@@ -1,0 +1,21 @@
+-wenn so kompiliert wird, dass von einem Translationserver aufgerufen wird
+ -wenn auf einem Root-Server ausgeführt wird 
+  dann sablevm verwenden (da nur 10MB RAM für Java-VM statt 60 MB für Sun JVM)
+  -sable vm musste kompiliert werden
+   -vllt. irgendetwas mit resources.jar
+   -vllt. irgendetwas mit libclasspath.jar
+   -gzip -d -r -v .sablevm-sdk-1.13.tar.gz
+   -cd sablevm-sdk-1.13
+   -cd sablevm
+   -make
+   -make install
+   -libsablevm-1.13.so
+  -dann musste noch eine 2te (abhängige) Sache ( sablevm-classpath) kompiliert werden
+   -auf Linux-Konsole
+    -1. wget httpgarr.dl.sourceforge.netsourceforgesablevmsablevm-classpath-1.13.tar.gz
+    -2. gzip -d -r -v sablevm-classpath-1.13.tar.gz
+    - mv resources.jar usrlocalsharesablevm-classpath
+  -so startet man den Ü-Server
+   -su steff
+   -erst screen -x, damit die console nach den ausloggen offen bleibt
+   -dann sablevm CallType.TranslationServer 5900 Exe busy2

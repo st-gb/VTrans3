@@ -1,0 +1,19 @@
+
+
+- "g++"-Option: -O3-Wall -c fmessage-length=0 -fno-for-scope -fpermissive -v
+  - "-fno-for-scope" für Umgehung des Problems wenn variable innerhalb 
+    Schleifen deklariert werden und dann (nicht) ausserhalb der Schleife sichtbar sind
+  - "-v": verbose-Modus
+-MFC ersetzen:
+  -Klasse CString ersetzen:
+    //Klasse, die die selben Methoden und Funktions-Signaturen hat wie CString
+    //Ordner von "StdString.h" zum Includepfad hinzufügen
+    #include <StdString.h> 
+    -namespace MFC_Compatibility
+      {
+        typedef CStdStr CString ;
+      };
+      ...
+      using namespace MFC_Compatibility ;
+      ...
+    -oder ohne namespace: typedef CStdStr CString ;

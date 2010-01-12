@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="VTrans-2" displayName="VTrans3" projectFiles="true">
+      <logicalFolder name="Basic Coordinating Conjunctions_dateien"
+                     displayName="Basic Coordinating Conjunctions_dateien"
+                     projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="comma_dateien"
+                     displayName="comma_dateien"
+                     projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="Debug" displayName="Debug" projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="Grammatik-Wissen"
+                     displayName="Grammatik-Wissen"
+                     projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="hlp" displayName="hlp" projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="Info" displayName="Info" projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="IO" displayName="IO" projectFiles="true">
+        <itemPath>../../IO/writeXML.cpp</itemPath>
+        <itemPath>../../IO/writeXML.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="Logged_Release"
+                     displayName="Logged_Release"
+                     projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="MFC" displayName="MFC" projectFiles="true">
+        <itemPath>../../MFC/ChildFrm.cpp</itemPath>
+        <itemPath>../../MFC/ChildFrm.h</itemPath>
+        <itemPath>../../MFC/EnglishView.cpp</itemPath>
+        <itemPath>../../MFC/EnglishView.h</itemPath>
+        <itemPath>../../MFC/ErrorCodeFromGetLastErrorToString.cpp</itemPath>
+        <itemPath>../../MFC/ErrorCodeFromGetLastErrorToString.h</itemPath>
+        <itemPath>../../MFC/GermanView.cpp</itemPath>
+        <itemPath>../../MFC/GermanView.h</itemPath>
+        <itemPath>../../MFC/LoadStatusDialog.cpp</itemPath>
+        <itemPath>../../MFC/LoadStatusDialog.h</itemPath>
+        <itemPath>../../MFC/MainFrm.cpp</itemPath>
+        <itemPath>../../MFC/MainFrm.h</itemPath>
+        <itemPath>../../MFC/OptionsDialog.cpp</itemPath>
+        <itemPath>../../MFC/OptionsDialog.h</itemPath>
+        <itemPath>../../MFC/SearchFormBar.cpp</itemPath>
+        <itemPath>../../MFC/SearchFormBar.h</itemPath>
+        <itemPath>../../MFC/SplitterFrame.cpp</itemPath>
+        <itemPath>../../MFC/StatusDialog.cpp</itemPath>
+        <itemPath>../../MFC/StatusDialog.h</itemPath>
+        <itemPath>../../MFC/UnknownWordsBar.cpp</itemPath>
+        <itemPath>../../MFC/UnknownWordsBar.h</itemPath>
+        <itemPath>../../MFC/VTrans.cpp</itemPath>
+        <itemPath>../../MFC/VTrans.h</itemPath>
+        <itemPath>../../MFC/VTransDoc.cpp</itemPath>
+        <itemPath>../../MFC/VTransDoc.h</itemPath>
+        <itemPath>../../MFC/VTransView.cpp</itemPath>
+        <itemPath>../../MFC/VTransView.h</itemPath>
+        <itemPath>../../MFC/WordDockingWindow.cpp</itemPath>
+        <itemPath>../../MFC/WordEditorBar.cpp</itemPath>
+        <itemPath>../../MFC/WordEditorBar.h</itemPath>
+        <itemPath>../../MFC/memdc.h</itemPath>
+        <itemPath>../../MFC/sizecbar.cpp</itemPath>
+        <itemPath>../../MFC/sizecbar.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="NetBeans" displayName="NetBeans" projectFiles="true">
+        <logicalFolder name="VTrans-2" displayName="VTrans-2" projectFiles="true">
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="Parse" displayName="Parse" projectFiles="true">
+        <itemPath>../../Parse/sequential.cpp</itemPath>
+        <itemPath>../../Parse/sequential.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="Release" displayName="Release" projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="res" displayName="res" projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="simple_clause"
+                     displayName="simple_clause"
+                     projectFiles="true">
+        <itemPath>../../simple_clause/simple_clause_c_pp.tab.cpp</itemPath>
+        <itemPath>../../simple_clause/simple_clause_c_pp.tab.hpp</itemPath>
+        <itemPath>../../simple_clause/simple_clause_tokenizer.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="VocabularyInMainMem"
+                     displayName="VocabularyInMainMem"
+                     projectFiles="true">
+        <logicalFolder name="DoublyLinkedList"
+                       displayName="DoublyLinkedList"
+                       projectFiles="true">
+          <itemPath>../../VocabularyInMainMem/DoublyLinkedList/WordList.cpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/DoublyLinkedList/WordList.hpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/DoublyLinkedList/WordNode.cpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/DoublyLinkedList/WordNode.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="LetterTree" displayName="LetterTree" projectFiles="true">
+          <itemPath>../../VocabularyInMainMem/LetterTree/LetterNode.cpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/LetterTree/LetterNode.hpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/LetterTree/LetterTree.cpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/LetterTree/LetterTree.hpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/LetterTree/Translate.cpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/LetterTree/VocabularyAndTranslation.cpp</itemPath>
+          <itemPath>../../VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp</itemPath>
+        </logicalFolder>
+        <itemPath>../../VocabularyInMainMem/AutomDelWord.hpp</itemPath>
+        <itemPath>../../VocabularyInMainMem/IVocabularyInMainMem.hpp</itemPath>
+        <itemPath>../../VocabularyInMainMem/I_WordSearch.hpp</itemPath>
+        <itemPath>../../VocabularyInMainMem/WordSearch.hpp</itemPath>
+      </logicalFolder>
+      <itemPath>../../1LinePerWordPair.cpp</itemPath>
+      <itemPath>../../1LinePerWordPair.h</itemPath>
+      <itemPath>../../GetAndTestWord.cpp</itemPath>
+      <itemPath>../../GetAndTestWord.h</itemPath>
+      <itemPath>../../IO.cpp</itemPath>
+      <itemPath>../../IO.h</itemPath>
+      <itemPath>../../I_UserInterface.hpp</itemPath>
+      <itemPath>../../ParseEnglish.cpp</itemPath>
+      <itemPath>../../ParseEnglish.h</itemPath>
+      <itemPath>../../SentenceElement.h</itemPath>
+      <itemPath>../../StdAfx.cpp</itemPath>
+      <itemPath>../../StdAfx.h</itemPath>
+      <itemPath>../../Text.cpp</itemPath>
+      <itemPath>../../Text.h</itemPath>
+      <itemPath>../../Token.cpp</itemPath>
+      <itemPath>../../Token.h</itemPath>
+      <itemPath>../../Translate.cpp</itemPath>
+      <itemPath>../../Translate.h</itemPath>
+      <itemPath>../../UI.h</itemPath>
+      <itemPath>../../Word.cpp</itemPath>
+      <itemPath>../../Word.hpp</itemPath>
+      <itemPath>../../Word_2003_08(Aug)14.cpp</itemPath>
+      <itemPath>../../allWordsIn1SingleLine.cpp</itemPath>
+      <itemPath>../../charsetconv.cpp</itemPath>
+      <itemPath>../../charsetconv.h</itemPath>
+      <itemPath>../../resource.h</itemPath>
+      <itemPath>../../rest.h</itemPath>
+      <itemPath>../../xmlwriter.cpp</itemPath>
+      <itemPath>../../xmlwriter.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../..</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>Cygwin_4.x|Cygwin_4.x</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../..</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>Cygwin_4.x|Cygwin_4.x</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

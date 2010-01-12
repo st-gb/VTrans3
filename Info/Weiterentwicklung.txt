@@ -1,0 +1,32 @@
+
+
+Geld verdienen (Marktidee):
+  -Online-Übersetzung -> 
+    -Werbung, wenn es genügend Besucher gibt
+    -Limitierung (nur kurze Texte erlauben, nur 1x Übersetzen pro 5 min.)
+  -auf Webseite verweisen auf andere kostenpflichtige Produkte bzw. den Übersetzer samt 
+    Verteilten Übersetzens (also Übersetzungs-Server)
+  
+TODOs:
+ -Wörterbuch (ist natürlich von entscheidender Wichtigkeit)
+  -eines mit vielen Einträgen, die ausreichend grammatikalische Attribute beinhalten finden, bzw. kaufen
+  (ohne Genehmigung benutzen könnte auffallen, da in Wörterbüchern Einträge eingebaut sein sollen, die 
+  es identifizieren sollen)
+  -bzw. selbst generieren (oder die Nutzer hinzufügen lassen, dann wäre aber eine Kontrolle der Daten sinnvoll)
+
+-Redesign:
+  - Wörterbuch: als shared memory zwischen mehrerern Übersetzer-Instanzen (bei Multicore-CPUs sinnvoll)
+    (könnte langsamer sein, auch da der Zugriff 
+    BEI ÄNDERUNGEN im Wörterbuch kontrolliert werden sollte)
+  - Aufruf des Übersetzer-Prozesses: Eingabe-Daten über die Standardeingabe(?) ->etwas schneller als 
+     ein Aufruf einer DLL-Funktion, wenn eine neue Übersetzung stattfinden soll
+  - besonderes Feature: grammatikalische Bestandteile (farblich) auf webseite hervorheben 
+    (gibt es bereits bei Eigennamen)
+    
+Aufgabenverteilung: Ich den Kern, also die Übersetzung, Seide den Rest (web-Oberfläche, Wörterbuch etc.?)
+
+Prioritäten:
+-zuerst die Suche im Wörterbuch im RAM beschleunigen
+-Übersetzer-Prozess stürtzt manchmal ab-> dann müsste der Prozess neu gestartet werden
+-ob wenn mehrere Übersetzungen gleichzeitig angestossen werden sauber übersetzt
+-UTF-8 im Übersetzer?

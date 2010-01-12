@@ -1,0 +1,38 @@
+
+könnte man auch einen Parser-Generator verwenden zum Überprüfen der Syntax
+und Aufbau der BaumStruktur eines Satzes:
+-GLR Parser: für natürliche Sprache (wie Englisch)
+ -wichtig: Endung der parser-Datei muss "ypp" sein, bei Endung "txt" wurde kein 
+  vollständiger (=inklusive cpp-Datei) Parser erstellt und es gab folgende Fehlermeldung:
+  "simple_clause_c_pp.txt: Warnung: widerspr³chliche Ausgaben in Datei äsimple_clau
+se_c_pp.tab.txtô "
+ -unter Linux "bison" (NICHT "bison++" / "bisonc++")
+ -schlecht: Rekursion (yyprocessOneStack ruft sich selbst auf )
+ -dem Parser-Stack kann der Speicher ausgehen (dann ruft yyparse() yyerror() auf und gibt "2" zurück)
+  -der Stack wächst zwar mit, hat aber die Obergrenze "YYMAXDEPTH" (Standard: 10.000)
+ -Win32-bison einrichten:
+  ich hatte "bison-2.4.tar.gz" und "bison-2.1.exe" (GnuWin32?) heruntergeladen
+  -installieren
+  dazu musst ich "glr.cc" und "location.cc" von einem Luinux-bison nach 
+  C:\Programme\Bison\share\bison kopieren
+  -
+	REM bison bennent die Dateien falsch. Deshalb gibt es ohne Umbennen
+	REM den Compiler-Fehler: kann Datei "location.hh" nicht finden in der 
+	REM ...tab.hpp-Datei
+	ren b4_dir_prefixlocation.hh location.hh
+	ren b4_dir_prefixposition.hh position.hh
+ -da ich in bison-Beispielen stdin als Quelle für den lexer (Tokenizer) sah,
+  könnte man von std::istream eine Subklasse ableiten und den Operator ">>" überschreiben,
+  so dass er das nächste Zeichen des "Text"-Ojektes liefert
+ -int 
+  yyparse(...) in "...tab.cpp" ist die parsende Funktion
+  -als Parameter wird der Parser-Klassenname übergeben
+  -wenn man also von einer Aktion zu einer Regel auf die Parser-Klasse zugreifen
+   will, um mehrere globale Variablen, auf die die Parser-Aktionen zugreifen, 
+   zu vermeiden, muss man in dieser Funktion so etwas wie
+   "gp_yyparser = & yyparser ;" hinzufügen 
+    (gp_yyparser ist 1 globale Variable vom Typ "b4_namespace::b4_parser_class_name * ")
+-LALR(1) Parser: nicht für Mehrdeutigkeiten (wie: 
+ "Sie beobachtet den Einbrecher mit dem Fernglas" ( entweder
+ "Sie beobachtet mit dem Fernglas den Einbrecher." oder
+ "Sie beobachtet den Einbrecher, der ein Fernglas hat." )
