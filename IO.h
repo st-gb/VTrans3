@@ -22,7 +22,7 @@
 #define STRING_INDEX_FOR_INIFINITIVE 0
 
 //const char * readInputText(const std::string & strFilePath) ;
-Word *    extract(const CString & str,BYTE bEnglishWord,int & ret) ;
+Word *    extract(const VTrans::string_type & str,BYTE bEnglishWord,int & ret) ;
 BYTE      readInputText(const std::string & strFilePath, std::string & str) ;
 LPCSTR                      UTF8toASCII(const char * str);
 void                        writeToOutputStream(std::ostream & rofstreamTranslToGerman,
@@ -30,5 +30,7 @@ void                        writeToOutputStream(std::ostream & rofstreamTranslTo
                             std::vector<SentenceAndValidityAndProperName> & vecsentenceandvalidityandpropername,
                             xmlwriter & MyXml
                             );
+void LoadWords(//WordNode * wn
+  std::string & r_strWordsFilePath );
 
 #endif //!defined (IO_H_INCLUDED)

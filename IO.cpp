@@ -11,8 +11,11 @@
 #include "charsetconv.h"
 #include "VocabularyInMainMem/LetterTree/LetterTree.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordList.hpp"
+#include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp" //for "class WordNode" etc.
 
 #include <sstream> //for ostringstream
+//cygwin: from dir "cygwin/usr/include/mingw"
+#include <mingw/tchar.h> //for _T()
 
 //class WordList ;
 
@@ -22,97 +25,98 @@ extern WordList wordList;
 LetterTree g_lettertree ;
 VocabularyAndTranslation * g_pvocabularyandtranslation ;
 
-CString EncodeToUTF8(LPCTSTR szSource)
-{
-  WORD ch;
-
-  BYTE bt1, bt2, bt3, bt4, bt5, bt6;
-
-  int n, nMax = _tcslen(szSource);
-
-  CString sFinal, sTemp;
-
-  for (n = 0; n < nMax; ++n)
-  {
-    ch = (WORD)szSource[n];
-
-    if (ch == _T('='))
-    {
-      sTemp.Format(_T("=%02X"), ch);
-
-      sFinal += sTemp;
-    }
-    else if (ch < 128)
-    {
-      sFinal += szSource[n];
-    }
-    else if (ch <= 2047)
-    {
-       bt1 = (BYTE)(192 + (ch / 64));
-       bt2 = (BYTE)(128 + (ch % 64));
-
-      sTemp.Format(_T("=%02X=%02X"), bt1, bt2);
-            
-      sFinal += sTemp;
-    }
-    else if (ch <= 65535)
-    {
-       bt1 = (BYTE)(224 + (ch / 4096));
-       bt2 = (BYTE)(128 + ((ch / 64) % 64));
-       bt3 = (BYTE)(128 + (ch % 64));
-
-      sTemp.Format(_T("=%02X=%02X=%02X"), bt1, bt2, bt3);
-            
-      sFinal += sTemp;
-    }
-    else if (ch <= 2097151)
-    {
-       bt1 = (BYTE)(240 + (ch / 262144));
-       bt2 = (BYTE)(128 + ((ch / 4096) % 64));
-       bt3 = (BYTE)(128 + ((ch / 64) % 64));
-       bt4 = (BYTE)(128 + (ch % 64));
-
-      sTemp.Format(_T("=%02X=%02X=%02X=%02X"), bt1, bt2, bt3, bt4);
-      sFinal += sTemp;
-    }
-    else if (ch <=67108863)
-    {
-      bt1 = (BYTE)(248 + (ch / 16777216));
-      bt2 = (BYTE)(128 + ((ch / 262144) % 64));
-      bt3 = (BYTE)(128 + ((ch / 4096) % 64));
-      bt4 = (BYTE)(128 + ((ch / 64) % 64));
-      bt5 = (BYTE)(128 + (ch % 64));
-
-      sTemp.Format(_T("=%02X=%02X=%02X=%02X=%02X"), bt1, bt2, bt3, bt4, bt5);
-      sFinal += sTemp;
-    }
-    else if (ch <=2147483647)
-    {
-       bt1 = (BYTE)(252 + (ch / 1073741824));
-       bt2 = (BYTE)(128 + ((ch / 16777216) % 64));
-       bt3 = (BYTE)(128 + ((ch / 262144) % 64));
-       bt4 = (BYTE)(128 + ((ch / 4096) % 64));
-       bt5 = (BYTE)(128 + ((ch / 64) % 64));
-       bt6 = (BYTE)(128 + (ch % 64));
-
-      sTemp.Format(_T("=%02X=%02X=%02X=%02X=%02X=%02X"), 
-                bt1, bt2, bt3, bt4, bt5, bt6);
-      sFinal += sTemp;
-    }
-  }
-  return sFinal;
-}
+//CString EncodeToUTF8(LPCTSTR szSource)
+//{
+//  WORD ch;
+//
+//  BYTE bt1, bt2, bt3, bt4, bt5, bt6;
+//
+//  int n, nMax = _tcslen(szSource);
+//
+//  CString sFinal, sTemp;
+//
+//  for (n = 0; n < nMax; ++n)
+//  {
+//    ch = (WORD)szSource[n];
+//
+//    if (ch == _T('='))
+//    {
+//      sTemp.Format(_T("=%02X"), ch);
+//
+//      sFinal += sTemp;
+//    }
+//    else if (ch < 128)
+//    {
+//      sFinal += szSource[n];
+//    }
+//    else if (ch <= 2047)
+//    {
+//       bt1 = (BYTE)(192 + (ch / 64));
+//       bt2 = (BYTE)(128 + (ch % 64));
+//
+//      sTemp.Format(_T("=%02X=%02X"), bt1, bt2);
+//
+//      sFinal += sTemp;
+//    }
+//    else if (ch <= 65535)
+//    {
+//       bt1 = (BYTE)(224 + (ch / 4096));
+//       bt2 = (BYTE)(128 + ((ch / 64) % 64));
+//       bt3 = (BYTE)(128 + (ch % 64));
+//
+//      sTemp.Format(_T("=%02X=%02X=%02X"), bt1, bt2, bt3);
+//
+//      sFinal += sTemp;
+//    }
+//    else if (ch <= 2097151)
+//    {
+//       bt1 = (BYTE)(240 + (ch / 262144));
+//       bt2 = (BYTE)(128 + ((ch / 4096) % 64));
+//       bt3 = (BYTE)(128 + ((ch / 64) % 64));
+//       bt4 = (BYTE)(128 + (ch % 64));
+//
+//      sTemp.Format(_T("=%02X=%02X=%02X=%02X"), bt1, bt2, bt3, bt4);
+//      sFinal += sTemp;
+//    }
+//    else if (ch <=67108863)
+//    {
+//      bt1 = (BYTE)(248 + (ch / 16777216));
+//      bt2 = (BYTE)(128 + ((ch / 262144) % 64));
+//      bt3 = (BYTE)(128 + ((ch / 4096) % 64));
+//      bt4 = (BYTE)(128 + ((ch / 64) % 64));
+//      bt5 = (BYTE)(128 + (ch % 64));
+//
+//      sTemp.Format(_T("=%02X=%02X=%02X=%02X=%02X"), bt1, bt2, bt3, bt4, bt5);
+//      sFinal += sTemp;
+//    }
+//    else if (ch <=2147483647)
+//    {
+//       bt1 = (BYTE)(252 + (ch / 1073741824));
+//       bt2 = (BYTE)(128 + ((ch / 16777216) % 64));
+//       bt3 = (BYTE)(128 + ((ch / 262144) % 64));
+//       bt4 = (BYTE)(128 + ((ch / 4096) % 64));
+//       bt5 = (BYTE)(128 + ((ch / 64) % 64));
+//       bt6 = (BYTE)(128 + (ch % 64));
+//
+//      sTemp.Format(_T("=%02X=%02X=%02X=%02X=%02X=%02X"),
+//                bt1, bt2, bt3, bt4, bt5, bt6);
+//      sFinal += sTemp;
+//    }
+//  }
+//  return sFinal;
+//}
 
 #define _INSERT_INTO_HASH_TREE
 
 //str: a string containing the specific words file format entry.
-Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
+//Inserts into LetterTree.
+Word * extract(const VTrans::string_type & str,BYTE bEnglishWord,int & ret)
 {
 	LOGN("extract--new word from file") ;
-  if( str.GetLength()>0 )
+  if( str.length() > 0 )
   {
 #ifdef _DEBUG
-	printf("Vocable * extract(CString s,BOOL english,int & ret) ANFANG\n");
+	//printf("Vocable * extract(CString s,BOOL english,int & ret) ANFANG\n");
 #endif
 	  //TRACE("Vocable * extract(CString s,BOOL english,int & ret) ANFANG\n");
 	  if(bEnglishWord)
@@ -123,32 +127,41 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
       {
       case WORD_TYPE_NOUN : // Substantiv
 		  {
-			  EnglishNoun * en=new EnglishNoun;
+			  EnglishNoun * en = new EnglishNoun;
 			  BYTE delemiterCount=0;
 			  BYTE otherCount=0;
-			  int start=1;
+			  int start = 1;
+        int i ;
         //TRACE("englisches Substantiv: %s\n", str);
 #ifdef _INSERT_INTO_HASH_TREE
         LetterNode * pletternode = NULL ;
         VocabularyAndTranslation * pvocabularyandtranslation = NULL,
           * pvocabularyandtranslationReturn = NULL ;
 #endif //#ifdef _INSERT_INTO_HASH_TREE
-        int nStringLength = str.GetLength() ;
-			  for( int i = 1 ; i < nStringLength ; i++ )
+        int nStringLength = str.length() ;
+			  for( i = 1 ; i < nStringLength ; i++ )
 			  {
 				  if(str[i] == STRING_DELIMITER)
 				  {
 					  if(delemiterCount == 0)
-						  en->m_strSingular=str.Mid(start,i-start);
+            {
+						  en->m_strSingular = //str.Mid(start,i-start);
+                str.substr(start,i-start);
+            #ifdef _DEBUG
+            const char * pch = en->m_strSingular.c_str() ;
+            pch = 0 ;
+            #endif
+            }
 					  if(delemiterCount == 1)
-						  en->m_strPlural=str.Mid(start,i-start);
+						  en->m_strPlural = //str.Mid(start,i-start);
+                str.substr(start,i-start);
 #ifdef _INSERT_INTO_HASH_TREE
             //if(bEnglishWord)
             //{
               //pletternode = g_lettertree.insert(//strVocabularyEntry
               pvocabularyandtranslationReturn = g_lettertree.insert(
                 //std::string(
-                (LPCSTR)str//)
+                (LPCSTR)str.c_str() //)
                 ,start,i-start, 
                 //If not assigned yet within THIS function.
                 !pvocabularyandtranslation,pletternode,byVocabularyType ) ;
@@ -183,7 +196,8 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
                 {
 #endif
                   pvocabularyandtranslation->m_arstrEnglishWord[
-                    delemiterCount] = str.Mid(start,i-start);
+                    delemiterCount] = //str.Mid(start,i-start);
+                    str.substr(start,i-start);
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
                   pvocabularyandtranslation->m_arpletternodeLastEngChar[
                     delemiterCount] = pletternode ;
@@ -262,7 +276,7 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
             }
           //}//char != '9'
 			  }
-        ASSERT(g_lettertree.m_pletternodeRoot->m_psetpvocabularyandtranslation==NULL) ;
+        //ASSERT(g_lettertree.m_pletternodeRoot->m_psetpvocabularyandtranslation==NULL) ;
 		  }
       break;
       case WORD_TYPE_MAIN_VERB : // englisches Vollverb
@@ -276,16 +290,17 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
         VocabularyAndTranslation * pvocabularyandtranslation = NULL,
           * pvocabularyandtranslationReturn = NULL ;
 #endif //#ifdef _INSERT_INTO_HASH_TREE
-			  for(int i=1;i<str.GetLength();i++)
+			  for( int i = 1 ; i < str.length() ; i++ )
 			  {
 				  if(str[i]== STRING_DELIMITER)
 				  {
 					  if(delemiterCount== STRING_INDEX_FOR_INIFINITIVE )
             {
-						  ev->m_strInfinitive=str.Mid(start,i-start);
+						  ev->m_strInfinitive = //str.Mid(start,i-start);
+                str.substr(start,i - start);
 #ifdef _INSERT_INTO_HASH_TREE
               //TODO if last letter = consonant, e.g. "refer": "refeRRing"
-              std::string strIng = ev->m_strInfinitive+"ing" ;
+              std::string strIng = ev->m_strInfinitive + "ing" ;
               //Also save the verb forms that do not stand within the
               //vocabulary file.
               pvocabularyandtranslationReturn = 
@@ -309,11 +324,14 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 #endif //#ifdef _INSERT_INTO_HASH_TREE
             }
 					  if(delemiterCount==1)
-						  ev->m_strPastTense=str.Mid(start,i-start);
+						  ev->m_strPastTense = //str.Mid(start,i-start);
+                str.substr(start, i - start);
 					  if(delemiterCount==2)
-						  ev->m_strPastParticiple=str.Mid(start,i-start);
-					  if(delemiterCount==3)
-						  ev->m_strPreposition=str.Mid(start,i-start);
+						  ev->m_strPastParticiple = //str.Mid(start,i-start);
+                str.substr(start,i-start);
+					  if(delemiterCount == 3)
+						  ev->m_strPreposition = //str.Mid(start,i-start);
+                str.substr(start,i-start);
 #ifdef _INSERT_INTO_HASH_TREE
 #ifdef _DEBUG
               if( ev->m_strInfinitive == _T("talk") )
@@ -321,7 +339,7 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 #endif
               pvocabularyandtranslationReturn = g_lettertree.insert(
                 //std::string(
-                (LPCSTR)str//)
+                (LPCSTR)str.c_str() //)
                 ,start,i-start, 
                 //If not assigned yet within THIS function.
                 !pvocabularyandtranslation,
@@ -362,14 +380,17 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
               {
                 if( pvocabularyandtranslation )
                   pvocabularyandtranslation->m_arstrEnglishWord[
-                    delemiterCount] = str.Mid(start,i-start);
+                    delemiterCount] = //str.Mid(start,i-start);
+                    str.substr(start,i-start);
               }
 #endif //#ifdef _INSERT_INTO_HASH_TREE
 					  delemiterCount++;
 					  start=i+1;
 				  }
-				  if(delemiterCount==5 && (str[i]=='1' || str[i]=='2' || str[i]=='3'
-					  || str[i]=='4'))
+				  if( delemiterCount == 5
+            &&
+            (str[i]=='1' || str[i]=='2' || str[i]=='3' || str[i]=='4')
+            )
 				  {
 					  ev->m_bAllowsIngForm=0;
 					  ev->m_bAllowsToPlusInfinitive=0;
@@ -404,34 +425,39 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 				  {
 					  ea->m_bAllowedPlace=str[2]-ASCII_CODE_FOR_DIGIT_1;
 				  }
-				  for(int i=3;i<str.GetLength();i++)
+				  for(int i=3; i < str.length(); i++)
 				  {
 					  if(str[i]=='9')
 					  {
 						  if(delemiterCount==0)
 						  {
-							  ea->m_strPositiv=str.Mid(start,i-start);
+							  ea->m_strPositiv = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
 						  }
 						  if(delemiterCount==1)
 						  {
 							  if(ea->m_bMoreMost==1)
 							  {
-								  ea->m_strAdverb=str.Mid(start,i-start);
+								  ea->m_strAdverb = //str.Mid(start,i-start);
+                    str.substr(start,i-start);
 								  return ea;
 							  }
-							  ea->m_strComperativ=str.Mid(start,i-start);
+							  ea->m_strComperativ = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
 						  }
-						  if(delemiterCount==2)
-							  ea->m_strSuperlativ=str.Mid(start,i-start);
-						  if(delemiterCount==3)
+						  if( delemiterCount == 2 )
+							  ea->m_strSuperlativ = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
+						  if( delemiterCount == 3 )
 						  {
-							  ea->m_strAdverb=str.Mid(start,i-start);
+							  ea->m_strAdverb = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
 						  }
-						  delemiterCount++;
-						  start=i+1;
+						  delemiterCount ++;
+						  start = i + 1 ;
 					  }
 				  }
-				  if(delemiterCount==4)
+				  if(delemiterCount == 4 )
 				  {
 					  //return TRUE;
 					  //voc=dynamic_cast<Vocable*>(ea);
@@ -443,24 +469,25 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
       break ;
       case WORD_TYPE_ADVERB : // Adverb
 		  {
-			  EnglishAdverb * ea=new EnglishAdverb;
+			  EnglishAdverb * ea = new EnglishAdverb;
 			  BYTE delemiterCount=0;
-			  for(int i=1;i<str.GetLength();++i)
+			  for(int i = 1 ; i < str.length(); ++i )
 			  {
 				  if(str[i]=='9')
 				  {
-					  if(delemiterCount==0)
-						  ea->m_strWord=str.Mid(1,i-1);
+					  if(delemiterCount == 0 )
+						  ea->m_strWord = //str.Mid(1,i-1);
+                str.substr(1,i-1);
 					  ++delemiterCount;
 				  }
 				  if(str[i]=='1' || str[i]=='2' || str[i]=='3' || str[i]=='4' || 
 					  str[i]=='5' || str[i]=='6')
-					  if(delemiterCount==1)
+					  if(delemiterCount == 1)
 					  {
 						  //return TRUE;
 						  //voc=dynamic_cast<Vocable*>(ea);
 						  //return 0;
-						  ea->m_bType=str[i]-ASCII_CODE_FOR_DIGIT_1;
+						  ea->m_bType = str[i] - ASCII_CODE_FOR_DIGIT_1;
 						  return ea;
 					  }
 			  }
@@ -468,13 +495,14 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
       break ;
       case WORD_TYPE_PREPOSITION : // Pr�position
 		  {
-			  EnglishPreposition * ep=new EnglishPreposition;
-			  for(int i=1;i<str.GetLength();++i)
+			  EnglishPreposition * ep = new EnglishPreposition;
+			  for(int i=1 ; i < str.length(); ++i)
 			  {
-				  if(str[i]==STRING_DELIMITER)
+				  if( str[i] == STRING_DELIMITER )
 				  {
-					  ep->m_strWord=str.Mid(1,i-1);
-					  if(i+1==str.GetLength())
+					  ep->m_strWord = //str.Mid(1,i-1);
+              str.substr(1,i-1);
+					  if( i + 1 == str.length() )
 						  return ep;
 					  else
 						  return NULL;
@@ -484,21 +512,23 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
       break ;
       case WORD_TYPE_PRONOUN : // Pronomen
 		  {
-			  EnglishPronoun * ep=new EnglishPronoun;
+			  EnglishPronoun * ep = new EnglishPronoun;
 			  BYTE delemiterCount=0;
 			  DWORD dwStart=0;
-			  for(int i=1;i<str.GetLength();i++)
+			  for(int i=1; i < str.length(); i++)
 			  {
 				  if(str[i]=='9')
 				  {
 					  if(delemiterCount==0)
 					  {
-						  ep->m_strSingular=str.Mid(1,i-1);
+						  ep->m_strSingular = //str.Mid(1,i-1);
+                str.substr(1,i-1);
 					  }
 					  if(delemiterCount==1)
 					  {
-						  ep->m_strPlural=str.Mid(dwStart,i-dwStart);
-						  if(i+1==str.GetLength())
+						  ep->m_strPlural = //str.Mid(dwStart,i-dwStart);
+                str.substr(dwStart,i-dwStart);
+						  if( i + 1 == str.length() )
 							  return ep;
 					  }
 					  delemiterCount++;
@@ -514,12 +544,13 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 			  BYTE delemiterCount=0;
 			  BYTE otherCount=0;
 			  int start=1;
-			  for(int i=1;i<str.GetLength();i++)
+			  for(int i=1;i < str.length();i++)
 			  {
 				  if(str[i]=='9') // finite (gebeugte) Verbformen
 				  {
 					  if(delemiterCount<14)
-						  eav->m_strWords[delemiterCount]=str.Mid(start,i-start);
+						  eav->m_strWords[delemiterCount] = //str.Mid(start,i-start);
+                str.substr(start,i-start);
 					  if(delemiterCount==13)
 						  return eav;
 					  delemiterCount++;
@@ -531,12 +562,13 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
       case WORD_TYPE_CONJUNCTION : // englische Konjunktion
 		  {
 			  EnglishConjunction * ec=new EnglishConjunction;
-			  for(int i=1;i<str.GetLength();i++)
+			  for(int i = 1;i < str.length(); i++)
 			  {
-				  if(str[i]=='9') // finite (gebeugte) Verbformen
+				  if( str[i] == '9' ) // finite (gebeugte) Verbformen
 				  {
-					  ec->m_strWord=str.Mid(1,i-1);
-					  if(i+1==str.GetLength())
+					  ec->m_strWord = //str.Mid(1,i-1);
+              str.substr(1,i-1);
+					  if( i + 1 == str.length() )
 						  return ec;
 				  }
 			  }
@@ -558,19 +590,21 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 			    BYTE delemiterCount=0;
 			    int start=1;
           LetterNode * pletternode = NULL ;
-			    for(int i=1;i<str.GetLength();i++)
+			    for( int i = 1 ; i < str.length() ; i++ )
 			    {
-				    if(str[i]=='9')
+				    if( str[i] == '9' )
 				    {
-					    if(delemiterCount==0)
-						    gn->m_strSingular=str.Mid(start,i-start);
-					    if(delemiterCount==1)
-						    gn->m_strPlural=str.Mid(start,i-start);
+					    if( delemiterCount == 0 )
+						    gn->m_strSingular = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
+					    if( delemiterCount == 1 )
+						    gn->m_strPlural = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
 #ifdef _INSERT_INTO_HASH_TREE
               //pvocabularyandtranslationReturn = 
               g_lettertree.insert(
                 //std::string(
-                (LPCSTR)str//)
+                (LPCSTR)str.c_str() //)
                 ,start,i-start, 
                 ////If not assigned yet within THIS function.
                 //!pvocabularyandtranslation,
@@ -585,7 +619,8 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
               if(delemiterCount < NUMBER_OF_STRINGS_FOR_GERMAN_NOUN )
                 //pvocabularyandtranslation->m_arstrGermanWord[
                 g_pvocabularyandtranslation->m_arstrGermanWord[
-                  delemiterCount] = str.Mid(start,i-start);
+                  delemiterCount] = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
 #endif //#ifdef _INSERT_INTO_HASH_TREE
 					    delemiterCount++;
 					    start=i+1;
@@ -605,19 +640,21 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
         case WORD_TYPE_MAIN_VERB : // deutsches Verb
 		    {
 			    TRACE("englisches Verb\n");;
-			    GermanVerb * gv=new GermanVerb;
+			    GermanVerb * gv = new GermanVerb;
 			    gv->m_bAuxiliaryVerb=FALSE;
 			    BYTE delemiterCount=0;
 			    BYTE otherCount=0;
 			    int start=1;
-			    for(int i=1;i<str.GetLength();i++)
+			    for( int i = 1 ; i < str.length(); i++ )
 			    {
 				    if(str[i]=='9') // finite (gebeugte) Verbformen, Pr�position
 				    {
-					    if(delemiterCount<16)
-						    gv->m_strWords[delemiterCount]=str.Mid(start,i-start);
-					    if(delemiterCount==16)
-						    gv->m_strPreposition=str.Mid(start,i-start);
+					    if( delemiterCount < 16 )
+						    gv->m_strWords[delemiterCount] = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
+					    if( delemiterCount == 16 )
+						    gv->m_strPreposition = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
 					    delemiterCount++;
 					    start=i+1;
 				    }
@@ -661,20 +698,24 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 			    GermanAdjective * ga=new GermanAdjective;
 			    BYTE delemiterCount=0;
 			    int start=1;
-			    for(int i=1;i<str.GetLength();++i)
+			    for(int i=1;i < str.length();++i)
 			    {
 				    if(str[i]=='9')
 				    {
-					    if(delemiterCount==0)
-						    ga->m_strPositiv=str.Mid(start,i-start);
-					    if(delemiterCount==1)
-						    ga->m_strComperativ=str.Mid(start,i-start);
-					    if(delemiterCount==2)
-						    ga->m_strSuperlativ=str.Mid(start,i-start);
-					    if(delemiterCount==3)
-						    ga->m_strWortstamm=str.Mid(start,i-start);
+					    if(delemiterCount == 0 )
+						    ga->m_strPositiv = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
+					    if(delemiterCount == 1 )
+						    ga->m_strComperativ = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
+					    if(delemiterCount == 2 )
+						    ga->m_strSuperlativ = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
+					    if(delemiterCount == 3 )
+						    ga->m_strWortstamm = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
 					    delemiterCount++;
-					    start=i+1;
+					    start = i+1;
 				    }
 			    }
 			    if(delemiterCount==4)
@@ -690,12 +731,13 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 		    {
 			    GermanAdverb * ga=new GermanAdverb;
 			    BYTE delemiterCount=0;
-			    for(int i=1;i<str.GetLength();++i)
+			    for(int i=1; i < str.length(); ++i)
 			    {
 				    if(str[i]=='9')
 				    {
 					    if(delemiterCount==0)
-						    ga->m_strWord=str.Mid(1,i-1);
+						    ga->m_strWord = //str.Mid(1,i-1);
+                  str.substr(1,i-1);
 					    ++delemiterCount;
 				    }
 			    }
@@ -710,11 +752,12 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 			    GermanPreposition * gp = new GermanPreposition;
           BYTE delemiterCount=0;
           int i = 1 ;
-			    for(;i<str.GetLength();i++)
+			    for(;i < str.length();i++)
 			    {
 				    if(str[i]==STRING_DELIMITER)
 				    {
-					    gp->m_strWord=str.Mid(1,i-1);
+					    gp->m_strWord = //str.Mid(1,i-1);
+                str.substr(1,i-1);
 					    //if(i+1==str.GetLength())
 						   // return gp;
 					    //else
@@ -726,7 +769,7 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 			    }
           if( delemiterCount == 1 )
           {
-            if( ++i < str.GetLength() )
+            if( ++i < str.length() )
               gp->m_byCase = str[i] - ASCII_CODE_FOR_DIGIT_0 ;
             return gp;
           }
@@ -734,13 +777,14 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
         break ;
         case WORD_TYPE_PRONOUN : // deutsches Pronomen
 		    {
-			    GermanPronoun * gp=new GermanPronoun;
-			    for(int i=1;i<str.GetLength();++i)
+			    GermanPronoun * gp = new GermanPronoun;
+			    for(int i=1;i < str.length();++i)
 			    {
 				    if(str[i]=='9')
 				    {
-					    gp->m_strWord=str.Mid(1,i-1);
-					    if(i+1==str.GetLength())
+					    gp->m_strWord = //str.Mid(1,i-1);
+                str.substr(1,i-1);
+					    if( i + 1 == str.length() )
 						    return gp;
 					    else
 						    return NULL;
@@ -755,12 +799,13 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 			    BYTE delemiterCount=0;
 			    BYTE otherCount=0;
 			    int start=1;
-			    for(int i=1;i<str.GetLength();++i)
+			    for(int i=1;i < str.length(); ++i)
 			    {
-				    if(str[i]=='9') // finite (gebeugte) Verbformen
+				    if(str[i] == '9') // finite (gebeugte) Verbformen
 				    {
 					    if(delemiterCount<16)
-						    gv->m_strWords[delemiterCount]=str.Mid(start,i-start);
+						    gv->m_strWords[delemiterCount] = //str.Mid(start,i-start);
+                  str.substr(start,i-start);
 					    delemiterCount++;
 					    start=i+1;
 				    }
@@ -782,17 +827,18 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 			    GermanConjunction * gc=new GermanConjunction;
 			    BYTE bDelemiterOccured=FALSE;
 			    BYTE otherCount=0;
-			    for(int i=1;i<str.GetLength();++i)
+			    for(int i=1;i < str.length();++i)
 			    {
 				    if(str[i]=='9') // finite (gebeugte) Verbformen
 				    {
-					    gc->m_strWord=str.Mid(1,i-1);
+					    gc->m_strWord = //str.Mid(1,i-1);
+                str.substr(1,i-1);
 					    bDelemiterOccured=TRUE;
 				    }
 				    if(str[i]=='1' || str[i]=='2')
 				    {
-					    gc->m_bWordOrder=str[i]-49;
-					    if(bDelemiterOccured && i+1==str.GetLength())
+					    gc->m_bWordOrder = str[i]-49;
+					    if( bDelemiterOccured && i+1 == str.length() )
 						    return gc;
 				    }
 			    }
@@ -804,38 +850,50 @@ Word * extract(const CString & str,BYTE bEnglishWord,int & ret)
 	return NULL;
 }
 
-void LoadWords(WordNode * pWordNodeCurrent)
+void LoadWords(//WordNode * pWordNodeCurrent
+  std::string & r_strWordsFilePath )
 {
 	FILE *f;
 	int i;
 	BOOL break_while=FALSE;
 	BOOL flag=FALSE;
-	CString concatenate;
-  CString strWordFile=_T(//"http://www.f4.fhtw-berlin.de/~s0518039/"
-    "words.txt");
+	VTrans::string_type concatenate;
+  VTrans::string_type strWordFile = //_T(
+    //"http://www.f4.fhtw-berlin.de/~s0518039/"
+    "words.txt" //);
+    ;
   WordNode * pWordNodePrevious=NULL;
 
 	//zuerst die integralen Vokabeln der verketteten Liste hinzuf�gen, Ende
   LOGN("05.06.2008 22.22.17");
-	if((f=fopen(strWordFile,"rb"))!=NULL)
+	if( ( f = fopen( //strWordFile.c_str()
+    r_strWordsFilePath.c_str() ,"rb") ) != NULL )
 	{
     LOGN("05.06.2008 22.22.26");
 		concatenate="";
 		BYTE bEnglishWord=TRUE;
-		CString str;
+		VTrans::string_type str;
 		DWORD dwOffset=0;
 		DWORD dwOffsetOfBeginOfEntry=0;//Offset (Position) des Anfanges eines 
 		//Vokabel-Eintrages
 		while((i=getc(f))!=-1)
 		{
-			if(i==(char)'0')
+			if(i == (char)'0'
+        //dec. 10 = newline
+        || i == 10
+        )
 			{
 				if(bEnglishWord)
 				{
 					int ret=0;
-					pWordNodePrevious=pWordNodeCurrent;
-					pWordNodeCurrent->m_pWordNodeNext=new WordNode();
-					pWordNodeCurrent->m_pWordNodeNext->m_pWord=extract(str,TRUE,ret);
+//					pWordNodePrevious=pWordNodeCurrent;
+//					pWordNodeCurrent->m_pWordNodeNext=new WordNode();
+//					pWordNodeCurrent->m_pWordNodeNext->m_pWord=extract(str,TRUE,ret);
+          extract(str,TRUE,ret);
+          #ifdef _DEBUG
+          const char * pch = str.c_str() ;
+          pch = 0 ;
+          #endif
 					//TODO also provide an error message for non-Windows binaries. 
 #ifdef _WINDOWS
 					if(!pWordNodeCurrent->m_pWordNodeNext->m_pWord)
@@ -857,8 +915,8 @@ Fehler in der Dateistruktur zu beheben."),
 						break;
 					}
 #endif //#ifdef _WINDOWS
-					pWordNodeCurrent=pWordNodeCurrent->m_pWordNodeNext;
-					pWordNodeCurrent->m_pWordNodePrevious=pWordNodePrevious;
+//					pWordNodeCurrent=pWordNodeCurrent->m_pWordNodeNext;
+//					pWordNodeCurrent->m_pWordNodePrevious=pWordNodePrevious;
 					if(ret==-1)
 					{
 						break;
@@ -867,9 +925,10 @@ Fehler in der Dateistruktur zu beheben."),
 				else // deutsch
 				{
 					int ret=0;
-					pWordNodePrevious=pWordNodeCurrent;
-					pWordNodeCurrent->m_pWordNodeNext=new WordNode();
-					pWordNodeCurrent->m_pWordNodeNext->m_pWord=extract(str,FALSE,ret);
+//					pWordNodePrevious=pWordNodeCurrent;
+//					pWordNodeCurrent->m_pWordNodeNext = new WordNode();
+//					pWordNodeCurrent->m_pWordNodeNext->m_pWord=extract(str,FALSE,ret);
+          extract(str,FALSE,ret);
 					//TODO also provide an error message for non-Windows binaries. 
 #ifdef _WINDOWS
 					if(!pWordNodeCurrent->m_pWordNodeNext->m_pWord)
@@ -886,8 +945,8 @@ der Vokabeln wird beendet. Versuchen Sie den Fehler in der Dateistruktur zu behe
 						break;
 					}
 #endif //#ifdef _WINDOWS
-					pWordNodeCurrent=pWordNodeCurrent->m_pWordNodeNext;
-					pWordNodeCurrent->m_pWordNodePrevious=pWordNodePrevious;
+//					pWordNodeCurrent=pWordNodeCurrent->m_pWordNodeNext;
+//					pWordNodeCurrent->m_pWordNodePrevious=pWordNodePrevious;
 					if(ret!=0)
 						//MessageBox("Datei %s enth�lt kein g�ltiges Format oder sonstiger Fehler","Fehler beim Lesen der Datei vocs.txt",MB_OK);
 						break;
@@ -903,10 +962,10 @@ der Vokabeln wird beendet. Versuchen Sie den Fehler in der Dateistruktur zu behe
 			++dwOffset;
 		}
 		fclose(f);
-		if(pWordNodeCurrent!=NULL)
-		{
-			pWordNodeCurrent->m_pWordNodeNext=NULL;
-		}
+//		if(pWordNodeCurrent!=NULL)
+//		{
+//			pWordNodeCurrent->m_pWordNodeNext=NULL;
+//		}
 	}
 #ifdef _WINDOWS
 	else
@@ -923,8 +982,8 @@ gibt es anf�nglich keine Vokabeln.\nM�gliche Ursachen:\
 		AfxMessageBox(strMessage,MB_OK,0);
 	}
 #endif
-	wordList.m_pWordNodeLast=pWordNodeCurrent;
-	wordList.m_pWordNodeLast->m_pWordNodeNext=NULL;
+//	wordList.m_pWordNodeLast=pWordNodeCurrent;
+//	wordList.m_pWordNodeLast->m_pWordNodeNext=NULL;
 #ifdef _DEBUG
 	printf("void LoadWords(WordNode * pWordNode) ENDE\n");
 #endif
@@ -1006,7 +1065,7 @@ void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
 {
   if(rofstreamTranslToGerman)
   {
-    CStringVector strvec;
+    VTrans_string_typeVector strvec;
     SentenceAndValidityAndProperName sentenceandvalidityandpropername;
     for(WORD wSentenceIndex=0;wSentenceIndex<
       vecsentenceandvalidityandpropername.size();++wSentenceIndex)
@@ -1107,8 +1166,10 @@ void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
 //              {
 #endif //#ifdef _WINDOWS
               if(lpTranslationInUTF8 = 
-                  ( CharSetConv::EncodeASCIIToUTF8(strvec.at(
-                wTranslationForEnglishWordIndex).GetBuffer() ) 
+                ( CharSetConv::EncodeASCIIToUTF8( (char *) strvec.at(
+                  //wTranslationForEnglishWordIndex).GetBuffer()
+                  wTranslationForEnglishWordIndex).c_str()
+                  )
                   )
                 )
               {

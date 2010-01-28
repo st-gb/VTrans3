@@ -1,10 +1,11 @@
 //Ohne das folgende include/wenn Pfad in den Eigenschaften dieser Datei 
 //unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
-//"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem vorkompilierten Header.[...]"
+//"fatal error C1010: Unerwartetes Dateiende wï¿½hrend der Suche nach dem vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
 #include "../../Word.hpp"
 #include "VocabularyAndTranslation.hpp"
-#include <Windef.h> //for BYTE
+#include <windef.h> //for BYTE
+#include <typeinfo> //for typeid()
 
 VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
 {
@@ -91,7 +92,7 @@ void VocabularyAndTranslation::GetWord(//Word & word
     //m_arbyAttribute = new BYTE[2] ;
     //word = dynamic_cast<Word &>(en) ;
     //word = en ;
-    p_en->m_bType = ;
+    p_en->m_bType = ENGLISH_NOUN ;
     r_automdelword.SetWord(p_en) ;
 #ifdef _DEBUG
     if( typeid(//*pWordNode->m_pWord

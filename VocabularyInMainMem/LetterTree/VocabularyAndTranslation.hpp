@@ -34,8 +34,10 @@ class Word ;
     Word * m_pword ;
     Word m_word ;
     Word * m_pwordTranslation ;
-    std::string * m_arstrEnglishWord ;
-    std::string * m_arstrGermanWord ;
+    //std::string * m_arstrEnglishWord ;
+    VTrans::string_type * m_arstrEnglishWord ;
+    //std::string * m_arstrGermanWord ;
+    VTrans::string_type * m_arstrGermanWord ;
     //LetterNode * m_arpletternodeBeginOfWord ;
     VocabularyAndTranslation(
       BYTE byType,

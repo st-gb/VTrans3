@@ -1,4 +1,4 @@
-//Ohne das folgende include: fatal error C1010: Unerwartetes Dateiende während der Suche nach dem vorkompilierten Header.
+//Ohne das folgende include: fatal error C1010: Unerwartetes Dateiende wï¿½hrend der Suche nach dem vorkompilierten Header.
 #include "StdAfx.h"
 #include "rest.h" //for CStringVector etc.
 #include "Token.h"
@@ -6,7 +6,7 @@
 
 extern std::ofstream ofstreamLogFile; //for "LOGN" macro
 
-void Append(CStringVector & destinationCStringVector,const CStringVector & append)
+void Append(VTrans_string_typeVector & destinationCStringVector,const VTrans_string_typeVector & append)
 {
 	TRACE("Append ANFANG\n");
 	for(unsigned int i=0;i<append.size();i++)
@@ -26,8 +26,8 @@ void Append(CStringVector & destinationCStringVector,const CStringVector & appen
 	TRACE("Append ENDE\n");
 }*/
 
-void Append(std::vector<CStringVector> & destinationCStringVector,
-  const std::vector<CStringVector> & append)
+void Append(std::vector<VTrans_string_typeVector> & destinationCStringVector,
+  const std::vector<VTrans_string_typeVector> & append)
 {
 	TRACE("Append ANFANG\n");
 	for(DWORD i=0;i<append.size();i++)
@@ -37,11 +37,11 @@ void Append(std::vector<CStringVector> & destinationCStringVector,
 	TRACE("Append ENDE\n");
 }
 
-BYTE Compare(const CStringVector & cstrvec1,const CStringVector & cstrvec2)
+BYTE Compare(const VTrans_string_typeVector & cstrvec1,const VTrans_string_typeVector & cstrvec2)
 {
 	if(cstrvec1.size()==cstrvec2.size())
 	{
-		//TRACE("Die Größen sind gleich.\n");
+		//TRACE("Die Grï¿½ï¿½en sind gleich.\n");
 		BOOL bEqual=TRUE;
 		for(DWORD i=0;i<cstrvec1.size();i++)
 		{
@@ -86,7 +86,7 @@ int CountTokens(CString text)
 	return count;
 }
 
-CString FormatGermanSentence(CStringVector germanSentence)
+CString FormatGermanSentence(VTrans_string_typeVector germanSentence)
 {
 	CString retStr;
 	for(DWORD i=0;i<germanSentence.size();i++)
@@ -151,10 +151,10 @@ CString GetBetween(CString str,int first,int last)
 	return CString("");
 }
 
-CStringVector GetBetween(const CStringVector cstrv,int first,int last)
+VTrans_string_typeVector GetBetween(const VTrans_string_typeVector cstrv,int first,int last)
 {
 	TRACE("GetBetween ANFANG\n");
-	CStringVector retCStrVec;
+	VTrans_string_typeVector retCStrVec;
 	//In MFC/Windows the TRACE macro has a variable # of args--I do 
 	//not know how to enable variable numbers of args for the same macro name.
 	//So I exclude it from non-Windows.
@@ -201,12 +201,12 @@ PositionCStringVector GetBetween(const PositionCStringVector & pcstrv,int first,
 	return retPCStrVec;
 }
 
-CStringVector GetBetweenAsCStringVector(const PositionCStringVector & pcstrv,int first,int last)
+VTrans_string_typeVector GetBetweenAsCStringVector(const PositionCStringVector & pcstrv,int first,int last)
 {
 	#ifdef _DEBUG
 	printf("CStringVector GetBetweenAsCStringVector(const PositionCStringVector & pcstrv,int first,int last) ANFANG\n");
 #endif
-	CStringVector retCStrVec;
+	VTrans_string_typeVector retCStrVec;
 	//In MFC/Windows the TRACE macro has a variable # of args--I do 
 	//not know how to enable variable numbers of args for the same macro name.
 	//So I exclude it from non-Windows.
@@ -228,11 +228,11 @@ CStringVector GetBetweenAsCStringVector(const PositionCStringVector & pcstrv,int
 	return retCStrVec;
 }
 
-CStringVector GetCStringVector(CString str)
+VTrans_string_typeVector GetCStringVector(CString str)
 {
 	//TRACE("GetCStringVector ANFANG\n");
 	//TRACE("str: %s\n",str);
-	CStringVector sv;
+	VTrans_string_typeVector sv;
 	BOOL flag=FALSE;
 	int count=0;
 	int start=0;
@@ -256,10 +256,10 @@ CStringVector GetCStringVector(CString str)
 	return sv;
 }
 
-CStringVector GetCStringVector2(const CString & str)
+VTrans_string_typeVector GetCStringVector2(const CString & str)
 {
 //	TRACE("GetCStringVector2 ANFANG\n");
-	CStringVector sv;
+	VTrans_string_typeVector sv;
 	BOOL flag=FALSE;
 	int count=0;
 	int start=0;
@@ -282,15 +282,15 @@ CStringVector GetCStringVector2(const CString & str)
 	return sv;
 }
 
-std::vector<CStringVector> GetCStringVectorVector(const CString & str)
+std::vector<VTrans_string_typeVector> GetCStringVectorVector(const CString & str)
 {
-	std::vector<CStringVector> vecvecStr;
+	std::vector<VTrans_string_typeVector> vecvecStr;
 	int nFirst=0;
 	for(int dwRun=0;dwRun<str.GetLength();dwRun++)
 	{
 		if(str.GetAt(dwRun)==' ' || dwRun==str.GetLength()-1)
 		{
-			CStringVector vecCString;
+			VTrans_string_typeVector vecCString;
 			vecCString.push_back(str.Mid(nFirst,dwRun-nFirst));
 			vecvecStr.push_back(vecCString);
 			nFirst=dwRun+1;
@@ -382,7 +382,7 @@ PositionCStringVector GetPositionCStringVector(CString & str)
 	return pv;
 }
 
-//diese Funktion liefert einen Vektor aus Token zurück.
+//diese Funktion liefert einen Vektor aus Token zurï¿½ck.
 //der Vektor wird aus einer Zeichenkette generiert.
 //Ein Token beginnt entweder am Anfang der Zeichenkette oder nach dem letzten
 //Leerzeichen, Punkt, Komma, Fragezeichen oder Ausrufezeichen
@@ -420,9 +420,9 @@ PositionCStringVector GetPositionCStringVector(CString & str,DWORD dwAdd)
 		{ // letzes Zeichen  
 			bDelimiter=TRUE;
 		}
-		else // wenn ein Zeichen außer '.' oder ',' oder '?' oder
+		else // wenn ein Zeichen auï¿½er '.' oder ',' oder '?' oder
 		{ // Leerzeichen und wenn nicht das Ende der Zeichenkette erreicht
-			if(!bLetterOccured) // wenn davor KEIN Buchstabe (Zeichen außer '.' 
+			if(!bLetterOccured) // wenn davor KEIN Buchstabe (Zeichen auï¿½er '.' 
 			{ //	oder ',' oder '?' ) vorkam
 				start=i;
 				bLetterOccured=TRUE;
@@ -623,9 +623,9 @@ CString Transform(CString str)
 		    { // letzes Zeichen  
 			    bDelimiter=TRUE;
 		    }
-		    else // wenn ein Zeichen außer '.' oder ',' oder '?' oder
+		    else // wenn ein Zeichen auï¿½er '.' oder ',' oder '?' oder
 		    { // Leerzeichen und wenn nicht das Ende der Zeichenkette erreicht
-			    if(!bLetterOccured) // wenn davor KEIN Buchstabe (Zeichen außer '.' 
+			    if(!bLetterOccured) // wenn davor KEIN Buchstabe (Zeichen auï¿½er '.' 
 			    { //	oder ',' oder '?' ) vorkam
 				    start=i;
 				    bLetterOccured=TRUE;

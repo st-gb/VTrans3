@@ -2,6 +2,8 @@
 #include "Word.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordList.hpp"
+
+#include <typeinfo> //for typeid()
 #include "IO.h" //for "::LoadWords(...)"
 //#include "MainFrm.h"
 #ifdef _WINDOWS
@@ -15,19 +17,19 @@ extern std::ofstream ofstreamLogFile;
 extern WordNode * m_first ;
 extern WordList wordList;
 
-BOOL Word::operator==(Word * pWordCompare)
+BOOL Word::operator == (Word * pWordCompare)
 {
-	if(typeid(*this)==typeid(*pWordCompare))
+	if(typeid(*this) == typeid(*pWordCompare))
 	{
 		if(typeid(*this)==typeid(EnglishNoun))
 		{
-			EnglishNoun * en1=dynamic_cast<EnglishNoun*>(this);
-			EnglishNoun * en2=dynamic_cast<EnglishNoun*>(pWordCompare);
-			if(en1 !=NULL && en2!=NULL)
+			EnglishNoun * en1 = dynamic_cast<EnglishNoun*>(this);
+			EnglishNoun * en2 = dynamic_cast<EnglishNoun*>(pWordCompare);
+			if(en1 != NULL && en2 != NULL )
 			{
-				if(en1->m_strSingular==en2->m_strSingular)
+				if(en1->m_strSingular == en2->m_strSingular)
 				{
-					if(en1->m_strPlural==en2->m_strPlural)
+					if(en1->m_strPlural == en2->m_strPlural)
 					{
 						return TRUE;
 					}
@@ -138,7 +140,8 @@ BOOL Word::operator==(Word * pWordCompare)
 //EnglishAuxiliaryVerb::EnglishAuxiliaryVerb(){m_bIntegral=FALSE;}
 
 EnglishAuxiliaryVerb::EnglishAuxiliaryVerb( 
-  const CString & str,
+  //const CString & str,
+  const VTrans::string_type & str,
 	bool bModalAuxiliary
   )
 {
@@ -146,51 +149,54 @@ EnglishAuxiliaryVerb::EnglishAuxiliaryVerb(
 	int start=0;
 	WORD wIndex=0;
 	m_bIntegral=TRUE;
-	while(i<str.GetLength())
+	while( i < str.length() )
 	{
-		if(str[i]=='\n')
+		if( str[i] == '\n' )
 		{
-			m_strWords[wIndex++]=str.Mid(start,i-start);
-			start=i+1;
+			m_strWords[wIndex++] = //str.Mid(start,i-start);
+        str.substr( start, i - start ) ;
+			start = i + 1 ;
 		}
-		i++;
+		i++ ;
 	}
-	//ein modales Hilfsverb wird NICHT für die Überstzung 
-	//unbedingt benötigt für einige Zeitformen (im Gegensatz
-	//zu "to be" für fortschreitenden Präsens ("I am working.")
-	m_bIntegral = !bModalAuxiliary ;
+	//ein modales Hilfsverb wird NICHT fï¿½r die ï¿½berstzung 
+	//unbedingt benï¿½tigt fï¿½r einige Zeitformen (im Gegensatz
+	//zu "to be" fï¿½r fortschreitenden Prï¿½sens ("I am working.")
+	m_bIntegral = ! bModalAuxiliary ;
 }
 
-GermanAuxiliaryVerb::GermanAuxiliaryVerb(const CString & str)
+GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 {
 	int i=0;
 	int start=0;
 	WORD wIndex=0;
 	m_bIntegral=TRUE;
-	while(i<str.GetLength())
+	while( i < str.length() )
 	{
 		if(str[i]=='\n')
 		{
-			m_strWords[wIndex++]=str.Mid(start,i-start);
-			start=i+1;
+			m_strWords[wIndex++] = //str.Mid(start,i-start);
+        str.substr( start ,i - start );
+			start = i + 1;
 		}
 		i++;
 	}
 }
 
-GermanVerb::GermanVerb(const CString & str)
+GermanVerb::GermanVerb(const VTrans::string_type & str)
 {
 	int i=0;
 	int start=0;
 	WORD wIndex=0;
 	m_bIntegral=TRUE;
-	while(i<str.GetLength())
+	while( i < str.length() )
 	{
-		if(wIndex==14)
+		if( wIndex == 14 )
 			m_bCase=str[i]-50;
-		if(str[i]=='\n')
+		if( str[i] == '\n' )
 		{
-			m_strWords[wIndex++]=str.Mid(start,i-start);
+			m_strWords[wIndex++] = //str.Mid(start,i-start);
+        str.substr(start,i-start);
 			start=i+1;
 		}
 		i++;
@@ -207,15 +213,15 @@ void InitDictionary()
 #ifdef _DEBUG
 	printf("void LoadWords(WordNode * pWordNode) ANFANG\n");
 #endif
-	//zuerst die integralen Vokabeln der verketteten Liste hinzufügen, Anfang
-	wordList.m_pWordNodeFirst=new WordNode();
-	wordList.m_pWordNodeFirst->m_pWord=new EnglishAuxiliaryVerb(
-		"be\nam\nare\nis\nare\nare\nare\nwas\nwere\n"
-		"was\nwere\nwere\nwere\nbeen\n",false);
-
-	//current=voclist.m_first;
-	wordList.m_pWordNodeFirst->m_pWordNodePrevious=NULL;
-	pWordNodeCurrent=wordList.m_pWordNodeFirst;
+//	//zuerst die integralen Vokabeln der verketteten Liste hinzufï¿½gen, Anfang
+//	wordList.m_pWordNodeFirst = new WordNode();
+//	wordList.m_pWordNodeFirst->m_pWord = new EnglishAuxiliaryVerb(
+//		"be\nam\nare\nis\nare\nare\nare\nwas\nwere\n"
+//		"was\nwere\nwere\nwere\nbeen\n",false);
+//
+//	//current=voclist.m_first;
+//	wordList.m_pWordNodeFirst->m_pWordNodePrevious=NULL;
+//	pWordNodeCurrent=wordList.m_pWordNodeFirst;
 	//delete voc;
 	//voc=new GermanVerb("sein\nbin\nbist\nist\nsind\nseid\nsind\nwar\nwarst\nwar\nwaren\nward\nwaren\ngewesen\n");
 	//voclist.Append(voc);
@@ -277,5 +283,5 @@ void InitDictionary()
 	pWordNodeCurrent=pWordNodeCurrent->m_pWordNodeNext;
 	pWordNodeCurrent->m_pWordNodePrevious=pWordNodePrevious;
 
-  ::LoadWords(pWordNodeCurrent) ;
+  //::LoadWords(pWordNodeCurrent) ;
 }

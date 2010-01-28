@@ -1,8 +1,9 @@
 //Ohne das folgende include/wenn Pfad in den Eigenschaften dieser Datei 
 //unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
-//"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem vorkompilierten Header.[...]"
+//"fatal error C1010: Unerwartetes Dateiende wï¿½hrend der Suche nach dem vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
 #include "LetterTree.hpp"
+#include <stdlib.h> //calloc(), free()
 
 LetterNode::LetterNode(BYTE byArraySize, LetterTree * plt )
 {

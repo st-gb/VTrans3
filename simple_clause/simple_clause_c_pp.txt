@@ -32,6 +32,7 @@
      %token VERB
      %token SEMICOLON
      %token CONJUNCTION
+     
      /* %left '*' '/'
      %left NEG     // negation--unary minus 
      %right '^'    exponentiation */
@@ -41,6 +42,7 @@
         "Eine Mutter, die 3 Kinder hat, wurde geschlagen." -> "A mother of 3 children was hit." oder 
         "Eine Mutter WURDE von 3 Kindern geschlagen." -> "A mother was hit BY 3 children."
         */
+     
      %skeleton "glr.cc" /*->generate a C++ parser */
 
      /* %skeleton "lalr1.cc" */ /*->generate a C++ parser */
@@ -111,10 +113,12 @@ referred to as $2.*/
      //evtl. Problem: Ein Plural kann identisch mit einem Singular sein ("a sheep, 2 sheep")
      plural_noun: PLURAL_NOUN { g_enumeleCurrent.push_back(englishnounrecordCurrent) ;  }
      ;
+     
      /*conjunction: SEMICOLON
      ;
      
      */
+     
      %%
 
      %{

@@ -60,7 +60,7 @@
   //{{AFX_INSERT_LOCATION}}
   // Microsoft Visual C++ f�gt unmittelbar vor der vorhergehenden Zeile zus�tzliche Deklarationen ein.
  #else
-  #include <MFC_Compatibility/CString.hpp>
-  using namespace MFC_Compatibility ; //for class CString in MFC_Compatibility
+//  #include <MFC_Compatibility/CString.hpp>
+//  using namespace MFC_Compatibility ; //for class CString in MFC_Compatibility
  #endif //#ifdef _MSC_VER
 #endif // !defined(AFX_STDAFX_H__FB6F08E4_1B96_11D5_A7D8_0000B45A1FE5__INCLUDED_)

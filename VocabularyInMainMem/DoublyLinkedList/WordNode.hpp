@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h> //for NULL
+
 class Word ;
 //class IVocabularyInMainMem ;
 //class I_WordSearch ;
@@ -10,12 +12,7 @@ public:
 	Word * m_pWord;
 	WordNode(){m_pWord = NULL; }
 	WordNode(Word *);
-	~WordNode()
-  {
-    TRACE("~WordNode\n");
-    if(m_pWord)
-      delete m_pWord;
-  };
+  ~WordNode() ;
 	WordNode * m_pWordNodePrevious;
 	WordNode * m_pWordNodeNext;
 };

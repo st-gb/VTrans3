@@ -8,12 +8,12 @@
 //	#include <StdString.h> //for class compatible to MFC's "CString"  
 //#endif//#ifndef _WINDOWS
 
-//Substitutionenn für GetPointerToWordnodeWhereANonBendEnglishVerbIsIncluded
+//Substitutionenn fï¿½r GetPointerToWordnodeWhereANonBendEnglishVerbIsIncluded
 #define INFINITIVE                    1//to GO
 #define INFINITIVE_OR_PAST_PARTICIPLE 2//z.B. to HIT,I have HIT
 #define PAST_PARTICIPLE               3//z.B. you were GONE //WENT
 #define PARTICIPLE_PROGRESSIVE        4//I am WALKING
-//Substitutionenn für GetPointerToWordnodeWhereANonEnglishVerbIsIncluded ENDE
+//Substitutionenn fï¿½r GetPointerToWordnodeWhereANonEnglishVerbIsIncluded ENDE
 
 //Zeitformen, Anfang
 #define SIMPLE_PRESENT 1
@@ -58,7 +58,7 @@ public:
 EnglishAdverb								GetEnglishAdverb(CString str);
 EnglishAuxiliaryVerb *			GetEnglishAuxiliaryVerb(CString & str);
 EnglishNoun *								GetEnglishNoun(CString & str);
-std::vector <EnglishNoun>		GetEnglishNoun(const CStringVector & svNoun);
+std::vector <EnglishNoun>		GetEnglishNoun(const VTrans_string_typeVector & svNoun);
 EnglishVerb *								GetEnglishVerb(CString &);
 Word *											GetGermanAdjectiveOrGermanAdverbOfEnglishAdverb(
 															const CString & str);
@@ -66,8 +66,8 @@ CString											GetGermanAdverb(CString str);
 CString											GetGermanNoun(CString);
 CString											GetGermanPersonalPronoun(CString & str);
 GermanNoun *								GetGermanWordOfEnglishNoun(CString str);
-GermanNoun *								GetGermanWordOfEnglishNoun(const CStringVector &);
-std::vector <GermanNoun >		GetGermanWordOfEnglishNoun2(const CStringVector 
+GermanNoun *								GetGermanWordOfEnglishNoun(const VTrans_string_typeVector &);
+std::vector <GermanNoun >		GetGermanWordOfEnglishNoun2(const VTrans_string_typeVector
 															& cstrvec);
 GermanVerb *								GetGermanWordOfEnglishVerb(CString str);
 GermanAdjective *						GetGermanWordOfEnglishAdjective(CString);
@@ -88,9 +88,9 @@ WordNode *									GetPointerToWordNodeWhereAnEnglishAdverbIsEncapsulated(
 WordNode * GetPointerToWordNodeWhereAnEnglishAdverbWhichRefersToAnAdjectiveOrAdverbIsEncapsulated(
 															const CString & str);
 WordNode * GetPointerToWordNodeWhereAnEnglishComperativeIsEncapsulated(
-															const CStringVector & sv,const DWORD & dwFlags);
+															const VTrans_string_typeVector & sv,const DWORD & dwFlags);
 WordNode * GetPointerToWordNodeWhereAnEnglishConjunctionIsEncapsulated(
-															const CStringVector & sv);
+															const VTrans_string_typeVector & sv);
 WordNode * GetPointerToWordNodeWhereAnEnglishInfinitiveIsEncapsulated(
 															const CString &);
 WordNode *									GetPointerToWordNodeWhereAnEnglishPastParticipleIsEncapsulated(
@@ -98,13 +98,13 @@ WordNode *									GetPointerToWordNodeWhereAnEnglishPastParticipleIsEncapsulate
 WordNode *									GetPointerToWordNodeWhereAnEnglishPositiveIsEncapsulated(
 															const CString & str,const DWORD & dwFlags);
 WordNode *									GetPointerToWordNodeWhereAnEnglishPrepositionIsEncapsulated(
-															const CStringVector & sv);
+															const VTrans_string_typeVector & sv);
 WordNode *									GetPointerToWordNodeWhereAnEnglishProgressiveIsEncapsulated(
 															const CString & str);
 WordNode *									GetPointerToWordNodeWhereAnEnglishPronounIsEncapsulated(
 															const CString & str);
 WordNode *									GetPointerToWordNodeWhereAnEnglishPronounIsEncapsulated(
-															const CStringVector & sv);
+															const VTrans_string_typeVector & sv);
 WordNode *									GetPointerToWordNodeWhereAnEnglishVerbIsEncapsulated(
 															const CString &);
 WordNode *									GetPointerToWordNodeWhereAnEnglishVerbIsEncapsulated(
@@ -118,7 +118,7 @@ GermanNoun *								GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncaps
 															WordNode *);
 std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated> 
 															GetVecPointerToWordNodeWhereAnEnglishNounIsEncapsulated(
-															const CStringVector & cstrvec,const DWORD & dwFlags);
+															const VTrans_string_typeVector & cstrvec,const DWORD & dwFlags);
 WordNode *									GetWordNodeWhereAnEnglishPositiveIsEncapsulated(
 															const CString & str);
 WordNode *									GetWordNodeWhereAnEnglishAdverbOfMannerIsEncapsulated(
@@ -126,10 +126,10 @@ WordNode *									GetWordNodeWhereAnEnglishAdverbOfMannerIsEncapsulated(
 WordNode *									GetWordNodeWhereAnEnglishAdverbRefersToAdjectiveOrAdverbIsEncapsulated(
 															const CString &);
 std::vector<PointerToEnglishNoun> IfIsEnglishNounThenGetVectorOfPointerToEnglishNoun(
-															const CStringVector & cstrvev);
+															const VTrans_string_typeVector & cstrvev);
 std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated> 
 														IfIsEnglishNounThenReturnEnglishNounEncapsulatedInWord(
-															const CStringVector & cstrvec);
+															const VTrans_string_typeVector & cstrvec);
 BYTE												IsConsonant(CString str);
 BOOL												IsEnglishAdjective(CString str); // englisches Adjektiv
 WordNode *									IsEnglishAdjective2(CString & str); // englisches Adjektiv
@@ -145,14 +145,14 @@ BOOL												IsEnglishNoun(CString str); // englisches Substanmtiv
 BOOL												IsEnglishObjectVerb(CString str);
 BOOL										    IsEnglishPersonalPronoun(CString &);
 BOOL												IsEnglishPlural(CString str); // englischer Plural
-BOOL												IsEnglishPlural(const CStringVector & cstrvec);
+BOOL												IsEnglishPlural(const VTrans_string_typeVector & cstrvec);
 BOOL												IsEnglishPossessivePronoun(CString str); // englisches Possessivpronom
 BOOL												IsPresentProgressiveCopyVocable(EnglishVerb & 
 															rEV,const CString & token);
 BOOL												IsEnglishPronoun(CString str);
 BOOL												IsEnglishPronoun3rdPerson(CString str);
 BOOL												IsEnglishSingular(CString str);
-BOOL												IsEnglishSingular(CStringVector cstrvec);
+BOOL												IsEnglishSingular(VTrans_string_typeVector cstrvec);
 BOOL												IsEnglishVerb(CString str); // englisches Verb
 BYTE												IsEnglishVerb3rdPerson(const CString & str);
 BYTE												IsEnglishVerb3rdPersonSingular(const CString 

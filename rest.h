@@ -27,7 +27,9 @@
   //volatile DWORD g_dwTotal=0;
   //volatile DWORD g_dwTranslated=0;
   //volatile DWORD g_dwTokensInSentence=0;
+  #include <windef.h> //for types DWORD, BYTE (,...)
   #include <vector> //for typedef	std::vector<CString> CStringVector;
+  #include <string_type.hpp> //for VTrans::string_type
   #ifdef _WINDOWS
 	  #include <afxstr.h> //for class CString
   #endif
@@ -51,7 +53,7 @@
 
   //std::ofstream ofstreamLogFile;//(LOG_FILE_PATH);
 
-  typedef	std::vector<CString> CStringVector;
+  typedef	std::vector<VTrans::string_type> VTrans_string_typeVector;
 
   class IntPair
   {
@@ -77,22 +79,22 @@
   {
   public:
     BYTE byReturnOfSentenceParsing;
-    std::vector<CStringVector> vecvecstrSentenceTokens;
+    std::vector<VTrans_string_typeVector> vecvecstrSentenceTokens;
     std::vector<Range> vecrangeProperName;
     //This vector is therefore:# wenn das ausgew�hlte Element einer Drop-Down-Box, die die Elemente "du","Sie" beinhaltet, ge�ndert wird, sollte sich auch die Auswahl der damit zusammenh�ngenden anderen Drop-Down-Box (z.B. die finite Verbform ) �ndern
     std::vector<IntPair> m_vecintpairConntectedWords;
 
     SentenceAndValidityAndProperName(){
-      byReturnOfSentenceParsing=SENTENCE_SEEMS_TO_BE_GRAMMATICALLY_INCORRECT;
+      byReturnOfSentenceParsing = SENTENCE_SEEMS_TO_BE_GRAMMATICALLY_INCORRECT;
     };
     SentenceAndValidityAndProperName(
       BYTE byReturnOfSentenceParsing,
-      const std::vector<CStringVector> & vecvecstrSentenceTokens,
+      const std::vector<VTrans_string_typeVector> & vecvecstrSentenceTokens,
       const std::vector<Range> & vecrangeProperName,
       const std::vector<IntPair> & vecintpairConntectedWords)
     {
-      this->byReturnOfSentenceParsing=byReturnOfSentenceParsing;
-      this->vecvecstrSentenceTokens=vecvecstrSentenceTokens;
+      this->byReturnOfSentenceParsing = byReturnOfSentenceParsing;
+      this->vecvecstrSentenceTokens = vecvecstrSentenceTokens;
       this->vecrangeProperName=vecrangeProperName;
       m_vecintpairConntectedWords=vecintpairConntectedWords;
     };
@@ -155,12 +157,12 @@
   //#define SUBJECT 0
   //#define PREDICATE 1
   //#define OBJECT 2
-  //class CStringVector
+  //class VTrans_string_type
   //{
   //  BYTE m_bySentenceElementType;
   //  std::vector<CString> m_vecstr;
   //  
-  //  CStringVector(){m_bySentenceElementType=255;}
+  //  VTrans_string_type(){m_bySentenceElementType=255;}
   //  
   //  void push_back(const CString & str){
   //    m_vecstr.push_back(str); 

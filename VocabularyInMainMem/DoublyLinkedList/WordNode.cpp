@@ -13,3 +13,10 @@ WordNode::WordNode(Word * pWord)
 	//	voc=new EnglishAuxiliaryVerb(*pVoc);
 	m_pWord = new Word(*pWord);
 }
+
+WordNode::~WordNode()
+{
+  //TRACE("~WordNode\n");
+  if(m_pWord)
+    delete m_pWord;
+};

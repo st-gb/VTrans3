@@ -15,8 +15,8 @@
 	  BYTE m_color;
 	  DWORD m_dwLength;
 	  DWORD m_dwStart;
-	  CString m_Str;
-	  PositionCString(CString str,DWORD dwStart,DWORD dwLength)
+	  VTrans::string_type m_Str;
+	  PositionCString(VTrans::string_type str,DWORD dwStart,DWORD dwLength)
 	  {
 		  m_Str=str;
 		  m_dwStart=dwStart;
@@ -48,31 +48,50 @@
   //Use std::string to be more (Linux) compiler compatible.
   typedef	std::vector<Positionstdstring> PositionstdstringVector;
 
-  void												Append(CStringVector &,const CStringVector &);
+  void												Append(
+    VTrans_string_typeVector &
+    ,const VTrans_string_typeVector & );
   void Append(
-    std::vector<CStringVector> & destinationCStringVector,
-    const std::vector<CStringVector> & append) ;
-  BYTE												Compare(const CStringVector &,const CStringVector &);
-  CString											FormatGermanSentence(CStringVector germanSentence);
-  CString											GetBetween(int first,int last);
-  CString											GetBetween(CString,int first,int last);
-  CStringVector								GetBetween(CStringVector sv,int first,int last);
-  PositionCStringVector				GetBetween(const PositionCStringVector & sv,
-															  int first,int last);
-  CStringVector								GetBetweenAsCStringVector(const 
-															  PositionCStringVector & pcstrv,int first,int last);
-  CStringVector								GetCStringVector(CString str);
-  CStringVector								GetCStringVector2(const CString & str);
-  std::vector<CStringVector>	GetCStringVectorVector(const CString & str);
-  PositionCStringVector GetPositionCStringVector(CString & str) ;
-  PositionCStringVector       GetPositionCStringVector(CString & str,DWORD dwAdd) ;
-  BOOL										    IsFirstLetterUpper(CString & str);
-  BOOL												IsFirstUpper(CString str); // ersetzt das erste Zeichen einer Zeichenkette durch einen Großbuchstaben
+    std::vector<VTrans_string_typeVector> & destinationCStringVector,
+    const std::vector<VTrans_string_typeVector> & append ) ;
+  BYTE												Compare(
+    const VTrans_string_typeVector &
+    , const VTrans_string_typeVector & );
+  VTrans::string_type					FormatGermanSentence( 
+    VTrans_string_typeVector germanSentence );
+  VTrans::string_type					GetBetween( 
+    int first
+    , int last);
+  VTrans::string_type					GetBetween(
+    VTrans::string_type
+    , int first
+    , int last );
+  VTrans_string_typeVector		GetBetween(
+    VTrans_string_typeVector sv
+    , int first
+    , int last );
+  PositionCStringVector				GetBetween(
+    const PositionCStringVector & sv,
+		int first, int last );
+  VTrans_string_typeVector		GetBetweenAsCStringVector(
+    const PositionCStringVector & pcstrv
+    ,int first
+    ,int last );
+  VTrans_string_typeVector		GetCStringVector( VTrans::string_type str);
+  VTrans_string_typeVector		GetCStringVector2( const VTrans::string_type & str);
+  std::vector<VTrans_string_typeVector>	GetCStringVectorVector(
+    const VTrans::string_type & str);
+  PositionCStringVector GetPositionCStringVector(VTrans::string_type & str) ;
+  PositionCStringVector       GetPositionCStringVector(
+    VTrans::string_type & str
+    , DWORD dwAdd ) ;
+  BOOL										    IsFirstLetterUpper(VTrans::string_type & str);
+  BOOL												IsFirstUpper(VTrans::string_type str); // ersetzt das erste Zeichen einer Zeichenkette durch einen Groï¿½buchstaben
   BOOL												IsLetter(BYTE ch);
-  void												MakeFirstLetterUpper(CString &);
+  void												MakeFirstLetterUpper(VTrans::string_type &);
   void                        MakeFirstLetterUpper(std::string & str);
-  void												MakeFirstLetterLower(CString & str);
-  CString											MakeFirstUpper(CString str); // ersetzt das erste Zeichen einer Zeichenkette durch einen Großbuchstaben
-  CString											MakeFirstLower(CString str); // ersetzt das erste Zeichen einer Zeichenkette durch einen Großbuchstaben
-  PositionstdstringVector     Tokenize(const CString & str) ;
+  void												MakeFirstLetterLower(VTrans::string_type & str);
+  VTrans::string_type					MakeFirstUpper(VTrans::string_type str); // ersetzt das erste Zeichen einer Zeichenkette durch einen Groï¿½buchstaben
+  VTrans::string_type					MakeFirstLower(VTrans::string_type str); // ersetzt das erste Zeichen einer Zeichenkette durch einen Groï¿½buchstaben
+  PositionstdstringVector     Tokenize(const VTrans::string_type & str) ;
 #endif //!defined (TOKEN_H_INCLUDED)

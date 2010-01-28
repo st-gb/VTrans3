@@ -10,20 +10,20 @@
 
 // Translate.h
 // const DATENTYP & :
-// diese Variable soll vor dem versehentlichen Verändern geschützt werden (const)
-// und zusätzlich als Referenz (&) dienen, um speichersparend zu sein, und
+// diese Variable soll vor dem versehentlichen Verï¿½ndern geschï¿½tzt werden (const)
+// und zusï¿½tzlich als Referenz (&) dienen, um speichersparend zu sein, und
 // nicht als Kopie den doppelten Speicherplatz zu belegen
-#include "Resource.h" // für die Ressourcen-Makros (z.B. IDD_VTRANS_DIALOG), 
+#include "Resource.h" // fï¿½r die Ressourcen-Makros (z.B. IDD_VTRANS_DIALOG), 
 // damit das Projekt kompiliert werden kann
 #include "StdAfx.h"
 //#include "VTransDlg.h"
-#include <vector> // für ADVERBVECTOR
+#include <vector> // fï¿½r ADVERBVECTOR
 #include "Word.hpp"
 #include "Token.h" //for PositionCStringVector
 //#ifndef TEXT_DEFINED
-#include "Text.h" // für MarkSentence()
-#include "rest.h" //für typedef	std::vector<CString> CStringVector;
-//#include "EnglishView.h" //für TranslateText
+#include "Text.h" // fï¿½r MarkSentence()
+#include "rest.h" //fï¿½r typedef	std::vector<CString> CStringVector;
+//#include "EnglishView.h" //fï¿½r TranslateText
 #include <string>
 #include "xmlwriter.h"
 #include "SentenceElement.h" //for EnumerationElement etc.
@@ -47,7 +47,7 @@
 #define WE 4
 #define THEY 6
 //englische Personalpronomen, Ende
-//Indizes für gebeugte Verformen, Anfang
+//Indizes fï¿½r gebeugte Verformen, Anfang
 #define INDEX_FOR_GERMAN_INFINITIVE 0
 #define INDEX_FOR_ICH_PRAESENS 1
 #define INDEX_FOR_DU_PRAESENS 2
@@ -61,8 +61,8 @@
 #define INDEX_FOR_WIR_PRAETERITUM 10
 #define INDEX_FOR_IHR_PRAETERITUM 11
 #define INDEX_FOR_PLURAL_SIE_PRAETERITUM 12
-//Indizes für gebeugte Verformen, Ende
-//Artikel-Arten für ein bestimmtes englisches Substantiv:
+//Indizes fï¿½r gebeugte Verformen, Ende
+//Artikel-Arten fï¿½r ein bestimmtes englisches Substantiv:
 #define A 1
 #define AN 2
 #define THE 3
@@ -146,10 +146,10 @@ static std::string g_arstrAdjInflectionSuffixForDefArticleAccusative[]=
   };
 
 static std::string g_arstrInflectedDefiniteArticleForNominative[]={
-  _T("der"),//DER Mann ist groß.
-  _T("die"),//DIE Frau ist groß.
-  _T("das"),//DAS Kind ist groß.
-  _T("die")//DIE Kinder sind groß.
+  _T("der"),//DER Mann ist groï¿½.
+  _T("die"),//DIE Frau ist groï¿½.
+  _T("das"),//DAS Kind ist groï¿½.
+  _T("die")//DIE Kinder sind groï¿½.
 };
 
 static std::string g_arstrInflectedDefiniteArticleForGenitive[]={
@@ -173,7 +173,7 @@ static std::string g_arstrInflectedDefiniteArticleForAccusative[]={
   _T("die")//Ich mag DIE Kinder.
 };
 
-//Wenn für jeden Genus(Geschlecht) definiert, dann müssen die jeweiligen 
+//Wenn fï¿½r jeden Genus(Geschlecht) definiert, dann mï¿½ssen die jeweiligen 
 //Werte keine Systematik aufweisen(also z.B, hintereinander liegen).
 #define VALUE_FOR_MASCULINE_TO_ARRAY_INDEX(value) value-49
 #define VALUE_FOR_MASCULINE_TO_ARRAY_INDEX(value) value-49
@@ -200,10 +200,10 @@ int													GetPradicatePosition(CString str);
 CString											GetTokenAt(CString,int);
 BYTE												ObjectPersonalPonounToIndex(CString);
 CString											Transform(CString);
-std::vector<CStringVector>	TranslateByAgentEnumerationElement(const 
+std::vector<VTrans_string_typeVector>	TranslateByAgentEnumerationElement(const
 															ByAgentEnumerationElement & ee,int & nStartID);
-std::vector<CStringVector>	TranslateENR(EnglishNounRecord * enr,BYTE Case);
-std::vector<CStringVector>	TranslateENR(
+std::vector<VTrans_string_typeVector>	TranslateENR(EnglishNounRecord * enr,BYTE Case);
+std::vector<VTrans_string_typeVector>	TranslateENR(
                               EnglishNounRecord * enr,
                               BYTE Case,
 	                            bool,
@@ -214,26 +214,26 @@ std::vector<CStringVector>	TranslateENR(
                               int & nStartID,
                               IVocabularyInMainMem & ivocabularyinmainmem
                               );
-std::vector<CStringVector>	TranslateENR(EnglishNounRecord * enr,
+std::vector<VTrans_string_typeVector>	TranslateENR(EnglishNounRecord * enr,
 															BYTE Case,BOOL bNegation,BOOL 
 															bTranslateAsObject,BYTE & personIndex,BYTE & 
 															bFirstTokenInSentence,BYTE & bArticle,int & 
 															nStartID);
-CStringVector								TranslateEnumerationElement(EnumerationElement ee);
-//pEV: ein EnglishView-Objekt wird benötigt, um dessen Member-Variable
-//m_vecIntPair (ein Vektor) gegebenenfalls Elemente hinzuzufügen, die
-//zwei integer als Membervariablen haben, die jeweils IDs für CComboBox-
+VTrans_string_typeVector								TranslateEnumerationElement(EnumerationElement ee);
+//pEV: ein EnglishView-Objekt wird benï¿½tigt, um dessen Member-Variable
+//m_vecIntPair (ein Vektor) gegebenenfalls Elemente hinzuzufï¿½gen, die
+//zwei integer als Membervariablen haben, die jeweils IDs fï¿½r CComboBox-
 //(Kombinationsfeld-)Steuerelemente sind und eine ID ein Subjekt, in dem
-//ein "du|ihr|Sie|man" vorkommt und eine ID für die gebeugten Verbformen steht.
+//ein "du|ihr|Sie|man" vorkommt und eine ID fï¿½r die gebeugten Verbformen steht.
 //Wenn man bei dem einen CComboBox-(Kombinationsfeld-)Steuerelement 
-//auswählt, soll dann nämlich auch in dem zugehörigen CComboBox-
-//(Kombinationsfeld-)Steuerelement der gleiche Index ausgewählt werden.
+//auswï¿½hlt, soll dann nï¿½mlich auch in dem zugehï¿½rigen CComboBox-
+//(Kombinationsfeld-)Steuerelement der gleiche Index ausgewï¿½hlt werden.
 //pEV wird aber nichts in TranslateEnumerationElement2(const EnumerationElement 
-//& ee,EnglishView * pEV,int & nStartID); hinzugefügt, sondern dient zur 
+//& ee,EnglishView * pEV,int & nStartID); hinzugefï¿½gt, sondern dient zur 
 //Weiterleitung an die Funktion TranslateRelativeClause, die eventuell 
 //innerhalb TranslateEnumerationElement2(const EnumerationElement & ee,
 //EnglishView * pEV,int & nStartID); aufgerufen wird
-std::vector<CStringVector>	TranslateEnumerationElement(const 
+std::vector<VTrans_string_typeVector>	TranslateEnumerationElement(const
 															EnumerationElement & ee,BOOL bTranslateAsObject,
 															BYTE & personIndex,BYTE & bFirstTokenInSentence,
 															//EnglishView * pEV,
@@ -241,98 +241,98 @@ std::vector<CStringVector>	TranslateEnumerationElement(const
 //std::vector<CStringVector>	TranslateEnumerationElement2(const 
 //															EnumerationElement & ee,EnglishView * pEV,
 //															int & nStartID);
-std::vector<CStringVector>	TranslateGerund(const Gerund & gerund,BYTE & 
+std::vector<VTrans_string_typeVector>	TranslateGerund(const Gerund & gerund,BYTE &
 															bFirstTokenInSentence,//EnglishView * pEV,
                               std::vector<IntPair> & rvecintpair,int & 
 															nStartID);
-std::vector<CStringVector>	TranslateManner(const Manner & manner,int & nStartID);
+std::vector<VTrans_string_typeVector>	TranslateManner(const Manner & manner,int & nStartID);
 CString											TranslateMannerAsCString(const Manner & manner);
-std::vector<CStringVector>	TranslateMannerEnumerationElement(const 
+std::vector<VTrans_string_typeVector>	TranslateMannerEnumerationElement(const
 															MannerEnumerationElement & mee,int & nStartID);
 CString											TranslateMannerEnumerationElementAsCString(const 
 															MannerEnumerationElement & mee);
 //CString											TranslateMiddle(CString str,MIDDLESTRUCT);
 CString											TranslateObject(CString before);
-CStringVector								TranslateObject(Object object);
+VTrans_string_typeVector								TranslateObject(Object object);
 //std::vector<CStringVector>	TranslateObject2(Object object);
-std::vector<CStringVector>	TranslateObject2(Object object,BYTE Case);
-//pEV: ein EnglishView-Objekt wird benötigt, um dessen Member-Variable
-// m_vecIntPair (ein Vektor) gegebenenfalls Elemente hinzuzufügen, die
-// zwei integer als Membervariablen haben, die jeweils IDs für CComboBox-
+std::vector<VTrans_string_typeVector>	TranslateObject2(Object object,BYTE Case);
+//pEV: ein EnglishView-Objekt wird benï¿½tigt, um dessen Member-Variable
+// m_vecIntPair (ein Vektor) gegebenenfalls Elemente hinzuzufï¿½gen, die
+// zwei integer als Membervariablen haben, die jeweils IDs fï¿½r CComboBox-
 // (Kombinationsfeld-)Steuerelemente sind und eine ID ein Subjekt, in dem
-// ein "du|ihr|Sie|man" vorkommt und eine ID für die gebeugten Verbformen steht.
+// ein "du|ihr|Sie|man" vorkommt und eine ID fï¿½r die gebeugten Verbformen steht.
 // Wenn man bei dem einen CComboBox-(Kombinationsfeld-)Steuerelement 
-// auswählt, soll dann nämlich auch in dem zugehörigen CComboBox-
-// (Kombinationsfeld-)Steuerelement der gleiche Index ausgewählt werden.
+// auswï¿½hlt, soll dann nï¿½mlich auch in dem zugehï¿½rigen CComboBox-
+// (Kombinationsfeld-)Steuerelement der gleiche Index ausgewï¿½hlt werden.
 // pEV wird aber nichts in std::vector<CStringVector>	TranslateObject2(Object 
 // object,BYTE Case,BOOL bNegation,BYTE & bFirstTokenInSentence,EnglishView * 
-// pEV,int & nStartID); hinzugefügt, sondern dient zur eventuellen
+// pEV,int & nStartID); hinzugefï¿½gt, sondern dient zur eventuellen
 // Weiterleitung an die Funktion TranslateObjectEnumerationElement.
-std::vector<CStringVector>	TranslateObject2(Object object,BYTE Case,BOOL 
+std::vector<VTrans_string_typeVector>	TranslateObject2(Object object,BYTE Case,BOOL
 															bNegation,BYTE & bFirstTokenInSentence,
 															//EnglishView * pEV,
                               std::vector<IntPair> & rvecintpair,int & nStartID);
-CStringVector								TranslateObjectEnumerationElement(EnumerationElement 
+VTrans_string_typeVector								TranslateObjectEnumerationElement(EnumerationElement
 															ee,BYTE bCase);
-std::vector<CStringVector>	TranslateObjectEnumerationElement2(const 
+std::vector<VTrans_string_typeVector>	TranslateObjectEnumerationElement2(const
 															EnumerationElement & ee,BYTE bCase,int & nStartID);
-std::vector<CStringVector>	TranslateObjectEnumerationElement2(const 
+std::vector<VTrans_string_typeVector>	TranslateObjectEnumerationElement2(const
 															EnumerationElement & ee,BYTE bCase,BOOL,BYTE & 
 															bFirstTokenInSentence,//EnglishView * pEV,
                               std::vector<IntPair> & rvecintpair,int & 
 															nStartID);
-std::vector<CStringVector>	TranslateOfPhrase(EnglishNounRecord enr,int & 
+std::vector<VTrans_string_typeVector>	TranslateOfPhrase(EnglishNounRecord enr,int &
 															nStartID);
-std::vector<CStringVector>	TranslatePlace(Place &,BYTE & 
+std::vector<VTrans_string_typeVector>	TranslatePlace(Place &,BYTE &
 															bFirstTokenInSentence,int & nStartID);
-std::vector<CStringVector>	TranslatePlaceEnumerationElement(const 
+std::vector<VTrans_string_typeVector>	TranslatePlaceEnumerationElement(const
 															EnumerationElement & ee,int & nStartID,BYTE byCase);
 CString											TranslatePossessivePronoun(BYTE);
 std::vector<std::string>    TranslatePossessivePronoun3(BYTE byte);
-CStringVector								TranslatePossessivePronoun2(BYTE);
+VTrans_string_typeVector								TranslatePossessivePronoun2(BYTE);
 CString											TranslatePSO(CString before);
-std::vector<CStringVector>	TranslatePSO(const Clause & subSentence,
+std::vector<VTrans_string_typeVector>	TranslatePSO(const Clause & subSentence,
 															BYTE & bFirstTokenInSentence,
 															//EnglishView * pEV
                               std::vector<IntPair> & rvecintpair,int & rnStartID);
-std::vector<CStringVector>	TranslateQuestion(Question & question,//EnglishView 
+std::vector<VTrans_string_typeVector>	TranslateQuestion(Question & question,//EnglishView
 															//* pEV,
                               std::vector<IntPair> & rvecintpair,int & nStartID);
-std::vector<CStringVector>	TranslateQuestionClause(Clause & ss,
+std::vector<VTrans_string_typeVector>	TranslateQuestionClause(Clause & ss,
 															//EnglishView * pEV,
                               std::vector<IntPair> & rvecintpair,int & nStartID);
 //std::vector<CStringVector>	TranslateRelativeClause(RelativeClause Clause);
-std::vector<CStringVector>	TranslateRelativeClause(RelativeClause & 
+std::vector<VTrans_string_typeVector>	TranslateRelativeClause(RelativeClause &
 															relativeClause,BYTE bArticle,//EnglishView * pEV,
                               std::vector<IntPair> & rvecintpair,
 															int & nStartID);
 CString											TranslateSentence(CString str);
-std::vector<CStringVector>	TranslateSentence2(const Sentence &,//EnglishView * pEV
+std::vector<VTrans_string_typeVector>	TranslateSentence2(const Sentence &,//EnglishView * pEV
                               std::vector<IntPair> & rvecintpair);
-std::vector<CStringVector>	TranslateSimilarity(const Similarity & similarity,
+std::vector<VTrans_string_typeVector>	TranslateSimilarity(const Similarity & similarity,
 															int & nStartID);
-CStringVector								TranslateSubject(Subject);
-std::vector<CStringVector>	TranslateSubject(Subject & subject,BOOL 
+VTrans_string_typeVector								TranslateSubject(Subject);
+std::vector<VTrans_string_typeVector>	TranslateSubject(Subject & subject,BOOL
 															bTranslateAsObject,BYTE & personIndex,BYTE & 
 															bFirstTokenInSentence,//EnglishView * pEV,
                               std::vector<IntPair> & rvecintpair,int & 
 															nStartID);
 //std::vector<CStringVector>	TranslateSubject2(const Subject &,BYTE &);
-std::vector<CStringVector>	TranslateClause(Clause &);
-std::vector<CStringVector>	TranslateClause2(const Clause &,BYTE & 
+std::vector<VTrans_string_typeVector>	TranslateClause(Clause &);
+std::vector<VTrans_string_typeVector>	TranslateClause2(const Clause &,BYTE &
 															bFirstTokenInSentence,//EnglishView * pEV
                               std::vector<IntPair> & rvecintpair, int 
 															& nStartID);
 CString											TranslateSPO(CString before);
-std::vector<CStringVector>	TranslateText(Text & text);
-std::vector<CStringVector>	TranslateText(Text & text,std::vector<Range> &,
+std::vector<VTrans_string_typeVector>	TranslateText(Text & text);
+std::vector<VTrans_string_typeVector>	TranslateText(Text & text,std::vector<Range> &,
 															const DWORD & dwFlags,//EnglishView * pEV
                               std::vector<IntPair> & rvecintpair);
-std::vector<CStringVector> TranslateText(
+std::vector<VTrans_string_typeVector> TranslateText(
   Text & text,
   std::vector<SentenceAndValidityAndProperName> & rvecsentenceandvalidityandpropername,
   const DWORD & dwFlags  );
 
-std::vector<CStringVector>	TranslateToPlusInfinitive(const ToPlusInfinitive & 
+std::vector<VTrans_string_typeVector>	TranslateToPlusInfinitive(const ToPlusInfinitive &
 															toPlusInfinitive,int & nStartID);
 #endif //!defined (TRANSLATE_H_INCLUDED)

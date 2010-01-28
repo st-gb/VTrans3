@@ -18,8 +18,8 @@
   public:
 	  BOOL bDefiniteArticle;
 	  BOOL bIndefiniteArticle;
-	  CStringVector m_Adjectives;
-	  CStringVector m_Noun;
+	  VTrans_string_typeVector m_Adjectives;
+	  VTrans_string_typeVector m_Noun;
 	  std::vector<PointerToEnglishNoun> m_vecPointerToEnglishNoun;
 	  std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated> 
 		  m_vecPointerToWordNodeWhereAnEnglishNounIsEncapsulated;
@@ -54,7 +54,7 @@
   class DefiniteArticleNoun
   {
   public:
-	  CStringVector m_Noun;
+	  VTrans_string_typeVector m_Noun;
 	  std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated> 
 		  m_vecPointerToWordNodeWhereAnEnglishNounIsEncapsulated;
   };
@@ -77,10 +77,10 @@
       m_engnounslettertree.Insert(pvoc) ;
     }
   #endif
-	  CStringVector m_Adjectives;
-	  CStringVector m_Noun;
-	  CStringVector m_vecStrPlainText;
-	  CStringVector m_strWords;
+	  VTrans_string_typeVector m_Adjectives;
+	  VTrans_string_typeVector m_Noun;
+	  VTrans_string_typeVector m_vecStrPlainText;
+	  VTrans_string_typeVector m_strWords;
 	  BOOL m_bArticle;
 	  BOOL m_bDefiniteArticle;
 	  BOOL m_bIndefiniteArticle;
@@ -91,7 +91,7 @@
 	  Gerund * m_pGerund;
 	  OfPhrase * m_pOfPhrase;
 	  //ein Relativsatz bezieht sich auf das kleinste Element des
-	  //Satzes (also ein Aufzählungselement des Subjektes zum
+	  //Satzes (also ein Aufzï¿½hlungselement des Subjektes zum
 	  //Beispiel), und nicht nur auf das gesamte Subjekt
 	  RelativeClause * m_pRelativeClause;
 	  ToPlusInfinitive * m_pToPlusInfinitive;
@@ -113,7 +113,7 @@
 		  m_possessivePronoun=0;
 	  };
 	  EnumerationElement(const CString & rStr)
-	  { // für Eigennamen
+	  { // fï¿½r Eigennamen
   #ifdef USE_LETTER_TREE
     //m_pengnounslettertree = NULL ;
   #endif
@@ -135,8 +135,8 @@
 	  CString m_strAdverbRefersToAdjectiveOrAdverb;
   };
 
-  class SentenceElement // SentenceElement muß textuell über den Subklassen
-  { // stehen, alphabetische Ordnung nicht möglich
+  class SentenceElement // SentenceElement muï¿½ textuell ï¿½ber den Subklassen
+  { // stehen, alphabetische Ordnung nicht mï¿½glich
 	  virtual void virtFunc(){};
   public:
     DWORD m_dwErrorCode;
@@ -160,7 +160,7 @@
   //Vergleich; Beispielsatz: "I am older than you."
   //															 |				    |
   //															 +-Vergleich--+
-  //(in diesem Fall: "older than you"; zu Deutsch: "älter als du")
+  //(in diesem Fall: "older than you"; zu Deutsch: "ï¿½lter als du")
   //ein Vergleich beinhaltet IMMER auch ein Objekt (in diesem Fall "du")
   class Comparison
   {
@@ -190,14 +190,14 @@
 	  }
   };
 
-  //MannerEnumerationElement: Ausfzählungselement einer Umstandsbestimmung der
+  //MannerEnumerationElement: Ausfzï¿½hlungselement einer Umstandsbestimmung der
   //Art und Weise:
   // "I am intelligent and old."
 
   //Umstandsbestimmung der Art und Weise: "intelligent and old"
-  //1. Aufzählungselement einer Umstandsbestimmung der Art und Weise:
+  //1. Aufzï¿½hlungselement einer Umstandsbestimmung der Art und Weise:
   //"intelligent"
-  //2. Aufzählungselement einer Umstandsbestimmung der Art und Weise:
+  //2. Aufzï¿½hlungselement einer Umstandsbestimmung der Art und Weise:
   //"old"
   class MannerEnumerationElement
   {
@@ -217,8 +217,8 @@
   };
 
   // Umstandsbestimmung der Art und Weise (man kann sie bestimmen, 
-  //indem man nach ihr mit "wie" fragt. Beispiel: "Er läuft langsam." 
-  //"Wie läuft er?" -Umstandsbestimmung der Art und Weise: "langsam" 
+  //indem man nach ihr mit "wie" fragt. Beispiel: "Er lï¿½uft langsam." 
+  //"Wie lï¿½uft er?" -Umstandsbestimmung der Art und Weise: "langsam" 
   //Im Englischen: "He walks slowly." "slowly" ist dabei die Umstandsbestimmung der 
   //Art und Weise
   class Manner
@@ -233,11 +233,11 @@
 	  EnglishNounRecord * m_pEnr;
 	  DefiniteArticleNoun * m_pDan;
 	  CString m_strPlainText;
-	  CStringVector m_vecstrAdjectives;
-	  CStringVector m_vecstrNoun;
+	  VTrans_string_typeVector m_vecstrAdjectives;
+	  VTrans_string_typeVector m_vecstrNoun;
 	  BYTE m_personalPronoun;
 	  BYTE m_possessivePronoun;
-	  CStringVector m_vecstrWords;
+	  VTrans_string_typeVector m_vecstrWords;
 	  BOOL m_bArticle;
 	  BOOL m_bDefiniteArticle;
 	  BOOL m_bIndefiniteArticle;
@@ -254,7 +254,7 @@
 		  m_possessivePronoun=0;
 	  };
 	  ByAgentEnumerationElement(const CString & rStr)
-	  { // für Eigennamen
+	  { // fï¿½r Eigennamen
 		  m_strPlainText=rStr;
 		  m_pOfPhrase=NULL;
 	  }
@@ -266,8 +266,8 @@
 	  std::vector<ByAgentEnumerationElement> m_enumerationElements;
   };
 
-  /*class SentenceElement // SentenceElement muß textuell über den Subklassen
-  { // stehen, alphabetische Ordnung nicht möglich
+  /*class SentenceElement // SentenceElement muï¿½ textuell ï¿½ber den Subklassen
+  { // stehen, alphabetische Ordnung nicht mï¿½glich
 	  virtual virtFunc(){};
   };*/
 
@@ -368,31 +368,31 @@
 	  }
   };
 
-  //Die Klasse "Predicate" gibt es, das es mehrere Möglichkeiten für 
-  //Prädikate  in 1nem Haupt- oder Nebensatz geben kann: "The glasses are 
-  //broken." -> "Die Brille ist kaputt." (Prädikat: "ist") und "Die Brille
-  //wird zerbrochen." (Prädikat: "wird zerbrochen")
-  //ein Prädikat hat - außer bei der einfachen Zukunft, denn bei der Zukunft
+  //Die Klasse "Predicate" gibt es, das es mehrere Mï¿½glichkeiten fï¿½r 
+  //Prï¿½dikate  in 1nem Haupt- oder Nebensatz geben kann: "The glasses are 
+  //broken." -> "Die Brille ist kaputt." (Prï¿½dikat: "ist") und "Die Brille
+  //wird zerbrochen." (Prï¿½dikat: "wird zerbrochen")
+  //ein Prï¿½dikat hat - auï¿½er bei der einfachen Zukunft, denn bei der Zukunft
   //wird das "will" als Zeitform angesehen und gespeichert, und bei passiven
-  //Sätzen ohne ein modales Hilfsverb - eine gebeugte 
+  //Sï¿½tzen ohne ein modales Hilfsverb - eine gebeugte 
   //Verbform ("gV",gebeugte Verbform im Deutschen, also keinen Infinitiv) 
-  //und zusätzlich kann es noch einen 
+  //und zusï¿½tzlich kann es noch einen 
   //Infinitiv oder Partizip Perfekt ("IPP") haben.
   //denn bei Kontruktionen, bei denen das Verb im Deutschen IMMER eindeutig
   //ist (Beispiel: das Passiv: im Deutschen immer eine gebeugte Verbform 
-  //des Hilfsverbes "werden"), braucht man dafür nicht extra eine weitere 
-  //Vokabel zu speichern (es sollen nur die NÖTIGSTEN Daten gespeichert 
-  //werden;die gebeugte Verbform bezieht sich auf das deutsche Prädikat):
+  //des Hilfsverbes "werden"), braucht man dafï¿½r nicht extra eine weitere 
+  //Vokabel zu speichern (es sollen nur die Nï¿½TIGSTEN Daten gespeichert 
+  //werden;die gebeugte Verbform bezieht sich auf das deutsche Prï¿½dikat):
   //SIMPLE_PRESENT:
   //"I like you." gV: like IPP:keiner ("Ich mag dich.")
-  //"I can like you." gV: can IPP: like ("Ich kann dich mögen.")
+  //"I can like you." gV: can IPP: like ("Ich kann dich mï¿½gen.")
   //"I am liked." gv: keine IPP: liked ("Ich werde gemocht.")
   //"I can be liked." gV: can IPP: liked ("Ich kann gemocht werden.")
   //SIMPLE_PAST:
   //"I liked you." gV: liked IPP:keiner ("Ich mochte dich.")
   //"I was liked." gV: keine IPP: liked ("Ich wurde gemocht.")
   //FUTURE:
-  //"I will like you." gV: keine IPP: like ("Ich werde dich mögen.")
+  //"I will like you." gV: keine IPP: like ("Ich werde dich mï¿½gen.")
   //"I will be liked." gV: keine IPP: liked ("Ich werde gemocht werden.")
   //FUTURE CONTINOUS:
   //"I will be walking." gV: keine IPP: walking ("Ich werde gelaufen sein.")
@@ -429,12 +429,12 @@
   class Predicate
   {
   public:
-	  //Verneinung (wenn ein "not" im Prädikat steht); 0: keine Verneinung
+	  //Verneinung (wenn ein "not" im Prï¿½dikat steht); 0: keine Verneinung
 	  //sonst: Verneinung
 	  BYTE m_bNegation;
 	  //0: Passivsatz sonst: Aktivsatz
 	  BYTE m_bActiveClause;
-	  //die Zeitform des Prädikats von Wert "1" bis Wert "8"
+	  //die Zeitform des Prï¿½dikats von Wert "1" bis Wert "8"
 	  //1: SIMPLE_PRESENT 
 	  //2: SIMPLE_PAST
 	  //3: FUTURE
@@ -445,27 +445,27 @@
 	  //8: SIMPLE_PRESENT_OR_SIMPLE_PAST
 	  BYTE m_bTense;
 	  //ein WordNode-Zeiger, der ein englisches Verb, dessen deutsches Pendant
-	  //eine gebeugte Verbform ist, die für eine korrekte Übersetzung notwendig 
+	  //eine gebeugte Verbform ist, die fï¿½r eine korrekte ï¿½bersetzung notwendig 
 	  //ist ("have" bei "I have been." ist zum Beispiel NICHT notwendig, da 
 	  //man durch die Zeitform "Perfekt" weiss, dass man eine gebeugte Verbform 
-	  //von "haben" im Deutschen dafür braucht), kapselt
+	  //von "haben" im Deutschen dafï¿½r braucht), kapselt
 	  WordNode * m_pWordNodeWhereTheGermanTranslationIsABendVerb;
 	  //ein WordNode-Zeiger, der ein englisches Verb, dessen deutsches Pendant
-	  //KEINE gebeugte Verbform ist, die für eine korrekte Übersetzung notwendig 
+	  //KEINE gebeugte Verbform ist, die fï¿½r eine korrekte ï¿½bersetzung notwendig 
 	  //ist ("being" bei "I am being used." ist zum Beispiel NICHT notwendig, da 
 	  //man durch das Attribut "Aktivsatz" weiss, dass man eine gebeugte Verbform 
-	  //von "werden" im Deutschen dafür braucht), kapselt
+	  //von "werden" im Deutschen dafï¿½r braucht), kapselt
 	  WordNode * m_pWordNodeWhereTheGermanTranslationIsANonBendVerb;
 	  //WordNode * m_pWordNodeWhereAnEnglishVerbIsEncapsulated;
 	  //WordNode * m_pWordNodeWhereAnEnglishInfinitiveIsEncapsulated;
-	  //englisches Adverb der Häufigkeit
+	  //englisches Adverb der Hï¿½ufigkeit
 	  WordNode * m_pWordNodeWhereAnEnglishAdverbIsEncapsulated;
 	  WordNode * m_pWordNodeWhereAnEnglishAdverbDescribingAVerbIsEncapsulated;
   #ifdef USE_LETTER_TREE
     //Gebeugtes Verb (nur 1 Verb kann gebeugt sein; auch wenn bei 3. Pers. Singular
-    //kein "s" angehängt, kann es trotzdem gebeugt sein, nämlich bei modalen
+    //kein "s" angehï¿½ngt, kann es trotzdem gebeugt sein, nï¿½mlich bei modalen
     //Hilfsverben; es muss 1 gebeugtes Verb
-    //in einem gültigen Predikat geben).
+    //in einem gï¿½ltigen Predikat geben).
     VocabularyAndTranslation * m_pvocabularyandtranslationInflectedVerb ;
     VocabularyAndTranslation * m_pvocabularyandtranslationNotInflectedVerb ;
     //Store conjection for the possibility of enumerated predicats, e.g.
@@ -561,8 +561,8 @@
 	  CString m_strPredicate;
 	  Gerund * m_pGerund;
 	  Place * m_pPlace;
-	  Object * m_pObjectFirst; //1tes mögliches Objekt
-    //2tes mögliches Objekt (nur bei bestimmten Verben, wie "to give": 
+	  Object * m_pObjectFirst; //1tes mï¿½gliches Objekt
+    //2tes mï¿½gliches Objekt (nur bei bestimmten Verben, wie "to give": 
     //"I gave him a book." : "him"=1tes Objekt, "a book" = 2tes Objekt
 	  Object * m_pObjectSecond; 
 	  Manner * m_pManner;
@@ -612,8 +612,8 @@
 		  //m_object=NULL;
 	  };
     BYTE 
-      //Soll ohne Subjekt und Objekt parsen, damit diese Funktion für Relativ-Sätze
-      //(The man you liked yesterday: Rel-Satz: "you liked yesterday" und für Frage-Sätze, die nach einem
+      //Soll ohne Subjekt und Objekt parsen, damit diese Funktion fï¿½r Relativ-Sï¿½tze
+      //(The man you liked yesterday: Rel-Satz: "you liked yesterday" und fï¿½r Frage-Sï¿½tze, die nach einem
       //Objekt fragen(Who likes you on the table?), benutzt werden kann.
       ParseClauseWithoutSubjectAndObject(
       Clause & subsentence,

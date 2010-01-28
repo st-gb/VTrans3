@@ -1,6 +1,6 @@
 //Ohne das folgende include/wenn Pfad in den Eigenschaften dieser Datei 
 //unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
-//"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem vorkompilierten Header.[...]"
+//"fatal error C1010: Unerwartetes Dateiende wï¿½hrend der Suche nach dem vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
 #include "../../SentenceElement.h"
 #include "../../Translate.h" //for ::TranslateENR(...)
@@ -21,9 +21,9 @@ void NSLetterTree::Translate(
   int n0 = 0 ;
   std::vector<EnumerationElement *>:://const_iterator 
     iterator iterenumele ;
-  std::vector<CStringVector>::iterator iterveccstring ;
+  std::vector<VTrans_string_typeVector>::iterator iterveccstring ;
   std::vector<CString>::iterator itercstring ;
-  std::vector<CStringVector> vecveccstring ;
+  std::vector<VTrans_string_typeVector> vecveccstring ;
   for(iterenumele = subject.m_vecpenumerationelement.begin() ;
     iterenumele != subject.m_vecpenumerationelement.end(); iterenumele++)
   {

@@ -1,6 +1,6 @@
 //Ohne das folgende include/wenn Pfad in den Eigenschaften dieser Datei 
 //unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
-//"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem vorkompilierten Header.[...]"
+//"fatal error C1010: Unerwartetes Dateiende wï¿½hrend der Suche nach dem vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
 #include "LetterTree.hpp"
 
@@ -27,7 +27,7 @@
     addToCharValueToArrayIndexMapping('0','9') ; // (e.g. "4x4 drive")
     addToCharValueToArrayIndexMapping('A','Z') ;
     addToCharValueToArrayIndexMapping('a','z') ;
-    addToCharValueToArrayIndexMapping('é') ; //Aprés Ski
+    addToCharValueToArrayIndexMapping('ï¿½') ; //Aprï¿½s Ski
     addToCharValueToArrayIndexMapping(228) ; //"ae" (falls wieder anderer Zeichensatz)
     addToCharValueToArrayIndexMapping(246) ; //"oe" (falls wieder anderer Zeichensatz)
     addToCharValueToArrayIndexMapping(252) ; //"ue" (falls wieder anderer Zeichensatz)
@@ -35,7 +35,7 @@
     addToCharValueToArrayIndexMapping(214) ; //"Oe" (falls wieder anderer Zeichensatz)
     addToCharValueToArrayIndexMapping(220) ; //"Ue" (falls wieder anderer Zeichensatz)
     addToCharValueToArrayIndexMapping(223) ; //"sz" (falls wieder anderer Zeichensatz)
-    addToCharValueToArrayIndexMapping('-') ; //für "passers-by" etc.
+    addToCharValueToArrayIndexMapping('-') ; //fï¿½r "passers-by" etc.
     //mappingToArray();
   }
 
@@ -82,10 +82,10 @@ LetterNode * LetterTree::CreateNodeIfNonExistant(
 #ifdef _DEBUG//_DETLEVEL_STEFAN
   else
   {
-	  cout<<"NODE ALREADY THERE ppletternodeToCreateIfNonExistant:"<<
-		  ppletternodeToCreateIfNonExistant;
-	  cout<<" *pletternodeToCreateIfNonExistant:"<<
-		  *ppletternodeToCreateIfNonExistant<<"\n";
+//	  cout<<"NODE ALREADY THERE ppletternodeToCreateIfNonExistant:"<<
+//		  ppletternodeToCreateIfNonExistant;
+//	  cout<<" *pletternodeToCreateIfNonExistant:"<<
+//		  *ppletternodeToCreateIfNonExistant<<"\n";
   }
 #endif//_DEBUG
   return *ppletternodeToCreateIfNonExistant;
@@ -270,6 +270,118 @@ VocabularyAndTranslation * LetterTree::insert(
   }
   return pvocabularyandtranslation ;
 }
+
+  //Called by a GLR (created by bison parser generator; similar to yacc)
+  //lexer.
+  //std::set<VocabularyAndTranslation *> *
+  bool LetterTree::IsPlural(
+    //const PositionCStringVector & psv
+    const PositionstdstringVector & psv ,
+    DWORD & r_dwTokenIndex,
+    std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
+    )
+  {
+    bool bIsPlural = false ;
+    r_setpvocabularyandtranslation.empty() ;
+    std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
+      NULL ;
+    //std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
+    //psetpvocabularyandtranslation = search( psv, i2 );
+    //return ContainsWordClass(WORD_TYPE_NOUN,psetpvocabularyandtranslation)
+      //TODO at this point I merke: It would be intelligent to save schon
+      //within a VocabularyAndTranslation for which string of it the
+      //letternode has a reference to this VocabularyAndTranslation.
+      //Else I would have to compare the string with the part of the psv
+      //(I highly accumulated this would be a waste of computing time).
+      //This would mean to store the address of the last letter node
+      //in a member of a VocabularyAndTranslation element?
+      //&& issingular(psetpvocabularyandtranslation);
+
+    LetterNode * p_letternode = searchAndReturnLetterNode( psv,
+      r_dwTokenIndex );
+    psetpvocabularyandtranslation = p_letternode->
+      m_psetpvocabularyandtranslation ;
+
+    //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
+    //  setpvocabularyandtranslation);
+    //Loop for all vocabularies having at least 1 word that
+    //equals the current token.
+    for(std::set<VocabularyAndTranslation *>::iterator iter =
+      psetpvocabularyandtranslation->begin() ; iter !=
+      psetpvocabularyandtranslation->end() ; iter ++ )
+    {
+      //TODO there may be more possibilities (e.g. if spelling for a noun
+      //and verb are identical, e.g. the >>heating<<, I am >>heating<<.
+      if((*iter)->m_byType == WORD_TYPE_NOUN &&
+        //(*iter)->m_arstrEnglishWord[0] ==
+        (*iter)->m_arpletternodeLastEngChar[ ARRAY_INDEX_FOR_PLURAL ]
+        == p_letternode
+        )
+      {
+        r_setpvocabularyandtranslation.insert(*iter);
+        bIsPlural = true ;
+      }
+    }
+    return bIsPlural ;
+  }//IsPlural(...)
+
+  //Called by a GLR (created by bison parser generator; similar to yacc)
+  //lexer.
+  //std::set<VocabularyAndTranslation *> *
+  bool LetterTree::IsSingular(
+    //const PositionCStringVector & psv
+    const PositionstdstringVector & psv ,
+    DWORD & r_dwTokenIndex,
+    std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
+    )
+  {
+    bool bIsSingular = false ;
+    r_setpvocabularyandtranslation.empty() ;
+    std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
+      NULL ;
+    //std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
+    //psetpvocabularyandtranslation = search( psv, i2 );
+    //return ContainsWordClass(WORD_TYPE_NOUN,psetpvocabularyandtranslation)
+      //TODO at this point I merke: It would be intelligent to save schon
+      //within a VocabularyAndTranslation for which string of it the
+      //letternode has a reference to this VocabularyAndTranslation.
+      //Else I would have to compare the string with the part of the psv
+      //(I highly accumulated this would be a waste of computing time).
+      //This would mean to store the address of the last letter node
+      //in a member of a VocabularyAndTranslation element?
+      //&& issingular(psetpvocabularyandtranslation);
+
+    LetterNode * p_letternode = searchAndReturnLetterNode( psv,
+      r_dwTokenIndex );
+    //If the word was founf
+    if( p_letternode )
+    {
+      psetpvocabularyandtranslation = p_letternode->
+        m_psetpvocabularyandtranslation ;
+
+      //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
+      //  setpvocabularyandtranslation);
+      //Loop for all vocabularies having at least 1 word that
+      //equals the current token.
+      for(std::set<VocabularyAndTranslation *>::iterator iter =
+        psetpvocabularyandtranslation->begin() ; iter !=
+        psetpvocabularyandtranslation->end() ; iter ++ )
+      {
+        //TODO there may be more possibilities (e.g. if spelling for a noun
+        //and verb are identical, e.g. the >>heating<<, I am >>heating<<.
+        if((*iter)->m_byType == WORD_TYPE_NOUN &&
+          //(*iter)->m_arstrEnglishWord[0] ==
+          (*iter)->m_arpletternodeLastEngChar[ ARRAY_INDEX_FOR_SINGULAR ]
+          == p_letternode
+          )
+        {
+          r_setpvocabularyandtranslation.insert(*iter);
+          bIsSingular = true ;
+        }
+      }
+    }
+    return bIsSingular ;
+  }//IsSingular(...)
 
 //!How it works:
 //! use an "auxiliary dynamic data structure specifically for iterative 
@@ -465,8 +577,10 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
     m_pletternodeRoot;
   LetterNode * pletternodeCurrentWithMostTokens = NULL ;
   WORD wTokenLength ;
+  WORD wTokenIndex = 0 ;
   //pchCurrentChar += start ;
-  for(WORD wTokenIndex = r_dwTokenIndex; wTokenIndex < psv.size(); 
+  for( //r_dwTokenIndex
+    ; wTokenIndex < psv.size();
     ++ wTokenIndex )
   {
     //pchCurrentChar = psv.at(wTokenIndex).m_Str ;

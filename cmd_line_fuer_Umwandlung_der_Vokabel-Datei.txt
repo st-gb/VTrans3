@@ -1,1 +1,0 @@
-cat words.txt | ./transformWords.txtToNewlines.awk > words.out

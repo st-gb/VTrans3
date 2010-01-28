@@ -23,23 +23,26 @@
   //  * A trie can provide an alphabetical ordering of the entries by key.
 
   
-  #include "../../IO.h" //for NUMBER_OF_WORD_TYPES
+  //#include "../../IO.h" //for NUMBER_OF_WORD_TYPES
   #include <string>
   //#include <map>
   #include <set>
   //for GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated,
   // PointerToWordNodeWhereAnEnglishNounIsEncapsulated
-  #include "../../GetAndTestWord.h"
+  //#include "../../GetAndTestWord.h"
   #include "../../Token.h" //for PositionCStringVector
   #include "../../I_UserInterface.hpp"
-  #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
+  //#include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
   #include "VocabularyAndTranslation.hpp"
   #include "LetterNode.hpp"
   #include "../IVocabularyInMainMem.hpp"
-  #include "../I_WordSearch.hpp"
+  #include "../I_WordSearch.hpp" //LetterTree's base class
 #ifndef _MSC_VER
   #include <TRACE.h>
 #endif
+  #include <windef.h> //BYTE etc.
+
+  #define TRACE(...) 
 
   ////Forward declarations are more performant than "#include"s.
   //class Word ;
@@ -119,7 +122,7 @@
 
   //void 
     //0=failure (no vocable with the string found)
-    BYTE LetterTree::GetFirstOccurance(
+    BYTE GetFirstOccurance(
     const std::string & cr_stdstr
     //, Word & r_wordEnglish
     //, Word & r_wordGerman
@@ -127,7 +130,7 @@
     //, Word * & p_wordGerman
     , AutomDelWord & r_automdelwordEng
     , AutomDelWord & r_automdelwordGer
-    ) ;
+    ) ; //class LetterTree
 
   //BYTE 
     Word * GetNextOccurance(
@@ -155,7 +158,7 @@
 
     //The sense of mapping is to allow the array of the direct child of a
     //node to be have less than 255 elements.
-    void LetterTree::createMapping() ;
+    void createMapping() ;
 
     LetterTree(//I_UserInterface * p_userinterface
       )
@@ -327,113 +330,25 @@
       DWORD & r_dwTokenIndex
       );
 
-    //Called by a GLR (created by bison parser generator; similar to yacc) 
+    //Called by a GLR (created by bison parser generator; similar to yacc)
     //lexer.
-    //std::set<VocabularyAndTranslation *> * 
-    bool IsSingular(
-      //const PositionCStringVector & psv
-      const PositionstdstringVector & psv ,
-      DWORD & r_dwTokenIndex,
-      std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
-      )
-    {
-      bool bIsSingular = false ;
-      r_setpvocabularyandtranslation.empty() ;
-      std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation = 
-        NULL ;
-      //std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
-      //psetpvocabularyandtranslation = search( psv, i2 );
-      //return ContainsWordClass(WORD_TYPE_NOUN,psetpvocabularyandtranslation) 
-        //TODO at this point I merke: It would be intelligent to save schon
-        //within a VocabularyAndTranslation for which string of it the 
-        //letternode has a reference to this VocabularyAndTranslation.
-        //Else I would have to compare the string with the part of the psv
-        //(I highly accumulated this would be a waste of computing time).
-        //This would mean to store the address of the last letter node 
-        //in a member of a VocabularyAndTranslation element?
-        //&& issingular(psetpvocabularyandtranslation);
-
-      LetterNode * p_letternode = searchAndReturnLetterNode( psv, 
-        r_dwTokenIndex );
-      psetpvocabularyandtranslation = p_letternode->
-        m_psetpvocabularyandtranslation ;
-
-      //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
-      //  setpvocabularyandtranslation);
-      //Loop for all vocabularies having at least 1 word that 
-      //equals the current token.
-      for(std::set<VocabularyAndTranslation *>::iterator iter =
-        psetpvocabularyandtranslation->begin() ; iter != 
-        psetpvocabularyandtranslation->end() ; iter ++ )
-      {
-        //TODO there may be more possibilities (e.g. if spelling for a noun
-        //and verb are identical, e.g. the >>heating<<, I am >>heating<<.
-        if((*iter)->m_byType == WORD_TYPE_NOUN && 
-          //(*iter)->m_arstrEnglishWord[0] ==  
-          (*iter)->m_arpletternodeLastEngChar[ ARRAY_INDEX_FOR_SINGULAR ] 
-          == p_letternode 
-          )
-        {
-          r_setpvocabularyandtranslation.insert(*iter);
-          bIsSingular = true ;
-        }
-      }
-      return bIsSingular ;
-    }//IsSingular(...)
-
-    //Called by a GLR (created by bison parser generator; similar to yacc) 
-    //lexer.
-    //std::set<VocabularyAndTranslation *> * 
+    //std::set<VocabularyAndTranslation *> *
     bool IsPlural(
       //const PositionCStringVector & psv
       const PositionstdstringVector & psv ,
       DWORD & r_dwTokenIndex,
       std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
-      )
-    {
-      bool bIsPlural = false ;
-      r_setpvocabularyandtranslation.empty() ;
-      std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation = 
-        NULL ;
-      //std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
-      //psetpvocabularyandtranslation = search( psv, i2 );
-      //return ContainsWordClass(WORD_TYPE_NOUN,psetpvocabularyandtranslation) 
-        //TODO at this point I merke: It would be intelligent to save schon
-        //within a VocabularyAndTranslation for which string of it the 
-        //letternode has a reference to this VocabularyAndTranslation.
-        //Else I would have to compare the string with the part of the psv
-        //(I highly accumulated this would be a waste of computing time).
-        //This would mean to store the address of the last letter node 
-        //in a member of a VocabularyAndTranslation element?
-        //&& issingular(psetpvocabularyandtranslation);
+      ) ;
 
-      LetterNode * p_letternode = searchAndReturnLetterNode( psv, 
-        r_dwTokenIndex );
-      psetpvocabularyandtranslation = p_letternode->
-        m_psetpvocabularyandtranslation ;
-
-      //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
-      //  setpvocabularyandtranslation);
-      //Loop for all vocabularies having at least 1 word that 
-      //equals the current token.
-      for(std::set<VocabularyAndTranslation *>::iterator iter =
-        psetpvocabularyandtranslation->begin() ; iter != 
-        psetpvocabularyandtranslation->end() ; iter ++ )
-      {
-        //TODO there may be more possibilities (e.g. if spelling for a noun
-        //and verb are identical, e.g. the >>heating<<, I am >>heating<<.
-        if((*iter)->m_byType == WORD_TYPE_NOUN && 
-          //(*iter)->m_arstrEnglishWord[0] ==  
-          (*iter)->m_arpletternodeLastEngChar[ ARRAY_INDEX_FOR_PLURAL ] 
-          == p_letternode 
-          )
-        {
-          r_setpvocabularyandtranslation.insert(*iter);
-          bIsPlural = true ;
-        }
-      }
-      return bIsPlural ;
-    }//IsPlural(...)
+    //Called by a GLR (created by bison parser generator; similar to yacc)
+    //lexer.
+    //std::set<VocabularyAndTranslation *> *
+    bool IsSingular(
+      //const PositionCStringVector & psv
+      const PositionstdstringVector & psv ,
+      DWORD & r_dwTokenIndex,
+      std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
+      ) ;
 
     ////Should search including variations: if e.g. verb "walking" is searched:
     ////if a full verb is found: add "ing" to the infinitive->if found....
@@ -554,73 +469,73 @@
 
   class PointerToWordNodeWhereAnEnglishNounIsEncapsulated ;
 
-  class EngNounsLinkedList 
-    : public IVocabularyInMainMem
-  {
-  public:
-    const std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated>
-      * m_pvecpwordnodeEnglish ;
-    std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated>::iterator
-      m_ivecpwordnodeEnglish ;
-
-    EngNounsLinkedList(
-      //const
-      std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated> &
-      rcvecpwordnode)
-    {
-      m_pvecpwordnodeEnglish = & rcvecpwordnode ;
-      m_ivecpwordnodeEnglish = rcvecpwordnode.begin() ;
-    }
-    BYTE GetGermanArticle()
-    {
-      GermanNoun * pgn=
-        GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated(
-          m_ivecpwordnodeEnglish->m_pWordNode);
-      if(pgn)
-        return pgn->m_bArticle ;
-      return -1 ;
-    }
-    std::string GetGermanPlural()
-    {
-      GermanNoun * pgn=
-        GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated(
-          m_ivecpwordnodeEnglish->m_pWordNode);
-      if(pgn)
-        return pgn->m_strPlural.GetBuffer() ;
-      return "" ;
-    }
-    std::string GetGermanSingular()
-    {
-      GermanNoun * pgn=
-        GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated(
-          m_ivecpwordnodeEnglish->m_pWordNode);
-      if(pgn)
-        return pgn->m_strSingular.GetBuffer() ;
-      return "" ;
-    }
-    WORD GetNumberOfNouns()
-    {
-      return m_pvecpwordnodeEnglish->size() ;
-    }
-    BYTE GetTranslationType()
-    {
-      EnglishNoun * pen=dynamic_cast<EnglishNoun*>
-        (m_ivecpwordnodeEnglish->m_pWordNode->m_pWord);
-      if(pen)
-      {
-        return pen->m_bTranslationType ;
-      }
-      return -1 ;
-    }
-    BYTE IsSingular()
-    {
-      return m_ivecpwordnodeEnglish->m_bSingular ;
-    }
-    void NextNoun()
-    {
-      m_ivecpwordnodeEnglish ++ ;
-    }
-  };
+//  class EngNounsLinkedList
+//    : public IVocabularyInMainMem
+//  {
+//  public:
+//    const std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated>
+//      * m_pvecpwordnodeEnglish ;
+//    std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated>::iterator
+//      m_ivecpwordnodeEnglish ;
+//
+//    EngNounsLinkedList(
+//      //const
+//      std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated> &
+//      rcvecpwordnode)
+//    {
+//      m_pvecpwordnodeEnglish = & rcvecpwordnode ;
+//      m_ivecpwordnodeEnglish = rcvecpwordnode.begin() ;
+//    }
+//    BYTE GetGermanArticle()
+//    {
+//      GermanNoun * pgn=
+//        GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated(
+//          m_ivecpwordnodeEnglish->m_pWordNode);
+//      if(pgn)
+//        return pgn->m_bArticle ;
+//      return -1 ;
+//    }
+//    std::string GetGermanPlural()
+//    {
+//      GermanNoun * pgn=
+//        GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated(
+//          m_ivecpwordnodeEnglish->m_pWordNode);
+//      if(pgn)
+//        return pgn->m_strPlural.GetBuffer() ;
+//      return "" ;
+//    }
+//    std::string GetGermanSingular()
+//    {
+//      GermanNoun * pgn=
+//        GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated(
+//          m_ivecpwordnodeEnglish->m_pWordNode);
+//      if(pgn)
+//        return pgn->m_strSingular.GetBuffer() ;
+//      return "" ;
+//    }
+//    WORD GetNumberOfNouns()
+//    {
+//      return m_pvecpwordnodeEnglish->size() ;
+//    }
+//    BYTE GetTranslationType()
+//    {
+//      EnglishNoun * pen=dynamic_cast<EnglishNoun*>
+//        (m_ivecpwordnodeEnglish->m_pWordNode->m_pWord);
+//      if(pen)
+//      {
+//        return pen->m_bTranslationType ;
+//      }
+//      return -1 ;
+//    }
+//    BYTE IsSingular()
+//    {
+//      return m_ivecpwordnodeEnglish->m_bSingular ;
+//    }
+//    void NextNoun()
+//    {
+//      m_ivecpwordnodeEnglish ++ ;
+//    }
+//  };
 
   //Declare forward(faster than "#include" for the following methods)
   class Sentence ;

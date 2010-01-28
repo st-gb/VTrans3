@@ -96,8 +96,13 @@ namespace CharSetConv
       {
     	size_t numberOfOutputBytes = outputBytesLeft ;
         LOGN("18.08.2008 13.32 "<<inputBytesLeft<<" "<<outputBytesLeft) ;
-        size_t ret = iconv(iconv_tConversionDescriptor, &strASCIIToken, 
-          & inputBytesLeft, & outbuf, & outputBytesLeft ) ;
+        size_t ret = iconv(
+          iconv_tConversionDescriptor
+          , & strASCIIToken
+          , & inputBytesLeft
+          , & outbuf
+          , & outputBytesLeft
+          ) ;
         LOGN("18.08.2008 13.31 "<<inputBytesLeft<<" "<< outputBytesLeft) ;
         if ( ret != (size_t)(-1) )
         {

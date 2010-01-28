@@ -1,15 +1,20 @@
 #if !defined (WORD_H_INCLUDED)
 	    #define WORD_H_INCLUDED
 
+#include <string_type.hpp>
+
 //#ifdef _WINDOWS
 #ifdef _MSC_VER //MS Compiler (internal MSVC preprocessor macro)
 	#include <atlstr.h>//This include is needed for "CString" when compiling as DLL.
 #else //#ifdef _MSC_VER
-	#include <typedefs.h>
+	//#include <typedefs.h>
 	//#include <StdString.h>
   //#include <MFC_Compatibility/CString.hpp>
-  using namespace MFC_Compatibility ; //for class CString in MFC_Compatibility
+  //using namespace MFC_Compatibility ; //for class CString in MFC_Compatibility
 #endif
+
+#include <windef.h> //for BYTE
+
 //extern VocNode * m_first;
 //Makro definieren mit Wert, der der ASCII-Code f�r "1" ist (damit man die 
 //W�rterbuch-Datei mit einem normalen Editor bearbeiten kann)
@@ -33,20 +38,21 @@ public:
 	BOOL operator==(Word * pWordFirst);
 };
 
-class EnglishAdjective:public Word
+class EnglishAdjective
+  : public Word
 {
 public:
 	//das Adverb, das aus diesem Adjektiv gebildet wird. Bespiel: Positiv: 
 	//"slow" Adverb: "slowly"; Positiv: "good" Adverb: "well"
-	CString m_strAdverb;
+	VTrans::string_type m_strAdverb;
 	//die erste Steigerungsform. Bespiel: Positiv: "slow" Komperativ: 
 	//"slower"; Positiv: "good" Adverb: "better"
-	CString m_strComperativ;
+	VTrans::string_type m_strComperativ;
 	//die Grundform des Adjektivs. Bespiel: "slow","good"
-	CString m_strPositiv;
+	VTrans::string_type m_strPositiv;
 	//die zweite Steigerungsform. Bespiel: Positiv: "slow" Komperativ: 
 	//"slowest"; Positiv: "good" Adverb: "best"
-	CString m_strSuperlativ;
+	VTrans::string_type m_strSuperlativ;
 	char m_regulary;
 	//gibt an, ob die Steigerungsformen durch "more" und "most" erreicht
 	//werden
@@ -71,7 +77,7 @@ public:
 class EnglishAdverb:public Word
 {
 public:
-	CString m_strWord;
+	VTrans::string_type m_strWord;
 	//m_bType: 0: Adverb befindet sich zwischen Subjekt und Verb oder nach 
 	//der finiten Form des Verbes 'to be' wie z.B. Adverbien der H�ufigkeit
 	//(always,never,often) 1: Adverb bezieht sich auf ein Adjektiv oder 
@@ -86,15 +92,15 @@ public:
 class EnglishAuxiliaryVerb:public Word // englisches Hilfsverb
 {
 public:
-	CString m_strWords[15]; // Bsp.: I am, you are, he is; I was, you were; been
-	EnglishAuxiliaryVerb(const CString &,bool bAuxiliaryVerb);
+	VTrans::string_type m_strWords[15]; // Bsp.: I am, you are, he is; I was, you were; been
+	EnglishAuxiliaryVerb(const VTrans::string_type &,bool bAuxiliaryVerb);
 	EnglishAuxiliaryVerb(){m_bIntegral=FALSE;}//EnglishAuxiliaryVerb); // Kopierkonstruktor
 };
 
 class EnglishConjunction:public Word // englisches Bindewort (Konjunktion)
 {
 public:
-	CString m_strWord;
+	VTrans::string_type m_strWord;
 	EnglishConjunction(){m_bIntegral=FALSE;}
 };
 
@@ -107,8 +113,8 @@ public:
 class EnglishNoun:public Word
 {
 public:
-	CString m_strSingular;
-	CString m_strPlural;
+	VTrans::string_type m_strSingular;
+	VTrans::string_type m_strPlural;
 	//bestimmter Artikel (the) immer, nie oder nur wenn speziell
 	BYTE m_bType;
 	BYTE m_bTranslationType;
@@ -125,15 +131,15 @@ public:
 class EnglishPreposition:public Word
 {
 public:
-	CString m_strWord;
+	VTrans::string_type m_strWord;
 	EnglishPreposition(){m_bIntegral=FALSE;}
 };
 
 class EnglishPronoun:public Word
 {
 public:
-	CString m_strSingular;
-	CString m_strPlural;
+	VTrans::string_type m_strSingular;
+	VTrans::string_type m_strPlural;
 	//BYTE type; // Typ:. Adverbien der H�ufigkeit (always,never,often), 
 	// der Art (well, slowly, hard), Adverbien, die sich auf einen ganzen Satz
 	// beziehen (Fortunately, Unfortunately), ...
@@ -143,10 +149,10 @@ public:
 class EnglishVerb:public Word
 {
 public:
-	CString m_strInfinitive;
-	CString m_strPastTense;
-	CString m_strPastParticiple; //Partizip Perfekt
-	CString m_strPreposition;
+	VTrans::string_type m_strInfinitive;
+	VTrans::string_type m_strPastTense;
+	VTrans::string_type m_strPastParticiple; //Partizip Perfekt
+	VTrans::string_type m_strPreposition;
 	BYTE m_bAllowsIngForm;
 	//wenn nicht "0": das Verb kann eine Verlaufsform (progressive) haben
 	BYTE m_byDynamic;
@@ -161,10 +167,10 @@ public:
 class GermanAdjective:public Word
 {
 public:
-	CString m_strPositiv; // z.B. hoch
-	CString m_strComperativ; // z.B. h�her
-	CString m_strSuperlativ; // z.B. am h�chsten
-	CString m_strWortstamm; // wichtig f�r: hoch - ein HOHes Haus (der Wortstamm hierbei
+	VTrans::string_type m_strPositiv; // z.B. hoch
+	VTrans::string_type m_strComperativ; // z.B. h�her
+	VTrans::string_type m_strSuperlativ; // z.B. am h�chsten
+	VTrans::string_type m_strWortstamm; // wichtig f�r: hoch - ein HOHes Haus (der Wortstamm hierbei
 	// ist hoh)
 	GermanAdjective(){m_bIntegral=FALSE;}
 };
@@ -172,22 +178,22 @@ public:
 class GermanAdverb:public Word
 {
 public:
-	CString m_strWord;
+	VTrans::string_type m_strWord;
 	GermanAdverb(){m_bIntegral=FALSE;}
 };
 
 class GermanAuxiliaryVerb:public Word // deutsches Hilfsverb
 {
 public:
-	CString m_strWords[15]; // Bsp.: I am, you are, he is; I was, you were; been
-	GermanAuxiliaryVerb(const CString &);
+	VTrans::string_type m_strWords[15]; // Bsp.: I am, you are, he is; I was, you were; been
+	GermanAuxiliaryVerb(const VTrans::string_type &);
 	GermanAuxiliaryVerb(){m_bIntegral=FALSE;}
 };
 
 class GermanConjunction:public Word // englisches Bindewort (Konjunktion)
 {
 public:
-	CString m_strWord;
+	VTrans::string_type m_strWord;
 	//word order: Satzbau
 	BYTE m_bWordOrder; // Satzbau: 0=Subjekt Pr�dikat [Objekt] 1=Subjekt [Objekt] Pr�dikat
 	// Beispiele: If you like me. -> Falls du mich magst.
@@ -208,8 +214,8 @@ public:
 class GermanNoun:public Word
 {
 public:
-	CString m_strSingular;
-	CString m_strPlural;
+	VTrans::string_type m_strSingular;
+	VTrans::string_type m_strPlural;
 	BYTE m_bArticle;
 	GermanNoun(){m_bIntegral=FALSE;}
 	//virtual virtfunc(){};
@@ -219,14 +225,14 @@ class GermanPreposition:public Word
 {
 public:
   BYTE m_byCase;
-	CString m_strWord;
+	VTrans::string_type m_strWord;
 	GermanPreposition(){m_bIntegral=FALSE; m_byCase=0;}
 };
 
 class GermanPronoun:public Word
 {
 public:
-	CString m_strWord;
+	VTrans::string_type m_strWord;
 	GermanPronoun(){m_bIntegral=FALSE;}
 };
 
@@ -242,7 +248,7 @@ public:
 class GermanVerb:public Word //deutsches Vollverb (engl.>verb< hei�t Vollverb)
 {
 public:
-	CString m_strWords[16];
+	VTrans::string_type m_strWords[16];
 	BOOL m_bMove; // Verb der Bewegung
 	BOOL m_bBe; // Hilfsverb: sein
 	BOOL m_bAuxiliaryVerb;
@@ -250,8 +256,8 @@ public:
   //4=Genitiv
 	BYTE m_bCase;
 	BOOL m_bReflexive;
-	CString m_strPreposition;
-	GermanVerb(const CString &);
+	VTrans::string_type m_strPreposition;
+	GermanVerb(const VTrans::string_type &);
 	GermanVerb(){m_bAuxiliaryVerb=FALSE;m_bReflexive=FALSE;
 		m_bIntegral=FALSE;};
 };
@@ -261,7 +267,6 @@ public:
 //extern WordList wordList;
 class WordNode ;
 
-void LoadWords(WordNode * wn);
 void InitDictionary() ;
 
 #endif //!defined (WORD_H_INCLUDED)
