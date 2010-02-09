@@ -17,7 +17,8 @@ TODOs:
 -Redesign:
   - Wörterbuch: als shared memory zwischen mehrerern Übersetzer-Instanzen (bei Multicore-CPUs sinnvoll)
     (könnte langsamer sein, auch da der Zugriff 
-    BEI ÄNDERUNGEN im Wörterbuch kontrolliert werden sollte)
+    BEI ÄNDERUNGEN im Wörterbuch kontrolliert werden sollte
+    ; geht eher nicht, da der die Knoten des Tries an sehr unterschiedlichen RAM-Adressen liegen koennen )
   - Aufruf des Übersetzer-Prozesses: Eingabe-Daten über die Standardeingabe(?) ->etwas schneller als 
      ein Aufruf einer DLL-Funktion, wenn eine neue Übersetzung stattfinden soll
   - besonderes Feature: grammatikalische Bestandteile (farblich) auf webseite hervorheben 

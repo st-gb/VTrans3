@@ -3,7 +3,7 @@
 #include <string>
 #include "../AutomDelWord.hpp"
   //use a relative path, else "VC/include/IO.h" is used
-  #include "../../IO.h" //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
+  #include "../../IO.hpp" //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
 
   #define BIT_POSITION_FOR_TRANSLATION_TYPE 2
 
@@ -14,10 +14,18 @@
   #define ENGLISH_NOUN WORD_TYPE_NOUN
   #define ENGLISH_MAIN_VERB WORD_TYPE_MAIN_VERB
   #define NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB 3//inf., simple past, past part.
-  #define NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB 14//inf.+ 6*present+ 6*past+past part.
+  //infinitive + 6*present + 6*past + past participle + imperative singualar & 
+  //imperative plural = 1 + 6 + 6 + 1 + 2 = 16
+  #define NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB 16
 
 class LetterNode ;
 class Word ;
+
+    static std::string g_ar_stdstrWordClass [] = {
+      "noun"
+      , "main verb"
+      , "adjective"
+    } ;
 
   //This class stands for a pair of English and German vocabulary.
   class VocabularyAndTranslation
@@ -25,6 +33,18 @@ class Word ;
   public:
     BYTE m_byType ;
     BYTE * m_arbyAttribute ;
+    enum word_class
+    {
+      noun = 0
+      , main_verb //Vollverb
+      , adjective
+      , adverb
+      , preposition
+      , pronoun
+      , auxiliary_verb
+      , conjunction
+    } ;
+
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
     //Currently only for English needed because it's only needed 
     //for looking up English words.
@@ -66,6 +86,11 @@ class Word ;
 
     void GetWord(//Word & word
       AutomDelWord & r_automdelword ) ;
+
+    std::string GetWordTypeAsStdStr()
+    {
+      return g_ar_stdstrWordClass[ m_byType - WORD_TYPE_NOUN ] ;
+    }
 
     //by: only the lowest 2 bit should be used.
     void SetNounTranslationType(BYTE by)

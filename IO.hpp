@@ -5,7 +5,9 @@
 #include "xmlwriter.h"
 #include "rest.h" //for class SentenceAndValidityAndProperName
 #include "Word.hpp" //for class Word
+#include <set> //std::set
 
+//The following characters are used in the vocabulary file:
 #define STRING_DELIMITER '9'
 #define NUMBER_OF_CHARS_FOR_ENG_NOUN_ATTS 3
 #define WORD_TYPE_CHAR_INDEX 0
@@ -22,7 +24,42 @@
 #define STRING_INDEX_FOR_INIFINITIVE 0
 
 //const char * readInputText(const std::string & strFilePath) ;
-Word *    extract(const VTrans::string_type & str,BYTE bEnglishWord,int & ret) ;
+
+class VocabularyAndTranslation ;
+class LetterNode ;
+
+class OneLinePerWordPair
+{
+private :
+  static VocabularyAndTranslation * s_pvocabularyandtranslation ; //= NULL ;
+public:
+  static Word * extract(
+    const VTrans::string_type & str
+    , BYTE bEnglishWord
+    , int & ret
+    ) ;
+  static inline void HandleVocabularyAndTranslationPointerInsertion(
+    std::set<LetterNode *> & stdsetpletternodeLastStringChar
+    , LetterNode * pletternodeCurrent
+    //, VocabularyAndTranslation * pvocabularyandtranslation
+    , bool  bInsertNewVocabularyAndTranslation
+    , BYTE byVocabularyType
+    ) ;
+  static //inline
+    void InsertIntoTrieAndHandleVocabularyAndTranslation(
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+    //, LetterNode * pletternodeCurrent
+    //, VocabularyAndTranslation * pvocabularyandtranslation
+    , bool & bInsertNewVocabularyAndTranslation
+    , BYTE byVocabularyType
+    , const std::string & str
+    , int nLength
+    , int nIndexOf1stChar
+    ) ;
+  static void LoadWords(//WordNode * wn
+    std::string & r_strWordsFilePath );
+} ; //end class
+
 BYTE      readInputText(const std::string & strFilePath, std::string & str) ;
 LPCSTR                      UTF8toASCII(const char * str);
 void                        writeToOutputStream(std::ostream & rofstreamTranslToGerman,
@@ -30,7 +67,5 @@ void                        writeToOutputStream(std::ostream & rofstreamTranslTo
                             std::vector<SentenceAndValidityAndProperName> & vecsentenceandvalidityandpropername,
                             xmlwriter & MyXml
                             );
-void LoadWords(//WordNode * wn
-  std::string & r_strWordsFilePath );
 
 #endif //!defined (IO_H_INCLUDED)

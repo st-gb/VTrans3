@@ -156,6 +156,10 @@ Word * LetterTree::GetPreviousOccurance(
 //Returns NULL if no item was added to "m_psetvocabularyandtranslation".
 //LetterNode * 
 
+//Adds words/ strings into a Trie data structure.
+//The last character / Trie node contains a pointer to a
+//VocabularyAndTranslation object where the grammatical attributes like article,
+//3rd person plural present for a German verb etc. are stored.
 //inline 
 VocabularyAndTranslation * LetterTree::insert(
   const char * pch,
@@ -174,12 +178,14 @@ VocabularyAndTranslation * LetterTree::insert(
   const char * const pchFirstLetter = pch ;
 #ifdef _DEBUG
   //Returns a pointer to the first occurrence of strSearch in str, or NULL if strSearch does not appear in str.
-  if( strstr(pch,"bertr") )
+  if( strstr(pch,"buggery") )
     start = start ;
 #endif
-  //In this loop check that for every character of the string a valid index exists.
+  //In this loop check that for every character of the string a valid index
+  //exists.
   //(the maximum index entspricht the amount of added characters to the map)
-  //Else we would address an unallocated  LetterNode (=NULL) and so the program crashes.
+  //Else we would address an unallocated  LetterNode (=NULL) and so the program
+  //crashes.
   for(WORD wIndex=0; wIndex < length; ++wIndex)
   {
     if( MapInputCharacterToLetterNodePointerArrayIndex(
@@ -227,39 +233,8 @@ VocabularyAndTranslation * LetterTree::insert(
       pletternode = NULL ;
     else
     {
-    //if(! pletternodeCurrent->m_psetvocabularyandtranslation)
-    if(! pletternodeCurrent->m_psetpvocabularyandtranslation)
-    //{
-      //pletternodeCurrent->m_psetvocabularyandtranslation = new 
-        //std::set<VocabularyAndTranslation>(//0,new Word(),new Word() 
-      pletternodeCurrent->m_psetpvocabularyandtranslation = new 
-        std::set<VocabularyAndTranslation *>(//0,new Word(),new Word() 
-        ) ;
-      //If allocating was successfull / if exits yet.
-      //if( pletternodeCurrent->m_psetvocabularyandtranslation )
-      if( pletternodeCurrent->m_psetpvocabularyandtranslation )
-      {        
-        if(bInsertNewVocabularyAndTranslation)
-        {
-          //TRACE("LetterTree::insert: inserting into voc. set at \"%x\"\n", 
-            //pletternodeCurrent->m_psetpvocabularyandtranslation ) ;
-          //std::pair <std::set<VocabularyAndTranslation>::iterator, bool> 
-          std::pair <std::set<VocabularyAndTranslation *>::iterator, bool> 
-            pairisetandbool =
-            //pletternodeCurrent->m_psetvocabularyandtranslation->insert(
-            pletternodeCurrent->m_psetpvocabularyandtranslation->insert(
-              //VocabularyAndTranslation(byVocabularyType //+
-              ////bGermanVocabulary * NUMBER_OF_WORD_TYPES 
-              //) 
-              new VocabularyAndTranslation(byVocabularyType ) 
-              ) ;
-          pvocabularyandtranslation = 
-            ////Pointer to VocabularyAndTranslation object/reference.
-            //& 
-            //VocabularyAndTranslation object/reference.
-            *(pairisetandbool.first) ;
-        }
-      }
+      //if(! pletternodeCurrent->m_psetvocabularyandtranslation)
+
       //}
       //return pletternodeCurrent ;
       //return pletternodeCurrent->m_psetvocabularyandtranslation ;
@@ -353,30 +328,32 @@ VocabularyAndTranslation * LetterTree::insert(
 
     LetterNode * p_letternode = searchAndReturnLetterNode( psv,
       r_dwTokenIndex );
-    //If the word was founf
+    //If the word was found.
     if( p_letternode )
     {
       psetpvocabularyandtranslation = p_letternode->
         m_psetpvocabularyandtranslation ;
-
-      //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
-      //  setpvocabularyandtranslation);
-      //Loop for all vocabularies having at least 1 word that
-      //equals the current token.
-      for(std::set<VocabularyAndTranslation *>::iterator iter =
-        psetpvocabularyandtranslation->begin() ; iter !=
-        psetpvocabularyandtranslation->end() ; iter ++ )
+      if( psetpvocabularyandtranslation )
       {
-        //TODO there may be more possibilities (e.g. if spelling for a noun
-        //and verb are identical, e.g. the >>heating<<, I am >>heating<<.
-        if((*iter)->m_byType == WORD_TYPE_NOUN &&
-          //(*iter)->m_arstrEnglishWord[0] ==
-          (*iter)->m_arpletternodeLastEngChar[ ARRAY_INDEX_FOR_SINGULAR ]
-          == p_letternode
-          )
+        //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
+        //  setpvocabularyandtranslation);
+        //Loop for all vocabularies having at least 1 word that
+        //equals the current token.
+        for(std::set<VocabularyAndTranslation *>::iterator iter =
+          psetpvocabularyandtranslation->begin() ; iter !=
+          psetpvocabularyandtranslation->end() ; iter ++ )
         {
-          r_setpvocabularyandtranslation.insert(*iter);
-          bIsSingular = true ;
+          //TODO there may be more possibilities (e.g. if spelling for a noun
+          //and verb are identical, e.g. the >>heating<<, I am >>heating<<.
+          if((*iter)->m_byType == WORD_TYPE_NOUN &&
+            //(*iter)->m_arstrEnglishWord[0] ==
+            (*iter)->m_arpletternodeLastEngChar[ ARRAY_INDEX_FOR_SINGULAR ]
+            == p_letternode
+            )
+          {
+            r_setpvocabularyandtranslation.insert(*iter);
+            bIsSingular = true ;
+          }
         }
       }
     }
@@ -563,12 +540,17 @@ std::set<VocabularyAndTranslation *> * LetterTree::search(
 //@return LetterNode of last char of string within LetterTree identical to psv 
 //in most tokens.
 LetterNode * LetterTree::searchAndReturnLetterNode(
-  //const PositionCStringVector & psv, 
-  const PositionstdstringVector & psv, 
+  //const PositionCStringVector & psv,
+  //Vector that contains the tokens of a text / a sentence.
+  const PositionstdstringVector & psv,
+  //The index of the first token to include in the trie search.
   DWORD & r_dwTokenIndex
   //,LetterNode * & pletternode,
   )
 {
+  #ifdef _DEBUG
+  BYTE byNodePointerArrayIndex ;
+  #endif
   const char * pchCurrentChar ;
   //const char * pch = strVocabularyEntry.c_str() ;
   //std::set<VocabularyAndTranslation> * psetvocabularyandtranslation = NULL ;
@@ -576,11 +558,14 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
   LetterNode * pletternodeCurrent = //NULL ;
     m_pletternodeRoot;
   LetterNode * pletternodeCurrentWithMostTokens = NULL ;
+  WORD wVectorSize = psv.size() ;
   WORD wTokenLength ;
-  WORD wTokenIndex = 0 ;
+  //WORD wTokenIndex = 0 ;
+  WORD wTokenIndex = r_dwTokenIndex ;
   //pchCurrentChar += start ;
   for( //r_dwTokenIndex
-    ; wTokenIndex < psv.size();
+    ; wTokenIndex < //psv.size() ;
+    wVectorSize ;
     ++ wTokenIndex )
   {
     //pchCurrentChar = psv.at(wTokenIndex).m_Str ;
@@ -589,10 +574,13 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
     for(WORD wCurrentTokenCharIndex=0; wCurrentTokenCharIndex< wTokenLength ; 
       ++wCurrentTokenCharIndex)
     {
+      #ifdef _DEBUG
+      byNodePointerArrayIndex = MapInputCharacterToLetterNodePointerArrayIndex(
+          *pchCurrentChar) ;
+      #endif
       if(//If the current letter node has children / pointer is NOT NULL.
         (pletternodeCurrent = pletternodeCurrent->m_arpletternode1LevelLower[
-        MapInputCharacterToLetterNodePointerArrayIndex(
-          *pchCurrentChar) ] )
+        byNodePointerArrayIndex ] )
         )
         //Forward/go to the string's next char.
         pchCurrentChar ++ ;
@@ -621,7 +609,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
     psetpvocabularyandtranslation = pletternodeCurrentWithMostTokens->
       m_psetpvocabularyandtranslation ;
     r_dwTokenIndex = wTokenIndex ;
-  }
+    }
   //return psetvocabularyandtranslation ;
   return pletternodeCurrentWithMostTokens ;
 }
