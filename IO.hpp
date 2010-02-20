@@ -31,31 +31,31 @@ class LetterNode ;
 class OneLinePerWordPair
 {
 private :
-  static VocabularyAndTranslation * s_pvocabularyandtranslation ; //= NULL ;
+//  static VocabularyAndTranslation * s_pvocabularyandtranslation ; //= NULL ;
 public:
   static Word * extract(
     const VTrans::string_type & str
     , BYTE bEnglishWord
     , int & ret
     ) ;
-  static inline void HandleVocabularyAndTranslationPointerInsertion(
-    std::set<LetterNode *> & stdsetpletternodeLastStringChar
-    , LetterNode * pletternodeCurrent
-    //, VocabularyAndTranslation * pvocabularyandtranslation
-    , bool  bInsertNewVocabularyAndTranslation
-    , BYTE byVocabularyType
-    ) ;
-  static //inline
-    void InsertIntoTrieAndHandleVocabularyAndTranslation(
-      std::set<LetterNode *> & stdsetpletternodeLastStringChar
-    //, LetterNode * pletternodeCurrent
-    //, VocabularyAndTranslation * pvocabularyandtranslation
-    , bool & bInsertNewVocabularyAndTranslation
-    , BYTE byVocabularyType
-    , const std::string & str
-    , int nLength
-    , int nIndexOf1stChar
-    ) ;
+//  static inline void HandleVocabularyAndTranslationPointerInsertion(
+//    std::set<LetterNode *> & stdsetpletternodeLastStringChar
+//    , LetterNode * pletternodeCurrent
+//    //, VocabularyAndTranslation * pvocabularyandtranslation
+//    , bool  bInsertNewVocabularyAndTranslation
+//    , BYTE byVocabularyType
+//    ) ;
+//  static //inline
+//    void InsertIntoTrieAndHandleVocabularyAndTranslation(
+//      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+//    //, LetterNode * pletternodeCurrent
+//    //, VocabularyAndTranslation * pvocabularyandtranslation
+//    , bool & bInsertNewVocabularyAndTranslation
+//    , BYTE byVocabularyType
+//    , const std::string & str
+//    , int nLength
+//    , int nIndexOf1stChar
+//    ) ;
   static void LoadWords(//WordNode * wn
     std::string & r_strWordsFilePath );
 } ; //end class

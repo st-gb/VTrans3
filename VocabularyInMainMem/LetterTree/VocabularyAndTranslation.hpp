@@ -19,7 +19,8 @@
   #define NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB 16
 
 class LetterNode ;
-class Word ;
+//class Word ;
+#include <Word.hpp>
 
     static std::string g_ar_stdstrWordClass [] = {
       "noun"

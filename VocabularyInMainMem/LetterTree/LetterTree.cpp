@@ -8,6 +8,10 @@
 #define _DEBUG_FREEING_MEM
 #endif
 
+//Static variables also need to defined. Else g++ error:
+//"undefined reference to `OneLinePerWordPair::s_pvocabularyandtranslation'"
+VocabularyAndTranslation * LetterTree::s_pvocabularyandtranslation ;
+
   //The sense of mapping is to allow the array of the direct child of a
   //node to be have less than 255 elements.
   void LetterTree::createMapping()
@@ -244,6 +248,172 @@ VocabularyAndTranslation * LetterTree::insert(
     //  pletternode ) ;
   }
   return pvocabularyandtranslation ;
+}
+
+  void LetterTree::Insert(std::string stdstr, BYTE byWordClass )
+  {
+    bool bInsertNewVocabularyAndTranslation = true ;
+    LetterNode * pletternode ;
+    std::set<LetterNode *> stdsetpletternodeLastStringChar ;
+//    insert(
+//      stdstr.c_str() //const char * pch,
+//      , 0 ,
+//      stdstr.length() ,
+//      false ,
+//      pletternode,
+//      byWordClass
+//      ) ;
+    InsertIntoTrieAndHandleVocabularyAndTranslation(
+      stdsetpletternodeLastStringChar
+      //, LetterNode * pletternodeCurrent
+      //, VocabularyAndTranslation * pvocabularyandtranslation
+      , bInsertNewVocabularyAndTranslation
+      , byWordClass //BYTE byVocabularyType
+      , stdstr //const std::string & str
+      , stdstr.length() // int nLength
+      , 0 //int nIndexOf1stChar
+      ) ;
+  }
+
+  void LetterTree::Insert(EnglishWord & ew , GermanWord & gw )
+  {
+    bool bInsertNewVocabularyAndTranslation = true ;
+    std::string stdstr ;
+    std::set<LetterNode *> stdsetpletternodeLastStringChar ;
+    ew.InitGetNextString() ;
+    while( ew.GetNextString(stdstr) )
+    {
+      InsertIntoTrieAndHandleVocabularyAndTranslation(
+        stdsetpletternodeLastStringChar
+        //std::set<LetterNode *> & stdsetpletternodeLastStringChar
+        , bInsertNewVocabularyAndTranslation //bool & bInsertNewVocabularyAndTranslation
+        , ew.GetWordClass()
+        , stdstr
+        , stdstr.length()
+        , 0
+        ) ;
+    }
+  }
+
+ inline void LetterTree::HandleVocabularyAndTranslationPointerInsertion(
+  std::set<LetterNode *> & stdsetpletternodeLastStringChar
+  , LetterNode * pletternodeCurrent
+  //, VocabularyAndTranslation * pvocabularyandtranslation
+  , bool  bInsertNewVocabularyAndTranslation
+  , BYTE byVocabularyType
+  )
+{
+  //If a string for the current English-German was inserted before
+  //the pointer to the VocabularyAndTranslation should not be again.
+  if( //pletternode may be NULL if the character was not inside the map that
+    // translates a character to an LetterNode array index.
+    pletternodeCurrent //&&
+    //pvocabularyandtranslation
+    //s_pvocabularyandtranslation
+    )
+  {
+    //If already a word with the same string was inserted into the Trie
+    //(e.g. "to love" before and now the noun "the love")
+    //m_psetpvocabularyandtranslation is not NULL. Else it must be created.
+    if( ! pletternodeCurrent->m_psetpvocabularyandtranslation )
+      //{
+      //pletternodeCurrent->m_psetvocabularyandtranslation = new
+        //std::set<VocabularyAndTranslation>(//0,new Word(),new Word()
+      pletternodeCurrent->m_psetpvocabularyandtranslation = new
+        std::set<VocabularyAndTranslation *>(//0,new Word(),new Word()
+        ) ;
+    //If allocating was successfull / if exits yet.
+    //if( pletternodeCurrent->m_psetvocabularyandtranslation )
+
+    if( pletternodeCurrent->m_psetpvocabularyandtranslation )
+    {
+      if(bInsertNewVocabularyAndTranslation)
+      {
+        //TRACE("LetterTree::insert: inserting into voc. set at \"%x\"\n",
+          //pletternodeCurrent->m_psetpvocabularyandtranslation ) ;
+        //std::pair <std::set<VocabularyAndTranslation>::iterator, bool>
+        std::pair <std::set<VocabularyAndTranslation *>::iterator, bool>
+          pairisetandbool =
+          //pletternodeCurrent->m_psetvocabularyandtranslation->insert(
+          pletternodeCurrent->m_psetpvocabularyandtranslation->insert(
+            //VocabularyAndTranslation(byVocabularyType //+
+            ////bGermanVocabulary * NUMBER_OF_WORD_TYPES
+            //)
+            new VocabularyAndTranslation(byVocabularyType )
+            ) ;
+        s_pvocabularyandtranslation =
+          ////Pointer to VocabularyAndTranslation object/reference.
+          //&
+          //VocabularyAndTranslation object/reference.
+          *(pairisetandbool.first) ;
+        stdsetpletternodeLastStringChar.insert( pletternodeCurrent ) ;
+      }
+    //}
+    else
+      if(
+        //If the LetterNode-pointer does NOT exist in the std::set yet:
+        //If for instance for the verb "love" the simple past "loved" was inserted
+        //then for the past participle "loved" that has the same LetterNode pointer
+        //there should not be inserted a VocabularyAndTranslation pointer again.
+        stdsetpletternodeLastStringChar.find( pletternodeCurrent ) ==
+        stdsetpletternodeLastStringChar.end()
+      )
+      {
+        pletternodeCurrent->insert( //pvocabularyandtranslation
+          s_pvocabularyandtranslation ) ;
+        stdsetpletternodeLastStringChar.insert( pletternodeCurrent ) ;
+      }
+    }
+//    stdsetpletternodeLastStringChar.insert( pletternodeCurrent ) ;
+  }
+//  if( bInsertNewVocabularyAndTranslation )
+//  {
+//    pletternodeCurrent->insert(pvocabularyandtranslation) ;
+//    stdsetpletternodeLastStringChar.insert( pletternodeCurrent ) ;
+//  }
+}
+
+ //Inserting into the Trie and handling the insertion of a pointer to
+//VocabularyAndTranslation often needs to be done in conjunction. So implement
+//this conjunction here.
+void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
+  std::set<LetterNode *> & stdsetpletternodeLastStringChar
+  //, LetterNode * pletternodeCurrent
+  //, VocabularyAndTranslation * pvocabularyandtranslation
+  , bool & bInsertNewVocabularyAndTranslation
+  , BYTE byVocabularyType
+  , const std::string & str
+  , int nLength
+  , int nIndexOf1stChar
+  )
+{
+  LetterNode * p_letternodeLastForInsertedWord ;
+  //If the singular and the plural are identical: add only once to
+  //the "trie" structure/ add only 1 VocabularyAndTranslation to the
+  //last LetterNode.
+  //pvocabularyandtranslationReturn =
+    insert(
+    //std::string(
+    (LPCSTR) str.c_str() //)
+    , nIndexOf1stChar
+    , nLength
+    , bInsertNewVocabularyAndTranslation
+    ////If not assigned yet within THIS function.
+    //! pvocabularyandtranslation
+    , p_letternodeLastForInsertedWord
+    , byVocabularyType
+    ) ;
+  HandleVocabularyAndTranslationPointerInsertion(
+    stdsetpletternodeLastStringChar
+    , p_letternodeLastForInsertedWord
+    //, pvocabularyandtranslation
+    , bInsertNewVocabularyAndTranslation
+    , byVocabularyType
+    ) ;
+  //Insert an allocated VocabularyAndTranslation object only ONCE for a
+  //vocabulary pair.
+  if( bInsertNewVocabularyAndTranslation )
+    bInsertNewVocabularyAndTranslation = false ;
 }
 
   //Called by a GLR (created by bison parser generator; similar to yacc)

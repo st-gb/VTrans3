@@ -40,41 +40,6 @@
                      displayName="Logged_Release"
                      projectFiles="true">
       </logicalFolder>
-      <logicalFolder name="MFC" displayName="MFC" projectFiles="true">
-        <itemPath>../../MFC/ChildFrm.cpp</itemPath>
-        <itemPath>../../MFC/ChildFrm.h</itemPath>
-        <itemPath>../../MFC/EnglishView.cpp</itemPath>
-        <itemPath>../../MFC/EnglishView.h</itemPath>
-        <itemPath>../../MFC/ErrorCodeFromGetLastErrorToString.cpp</itemPath>
-        <itemPath>../../MFC/ErrorCodeFromGetLastErrorToString.h</itemPath>
-        <itemPath>../../MFC/GermanView.cpp</itemPath>
-        <itemPath>../../MFC/GermanView.h</itemPath>
-        <itemPath>../../MFC/LoadStatusDialog.cpp</itemPath>
-        <itemPath>../../MFC/LoadStatusDialog.h</itemPath>
-        <itemPath>../../MFC/MainFrm.cpp</itemPath>
-        <itemPath>../../MFC/MainFrm.h</itemPath>
-        <itemPath>../../MFC/OptionsDialog.cpp</itemPath>
-        <itemPath>../../MFC/OptionsDialog.h</itemPath>
-        <itemPath>../../MFC/SearchFormBar.cpp</itemPath>
-        <itemPath>../../MFC/SearchFormBar.h</itemPath>
-        <itemPath>../../MFC/SplitterFrame.cpp</itemPath>
-        <itemPath>../../MFC/StatusDialog.cpp</itemPath>
-        <itemPath>../../MFC/StatusDialog.h</itemPath>
-        <itemPath>../../MFC/UnknownWordsBar.cpp</itemPath>
-        <itemPath>../../MFC/UnknownWordsBar.h</itemPath>
-        <itemPath>../../MFC/VTrans.cpp</itemPath>
-        <itemPath>../../MFC/VTrans.h</itemPath>
-        <itemPath>../../MFC/VTransDoc.cpp</itemPath>
-        <itemPath>../../MFC/VTransDoc.h</itemPath>
-        <itemPath>../../MFC/VTransView.cpp</itemPath>
-        <itemPath>../../MFC/VTransView.h</itemPath>
-        <itemPath>../../MFC/WordDockingWindow.cpp</itemPath>
-        <itemPath>../../MFC/WordEditorBar.cpp</itemPath>
-        <itemPath>../../MFC/WordEditorBar.h</itemPath>
-        <itemPath>../../MFC/memdc.h</itemPath>
-        <itemPath>../../MFC/sizecbar.cpp</itemPath>
-        <itemPath>../../MFC/sizecbar.h</itemPath>
-      </logicalFolder>
       <logicalFolder name="NetBeans" displayName="NetBeans" projectFiles="true">
         <logicalFolder name="VTrans-2" displayName="VTrans-2" projectFiles="true">
         </logicalFolder>
@@ -82,6 +47,8 @@
       <logicalFolder name="Parse" displayName="Parse" projectFiles="true">
         <itemPath>../../Parse/sequential.cpp</itemPath>
         <itemPath>../../Parse/sequential.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="Qt" displayName="Qt" projectFiles="true">
       </logicalFolder>
       <logicalFolder name="Release" displayName="Release" projectFiles="true">
       </logicalFolder>
@@ -119,12 +86,18 @@
         <itemPath>../../VocabularyInMainMem/I_WordSearch.hpp</itemPath>
         <itemPath>../../VocabularyInMainMem/WordSearch.hpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="wxWidgets" displayName="wxWidgets" projectFiles="true">
+        <itemPath>../../wxWidgets/noname.cpp</itemPath>
+        <itemPath>../../wxWidgets/noname.h</itemPath>
+        <itemPath>../../wxWidgets/wxTextInputDlg.cpp</itemPath>
+        <itemPath>../../wxWidgets/wxTextInputDlg.h</itemPath>
+      </logicalFolder>
       <itemPath>../../1LinePerWordPair.cpp</itemPath>
       <itemPath>../../1LinePerWordPair.h</itemPath>
       <itemPath>../../GetAndTestWord.cpp</itemPath>
       <itemPath>../../GetAndTestWord.h</itemPath>
       <itemPath>../../IO.cpp</itemPath>
-      <itemPath>../../IO.h</itemPath>
+      <itemPath>../../IO.hpp.h</itemPath>
       <itemPath>../../I_UserInterface.hpp</itemPath>
       <itemPath>../../ParseEnglish.cpp</itemPath>
       <itemPath>../../ParseEnglish.h</itemPath>
@@ -167,10 +140,25 @@
         <platform>3</platform>
       </toolsSet>
       <compileType>
+        <cTool>
+          <incDir>
+            <pElem>../../${WXWIDGETS_CYGWIN_PATH}/include</pElem>
+          </incDir>
+        </cTool>
         <ccTool>
           <incDir>
             <pElem>../..</pElem>
+            <pElem>${WXWIDGETS_CYGWIN_PATH}/include</pElem>
+            <pElem>${WX_ANSI_DBG_STATIC_SETUP_H_CYG_PATH}</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>__WXMSW__</Elem>
+            <Elem>NOMINMAX</Elem>
+            <Elem>__cplusplus</Elem>
+            <Elem>_DEBUG</Elem>
+            <Elem>_WINDOWS</Elem>
+            <Elem>__WINDOWS__</Elem>
+          </preprocessorList>
         </ccTool>
         <linkerTool>
           <linkerLibItems>

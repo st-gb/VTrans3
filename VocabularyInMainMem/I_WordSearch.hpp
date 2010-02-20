@@ -9,6 +9,19 @@ class AutomDelWord ;
 //should be retrievable.
 class I_WordSearch
 {
+  enum word_class
+  {
+    noun = 0
+    , main_verb //Vollverb
+    , adjective
+    , adverb
+    , preposition
+    , pronoun
+    , auxiliary_verb
+    , conjunction
+    //, definite_articel
+  } ;
+
   //If e.g. someone searches inside the GUI for words.
   //virtual BYTE GetNextOccurance(const CString & str ) = 0 ;
   virtual //void 
@@ -36,4 +49,5 @@ class I_WordSearch
     , Word ** p_wordEnglish
     , Word ** p_wordGerman
     ) = 0 ;
+//  void InsertFundamentalWords() ;
 };

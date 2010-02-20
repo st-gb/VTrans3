@@ -34,6 +34,9 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
   //  break;
   default:
     m_pword = new Word() ; 
+    m_arstrEnglishWord = NULL ;
+    m_arstrGermanWord = NULL ;
+    m_arbyAttribute = NULL ;
   }
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   m_arpletternodeLastEngChar = new LetterNode * [byArraySizeForEng];

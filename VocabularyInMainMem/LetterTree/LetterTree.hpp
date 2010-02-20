@@ -38,7 +38,7 @@
   #include "../IVocabularyInMainMem.hpp"
   #include "../I_WordSearch.hpp" //LetterTree's base class
 #ifndef _MSC_VER
-  #include <TRACE.h>
+  //#include <TRACE.h>
 #endif
   #include <windef.h> //BYTE etc.
 
@@ -83,6 +83,7 @@
 
   class LetterTree
     : public I_WordSearch
+    , public IVocabularyInMainMem
   {
   private:
     //Needed only for the creation of the char to array index mapping.
@@ -92,6 +93,9 @@
     std::set<VocabularyAndTranslation *>::const_iterator 
       p_stdsetp_vocabularyandtranslation_const_iter ;
   public:
+    //For access to the last inserted VocabularyAndTranslation pointer for
+    //OneLinePerWordPair::extract(...)
+    static VocabularyAndTranslation * s_pvocabularyandtranslation ;
     LetterNode * //pnodeCurrent ; //= m_pletternodeRoot;
       m_pletternodeRoot ;
     BYTE m_pbyMappingTableFromCharacterToLetterNodePointerArrayIndex[
@@ -197,6 +201,9 @@
       LetterNode * & pletternode,
       BYTE byVocabularyType) ;
 
+    void Insert(std::string stdstr, BYTE byWordClass ) ;
+    void Insert(EnglishWord & ew , GermanWord & gw ) ;
+
     //std::set<VocabularyAndTranslation> * search(
     std::set<VocabularyAndTranslation *> * search(
       const char * pchCurrentChar,
@@ -224,6 +231,26 @@
   #endif
       return m_arbyCharValueToArrayIndex[byCharValue] ;
     }
+    
+  //static
+    inline void HandleVocabularyAndTranslationPointerInsertion(
+    std::set<LetterNode *> & stdsetpletternodeLastStringChar
+    , LetterNode * pletternodeCurrent
+    //, VocabularyAndTranslation * pvocabularyandtranslation
+    , bool  bInsertNewVocabularyAndTranslation
+    , BYTE byVocabularyType
+    ) ;
+  //static //inline
+    void InsertIntoTrieAndHandleVocabularyAndTranslation(
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+    //, LetterNode * pletternodeCurrent
+    //, VocabularyAndTranslation * pvocabularyandtranslation
+    , bool & bInsertNewVocabularyAndTranslation
+    , BYTE byVocabularyType
+    , const std::string & str
+    , int nLength
+    , int nIndexOf1stChar
+    ) ;
 
     #define _DEBUG_DETLEVEL_STEFAN
 

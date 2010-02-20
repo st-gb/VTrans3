@@ -165,6 +165,27 @@ EnglishAuxiliaryVerb::EnglishAuxiliaryVerb(
 	m_bIntegral = ! bModalAuxiliary ;
 }
 
+//void EnglishAuxiliaryVerb::InitGetNextString( )
+//{
+//  m_byIndex = 0 ;
+//}
+
+bool EnglishAuxiliaryVerb::GetNextString( std::string & r_stdstr )
+{
+  bool bSucc = false ;
+  if( m_byIndex < NUMBER_OF_ENGLISH_AUX_STRINGS )
+  {
+    m_strWords [ m_byIndex ++ ] ;
+    bSucc = true ;
+  }
+  return bSucc ;
+}
+
+BYTE EnglishAuxiliaryVerb::GetWordClass()
+{
+  return auxiliary_verb ;
+}
+
 GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 {
 	int i=0;
@@ -183,7 +204,7 @@ GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 	}
 }
 
-GermanVerb::GermanVerb(const VTrans::string_type & str)
+void GermanVerb::CreateFromString(const VTrans::string_type & str)
 {
 	int i=0;
 	int start=0;
@@ -192,7 +213,7 @@ GermanVerb::GermanVerb(const VTrans::string_type & str)
 	while( i < str.length() )
 	{
 		if( wIndex == 14 )
-			m_bCase=str[i]-50;
+			m_bCase = str[i] - 50 ;
 		if( str[i] == '\n' )
 		{
 			m_strWords[wIndex++] = //str.Mid(start,i-start);
@@ -203,6 +224,17 @@ GermanVerb::GermanVerb(const VTrans::string_type & str)
 	}
 	m_bAuxiliaryVerb=TRUE;
 	m_bReflexive=FALSE;
+}
+
+GermanVerb::GermanVerb(const VTrans::string_type & str)
+{
+  CreateFromString(str) ;
+}
+
+GermanVerb::GermanVerb(const VTrans::string_type & str , e_case cas)
+{
+  CreateFromString(str) ;
+  m_bCase = cas ;
 }
 
 void InitDictionary()

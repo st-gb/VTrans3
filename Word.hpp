@@ -13,7 +13,9 @@
   //using namespace MFC_Compatibility ; //for class CString in MFC_Compatibility
 #endif
 
-#include <windef.h> //for BYTE
+#include <windef.h>
+
+//#include "VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp" //for BYTE
 
 //extern VocNode * m_first;
 //Makro definieren mit Wert, der der ASCII-Code f�r "1" ist (damit man die 
@@ -33,9 +35,48 @@ public:
 	//"vocs.txt") gespeichert werden, denn sonst nehmen sie den doppelten 
 	//Speicherplatz im Hauptspeicher ein
 	BYTE m_bIntegral;
-	//wird - so glaube ich - f�r Run Time Type Information ben�tigt
+	//wird - so glaube ich - fuer Run Time Type Information benoetigt
 	virtual void virtfunc(){};
 	BOOL operator==(Word * pWordFirst);
+};
+
+class EnglishWord
+{
+public:
+    //Because this is a translation for English->German the dictionary resp.
+  //the order of the words is primarily important for English words / word
+  //attributes.
+  //For the
+  enum English_word_class
+  {
+    noun = //0
+      //ENGLISH_NOUN
+      49
+    , main_verb //Vollverb
+    , adjective
+    , adverb
+    , preposition
+    , pronoun
+    , auxiliary_verb
+    , conjunction
+    , English_definite_article
+    , English_indefinite_article
+  } ;
+  BYTE m_byIndex ;
+  //For ability to iterate over all of the word's strings.
+  virtual bool GetNextString( std::string & r_stdstr ) = 0 ;
+  //Needed for English words to determine the word class resp. for
+  //Insertion into trie from a derived class of this class.
+  virtual BYTE GetWordClass() = 0 ;
+  void InitGetNextString()
+  {
+    m_byIndex = 0 ;
+  }
+};
+
+class GermanWord
+{
+  
 };
 
 class EnglishAdjective
@@ -74,7 +115,8 @@ public:
 #define QUESTION_WORD 4
 #define ADVERB_OF_TIME 5
 #define ASK_FOR_SUBJECT 6
-class EnglishAdverb:public Word
+class EnglishAdverb
+  : public Word
 {
 public:
 	VTrans::string_type m_strWord;
@@ -89,10 +131,20 @@ public:
 	EnglishAdverb(){m_bIntegral=FALSE;}
 };
 
-class EnglishAuxiliaryVerb:public Word // englisches Hilfsverb
+#define NUMBER_OF_ENGLISH_AUX_STRINGS 15
+
+class EnglishAuxiliaryVerb
+  : public Word // englisches Hilfsverb
+  //For ability to iterate over all of the word's strings.
+  , public EnglishWord
 {
 public:
-	VTrans::string_type m_strWords[15]; // Bsp.: I am, you are, he is; I was, you were; been
+  bool GetNextString( std::string & r_stdstr ) ;
+  inline BYTE GetWordClass() ;
+  // Bsp.: I am, you are, he is; I was, you were; been
+  //15 strings: 6 person indexes * 2 tenses (present, past) + past participle
+  // + 2 * imperative = 12 + 1 + 2
+	VTrans::string_type m_strWords[NUMBER_OF_ENGLISH_AUX_STRINGS];
 	EnglishAuxiliaryVerb(const VTrans::string_type &,bool bAuxiliaryVerb);
 	EnglishAuxiliaryVerb(){m_bIntegral=FALSE;}//EnglishAuxiliaryVerb); // Kopierkonstruktor
 };
@@ -110,7 +162,8 @@ public:
   #define SAME_GRAMMATICAL_NUMBER_BETWEEN_ENGLISH_AND_GERMAN 0
   #define SINGULAR_IN_ENGLISH_PLURAL_IN_GERMAN 1
   #define PLURAL_IN_ENGLISH_SINGULAR_IN_GERMAN 2
-class EnglishNoun:public Word
+class EnglishNoun
+  : public Word
 {
 public:
 	VTrans::string_type m_strSingular;
@@ -146,9 +199,16 @@ public:
 	EnglishPronoun(){m_bIntegral=FALSE;}
 };
 
-class EnglishVerb:public Word
+class EnglishVerb
+  : public Word
+  , public EnglishWord
 {
 public:
+  enum object_type {
+    no_object
+    , _1_object
+    , _2_objects //e.g.: "to give somebody something"
+    };
 	VTrans::string_type m_strInfinitive;
 	VTrans::string_type m_strPastTense;
 	VTrans::string_type m_strPastParticiple; //Partizip Perfekt
@@ -158,10 +218,17 @@ public:
 	BYTE m_byDynamic;
 	BYTE m_bAllowsToPlusInfinitive;
 	BYTE m_bAuxiliaryType;
+  BYTE m_byObjectType ;
 	//m_bDescriptionType gibt an, ob ein Wort, das dieses Verb beschreibt,
 	//ein Adjektiv oder ein Adverb ist
 	BYTE m_bDescriptionType;
 	EnglishVerb(){m_bIntegral=FALSE;}
+  EnglishVerb( BYTE byObjectType ) { m_byObjectType = byObjectType ; }
+  //For ability to iterate over all of the word's strings.
+  bool GetNextString( std::string & r_stdstr ) { return false ; } ;
+  //Needed for English words to determine the word class resp. for
+  //Insertion into trie from a derived class of this class.
+  BYTE GetWordClass() { return main_verb ; } ;
 };
 
 class GermanAdjective:public Word
@@ -245,21 +312,46 @@ public:
 #define NOMINATIVE 0
 #define GENITIVE 2
 #define FIRST_PERSON_SINGULAR 1
-class GermanVerb:public Word //deutsches Vollverb (engl.>verb< hei�t Vollverb)
+
+//Class for both Auxiliary and main verb because they both have the same
+//attributes.
+class GermanVerb
+  : public Word //deutsches Vollverb (engl.>verb< heisst Vollverb)
+  , public GermanWord
 {
 public:
+  enum e_case {
+    nominative = 1
+    , genitive
+    , dativ
+    , accusativ
+    //"Ich gab ihm ein Buch."
+    //          \/   \    /
+    //       dative accusative
+    , dativ_and_accusativ
+    } ;
 	VTrans::string_type m_strWords[16];
-	BOOL m_bMove; // Verb der Bewegung
-	BOOL m_bBe; // Hilfsverb: sein
-	BOOL m_bAuxiliaryVerb;
+  //Für Uebersetzung: ob "wo" oder "wohin":
+  //"true": Verb der Bewegung (für die Uebersetzung: "Wohin ging er?")
+  //"false": kein Verb der Bewegung ("Wo stand er?")
+	bool m_bMove;
+	bool m_bBe; // "true": Hilfsverb ist "sein"
+	bool m_bAuxiliaryVerb;
 	//Der Fall: 0=kein,1=jemandeM (3. Fall),2=jemandeN (4.Fall),3=3. und 4. Fall
   //4=Genitiv
 	BYTE m_bCase;
-	BOOL m_bReflexive;
+	bool m_bReflexive; //reflexives Verb.
 	VTrans::string_type m_strPreposition;
-	GermanVerb(const VTrans::string_type &);
-	GermanVerb(){m_bAuxiliaryVerb=FALSE;m_bReflexive=FALSE;
-		m_bIntegral=FALSE;};
+
+  void CreateFromString(const VTrans::string_type & str) ;
+	GermanVerb(const VTrans::string_type & );
+	GermanVerb(const VTrans::string_type & , e_case );
+	GermanVerb()
+  {
+    m_bAuxiliaryVerb = FALSE;
+    m_bReflexive = FALSE;
+		m_bIntegral = FALSE;
+  }
 };
 
 //extern WordNode * m_pWordFirst;
