@@ -153,7 +153,8 @@
       BYTE chFrom, //CHAR
       BYTE chTo )
     {
-      for(CHAR chIndex = chFrom ; chIndex <= chTo ; ++ chIndex )
+      for(//CHAR
+        BYTE chIndex = chFrom ; chIndex <= chTo ; ++ chIndex )
         //m_vecch.push_back(ch);
         //Sanity check.
         if(chIndex < 255 )

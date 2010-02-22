@@ -13,6 +13,7 @@
 #include "ParseByRise.hpp"
 #include <VocabularyInMainMem/LetterTree/LetterNode.hpp>
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp>
+#include <Token.h> //for PositionstdstringVector
 
 extern LetterTree g_lettertree ;
 
@@ -27,6 +28,119 @@ ParseByRise::ParseByRise(const ParseByRise& orig) {
 }
 
 ParseByRise::~ParseByRise() {
+}
+
+void BuildTokenVector(
+  const std::string & stdstrText
+  , PositionstdstringVector & psv )
+{
+  bool bDoLoop = true ;
+  const char * pch ;
+  //stdstrText.find()
+  pch = stdstrText.c_str() ;
+  std::string stdstrToken ;
+  WORD wEndOfTokenIndex = MAXWORD ;
+  WORD wBeginOfTokenIndex = //MAXWORD ;
+    0 ;
+  WORD wCharIndex = 0 ;
+//  //while not "\0"
+//  while( *pch )
+  do
+  {
+    switch( *pch )
+    {
+      case '\t':
+      case ' ':
+      case '\0':
+        //If unset.
+        if( wEndOfTokenIndex == MAXWORD )
+        {
+          wEndOfTokenIndex = wCharIndex ;
+          stdstrToken = stdstrText.substr(
+              wBeginOfTokenIndex,wEndOfTokenIndex-wBeginOfTokenIndex) ;
+          psv.push_back(
+            Positionstdstring( stdstrToken ,
+              wBeginOfTokenIndex,wBeginOfTokenIndex)
+            ) ;
+          //std::cout << ""
+        }
+        if( *pch == '\0' )
+           bDoLoop = false ;
+        //Always setting the value is ~ as fast to first compare
+        //( if( "wBeginOfTokenIndex == MAXWORD" ) )
+        wBeginOfTokenIndex = MAXWORD ;
+        break;
+      default:
+//        if( bBeginOfNewToken )
+//          bBeginOfNewToken = false
+//        else
+//          bBeginOfNewToken = true ;
+        //If unset.
+        if( wBeginOfTokenIndex == MAXWORD )
+          wBeginOfTokenIndex = wCharIndex ;
+        //Always setting the value is ~ as fast to first compare
+        //( if( "wEndOfTokenIndex == MAXWORD" ) )
+        wEndOfTokenIndex = MAXWORD ;
+    }
+    //if( bBeginOfNewToken )
+    ++ pch ;
+    ++ wCharIndex ;
+  }
+  while( bDoLoop ) ;
+}
+
+void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
+{
+  PositionstdstringVector psv ;
+//  std::map<DWORD, GrammarPart> stdmapwLeftmostIndex2grammarpart ;
+//  std::map<DWORD, GrammarPart> stdmapwRightmostIndex2grammarpart ;
+
+  BuildTokenVector(stdstrText,psv) ;
+  PositionstdstringVector::const_iterator iter = psv.begin() ;
+  #ifdef _DEBUG
+  std::cout << "tokens:\n" ;
+  #endif
+  DWORD wTokenIndex = 0 ;
+  ParseByRise parsebyrise ;
+  while( iter != psv.end() )
+  {
+    #ifdef _DEBUG
+    std::cout << "\"" << (*iter).m_Str << "\"\n" ;
+    #endif
+    //std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
+
+//   if( g_lettertree.IsSingular(
+//     //searchIncludingInflections(
+//     psv
+//     , wTokenIndex ,
+//     setpvocabularyandtranslation
+//     ) )
+//   {
+//     outputGermanTranslation(setpvocabularyandtranslation) ;
+//   }
+    //outputWordTypeAndGermanTranslation(psv,wTokenIndex) ;
+    parsebyrise.StoreWordTypeAndGermanTranslation(
+      psv //PositionstdstringVector & psv
+      , wTokenIndex //DWORD dwTokenIndex
+    //  , std::map <WORD, std::set<VocabularyAndTranslation *> *> &
+    //    stdmap_wIndex2p_set_p_vocabularyandtranslation
+    //  , std::vector<GrammarPart> & stdvector_grammarpart ;
+
+      //Maintaining 2 maps with both leftnost and rightmost indexes should be faster
+      //when searching for neighboured grammar parts:
+      //  0    1       2      3      <-index
+      //"the vacuum cleaner sucks."
+      // +----------------+
+      //   e.g. current grammar part: rightmost index: 2: find neighbour with
+      //     leftmost index "3".
+//      , stdmapwLeftmostIndex2grammarpart
+//      , stdmapwRightmostIndex2grammarpart
+//      , stdmultimap_wLeftmostIndex2grammarpart
+//      , stdmultimap_wRightmostIndex2grammarpart
+      ) ;
+    ++ iter ;
+    ++ wTokenIndex ;
+  }
 }
 
 void ParseByRise::InitGrammar()
@@ -527,4 +641,131 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
       }
     }
   }
+}
+
+void ParseByRise::ResolveGrammarRulesForAllParseLevels()
+{
+  //Use a multimap because at an index x more than 1 grammar part may exist.
+  //E.g. for "I love you.": love" can be grammar part "noun" or grammar part
+  //"verb".
+  std::multimap<DWORD, GrammarPart> stdmultimap_dwLeftmostIndex2grammarpart ;
+  std::multimap<DWORD, GrammarPart> stdmultimap_dwRightmostIndex2grammarpart ;
+  WORD wstdmultimap_wLeftmostIndex2grammarpartSize ;
+  std::multimap<DWORD, GrammarPart> *
+    p_stdmultimap_dwLeftmostIndex2grammarpart =
+    & //parsebyrise.
+    m_stdmultimap_dwLeftmostIndex2grammarpart ;
+  std::multimap<DWORD, GrammarPart> *
+    p_stdmultimap_dwRightmostIndex2grammarpart =
+    & //parsebyrise.
+    m_stdmultimap_dwRightmostIndex2grammarpart ;
+
+  std::multimap<DWORD, GrammarPart> *
+    p_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate ;
+  std::multimap<DWORD, GrammarPart> *
+    p_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
+  std::multimap<DWORD, GrammarPart>
+    stdmultimap_dwLeftmostIndex2grammarpartSuperordinate ;
+  std::multimap<DWORD, GrammarPart>
+    stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
+
+  std::multimap<DWORD, GrammarPart>
+    stdmultimap_dwRightmostIndex2grammarpartEmpty ;
+
+  std::map< DWORD, std::multimap<DWORD, GrammarPart> >
+    map_stdmultimap_dwLeftmostIndex2grammarpart ;
+  std::map< DWORD, std::multimap<DWORD, GrammarPart> >
+    map_stdmultimap_dwRightmostIndex2grammarpart ;
+  DWORD dwSize ;
+  do
+  {
+    stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.clear() ;
+    stdmultimap_dwRightmostIndex2grammarpartSuperordinate.clear() ;
+    wstdmultimap_wLeftmostIndex2grammarpartSize =
+      stdmultimap_dwLeftmostIndex2grammarpart.size() ;
+//    p_stdmultimap_dwRightmostIndex2grammarpartSuperordinate =
+//      & (
+//        map_stdmultimap_dwLeftmostIndex2grammarpart.insert(
+//          std::pair< DWORD, std::multimap<DWORD, GrammarPart> >
+//          ( (DWORD) parsebyrise.m_dwMapIndex
+//            , stdmultimap_dwRightmostIndex2grammarpartEmpty
+//          )
+//        )
+//      .first->second
+//      ) ;
+//    p_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate =
+//      & (map_stdmultimap_dwRightmostIndex2grammarpart.insert(
+//      std::pair< DWORD, std::multimap<DWORD, GrammarPart> >
+//        ( (DWORD) parsebyrise.m_dwMapIndex
+//          , stdmultimap_dwRightmostIndex2grammarpartEmpty
+//        )
+//      ).first->second
+//      ) ;
+    ++ //parsebyrise.
+      m_dwMapIndex ;
+    //parsebyrise.ResolveGrammarRules(
+    ResolveGrammarRules(
+    //  std::map <WORD, std::set<VocabularyAndTranslation *> *> &
+    //    stdmap_wIndex2p_set_p_vocabularyandtranslation
+    //  std::vector <GrammarRule>, std::set<VocabularyAndTranslation *> *> &
+    //    stdmap_wIndex2p_set_p_vocabularyandtranslation
+
+      //Maintaining 2 maps with both leftnost and rightmost indexes should be faster
+      //when searching for neighboured grammar parts:
+      //  0    1       2      3      <-index
+      //"the vacuum cleaner sucks."
+      // +----------------+
+      //   e.g. current grammar part: rightmost index: 2: find neighbour with
+      //     leftmost index "3".
+    //  std::map<DWORD, GrammarPart> & r_stdmapwLeftmostIndex2grammarpart
+    //  , std::map<DWORD, GrammarPart> & r_stdmapwRightmostIndex2grammarpart
+
+//      //Use a multimap because at an index x more than 1 grammar part may exist.
+//      //E.g. for "I love you.": love" can be grammar part "noun" or grammar part
+//      //"verb".
+//      stdmultimap_wLeftmostIndex2grammarpart
+      * p_stdmultimap_dwLeftmostIndex2grammarpart
+      , * p_stdmultimap_dwRightmostIndex2grammarpart
+//      , stdmultimap_wRightmostIndex2grammarpart
+      //, GrammarRule & grammarrule
+      //, std::multimap<WORD, GrammarRule > & r_stdmultimap_wGrammarPartID2grammarrule
+      //, * p_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate
+      , stdmultimap_dwLeftmostIndex2grammarpartSuperordinate
+      //, * p_stdmultimap_dwRightmostIndex2grammarpartSuperordinate
+      , stdmultimap_dwRightmostIndex2grammarpartSuperordinate
+      ) ;
+//    p_stdmultimap_dwLeftmostIndex2grammarpart =
+//      p_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
+//    p_stdmultimap_dwRightmostIndex2grammarpart =
+//      p_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
+
+    #ifdef _DEBUG
+      dwSize = //parsebyrise.
+        m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
+      dwSize = //parsebyrise.
+        m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
+      dwSize = stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.size() ;
+      dwSize = stdmultimap_dwRightmostIndex2grammarpartSuperordinate.size() ;
+    #endif
+    //Join the grammar parts and the superordinate grammar parts, i.e.
+    //for "the vacuum cleaner sucks" join the superordinate grammar part
+    // "noun_construct" "the vacuum cleaner"
+    // and "sucks" so that the next time the rule "subject + verb = clause"
+    // can be applied.
+    //parsebyrise.
+      m_stdmultimap_dwRightmostIndex2grammarpart.insert(
+      stdmultimap_dwRightmostIndex2grammarpartSuperordinate.begin( ),
+      stdmultimap_dwRightmostIndex2grammarpartSuperordinate.end( )
+      );
+    //parsebyrise.
+      m_stdmultimap_dwLeftmostIndex2grammarpart.insert(
+      stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.begin( ),
+      stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.end( )
+      );
+  }
+  while( //parsebyrise.m_stdmultimap_dwLeftmostIndex2grammarpart.size() >
+      //wstdmultimap_wLeftmostIndex2grammarpartSize
+    //! p_stdmultimap_dwRightmostIndex2grammarpartSuperordinate->empty()
+    ! stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.empty()
+    ) ;
 }

@@ -53,6 +53,10 @@ public:
     mp_grammarpartRightChild = & r_grammarpart ;
   }
 
+  void BuildTokenVector(
+    const std::string & stdstrText
+    , PositionstdstringVector & psv ) ;
+
   GrammarPart(DWORD dwTokenIndexLeftMost, DWORD dwTokenIndexRightMost )
   {
     Init() ;
@@ -128,6 +132,7 @@ public:
   //    = the_comperative
   std::set<GrammarPart * > m_stdset_grammarpartAllSuperordinate ;
 public:
+  void CreateInitialGrammarParts (std::string & stdstrText ) ;
   void InitGrammar() ;
 
   void InsertFundamentalRuleIDs() ;
@@ -202,6 +207,9 @@ public:
     , std::multimap<DWORD, GrammarPart> &
       r_stdmultimap_dwRightmostIndex2grammarpartSuperordinate
     ) ;
+
+  void ResolveGrammarRulesForAllParseLevels() ;
+
   void StoreWordTypeAndGermanTranslation(
     PositionstdstringVector & psv
     , DWORD wTokenIndex

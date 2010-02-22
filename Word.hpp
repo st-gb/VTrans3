@@ -5,7 +5,7 @@
 
 //#ifdef _WINDOWS
 #ifdef _MSC_VER //MS Compiler (internal MSVC preprocessor macro)
-	#include <atlstr.h>//This include is needed for "CString" when compiling as DLL.
+	//#include <atlstr.h>//This include is needed for "CString" when compiling as DLL.
 #else //#ifdef _MSC_VER
 	//#include <typedefs.h>
 	//#include <StdString.h>

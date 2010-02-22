@@ -14,8 +14,12 @@
 #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp" //for "class WordNode" etc.
 
 #include <sstream> //for ostringstream
+#ifdef __CYGWIN__
 //cygwin: from dir "cygwin/usr/include/mingw"
 #include <mingw/tchar.h> //for _T()
+#else //MinGW, MS VC++
+#include <tchar.h> //for _T()
+#endif
 
 //class WordList ;
 
@@ -1196,6 +1200,7 @@ LPCSTR UTF8toASCII(const char * str)
 //{
 //}
 
+#ifndef __MINGW32__ //MinGW has no iconv
 void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
   //std::vector<Range> & vecRange,std::vector<CStringVector> & vecstrvec
   std::vector<SentenceAndValidityAndProperName> & vecsentenceandvalidityandpropername,
@@ -1409,6 +1414,7 @@ void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
     //rofstreamTranslToGerman.close();
   }//if(rofstreamTranslToGerman)
 }
+#endif //#ifndef __MINGW32__ //MinGW has no iconv
 
 //const char * 
 BYTE readInputText(const std::string & strFilePath, std::string & str)
