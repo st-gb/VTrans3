@@ -18,9 +18,12 @@
 extern LetterTree g_lettertree ;
 
 ParseByRise::ParseByRise()
-  : m_wNumberOfSuperordinateRules( 0 )
-  , m_dwMapIndex(0)
+  :
+   //m_wNumberOfSuperordinateRules( 0 )
+  //,
+  m_dwMapIndex(0)
 {
+  m_wNumberOfSuperordinateRules = EnglishWord::beyond_last_entry ;
   InsertFundamentalRuleIDs() ;
 }
 
@@ -89,6 +92,14 @@ void BuildTokenVector(
   while( bDoLoop ) ;
 }
 
+//Clears (empties) the previously generated parse tree.
+//This should be done for a next parse tree generation .
+void ParseByRise::ClearParseTree()
+ {
+   m_stdmultimap_dwRightmostIndex2grammarpart.clear() ;
+   m_stdmultimap_dwLeftmostIndex2grammarpart.clear() ;
+ }
+
 void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
 {
   PositionstdstringVector psv ;
@@ -96,12 +107,13 @@ void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
 //  std::map<DWORD, GrammarPart> stdmapwRightmostIndex2grammarpart ;
 
   BuildTokenVector(stdstrText,psv) ;
+  DWORD dwSize ;
   PositionstdstringVector::const_iterator iter = psv.begin() ;
   #ifdef _DEBUG
   std::cout << "tokens:\n" ;
   #endif
   DWORD wTokenIndex = 0 ;
-  ParseByRise parsebyrise ;
+  //ParseByRise parsebyrise ;
   while( iter != psv.end() )
   {
     #ifdef _DEBUG
@@ -119,7 +131,8 @@ void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
 //     outputGermanTranslation(setpvocabularyandtranslation) ;
 //   }
     //outputWordTypeAndGermanTranslation(psv,wTokenIndex) ;
-    parsebyrise.StoreWordTypeAndGermanTranslation(
+    //parsebyrise.StoreWordTypeAndGermanTranslation(
+    StoreWordTypeAndGermanTranslation(
       psv //PositionstdstringVector & psv
       , wTokenIndex //DWORD dwTokenIndex
     //  , std::map <WORD, std::set<VocabularyAndTranslation *> *> &
@@ -138,9 +151,38 @@ void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
 //      , stdmultimap_wLeftmostIndex2grammarpart
 //      , stdmultimap_wRightmostIndex2grammarpart
       ) ;
+    dwSize = //parsebyrise.
+      m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
+    dwSize = //parsebyrise.
+      m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
     ++ iter ;
     ++ wTokenIndex ;
   }
+}
+
+GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
+  DWORD dwLeftMostTokenIndex )
+{
+  DWORD dwNumberOfTokensCoveredMax = 0 ;
+  DWORD dwNumberOfTokensCoveredCurrent ;
+  GrammarPart * p_gp = NULL ;
+  //std::multimap<DWORD, GrammarPart>::const_iterator iter ;
+  std::pair<c_iter_mmap_dw2grammarpart,c_iter_mmap_dw2grammarpart>
+    stdpair_iter =
+    m_stdmultimap_dwLeftmostIndex2grammarpart.equal_range(
+    dwLeftMostTokenIndex) ;
+  for( c_iter_mmap_dw2grammarpart iterCurrent = stdpair_iter.first ;
+      iterCurrent != stdpair_iter.second ; ++ iterCurrent )
+  {
+    dwNumberOfTokensCoveredCurrent = iterCurrent->second.m_dwRightmostIndex -
+      dwLeftMostTokenIndex ;
+    if( dwNumberOfTokensCoveredCurrent > dwNumberOfTokensCoveredMax )
+    {
+      p_gp = (GrammarPart *) & iterCurrent->second ;
+      dwNumberOfTokensCoveredMax = dwNumberOfTokensCoveredCurrent ;
+    }
+  }
+  return p_gp ;
 }
 
 void ParseByRise::InitGrammar()
@@ -154,6 +196,13 @@ void ParseByRise::InitGrammar()
 
 }
 
+void ParseByRise::InsertRuleIDsForWordClasses()
+{
+  InsertGrammarRule( EnglishWord::noun, "noun" ) ;
+  InsertGrammarRule( EnglishWord::main_verb, "main_verb" ) ;
+  InsertGrammarRule( EnglishWord::English_definite_article, "definite_article" ) ;
+}
+
 void ParseByRise::InsertFundamentalRuleIDs()
 {
 //  for( BYTE by = 0 ; by < NUMBER_OF_ENGLISH_WORD_CLASSES ; ++ by )
@@ -161,6 +210,7 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //
 //  }
   //InsertGrammarRule( EnglishWord::noun, "noun" ) ;
+  InsertRuleIDsForWordClasses() ;
   InsertGrammarRule( EnglishWord::English_definite_article, EnglishWord::noun,
     "noun_construct") ;
   InsertGrammarRule(
@@ -194,6 +244,8 @@ void ParseByRise::InsertGrammarRule(
   WORD wGrammarRuleIDLeft
   , WORD wGrammarRuleIDRight
   , //std::string
+  //Name of the new rule to insert that consists of left and right existing
+  //rules.
   const char * cp_ch
   )
 {
@@ -212,12 +264,13 @@ void ParseByRise::InsertGrammarRule(
     std::pair<WORD,WORD> (wGrammarRuleIDLeft, wGrammarRuleIDRight)
     ) ;
 
-  m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
-    ( m_wNumberOfSuperordinateRules, std::string( cp_ch) )
-    ) ;
-  m_stdmap_RuleName2RuleID.insert( std::pair<std::string,WORD>
-    ( std::string( cp_ch) , m_wNumberOfSuperordinateRules )
-    ) ;
+//  m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
+//    ( m_wNumberOfSuperordinateRules, std::string( cp_ch) )
+//    ) ;
+//  m_stdmap_RuleName2RuleID.insert( std::pair<std::string,WORD>
+//    ( std::string( cp_ch) , m_wNumberOfSuperordinateRules )
+//    ) ;
+  InsertRuleID2NameMapping( m_wNumberOfSuperordinateRules , cp_ch ) ;
   ++ m_wNumberOfSuperordinateRules ;
 }
 
@@ -225,8 +278,20 @@ void ParseByRise::InsertGrammarRule(WORD wGrammarRuleID
   , const char * cp_ch )
 {
   //GrammarRule()
+//  m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
+//    ( wGrammarRuleID, std::string( cp_ch) )
+//    ) ;
+  InsertRuleID2NameMapping( wGrammarRuleID , cp_ch ) ;
+}
+
+void ParseByRise::InsertRuleID2NameMapping( WORD wGrammarRuleID
+    , const char * cp_ch )
+{
   m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
     ( wGrammarRuleID, std::string( cp_ch) )
+    ) ;
+  m_stdmap_RuleName2RuleID.insert( std::pair<std::string,WORD>
+    ( std::string( cp_ch) , wGrammarRuleID )
     ) ;
 }
 
@@ -337,10 +402,10 @@ bool ParseByRise:://GrammarRuleAppliesTo(
       //The map with the leftmost indexes can be used for tranlation:
       //  1. iterate over all GrammarPart beginning at index i
       //  2. use the GrammarPart that starts at index i and covers the most tokens,
-      //    i.e. has the righmost token index of all GrammarPart elements
+      //    i.e. has the rightmost token index of all GrammarPart elements
       //    starting at index i
       //m_stdmultimap_dwLeftmostIndex2grammarpart.insert(
-      //m_iter_mapindex2stdmap_stdmultimap_dwLeftmostIndex2grammarpart->second.
+      //m_iter_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart->second.
       mp_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate->
         insert(
         std::pair<DWORD, GrammarPart> (
@@ -350,7 +415,7 @@ bool ParseByRise:://GrammarRuleAppliesTo(
         , grammarpart )
       ) ;
       //m_stdmultimap_dwRightmostIndex2grammarpart.insert(
-      //m_iter_mapindex2stdmap_stdmultimap_dwLeftmostIndex2grammarpart->second.
+      //m_iter_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart->second.
       mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate->
         insert(
         std::pair<DWORD, GrammarPart> (
@@ -469,8 +534,8 @@ void ParseByRise::ResolveGrammarRules(
   )
 {
 //  WORD wGrammarIDOfRule ;
-//  m_iter_mapindex2stdmap_stdmultimap_dwLeftmostIndex2grammarpart =
-//    m_mapindex2stdmap_stdmultimap_dwLeftmostIndex2grammarpart.insert(
+//  m_iter_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart =
+//    m_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart.insert(
 //    m_dwMapIndex
 //    ,
 //    )
@@ -585,10 +650,15 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
 //  , std::multimap<DWORD, GrammarPart> & r_stdmultimap_wRightmostIndex2grammarpart
   )
 {
-  std::multimap<DWORD, GrammarPart> & r_stdmultimap_wLeftmostIndex2grammarpart
-    = m_stdmultimap_dwLeftmostIndex2grammarpart ;
-  std::multimap<DWORD, GrammarPart> & r_stdmultimap_wRightmostIndex2grammarpart
-    = m_stdmultimap_dwRightmostIndex2grammarpart ;
+  //When using references the container was empty after leaving this function.
+//  std::multimap<DWORD, GrammarPart> & r_stdmultimap_wLeftmostIndex2grammarpart
+//    = m_stdmultimap_dwLeftmostIndex2grammarpart ;
+//  std::multimap<DWORD, GrammarPart> & r_stdmultimap_wRightmostIndex2grammarpart
+//    = m_stdmultimap_dwRightmostIndex2grammarpart ;
+  std::multimap<DWORD, GrammarPart> * p_stdmultimap_wLeftmostIndex2grammarpart
+    = & m_stdmultimap_dwLeftmostIndex2grammarpart ;
+  std::multimap<DWORD, GrammarPart> * p_stdmultimap_wRightmostIndex2grammarpart
+    = & m_stdmultimap_dwRightmostIndex2grammarpart ;
   std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
   DWORD dwTokenIndexRightMost = dwTokenIndex ;
   LetterNode * p_letternode = g_lettertree.searchAndReturnLetterNode( psv,
@@ -629,18 +699,24 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
         //grammarPart.setRuleID( (*iter)->m_byType ) ;
         grammarPart.m_wGrammarPartID = (*iter)->m_byType ;
         //r_stdmapwLeftmostIndex2grammarpart.insert(
-        r_stdmultimap_wLeftmostIndex2grammarpart.insert(
+        //r_stdmultimap_wLeftmostIndex2grammarpart.insert(
+        p_stdmultimap_wLeftmostIndex2grammarpart->insert(
           std::pair<WORD, GrammarPart>
             ( dwTokenIndex, grammarPart )
           ) ;
         //r_stdmapwRightmostIndex2grammarpart.insert(
-        r_stdmultimap_wRightmostIndex2grammarpart.insert(
+        //r_stdmultimap_wRightmostIndex2grammarpart.insert(
+        p_stdmultimap_wRightmostIndex2grammarpart->insert(
           std::pair<WORD, GrammarPart>
             ( dwTokenIndexRightMost , grammarPart )
           ) ;
       }
     }
   }
+  DWORD dwSize = //parsebyrise.
+    m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
+  dwSize = //parsebyrise.
+    m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
 }
 
 void ParseByRise::ResolveGrammarRulesForAllParseLevels()
@@ -768,4 +844,12 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
     //! p_stdmultimap_dwRightmostIndex2grammarpartSuperordinate->empty()
     ! stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.empty()
     ) ;
+#ifdef _DEBUG
+  dwSize = //parsebyrise.
+    m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
+  dwSize = //parsebyrise.
+    m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
+  dwSize = stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.size() ;
+  dwSize = stdmultimap_dwRightmostIndex2grammarpartSuperordinate.size() ;
+#endif
 }

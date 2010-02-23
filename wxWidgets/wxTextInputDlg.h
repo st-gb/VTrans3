@@ -21,6 +21,8 @@
 #include <wx/dialog.h>
 
 #include <Parse/ParseByRise.hpp>
+#include <wxWidgets/wxParseTreePanel.h>
+
 ///////////////////////////////////////////////////////////////////////////
 
 
@@ -34,7 +36,8 @@ class wxTextInputDlg : public wxDialog
 	protected:
     ParseByRise m_parsebyrise ;
 		wxTextCtrl * mp_textctrlEnglishText;
-		wxPanel* m_panel1;
+		//wxPanel * m_panelParseTree;
+		wxParseTreePanel * m_panelParseTree;
     wxSplitterWindow * mp_wxsplitterwindow ;
 	
 	public:

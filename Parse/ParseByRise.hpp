@@ -57,6 +57,11 @@ public:
     const std::string & stdstrText
     , PositionstdstringVector & psv ) ;
 
+//  std::string GetGrammarPartName()
+//  {
+//    return
+//  }
+
   GrammarPart(DWORD dwTokenIndexLeftMost, DWORD dwTokenIndexRightMost )
   {
     Init() ;
@@ -110,15 +115,19 @@ public:
     m_stdmultimap_wGrammarPartID2SuperordinateGrammarRule ;
   std::map<WORD, std::string> m_stdmap_wRuleID2RuleName ;
   std::map<std::string,WORD> m_stdmap_RuleName2RuleID ;
+
   std::map<WORD, std::multimap<WORD, GrammarRule> >
-    m_mapindex2stdmap_stdmultimap_dwLeftmostIndex2grammarpart ;
+    m_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart ;
   std::map<WORD, std::multimap<WORD, GrammarRule> >::iterator
-    m_iter_mapindex2stdmap_stdmultimap_dwLeftmostIndex2grammarpart ;
+    m_iter_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart ;
   WORD m_wNumberOfSuperordinateRules ;
   std::map<WORD, std::multimap<WORD, GrammarRule> >
-    m_mapindex2stdmap_stdmultimap_dwRightmostIndex2grammarpart ;
+    m_stdmap_wParseLevelIndex2stdmultimap_dwRightmostIndex2grammarpart ;
   std::map<WORD, std::multimap<WORD, GrammarRule> >::iterator
-    m_iter_mapindex2stdmap_stdmultimap_dwRightmostIndex2grammarpart ;
+    m_iter_stdmap_wParseLevelIndex2stdmultimap_dwRightmostIndex2grammarpart ;
+  typedef std::multimap<DWORD, GrammarPart>::const_iterator
+    c_iter_mmap_dw2grammarpart ;
+
   std::multimap<DWORD, GrammarPart> *
     mp_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate ;
   std::multimap<DWORD, GrammarPart> *
@@ -132,7 +141,25 @@ public:
   //    = the_comperative
   std::set<GrammarPart * > m_stdset_grammarpartAllSuperordinate ;
 public:
+  //Clears (empties) the previously generated parse tree.
+  //This should be done for a next parse tree generation .
+  void ClearParseTree() ;
+
   void CreateInitialGrammarParts (std::string & stdstrText ) ;
+
+  GrammarPart * GetGrammarPartCoveringMostTokens(
+    DWORD dwLeftMostTokenIndex ) ;
+
+  std::string GetGrammarPartName(WORD wRuleID )
+  {
+    std::string stdstrRuleName ;
+    std::map<WORD,std::string>::const_iterator iter =
+      m_stdmap_wRuleID2RuleName.find( wRuleID ) ;
+    if( iter != m_stdmap_wRuleID2RuleName.end() )
+      return iter->second ;
+    return std::string("") ;
+  }
+
   void InitGrammar() ;
 
   void InsertFundamentalRuleIDs() ;
@@ -151,6 +178,9 @@ public:
     ) ;
   void InsertGrammarRule(WORD wGrammarRuleID
     , const char * cp_ch ) ;
+  void InsertRuleIDsForWordClasses() ;
+  void InsertRuleID2NameMapping( WORD wGrammarRuleID
+      , const char * cp_ch ) ;
   ParseByRise();
   ParseByRise(const ParseByRise& orig);
   bool InsertIfGrammarRuleAppliesTo(

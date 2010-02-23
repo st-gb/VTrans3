@@ -61,6 +61,7 @@ public:
     , conjunction
     , English_definite_article
     , English_indefinite_article
+    , beyond_last_entry
   } ;
   BYTE m_byIndex ;
   //For ability to iterate over all of the word's strings.

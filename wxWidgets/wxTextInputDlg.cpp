@@ -33,10 +33,12 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString&
 
   mp_wxsplitterwindow = new wxSplitterWindow( this, wxID_ANY ) ;
 
-  m_panel1 = new wxPanel(
+  m_panelParseTree = new //wxPanel(
+    wxParseTreePanel(
     //new wxParseTreePanel(
     //this
     mp_wxsplitterwindow
+    //(wxFrame*) mp_wxsplitterwindow
     , wxID_ANY
     , wxDefaultPosition
     , wxDefaultSize,
@@ -102,7 +104,7 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString&
   mp_wxsplitterwindow->SplitHorizontally(
     //m_panelSplitterTop
     mp_textctrlEnglishText
-    , m_panel1
+    , m_panelParseTree
     ) ;
 
   p_wxbutton = new wxButton(
@@ -176,8 +178,10 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
   wxstringWholeText = mp_textctrlEnglishText->GetRange(0 ,
     wxtextposNumberOfCharacters) ;
   stdstrText = std::string( wxstringWholeText.c_str() ) ;
+  m_parsebyrise.ClearParseTree() ;
   m_parsebyrise.CreateInitialGrammarParts ( stdstrText ) ;
   m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
+  m_panelParseTree->DrawParseTree(m_parsebyrise) ;
   //You can also trigger this call by calling Refresh()/Update()
-  m_panel1->Refresh() ;
+  //m_panel1->Refresh() ;
 }

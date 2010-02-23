@@ -8,9 +8,12 @@
 #include "VTransApp.hpp"
 #include <wx/wx.h>
 #include "wxTextInputDlg.h"
+#include <IO.hpp> //OneLinePerWordPair::LoadWords()
+#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>
 #include <fstream> //for std::ofstream
 
 std::ofstream ofstreamLogFile ;
+extern LetterTree g_lettertree ;
 
 IMPLEMENT_APP(VTransApp)
 
@@ -26,6 +29,10 @@ VTransApp::~VTransApp() {
 bool VTransApp::OnInit()
 {
   //ParseByRise parsebyrise ;
+  std::string str("germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
+    g_lettertree.InsertFundamentalWords() ;
+    OneLinePerWordPair::LoadWords( //pWordNodeCurrent
+       str ) ;
    wxTextInputDlg *frame = new wxTextInputDlg(
      NULL
      //, wxID_ANY, wxString("gg"), wxPoint(50,50), wxSize(400,400),

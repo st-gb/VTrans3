@@ -136,6 +136,8 @@ Word * OneLinePerWordPair::extract(
       //The other last LetterNodes should point to its address.
       bInsertNewVocabularyAndTranslation = true ;
       BYTE byVocabularyType = strCurrentWordData[ WORD_TYPE_CHAR_INDEX ] ;
+      byVocabularyType = WordFileWordClassValueToZeroBasedIndex(
+        byVocabularyType) ;
       //Make empty, else VocabularyAndTranslation kann not be appended to the
       //last LetterNode if e.g. noun "love" followed by verb "love".
       stdsetpletternodeLastStringChar.clear() ;
@@ -1450,4 +1452,20 @@ BYTE readInputText(const std::string & strFilePath, std::string & str)
 	//return pch ;
 	//return str ;
 	return 0 ;
+}
+
+BYTE OneLinePerWordPair::WordFileWordClassValueToZeroBasedIndex(
+    BYTE byWordFileWordClassValue )
+{
+  BYTE byRet = 255 ;
+  switch( byWordFileWordClassValue )
+  {
+  case WORD_TYPE_NOUN:
+    byRet = EnglishWord::noun ;
+    break ;
+  case WORD_TYPE_MAIN_VERB:
+    byRet = EnglishWord::main_verb ;
+    break ;
+  }
+  return byRet ;
 }

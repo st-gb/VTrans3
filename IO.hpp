@@ -58,6 +58,8 @@ public:
 //    ) ;
   static void LoadWords(//WordNode * wn
     std::string & r_strWordsFilePath );
+  inline static BYTE WordFileWordClassValueToZeroBasedIndex(
+    BYTE byWordFileWordClassValue ) ;
 } ; //end class
 
 BYTE      readInputText(const std::string & strFilePath, std::string & str) ;
