@@ -58,14 +58,18 @@ public:
 //    ) ;
   static void LoadWords(//WordNode * wn
     std::string & r_strWordsFilePath );
+  inline static BYTE WordFileWordClassValueToZeroBasedIndex(
+    BYTE byWordFileWordClassValue ) ;
 } ; //end class
 
 BYTE      readInputText(const std::string & strFilePath, std::string & str) ;
 LPCSTR                      UTF8toASCII(const char * str);
+#ifndef __MINGW32__ //MinGW has no iconv
 void                        writeToOutputStream(std::ostream & rofstreamTranslToGerman,
                             //std::vector<Range> & vecRange,std::vector<CStringVector> & vecstrvec
                             std::vector<SentenceAndValidityAndProperName> & vecsentenceandvalidityandpropername,
                             xmlwriter & MyXml
                             );
+#endif //#ifndef __MINGW32__ //MinGW has no iconv
 
 #endif //!defined (IO_H_INCLUDED)

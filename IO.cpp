@@ -14,8 +14,12 @@
 #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp" //for "class WordNode" etc.
 
 #include <sstream> //for ostringstream
+#ifdef __CYGWIN__
 //cygwin: from dir "cygwin/usr/include/mingw"
 #include <mingw/tchar.h> //for _T()
+#else //MinGW, MS VC++
+#include <tchar.h> //for _T()
+#endif
 
 //class WordList ;
 
@@ -132,6 +136,8 @@ Word * OneLinePerWordPair::extract(
       //The other last LetterNodes should point to its address.
       bInsertNewVocabularyAndTranslation = true ;
       BYTE byVocabularyType = strCurrentWordData[ WORD_TYPE_CHAR_INDEX ] ;
+      byVocabularyType = WordFileWordClassValueToZeroBasedIndex(
+        byVocabularyType) ;
       //Make empty, else VocabularyAndTranslation kann not be appended to the
       //last LetterNode if e.g. noun "love" followed by verb "love".
       stdsetpletternodeLastStringChar.clear() ;
@@ -1196,6 +1202,7 @@ LPCSTR UTF8toASCII(const char * str)
 //{
 //}
 
+#ifndef __MINGW32__ //MinGW has no iconv
 void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
   //std::vector<Range> & vecRange,std::vector<CStringVector> & vecstrvec
   std::vector<SentenceAndValidityAndProperName> & vecsentenceandvalidityandpropername,
@@ -1409,6 +1416,7 @@ void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
     //rofstreamTranslToGerman.close();
   }//if(rofstreamTranslToGerman)
 }
+#endif //#ifndef __MINGW32__ //MinGW has no iconv
 
 //const char * 
 BYTE readInputText(const std::string & strFilePath, std::string & str)
@@ -1444,4 +1452,20 @@ BYTE readInputText(const std::string & strFilePath, std::string & str)
 	//return pch ;
 	//return str ;
 	return 0 ;
+}
+
+BYTE OneLinePerWordPair::WordFileWordClassValueToZeroBasedIndex(
+    BYTE byWordFileWordClassValue )
+{
+  BYTE byRet = 255 ;
+  switch( byWordFileWordClassValue )
+  {
+  case WORD_TYPE_NOUN:
+    byRet = EnglishWord::noun ;
+    break ;
+  case WORD_TYPE_MAIN_VERB:
+    byRet = EnglishWord::main_verb ;
+    break ;
+  }
+  return byRet ;
 }

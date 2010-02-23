@@ -4,6 +4,7 @@
   #include <vector>
   #include <string>
   #include "rest.h" //for CStringVector etc.
+  #include <string_type.hpp>
   //#ifndef _WINDOWS
   //	#include <typedefs.h> //for DWORD etc.
   //	#include <StdString.h> //for class compatible to MFC's "CString"  

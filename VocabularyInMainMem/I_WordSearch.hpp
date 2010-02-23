@@ -1,5 +1,8 @@
 #pragma once //Include guard
 
+#include <windef.h> //for BYTE
+#include <string> //std::string
+
 class Word ;
 class AutomDelWord ;
 
