@@ -56,7 +56,7 @@ public:
 //    , int nLength
 //    , int nIndexOf1stChar
 //    ) ;
-  static void LoadWords(//WordNode * wn
+  static BYTE LoadWords(//WordNode * wn
     std::string & r_strWordsFilePath );
   inline static BYTE WordFileWordClassValueToZeroBasedIndex(
     BYTE byWordFileWordClassValue ) ;

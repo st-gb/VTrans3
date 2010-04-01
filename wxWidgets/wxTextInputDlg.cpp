@@ -10,6 +10,8 @@
 #include <wx/textctrl.h>
 #include <wx/event.h> //for EVT_CLOSE
 
+#include <Translate/TranslateParseByRiseTree.h>
+
 ///////////////////////////////////////////////////////////////////////////
 
 //An enum guarantees a unique number for each element.
@@ -180,8 +182,13 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
   stdstrText = std::string( wxstringWholeText.c_str() ) ;
   m_parsebyrise.ClearParseTree() ;
   m_parsebyrise.CreateInitialGrammarParts ( stdstrText ) ;
+  DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
   m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
+  TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise ) ;
+  DEBUG_COUT("before translation\n")
+  translateParseByRiseTree.Translate(m_parsebyrise) ;
   m_panelParseTree->DrawParseTree(m_parsebyrise) ;
+  DEBUG_COUT("end of OnTranslateButton\n")
   //You can also trigger this call by calling Refresh()/Update()
   //m_panel1->Refresh() ;
 }

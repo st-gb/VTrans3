@@ -14,6 +14,8 @@
 #include <set>
 #include "Token.h" //for PositionstdstringVector
 
+class VocabularyAndTranslation ;
+
 //class GrammarRule
 class GrammarPart
 {
@@ -40,6 +42,8 @@ public:
   GrammarPart * mp_grammarpartRightChild ;
   //Use strings to show grammar parts in the user interface as a feature.
   std::string m_stdstrGrammarPartName ;
+  //Important for translating into the destination language.
+  VocabularyAndTranslation * m_psetpvocabularyandtranslation ;
   //Additionally use numbers corresponding to the rule name because they can
   //be compared faster than strings.
   WORD m_wGrammarPartID ;
@@ -133,6 +137,7 @@ public:
   std::multimap<DWORD, GrammarPart> *
     mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
   DWORD m_dwMapIndex ;
+  PositionstdstringVector psv ;
   //Memorize the applied rules to enable a parse break condition.
   //TODO determining if a rule was applied yet by using a std::set is fast but
   // I does not consider that for a grammar part multiple rules may exist:
@@ -150,7 +155,20 @@ public:
   GrammarPart * GetGrammarPartCoveringMostTokens(
     DWORD dwLeftMostTokenIndex ) ;
 
-  std::string GetGrammarPartName(WORD wRuleID )
+  bool GetGrammarPartID( std::string & r_str , WORD & wID )
+  {
+    bool bSuccess = false ;
+    std::map<std::string,WORD>::const_iterator iter =
+      m_stdmap_RuleName2RuleID.find(r_str) ;
+    if( iter != m_stdmap_RuleName2RuleID.end() )
+    {
+      wID = iter->second ;
+      bSuccess = true ;
+    }
+    return bSuccess ;
+  }
+
+  std::string GetGrammarPartName(WORD wRuleID ) //;
   {
     std::string stdstrRuleName ;
     std::map<WORD,std::string>::const_iterator iter =
