@@ -1,6 +1,8 @@
 #if !defined(REST_H)
-		 #define REST_H
+  #define REST_H
+
   #include <fstream> //for ofstream
+  #include <iostream> //std::cout
 
   #define USE_LETTER_TREE
 
@@ -109,6 +111,12 @@
   //FILE * logfile=NULL;
 
   //#define FILE_PATH_FOR_INTERRUPTED_TRANSLATION "int_resp_crashed_trans_exe.txt"
+
+#if defined( _DEBUG) || defined(DEBUG)
+#define DEBUG_COUT(out) std::cout << out ; std::cout.flush() ;
+#else
+#endif
+
 
   #ifdef _LOG
     #define LOG_FILE_PATH "release_log.txt"

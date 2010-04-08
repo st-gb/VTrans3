@@ -222,8 +222,41 @@ Word * OneLinePerWordPair::extract(
                     delemiterCount] = //str.Mid(start,i-start);
                     strCurrentWordData.substr( nIndexOf1stChar
                     , nIndexOfCurrentChar - nIndexOf1stChar );
+#ifdef _DEBUG
+                  std::cout << "eng noun read:" <<
+                      g_lettertree.s_pvocabularyandtranslation->
+                      m_arstrEnglishWord[delemiterCount] << "\n" ;
+#endif
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
-                  g_lettertree.s_pvocabularyandtranslation->m_arpletternodeLastEngChar[
+                  //Reason: in the lettertrie the reference to ...
+                  // is for every string of a
+                  // word
+                  // e.g. in lettertrie: "car"
+                  //   the last letternode has a reference to
+                  //   a list where all words that contain "car" are stored.
+                  //   If we parse the grammar of "the car drives", we find
+                  //   "car" within the lettertree.
+                  //  But at least when we want to translate we need to know
+                  //  it "car" is singular or plural.
+                  //  So if we store the letternode within the grammar parse
+                  //  tree we can see if it was a singular or plural in the
+                  //  cases where both differ (=mostly).
+                  //  Therefore we store the pointer to the letternode in an
+                  //  array index that is the same index as in the words array:
+                  //  example:
+                  //  letternode of ('r') from "car":
+                  //   +--vocabularyandtranslation list
+                  //     +--vocabularyandtranslation "the car"
+                  //        "car" (singular, index 0)
+                  //        "cars" (plural, index 1)
+                  //       +--letternode pointer array
+                  //         +--pointer to last letternode of "car" (index 0)
+                  //         +--pointer to last letternode of "cars" (index 1)
+                  //
+                  // So by comparing the pointer addresses one can see if it
+                  // was singular or plural.
+                  g_lettertree.s_pvocabularyandtranslation->
+                    m_arpletternodeLastEngChar[
                     delemiterCount] = pletternode ;
                 }
 #endif
@@ -734,6 +767,11 @@ Word * OneLinePerWordPair::extract(
                   delemiterCount ] = //str.Mid(start,i-start);
                   strCurrentWordData.substr( nIndexOf1stChar
                   , nIndexOfCurrentChar - nIndexOf1stChar );
+#ifdef _DEBUG
+                std::cout << "German noun read:" <<
+                    g_lettertree.s_pvocabularyandtranslation->
+                    m_arstrGermanWord[delemiterCount] << "\n" ;
+#endif
 #endif //#ifdef _INSERT_INTO_HASH_TREE
 					    delemiterCount ++ ;
 					    nIndexOf1stChar = nIndexOfCurrentChar + 1 ;
@@ -983,9 +1021,10 @@ Word * OneLinePerWordPair::extract(
 	return NULL;
 }
 
-void OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
+BYTE OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
   std::string & r_strWordsFilePath )
 {
+  BYTE byRet = 0 ;
 	FILE * p_fileWords ;
 	int i;
 	BOOL break_while = FALSE ;
@@ -1002,6 +1041,7 @@ void OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
 	if( ( p_fileWords = fopen( //strWordFile.c_str()
     r_strWordsFilePath.c_str() ,"rb") ) != NULL )
 	{
+	  byRet = 1 ;
     LOGN("05.06.2008 22.22.26");
 		concatenate = "" ;
 		BYTE bEnglishWord = TRUE;
@@ -1132,6 +1172,7 @@ gibt es anf�nglich keine Vokabeln.\nM�gliche Ursachen:\
 #ifdef _DEBUG
 	printf("void LoadWords(WordNode * pWordNode) ENDE\n");
 #endif
+	return byRet ;
 }
 
 #ifdef _WINDOWS

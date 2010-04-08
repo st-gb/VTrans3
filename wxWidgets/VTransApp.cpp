@@ -29,15 +29,38 @@ VTransApp::~VTransApp() {
 bool VTransApp::OnInit()
 {
   //ParseByRise parsebyrise ;
-  std::string str("germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
+  if( argc > 1 )
+  {
+    std::string str(//"germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
+        argv[1] ) ;
     g_lettertree.InsertFundamentalWords() ;
-    OneLinePerWordPair::LoadWords( //pWordNodeCurrent
-       str ) ;
-   wxTextInputDlg *frame = new wxTextInputDlg(
-     NULL
-     //, wxID_ANY, wxString("gg"), wxPoint(50,50), wxSize(400,400),
-     //wxDEFAULT_DIALOG_STYLE | wxCLOSE_BOX
-     );
-   frame->Show(true);
-   return true;
+    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
+         str )
+      )
+    {
+      wxTextInputDlg * frame = new wxTextInputDlg(
+       NULL
+       //, wxID_ANY, wxString("gg"), wxPoint(50,50), wxSize(400,400),
+       //wxDEFAULT_DIALOG_STYLE | wxCLOSE_BOX
+       );
+     if( frame )
+       frame->Show(true);
+     else
+       std::cerr << "error: couldn't create window\n" ;
+     return true;
+    }
+    else
+    {
+      wxString wxstrCwd = wxGetCwd() ;
+      ::wxMessageBox( wxString::Format("Error loading vocabulary file \"%s\\%s\" "
+        "->exiting", wxstrCwd.c_str(), str.c_str() )
+        ) ;
+    }
+  }
+  else
+  {
+    ::wxMessageBox( wxT("No vocabulary file specified as 1st command line "
+      "argument ->exiting" ) ) ;
+  }
+  return false ;
 }

@@ -24,6 +24,7 @@ class wxParseTreePanel
     ParseByRise * mp_parsebyrise ;
     std::map<WORD,DWORD>
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
+    std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2wCenter ;
     std::vector<GrammarPart *> m_stdvecNodesToProcess ;
 public:
 //	wxParseTreePanel();
@@ -41,8 +42,14 @@ public:
 //	wxParseTreePanel(wxWindow* parent ) ;
 	virtual ~wxParseTreePanel();
 	void DrawGrammarPartChildren( GrammarPart * p_pg , wxPaintDC & wxpaintdc ) ;
-	void DrawGrammarPartName(GrammarPart * p_pg ,
-	    wxPaintDC & wxpaintdc ) ;
+	void DrawGrammarPartParentToChildLine(
+	  WORD wParentHorizTextCenter, WORD wChildHorizTextCenter
+	  , wxPaintDC & r_wxpaintdc ) ;
+	void DrawGrammarPartName(
+	    GrammarPart * p_pg ,
+	    wxPaintDC & wxpaintdc ,
+	    WORD & wHorizTextCenter
+	    ) ;
 	void DrawParseTree( ParseByRise & r_parsebyrise ) ;
 	void OnPaint(wxPaintEvent & event) ;
 	DECLARE_EVENT_TABLE()

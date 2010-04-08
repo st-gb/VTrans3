@@ -724,7 +724,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
   const char * pchCurrentChar ;
   //const char * pch = strVocabularyEntry.c_str() ;
   //std::set<VocabularyAndTranslation> * psetvocabularyandtranslation = NULL ;
-  std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation = NULL ;
+//  std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation = NULL ;
   LetterNode * pletternodeCurrent = //NULL ;
     m_pletternodeRoot;
   LetterNode * pletternodeCurrentWithMostTokens = NULL ;
@@ -776,8 +776,8 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
   if(pletternodeCurrentWithMostTokens )
   {
     //psetvocabularyandtranslation = pletternodeCurrent->m_psetvocabularyandtranslation ;
-    psetpvocabularyandtranslation = pletternodeCurrentWithMostTokens->
-      m_psetpvocabularyandtranslation ;
+//    psetpvocabularyandtranslation = pletternodeCurrentWithMostTokens->
+//      m_psetpvocabularyandtranslation ;
     r_dwTokenIndex = wTokenIndex ;
     }
   //return psetvocabularyandtranslation ;

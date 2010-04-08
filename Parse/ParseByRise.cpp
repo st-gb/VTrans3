@@ -102,7 +102,8 @@ void ParseByRise::ClearParseTree()
 
 void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
 {
-  PositionstdstringVector psv ;
+  //PositionstdstringVector psv ;
+  psv.clear() ;
 //  std::map<DWORD, GrammarPart> stdmapwLeftmostIndex2grammarpart ;
 //  std::map<DWORD, GrammarPart> stdmapwRightmostIndex2grammarpart ;
 
@@ -184,6 +185,16 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
   }
   return p_gp ;
 }
+
+//std::string ParseByRise::GetGrammarPartName(WORD wRuleID )
+//{
+//  std::string stdstrRuleName ;
+//  std::map<WORD,std::string>::const_iterator iter =
+//    m_stdmap_wRuleID2RuleName.find( wRuleID ) ;
+//  if( iter != m_stdmap_wRuleID2RuleName.end() )
+//    return iter->second ;
+//  return std::string("") ;
+//}
 
 void ParseByRise::InitGrammar()
 {
@@ -662,12 +673,12 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
   std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
   DWORD dwTokenIndexRightMost = dwTokenIndex ;
   LetterNode * p_letternode = g_lettertree.searchAndReturnLetterNode( psv,
-    //If "vacuum cleaner" and wTokenIndex is "0" it gets "1"
+    //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
     dwTokenIndexRightMost );
   //If the word was found.
   if( p_letternode )
   {
-    std::cout << "word found in dictionary." ;
+    DEBUG_COUT( "word found in dictionary." )
     std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
       NULL ;
     psetpvocabularyandtranslation = p_letternode->
@@ -678,14 +689,17 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
 //        std::pair<WORD>, std::set<VocabularyAndTranslation *> *>
 //        (wTokenIndex,psetpvocabularyandtranslation) ) ;
 
-      GrammarPart grammarPart(dwTokenIndex, dwTokenIndexRightMost) ;
+      GrammarPart grammarPart(
+        //Via the indices the tokens can be got later.
+        dwTokenIndex, dwTokenIndexRightMost) ;
 
       //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
       //  setpvocabularyandtranslation);
 
       //Loop for all vocabularies having at least 1 word that
       //equals the current token.
-      //Because "love" may be either a noun or a verb
+      //There may be more than 1 vocabulary for the same word:
+      //e.g. "love" may be either a noun ("the love") or a verb ("to love").
       for(std::set<VocabularyAndTranslation *>::iterator iter =
         psetpvocabularyandtranslation->begin() ; iter !=
         psetpvocabularyandtranslation->end() ; iter ++ )
@@ -698,6 +712,9 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
 //        (*iter)->m_byType ;
         //grammarPart.setRuleID( (*iter)->m_byType ) ;
         grammarPart.m_wGrammarPartID = (*iter)->m_byType ;
+        //For accessing the vocabulary attributes later.
+        grammarPart.m_psetpvocabularyandtranslation =
+          (*iter) ;
         //r_stdmapwLeftmostIndex2grammarpart.insert(
         //r_stdmultimap_wLeftmostIndex2grammarpart.insert(
         p_stdmultimap_wLeftmostIndex2grammarpart->insert(
