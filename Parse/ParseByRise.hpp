@@ -17,9 +17,54 @@
 class VocabularyAndTranslation ;
 
 //class GrammarRule
+//idea: model the syntax tree of the source text as a binary tree structure.
+//e.g.:
+//the vacuum cleaner  sucks.
+//--------------clause---------
+//              /     \
+//-noun_construct--- -main_verb
+// /     \
+//DA  ----noun------  DA=Definite Article
+//
+//e.g.:
+//the car and the cat suck.
+//--------------clause---------
+//              /     \
+//      EE_CJ_EE       \
+//     /       |        \
+//    /      CJ_EE      |
+//   /       /   \      |
+//--NC--  -CJ ---NC-- -main_verb   NC=Noun_Construct CJ=ConJunction
+//
+//e.g.
+//the car , the dog and the cat suck.
+//--------------clause---------
+//              /     \
+//      EE_C_EE_CJ_EE
+//            /     \
+//      EE_C_EE      \           EE=Enumeration element
+//     /     |        \
+//    /    C_EE       CJ_EE      |    C=Comma
+//   /     /   \      /   \      |
+//--NC--- C ---NC-- -CJ ---NC-- main_verb   NC=Noun_Construct CJ=ConJunction
+//
+//e.g.
+//I  , he , it and the cat suck.
+//--------------clause---------
+//              /     \
+//      EE_C_EE_CJ_EE
+//            /     \
+//     EE_C_EE      \           EE=Enumeration element
+//     /  |
+//    /  C_EE
+//   /   /  \       \         PP=Personal Pronoun
+//  / C_EE C_EE       CJ_EE      |    C=Comma
+// / /  \  / \   /   \      |
+//PP C PP C PP -CJ ---NC-- main_verb   NC=Noun_Construct CJ=ConJunction
 class GrammarPart
 {
 public:
+  BYTE m_byPersonIndex ;
   //The region indexes are important for applying grammar rules:
   // 0     1      2     3  4     <-indexes of tokens
   //The vacuum cleaner is big.
@@ -40,10 +85,10 @@ public:
   //noun_construct->rightchild = noun
   GrammarPart * mp_grammarpartLeftChild ;
   GrammarPart * mp_grammarpartRightChild ;
-  //Use strings to show grammar parts in the user interface as a feature.
-  std::string m_stdstrGrammarPartName ;
+//  //Use strings to show grammar parts in the user interface as a feature.
+//  std::string m_stdstrGrammarPartName ;
   //Important for translating into the destination language.
-  VocabularyAndTranslation * m_psetpvocabularyandtranslation ;
+  VocabularyAndTranslation * m_pvocabularyandtranslation ;
   //Additionally use numbers corresponding to the rule name because they can
   //be compared faster than strings.
   WORD m_wGrammarPartID ;
@@ -84,6 +129,7 @@ public:
 
   void Init()
   {
+    m_byPersonIndex = 0 ;
     mp_grammarpartLeftChild = NULL ;
     mp_grammarpartRightChild = NULL ;
   }
@@ -108,7 +154,8 @@ public:
   }
 } ;
 
-class ParseByRise {
+class ParseByRise
+{
 //private:
 public:
   std::multimap<DWORD, GrammarPart> m_stdmultimap_dwLeftmostIndex2grammarpart ;
@@ -137,7 +184,7 @@ public:
   std::multimap<DWORD, GrammarPart> *
     mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
   DWORD m_dwMapIndex ;
-  PositionstdstringVector psv ;
+  PositionstdstringVector m_psv ;
   //Memorize the applied rules to enable a parse break condition.
   //TODO determining if a rule was applied yet by using a std::set is fast but
   // I does not consider that for a grammar part multiple rules may exist:
@@ -155,7 +202,7 @@ public:
   GrammarPart * GetGrammarPartCoveringMostTokens(
     DWORD dwLeftMostTokenIndex ) ;
 
-  bool GetGrammarPartID( std::string & r_str , WORD & wID )
+  bool GetGrammarPartID( const std::string & r_str , WORD & wID )
   {
     bool bSuccess = false ;
     std::map<std::string,WORD>::const_iterator iter =
@@ -177,6 +224,15 @@ public:
       return iter->second ;
     return std::string("") ;
   }
+
+  //return: bitfield: 1 bit for every single person Index (1st person singular...3rd
+  //persion  plural)
+  BYTE GetSubjectPersonIndex( GrammarPart * p_grammarpart) ;
+
+  void GetTokensAsSpaceSeparatedString(
+    DWORD dwLeftmostIndex,
+    DWORD dwRightmostIndex ,
+    std::string & r_stdstr ) ;
 
   void InitGrammar() ;
 

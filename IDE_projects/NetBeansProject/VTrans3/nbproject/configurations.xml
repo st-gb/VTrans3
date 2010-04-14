@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="VTrans3" displayName="VTrans3" projectFiles="true">
+      <logicalFolder name="aquire_vocables"
+                     displayName="aquire_vocables"
+                     projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="IDE_projects"
+                     displayName="IDE_projects"
+                     projectFiles="true">
+        <logicalFolder name="NetBeansProject"
+                       displayName="NetBeansProject"
+                       projectFiles="true">
+          <logicalFolder name="VTrans3" displayName="VTrans3" projectFiles="true">
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="VTrans3" displayName="VTrans3" projectFiles="true">
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="Info" displayName="Info" projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="IO" displayName="IO" projectFiles="true">
+        <itemPath>../../../IO/writeXML.cpp</itemPath>
+        <itemPath>../../../IO/writeXML.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="NetBeans" displayName="NetBeans" projectFiles="true">
+        <logicalFolder name="VTrans3" displayName="VTrans3" projectFiles="true">
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="Parse" displayName="Parse" projectFiles="true">
+        <itemPath>../../../Parse/ParseByRise.cpp</itemPath>
+        <itemPath>../../../Parse/ParseByRise.hpp</itemPath>
+        <itemPath>../../../Parse/sequential.cpp</itemPath>
+        <itemPath>../../../Parse/sequential.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="Translate" displayName="Translate" projectFiles="true">
+        <itemPath>T:/SourceCodeManagement/VTrans3/Translate/Condition.hpp</itemPath>
+        <itemPath>T:/SourceCodeManagement/VTrans3/Translate/ConditionsAndTranslation.hpp</itemPath>
+        <itemPath>../../../Translate/SyntaxTreePath.cpp</itemPath>
+        <itemPath>../../../Translate/SyntaxTreePath.hpp</itemPath>
+        <itemPath>../../../Translate/TranslateParseByRiseTree.cpp</itemPath>
+        <itemPath>../../../Translate/TranslateParseByRiseTree.h</itemPath>
+        <itemPath>../../../Translate/TranslationRule.cpp</itemPath>
+        <itemPath>../../../Translate/TranslationRule.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="VocabularyInMainMem"
+                     displayName="VocabularyInMainMem"
+                     projectFiles="true">
+        <logicalFolder name="DoublyLinkedList"
+                       displayName="DoublyLinkedList"
+                       projectFiles="true">
+          <itemPath>../../../VocabularyInMainMem/DoublyLinkedList/WordList.cpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/DoublyLinkedList/WordList.hpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/DoublyLinkedList/WordNode.cpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/DoublyLinkedList/WordNode.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="LetterTree" displayName="LetterTree" projectFiles="true">
+          <itemPath>../../../VocabularyInMainMem/LetterTree/LetterNode.cpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/LetterTree/LetterNode.hpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/LetterTree/LetterTree.cpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/LetterTree/LetterTree.hpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/LetterTree/Translate.cpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/LetterTree/VocabularyAndTranslation.cpp</itemPath>
+          <itemPath>../../../VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp</itemPath>
+        </logicalFolder>
+        <itemPath>../../../VocabularyInMainMem/AutomDelWord.hpp</itemPath>
+        <itemPath>../../../VocabularyInMainMem/IVocabularyInMainMem.cpp</itemPath>
+        <itemPath>../../../VocabularyInMainMem/IVocabularyInMainMem.hpp</itemPath>
+        <itemPath>../../../VocabularyInMainMem/I_WordSearch.cpp</itemPath>
+        <itemPath>../../../VocabularyInMainMem/I_WordSearch.hpp</itemPath>
+        <itemPath>../../../VocabularyInMainMem/WordSearch.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="wxWidgets" displayName="wxWidgets" projectFiles="true">
+        <itemPath>../../../wxWidgets/VTransApp.cpp</itemPath>
+        <itemPath>../../../wxWidgets/VTransApp.hpp</itemPath>
+        <itemPath>../../../wxWidgets/wxParseTreePanel.cpp</itemPath>
+        <itemPath>../../../wxWidgets/wxParseTreePanel.h</itemPath>
+        <itemPath>../../../wxWidgets/wxTextInputDlg.cpp</itemPath>
+        <itemPath>../../../wxWidgets/wxTextInputDlg.h</itemPath>
+      </logicalFolder>
+      <itemPath>../../../1LinePerWordPair.cpp</itemPath>
+      <itemPath>../../../1LinePerWordPair.h</itemPath>
+      <itemPath>../../../GetAndTestWord.cpp</itemPath>
+      <itemPath>../../../IO.cpp</itemPath>
+      <itemPath>../../../IO.hpp</itemPath>
+      <itemPath>../../../I_UserInterface.hpp</itemPath>
+      <itemPath>../../../ParseEnglish.cpp</itemPath>
+      <itemPath>../../../ParseEnglish.h</itemPath>
+      <itemPath>../../../StdAfx.cpp</itemPath>
+      <itemPath>../../../StdAfx.h</itemPath>
+      <itemPath>../../../Text.cpp</itemPath>
+      <itemPath>../../../Text.h</itemPath>
+      <itemPath>../../../Token.cpp</itemPath>
+      <itemPath>../../../Token.h</itemPath>
+      <itemPath>../../../Translate.cpp</itemPath>
+      <itemPath>../../../Translate.h</itemPath>
+      <itemPath>../../../UI.h</itemPath>
+      <itemPath>../../../Word.cpp</itemPath>
+      <itemPath>../../../Word.hpp</itemPath>
+      <itemPath>../../../allWordsIn1SingleLine.cpp</itemPath>
+      <itemPath>../../../charsetconv.cpp</itemPath>
+      <itemPath>../../../charsetconv.h</itemPath>
+      <itemPath>../../../resource.h</itemPath>
+      <itemPath>../../../rest.h</itemPath>
+      <itemPath>../../../string_type.hpp</itemPath>
+      <itemPath>../../../xmlwriter.cpp</itemPath>
+      <itemPath>../../../xmlwriter.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../..</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>Cygwin_4.x|Cygwin_4.x</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../../..</pElem>
+            <pElem>${WXWIDGETS_CYGWIN_PATH}/include</pElem>
+            <pElem>${WX_ANSI_DBG_STATIC_SETUP_H_CYG_PATH}</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>__WXMSW__</Elem>
+            <Elem>_DEBUG</Elem>
+            <Elem>NOMINMAX</Elem>
+          </preprocessorList>
+        </ccTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>${WX_CYG_ANSI_DBG_STAT_LIB_PATH}</pElem>
+          </linkerAddLib>
+          <linkerLibItems>
+            <linkerLibLibItem>wx_mswd_core-2.8</linkerLibLibItem>
+            <linkerLibLibItem>wx_mswd_adv-2.8</linkerLibLibItem>
+            <linkerLibLibItem>wx_based-2.8</linkerLibLibItem>
+            <linkerLibLibItem>gdi32</linkerLibLibItem>
+            <linkerLibLibItem>ole32</linkerLibLibItem>
+            <linkerLibLibItem>comdlg32</linkerLibLibItem>
+            <linkerLibLibItem>comctl32</linkerLibLibItem>
+            <linkerLibLibItem>uuid</linkerLibLibItem>
+            <linkerLibLibItem>oleaut32</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="../../../1LinePerWordPair.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../GetAndTestWord.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../IO/writeXML.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../Parse/sequential.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../ParseEnglish.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../Text.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../Token.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../Translate.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../VocabularyInMainMem/DoublyLinkedList/WordList.cpp"
+            ex="true"
+            tool="1">
+      </item>
+      <item path="../../../VocabularyInMainMem/LetterTree/Translate.cpp"
+            ex="true"
+            tool="1">
+      </item>
+      <item path="../../../charsetconv.cpp" ex="true" tool="1">
+      </item>
+      <item path="../../../xmlwriter.cpp" ex="true" tool="1">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>Cygwin_4.x|Cygwin_4.x</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

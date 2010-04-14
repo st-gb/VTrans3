@@ -45,6 +45,16 @@ class LetterNode ;
       , auxiliary_verb
       , conjunction
     } ;
+    enum German_main_verb
+    {
+      infinitive = 0
+      , first_person_singular
+      , second_person_singular
+      , third_person_singular
+      , first_person_plural
+      , second_person_plural
+      , third_person_plural
+    } ;
 
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
     //Currently only for English needed because it's only needed 

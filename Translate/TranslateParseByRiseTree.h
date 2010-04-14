@@ -11,73 +11,52 @@
 #include <map>
 #include <vector>
 #include <windef.h> //DWORD
+#include "SyntaxTreePath.hpp"
+#include "ConditionsAndTranslation.hpp"
+//#include "TranslationRule.hpp"
 
 class GrammarPart ;
 class ParseByRise ;
+class TranslationRule ;
 
+#define FIRST_PERSON_SINGULAR 1 //2^0 = 1
+#define SECOND_PERSON_SINGULAR 2 //2^1 = 2
+#define THIRD_PERSON_SINGULAR 4 //2^2 = 4
+#define FIRST_PERSON_PLURAL 8 //2^3 = 8
+#define SECOND_PERSON_PLURAL 16 //2^4 = 16
+#define THIRD_PERSON_PLURAL 32 //2^5 = 32
+
+//This class models an easy access to the data in a VocabularyAndTranslation
+//object.
+//So one can define an attribute name, bit start etc. with an object of this
+//class. E.g. define "Eng_singular", index "0", length 1.
+//And then when used.
 class AttributeTypeAndPosAndSize
 {
+public:
   enum attribute_type { string, bit } ;
   enum language { German, English } ;
-public:
-  //attribute is a string or some bits
-  BYTE m_byType ;
+  BYTE m_byLanguage ;
+  //attribute is a string or some bits (=whether the indedx refers to the
+  // string or byte array)
+  BYTE m_byAttrDataType ;
+  BYTE m_byWordClass ; //e.g. ID for word class "noun",
   //String or bit index
   WORD m_wIndex ;
-  //bit length
+  //bit length of the attribute data.
   WORD m_wLenght ;
-  AttributeTypeAndPosAndSize( BYTE byType, WORD wIndex, WORD wLenght)
+  AttributeTypeAndPosAndSize( BYTE byType, WORD wIndex, WORD wLenght,
+    BYTE byWordClass , BYTE byLanguage )
   {
-    m_byType = byType ;
+    m_byLanguage = byLanguage ;
+    m_byWordClass = byWordClass ;
+    m_byAttrDataType = byType ;
     m_wIndex = wIndex ;
     m_wLenght = wLenght ;
   }
 } ;
 
-class ConditionsAndTranslation
-{
-  enum compare_type { equals } ;
-  BYTE m_byCompareType ;
-  std::vector<std::string> conditions ;
-};
-
-class TranslationRule
-{
-public:
-  WORD * m_ar_wElements ;
-  WORD m_wNumberOfElements ;
-  TranslationRule( WORD * ar_wElements , WORD wNumberOfElements)
-  {
-    m_ar_wElements = ar_wElements ;
-    m_wNumberOfElements = wNumberOfElements ;
-  }
-  ~TranslationRule( )
-  {
-    DEBUG_COUT("~TranslationRule (destructor)\n")
-    //Release mem.
-    delete [] m_ar_wElements ;
-  }
-  bool operator < ( const TranslationRule & r) const
-  {
-    if( m_wNumberOfElements < r.m_wNumberOfElements )
-      return true ;
-    else if( m_wNumberOfElements > r.m_wNumberOfElements )
-      return false ;
-    else //same number of elements
-    {
-      for( WORD wIndex = 0 ; wIndex < m_wNumberOfElements ; ++ wIndex )
-      {
-        if( m_ar_wElements[ wIndex ] < r.m_ar_wElements[ wIndex ] )
-          return true ;
-        else if ( m_ar_wElements[ wIndex ] > r.m_ar_wElements[ wIndex ] )
-          return false ;
-      }
-      //here: Contents are identical.
-      return false ;
-    }
-  }
-};
-
+//Translates the parse tree of type "ParseByRise"
 class TranslateParseByRiseTree
 {
   WORD m_wParseLevel ;
@@ -94,6 +73,12 @@ class TranslateParseByRiseTree
   // "clause.subject.noun_construct" -> "clause.subject.noun_construct.noun".
   //the rule applies to the subtree "subject.noun_construct.noun"
   std::vector<WORD> m_stdvec_wGrammarPartPath ;
+  std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
+
+  //e.g. define std::string "Eng_singular",
+  // AttributeTypeAndPosAndSize ( string, 0 ,1 )
+  //what means that the string data inside the VocabularyAndTranslation object
+  //  at string array index 0 is defined as "English_singular".
   std::map<std::string,AttributeTypeAndPosAndSize>
     m_stdmap_AttrName2VocAndTranslAttrDef ;
   std::map<TranslationRule *,ConditionsAndTranslation>
@@ -122,14 +107,21 @@ public:
     const std::string & r_stdstrGermanTranslationRule ,
     const std::string & r_
     ) ;
+  void AddTranslationRule(
+    TranslationRule * p_tr,
+    const ConditionsAndTranslation & rc_cnt ) ;
+  bool AllConditionsMatch( const ConditionsAndTranslation & r_cnt ) ;
   std::string GetSyntaxTreePathAsName( //ParseByRise & r_parsebyrise
    std::vector<WORD> & ) ;
   std::string GetSyntaxTreePathAsName(WORD * ar_wGrammarPartPath,
       WORD wLength) ;
+  std::string GetTranslationEquivalent(
+    const ConditionsAndTranslation & r_cnt ) ;
   TranslateParseByRiseTree(ParseByRise & r_parsebyrise );
   ~TranslateParseByRiseTree();
   void Translate( ParseByRise & r_parsebyrise ) ;
-  bool TranslationRuleApplies() ;
+  bool TranslationRuleApplies( std::string & r_stdstrTranslation
+    , BYTE & r_byPersonIndex ) ;
 };
 
 #endif /* TRANSLATEPARSEBYRISETREE_H_ */

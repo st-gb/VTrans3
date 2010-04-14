@@ -1242,7 +1242,7 @@ LPCSTR UTF8toASCII(const char * str)
 //void ::TranslateAndWriteOutputFile()
 //{
 //}
-
+#ifdef COMPILE_WITH_XML_OUTPUT
 #ifndef __MINGW32__ //MinGW has no iconv
 void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
   //std::vector<Range> & vecRange,std::vector<CStringVector> & vecstrvec
@@ -1458,6 +1458,7 @@ void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
   }//if(rofstreamTranslToGerman)
 }
 #endif //#ifndef __MINGW32__ //MinGW has no iconv
+#endif//#ifdef COMPILE_WITH_XML_OUTPUT
 
 //const char * 
 BYTE readInputText(const std::string & strFilePath, std::string & str)
