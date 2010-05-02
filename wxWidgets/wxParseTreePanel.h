@@ -18,7 +18,7 @@ class ParseByRise ;
 class GrammarPart ;
 
 class wxParseTreePanel
-  :public wxPanel
+  : public wxPanel
 {
     WORD m_wParseLevel ;
     ParseByRise * mp_parsebyrise ;
@@ -26,6 +26,7 @@ class wxParseTreePanel
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
     std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2wCenter ;
     std::vector<GrammarPart *> m_stdvecNodesToProcess ;
+    std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2HorizCenter;
 public:
 //	wxParseTreePanel();
   wxParseTreePanel(
@@ -45,12 +46,50 @@ public:
 	void DrawGrammarPartParentToChildLine(
 	  WORD wParentHorizTextCenter, WORD wChildHorizTextCenter
 	  , wxPaintDC & r_wxpaintdc ) ;
-	void DrawGrammarPartName(
+  void DrawGrammarPartName(
+      GrammarPart * p_pg ,
+      wxPaintDC & wxpaintdc ,
+      WORD & wHorizTextCenter
+      ) ;
+	void DrawGrammarPartNameAndPossiblyToken(
 	    GrammarPart * p_pg ,
 	    wxPaintDC & wxpaintdc ,
 	    WORD & wHorizTextCenter
 	    ) ;
+	void DrawGrammarPartToken(
+	    GrammarPart * p_pg ,
+	    wxPaintDC & wxpaintdc ,
+	    WORD & r_wHorizTextCenter
+	    ) ;
+	void DrawLeavesOfParseTree( wxPaintDC & wxpaintdc ,
+//	    std::map<GrammarPart *,WORD> & map_p_grammarpart2HorizCenter
+	    GrammarPart * p_grammarpart
+	    ) ;
+	void DrawNextParseTreeLevelDirectingRoot(
+//	  wxPaintDC & wxpaintdc ,
+    wxDC & r_wxdc ,
+	  WORD wParseLevel ,
+	  GrammarPart * p_grammarpart
+	  ) ;
 	void DrawParseTree( ParseByRise & r_parsebyrise ) ;
+  void DrawParseTreeBeginningFromLeaves(wxPaintDC & wxpaintdc ) ;
+	void DrawParseTreeBeginningFromRoots(wxPaintDC & wxpaintdc ) ;
+	GrammarPart * GetNextRightGrammarPartNotProcessedYet() ;
+	//void
+	wxSize GetTokenExtent(
+	    wxPaintDC & wxpaintdc ,
+	    GrammarPart * p_pg ,
+	    //wxSize & wxsizeText
+      wxString & wxstr
+	    ) ;
+  //void
+	wxSize GetGrammarPartNameExtent(
+    //wxPaintDC & wxpaintdc ,
+    wxDC & r_wxdc ,
+    GrammarPart * p_pg ,
+    //wxSize & wxsizeText
+    wxString & wxstr
+    ) ;
 	void OnPaint(wxPaintEvent & event) ;
 	DECLARE_EVENT_TABLE()
 };

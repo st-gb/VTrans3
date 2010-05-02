@@ -184,9 +184,9 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
   m_parsebyrise.CreateInitialGrammarParts ( stdstrText ) ;
   DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
   m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
-  TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise ) ;
-  DEBUG_COUT("before translation\n")
-  translateParseByRiseTree.Translate(m_parsebyrise) ;
+//  TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise ) ;
+//  DEBUG_COUT("before translation\n")
+//  translateParseByRiseTree.Translate(m_parsebyrise) ;
   m_panelParseTree->DrawParseTree(m_parsebyrise) ;
   DEBUG_COUT("end of OnTranslateButton\n")
   //You can also trigger this call by calling Refresh()/Update()

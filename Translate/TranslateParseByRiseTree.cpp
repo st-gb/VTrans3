@@ -768,7 +768,7 @@ void TranslateParseByRiseTree::Translate( ParseByRise & r_parsebyrise )
               mp_parsebyrise->GetGrammarPartName(
               p_grammarpart->m_wGrammarPartID ) << " current size=" <<
                   m_stdvecNodesToProcess.size() << "\n" ) ;
-//          DrawGrammarPartName( *iter , wxpaintdc) ;
+//          DrawGrammarPartNameAndPossiblyToken( *iter , wxpaintdc) ;
           m_stdvecNodesToProcess.pop_back() ;
           //std::cout.flush() ;
           //usleep(100000) ;

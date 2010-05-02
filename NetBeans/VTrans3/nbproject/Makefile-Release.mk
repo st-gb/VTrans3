@@ -31,45 +31,37 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/StatusDialog.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/MainFrm.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Parse/sequential.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/LetterNode.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTransView.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/WordEditorBar.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/simple_clause/simple_clause_c_pp.tab.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/DoublyLinkedList/WordNode.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/simple_clause/simple_clause_c_pp.tab.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/noname.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/ParseEnglish.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/GetAndTestWord.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/ErrorCodeFromGetLastErrorToString.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Parse/ParseByRise.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/1LinePerWordPair.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/UnknownWordsBar.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/sizecbar.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTransDoc.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/IVocabularyInMainMem.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/wxParseTreePanel.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Text.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/WordDockingWindow.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTrans.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/wxTextInputDlg.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/Translate.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/DoublyLinkedList/WordList.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Word.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/IO/writeXML.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/SplitterFrame.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/GermanView.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Token.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/LoadStatusDialog.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/SearchFormBar.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/OptionsDialog.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/TranslateParseByRiseTree.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/charsetconv.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/allWordsIn1SingleLine.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/IO.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Word_2003_08_Aug_14.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/SyntaxTreePath.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/xmlwriter.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/VocabularyAndTranslation.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/StdAfx.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/LetterTree.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/EnglishView.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/ChildFrm.o
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/TranslationRule.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/VTransApp.o
 
 # C Compiler Flags
 CFLAGS=
@@ -95,16 +87,6 @@ dist/Release/Cygwin_4.x-Windows/vtrans3.exe: ${OBJECTFILES}
 	${MKDIR} -p dist/Release/Cygwin_4.x-Windows
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/vtrans3 ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/StatusDialog.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/StatusDialog.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/StatusDialog.o ../../MFC/StatusDialog.cpp
-
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/MainFrm.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/MainFrm.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/MainFrm.o ../../MFC/MainFrm.cpp
-
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Parse/sequential.o: nbproject/Makefile-${CND_CONF}.mk ../../Parse/sequential.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Parse
 	${RM} $@.d
@@ -115,25 +97,20 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/LetterNode.o: n
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/LetterNode.o ../../VocabularyInMainMem/LetterTree/LetterNode.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTransView.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/VTransView.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/DoublyLinkedList/WordNode.o: nbproject/Makefile-${CND_CONF}.mk ../../VocabularyInMainMem/DoublyLinkedList/WordNode.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/DoublyLinkedList
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTransView.o ../../MFC/VTransView.cpp
-
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/WordEditorBar.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/WordEditorBar.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/WordEditorBar.o ../../MFC/WordEditorBar.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/DoublyLinkedList/WordNode.o ../../VocabularyInMainMem/DoublyLinkedList/WordNode.cpp
 
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/simple_clause/simple_clause_c_pp.tab.o: nbproject/Makefile-${CND_CONF}.mk ../../simple_clause/simple_clause_c_pp.tab.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/simple_clause
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/simple_clause/simple_clause_c_pp.tab.o ../../simple_clause/simple_clause_c_pp.tab.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/DoublyLinkedList/WordNode.o: nbproject/Makefile-${CND_CONF}.mk ../../VocabularyInMainMem/DoublyLinkedList/WordNode.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/DoublyLinkedList
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/noname.o: nbproject/Makefile-${CND_CONF}.mk ../../wxWidgets/noname.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/DoublyLinkedList/WordNode.o ../../VocabularyInMainMem/DoublyLinkedList/WordNode.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/noname.o ../../wxWidgets/noname.cpp
 
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/ParseEnglish.o: nbproject/Makefile-${CND_CONF}.mk ../../ParseEnglish.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT
@@ -145,30 +122,25 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/GetAndTestWord.o: nbproject/Makefile-${CND_CON
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/GetAndTestWord.o ../../GetAndTestWord.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/ErrorCodeFromGetLastErrorToString.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/ErrorCodeFromGetLastErrorToString.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Parse/ParseByRise.o: nbproject/Makefile-${CND_CONF}.mk ../../Parse/ParseByRise.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Parse
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/ErrorCodeFromGetLastErrorToString.o ../../MFC/ErrorCodeFromGetLastErrorToString.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Parse/ParseByRise.o ../../Parse/ParseByRise.cpp
 
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/1LinePerWordPair.o: nbproject/Makefile-${CND_CONF}.mk ../../1LinePerWordPair.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/1LinePerWordPair.o ../../1LinePerWordPair.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/UnknownWordsBar.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/UnknownWordsBar.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/IVocabularyInMainMem.o: nbproject/Makefile-${CND_CONF}.mk ../../VocabularyInMainMem/IVocabularyInMainMem.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/UnknownWordsBar.o ../../MFC/UnknownWordsBar.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/IVocabularyInMainMem.o ../../VocabularyInMainMem/IVocabularyInMainMem.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/sizecbar.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/sizecbar.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/wxParseTreePanel.o: nbproject/Makefile-${CND_CONF}.mk ../../wxWidgets/wxParseTreePanel.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/sizecbar.o ../../MFC/sizecbar.cpp
-
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTransDoc.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/VTransDoc.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTransDoc.o ../../MFC/VTransDoc.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/wxParseTreePanel.o ../../wxWidgets/wxParseTreePanel.cpp
 
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate.o: nbproject/Makefile-${CND_CONF}.mk ../../Translate.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT
@@ -180,15 +152,10 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Text.o: nbproject/Makefile-${CND_CONF}.mk ../.
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Text.o ../../Text.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/WordDockingWindow.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/WordDockingWindow.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/wxTextInputDlg.o: nbproject/Makefile-${CND_CONF}.mk ../../wxWidgets/wxTextInputDlg.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/WordDockingWindow.o ../../MFC/WordDockingWindow.cpp
-
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTrans.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/VTrans.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/VTrans.o ../../MFC/VTrans.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/wxTextInputDlg.o ../../wxWidgets/wxTextInputDlg.cpp
 
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/Translate.o: nbproject/Makefile-${CND_CONF}.mk ../../VocabularyInMainMem/LetterTree/Translate.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree
@@ -210,35 +177,15 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/IO/writeXML.o: nbproject/Makefile-${CND_CONF}.
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/IO/writeXML.o ../../IO/writeXML.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/SplitterFrame.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/SplitterFrame.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/SplitterFrame.o ../../MFC/SplitterFrame.cpp
-
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/GermanView.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/GermanView.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/GermanView.o ../../MFC/GermanView.cpp
-
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Token.o: nbproject/Makefile-${CND_CONF}.mk ../../Token.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Token.o ../../Token.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/LoadStatusDialog.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/LoadStatusDialog.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/TranslateParseByRiseTree.o: nbproject/Makefile-${CND_CONF}.mk ../../Translate/TranslateParseByRiseTree.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/LoadStatusDialog.o ../../MFC/LoadStatusDialog.cpp
-
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/SearchFormBar.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/SearchFormBar.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/SearchFormBar.o ../../MFC/SearchFormBar.cpp
-
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/OptionsDialog.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/OptionsDialog.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/OptionsDialog.o ../../MFC/OptionsDialog.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/TranslateParseByRiseTree.o ../../Translate/TranslateParseByRiseTree.cpp
 
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/charsetconv.o: nbproject/Makefile-${CND_CONF}.mk ../../charsetconv.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT
@@ -260,6 +207,11 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Word_2003_08_Aug_14.o: nbproject/Makefile-${CN
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Word_2003_08_Aug_14.o ../../Word_2003_08\(Aug\)14.cpp
 
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/SyntaxTreePath.o: nbproject/Makefile-${CND_CONF}.mk ../../Translate/SyntaxTreePath.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/SyntaxTreePath.o ../../Translate/SyntaxTreePath.cpp
+
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/xmlwriter.o: nbproject/Makefile-${CND_CONF}.mk ../../xmlwriter.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT
 	${RM} $@.d
@@ -280,15 +232,15 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/LetterTree.o: n
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/VocabularyInMainMem/LetterTree/LetterTree.o ../../VocabularyInMainMem/LetterTree/LetterTree.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/EnglishView.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/EnglishView.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/TranslationRule.o: nbproject/Makefile-${CND_CONF}.mk ../../Translate/TranslationRule.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/EnglishView.o ../../MFC/EnglishView.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/Translate/TranslationRule.o ../../Translate/TranslationRule.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/ChildFrm.o: nbproject/Makefile-${CND_CONF}.mk ../../MFC/ChildFrm.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/VTransApp.o: nbproject/Makefile-${CND_CONF}.mk ../../wxWidgets/VTransApp.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/MFC/ChildFrm.o ../../MFC/ChildFrm.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/wxWidgets/VTransApp.o ../../wxWidgets/VTransApp.cpp
 
 # Subprojects
 .build-subprojects:

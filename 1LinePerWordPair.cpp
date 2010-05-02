@@ -142,6 +142,6 @@ gibt es anfänglich keine Vokabeln.\nMögliche Ursachen:\
   wordList.m_pWordNodeLast=pWordNodeCurrent;
   wordList.m_pWordNodeLast->m_pWordNodeNext=NULL;
 #ifdef _DEBUG
-  printf("void LoadWords(WordNode * pWordNode) ENDE\n");
+  printf("1L...cpp: void OneLinePerWordPair::LoadWords(WordNode * pWordNode) ENDE\n");
 #endif
 }

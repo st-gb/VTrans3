@@ -45,5 +45,6 @@ void IVocabularyInMainMem::InsertFundamentalWords()
 	germanverbSein.m_bMove = 0 ;
 
   Insert("a", English_indefinite_article ) ;
+//  Insert(",", comma ) ;
 //  InsertPersonalPronouns() ;
 }

@@ -420,8 +420,8 @@ void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
   //lexer.
   //std::set<VocabularyAndTranslation *> *
   bool LetterTree::IsPlural(
-    //const PositionCStringVector & psv
-    const PositionstdstringVector & psv ,
+    const PositionStringVector & psv ,
+//    const PositionstdstringVector & psv ,
     DWORD & r_dwTokenIndex,
     std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
     )
@@ -474,8 +474,8 @@ void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
   //lexer.
   //std::set<VocabularyAndTranslation *> *
   bool LetterTree::IsSingular(
-    //const PositionCStringVector & psv
-    const PositionstdstringVector & psv ,
+    const PositionStringVector & psv ,
+//    const PositionstdstringVector & psv ,
     DWORD & r_dwTokenIndex,
     std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
     )
@@ -710,9 +710,9 @@ std::set<VocabularyAndTranslation *> * LetterTree::search(
 //@return LetterNode of last char of string within LetterTree identical to psv 
 //in most tokens.
 LetterNode * LetterTree::searchAndReturnLetterNode(
-  //const PositionCStringVector & psv,
   //Vector that contains the tokens of a text / a sentence.
-  const PositionstdstringVector & psv,
+  const PositionStringVector & psv,
+//  const PositionstdstringVector & psv,
   //The index of the first token to include in the trie search.
   DWORD & r_dwTokenIndex
   //,LetterNode * & pletternode,
@@ -794,7 +794,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
 //@return LetterNode of last char of string within LetterTree identical to psv 
 //in most tokens.
 LetterNode * LetterTree::searchAndReturnLetterNode(
-  //const PositionCStringVector & psv, 
+  //const PositionStringVector & psv, 
   //const 
     std::istream & istreamEnglish, 
   DWORD & r_dwTokenIndex
@@ -895,8 +895,8 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
 //@pchCurrentChar points to the first string char at the begin.
 //std::set<VocabularyAndTranslation> * LetterTree::search(
 std::set<VocabularyAndTranslation *> * LetterTree::search(
-  //const PositionCStringVector & psv, 
-  const PositionstdstringVector & psv, 
+  const PositionStringVector & psv,
+//  const PositionstdstringVector & psv,
   DWORD & r_dwTokenIndex
   //,LetterNode * & pletternode,
   )

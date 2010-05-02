@@ -29,6 +29,7 @@
     , conjunction
     , English_definite_article
     , English_indefinite_article
+    , comma
   } ;
     //Make methods pure virtual ("virtual [...] = 0" ) to avoid
     //linker error "LNK 2001" in MSVC++.

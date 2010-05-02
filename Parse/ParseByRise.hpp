@@ -104,7 +104,9 @@ public:
 
   void BuildTokenVector(
     const std::string & stdstrText
-    , PositionstdstringVector & psv ) ;
+//    , PositionstdstringVector & psv
+    , PositionStringVector & psv
+    ) ;
 
 //  std::string GetGrammarPartName()
 //  {
@@ -134,6 +136,9 @@ public:
     mp_grammarpartRightChild = NULL ;
   }
 
+  //Define a < operator in order to insert into a container like std::set.
+  bool operator < (const GrammarPart & ) const ;
+
   void setGrammarPartID(WORD wGrammarPartID )
   {
     m_wGrammarPartID = wGrammarPartID ;
@@ -158,7 +163,33 @@ class ParseByRise
 {
 //private:
 public:
+  //This list stores the leftmost indices of the grammar parts:
+  // initially only word classes are grammar parts:
+  //   0    1       2      3      <- token index
+  // "the vacuum cleaner sucks".
+  // -> insert into the container:
+  //  "<0,grammar part for "the">
+  //  "<1,grammar part for "vacuum cleaner">
+  //  "<3,grammar part for "sucks">
+  // afterwards after grammar rules have been applied, the list becomes the
+  //   leftmost indices of the superordinate grammar parts:
+  //  insert:
+  //   "<0,grammar part "noun_construct" for "the vacuum cleaner">
+  //   "<0,grammar part "clause" for "the vacuum cleaner sucks">
   std::multimap<DWORD, GrammarPart> m_stdmultimap_dwLeftmostIndex2grammarpart ;
+  //This list stores the rightmost indices of the grammar parts:
+  // initially only word classes are grammar parts:
+  //   0    1       2      3      <- token index
+  // "the vacuum cleaner sucks".
+  // -> insert into the container:
+  //  "<0,grammar part for "the">
+  //  "<2,grammar part for "vacuum cleaner">
+  //  "<3,grammar part for "sucks">
+  // afterwards after grammar rules have been applied, the list becomes the
+  //   rightmost indices of the superordinate grammar parts:
+  //  insert:
+  //   "<2,grammar part "noun_construct" for "the vacuum cleaner">
+  //   "<3,grammar part "clause" for "the vacuum cleaner sucks">
   std::multimap<DWORD, GrammarPart> m_stdmultimap_dwRightmostIndex2grammarpart ;
   std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2wGrammarPartID ;
   std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2SuperordinateID ;
@@ -184,14 +215,29 @@ public:
   std::multimap<DWORD, GrammarPart> *
     mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
   DWORD m_dwMapIndex ;
-  PositionstdstringVector m_psv ;
+//  PositionstdstringVector m_psv ;
+  PositionStringVector m_psv ;
   //Memorize the applied rules to enable a parse break condition.
   //TODO determining if a rule was applied yet by using a std::set is fast but
   // I does not consider that for a grammar part multiple rules may exist:
   //  -grammar part "the" + grammar part "noun" = noun_construct.
   //  -grammar part "the" + grammar part "comperative" ("the faster the better")
   //    = the_comperative
-  std::set<GrammarPart * > m_stdset_grammarpartAllSuperordinate ;
+  std::set<GrammarPart * > m_stdset_p_grammarpartAllSuperordinate ;
+  //---
+  //Better store the rule ID/ grammar part ID of applied rules in it:
+  // to check that the rules aren't already contained for the next parse level:
+  //e.g. 1st parse level:
+  // "the vacuum cleaner sucks": add rule "noun_construct" for
+  //   "the vacuum cleaner" ("definite article" + "noun")
+  // 2nd and later parse levels: rule "noun_construct" already contained for
+  //  leftmost index 0, rightmost index 2?: yes -> do not add to the list of
+  // ALL grammar parts (that contains word classes plus applied rules)
+  std::set<GrammarPart> m_stdset_grammarpartAllSuperordinate ;
+
+  //serves as a break condition so that is known that no more
+  WORD m_wBiggestNumberOfTokensForAppliedGrammarRule ;
+  WORD m_wNumberOfTokensForAppliedGrammarRule ;
 public:
   //Clears (empties) the previously generated parse tree.
   //This should be done for a next parse tree generation .
@@ -233,6 +279,7 @@ public:
     DWORD dwLeftmostIndex,
     DWORD dwRightmostIndex ,
     std::string & r_stdstr ) ;
+  bool GrammarPartIDIsWordClass( WORD wGrammarPartID ) ;
 
   void InitGrammar() ;
 
@@ -245,6 +292,12 @@ public:
     const char * cp_ch
     ) ;
   void InsertGrammarRule(
+    WORD wGrammarRuleIDLeft ,
+    const char * cp_chRightGrammarRuleName
+    , //std::string
+    const char * cp_chSuperordinateGrammarRuleName
+    ) ;
+  WORD InsertGrammarRule(
     const char * cp_chLeftGrammarRuleName
     , WORD wGrammarRuleIDRight
     , //std::string
@@ -252,6 +305,18 @@ public:
     ) ;
   void InsertGrammarRule(WORD wGrammarRuleID
     , const char * cp_ch ) ;
+  void InsertGrammarRule(
+    const char * cp_chLeftGrammarRuleName
+    , const char * cp_chRightGrammarRuleName
+    , //std::string
+    const char * cp_chSuperordinateGrammarRuleName
+    ) ;
+  void InsertGrammarRule(
+    const char * cp_chLeftGrammarRuleName
+    , const char * cp_chRightGrammarRuleName
+    , //std::string
+    //EXISTING rule / grammar part ID
+    WORD wSuperordinateGrammarRuleID ) ;
   void InsertRuleIDsForWordClasses() ;
   void InsertRuleID2NameMapping( WORD wGrammarRuleID
       , const char * cp_ch ) ;
@@ -315,7 +380,8 @@ public:
   void ResolveGrammarRulesForAllParseLevels() ;
 
   void StoreWordTypeAndGermanTranslation(
-    PositionstdstringVector & psv
+//    PositionstdstringVector & psv
+    PositionStringVector & psv
     , DWORD wTokenIndex
   //  , std::map <WORD, std::set<VocabularyAndTranslation *> *> &
   //    stdmap_wIndex2p_set_p_vocabularyandtranslation

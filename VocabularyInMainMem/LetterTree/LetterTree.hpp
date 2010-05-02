@@ -30,7 +30,7 @@
   //for GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated,
   // PointerToWordNodeWhereAnEnglishNounIsEncapsulated
   //#include "../../GetAndTestWord.h"
-  #include "../../Token.h" //for PositionCStringVector
+  #include "../../Token.h" //for PositionStringVector
   #include "../../I_UserInterface.hpp"
   //#include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
   #include "VocabularyAndTranslation.hpp"
@@ -267,14 +267,15 @@
     ////vocabulary entry for "vacuum cleaner" is returned and index
     ////is set to the last token of the vocabulary within psv.
     //std::set<VocabularyAndTranslation *> * search(
-    //  const PositionCStringVector & psv, 
+    //  const PositionStringVector & psv, 
     //  DWORD & r_dwIndex) ;
     //{
     //  return search(pchCurrentChar,0,strlen(pchCurrentChar) ) ;
     //}
 
     std::set<VocabularyAndTranslation *> * search(
-      const PositionstdstringVector & psv, 
+//      const PositionstdstringVector & psv,
+      const PositionStringVector & psv,
       DWORD & r_dwTokenIndex);
 
     LetterNode * searchAndReturnLetterNode(
@@ -353,8 +354,8 @@
     }
 
     LetterNode * searchAndReturnLetterNode(
-      //const PositionCStringVector & psv, 
-      const PositionstdstringVector & psv, 
+      const PositionStringVector & psv,
+//      const PositionstdstringVector & psv,
       DWORD & r_dwTokenIndex
       );
 
@@ -362,8 +363,8 @@
     //lexer.
     //std::set<VocabularyAndTranslation *> *
     bool IsPlural(
-      //const PositionCStringVector & psv
-      const PositionstdstringVector & psv ,
+      const PositionStringVector & psv ,
+//      const PositionstdstringVector & psv ,
       DWORD & r_dwTokenIndex,
       std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
       ) ;
@@ -372,8 +373,8 @@
     //lexer.
     //std::set<VocabularyAndTranslation *> *
     bool IsSingular(
-      //const PositionCStringVector & psv
-      const PositionstdstringVector & psv ,
+      const PositionStringVector & psv ,
+//      const PositionstdstringVector & psv ,
       DWORD & r_dwTokenIndex,
       std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
       ) ;

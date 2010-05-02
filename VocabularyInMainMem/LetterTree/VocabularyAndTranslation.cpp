@@ -28,6 +28,12 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
     m_arbyAttribute = new BYTE[2] ;
     break;
+  case WORD_TYPE_CONJUNCTION:
+    m_arstrEnglishWord = new std::string[1] ;
+    m_arstrGermanWord = new std::string[1] ;
+    m_arbyAttribute = new BYTE[1] ;
+    break;
+
   //case GERMAN_NOUN:
   //  m_pword = new GermanNoun() ;
   //  m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
