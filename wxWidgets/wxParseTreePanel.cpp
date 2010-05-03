@@ -60,7 +60,7 @@ wxParseTreePanel::~wxParseTreePanel() {
 
 void wxParseTreePanel::DrawGrammarPartName(
     GrammarPart * p_pg ,
-    wxPaintDC & wxpaintdc ,
+    wxDC & r_wxdc ,
     WORD & r_wHorizTextCenter
     )
 {
@@ -82,11 +82,11 @@ void wxParseTreePanel::DrawGrammarPartName(
     }
     else
       dwXcoordinate = 0 ;
-    wxpaintdc.DrawText( //citer->second.m_stdstrGrammarPartName
+    r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
       r_stdstrGrammarPartName
        , wxPoint( dwXcoordinate ,m_wParseLevel * 20) ) ;
 
-    wxSize wxsizeText = wxpaintdc.GetTextExtent( wxString(r_stdstrGrammarPartName) ) ;
+    wxSize wxsizeText = r_wxdc.GetTextExtent( wxString(r_stdstrGrammarPartName) ) ;
     dwXcoordinate += wxsizeText.x ;
     std::pair<std::map<WORD,DWORD>::iterator,bool> pair_iter_bool =
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.insert(
@@ -108,7 +108,7 @@ void wxParseTreePanel::DrawGrammarPartName(
 
 void wxParseTreePanel::DrawGrammarPartNameAndPossiblyToken(
     GrammarPart * p_pg ,
-    wxPaintDC & wxpaintdc ,
+    wxDC & r_wxdc ,
     WORD & r_wHorizTextCenter
     )
 {
@@ -130,7 +130,7 @@ void wxParseTreePanel::DrawGrammarPartNameAndPossiblyToken(
     }
     else
       dwXcoordinate = 0 ;
-    wxpaintdc.DrawText( //citer->second.m_stdstrGrammarPartName
+    r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
       r_stdstrGrammarPartName
        , wxPoint( dwXcoordinate ,m_wParseLevel * 20) ) ;
     if( mp_parsebyrise->GrammarPartIDIsWordClass(p_pg->m_wGrammarPartID) )
@@ -138,11 +138,11 @@ void wxParseTreePanel::DrawGrammarPartNameAndPossiblyToken(
       std::string stdstrTokens = GetBetweenAsStdString(
           mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
           p_pg->m_dwRightmostIndex ) ;
-      wxpaintdc.DrawText( //citer->second.m_stdstrGrammarPartName
+      r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
           stdstrTokens
          , wxPoint( dwXcoordinate ,m_wParseLevel * 20 + 10 ) ) ;
     }
-    wxSize wxsizeText = wxpaintdc.GetTextExtent( wxString(r_stdstrGrammarPartName) ) ;
+    wxSize wxsizeText = r_wxdc.GetTextExtent( wxString(r_stdstrGrammarPartName) ) ;
     dwXcoordinate += wxsizeText.x ;
     std::pair<std::map<WORD,DWORD>::iterator,bool> pair_iter_bool =
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.insert(
@@ -162,8 +162,10 @@ void wxParseTreePanel::DrawGrammarPartNameAndPossiblyToken(
   }
 }
 
-void wxParseTreePanel::DrawGrammarPartChildren( GrammarPart * p_grammarpart ,
-    wxPaintDC & r_wxpaintdc )
+void wxParseTreePanel::DrawGrammarPartChildren(
+  GrammarPart * p_grammarpart ,
+  wxDC & r_wxdc
+  )
 {
   GrammarPart * p_grammarpartChild = p_grammarpart->mp_grammarpartLeftChild ;
   WORD wChildHorizTextCenter ;
@@ -184,10 +186,10 @@ void wxParseTreePanel::DrawGrammarPartChildren( GrammarPart * p_grammarpart ,
        p_grammarpartChild->m_wGrammarPartID ) ;
 #endif
      DrawGrammarPartNameAndPossiblyToken(//p_grammarpart->mp_grammarpartLeftChild
-         p_grammarpartChild ,r_wxpaintdc, wChildHorizTextCenter ) ;
+         p_grammarpartChild ,r_wxdc, wChildHorizTextCenter ) ;
 //          p_pg = p_pg->mp_grammarpartLeftChild ;
      DrawGrammarPartParentToChildLine(wHorizTextCenter,wChildHorizTextCenter
-         , r_wxpaintdc );
+         , r_wxdc );
    }
 //   else //Left leave of parse tree found.
 //   {
@@ -209,11 +211,11 @@ void wxParseTreePanel::DrawGrammarPartChildren( GrammarPart * p_grammarpart ,
           p_grammarpartChild->m_wGrammarPartID ) ;
 #endif
      DrawGrammarPartNameAndPossiblyToken( //p_grammarpart->mp_grammarpartRightChild,
-       p_grammarpartChild, r_wxpaintdc, wChildHorizTextCenter ) ;
+       p_grammarpartChild, r_wxdc, wChildHorizTextCenter ) ;
 
      //Draw the line from grammar part parent to grammar part child.
      DrawGrammarPartParentToChildLine(wHorizTextCenter,wChildHorizTextCenter
-       , r_wxpaintdc );
+       , r_wxdc );
      DEBUG_COUT( "DrawGrammarPartChildren--pushinG right child "
        << mp_parsebyrise->GetGrammarPartName(
          //p_grammarpart->mp_grammarpartRightChild->
@@ -231,10 +233,11 @@ void wxParseTreePanel::DrawGrammarPartChildren( GrammarPart * p_grammarpart ,
 }
 
 void wxParseTreePanel::DrawGrammarPartParentToChildLine(
-  WORD wParentHorizTextCenter, WORD wChildHorizTextCenter
-  , wxPaintDC & r_wxpaintdc )
+  WORD wParentHorizTextCenter,
+  WORD wChildHorizTextCenter
+  , wxDC & r_wxdc )
 {
-  r_wxpaintdc.DrawLine( wParentHorizTextCenter, ( m_wParseLevel - 1 )* 20 + 10 ,
+  r_wxdc.DrawLine( wParentHorizTextCenter, ( m_wParseLevel - 1 )* 20 + 10 ,
     wChildHorizTextCenter , m_wParseLevel * 20 + 10 ) ;
 }
 
@@ -246,15 +249,20 @@ void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise )
   Refresh() ;
 }
 
-void wxParseTreePanel::DrawLeavesOfParseTree(
-    wxPaintDC & wxpaintdc ,
+WORD wxParseTreePanel::DrawLeavesOfParseTree(
+    wxDC & r_wxdc ,
     //std::map<GrammarPart *,WORD> & map_p_grammarpart2HorizCenter
-    GrammarPart * p_grammarpart )
+    GrammarPart * p_grammarpart ,
+    //This is relevant if more than 1 parse tree for the text.
+    WORD wLeftEndOfLeftmostTokenInPixels
+    )
 {
   m_stdvecNodesToProcess.clear();
 //  GrammarPart * p_grammarpart ;
   WORD wStringWidthLeftChild ;
-  WORD wXcoord = 0 ;
+  WORD wXcoord = //0
+      wLeftEndOfLeftmostTokenInPixels ;
+  WORD wTextWidthInPixels ;
   wxSize wxsizeString ;
   wxString wxstrGrammarPartName ;
   do
@@ -283,26 +291,30 @@ void wxParseTreePanel::DrawLeavesOfParseTree(
   //        DrawGrammarPartNameAndPossiblyToken( p_grammarpart, wxpaintdc
   //           , wHorizTextCenter ) ;
       wxString wxstrTokens ;
-      WORD wWidth ;
 //      wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
-      wxsizeString = GetGrammarPartNameExtent( wxpaintdc, p_grammarpart,
+      wxsizeString = GetGrammarPartNameExtent( r_wxdc, p_grammarpart,
           wxstrGrammarPartName ) ;
-      wWidth = wxsizeString.GetWidth() ;
-      wxsizeString = GetTokenExtent( wxpaintdc, p_grammarpart, wxstrTokens ) ;
-      if ( wxsizeString.GetWidth() > wWidth )
-        wWidth = wxsizeString.GetWidth() ;
+      wTextWidthInPixels = wxsizeString.GetWidth() ;
+      wxsizeString = GetTokenExtent( r_wxdc, p_grammarpart, wxstrTokens ) ;
+      if ( wxsizeString.GetWidth() > wTextWidthInPixels )
+        wTextWidthInPixels = wxsizeString.GetWidth() ;
 
   //          DrawGrammarPartToken( p_grammarpart, wxpaintdc
   //              , wHorizTextCenter ) ;
   //          DrawGrammarPartName( p_grammarpart, wxpaintdc
   //              , wHorizTextCenter ) ;
-      wxpaintdc.DrawText( wxstrTokens , wXcoord, 0 ) ;
-      wxpaintdc.DrawText( wxstrGrammarPartName , wXcoord,
+      r_wxdc.DrawText( wxstrTokens , wXcoord, 0 ) ;
+      r_wxdc.DrawText( wxstrGrammarPartName , wXcoord,
           wxsizeString.GetHeight() ) ;
-      m_stdmap_p_grammarpart2HorizCenter.insert(std::pair<GrammarPart *,WORD>
-        (p_grammarpart,wXcoord + wWidth/2)
+      DrawGrammarPartAttributes draw_grammar_part_attributes(
+          wXcoord + wTextWidthInPixels / 2 , m_wParseLevel ) ;
+      m_stdmap_p_grammarpart2HorizCenter.insert(
+        //std::pair<GrammarPart *,WORD>
+//          (p_grammarpart, wXcoord + wWidth / 2 )
+        std::pair<GrammarPart *,DrawGrammarPartAttributes>
+        (p_grammarpart, draw_grammar_part_attributes )
         ) ;
-      wXcoord += wWidth + 10 ;
+      wXcoord += wTextWidthInPixels + 10 ;
 //      if( bRightChild )
 //      { //At this point: both the left and the right child have been drawn.
 //        //So the parent can be drawn at their horizontal center now.
@@ -350,6 +362,7 @@ void wxParseTreePanel::DrawLeavesOfParseTree(
   while( //! m_stdvecNodesToProcess.empty()
       //m_wParseLevel > 0
       p_grammarpart ) ;
+  return wXcoord ;
 }
 
 GrammarPart * wxParseTreePanel::GetNextRightGrammarPartNotProcessedYet()
@@ -405,13 +418,20 @@ void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
   m_stdvecNodesToProcess.clear();
 //  GrammarPart * p_grammarpart ;
   //Must NOT be declared as const because it is used in std::map::erase() later
-  std::map<GrammarPart *,WORD>::iterator iterLeft ;
-  std::map<GrammarPart *,WORD>::iterator iterRight ;
+//  std::map<GrammarPart *,WORD>::iterator iterLeft ;
+//  std::map<GrammarPart *,WORD>::iterator iterRight ;
+  DrawGrammarPartAttributes * p_dgpaLeft ;
+  DrawGrammarPartAttributes * p_dgpaRight ;
+  std::map<GrammarPart *,DrawGrammarPartAttributes>::iterator iterLeft ;
+  std::map<GrammarPart *,DrawGrammarPartAttributes>::iterator iterRight ;
   WORD wStringWidthLeftChild ;
   WORD wXcoord = 0 ;
+  WORD wMiddleBetweenLeftAndRightChild ;
+  WORD wLeftTextEndInPixels ;
+//  WORD wHorizCenterInPixelsOfLeftChild ;
+//  WORD wHorizCenterInPixelsOfRightChild ;
   wxSize wxsizeString ;
   wxString wxstrGrammarPartName ;
-  WORD wMiddleBetweenLeftAndRightChild ;
   do
   {
     iterRight = m_stdmap_p_grammarpart2HorizCenter.find(
@@ -429,15 +449,39 @@ void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
       && iterLeft != m_stdmap_p_grammarpart2HorizCenter.end()
       )
     {
+//      wHorizCenterInPixelsOfLeftChild =
+//        iterLeft->second.m_wHorizCenterInPixels ;
+//      wHorizCenterInPixelsOfRightChild =
+//        iterRight->second.m_wHorizCenterInPixels ;
+      p_dgpaLeft = & iterLeft->second ;
+      p_dgpaRight = & iterRight->second ;
       //Calculate the middle of the current node from the middle of the left
       //and the right child.
-      wMiddleBetweenLeftAndRightChild = iterLeft->second +
-          ( iterRight->second - iterLeft->second ) / 2 ;
+      wMiddleBetweenLeftAndRightChild =
+        //iterLeft->second + ( iterRight->second - iterLeft->second ) / 2 ;
+        iterLeft->second.m_wHorizCenterInPixels +
+        ( iterRight->second.m_wHorizCenterInPixels -
+        iterLeft->second.m_wHorizCenterInPixels ) / 2 ;
       wxsizeString = GetGrammarPartNameExtent( r_wxdc, p_grammarpart,
           wxstrGrammarPartName ) ;
+      wLeftTextEndInPixels = wMiddleBetweenLeftAndRightChild -
+          ( wxsizeString.GetWidth() / 2 ) ;
       r_wxdc.DrawText( wxstrGrammarPartName ,
-        wMiddleBetweenLeftAndRightChild - wxsizeString.GetWidth() / 2,
+        wLeftTextEndInPixels ,
         wParseLevel * wxsizeString.GetHeight()
+        ) ;
+
+      r_wxdc.DrawLine(
+        p_dgpaLeft->m_wHorizCenterInPixels ,
+        ( p_dgpaLeft->m_wParseLevel + 1 ) * wxsizeString.GetHeight() ,
+        wMiddleBetweenLeftAndRightChild ,
+        wParseLevel * wxsizeString.GetHeight() + 10
+        ) ;
+        r_wxdc.DrawLine(
+        p_dgpaRight->m_wHorizCenterInPixels ,
+        (p_dgpaRight->m_wParseLevel + 1 ) * wxsizeString.GetHeight() ,
+        wMiddleBetweenLeftAndRightChild ,
+        wParseLevel * wxsizeString.GetHeight() + 10
         ) ;
 //      bAtLeast1ItemDrawn = true ;
       //The children inside the container are not needed anymore now.
@@ -446,9 +490,13 @@ void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
       //inside it.
       m_stdmap_p_grammarpart2HorizCenter.erase(iterLeft) ;
       m_stdmap_p_grammarpart2HorizCenter.erase(iterRight) ;
+      DrawGrammarPartAttributes draw_grammar_part_attributes(
+          wMiddleBetweenLeftAndRightChild , wParseLevel ) ;
       m_stdmap_p_grammarpart2HorizCenter.insert(
-        std::pair<GrammarPart*,WORD>
-        (p_grammarpart,wMiddleBetweenLeftAndRightChild)
+//        std::pair<GrammarPart*,WORD>
+//        (p_grammarpart,wMiddleBetweenLeftAndRightChild)
+        std::pair<GrammarPart*,DrawGrammarPartAttributes>
+        (p_grammarpart,draw_grammar_part_attributes)
         ) ;
       do
       {
@@ -466,7 +514,7 @@ void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
       } while( //exists in the list
           iterRight != m_stdmap_p_grammarpart2HorizCenter.end() ) ;
     }
-    else
+    else //Not both left and right child that have already been drawn found.
     {
       if( p_grammarpart->mp_grammarpartRightChild )
       {
@@ -553,11 +601,11 @@ void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
 //  //        //So the parent can be drawn at their horizontal center now.
 //  //      }
       }
-    }
+    } //Not both left and right child that have already been drawn found.
     DEBUG_COUT ( "DrawNextParseTreeLevelDirectingRoot--m_wParseLevel: "
-        << m_wParseLevel
-        << " nodes to process size="
-        << m_stdvecNodesToProcess.size() << "\n" )
+      << m_wParseLevel
+      << " nodes to process size="
+      << m_stdvecNodesToProcess.size() << "\n" )
   //        usleep(1000000) ;
   }
   while( //! m_stdvecNodesToProcess.empty()
@@ -591,7 +639,8 @@ void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
 //  Additionally, when a grammar part name is drawn store the horizontal position
 // because its parent should be drawn in the middle of its children and
 //  a line should be drawn from child to parent.
-void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(wxPaintDC & wxpaintdc )
+void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
+    wxDC & r_wxdc )
 {
   DWORD dwNumberOfAlreadyDrawnItems = 0 ;
   DWORD dwLeftMostTokenIndex = 0 ;
@@ -606,6 +655,12 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(wxPaintDC & wxpaintdc )
   m_wParseLevel = 0 ;
   m_stdvecNodesToProcess.clear() ;
   citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
+  //A text (especially the longer the more probable) may contain more than 1
+  //contigous parse tree: e.g. if only parse rule
+  //"definite article + noun" = noun_construct, text "the man the woman":
+  //       the man the woman
+  //         \ /     \ /
+  //noun_construct noun_construct <- 2 parse trees for the text
   p_grammarpart = mp_parsebyrise->GetGrammarPartCoveringMostTokens(
       dwLeftMostTokenIndex ) ;
   std::set<GrammarPart * > setFinalNodesOfCurrentParseLevel ;
@@ -635,42 +690,62 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(wxPaintDC & wxpaintdc )
 //  wxSize wxsizeStringRightChild ;
   WORD wStringWidthLeftChild ;
   WORD wStringWidthRightChild ;
+  WORD wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens = 0 ;
   bool bRightChild = false ;
   m_stdmap_p_grammarpart2HorizCenter.clear() ;
-  while( p_grammarpart )
+
+//  while( p_grammarpart )
+//  while( bDrawText )
+  //Draw leaves of parse trees AND token that do not belong to a parse tree.
+  while ( dwLeftMostTokenIndex < mp_parsebyrise->m_psv.size() )
   {
-    dwLeftMostTokenIndex = p_grammarpart->m_dwRightmostIndex + 1 ;
-    DEBUG_COUT("wxParseTreePanel::DrawParseTreeBeginningFromLeaves--topmost grammar part "
-        "beginning from token index " << dwLeftMostTokenIndex << ":"
-        << p_grammarpart
-        << "\n")
-//    if( p_grammarpart )
+    //Is NULL if the token does not belong to a parse tree.
+    if( p_grammarpart )
     {
+      dwLeftMostTokenIndex = p_grammarpart->m_dwRightmostIndex + 1 ;
+      DEBUG_COUT("wxParseTreePanel::DrawParseTreeBeginningFromLeaves--"
+        "topmost grammar part from token indices ["
+        //<< dwLeftMostTokenIndex << ":"
+        << p_grammarpart->m_dwLeftmostIndex << ":"
+        << p_grammarpart->m_dwRightmostIndex << "] :"
+        << p_grammarpart
+        << "\n" )
       WORD wHorizTextCenter = 0 ;
       const std::string & r_stdstrGrammarPartName = //citer->second.
         //m_stdstrGrammarPartName ;
         mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID ) ;
       wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
-      wxsizeString = GetGrammarPartNameExtent( wxpaintdc, p_grammarpart,
+      wxsizeString = GetGrammarPartNameExtent( r_wxdc, p_grammarpart,
           wxstrGrammarPartName ) ;
       setStringWidthsOfCurrentParseTreePath.insert( wxsizeString.GetWidth()) ;
       vecCurrentParseTreePath.push_back(p_grammarpart) ;
 
-      DrawLeavesOfParseTree(wxpaintdc, //m_stdmap_p_grammarpart2HorizCenter
-          p_grammarpart ) ;
+      wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens =
+          DrawLeavesOfParseTree( r_wxdc, //m_stdmap_p_grammarpart2HorizCenter
+          p_grammarpart ,
+          wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens ) ;
 //      while(DrawNextParseTreeLevelDirectingRoot() ) ;
       m_wParseLevel =  2 ;
-      do
-      {
-        dwNumberOfAlreadyDrawnItems = m_stdmap_p_grammarpart2HorizCenter.size() ;
-        DrawNextParseTreeLevelDirectingRoot(wxpaintdc, //2
-            m_wParseLevel ++ , p_grammarpart) ;
-      }
-      while( //m_stdmap_p_grammarpart2HorizCenter.size() < dwNumberOfAlreadyDrawnItems
-        //While the root has not been drawn yet.
+      if( //If the root has not been drawn yet (for trees that have only 1 node
+          //that is root and leaf at the same time ).
+          //If this case is not catched this may result in an endless loop
+          //below.
         m_stdmap_p_grammarpart2HorizCenter.find( p_grammarpart ) ==
           m_stdmap_p_grammarpart2HorizCenter.end()
-        ) ;
+        )
+      {
+        do
+        {
+          dwNumberOfAlreadyDrawnItems = m_stdmap_p_grammarpart2HorizCenter.size() ;
+          DrawNextParseTreeLevelDirectingRoot( r_wxdc, //2
+              m_wParseLevel ++ , p_grammarpart) ;
+        }
+        while( //m_stdmap_p_grammarpart2HorizCenter.size() < dwNumberOfAlreadyDrawnItems
+          //While the root has not been drawn yet.
+          m_stdmap_p_grammarpart2HorizCenter.find( p_grammarpart ) ==
+            m_stdmap_p_grammarpart2HorizCenter.end()
+          ) ;
+      }
       //Set to zero, else infinite loop when the tree is drawn the 2nd time
       //because it would start with the value "1" and would not get "0".
       m_wParseLevel = 0 ;
@@ -678,15 +753,35 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(wxPaintDC & wxpaintdc )
       DEBUG_COUT("DrawParseTreeBeginningFromLeaves--no more nodes to process"
           << "\n")
     }
+    else //token not part of a parse tree.
+    {
+      VTrans::string_type & r_vtrans_str =
+        mp_parsebyrise->m_psv.at(dwLeftMostTokenIndex).m_Str ;
+      r_wxdc.DrawText( r_vtrans_str ,
+        wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens , 0 ) ;
+      wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens +=
+        10 + r_wxdc.GetTextExtent( r_vtrans_str ).GetWidth() ;
+      ++ dwLeftMostTokenIndex ;
+    }
+    //A text (especially the longer the more probable) may contain more than 1
+    //contigous parse tree: e.g. if only parse rule
+    //"definite article + noun" = noun_construct, text "the man the woman":
+    //       the man the woman
+    //         \ /     \ /
+    //noun_construct noun_construct <- 2 parse trees for the text
     p_grammarpart =
         //Get the next tree.
-        //mp_parsebyrise->GetGrammarPartCoveringMostTokens(
-        //dwLeftMostTokenIndex ) ;
-        NULL ;
+      mp_parsebyrise->GetGrammarPartCoveringMostTokens(
+      dwLeftMostTokenIndex ) ;
+//        NULL ;
+//    if( ! p_grammarpart )
+//      if( mp_parsebyrise->m_psv.size() > dwLeftMostTokenIndex )
+//      bDrawText
   }
 }
 
-void wxParseTreePanel::DrawParseTreeBeginningFromRoots(wxPaintDC & wxpaintdc )
+void wxParseTreePanel::DrawParseTreeBeginningFromRoots(
+    wxDC & r_wxdc )
 {
   DWORD dwLeftMostTokenIndex = 0 ;
   GrammarPart * p_grammarpart ;
@@ -712,7 +807,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromRoots(wxPaintDC & wxpaintdc )
     //m_stdstrGrammarPartName ;
     mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID ) ;
   wxString wxstr(r_stdstrGrammarPartName) ;
-  wxpaintdc.DrawText( //citer->second.m_stdstrGrammarPartName
+  r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
     //r_stdstrGrammarPartName
     wxstr
      , wxPoint(200,0) ) ;
@@ -741,7 +836,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromRoots(wxPaintDC & wxpaintdc )
   //          stdvecNodesToProcess.push_back(p_pg->mp_grammarpartRightChild) ;
   ////          ++ m_wParseLevel ;
   //        }
-    DrawGrammarPartChildren( p_grammarpart , wxpaintdc ) ;
+    DrawGrammarPartChildren( p_grammarpart , r_wxdc ) ;
     if( p_grammarpart->mp_grammarpartLeftChild )
     {
       p_grammarpart = p_grammarpart->mp_grammarpartLeftChild ;
@@ -800,7 +895,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromRoots(wxPaintDC & wxpaintdc )
 
 void wxParseTreePanel::DrawGrammarPartToken(
     GrammarPart * p_pg ,
-    wxPaintDC & wxpaintdc ,
+    wxDC & r_wxdc ,
     WORD & r_wHorizTextCenter
     )
 {
@@ -825,10 +920,10 @@ void wxParseTreePanel::DrawGrammarPartToken(
           GetBetweenAsStdString(
           mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
           p_pg->m_dwRightmostIndex ) ;
-      wxpaintdc.DrawText( //citer->second.m_stdstrGrammarPartName
+      r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
           r_stdstrTokens
          , wxPoint( dwXcoordinate ,m_wParseLevel * 20 ) ) ;
-      wxSize wxsizeText = wxpaintdc.GetTextExtent( wxString(
+      wxSize wxsizeText = r_wxdc.GetTextExtent( wxString(
           r_stdstrTokens) ) ;
       dwXcoordinate += wxsizeText.x ;
       std::pair<std::map<WORD,DWORD>::iterator,bool> pair_iter_bool =
@@ -869,7 +964,7 @@ wxSize wxParseTreePanel::GetGrammarPartNameExtent(
 
 //void
 wxSize wxParseTreePanel::GetTokenExtent(
-    wxPaintDC & wxpaintdc ,
+    wxDC & r_wxdc ,
     GrammarPart * p_pg ,
 //    wxSize & wxsizeText
     wxString & wxstr
@@ -880,7 +975,7 @@ wxSize wxParseTreePanel::GetTokenExtent(
      mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
      p_pg->m_dwRightmostIndex ) ;
   wxstr = wxString(r_stdstrTokens) ;
-  wxSize wxsizeText = wxpaintdc.GetTextExtent( wxstr ) ;
+  wxSize wxsizeText = r_wxdc.GetTextExtent( wxstr ) ;
   return wxsizeText ;
 }
 

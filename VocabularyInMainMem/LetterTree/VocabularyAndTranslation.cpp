@@ -15,7 +15,7 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
   switch(byVocabularyType)
   {
   case ENGLISH_NOUN:
-    m_pword = new EnglishNoun() ;
+//    m_pword = new EnglishNoun() ;
     m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN] ;
     m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
     byArraySizeForEng = NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN ;
@@ -33,13 +33,19 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     m_arstrGermanWord = new std::string[1] ;
     m_arbyAttribute = new BYTE[1] ;
     break;
+  //case LetterTree::personal_pronoun :
+  case EnglishWord::personal_pronoun :
+    m_arstrEnglishWord = new std::string[1] ;
+    m_arstrGermanWord = new std::string[1] ;
+    m_arbyAttribute = new BYTE[1] ;
+    break;
 
   //case GERMAN_NOUN:
   //  m_pword = new GermanNoun() ;
   //  m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
   //  break;
   default:
-    m_pword = new Word() ; 
+//    m_pword = new Word() ;
     m_arstrEnglishWord = NULL ;
     m_arstrGermanWord = NULL ;
     m_arbyAttribute = NULL ;
@@ -50,15 +56,15 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
   //m_arpletternodeLastGerChar = new LetterNode * [byArraySizeForGer];
   //Important for the destructor: init. with "NULL".
   //m_pword = NULL ;
-  m_pwordTranslation = NULL ;
+//  m_pwordTranslation = NULL ;
 }
 
 VocabularyAndTranslation::~VocabularyAndTranslation()
 {
   //if ( m_pword )
   //  delete m_pword ;
-  if( m_pwordTranslation )
-    delete m_pwordTranslation ;
+//  if( m_pwordTranslation )
+//    delete m_pwordTranslation ;
   if(m_arstrEnglishWord)
   {
 #ifdef _DEBUG_FREEING_MEM

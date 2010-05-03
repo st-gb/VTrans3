@@ -250,7 +250,7 @@ VocabularyAndTranslation * LetterTree::insert(
   return pvocabularyandtranslation ;
 }
 
-  void LetterTree::Insert(std::string stdstr, BYTE byWordClass )
+  void LetterTree::Insert(const std::string & stdstr, BYTE byWordClass )
   {
     bool bInsertNewVocabularyAndTranslation = true ;
     LetterNode * pletternode ;
@@ -414,6 +414,26 @@ void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
   //vocabulary pair.
   if( bInsertNewVocabularyAndTranslation )
     bInsertNewVocabularyAndTranslation = false ;
+}
+
+void LetterTree::InsertPersonalPronouns()
+{
+  Insert("I", EnglishWord::personal_pronoun ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _1_st_person_singular ;
+  Insert("you", EnglishWord::personal_pronoun ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_singular ;
+  Insert("he", EnglishWord::personal_pronoun ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  Insert("she", EnglishWord::personal_pronoun ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  Insert("it", EnglishWord::personal_pronoun ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  Insert("we", EnglishWord::personal_pronoun ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _1st_person_plural ;
+  Insert("you", EnglishWord::personal_pronoun ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_plural ;
+  Insert("they", EnglishWord::personal_pronoun ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_plural ;
 }
 
   //Called by a GLR (created by bison parser generator; similar to yacc)

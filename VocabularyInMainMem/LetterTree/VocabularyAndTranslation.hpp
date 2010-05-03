@@ -62,9 +62,10 @@ class LetterNode ;
     LetterNode ** m_arpletternodeLastEngChar ;
     //LetterNode ** m_arpletternodeLastGerChar ;
 #endif //COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
-    Word * m_pword ;
-    Word m_word ;
-    Word * m_pwordTranslation ;
+
+//    Word * m_pword ;
+//    Word m_word ;
+//    Word * m_pwordTranslation ;
     //std::string * m_arstrEnglishWord ;
     VTrans::string_type * m_arstrEnglishWord ;
     //std::string * m_arstrGermanWord ;
@@ -77,8 +78,8 @@ class LetterNode ;
       //const
       Word & rwordTranslation)
     {
-      m_pword = & rword ;
-      m_pwordTranslation = & rwordTranslation ;
+//      m_pword = & rword ;
+//      m_pwordTranslation = & rwordTranslation ;
     }
 
     VocabularyAndTranslation(BYTE byVocabularyType) ;
@@ -109,10 +110,12 @@ class LetterNode ;
       m_arbyAttribute[0] |= (by >> BIT_POSITION_FOR_TRANSLATION_TYPE) ;
     }
 
-    //for std::set::insert(): there must NOT be: " (this<right)==false && (right<this)==false"
+    //for std::set::insert(): there must NOT be:
+    //" (this<right)==false && (right<this)==false"
     bool operator <(const VocabularyAndTranslation & right) const
     {
       //return m_pword < right.m_pword ;
-      return &m_word < &right.m_word ;
+//      return &m_word < &right.m_word ;
+      return this < & right ;
     }
   }; //end class

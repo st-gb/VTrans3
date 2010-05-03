@@ -220,16 +220,19 @@ void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
 //  : "the vacuum cleaner" (pos 0-2) covers 3 tokens
 //  : "the vacuum cleaner sucks." (pos 0-3) covers 4 tokens
 GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
-  DWORD dwLeftMostTokenIndex )
+  DWORD dwLeftmostTokenIndex )
 {
   DWORD dwNumberOfTokensCoveredMax = 0 ;
   DWORD dwNumberOfTokensCoveredCurrent ;
   GrammarPart * p_gp = NULL ;
   //std::multimap<DWORD, GrammarPart>::const_iterator iter ;
+
+  //Get a list with all parse trees that have the leftmost token at index
+  //"dwLeftmostTokenIndex".
   std::pair<c_iter_mmap_dw2grammarpart,c_iter_mmap_dw2grammarpart>
     stdpair_iter =
     m_stdmultimap_dwLeftmostIndex2grammarpart.equal_range(
-    dwLeftMostTokenIndex) ;
+    dwLeftmostTokenIndex) ;
 #ifdef _DEBUG
   WORD wNumberOfGrammapartsStartingAtPos = 0 ;
 #endif
@@ -240,7 +243,7 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
     ++ wNumberOfGrammapartsStartingAtPos ;
 #endif
     dwNumberOfTokensCoveredCurrent = iterCurrent->second.m_dwRightmostIndex -
-      dwLeftMostTokenIndex
+      dwLeftmostTokenIndex
       //to include grammar parts with 1 token
       + 1 ;
     if( dwNumberOfTokensCoveredCurrent > dwNumberOfTokensCoveredMax )
@@ -422,6 +425,7 @@ void ParseByRise::InsertRuleIDsForWordClasses()
   InsertGrammarRule( EnglishWord::main_verb, "main_verb" ) ;
   InsertGrammarRule( EnglishWord::English_definite_article, "definite_article" ) ;
   InsertGrammarRule( EnglishWord::conjunction, "conjunction" ) ;
+  InsertGrammarRule( EnglishWord::personal_pronoun, "pers_pronoun" ) ;
 }
 
 bool ParseByRise::GrammarPartIDIsWordClass( WORD wGrammarPartID )

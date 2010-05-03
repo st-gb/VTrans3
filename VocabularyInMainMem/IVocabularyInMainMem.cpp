@@ -9,13 +9,12 @@
 //{
 //  Insert("I", personal_pronoun ) ;
 //  Insert("you", personal_pronoun ) ;
-//  Insert("a", personal_pronoun ) ;
-//  Insert("a", English_indefinite_article ) ;
-//  Insert("a", English_indefinite_article ) ;
-//  Insert("a", English_indefinite_article ) ;
-//  Insert("a", English_indefinite_article ) ;
-//  Insert("a", English_indefinite_article ) ;
-//
+//  Insert("he", personal_pronoun ) ;
+//  Insert("she", personal_pronoun ) ;
+//  Insert("it", personal_pronoun ) ;
+//  Insert("we", personal_pronoun ) ;
+//  Insert("you", personal_pronoun ) ;
+//  Insert("they", personal_pronoun ) ;
 //}
 
 IVocabularyInMainMem::IVocabularyInMainMem()
@@ -43,8 +42,8 @@ void IVocabularyInMainMem::InsertFundamentalWords()
   Insert(englishauxiliaryverbBe,germanverbSein) ;
 	germanverbSein.m_bCase = GermanVerb::nominative ;
 	germanverbSein.m_bMove = 0 ;
+	InsertPersonalPronouns() ;
 
-  Insert("a", English_indefinite_article ) ;
+//  Insert("a", English_indefinite_article ) ;
 //  Insert(",", comma ) ;
-//  InsertPersonalPronouns() ;
 }

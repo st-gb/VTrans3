@@ -165,6 +165,8 @@
     //node to be have less than 255 elements.
     void createMapping() ;
 
+    void InsertPersonalPronouns() ;
+
     LetterTree(//I_UserInterface * p_userinterface
       )
       //Initializations .
@@ -202,7 +204,7 @@
       LetterNode * & pletternode,
       BYTE byVocabularyType) ;
 
-    void Insert(std::string stdstr, BYTE byWordClass ) ;
+    void Insert(const std::string & r_stdstr, BYTE byWordClass ) ;
     void Insert(EnglishWord & ew , GermanWord & gw ) ;
 
     //std::set<VocabularyAndTranslation> * search(
