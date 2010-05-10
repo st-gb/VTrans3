@@ -261,6 +261,59 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
   return p_gp ;
 }
 
+bool ParseByRise::GetGrammarPartID( const std::string & r_str , WORD & wID )
+{
+  bool bSuccess = false ;
+  std::map<std::string,WORD>::const_iterator iter =
+    m_stdmap_RuleName2RuleID.find(r_str) ;
+  if( iter != m_stdmap_RuleName2RuleID.end() )
+  {
+    wID = iter->second ;
+    bSuccess = true ;
+  }
+  return bSuccess ;
+}
+
+std::string ParseByRise::GetGrammarPartName(WORD wRuleID )
+{
+  std::string stdstrRuleName ;
+  std::map<WORD,std::string>::const_iterator iter =
+    m_stdmap_wRuleID2RuleName.find( wRuleID ) ;
+  if( iter != m_stdmap_wRuleID2RuleName.end() )
+    return iter->second ;
+  return std::string("") ;
+}
+
+std::string ParseByRise::GetPathAs_std_string(
+  const std::vector<WORD> & r_stdvec_wGrammarPartPath )
+{
+  std::string stdstr ;
+//  for(WORD  w=0; w < m_ar_wElements ; ++ w )
+//    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
+  for( std::vector<WORD>::const_iterator iter =
+    r_stdvec_wGrammarPartPath.begin() ;
+    iter != r_stdvec_wGrammarPartPath.end() ; ++ iter )
+  {
+    stdstr += GetGrammarPartName( *iter ) + " ";
+  }
+  return stdstr ;
+}
+
+std::string ParseByRise::GetPathAs_std_string(
+  const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath )
+{
+  std::string stdstr ;
+//  for(WORD  w=0; w < m_ar_wElements ; ++ w )
+//    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
+  for( std::vector<GrammarPart *>::const_iterator iter =
+      r_stdvec_p_grammarpartPath.begin() ;
+    iter != r_stdvec_p_grammarpartPath.end() ; ++ iter )
+  {
+    stdstr += GetGrammarPartName( (*iter)->m_wGrammarPartID ) + " ";
+  }
+  return stdstr ;
+}
+
 //return: bitfield: 1 bit for every single person Index (1st person singular...3rd
 //persion  plural)
 //TODO: combine child node's person indices to the value of the
@@ -368,6 +421,7 @@ BYTE ParseByRise::GetSubjectPersonIndex( GrammarPart * p_grammarpart)
 //    }
 //    while( ! m_stdvecNodesToProcess.empty() ) ;
 //  }
+//  ParseTreeTraverser::SummarizePersonIndex spi(
 }
 
 void ParseByRise::GetTokensAsSpaceSeparatedString(
@@ -824,11 +878,45 @@ bool ParseByRise:://GrammarRuleAppliesTo(
           m_stdset_grammarpartAllSuperordinate.end()
           )
       {
-        //For the translation: add children
+        //e.g. for the grammar part "noun_construct" add "the" (article) and
+        //"car" (noun)
+        //In order to translate: add children
         grammarpart.AddLeftChild(
           iter_mm_rightmostidx2grammarptLeftGrammarPart->second ) ;
         grammarpart.AddRightChild(
           iter_wLeftmostIndex2grammarpartRightGrammarPart->second ) ;
+#ifdef COMPILE_WITH_LEFT2RIGHT_RELATIONSHIP
+        //when getting the personindex this is a fast method:
+        //the car and the cat suck.
+        //  \ /    /   \  /
+        //  nc(1) /   nc(2)
+        //   \   /     /
+        //   nc_conj  /
+        //        \  /
+        //     nc_conj_nc
+        //        |
+        //
+        //insert left child to right child mappings for:
+        // the -> car
+        // nc(1) -> and
+        // the  -> cat
+        // nc_conj -> nc(2)
+        // then when I want to know the person index:
+        // the car -> singular -> 3rd pers sing; save "3rd person sing" in
+        //    parent "nc(1)"
+        //   -add "nc(1)" to a list for the next level,
+        //  -continue with
+        // the car + and : no change
+        // the cat -> singular -> 3rd pers sing
+        // "the cat and" + "the cat" : 3rd pers sing + 3rd pers sing = 3rd pers plur
+        //
+        m_stdmapgrammarpartLeftChild2grammarpartRightChild.insert(
+          std::pair<GrammarPart *,GrammarPart *>(
+          iter_mm_rightmostidx2grammarptLeftGrammarPart->second,
+          iter_wLeftmostIndex2grammarpartRightGrammarPart->second
+          )
+          ) ;
+#endif
         //Bad approach !? better simply check whether the number of tokens for
         //an applied rule got larger for each parse level?!
   //      //Memorize the grammar parts involved in applied rules as a break

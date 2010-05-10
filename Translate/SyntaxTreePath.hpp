@@ -19,6 +19,13 @@ class GrammarPart ;
 //Used to compare whether a condition of a translation rule applies.
 //Therefore it created a syntax tree path as an ID array from the
 //grammar part name(s) to compare faster.
+//A syntax tree path in the syntax tree
+//  the         car
+// def_article  noun
+//           \  /
+// def_article_noun
+//
+//is e.g. "def_article_noun(3)"->"def_article(1)", as IDs e.g. "3->1"
 //This class encapsulates both the ID array and its size because the size
 //is necessary for knowing the end of the array.
 class SyntaxTreePath
@@ -49,8 +56,9 @@ public:
   void CreateGrammarPartIDArray(
       const std::string & r_stdstrSyntaxTreePath
       ,     ParseByRise * p_parsebyrise ) ;
+  std::string GetAs_std_string() const ;
   GrammarPart * GetLeaf(
-    std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const ;
+    const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const ;
   bool operator < ( const SyntaxTreePath & r) const ;
   bool IsPartOf(std::vector<WORD> & r_stdvec_wGrammarPartPath ) ;
 };

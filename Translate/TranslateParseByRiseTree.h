@@ -110,18 +110,29 @@ public:
   void AddTranslationRule(
     TranslationRule * p_tr,
     const ConditionsAndTranslation & rc_cnt ) ;
-  bool AllConditionsMatch( const ConditionsAndTranslation & r_cnt ) ;
+  bool AllConditionsMatch( const ConditionsAndTranslation & r_cnt
+    // So it can be used with data from outside this class.
+    //, const std::vector<WORD> & r_stdvec_wGrammarPartPath
+    , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
+    ) ;
   std::string GetSyntaxTreePathAsName( //ParseByRise & r_parsebyrise
-   std::vector<WORD> & ) ;
+   const std::vector<WORD> & ) ;
   std::string GetSyntaxTreePathAsName(WORD * ar_wGrammarPartPath,
       WORD wLength) ;
   std::string GetTranslationEquivalent(
-    const ConditionsAndTranslation & r_cnt ) ;
+    const ConditionsAndTranslation & r_cnt
+    , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
+    ) ;
   TranslateParseByRiseTree(ParseByRise & r_parsebyrise );
   ~TranslateParseByRiseTree();
   void Translate( ParseByRise & r_parsebyrise ) ;
-  bool TranslationRuleApplies( std::string & r_stdstrTranslation
-    , BYTE & r_byPersonIndex ) ;
+  bool TranslationRuleApplies(
+    std::string & r_stdstrTranslation
+    , BYTE & r_byPersonIndex
+    // So it can be used with data from outside this class.
+    , const std::vector<WORD> & r_stdvec_wGrammarPartPath
+    , const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
+    ) ;
 };
 
 #endif /* TRANSLATEPARSEBYRISETREE_H_ */

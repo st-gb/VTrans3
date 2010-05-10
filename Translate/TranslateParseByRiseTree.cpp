@@ -6,6 +6,7 @@
  */
 
 #include <Parse/ParseByRise.hpp>
+#include <Translate/SummarizePersonIndex.hpp>
 #include <Translate/TranslateParseByRiseTree.h>
 #include <Translate/Translationrule.hpp>
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
@@ -224,7 +225,11 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
 }
 
 bool TranslateParseByRiseTree::AllConditionsMatch(
-  const ConditionsAndTranslation & r_cnt )
+  const ConditionsAndTranslation & r_conditions_and_translation
+  // So it can be used with data from outside this class.
+  //, const std::vector<WORD> & r_stdvec_wGrammarPartPath
+  , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
+  )
 {
   bool bAllConditionsMatch = false ;
   int i = 0 ;
@@ -234,14 +239,15 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
 //          grammarpart.string &&
 //          mp_parsebyrise->psv.getTokens(
 //              grammarpart.index, index2) )
-  if( r_cnt.m_conditions.size() > 0 )
+  if( r_conditions_and_translation.m_conditions.size() > 0 )
   {
     bAllConditionsMatch = true ;
-    const Condition & r_cond = r_cnt.m_conditions.front() ;
+    const Condition & cr_condition =
+        r_conditions_and_translation.m_conditions.front() ;
     //if( r_cond.m_syntaxtreepath.IsPartOf(m_stdvec_wGrammarPartPath) )
     //TODO get pointer to leaf node of r_cond.m_syntaxtreepath
-    GrammarPart * p_grammarpartLeaf = r_cond.m_syntaxtreepath.GetLeaf(
-      m_stdvec_p_grammarpartPath) ;
+    GrammarPart * p_grammarpartLeaf = cr_condition.m_syntaxtreepath.GetLeaf(
+      r_stdvec_p_grammarpartPath ) ;
     if( p_grammarpartLeaf &&
       p_grammarpartLeaf->m_pvocabularyandtranslation )
     {
@@ -252,8 +258,9 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
           p_grammarpartLeaf->m_wGrammarPartID) << "\n")
       }
       std::map<std::string,AttributeTypeAndPosAndSize>::const_iterator
-        c_iter_stdstrSttrName2atapas = m_stdmap_AttrName2VocAndTranslAttrDef.find(
-          r_cond.m_stdstrAttributeName ) ;
+        c_iter_stdstrSttrName2atapas =
+            m_stdmap_AttrName2VocAndTranslAttrDef.find(
+          cr_condition.m_stdstrAttributeName ) ;
       if( c_iter_stdstrSttrName2atapas !=
         m_stdmap_AttrName2VocAndTranslAttrDef.end() )
       {
@@ -313,7 +320,9 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
 }
 
 std::string TranslateParseByRiseTree::GetTranslationEquivalent(
-  const ConditionsAndTranslation & r_cnt )
+  const ConditionsAndTranslation & r_cnt
+  , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
+  )
 {
   bool bAllConditionsMatch = false ;
   std::string stdstr ;
@@ -332,7 +341,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
     //if( r_cond.m_syntaxtreepath.IsPartOf(m_stdvec_wGrammarPartPath) )
     //TODO get pointer to leaf node of r_cond.m_syntaxtreepath
     GrammarPart * p_grammarpartLeaf = r_cnt.m_syntaxtreepath.GetLeaf(
-      m_stdvec_p_grammarpartPath) ;
+      r_stdvec_p_grammarpartPath) ;
     if( p_grammarpartLeaf &&
       p_grammarpartLeaf->m_pvocabularyandtranslation )
     {
@@ -419,6 +428,12 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   cond.m_stdstrAttributeName = "Eng_plural" ;
   ConditionsAndTranslation cnt ;
   cnt.AddCondition(cond) ;
+#ifdef _DEBUG
+  std::string stdstr = cnt.m_conditions.front().m_syntaxtreepath.
+      GetAs_std_string() ;
+  DEBUG_COUT("TranslateParseByRiseTree()--syntax tree path string from vectr: "
+    << stdstr)
+#endif
   cnt.m_stdstrGermanTranslation = "die" ;
   cnt.m_byPersonIndex = THIRD_PERSON_PLURAL ;
   //must create on heap.
@@ -435,11 +450,13 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
     cnt
   ) ;
 
+  //TODO for nouns where the sing equals the plural (like "sheep"):
+  //  (additional) condition should be "when indefinite article ("a"): singular"
   Condition cond2 ;
   cond2.SetSyntaxTreePath( "noun_construct.noun" , mp_parsebyrise ) ;
   cond2.m_stdstrAttributeName = "Eng_singular" ;
   ConditionsAndTranslation cnt2 ;
-  cnt2.AddCondition(cond) ;
+  cnt2.AddCondition(cond2) ;
   cnt2.SetSyntaxTreePath( "noun_construct.noun", mp_parsebyrise ) ;
   cnt2.m_stdstrAttributeName = "German_singular" ;
   cnt2.m_byPersonIndex = THIRD_PERSON_SINGULAR ;
@@ -461,6 +478,19 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
     //, ""
     cnt2
   ) ;
+#ifdef _DEBUG
+  std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator ci =
+      m_stdmap_translationrule2ConditionsAndTranslation.find(p_tr2) ;
+  if( ci !=
+      m_stdmap_translationrule2ConditionsAndTranslation.end() )
+  {
+    const Condition & cr_cond = ci->second.m_conditions.front() ;
+    std::string stdstr = cr_cond.m_syntaxtreepath.
+        GetAs_std_string() ;
+    DEBUG_COUT("TranslateParseByRiseTree()--syntax tree path string from vectr: "
+      << stdstr)
+  }
+#endif
 
   //Condition for translating the predicate.
   Condition cond3 ;
@@ -469,7 +499,7 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   //TODO
 //  cond3.m_wAttributeValue = THIRD_PERSON_PLURAL ;
   ConditionsAndTranslation cnt3 ;
-  cnt3.AddCondition(cond) ;
+  cnt3.AddCondition(cond3) ;
   cnt3.SetSyntaxTreePath( "main_verb", mp_parsebyrise ) ;
   //="If subject is in third person plural, use German verb attribute value
   //for plural."
@@ -510,7 +540,8 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
     "Eng_singular" , //attribute name to use as a map key value
     AttributeTypeAndPosAndSize::English, //language
     AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
-    0 , //index
+    0 , //index (singular is stored at index 0 in VocabularyAndTransaltion
+      // string array)
     1 // length
     );
   AddVocAndTranslDefinition(
@@ -518,7 +549,8 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
     "Eng_plural" , //attribute name to use as a map key value
     AttributeTypeAndPosAndSize::English, //language
     AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
-    1 , //index
+    1 , //index (plural is stored at index 1 in VocabularyAndTranslation
+      // string array)
     1 // length
     );
   AddVocAndTranslDefinition(
@@ -594,7 +626,7 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 
 std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
   //ParseByRise & r_parsebyrise
-  std::vector<WORD> & r_stdvec_wGrammarPartPath
+  const std::vector<WORD> & r_stdvec_wGrammarPartPath
   )
 {
   std::string str ;
@@ -678,16 +710,29 @@ void TranslateParseByRiseTree::Translate( ParseByRise & r_parsebyrise )
         m_stdvec_wGrammarPartPath ) << "\n" )
         
       WORD wSubjectID ;
-      if( ! mp_parsebyrise->GetGrammarPartID("subject", wSubjectID) )
+//      if( ! mp_parsebyrise->GetGrammarPartID("subject", wSubjectID) )
+//        wSubjectID = 65535 ;
+      if( ! mp_parsebyrise->GetGrammarPartID("noun_construct", wSubjectID) )
         wSubjectID = 65535 ;
       do
       {
+        //if subject: get person index (and store it in a GrammarPart
+        //member variable)
         if( p_grammarpart->m_wGrammarPartID == wSubjectID )
           //Get the person index bitfield, i.e. 
+        {
           //  "I" has person index "0",
           //  "you" has person indices "1" (singular, German: "du" ), 
           //     "4" (plural, German: "ihr"), "6" (German: "man")
-          mp_parsebyrise->GetSubjectPersonIndex( p_grammarpart);
+//          mp_parsebyrise->GetSubjectPersonIndex( p_grammarpart);
+          ParseTreeTraverser::SummarizePersonIndex spi(
+            p_grammarpart ,
+            mp_parsebyrise ,
+            * this ) ;
+          spi.Traverse() ;
+          DEBUG_COUT( "result of getting persindex:"
+            << (WORD) p_grammarpart->m_byPersonIndex )
+        }
         DEBUG_COUT ( "current syntax tree path:" << GetSyntaxTreePathAsName(
           //r_parsebyrise
             m_stdvec_wGrammarPartPath ) << "\n" );
@@ -726,7 +771,11 @@ void TranslateParseByRiseTree::Translate( ParseByRise & r_parsebyrise )
               p_grammarpart->m_wGrammarPartID ) << " current size=" <<
                   m_stdvecNodesToProcess.size() << "\n" ) ;
           //ApplyTranslationRule( ) ;
-          if( TranslationRuleApplies( stdstrTranslation , byPersonIndex ) )
+#ifdef _DEBUG
+          if( TranslationRuleApplies( stdstrTranslation , byPersonIndex ,
+              m_stdvec_wGrammarPartPath ,
+              m_stdvec_p_grammarpartPath )
+            )
           {
             DEBUG_COUT( "translation rule applies\n" ) ;
             stdstrWholeTransl += stdstrTranslation + " " ;
@@ -738,6 +787,7 @@ void TranslateParseByRiseTree::Translate( ParseByRise & r_parsebyrise )
             //                -S- --P-    --P--
             p_grammarpart->m_byPersonIndex = byPersonIndex ;
           }
+#endif
           switch( p_grammarpart->m_wGrammarPartID )
           {
           case EnglishWord::noun:
@@ -745,6 +795,9 @@ void TranslateParseByRiseTree::Translate( ParseByRise & r_parsebyrise )
               p_grammarpart->m_pvocabularyandtranslation->
               m_arstrGermanWord[0] <<
               "\n" ) ;
+            break ;
+//          case EnglishWord::main_verb
+//            break ;
           }
           m_stdvec_wGrammarPartPath.pop_back() ;
           m_stdvec_p_grammarpartPath.pop_back() ;
@@ -782,7 +835,12 @@ void TranslateParseByRiseTree::Translate( ParseByRise & r_parsebyrise )
 }
 
 bool TranslateParseByRiseTree::TranslationRuleApplies( 
-  std::string & r_stdstrTranslation , BYTE & r_byPersonIndex )
+  std::string & r_stdstrTranslation ,
+  BYTE & r_byPersonIndex
+  // So it can be used with data from outside this class.
+  , const std::vector<WORD> & r_stdvec_wGrammarPartPath
+  , const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
+  )
 {
   bool bIdentical = false ;
   DEBUG_COUT("TranslationRuleApplies--beg\n")
@@ -791,9 +849,12 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 //   ;
 //  m_stdvec_wGrammarPartPath ;
   for( std::map<TranslationRule * ,ConditionsAndTranslation>::const_iterator
-      iter = m_stdmap_translationrule2ConditionsAndTranslation.begin() ;
-      iter != m_stdmap_translationrule2ConditionsAndTranslation.end() ;
-      ++ iter )
+      c_iter_p_translationrule2conditionsandtranslation =
+        m_stdmap_translationrule2ConditionsAndTranslation.begin() ;
+      c_iter_p_translationrule2conditionsandtranslation !=
+        m_stdmap_translationrule2ConditionsAndTranslation.end() ;
+      ++ c_iter_p_translationrule2conditionsandtranslation
+      )
   {
     //E.g. m_stdvec_wGrammarPartPath is
     // "clause.subject.noun_construct.noun.definite_article", so it has the
@@ -804,46 +865,51 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
     //  m_stdmap_translationrule2ConditionsAndTranslation ) that may be
     // "subject.noun_construct.noun.definite_article", i.e. a subtree of
     // m_stdvec_wGrammarPartPathw with just 4 elements.
-    if ( m_stdvec_wGrammarPartPath.size() >= //iter->first->m_wNumberOfElements
-        iter->first->m_SyntaxTreePath.m_wNumberOfElements )
+    if ( //m_stdvec_wGrammarPartPath.size()
+        r_stdvec_wGrammarPartPath.size() >= //iter->first->m_wNumberOfElements
+        c_iter_p_translationrule2conditionsandtranslation->first->
+        m_SyntaxTreePath.m_wNumberOfElements
+        )
     {
       //Use a pointer, else the TranslationRule destructor is called.
-      const TranslationRule * p_tr = iter->first ;
-      WORD wLenghtDiff = m_stdvec_wGrammarPartPath.size() -
+      const TranslationRule * p_translationrule =
+          c_iter_p_translationrule2conditionsandtranslation->first ;
+      WORD wLenghtDiff = r_stdvec_wGrammarPartPath.size() -
           //iter->first->m_wNumberOfElements
-          iter->first->m_SyntaxTreePath.m_wNumberOfElements ;
+          c_iter_p_translationrule2conditionsandtranslation->first->
+          m_SyntaxTreePath.m_wNumberOfElements ;
       bIdentical = true ;
 #ifdef _DEBUG
-      std::string stdstr = GetSyntaxTreePathAsName(m_stdvec_wGrammarPartPath ) ;
+      std::string stdstr = GetSyntaxTreePathAsName(r_stdvec_wGrammarPartPath ) ;
       std::string stdstr2 = GetSyntaxTreePathAsName(
           //p_tr->m_ar_wElements, p_tr->m_wNumberOfElements
-          p_tr->m_SyntaxTreePath.m_ar_wElements,
-          p_tr->m_SyntaxTreePath.m_wNumberOfElements
+          p_translationrule->m_SyntaxTreePath.m_ar_wElements,
+          p_translationrule->m_SyntaxTreePath.m_wNumberOfElements
           ) ;
       std::cout << "Comparing " << stdstr << " and " << stdstr2 << "\n" ;
 #endif
 //      std::vector<WORD>::const_iterator c_iter_wGrammarPartPath =
-//          m_stdvec_wGrammarPartPath ;
+//          r_stdvec_wGrammarPartPath ;
       //DEBUG_COUT
       //Compare from end to begin.
       for( WORD wIndex = //p_tr->m_wNumberOfElements - 1 ;
-          p_tr->m_SyntaxTreePath.m_wNumberOfElements - 1 ;
+          p_translationrule->m_SyntaxTreePath.m_wNumberOfElements - 1 ;
           wIndex != MAXWORD  ; -- wIndex )
       {
         DEBUG_COUT("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
-            p_tr->m_SyntaxTreePath.m_ar_wElements [ wIndex ] <<
+            p_translationrule->m_SyntaxTreePath.m_ar_wElements [ wIndex ] <<
           mp_parsebyrise->GetGrammarPartName( //p_tr->m_ar_wElements [ wIndex ]
-              p_tr->m_SyntaxTreePath.m_ar_wElements [ wIndex ]
+              p_translationrule->m_SyntaxTreePath.m_ar_wElements [ wIndex ]
           )
           << " and "
-          << m_stdvec_wGrammarPartPath.at(wIndex + wLenghtDiff )
+          << r_stdvec_wGrammarPartPath.at(wIndex + wLenghtDiff )
           << mp_parsebyrise->GetGrammarPartName(
-              m_stdvec_wGrammarPartPath.at(wIndex + wLenghtDiff ) )
+              r_stdvec_wGrammarPartPath.at(wIndex + wLenghtDiff ) )
           << "\n"
           )
         if( //p_tr->m_ar_wElements [ wIndex ] !=
-            p_tr->m_SyntaxTreePath.m_ar_wElements [ wIndex ] !=
-          m_stdvec_wGrammarPartPath.at(wIndex + wLenghtDiff )
+            p_translationrule->m_SyntaxTreePath.m_ar_wElements [ wIndex ] !=
+          r_stdvec_wGrammarPartPath.at(wIndex + wLenghtDiff )
           )
         {
           bIdentical = false ;
@@ -853,12 +919,21 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
       }
       if( bIdentical )
       {
-        const ConditionsAndTranslation & r_cnt = iter->second ;
-        if( AllConditionsMatch(r_cnt) )
+#ifdef _DEBUG
+        std::string stdstr = GetSyntaxTreePathAsName(r_stdvec_wGrammarPartPath ) ;
+#endif
+        const ConditionsAndTranslation & r_cnt =
+            c_iter_p_translationrule2conditionsandtranslation->second ;
+        if( AllConditionsMatch(
+            r_cnt ,
+            r_stdvec_p_grammarpartPath )
+          )
         {
            //std::string str =
            r_stdstrTranslation = GetTranslationEquivalent(
-              r_cnt ) ;
+              r_cnt ,
+              r_stdvec_p_grammarpartPath
+              ) ;
            r_byPersonIndex = r_cnt.m_byPersonIndex ;
            return true ;
         }

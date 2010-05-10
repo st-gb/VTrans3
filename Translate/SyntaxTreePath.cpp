@@ -9,6 +9,7 @@
 #include <Parse/ParseByRise.hpp>
 #include <string>
 #include <rest.h> //DEBUG_COUT
+#include <windef.h>
 
 SyntaxTreePath::SyntaxTreePath(
     std::string & r_stdstrSyntaxTreePath
@@ -27,23 +28,38 @@ SyntaxTreePath::SyntaxTreePath(
 //we simply set a flag that we are referring this array.
 SyntaxTreePath::SyntaxTreePath( const SyntaxTreePath & stpToCopyFrom )
 {
-  DEBUG_COUT("SyntaxTreePath copy ctor\n")
+  //for checking for correct release of memory:
+//  DEBUG_COUT("SyntaxTreePath copy ctor\n")
   //m_byOtherReferencesToGrammarPartIDArray ++ ;
-  m_bReferringOthersGrammarPartIDArray = true ;
-  m_ar_wElements = stpToCopyFrom.m_ar_wElements ;
+//  m_bReferringOthersGrammarPartIDArray = true ;
+//  stpToCopyFrom.m_bReferredOthersGrammarPartIDArray = true ;
   m_wNumberOfElements = stpToCopyFrom.m_wNumberOfElements ;
+//  m_ar_wElements = stpToCopyFrom.m_ar_wElements ;
+  m_ar_wElements = new WORD[ m_wNumberOfElements ] ;
+  if( m_ar_wElements )
+  {
+    memcpy( m_ar_wElements , //void * destination,
+      stpToCopyFrom.m_ar_wElements , //const void * source
+      sizeof(WORD) * m_wNumberOfElements //Number of bytes to copy.
+      ) ;
+  }
   mp_parsebyrise = stpToCopyFrom.mp_parsebyrise ;
   //m_byOtherReferencesToGrammarPartIDArray = 0 ;
 }
 
 SyntaxTreePath::~SyntaxTreePath()
 {
-  DEBUG_COUT("~SyntaxTreePath (destructor) (obj at address " << this << "\n")
-  if( m_ar_wElements && //m_byOtherReferencesToGrammarPartIDArray == 0
-    ! m_bReferringOthersGrammarPartIDArray )
+  //for checking for correct release of memory:
+//  DEBUG_COUT("~SyntaxTreePath (destructor) (obj at address " << this << "\n")
+//  if(
+//    m_ar_wElements && //m_byOtherReferencesToGrammarPartIDArray == 0
+//    //! m_bReferringOthersGrammarPartIDArray
+//    ! m_bReferredByOthersGrammarPartIDArray
+//    )
   {
-    DEBUG_COUT("~SyntaxTreePath (destructor)--release mem. at " <<
-      m_ar_wElements << "\n")
+    //for checking for correct release of memory:
+//    DEBUG_COUT("~SyntaxTreePath (destructor)--release mem. at " <<
+//      m_ar_wElements << "\n")
     //Release mem.
     delete [] m_ar_wElements ;
   }
@@ -101,6 +117,12 @@ void SyntaxTreePath::CreateGrammarPartIDArray(
     }
     m_ar_wElements = ar_wElements ;
     m_wNumberOfElements = vec_wElements.size() ;
+#ifdef _DEBUG
+    std::string str = GetAs_std_string() ;
+    DEBUG_COUTN("SyntaxTreePath(" << this << ")::CreateGrammarPartIDArray()"
+      "--array as string:"
+      << str )
+#endif
   }
 }
 
@@ -124,28 +146,66 @@ bool SyntaxTreePath::operator < ( const SyntaxTreePath & r) const
   }
 }
 
+std::string SyntaxTreePath::GetAs_std_string( ) const
+{
+  std::string stdstr ;
+#ifdef _DEBUG
+  WORD wGrammarPartID ;
+#endif
+//  for(WORD  w=0; w < m_ar_wElements ; ++ w )
+//    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
+  for( WORD wIndex = 0 ; wIndex < m_wNumberOfElements ; ++ wIndex )
+  {
+#ifdef _DEBUG
+    wGrammarPartID = m_ar_wElements[ wIndex ] ;
+    stdstr += mp_parsebyrise->GetGrammarPartName( wGrammarPartID )
+        + "." ;
+#else
+    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[ wIndex ] )
+        + "." ;
+#endif
+  }
+  return stdstr ;
+}
+
 //Gets the leaf node ausgehend from the the back of vector.
 //So for instance if we want to get the leaf of "noun_construction.noun" , i.e.
 // get the node "noun" ausgehend from "noun_construct.definite_aricle"
 // The 1st common node from the back is "noun_construct", so advance from
 // this node to "noun_construct.noun"
 GrammarPart * SyntaxTreePath::GetLeaf(
-  std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const
+  //The parse tree part, first element is the root or closer to the root than
+  // the last element.
+  //  e.g. for  the car
+  //              \ /
+  //           def_noun
+  // the vector is  [def_noun;article]
+  const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const
 {
   GrammarPart * p_grammarpartRet = NULL ;
+#ifdef _DEBUG
+  std::string str = mp_parsebyrise->GetPathAs_std_string(
+    r_stdvec_p_grammarpartPath ) ;
+  std::string strWORDarray = GetAs_std_string( ) ;
+  DEBUG_COUTN("SyntaxTreePath(" << this << ")::GetLeaf()"
+    "--array as string:"
+    << strWORDarray )
+#endif
   if( m_wNumberOfElements > 0 )
   {
     GrammarPart * p_grammarpart = NULL ;
     //e.g. find "noun_construct.noun" in
     // "subject.noun_construct.definite_article"
     //
-    for( std::vector<GrammarPart *>::reverse_iterator r_iter =
+    for( std::vector<GrammarPart *>::const_reverse_iterator r_iter =
+
       r_stdvec_p_grammarpartPath.rbegin() ;
       r_iter != r_stdvec_p_grammarpartPath.rend() ; ++ r_iter )
     {
       //for( WORD wArrayIndex = m_wNumberOfElements )
 
-      // e.g. "noun_construct" from "noun_construct.noun" found in
+      // e.g. "noun_construct" from the parse tree path
+      //  "noun_construct.noun" found in
       //    "subject.noun_construct.definite_article" .
       if( (*r_iter)->m_wGrammarPartID == m_ar_wElements[0] )
       {
@@ -159,6 +219,16 @@ GrammarPart * SyntaxTreePath::GetLeaf(
     {
       //bool
       GrammarPart * p_grammarpartChild ;
+      //"Walk" directing the leaf in the
+      //e.g. beginning from "noun_construct" go further the way that the rule
+      //IDs define.
+      //  e.g. the tree is
+      //    the            car
+      // definite_article  noun
+      //         \         /
+      //         noun_construct  <-starting here. the grammar part ID defines
+      // the way directing the leaf as "noun_construct->definite_article",
+      // So take the child node that has the grammar part ID of "definite_article"
       for( WORD wIndex = 1 ; wIndex < m_wNumberOfElements ; ++ wIndex )
       {
         p_grammarpartChild = p_grammarpart->mp_grammarpartLeftChild ;
