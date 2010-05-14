@@ -23,10 +23,10 @@ public:
   //e.g. grammar part ID for "the" and for "noun" refer to the same
   //superordinate grammar part ID for "noun_construct".
   WORD m_wSuperordinateGrammarRuleID ;
-  WORD m_wGrammarRuleID ;
+  WORD m_wRightChildGrammarPartID ;
   GrammarRule( WORD wGrammarRuleID , WORD wSuperordinateGrammarRuleID )
   {
-    m_wGrammarRuleID = wGrammarRuleID ;
+    m_wRightChildGrammarPartID = wGrammarRuleID ;
     m_wSuperordinateGrammarRuleID = wSuperordinateGrammarRuleID ;
   }
 } ;
@@ -35,6 +35,7 @@ class ParseByRise
 {
 //private:
 public:
+  std::map<WORD,WORD> m_stdmap_wGrammarPartID2SuperordinateID ;
   //This list stores the leftmost indices of the grammar parts:
   // initially only word classes are grammar parts:
   //   0    1       2      3      <- token index
@@ -66,7 +67,7 @@ public:
   std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2wGrammarPartID ;
   std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2SuperordinateID ;
   std::multimap<WORD, GrammarRule>
-    m_stdmultimap_wGrammarPartID2SuperordinateGrammarRule ;
+    m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule ;
   std::map<WORD, std::string> m_stdmap_wRuleID2RuleName ;
   std::map<std::string,WORD> m_stdmap_RuleName2RuleID ;
 
@@ -177,6 +178,11 @@ public:
   void InsertRuleIDsForWordClasses() ;
   void InsertRuleID2NameMapping( WORD wGrammarRuleID
       , const char * cp_ch ) ;
+  WORD InsertSuperClassGrammarRule(
+    const char * cp_chLeftGrammarRuleName
+    , //std::string
+    const char * cp_chSuperordinateGrammarRuleName
+    ) ;
   ParseByRise();
   ParseByRise(const ParseByRise& orig);
   bool InsertIfGrammarRuleAppliesTo(
@@ -234,7 +240,12 @@ public:
       r_stdmultimap_dwRightmostIndex2grammarpartSuperordinate
     ) ;
 
+  bool ReplaceGrammarPartIDsBySuperordinate() ;
   void ResolveGrammarRulesForAllParseLevels() ;
+  bool InsertSuperordinateGrammarPart(
+    std::multimap<DWORD, GrammarPart> & mm_idx2grammarpt
+    , bool bMemorizeInsertion
+    ) ;
 
   void StoreWordTypeAndGermanTranslation(
 //    PositionstdstringVector & psv

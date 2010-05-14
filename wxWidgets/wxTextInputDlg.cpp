@@ -34,6 +34,7 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString&
   wxButton * p_wxbutton ;
 
   mp_wxsplitterwindow = new wxSplitterWindow( this, wxID_ANY ) ;
+//  mp_wxpanelTop = new wxPanel( mp_wxsplitterwindow ) ;
 
   m_panelParseTree = new //wxPanel(
     wxParseTreePanel(
@@ -57,30 +58,57 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString&
 //    wxTAB_TRAVERSAL
     );
 
+	 //wxGridBagSizer * p_gridbagsizerSplitterTop = new wxGridBagSizer( ) ;
+	  wxFlexGridSizer * p_flexgridsizerSplitterTop = new wxFlexGridSizer( 0 ) ;
+	  p_flexgridsizerSplitterTop->SetFlexibleDirection( wxVERTICAL ) ;
+	  wxBoxSizer * p_boxsizerSplitterTop = new wxBoxSizer( //wxHORIZONTAL
+	    wxVERTICAL ) ;
+
+  m_panelSplitterTop->SetSizer(
+    //p_gridbagsizerSplitterTop
+//    p_flexgridsizerSplitterTop
+    p_boxsizerSplitterTop
+    ) ;
+
 	mp_textctrlEnglishText = new wxTextCtrl(
     //this
-    mp_wxsplitterwindow
-    //m_panelSplitterTop
+//    mp_wxsplitterwindow
+    m_panelSplitterTop
     , wxID_ANY, 
     wxEmptyString,
     wxDefaultPosition,
     wxDefaultSize,
     wxHSCROLL|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB
     );
-
-	//wxGridBagSizer * p_gridbagsizerSplitterTop = new wxGridBagSizer( ) ;
-	wxFlexGridSizer * p_flexgridsizerSplitterTop = new wxFlexGridSizer( 0 ) ;
-	wxBoxSizer * p_boxsizerSplitterTop = new wxBoxSizer( wxHORIZONTAL ) ;
+  mp_textctrlGermanText = new wxTextCtrl(
+    //this
+//    mp_wxsplitterwindow
+    m_panelSplitterTop
+    , wxID_ANY,
+    wxEmptyString,
+    wxDefaultPosition,
+    wxDefaultSize,
+    wxHSCROLL|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB
+    );
 
   //p_gridbagsizerSplitterTop->Add( m_textCtrl7, 1, wxEXPAND | wxALL, 5 );
-  p_flexgridsizerSplitterTop->Add(
-  //p_boxsizerSplitterTop->Add(
+//  p_flexgridsizerSplitterTop->Add(
+  p_boxsizerSplitterTop->Add(
     mp_textctrlEnglishText,
     1,
     wxEXPAND |
     wxALL
     , 5
     );
+//  p_flexgridsizerSplitterTop->Add(
+  p_boxsizerSplitterTop->Add(
+    mp_textctrlGermanText,
+    1,
+    wxEXPAND |
+    wxALL
+    , 5
+    );
+
 //  p_flexgridsizerSplitterTop->Add(
 //  p_boxsizerSplitterTop->Add(
 //    p_wxbutton ,
@@ -98,17 +126,27 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString&
 	
 //	gSizer3->Add( m_textCtrl7, 1, wxALL|wxEXPAND, 5 );
 
-  m_panelSplitterTop->SetSizer(
-    //p_gridbagsizerSplitterTop
-    p_flexgridsizerSplitterTop
-    //p_boxsizerSplitterTop
-    ) ;
   mp_wxsplitterwindow->SplitHorizontally(
-    //m_panelSplitterTop
-    mp_textctrlEnglishText
+    m_panelSplitterTop
+//    mp_textctrlEnglishText
     , m_panelParseTree
     ) ;
+//  mp_wxsplitterwindow->SplitHorizontally(
+//    //m_panelSplitterTop
+//    mp_textctrlGermanText
+//    , m_panelParseTree
+//    ) ;
 
+  p_wxbutton = new wxButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    //this
+    , //wxID_ANY
+    ID_Translate
+    , wxT("translate")
+    ) ;
   p_wxbutton = new wxButton(
     //mp_wxsplitterwindow
     //m_panelSplitterTop
@@ -186,7 +224,9 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
   m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
   TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise ) ;
   DEBUG_COUT("before translation\n")
-  translateParseByRiseTree.Translate(m_parsebyrise) ;
+  std::string stdstrWholeTransl ;
+  translateParseByRiseTree.Translate( m_parsebyrise, stdstrWholeTransl ) ;
+  mp_textctrlGermanText->SetValue( stdstrWholeTransl ) ;
   m_panelParseTree->DrawParseTree(m_parsebyrise) ;
   DEBUG_COUT("end of OnTranslateButton\n")
   //You can also trigger this call by calling Refresh()/Update()

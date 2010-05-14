@@ -667,11 +667,14 @@ std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
 //Getting the "person index":
 // e.g. "I, you and the car suck."
 //  "I"
-void TranslateParseByRiseTree::Translate( ParseByRise & r_parsebyrise )
+void TranslateParseByRiseTree::Translate(
+  ParseByRise & r_parsebyrise
+  , std::string & stdstrWholeTransl
+  )
 {
   BYTE byPersonIndex ;
   ParseByRise * mp_parsebyrise = & r_parsebyrise ;
-  std::string stdstrWholeTransl ;
+//  std::string stdstrWholeTransl ;
   std::string stdstrTranslation ;
   DEBUG_COUT( "Translate(): \n" )
   if( mp_parsebyrise )
@@ -710,10 +713,10 @@ void TranslateParseByRiseTree::Translate( ParseByRise & r_parsebyrise )
         m_stdvec_wGrammarPartPath ) << "\n" )
         
       WORD wSubjectID ;
-//      if( ! mp_parsebyrise->GetGrammarPartID("subject", wSubjectID) )
-//        wSubjectID = 65535 ;
-      if( ! mp_parsebyrise->GetGrammarPartID("noun_construct", wSubjectID) )
+      if( ! mp_parsebyrise->GetGrammarPartID("subject", wSubjectID) )
         wSubjectID = 65535 ;
+//      if( ! mp_parsebyrise->GetGrammarPartID("noun_construct", wSubjectID) )
+//        wSubjectID = 65535 ;
       do
       {
         //if subject: get person index (and store it in a GrammarPart

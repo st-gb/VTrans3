@@ -13,24 +13,10 @@
 #include <map> //std::map
 #include <vector> //std::vector
 #include <windef.h> //for WORD
+#include "DrawGrammarPartAttributes.hpp"
 
 class ParseByRise ;
 class GrammarPart ;
-
-class DrawGrammarPartAttributes
-{
-public:
-  DrawGrammarPartAttributes(
-    WORD wHorizCenterInPixels ,
-    WORD wParseLevel
-    )
-  {
-    m_wHorizCenterInPixels = wHorizCenterInPixels ;
-    m_wParseLevel = wParseLevel ;
-  }
-  WORD m_wParseLevel ;
-  WORD m_wHorizCenterInPixels ;
-};
 
 class wxParseTreePanel
   : public wxPanel

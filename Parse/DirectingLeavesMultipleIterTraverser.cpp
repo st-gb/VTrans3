@@ -17,7 +17,7 @@ namespace ParseTreeTraverser
     const GrammarPart * p_grammarpart
     , ParseByRise * p_parsebyrise
     )
-    : m_grammarpartpointer_and_parselevel (
+    : m_grammarpartpointer_and_parselevelCurrent (
         mp_grammarpartStartNode , 0 )
     , m_wParseLevel( 0)
   {
@@ -103,7 +103,7 @@ namespace ParseTreeTraverser
     const GrammarPart * p_grammarpart = mp_grammarpartStartNode ;
     BeforeBeginAtRoot() ;
     ProcessLeavesOfParseTree() ;
-//    m_grammarpartpointer_and_parselevel = GrammarPartPointerAndParseLevel(
+//    m_grammarpartpointer_and_parselevelCurrent = GrammarPartPointerAndParseLevel(
 //        mp_grammarpartStartNode , 0 ) ;
     if( //If the root has not been drawn yet (for trees that have only 1 node
         //that is root and leaf at the same time ).
@@ -134,14 +134,14 @@ namespace ParseTreeTraverser
     m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.clear() ;
 //    const GrammarPart * p_grammarpart = mp_grammarpartStartNode;
 //    mcp_grammarpartCurrent = mp_grammarpartStartNode;
-    m_grammarpartpointer_and_parselevel = GrammarPartPointerAndParseLevel(
+    m_grammarpartpointer_and_parselevelCurrent = GrammarPartPointerAndParseLevel(
         mp_grammarpartStartNode , 0 ) ;
     //for the root element
     ParseTreePathAdded() ;
     do
     {
       if( //mcp_grammarpartCurrent->mp_grammarpartRightChild
-          m_grammarpartpointer_and_parselevel.m_p_grammarpart->
+          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
           mp_grammarpartRightChild
         )
       {
@@ -150,25 +150,25 @@ namespace ParseTreeTraverser
 //            mcp_grammarpartCurrent->mp_grammarpartRightChild  ) ;
         m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.push_back(
             GrammarPartPointerAndParseLevel(
-            m_grammarpartpointer_and_parselevel.m_p_grammarpart->
+            m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
             mp_grammarpartRightChild ,
 //            m_wParseLevel + 1
-            m_grammarpartpointer_and_parselevel.m_wParseLevel + 1
+            m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel + 1
             )
             ) ;
       }
       if( //mcp_grammarpartCurrent->mp_grammarpartLeftChild
-          m_grammarpartpointer_and_parselevel.m_p_grammarpart->
+          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
           mp_grammarpartLeftChild  )
       {
         ++ m_wParseLevel ;
 //        mcp_grammarpartCurrent =
 //            mcp_grammarpartCurrent->mp_grammarpartLeftChild ;
-        m_grammarpartpointer_and_parselevel.SetGrammarPartPointerAndParseLevel(
-          m_grammarpartpointer_and_parselevel.m_p_grammarpart->
+        m_grammarpartpointer_and_parselevelCurrent.SetGrammarPartPointerAndParseLevel(
+          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
           mp_grammarpartLeftChild ,
           //m_wParseLevel
-          ++ m_grammarpartpointer_and_parselevel.m_wParseLevel
+          ++ m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel
           ) ;
         //Can be used as a callback method in subclasses of this class to keep
         // track of the current parse tree path:
@@ -184,7 +184,7 @@ namespace ParseTreeTraverser
     //          setFinalNodesOfCurrentParseLevel.insert( ) ;
         m_stdset_p_grammarpartProcessedYet.insert(
 //            mcp_grammarpartCurrent
-            m_grammarpartpointer_and_parselevel.m_p_grammarpart
+            m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
           ) ;
         //Can be used as a callback method in subclasses of this class.
         LeaveFound() ;
@@ -220,7 +220,7 @@ namespace ParseTreeTraverser
 //          //"Returns a read/write reference to the data at the last
 //          //*  element of the %vector."
 //          back() ;
-          m_grammarpartpointer_and_parselevel =
+          m_grammarpartpointer_and_parselevelCurrent =
             m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.back() ;
           //Can be used as a callback method in subclasses of this class to keep
           // track of the current parse tree path:
@@ -238,11 +238,11 @@ namespace ParseTreeTraverser
         DEBUG_COUT ( "DrawLeavesOfParseTree--popping " <<
           mp_parsebyrise->GetGrammarPartName(
             //mcp_grammarpartCurrent->m_wGrammarPartID
-            m_grammarpartpointer_and_parselevel.m_p_grammarpart->
+            m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
               m_wGrammarPartID
               )
 //          << mcp_grammarpartCurrent
-          << m_grammarpartpointer_and_parselevel.m_p_grammarpart
+          << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
     //            << " current size=" << m_stdvec_p_grammarpartRightNodeToProcess.size()
           << "\n" )
         //e.g.: noun_construct
@@ -259,7 +259,7 @@ namespace ParseTreeTraverser
         }
         else
           //mcp_grammarpartCurrent = NULL ;
-          m_grammarpartpointer_and_parselevel.m_p_grammarpart = NULL ;
+          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart = NULL ;
       }
       DEBUG_COUT ( "DrawLeavesOfParseTree--"
           << " nodes to process size="
@@ -271,7 +271,7 @@ namespace ParseTreeTraverser
     while( //! m_stdvec_p_grammarpartRightNodeToProcess.empty()
       //m_wParseLevel > 0
       // mcp_grammarpartCurrent
-      m_grammarpartpointer_and_parselevel.m_p_grammarpart
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
      ) ;
   }
 
@@ -280,156 +280,163 @@ namespace ParseTreeTraverser
 //    const GrammarPart * p_grammarpart
     )
   {
-    m_grammarpartpointer_and_parselevel = GrammarPartPointerAndParseLevel(
+    bool bProcessedYet = false ;
+    m_grammarpartpointer_and_parselevelCurrent = GrammarPartPointerAndParseLevel(
         mp_grammarpartStartNode , 0 ) ;
     //for the root node.
     ParseTreePathAdded() ;
     GrammarPartPointerAndParseLevel * p_grammarpartpointerandparselevel =
-        & m_grammarpartpointer_and_parselevel ;
-    std::set<const GrammarPart*>::iterator iterLeft, iterRight ;
+        & m_grammarpartpointer_and_parselevelCurrent ;
+    std::set<const GrammarPart*>::iterator iter_p_grammarpartLeft,
+      iter_p_grammarpartRight ;
 //    m_stdvec_p_grammarpartRightNodeToProcess.clear();
     m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.clear() ;
     WORD m_wCurrentParseTreeLevel = 0 ;
+    bool bGetNextUnprocessedRightChild = false ;
     do
     {
-      iterRight = m_stdset_p_grammarpartProcessedYet.find(
+      bGetNextUnprocessedRightChild = false ;
+      iter_p_grammarpartRight = m_stdset_p_grammarpartProcessedYet.find(
         //p_grammarpart->mp_grammarpartRightChild
         p_grammarpartpointerandparselevel->m_p_grammarpart->
         mp_grammarpartRightChild ) ;
-      iterLeft = m_stdset_p_grammarpartProcessedYet.find(
+      iter_p_grammarpartLeft = m_stdset_p_grammarpartProcessedYet.find(
         //p_grammarpart->mp_grammarpartLeftChild
         p_grammarpartpointerandparselevel->m_p_grammarpart->
           mp_grammarpartLeftChild
           ) ;
 
-      if(
-          //If 2 already drawn children found.
-          //e.g. "the car"
-          //       \  /
-          //     noun_construct
-          //when at "noun_construct"
-          iterRight != m_stdset_p_grammarpartProcessedYet.end()
-        && iterLeft != m_stdset_p_grammarpartProcessedYet.end()
+      if( //node has been processed yet/ in "processed yet" list .
+        iter_p_grammarpartLeft != m_stdset_p_grammarpartProcessedYet.end()
+        //          //If 2 already processed children found.
+        //          //e.g. "the car"
+        //          //       \  /
+        //          //     noun_construct
+        //          //when at "noun_construct"
+        //&& iterRight != m_stdset_p_grammarpartProcessedYet.end()
         )
       {
+        bProcessedYet = iter_p_grammarpartRight !=
+            m_stdset_p_grammarpartProcessedYet.end() ;
   //      bAtLeast1ItemDrawn = true ;
-        //The children inside the container are not needed anymore now.
-        //Also searching
-        //inside the container the next time is faster is less elements are
-        //inside it.
-        m_stdset_p_grammarpartProcessedYet.erase(iterLeft) ;
-        m_stdset_p_grammarpartProcessedYet.erase(iterRight) ;
-        UnprocessedHighestLevelNodeFound() ;
-        m_stdset_p_grammarpartProcessedYet.insert( //p_grammarpart
-          //mp_grammarpartLeftChild->m_p_grammarpart
-          p_grammarpartpointerandparselevel->m_p_grammarpart ) ;
-        do
-        {
-          //Do NOT follow children for the grammar part! they have been drawn yet.
-//          p_grammarpart = GetNextRightGrammarPartNotProcessedYet() ;
-          p_grammarpartpointerandparselevel =
-              GetNextRightGrammarPartNotProcessedYet() ;
-          //No more unprocessed right grammar parts.
-          if( //p_grammarpart == NULL
-            p_grammarpartpointerandparselevel == NULL
-            )
-            //break ;
-            return ;
-          iterRight = m_stdset_p_grammarpartProcessedYet.find(
-              //p_grammarpart
-              p_grammarpartpointerandparselevel->m_p_grammarpart ) ;
-          //e.g. for "the anal and the vacuum cleaner and" the 1st right node
-          //would be for "and". But this has been drawn yet, so continue with the
-          //next right child.
-        } while( //exists in the list
-            iterRight != m_stdset_p_grammarpartProcessedYet.end() ) ;
-        CurrentNodeIsLastAddedRightChild() ;
-      }
-      else //Not both left and right child that have already been drawn found.
-      {
-        if( //p_grammarpart->mp_grammarpartRightChild
-            p_grammarpartpointerandparselevel->m_p_grammarpart->
-            mp_grammarpartRightChild
+        if( //right child is processed yet.
+          bProcessedYet
+          //right iterator may be NULL:
+          //   subj_or_obj_ee
+          //           |
+          // definite_article_noun <- left child,  no right child
+//          || *iter_p_grammarpartRight == NULL
+          || ! p_grammarpartpointerandparselevel->m_p_grammarpart->
+          mp_grammarpartRightChild
           )
         {
-          iterRight = m_stdset_p_grammarpartProcessedYet.find(
-              //p_grammarpart->mp_grammarpartRightChild
-            p_grammarpartpointerandparselevel->m_p_grammarpart->
-            mp_grammarpartRightChild
-            ) ;
-          if( //is not in list
-            iterRight == m_stdset_p_grammarpartProcessedYet.end() )
+          //The children inside the container are not needed anymore now because
+          //its parent will be inserted.
+          //Also searching
+          //inside the container the next time is faster is less elements are
+          //inside it.
+          m_stdset_p_grammarpartProcessedYet.erase(iter_p_grammarpartLeft) ;
+
+          if( //*iter_p_grammarpartRight
+              bProcessedYet )
+            m_stdset_p_grammarpartProcessedYet.erase(iter_p_grammarpartRight) ;
+          UnprocessedHighestLevelNodeFound() ;
+          bGetNextUnprocessedRightChild = true ;
+          m_stdset_p_grammarpartProcessedYet.insert( //p_grammarpart
+            //mp_grammarpartLeftChild->m_p_grammarpart
+            p_grammarpartpointerandparselevel->m_p_grammarpart ) ;
+        }
+        else
+        {
+          if( //p_grammarpart->mp_grammarpartRightChild
+              p_grammarpartpointerandparselevel->m_p_grammarpart->
+              mp_grammarpartRightChild
+            )
           {
-            //Add to process possible children of the right nodes later.
+//            p_grammarpartpointerandparselevel =
+//              p_grammarpartpointerandparselevel->m_p_grammarpart->
+//              mp_grammarpartRightChild ;
+//            p_grammarpartpointerandparselevel->m_p_grammarpart =
+//                p_grammarpartpointerandparselevel->m_p_grammarpart->
+////                mp_grammarpartLeftChild ;
+//                mp_grammarpartRightChild ;
+//            p_grammarpartpointerandparselevel->m_wParseLevel ++ ;
+            m_grammarpartpointer_and_parselevelCurrent.
+              SetGrammarPartPointerAndParseLevel(
+                p_grammarpartpointerandparselevel->m_p_grammarpart->
+                mp_grammarpartRightChild
+                ,
+                m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel + 1
+                ) ;
+            p_grammarpartpointerandparselevel =
+                & m_grammarpartpointer_and_parselevelCurrent ;
+            ++ m_wCurrentParseTreeLevel ;
+            ParseTreePathAdded() ;
+          }
+          else
+            bGetNextUnprocessedRightChild = true ;
+        }
+      }
+      else //left node has not been processed yet.
+      {
+//        iterRight = m_stdset_p_grammarpartProcessedYet.find(
+//            //p_grammarpart->mp_grammarpartRightChild
+//          p_grammarpartpointerandparselevel->m_p_grammarpart->
+//          mp_grammarpartRightChild
+//          ) ;
+        if( //is not in list-> not processed yet
+          iter_p_grammarpartRight == m_stdset_p_grammarpartProcessedYet.end()
+          //If grammar part pointer is NOT NULL (May be NULL !).
+//          && *iterRight
+          && p_grammarpartpointerandparselevel->m_p_grammarpart->
+          mp_grammarpartRightChild
+          )
+        {
+          //Add to process possible children of the right nodes later.
 //            m_stdvec_p_grammarpartRightNodeToProcess.push_back( //p_grammarpart->mp_grammarpartRightChild
 //              p_grammarpart->mp_grammarpartRightChild  ) ;
-            m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.push_back(
-              GrammarPartPointerAndParseLevel(
-              //p_grammarpart->mp_grammarpartRightChild
-              p_grammarpartpointerandparselevel->m_p_grammarpart->
-                mp_grammarpartRightChild
-              , //m_wParseLevel
-              p_grammarpartpointerandparselevel->m_wParseLevel
-              )
-              ) ;
-            //This is important for keeping track of the current parse tree
-            //path:
-            RightChildAdded(m_wCurrentParseTreeLevel) ;
-            //e.g.:
-            //   the car and
-            //    \  /   /
-            // def_noun /
-            //        \/
-            //    def_noun_conj
-            // we start at "def_noun_conj", go left as long as possible, then go
-            // right.
-            //  -at "def_noun_conj": in RightChildAdded(0) of
-            //    this class' subclass store pointer to node for ["and", 0]
-            //    in a map.
-            //  -at "def_noun": in RightChildAdded(1) of
-            //    this class' subclass store pointer to node for ["car", 1]
-            //    in a map.
-            // at "the" the parse tree path is:
-            //   def_noun_conj->def_noun->article
-            //  1.because this is a leaf: next node is the node that was the
-            //     last added to this list of the unprocessed right children:
-            //     right child node "car".
-            //  2. search in the node2parselevel map for "car"
-            //     ->parselevel "1" -> shorten parse tree path to
-            //     "def_noun_conj->def_noun", the current parse tree is
-            //     def_noun_conj->def_noun->noun
-            // then at "car": def_noun_conj->def_noun->noun
-            //   then go to "and", the topmost in the stack of right children.
-            //     : if we kept track by implementing RightChildAdded(WORD)
-            //       we could have stored a mapping node->parse level
-            //       and so we could have shortened "def_noun_conj->def_noun->noun"
-            //      to "def_noun_conj" (because parse level was 0/1 at
-            //       "def_noun_conj" when "and" was added to the right nodes
-            //        not processed yet
-            //   then at "and": def_noun_conj->conj
-      //      wStringWidthRightChild = GetGrammarPartNameExtent( wxpaintdc,
-      //          p_grammarpart->mp_grammarpartRightChild,
-      //          wxstrGrammarPartName ).GetWidth() ;
-          }
+          m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.push_back(
+            GrammarPartPointerAndParseLevel(
+            //p_grammarpart->mp_grammarpartRightChild
+            p_grammarpartpointerandparselevel->m_p_grammarpart->
+              mp_grammarpartRightChild
+            , //m_wParseLevel
+            p_grammarpartpointerandparselevel->m_wParseLevel
+            )
+            ) ;
+          //This is important for keeping track of the current parse tree
+          //path:
+          RightChildAdded(m_wCurrentParseTreeLevel) ;
+    //      wStringWidthRightChild = GetGrammarPartNameExtent( wxpaintdc,
+    //          p_grammarpart->mp_grammarpartRightChild,
+    //          wxstrGrammarPartName ).GetWidth() ;
         }
         if( //p_grammarpart->mp_grammarpartLeftChild
             p_grammarpartpointerandparselevel->m_p_grammarpart->
             mp_grammarpartLeftChild
           )
         {
-          iterLeft = m_stdset_p_grammarpartProcessedYet.find(
-              //p_grammarpart->mp_grammarpartLeftChild
-            p_grammarpartpointerandparselevel->m_p_grammarpart->
-            mp_grammarpartLeftChild
-            ) ;
-          if( //is not in list
-              iterLeft == m_stdset_p_grammarpartProcessedYet.end() )
-          {
+//          iterLeft = m_stdset_p_grammarpartProcessedYet.find(
+//              //p_grammarpart->mp_grammarpartLeftChild
+//            p_grammarpartpointerandparselevel->m_p_grammarpart->
+//            mp_grammarpartLeftChild
+//            ) ;
+//          if( //is not in list
+//              iterLeft == m_stdset_p_grammarpartProcessedYet.end() )
+//          {
 //            p_grammarpart = p_grammarpart->mp_grammarpartLeftChild ;
-            p_grammarpartpointerandparselevel->m_p_grammarpart =
+//            p_grammarpartpointerandparselevel->m_p_grammarpart =
+//                p_grammarpartpointerandparselevel->m_p_grammarpart->
+//                mp_grammarpartLeftChild ;
+//            p_grammarpartpointerandparselevel->m_wParseLevel ++ ;
+            m_grammarpartpointer_and_parselevelCurrent.
+              SetGrammarPartPointerAndParseLevel(
                 p_grammarpartpointerandparselevel->m_p_grammarpart->
-                mp_grammarpartLeftChild ;
-            p_grammarpartpointerandparselevel->m_wParseLevel ++ ;
+                mp_grammarpartLeftChild ,
+                p_grammarpartpointerandparselevel->m_wParseLevel + 1
+                ) ;
+            p_grammarpartpointerandparselevel =
+                & m_grammarpartpointer_and_parselevelCurrent ;
             ++ m_wCurrentParseTreeLevel ;
             ParseTreePathAdded() ;
       //      wStringWidthLeftChild = GetGrammarPartNameExtent( wxpaintdc,
@@ -437,47 +444,69 @@ namespace ParseTreeTraverser
       //          wxstrGrammarPartName ).GetWidth() ;
       //      bRightChild = false ;
         //        ++ m_wParseLevel ;
-          }
-          else
-            //Left child was processed, but not right child yet:
-            // the car        sucks
-            //  \  /           /
-            // noun_construct /
-            //             \ /
-            //           clause
-            // when at "clause" and "the", "car" , and "noun_construct" have
-            // been processed yet in previous iterations.
-          {
-            do
-            {
-              //Do NOT follow children for the grammar part! they have been drawn yet.
-//              p_grammarpart = GetNextRightGrammarPartNotProcessedYet() ;
-              p_grammarpartpointerandparselevel =
-                GetNextRightGrammarPartNotProcessedYet() ;
-              //No more unprocessed right grammar parts.
-              if( //p_grammarpart == NULL
-                p_grammarpartpointerandparselevel == NULL )
-                //break ;
-                return ;
-              iterRight = m_stdset_p_grammarpartProcessedYet.find(
-                  //p_grammarpart
-                p_grammarpartpointerandparselevel->m_p_grammarpart ) ;
-              //e.g. for "the anal and the vacuum cleaner and" the 1st right node
-              //would be for "and". But this has been drawn yet, so continue with the
-              //next right child.
-            } while( //while the node exists in the list
-                iterRight != m_stdset_p_grammarpartProcessedYet.end()
-                ) ;
-//            p_grammarpart wparselevel
-            m_wCurrentParseTreeLevel = p_grammarpartpointerandparselevel->
-              m_wParseLevel ;
-            CurrentNodeIsLastAddedRightChild() ;
-         }
         }
-        else //(Left) leave of parse tree found.
+        else
+          //Left child was processed, but not right child yet:
+          // the car        sucks
+          //  \  /           /
+          // noun_construct /
+          //             \ /
+          //           clause
+          // when at "clause" and "the", "car" , and "noun_construct" have
+          // been processed yet in previous iterations.
         {
+          m_stdset_p_grammarpartProcessedYet.insert( //p_grammarpart
+            //mp_grammarpartLeftChild->m_p_grammarpart
+            p_grammarpartpointerandparselevel->m_p_grammarpart ) ;
+          LeaveFound() ;
+          bGetNextUnprocessedRightChild = true ;
         }
-      } //Not both left and right child that have already been drawn found.
+//        }
+//        else //(Left) leave of parse tree found.
+//        {
+//        }
+//        bGetNextUnprocessedRightChild = true ;
+      }
+//      else ////Not both left and right child that have already been  found.
+//      { //Left child has not already been processed found.
+//
+//
+//      } //Not both left and right child that have already been drawn found.
+      if( bGetNextUnprocessedRightChild )
+      {
+        do
+        {
+          //Do NOT follow children for the grammar part! they have been drawn yet.
+  //              p_grammarpart = GetNextRightGrammarPartNotProcessedYet() ;
+          p_grammarpartpointerandparselevel =
+            GetNextRightGrammarPartNotProcessedYet() ;
+          //No more unprocessed right grammar parts.
+          if( //p_grammarpart == NULL
+            p_grammarpartpointerandparselevel == NULL )
+            //break ;
+            return ;
+          iter_p_grammarpartRight = m_stdset_p_grammarpartProcessedYet.find(
+              //p_grammarpart
+            p_grammarpartpointerandparselevel->m_p_grammarpart ) ;
+          // assert( iterRight == m_stdset_p_grammarpartProcessedYet.end() ) ;
+
+          //e.g. for "the anal and the vacuum cleaner and" the 1st right node
+          //            \  /    /
+          //         def_noun
+          //
+          //would be for "anal". But this has been processed yet in the 1st pass
+          //, so continue with the next right child.
+        } while( //while the node exists in the list
+            iter_p_grammarpartRight != m_stdset_p_grammarpartProcessedYet.end()
+            ) ;
+        //Copy from found node.
+        m_grammarpartpointer_and_parselevelCurrent =
+            * p_grammarpartpointerandparselevel ;
+  //            p_grammarpart wparselevel
+        m_wCurrentParseTreeLevel = p_grammarpartpointerandparselevel->
+          m_wParseLevel ;
+        CurrentNodeIsLastAddedRightChild() ;
+      }
       DEBUG_COUT ( "DrawNextParseTreeLevelDirectingRoot-- "
         << " nodes to process size="
 //        << m_stdvec_p_grammarpartRightNodeToProcess.size()
@@ -489,7 +518,8 @@ namespace ParseTreeTraverser
       //m_wParseLevel > 0
       //p_grammarpart
       //mp_grammarpartLeftChild->m_p_grammarpart
-      p_grammarpartpointerandparselevel->m_p_grammarpart
+//      p_grammarpartpointerandparselevel->m_p_grammarpart
+      p_grammarpartpointerandparselevel
       ) ;
   }
 }

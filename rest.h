@@ -114,7 +114,7 @@
 
 #if defined( _DEBUG) || defined(DEBUG)
 #define DEBUG_COUT(out) std::cout << out ; std::cout.flush() ;
-#define DEBUG_COUTN(out) std::cout << out << "\n" ; std::cout.flush() ;
+#define DEBUG_COUTN(out) { std::cout << out << "\n" ; std::cout.flush() ; }
 #else
 #endif
 

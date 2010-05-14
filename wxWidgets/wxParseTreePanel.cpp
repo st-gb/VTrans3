@@ -9,6 +9,7 @@
 #include <Parse/ParseByRise.hpp> //for class GrammerPart
 #include <map> //multimap
 #include <unistd.h> //sleep()
+#include "DrawParseTreeTraverser.h"
 
 BEGIN_EVENT_TABLE(wxParseTreePanel, wxPanel)
   EVT_PAINT  (wxParseTreePanel::OnPaint)
@@ -407,7 +408,7 @@ GrammarPart * wxParseTreePanel::GetNextRightGrammarPartNotProcessedYet()
 
 //wParseLevel: used to calculate the y coordinate for drawing the
 //grammar part name.
-void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
+void wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
 //  wxPaintDC & wxpaintdc ,
   wxDC & r_wxdc ,
   WORD wParseLevel ,
@@ -466,6 +467,10 @@ void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
           wxstrGrammarPartName ) ;
       wLeftTextEndInPixels = wMiddleBetweenLeftAndRightChild -
           ( wxsizeString.GetWidth() / 2 ) ;
+
+      wxstrGrammarPartName += wxString::Format( "%u",
+        p_grammarpart->m_byPersonIndex ) ;
+
       r_wxdc.DrawText( wxstrGrammarPartName ,
         wLeftTextEndInPixels ,
         wParseLevel * wxsizeString.GetHeight()
@@ -477,7 +482,7 @@ void  wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
         wMiddleBetweenLeftAndRightChild ,
         wParseLevel * wxsizeString.GetHeight() + 10
         ) ;
-        r_wxdc.DrawLine(
+      r_wxdc.DrawLine(
         p_dgpaRight->m_wHorizCenterInPixels ,
         (p_dgpaRight->m_wParseLevel + 1 ) * wxsizeString.GetHeight() ,
         wMiddleBetweenLeftAndRightChild ,
@@ -694,6 +699,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
   bool bRightChild = false ;
   m_stdmap_p_grammarpart2HorizCenter.clear() ;
 
+  WORD wCurrentParseTreeLeftEndInPixels = 0 ;
 //  while( p_grammarpart )
 //  while( bDrawText )
   //Draw leaves of parse trees AND token that do not belong to a parse tree.
@@ -720,32 +726,43 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
       setStringWidthsOfCurrentParseTreePath.insert( wxsizeString.GetWidth()) ;
       vecCurrentParseTreePath.push_back(p_grammarpart) ;
 
-      wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens =
-          DrawLeavesOfParseTree( r_wxdc, //m_stdmap_p_grammarpart2HorizCenter
-          p_grammarpart ,
-          wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens ) ;
+//      wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens =
+//          DrawLeavesOfParseTree( r_wxdc, //m_stdmap_p_grammarpart2HorizCenter
+//          p_grammarpart ,
+//          wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens ) ;
 //      while(DrawNextParseTreeLevelDirectingRoot() ) ;
       m_wParseLevel =  2 ;
-      if( //If the root has not been drawn yet (for trees that have only 1 node
-          //that is root and leaf at the same time ).
-          //If this case is not catched this may result in an endless loop
-          //below.
-        m_stdmap_p_grammarpart2HorizCenter.find( p_grammarpart ) ==
-          m_stdmap_p_grammarpart2HorizCenter.end()
-        )
-      {
-        do
-        {
-          dwNumberOfAlreadyDrawnItems = m_stdmap_p_grammarpart2HorizCenter.size() ;
-          DrawNextParseTreeLevelDirectingRoot( r_wxdc, //2
-              m_wParseLevel ++ , p_grammarpart) ;
-        }
-        while( //m_stdmap_p_grammarpart2HorizCenter.size() < dwNumberOfAlreadyDrawnItems
-          //While the root has not been drawn yet.
-          m_stdmap_p_grammarpart2HorizCenter.find( p_grammarpart ) ==
-            m_stdmap_p_grammarpart2HorizCenter.end()
-          ) ;
-      }
+//      if( //If the root has not been drawn yet (for trees that have only 1 node
+//          //that is root and leaf at the same time ).
+//          //If this case is not catched this may result in an endless loop
+//          //below.
+//        m_stdmap_p_grammarpart2HorizCenter.find( p_grammarpart ) ==
+//          m_stdmap_p_grammarpart2HorizCenter.end()
+//        )
+//      {
+//        do
+//        {
+//          dwNumberOfAlreadyDrawnItems = m_stdmap_p_grammarpart2HorizCenter.size() ;
+//          DrawNextParseTreeLevelDirectingRoot(
+//            r_wxdc, //2
+//            m_wParseLevel ++ , p_grammarpart) ;
+//        }
+//        while( //m_stdmap_p_grammarpart2HorizCenter.size() < dwNumberOfAlreadyDrawnItems
+//          //While the root has not been drawn yet.
+//          m_stdmap_p_grammarpart2HorizCenter.find( p_grammarpart ) ==
+//            m_stdmap_p_grammarpart2HorizCenter.end()
+//          ) ;
+//      }
+      DrawParseTreeTraverser dptt(
+        & r_wxdc ,
+        mp_parsebyrise ,
+        p_grammarpart
+        );
+      dptt.m_wCurrentParseTreeLeftEndInPixels =
+          wCurrentParseTreeLeftEndInPixels ;
+      dptt.Traverse() ;
+      wCurrentParseTreeLeftEndInPixels =
+          dptt.m_wCurrentParseTreeLeftEndInPixels ;
       //Set to zero, else infinite loop when the tree is drawn the 2nd time
       //because it would start with the value "1" and would not get "0".
       m_wParseLevel = 0 ;

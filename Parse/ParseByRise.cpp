@@ -509,16 +509,26 @@ void ParseByRise::InsertFundamentalRuleIDs()
     EnglishWord::English_definite_article,
     EnglishWord::noun,
     "noun_construct") ;
-  InsertGrammarRule(
+//  InsertGrammarRule(
+//    "noun_construct"
+//    , EnglishWord::main_verb
+//    , "clause"
+//    ) ;
+  InsertSuperClassGrammarRule(
     "noun_construct"
-    , EnglishWord::main_verb
-    , "clause"
+    , "subj_or_obj_enum_ele"
+    ) ;
+  InsertSuperClassGrammarRule(
+    "subj_or_obj_enum_ele"
+    , "subject"
     ) ;
   //TODO
   WORD wIDnoun_construct_conj = InsertGrammarRule(
-    "noun_construct",
+//    "noun_construct",
+    "subj_or_obj_enum_ele" ,
     EnglishWord::conjunction,
-    "noun_construct_conj"
+    //"noun_construct_conj"
+    "subj_or_obj_enum_ele_AND_conj"
     ) ;
 //  InsertGrammarRule(
 //    EnglishWord::conjunction,
@@ -526,9 +536,22 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    "conj_noun_construct"
 //    ) ;
   InsertGrammarRule(
-    "noun_construct_conj",
-    "noun_construct",
-    "noun_constr,conj,noun_constr"
+    //"noun_construct_conj",
+    "subj_or_obj_enum_ele_AND_conj" ,
+//    "noun_construct",
+    "subj_or_obj_enum_ele" ,
+    //"noun_constr,conj,noun_constr"
+    "subj_or_obj_enum_ele,conj,subj_or_obj_enum_ele"
+    ) ;
+  InsertSuperClassGrammarRule(
+    "subj_or_obj_enum_ele,conj,subj_or_obj_enum_ele"
+    , "subject"
+    ) ;
+  InsertGrammarRule(
+    //"subj_or_obj_ee"
+    "subject"
+    , EnglishWord::main_verb
+    , "clause"
     ) ;
 //  InsertGrammarRule( // e.g. "the car and " + "the cat and the dog"
 //    "noun_construct_conj",
@@ -536,9 +559,18 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    "noun_constr,conj,noun_constr"
 //    ) ;
   InsertGrammarRule(
-    //e.g. "the car and the car and"
-    "noun_construct_conj",
-    "noun_construct_conj",
+    //e.g.
+    // "the car             and  the car              and"
+    //    \   /              /    \   /               /
+    // subj_or_obj_enum_ele /   subj_or_obj_enum_ele /
+    //                \    /                    \   /
+    // subj_or_obj_enum_ele_AND_conj  subj_or_obj_enum_ele_AND_conj
+    //                           \     /
+    //                subj_or_obj_enum_ele_AND_conj
+//    "noun_construct_conj",
+    "subj_or_obj_enum_ele_AND_conj" ,
+//    "noun_construct_conj",
+    "subj_or_obj_enum_ele_AND_conj" ,
     //"noun_construct_conj"
     wIDnoun_construct_conj
     ) ;
@@ -675,8 +707,9 @@ void ParseByRise::InsertGrammarRule(
       //ID for added rule.
       wSuperordinateGrammarRuleID)
       ) ;
-    m_stdmultimap_wGrammarPartID2SuperordinateGrammarRule.insert(
-      std::pair<WORD,GrammarRule> (wGrammarRuleIDLeft,
+    m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule.insert(
+      std::pair<WORD,GrammarRule> (
+        wGrammarRuleIDLeft,
         GrammarRule(wGrammarRuleIDRight,wSuperordinateGrammarRuleID)
         )
       ) ;
@@ -694,6 +727,88 @@ void ParseByRise::InsertGrammarRule(
 //    InsertRuleID2NameMapping( m_wNumberOfSuperordinateRules
 //      , cp_chGrammarPartName ) ;
   }
+}
+
+//return: new rule ID
+// purpose: if a superordinate grammar rule for many different grammar parts
+//   exists:  e.g. superordinate grammar rule "subj_or_obj_ee" exists for
+//   -definite_article_noun ("a man" from "a man saw me.")
+//   -indefinite_article_noun ("a man" from "a man saw me.")
+//   -gerund ("working" from "working and sleeping are great.")
+//So (less) grammar rule can be defined: "subj_or_obj_ee" + "conj"
+//  instead of multiple rules
+//   -"definite_article_noun" + "conj"
+//   -"indefinite_article_noun" + "conj"
+//   -"gerund" + "conj"
+//  or if every subclass of "subj_or_obj_ee"  can be part of a grammar rule:
+//   e.g. "definite_article_noun" + conj + "gerund"
+//    subclass^2 rules would be needed?:
+//  -"definite_article_noun" + conj + "definite_article_noun"
+//  -"definite_article_noun" + conj + "indefinite_article_noun"
+//  -"definite_article_noun" + conj + "gerund"
+//  -"indefinite_article_noun" + conj + "definite_article_noun"
+//  -"indefinite_article_noun" + conj + "indefinite_article_noun"
+//  -"indefinite_article_noun" + conj + "gerund"
+//  -"gerund" + conj + "definite_article_noun"
+//  -"gerund" + conj + "indefinite_article_noun"
+//  -"gerund" + conj + "gerund"
+
+WORD ParseByRise::InsertSuperClassGrammarRule(
+  const char * cp_chLeftGrammarRuleName
+  , //std::string
+  const char * cp_chSuperordinateGrammarRuleName
+  )
+{
+  std::map<std::string,WORD>::const_iterator iter =
+    m_stdmap_RuleName2RuleID.find(
+    cp_chLeftGrammarRuleName ) ;
+  if( iter != m_stdmap_RuleName2RuleID.end() )
+  {
+    WORD wGrammarRuleIDLeft = iter->second ;
+    DEBUG_COUT("inserting rule \"" << cp_chSuperordinateGrammarRuleName << "\" "
+      << "(ID=" << m_wNumberOfSuperordinateRules << ")"
+      << " for " << cp_chLeftGrammarRuleName << wGrammarRuleIDLeft
+//      << ","
+//      << wGrammarRuleIDRight
+      << "\n")
+//    InsertGrammarRule(
+//      wGrammarRuleIDLeft
+//      , 65535
+//      , cp_chSuperordinateGrammarRuleName ) ;
+    //superordinate grammar part ID.
+    //e.g.   subj_or_obj_ee
+    //         |
+    //   definite_article_noun (superordinate grammar part)
+    //         /          \
+    // definite article  noun
+    m_stdmap_wGrammarPartID2SuperordinateID.insert(
+      std::pair<WORD,WORD> (
+        wGrammarRuleIDLeft,
+        //ID for added rule.
+        m_wNumberOfSuperordinateRules
+        )
+      ) ;
+//    m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule.insert(
+//      std::pair<WORD,GrammarRule> (wGrammarRuleIDLeft,
+//        GrammarRule(wGrammarRuleIDRight,m_wNumberOfSuperordinateRules)
+//        )
+//      ) ;
+//
+//    m_stdmultimap_wGrammarPartID2wGrammarPartID.insert(
+//      std::pair<WORD,WORD> (wGrammarRuleIDLeft, wGrammarRuleIDRight)
+//      ) ;
+
+  //  m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
+  //    ( m_wNumberOfSuperordinateRules, std::string( cp_ch) )
+  //    ) ;
+  //  m_stdmap_RuleName2RuleID.insert( std::pair<std::string,WORD>
+  //    ( std::string( cp_ch) , m_wNumberOfSuperordinateRules )
+  //    ) ;
+    InsertRuleID2NameMapping( m_wNumberOfSuperordinateRules
+      , cp_chSuperordinateGrammarRuleName ) ;
+    ++ m_wNumberOfSuperordinateRules ;
+  }
+  return m_wNumberOfSuperordinateRules - 1 ;
 }
 
 void ParseByRise::InsertGrammarRule(
@@ -717,8 +832,9 @@ void ParseByRise::InsertGrammarRule(
     //ID for added rule.
     m_wNumberOfSuperordinateRules)
     ) ;
-  m_stdmultimap_wGrammarPartID2SuperordinateGrammarRule.insert(
-    std::pair<WORD,GrammarRule> (wGrammarRuleIDLeft,
+  m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule.insert(
+    std::pair<WORD,GrammarRule> (
+      wGrammarRuleIDLeft,
       GrammarRule(wGrammarRuleIDRight,m_wNumberOfSuperordinateRules)
       )
     ) ;
@@ -810,11 +926,12 @@ bool ParseByRise:://GrammarRuleAppliesTo(
   typedef std::multimap<WORD, GrammarRule>::const_iterator c_iter_mm ;
   std::pair< c_iter_mm,c_iter_mm> stdpair1stAndLastLeft2RightGrammarPartID =
     //Get all rules that match to the left grammar part ID.
-    //e.g. for params passed "the", "car": left grammar part ID: "definite_article"
-    //Grammar rule may be "definite_article" + "noun" = "noun_construct".
+    //e.g. for params passed "the", "car":
+    // -left grammar part ID: "definite_article"
+    // -grammar rule may be "definite_article" + "noun" = "noun_construct".
     // it gets all rules whose left grammar part ID is "definite_article"
     //(The grammar rules container isn't modified during parsing)
-    m_stdmultimap_wGrammarPartID2SuperordinateGrammarRule.equal_range(
+    m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule.equal_range(
     wLeftGrammarPartIDForRule ) ;
   WORD wSuperordinateGrammarPartID ;
 
@@ -838,13 +955,17 @@ bool ParseByRise:://GrammarRuleAppliesTo(
     ++ iterLeft2RightGrammarPartIDCurrent
     )
   {
+    //grammar rule whose left child grammar part ID is the same as the passed
+    //ID.
     const GrammarRule & r_grammarrule = iterLeft2RightGrammarPartIDCurrent->
       second ;
     //Rule matches for 2 neighboured grammatical items.
     if( //iterLeft2RightGrammarPartIDCurrent->second ==
 
-      //The 2 passed grammar parts belong to the same rule.
-      r_grammarrule.m_wGrammarRuleID == wRightGrammarPartIDForRule
+      //The 2 passed grammar parts belong to the same rule:
+      //e.g. rule "definite_noun": superordinate ID = 2, right child grammar part ID:1
+        //  "the": ID = 0   "car" ID = 1
+      r_grammarrule.m_wRightChildGrammarPartID == wRightGrammarPartIDForRule
 //#ifdef _DEBUG
 //      )
 //      if(
@@ -874,6 +995,9 @@ bool ParseByRise:://GrammarRuleAppliesTo(
         dwRightMostTokenIndexOfRule
         , wSuperordinateGrammarPartID
         ) ;
+      //Do not store 1 and the same grammar part more than once in
+      // -the container "leftmost token index -> grammar part"
+      // -the container "rightmost token index -> grammar part"
       if( m_stdset_grammarpartAllSuperordinate.find( grammarpart ) ==
           m_stdset_grammarpartAllSuperordinate.end()
           )
@@ -1154,7 +1278,7 @@ void ParseByRise::ResolveGrammarRules(
   //The left grammar part is the one whos rightmost token index is the
   //neighbour of the right part's leftmost token index:
   // 1     2       3      4    <-index
-  //the vaccuum cleaner sucks.
+  //the vacuum cleaner sucks.
   //    +-------------+
   //               ^
   //               |
@@ -1170,7 +1294,8 @@ void ParseByRise::ResolveGrammarRules(
 //    std::map <WORD, std::set<VocabularyAndTranslation *> *>::iterator
 //      iterRightOf = iter ;
 //    iterRightOf ++ ;
-    while( iter_mm_rightmostidx2grammarptLeftGrammarPart != //stdmap_wIndex2p_set_p_vocabularyandtranslation.end()
+    while( iter_mm_rightmostidx2grammarptLeftGrammarPart !=
+      //stdmap_wIndex2p_set_p_vocabularyandtranslation.end()
       //r_stdmapwRightmostIndex2grammarpart.end()
       r_stdmultimap_dwRightmostIndex2grammarpart.end()
       //m_stdmultimap_dwRightmostIndex2grammarpart.end()
@@ -1346,6 +1471,175 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
     m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
 }
 
+bool ParseByRise::InsertSuperordinateGrammarPart(
+  std::multimap<DWORD, GrammarPart> & mm_idx2grammarpt
+  , bool bMemorizeInsertion
+  )
+{
+  bool bReplaced = false ;
+#ifdef _DEBUG
+  std::map<WORD, std::string>::const_iterator ci_stdmap_wRuleID2stdstrRuleName ;
+  std::map<WORD, std::string>::const_iterator ci_stdmap_wLeftGrammarPartID2stdstrRuleName ;
+#endif
+  std::map<WORD,WORD>::iterator iter_stdmap_wGrammarPartID2wSuperordinateID ;
+  std::multimap<DWORD, GrammarPart>::iterator iter_mm_idx2grammarpt
+    = mm_idx2grammarpt.begin() ;
+  WORD wGrammarPartID ;
+
+  while( iter_mm_idx2grammarpt !=
+      mm_idx2grammarpt.end()
+    )
+  {
+    wGrammarPartID = iter_mm_idx2grammarpt->second.
+        m_wGrammarPartID ;
+//    m_stdmultimap_wGrammarPartID2SuperordinateID.find(wGrammarPartID)
+//          std::pair< iter_mm_dword2grammarpart,iter_mm_dword2grammarpart>
+//            //1st and last iterator having the same value within the multimap.
+//            stdpair1stAndLastRangeIterwLeftmostIndex2grammarpart =
+//                m_stdmultimap_wGrammarPartID2SuperordinateID.equal_range(
+//            //m_stdmultimap_dwLeftmostIndex2grammarpart.equal_range(
+//            //Get all grammar parts that are direct neighbours of the left grammar
+//            //part.
+//            iter_mm_rightmostidx2grammarptLeftGrammarPart->first + 1 ) ;
+//
+//          //e.g. token 1: "the" -> article, token2: "man" -> noun
+//          // article + noun = noun_construct
+//          //if( RulesAppliesTo( iter, iterLeftGrammarPart ) )
+//          for( iter_mm_dword2grammarpart
+//            //This iterator has all items that have the same leftmost token index
+//            //that is _directly_ right of the rightmost token index of the
+//            //current grammar part.
+//            iter_wLeftmostIndex2grammarpartRightGrammarPart =
+//            //Iterator with 1st key with searched value.
+//            stdpair1stAndLastRangeIterwLeftmostIndex2grammarpart.first ;
+//            iter_wLeftmostIndex2grammarpartRightGrammarPart !=
+//            //Iterator beyond last key with searched value.
+//            stdpair1stAndLastRangeIterwLeftmostIndex2grammarpart.second ;
+//            ++ iter_wLeftmostIndex2grammarpartRightGrammarPart )
+
+
+    //loop for replacing the grammar part ID by the superordinate grammar part
+    //ID: e.g.    "the car"
+    //              \  /
+    //  definite_article_noun
+    //       |
+    //  subj_or_obj_enum_ele  <-- superordinate
+    //       |
+    //   subject    <--superordinate
+    //
+    //  -> replaced the ID 2 times
+//    do
+//    {
+//      bReplaced = false ;
+      iter_stdmap_wGrammarPartID2wSuperordinateID =
+          m_stdmap_wGrammarPartID2SuperordinateID.find(
+        wGrammarPartID) ;
+      if( iter_stdmap_wGrammarPartID2wSuperordinateID !=
+          m_stdmap_wGrammarPartID2SuperordinateID.end()
+        )
+      {
+        //e.g. "the car"
+        //     def_noun
+        //        |
+        // subj_or_obj_ee
+        // -> the indices for "subj_or_obj_ee" stay the same. So copy.
+        GrammarPart grammarpartSuperordinate(
+          iter_mm_idx2grammarpt->second ) ;
+  //      iter_mm_rightmostidx2grammarptLeftGrammarPart->second.m_wGrammarPartID =
+  //          iter_stdmap_w2w->second ;
+        //e.g. subj_or_obj_ee->def_noun
+        grammarpartSuperordinate.mp_grammarpartLeftChild =
+          & iter_mm_idx2grammarpt->second ;
+        grammarpartSuperordinate.mp_grammarpartRightChild = NULL ;
+        grammarpartSuperordinate.m_wGrammarPartID =
+          iter_stdmap_wGrammarPartID2wSuperordinateID->second ;
+  //      iter_mm_rightmostidx2grammarptLeftGrammarPart->second =
+  //          grammarpartSuperordinate ;
+  #ifdef _DEBUG
+        WORD wIndex = iter_mm_idx2grammarpt->first ;
+  #endif
+        //Do not store 1 and the same grammar part more than once in
+        // -the container "leftmost token index -> grammar part"
+        // -the container "rightmost token index -> grammar part"
+        if( m_stdset_grammarpartAllSuperordinate.find(
+          grammarpartSuperordinate ) ==
+            m_stdset_grammarpartAllSuperordinate.end()
+            )
+        {
+          //TODO runtime error in
+    //      DirectingLeavesMultipleIterTraverser::
+    //        GetNextRightGrammarPartNotProcessedYet()
+          //when inserted into the map
+
+          mm_idx2grammarpt.insert(
+            std::pair< WORD, GrammarPart >
+            (
+    //          iter_stdmap_w2w->first ,
+              iter_mm_idx2grammarpt->first ,
+              grammarpartSuperordinate
+            )
+            ) ;
+#ifdef _DEBUG
+          WORD wSuperordinateGrammarPartID =
+            iter_stdmap_wGrammarPartID2wSuperordinateID->second ;
+          ci_stdmap_wRuleID2stdstrRuleName = m_stdmap_wRuleID2RuleName.find(
+            wSuperordinateGrammarPartID) ;
+          ci_stdmap_wLeftGrammarPartID2stdstrRuleName =
+              m_stdmap_wRuleID2RuleName.find(
+                wGrammarPartID ) ;
+          GrammarPart & r_grammarpartLeft =
+              iter_mm_idx2grammarpt->second ;
+          if( ci_stdmap_wRuleID2stdstrRuleName != m_stdmap_wRuleID2RuleName.end()
+            && ci_stdmap_wLeftGrammarPartID2stdstrRuleName !=
+                m_stdmap_wRuleID2RuleName.end()
+            )
+          {
+            DEBUG_COUTN( "rule \"" << ci_stdmap_wRuleID2stdstrRuleName->second
+            << "(ID=" << wSuperordinateGrammarPartID << ")"
+            <<  "\" found for "
+            //"the token range"
+            //<< dwLeftMostTokenIndexOfRule << "..."
+            //<< dwRightMostTokenIndexOfRule
+            << ci_stdmap_wLeftGrammarPartID2stdstrRuleName->second
+            << "(ID=" << r_grammarpartLeft.m_wGrammarPartID << ")"
+            << r_grammarpartLeft.m_dwLeftmostIndex
+            << ","
+            << r_grammarpartLeft.m_dwRightmostIndex
+            << ";"
+            //<< "]"
+            ) ;
+          }
+#endif
+          //Insert if at the second map, not when at the first map!
+          //(else it is NOT inserted into the 2nd map)
+          if( bMemorizeInsertion )
+            m_stdset_grammarpartAllSuperordinate.insert(
+              grammarpartSuperordinate ) ;
+          bReplaced = true ;
+        }
+        //just replace the grammar part ID
+//        iter_mm_idx2grammarpt->second.m_wGrammarPartID =
+//            iter_stdmap_wGrammarPartID2wSuperordinateID->second ;
+        wGrammarPartID = iter_mm_idx2grammarpt->second.m_wGrammarPartID ;
+      }
+//    }while( bReplaced ) ;
+    ++ iter_mm_idx2grammarpt ;
+  }
+  DEBUG_COUTN("InsertSuperordinateGrammarPart end")
+  return bReplaced ;
+}
+
+bool ParseByRise::ReplaceGrammarPartIDsBySuperordinate()
+{
+//  std::multimap<DWORD, GrammarPart>::iterator
+//    iter_mm_rightmostidx2grammarptLeftGrammarPart =
+//    .begin() ;
+  InsertSuperordinateGrammarPart(m_stdmultimap_dwRightmostIndex2grammarpart,
+    false ) ;
+  return InsertSuperordinateGrammarPart(
+    m_stdmultimap_dwLeftmostIndex2grammarpart, true ) ;
+}
+
 void ParseByRise::ResolveGrammarRulesForAllParseLevels()
 {
   //Use a multimap because at an index x more than 1 grammar part may exist.
@@ -1381,7 +1675,9 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
     map_stdmultimap_dwRightmostIndex2grammarpart ;
   DWORD dwSize ;
   m_dwMapIndex = 0 ;
-  do
+  do //Replace by superordinate grammar part ID loop.
+  {
+  do //Apply grammar rule loop.
   {
     stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.clear() ;
     stdmultimap_dwRightmostIndex2grammarpartSuperordinate.clear() ;
@@ -1407,6 +1703,7 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
 //      ) ;
     ++ //parsebyrise.
       m_dwMapIndex ;
+//    ReplaceGrammarPartIDsBySuperordinate() ;
     //parsebyrise.ResolveGrammarRules(
     ResolveGrammarRules(
     //  std::map <WORD, std::set<VocabularyAndTranslation *> *> &
@@ -1455,9 +1752,11 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
     #endif
     //Join the grammar parts and the superordinate grammar parts, i.e.
     //for "the vacuum cleaner sucks" join the superordinate grammar part
-    // "noun_construct" "the vacuum cleaner"
-    // and "sucks" so that the next time the rule "subject + verb = clause"
-    // can be applied.
+    // "definite_article_noun" for
+    //  -"the" (definite_article) +
+    //  -"vacuum cleaner" (noun)
+    // so that the next time the rule "definite_article_noun + verb = clause"
+    // for "the vacuum cleaner sucks" can be applied.
     //parsebyrise.
     m_stdmultimap_dwRightmostIndex2grammarpart.insert(
       stdmultimap_dwRightmostIndex2grammarpartSuperordinate.begin( ),
@@ -1470,11 +1769,23 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
       );
       DEBUG_COUT("resolving grammar/ parse level " << m_dwMapIndex << "\n" )
   }
+  //while no grammar rule for "left + right = parent" applied.
   while( //parsebyrise.m_stdmultimap_dwLeftmostIndex2grammarpart.size() >
       //wstdmultimap_wLeftmostIndex2grammarpartSize
     //! p_stdmultimap_dwRightmostIndex2grammarpartSuperordinate->empty()
     ! stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.empty()
     ) ;
+  //e.g. now at "the car and the cat" ...
+  //              \ /         \  /
+  //          def_noun      def_noun
+  //
+  //...and no more grammar rules can be applied.
+  //BUT there is a rule for "subj_or_obj_enum_ele" + "conj" =
+  //  "subj_or_obj_enum_ele,conj"
+  // and "subj_or_obj_enum_ele" is a superordinate grammar ID for "def_noun"
+  }
+  while( ReplaceGrammarPartIDsBySuperordinate() );
+
   DEBUG_COUT("end of resolving grammar\n" )
 #ifdef _DEBUG
   dwSize = //parsebyrise.

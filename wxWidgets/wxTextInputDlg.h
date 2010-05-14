@@ -36,8 +36,10 @@ class wxTextInputDlg : public wxDialog
 	protected:
     ParseByRise m_parsebyrise ;
 		wxTextCtrl * mp_textctrlEnglishText;
+		wxTextCtrl * mp_textctrlGermanText ;
 		//wxPanel * m_panelParseTree;
 		wxParseTreePanel * m_panelParseTree;
+//    wxPanel * mp_wxpanelTop;
     wxSplitterWindow * mp_wxsplitterwindow ;
 	
 	public:

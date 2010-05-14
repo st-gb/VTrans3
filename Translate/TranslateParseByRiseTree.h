@@ -125,7 +125,9 @@ public:
     ) ;
   TranslateParseByRiseTree(ParseByRise & r_parsebyrise );
   ~TranslateParseByRiseTree();
-  void Translate( ParseByRise & r_parsebyrise ) ;
+  void Translate( ParseByRise & r_parsebyrise
+    , std::string & stdstrWholeTransl
+    ) ;
   bool TranslationRuleApplies(
     std::string & r_stdstrTranslation
     , BYTE & r_byPersonIndex

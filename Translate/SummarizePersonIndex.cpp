@@ -52,7 +52,7 @@ namespace ParseTreeTraverser
     //does.
     if( mp_translateparsebyrisetree->TranslationRuleApplies(
         //stdstrTranslation
-        m_grammarpartpointer_and_parselevel.m_p_grammarpart->m_stdstrTranslation
+        m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->m_stdstrTranslation
         , byPersonIndex
         , m_vecGrammarPartID
         , m_stdvec_p_grammarpartPath
@@ -68,18 +68,18 @@ namespace ParseTreeTraverser
       // ---S--- -relative clause-
       //                -S- --P-    --P--
 //      p_grammarpart->m_byPersonIndex = byPersonIndex ;
-      m_grammarpartpointer_and_parselevel.m_p_grammarpart->m_byPersonIndex =
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->m_byPersonIndex =
           byPersonIndex ;
-//      m_grammarpartpointer_and_parselevel.m_p_grammarpart->m_
+//      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->m_
     }
 //    mcp_grammarpartCurrent
   }
 
   void SummarizePersonIndex::ParseTreePathAdded()
   {
-    m_vecGrammarPartID.push_back( m_grammarpartpointer_and_parselevel.
+    m_vecGrammarPartID.push_back( m_grammarpartpointer_and_parselevelCurrent.
         m_p_grammarpart->m_wGrammarPartID ) ;
-    m_stdvec_p_grammarpartPath.push_back( m_grammarpartpointer_and_parselevel.
+    m_stdvec_p_grammarpartPath.push_back( m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart) ;
 #ifdef _DEBUG
     std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
@@ -103,14 +103,14 @@ namespace ParseTreeTraverser
     m_vecGrammarPartID.resize(
       //if the right node was at parse level 1 (2nd level), then 1 element
       //should remain.
-      m_grammarpartpointer_and_parselevel.m_wParseLevel ) ;
+      m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ) ;
     m_stdvec_p_grammarpartPath.resize(
       //if the right node was at parse level 1 (2nd level), then 1 element
       //should remain.
-      m_grammarpartpointer_and_parselevel.m_wParseLevel ) ;
-    m_vecGrammarPartID.push_back( m_grammarpartpointer_and_parselevel.
+      m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ) ;
+    m_vecGrammarPartID.push_back( m_grammarpartpointer_and_parselevelCurrent.
         m_p_grammarpart->m_wGrammarPartID ) ;
-    m_stdvec_p_grammarpartPath.push_back( m_grammarpartpointer_and_parselevel.
+    m_stdvec_p_grammarpartPath.push_back( m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart ) ;
 #ifdef _DEBUG
     stdstr = mr_parsebyrise.GetPathAs_std_string(
@@ -126,54 +126,66 @@ namespace ParseTreeTraverser
       m_vecGrammarPartID) ;
 #endif
     GrammarPart * p_grammarpart =
-      m_grammarpartpointer_and_parselevel.m_p_grammarpart ;
-    switch(
-        p_grammarpart->mp_grammarpartLeftChild->m_byPersonIndex )
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
+    //May be NULL (if the superordinate grammar part is just a superclass):
+    //   the car
+    //    \  /
+    // def_noun
+    //    /
+    // subj_or_obj_enum_ele
+    if( p_grammarpart->mp_grammarpartRightChild )
     {
-    //Undefined person index (e.g. "the" for "the car").
-    case VocabularyAndTranslation::infinitive :
-      p_grammarpart->m_byPersonIndex =
-          p_grammarpart->mp_grammarpartRightChild->m_byPersonIndex ;
-      break ;
-    case VocabularyAndTranslation::first_person_singular :
-      //I and I -> we  I and you -> we    I and he->we I and we -> we
-      // I and you(plur)-> we    I and they->we
-      p_grammarpart->m_byPersonIndex =
-          VocabularyAndTranslation::first_person_plural ;
-      break ;
-      //"you" is 2nd person sing. ("du"), 3rd perosn ("man") and plural ("ihr")
-    case VocabularyAndTranslation::second_person_singular :
-      //"you and I" ->   "we"
-      //"you(singular) and you" -> "you"(plural)
-      //"you and he"->   "you"(plural)
-      //you and we -> we
-      // I and you(plur)-> we    I and they->we
-//      switch(p_grammarpart->mp_grammarpartRightChild )
-//      {
-//      case
-//      }
-//      p_grammarpart->m_byPersonIndex =
-//          VocabularyAndTranslation::first_person_plural ;
-      break ;
-    case VocabularyAndTranslation::third_person_singular :
-
-      //"he and he" ->   "they"
-      //"he and they" -> "they"
-      switch(p_grammarpart->mp_grammarpartRightChild->m_byPersonIndex )
+      switch(
+          p_grammarpart->mp_grammarpartLeftChild->m_byPersonIndex )
       {
-      case VocabularyAndTranslation::first_person_singular : //"he and I"->"we"
-      case VocabularyAndTranslation::first_person_plural : //"he and we"->"we"
+      //Undefined person index (e.g. "the" for "the car").
+      case VocabularyAndTranslation::infinitive :
+        p_grammarpart->m_byPersonIndex =
+            p_grammarpart->mp_grammarpartRightChild->m_byPersonIndex ;
+        break ;
+      case VocabularyAndTranslation::first_person_singular :
+        //I and I -> we  I and you -> we    I and he->we I and we -> we
+        // I and you(plur)-> we    I and they->we
         p_grammarpart->m_byPersonIndex =
             VocabularyAndTranslation::first_person_plural ;
         break ;
-        //"he and you(singular)" -> "you"(plural)
+        //"you" is 2nd person sing. ("du"), 3rd perosn ("man") and plural ("ihr")
       case VocabularyAndTranslation::second_person_singular :
-        //"he and you(plural)" -> "you"(plural)
-      case VocabularyAndTranslation::second_person_plural :
-        p_grammarpart->m_byPersonIndex =
-            VocabularyAndTranslation::second_person_plural ;
+        //"you and I" ->   "we"
+        //"you(singular) and you" -> "you"(plural)
+        //"you and he"->   "you"(plural)
+        //you and we -> we
+        // I and you(plur)-> we    I and they->we
+  //      switch(p_grammarpart->mp_grammarpartRightChild )
+  //      {
+  //      case
+  //      }
+  //      p_grammarpart->m_byPersonIndex =
+  //          VocabularyAndTranslation::first_person_plural ;
         break ;
+      case VocabularyAndTranslation::third_person_singular :
+
+        //"he and he" ->   "they"
+        //"he and they" -> "they"
+        switch(p_grammarpart->mp_grammarpartRightChild->m_byPersonIndex )
+        {
+        case VocabularyAndTranslation::first_person_singular : //"he and I"->"we"
+        case VocabularyAndTranslation::first_person_plural : //"he and we"->"we"
+          p_grammarpart->m_byPersonIndex =
+              VocabularyAndTranslation::first_person_plural ;
+          break ;
+          //"he and you(singular)" -> "you"(plural)
+        case VocabularyAndTranslation::second_person_singular :
+          //"he and you(plural)" -> "you"(plural)
+        case VocabularyAndTranslation::second_person_plural :
+          p_grammarpart->m_byPersonIndex =
+              VocabularyAndTranslation::second_person_plural ;
+          break ;
+        }
       }
     }
+    else
+      p_grammarpart->m_byPersonIndex =
+          p_grammarpart->mp_grammarpartLeftChild->m_byPersonIndex ;
   }
 }
