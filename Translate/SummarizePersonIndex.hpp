@@ -44,8 +44,10 @@ namespace ParseTreeTraverser
       m_vecGrammarPartID.clear() ;
       m_stdvec_p_grammarpartPath.clear() ;
     }
+    //In order to keep track of the current parse tree path.
     void CurrentNodeIsLastAddedRightChild() ;
     void LeaveFound() ;
+    //In order to keep track of the current parse tree path.
     void ParseTreePathAdded() ;
 //    void RightChildAdded(WORD wCurrentParseTreeLevel) ;
     void UnprocessedHighestLevelNodeFound() ;

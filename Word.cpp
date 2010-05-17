@@ -186,6 +186,43 @@ BYTE EnglishAuxiliaryVerb::GetWordClass()
   return auxiliary_verb ;
 }
 
+//inline
+void EnglishVerb::Get3rdPersonForm(
+  VTrans::string_type & r_vtransstr )
+{
+  WORD wStringSize = r_vtransstr.size() ;
+  if ( wStringSize > 2 )
+  {
+    VTrans::string_type vtransstrEnding = r_vtransstr.substr(
+      wStringSize - 2 ) ;
+   if( vtransstrEnding == //"wish->wishes"
+       "sh" || vtransstrEnding ==
+           //"switch->switches"
+       "ch"
+     )
+   {
+     r_vtransstr += "es" ;
+     return ;
+   }
+  }
+  else
+    if ( wStringSize > 1 )
+    {
+      VTrans::string_type vtransstrEnding = r_vtransstr.substr(
+        wStringSize - 1 ) ;
+      if( vtransstrEnding ==
+          //"go->goes"
+          "o"
+        )
+      {
+        r_vtransstr += "es" ;
+        return ;
+
+      }
+    }
+  r_vtransstr += "s" ;
+}
+
 GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 {
 	int i=0;

@@ -22,6 +22,7 @@ public:
   //The attribute name that should be used as a key to an
   //AttributeTypeAndPosAndSize object stored somewhere.
   std::string m_stdstrAttributeName ;
+  BYTE m_byAttributeValue ;
   SyntaxTreePath m_syntaxtreepath ;
 
   //void SetSyntaxTreePath(std::string & r_stdstrSyntaxTreePath)

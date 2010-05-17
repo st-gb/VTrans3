@@ -19,6 +19,8 @@ class GrammarPart ;
 class ParseByRise ;
 class TranslationRule ;
 
+//use  a power of 2 in order to enable all values at the same time
+//(for different BIT indices)
 #define FIRST_PERSON_SINGULAR 1 //2^0 = 1
 #define SECOND_PERSON_SINGULAR 2 //2^1 = 2
 #define THIRD_PERSON_SINGULAR 4 //2^2 = 4
@@ -72,7 +74,7 @@ class TranslateParseByRiseTree
   //Example: at first it starts at "clause" . Then "clause.subject"
   // "clause.subject.noun_construct" -> "clause.subject.noun_construct.noun".
   //the rule applies to the subtree "subject.noun_construct.noun"
-  std::vector<WORD> m_stdvec_wGrammarPartPath ;
+  std::vector<WORD> m_stdvec_wCurrentGrammarPartPath ;
   std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
 
   //e.g. define std::string "Eng_singular",

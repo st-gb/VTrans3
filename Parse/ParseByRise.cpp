@@ -288,13 +288,21 @@ std::string ParseByRise::GetPathAs_std_string(
   const std::vector<WORD> & r_stdvec_wGrammarPartPath )
 {
   std::string stdstr ;
+  WORD wIndex = 0 ;
+  //Gets "-1"->65535 as unsigned if vector size is "0", but then the loop body
+  //is not executed.
+  WORD wSizeMinus1 = r_stdvec_wGrammarPartPath.size() - 1 ;
 //  for(WORD  w=0; w < m_ar_wElements ; ++ w )
 //    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
   for( std::vector<WORD>::const_iterator iter =
     r_stdvec_wGrammarPartPath.begin() ;
     iter != r_stdvec_wGrammarPartPath.end() ; ++ iter )
   {
-    stdstr += GetGrammarPartName( *iter ) + " ";
+    stdstr += GetGrammarPartName( *iter ) ;
+    //Not the last element (if size == 2: wSizeMinus1-> 1 ).
+    if( wIndex < wSizeMinus1 )
+      stdstr += "." ;
+    ++ wIndex ;
   }
   return stdstr ;
 }
@@ -303,13 +311,21 @@ std::string ParseByRise::GetPathAs_std_string(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath )
 {
   std::string stdstr ;
+  WORD wIndex = 0 ;
+  //Gets "-1"->65535 as unsigned if vector size is "0", but then the loop body
+  //is not executed.
+  WORD wSizeMinus1 = r_stdvec_p_grammarpartPath.size() - 1 ;
 //  for(WORD  w=0; w < m_ar_wElements ; ++ w )
 //    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
   for( std::vector<GrammarPart *>::const_iterator iter =
       r_stdvec_p_grammarpartPath.begin() ;
     iter != r_stdvec_p_grammarpartPath.end() ; ++ iter )
   {
-    stdstr += GetGrammarPartName( (*iter)->m_wGrammarPartID ) + " ";
+    stdstr += GetGrammarPartName( (*iter)->m_wGrammarPartID ) ;
+    //Not the last element (if size == 2: wSizeMinus1-> 1 ).
+    if( wIndex < wSizeMinus1 )
+      stdstr += "." ;
+    ++ wIndex ;
   }
   return stdstr ;
 }
@@ -448,7 +464,7 @@ void ParseByRise::GetTokensAsSpaceSeparatedString(
     ++ wIndex ;
     ++ iter ;
   }
-  m_psv.at(dwLeftmostIndex) ;
+//  m_psv.at(dwLeftmostIndex) ;
   //return stdstr ;
 }
 
@@ -1447,7 +1463,7 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
 //        (*iter)->m_byType ;
         //grammarPart.setRuleID( (*iter)->m_byType ) ;
         grammarPart.m_wGrammarPartID = (*iter)->m_byType ;
-        //For accessing the vocabulary attributes later.
+        //For accessing the vocabulary attributes later for translating.
         grammarPart.m_pvocabularyandtranslation =
           (*iter) ;
         //r_stdmapwLeftmostIndex2grammarpart.insert(

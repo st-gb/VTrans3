@@ -21,6 +21,10 @@ class TranslationRule
 public:
 //  WORD * m_ar_wElements ;
 //  WORD m_wNumberOfElements ;
+
+  //This path is compared with the current parse tree path: if identical,
+  //proceed with the ConditionAndTranslation value of the
+  //TranslationRule->ConditionAndTranslation map
   SyntaxTreePath m_SyntaxTreePath ;
 //  TranslationRule( WORD * ar_wElements , WORD wNumberOfElements)
 //  {

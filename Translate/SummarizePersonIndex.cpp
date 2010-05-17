@@ -19,12 +19,12 @@ namespace ParseTreeTraverser
 {
 
   SummarizePersonIndex::SummarizePersonIndex(
-    const GrammarPart * p_grammarpart ,
+    const GrammarPart * p_grammarpartStartNode ,
     ParseByRise * p_parsebyrise ,
     TranslateParseByRiseTree & r_translateparsebyrisetree
     )
     : ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
-      p_grammarpart ,
+      p_grammarpartStartNode ,
       p_parsebyrise
       )
     , mp_translateparsebyrisetree ( & r_translateparsebyrisetree )

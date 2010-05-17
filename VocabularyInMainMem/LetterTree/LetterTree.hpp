@@ -96,6 +96,9 @@
     //For access to the last inserted VocabularyAndTranslation pointer for
     //OneLinePerWordPair::extract(...)
     static VocabularyAndTranslation * s_pvocabularyandtranslation ;
+    //for being able to insert a VocAnsTranls after inseting into lettertree
+    //easily (without using "return" or a parameter as reference(->a bit faster).
+    static LetterNode * sp_letternodeLastForInsertedWord ;
     LetterNode * //pnodeCurrent ; //= m_pletternodeRoot;
       m_pletternodeRoot ;
     BYTE m_pbyMappingTableFromCharacterToLetterNodePointerArrayIndex[
@@ -199,10 +202,11 @@
     VocabularyAndTranslation * insert(
       const char * pch,
       int start,
-      int length,
-      bool bInsertNewVocabularyAndTranslation,
-      LetterNode * & pletternode,
-      BYTE byVocabularyType) ;
+      int length //,
+//      bool bInsertNewVocabularyAndTranslation,
+//      LetterNode * & rp_letternodeLastForInsertedWord
+//      ,BYTE byVocabularyType
+      ) ;
 
     void Insert(const std::string & r_stdstr, BYTE byWordClass ) ;
     void Insert(EnglishWord & ew , GermanWord & gw ) ;
@@ -238,7 +242,7 @@
   //static
     inline void HandleVocabularyAndTranslationPointerInsertion(
     std::set<LetterNode *> & stdsetpletternodeLastStringChar
-    , LetterNode * pletternodeCurrent
+//    , LetterNode * p_letternodeLastForInsertedWord
     //, VocabularyAndTranslation * pvocabularyandtranslation
     , bool  bInsertNewVocabularyAndTranslation
     , BYTE byVocabularyType

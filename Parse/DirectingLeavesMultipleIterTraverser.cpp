@@ -14,14 +14,15 @@ namespace ParseTreeTraverser
 {
 
   DirectingLeavesMultipleIterTraverser::DirectingLeavesMultipleIterTraverser(
-    const GrammarPart * p_grammarpart
+    const GrammarPart * p_grammarpartStartNode
     , ParseByRise * p_parsebyrise
     )
-    : m_grammarpartpointer_and_parselevelCurrent (
-        mp_grammarpartStartNode , 0 )
+    :
+    mp_grammarpartStartNode ( p_grammarpartStartNode )
+    , m_grammarpartpointer_and_parselevelCurrent (
+        p_grammarpartStartNode , 0 )
     , m_wParseLevel( 0)
   {
-    mp_grammarpartStartNode = p_grammarpart ;
     mp_parsebyrise = p_parsebyrise ;
   }
 

@@ -39,6 +39,16 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     m_arstrGermanWord = new std::string[1] ;
     m_arbyAttribute = new BYTE[1] ;
     break;
+    //Only the singular (for parsing "indefinite article" + "singular"
+    // ( if the rule was "indefinite article" + "noun",
+    //  "indefinite article" + "plural" which is wrong would also be possible)
+    // singular type is only needed for parsing. It shares the same attr as
+    // the noun.
+//  case EnglishWord::singular :
+//    m_arstrEnglishWord = new std::string[1] ;
+//    m_arstrGermanWord = new std::string[1] ;
+//    m_arbyAttribute = new BYTE[1] ;
+//    break;
 
   //case GERMAN_NOUN:
   //  m_pword = new GermanNoun() ;
@@ -65,25 +75,34 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
   //  delete m_pword ;
 //  if( m_pwordTranslation )
 //    delete m_pwordTranslation ;
-  if(m_arstrEnglishWord)
+
+  // singular type is only needed for parsing. It shares the same attr as
+  // the noun. Because for the noun the storage is freed it should NOT be done again
+  // for the singular.
+  if( m_byType != EnglishWord::singular &&
+      m_byType != EnglishWord::third_person_singular_present
+      )
   {
-#ifdef _DEBUG_FREEING_MEM
-    TRACE("~VocabularyAndTranslation()--%x ",this);
-    BYTE byNumWords = g_arbyNumberOfEnglishWords[ m_byType - ENGLISH_NOUN ] ;
-    for(int i = 0 ; i < byNumWords ; i++ )
-      TRACE("\"%s\"", m_arstrEnglishWord[i].c_str() ) ;
-    TRACE("\n") ;
-#endif
-    delete [] m_arstrEnglishWord ;
-  }
-  if(m_arstrGermanWord)
-    delete [] m_arstrGermanWord ;
-  if(m_arbyAttribute)
-    delete [] m_arbyAttribute ;
-#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
-  delete [] m_arpletternodeLastEngChar ;
-#endif //#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
+    if(m_arstrEnglishWord)
+    {
+  #ifdef _DEBUG_FREEING_MEM
+      TRACE("~VocabularyAndTranslation()--%x ",this);
+      BYTE byNumWords = g_arbyNumberOfEnglishWords[ m_byType - ENGLISH_NOUN ] ;
+      for(int i = 0 ; i < byNumWords ; i++ )
+        TRACE("\"%s\"", m_arstrEnglishWord[i].c_str() ) ;
+      TRACE("\n") ;
+  #endif
+      delete [] m_arstrEnglishWord ;
+    }
+    if(m_arstrGermanWord)
+      delete [] m_arstrGermanWord ;
+    if(m_arbyAttribute)
+      delete [] m_arbyAttribute ;
+  #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
+    delete [] m_arpletternodeLastEngChar ;
+  #endif //#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   //delete m_arpletternodeLastGerChar ;
+  }
 }
 
 //Word 

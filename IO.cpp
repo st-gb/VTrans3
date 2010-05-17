@@ -239,8 +239,42 @@ void OneLinePerWordPair::InsertEnglishNoun(
       //{
       //}
 #endif //#ifdef _INSERT_INTO_HASH_TREE
-      if(delemiterCount == 0)
+      if(delemiterCount == 0) //singular noun
       {
+        VocabularyAndTranslation * p_vocabularyandtranslationEnglishNoun =
+          g_lettertree.s_pvocabularyandtranslation ;
+
+//        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+//          stdsetpletternodeLastStringChar
+//          //, LetterNode * pletternodeCurrent
+//          //, VocabularyAndTranslation * pvocabularyandtranslation
+//          , bInsertNewVocabularyAndTranslation
+//          , EnglishWord::singular
+//          , strCurrentWordData
+//          , //nIndexOfCurrentChar - nIndexOf1stChar
+//            nLength
+//          , nIndexOf1stChar
+//          ) ;
+        //Force insertion of new VocAndTransl(singular) object.
+        bool bDoInsertNewVocabularyAndTranslation = true ;
+        g_lettertree.HandleVocabularyAndTranslationPointerInsertion(
+          stdsetpletternodeLastStringChar
+//          , p_letternodeLastForInsertedWord
+          //, pvocabularyandtranslation
+          , bDoInsertNewVocabularyAndTranslation
+          , EnglishWord::singular
+          ) ;
+        //object for singular
+        //refer/ point to the attributes of the "main verb" (saves storage)
+        g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord =
+            p_vocabularyandtranslationEnglishNoun->m_arstrEnglishWord ;
+        g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord=
+            p_vocabularyandtranslationEnglishNoun->m_arstrGermanWord ;
+        g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute=
+            p_vocabularyandtranslationEnglishNoun->m_arbyAttribute ;
+
+        g_lettertree.s_pvocabularyandtranslation =
+          p_vocabularyandtranslationEnglishNoun ;
 //						  en->m_strSingular = //str.Mid(start,i-start);
 //                str.substr(start,i-start);
 //            #ifdef _DEBUG
@@ -399,6 +433,40 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
           , strIng.length()
           , 0
           ) ;
+        bool bDoInsertNewVocabularyAndTranslation = true ;
+        VTrans::string_type vtransstr3rdPersSingularPresent =
+            ev->m_strInfinitive ;
+
+        VocabularyAndTranslation * p_vocabularyandtranslationEnglishVerb =
+          g_lettertree.s_pvocabularyandtranslation ;
+
+        EnglishVerb::Get3rdPersonForm( vtransstr3rdPersSingularPresent ) ;
+        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+          stdsetpletternodeLastStringChar
+          //, LetterNode * pletternodeCurrent
+          //, VocabularyAndTranslation * pvocabularyandtranslation
+          , bDoInsertNewVocabularyAndTranslation
+          , EnglishWord::third_person_singular_present
+          , vtransstr3rdPersSingularPresent
+          , //nIndexOfCurrentChar - nIndexOf1stChar
+            vtransstr3rdPersSingularPresent.length()
+          , 0 //nIndexOf1stChar
+          ) ;
+        //Set to NULL if "insert()" failed.
+        if( g_lettertree.sp_letternodeLastForInsertedWord )
+        {
+          //refer/ point to the attributes of the "main verb" (saves storage)
+          g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord =
+              p_vocabularyandtranslationEnglishVerb->m_arstrEnglishWord ;
+          g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord=
+              p_vocabularyandtranslationEnglishVerb->m_arstrGermanWord ;
+          g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute=
+              p_vocabularyandtranslationEnglishVerb->m_arbyAttribute ;
+          //Set back the current pointer to the vocandtransl for the main verb.
+          g_lettertree.s_pvocabularyandtranslation =
+            p_vocabularyandtranslationEnglishVerb ;
+        }
+
 #endif //#ifdef _INSERT_INTO_HASH_TREE
       }
       if(delemiterCount==1)
@@ -1025,7 +1093,8 @@ void OneLinePerWordPair::InsertGermanNoun(
     }
     if( strCurrentWordData[nIndexOfCurrentChar] == '1' ||
       strCurrentWordData[nIndexOfCurrentChar] == '2' ||
-      strCurrentWordData[nIndexOfCurrentChar] == '3' )
+      strCurrentWordData[nIndexOfCurrentChar] == '3'
+      )
       if( delemiterCount == 2 )
       {
         gn->m_bArticle = strCurrentWordData[nIndexOfCurrentChar];
@@ -1033,6 +1102,8 @@ void OneLinePerWordPair::InsertGermanNoun(
         //voc=dynamic_cast<Vocable*>(gn);
         //return 0;
 //                return gn;
+        g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[
+          0 ] = ( strCurrentWordData[nIndexOfCurrentChar] - '1' ) ;
         return ;
       }
   }

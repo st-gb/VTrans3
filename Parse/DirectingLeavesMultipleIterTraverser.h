@@ -62,6 +62,8 @@ namespace ParseTreeTraverser
       m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess ;
     std::set<const GrammarPart*> m_stdset_p_grammarpartProcessedYet ;
     WORD m_wParseLevel ;
+    //e.g. gives the poss. to clear containers that track the current parse tree
+    //path.
     virtual void BeforeBeginAtRoot() {} ;
     virtual void CurrentNodeIsLastAddedRightChild() {} ;
     DirectingLeavesMultipleIterTraverser(
@@ -113,6 +115,13 @@ namespace ParseTreeTraverser
     void Traverse() ;
     //virtual because this is the callback method for the subclasses.
     virtual void LeaveFound() {}
+    //The traverser traverses the tree until 1 or 2 processed node(s) was/ were
+    //found: e.g.
+    //
+    //    def_noun    <-when arrived here: "the" and "car" were processed-> call
+    //     / \           "UnprocessedHighestLevelNodeFound"
+    //   the car  <-both were processed yet.
+    //
     virtual void UnprocessedHighestLevelNodeFound() {}
   };
 }

@@ -174,7 +174,7 @@ std::string SyntaxTreePath::GetAs_std_string( ) const
 // The 1st common node from the back is "noun_construct", so advance from
 // this node to "noun_construct.noun"
 GrammarPart * SyntaxTreePath::GetLeaf(
-  //The parse tree part, first element is the root or closer to the root than
+  //The parse tree path, first element is the root or closer to the root than
   // the last element.
   //  e.g. for  the car
   //              \ /
@@ -184,12 +184,14 @@ GrammarPart * SyntaxTreePath::GetLeaf(
 {
   GrammarPart * p_grammarpartRet = NULL ;
 #ifdef _DEBUG
-  std::string str = mp_parsebyrise->GetPathAs_std_string(
+  std::string strPathFromGrammarPartPointerVector =
+      mp_parsebyrise->GetPathAs_std_string(
     r_stdvec_p_grammarpartPath ) ;
   std::string strWORDarray = GetAs_std_string( ) ;
   DEBUG_COUTN("SyntaxTreePath(" << this << ")::GetLeaf()"
     "--array as string:"
-    << strWORDarray )
+    << strWORDarray << "  "
+    << strPathFromGrammarPartPointerVector )
 #endif
   if( m_wNumberOfElements > 0 )
   {
@@ -198,11 +200,24 @@ GrammarPart * SyntaxTreePath::GetLeaf(
     // "subject.noun_construct.definite_article"
     //
     for( std::vector<GrammarPart *>::const_reverse_iterator r_iter =
-
+      //Start from the end (leaf, at least closer to the leaf than the begin)
+      //e.g. for the parse tree path "definite_article_noun.noun"
+      //  e.g. for  the car
+      //              \ /
+      //       definite_article_noun
+      //start from "the" ("noun")
+      //of the current parse tree path.
       r_stdvec_p_grammarpartPath.rbegin() ;
       r_iter != r_stdvec_p_grammarpartPath.rend() ; ++ r_iter )
     {
       //for( WORD wArrayIndex = m_wNumberOfElements )
+      DEBUG_COUTN("* r_iter: " << *r_iter )
+#ifdef _DEBUG
+      if( *r_iter )
+      {
+//        DEBUG_COUTN("* r_iter: " << r_iter->GetG )
+      }
+    #endif
 
       // e.g. "noun_construct" from the parse tree path
       //  "noun_construct.noun" found in
@@ -218,7 +233,7 @@ GrammarPart * SyntaxTreePath::GetLeaf(
     if( p_grammarpart )
     {
       //bool
-      GrammarPart * p_grammarpartChild ;
+      GrammarPart * p_grammarpartChild = NULL ;
       //"Walk" directing the leaf in the
       //e.g. beginning from "noun_construct" go further the way that the rule
       //IDs define.
@@ -251,6 +266,8 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       }
       if( p_grammarpartChild )
         p_grammarpartRet = p_grammarpartChild ;
+      else
+        p_grammarpartRet = p_grammarpart ;
     }
   }
   return p_grammarpartRet ;
