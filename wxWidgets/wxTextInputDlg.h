@@ -47,6 +47,8 @@ class wxTextInputDlg : public wxDialog
 		~wxTextInputDlg();
 
 	void OnClose( wxCloseEvent & wxcmd ) ;
+	void OnLoadDictionaryButton(wxCommandEvent & wxcmd ) ;
+	void OnReInitGrammarRulesButton( wxCommandEvent & wxcmd ) ;
   void OnTranslateButton( wxCommandEvent & wxcmd ) ;
   //Neccessary in order to get scroll events; to avoid compilation errors.
   DECLARE_EVENT_TABLE()

@@ -24,10 +24,18 @@ namespace ParseTreeTraverser
     , mr_parsebyrise (r_parsebyrise)
     , mr_translateparsebyrisetree( r_translateparsebyrisetree )
   {
-    // TODO Auto-generated constructor stub
     m_wSubjectGrammarPartID ;
-    if( ! mp_parsebyrise->GetGrammarPartID("subject", m_wSubjectGrammarPartID) )
+    if( ! mp_parsebyrise->GetGrammarPartID("subject", m_wSubjectGrammarPartID)
+      )
       m_wSubjectGrammarPartID = 65535 ;
+    if( ! mp_parsebyrise->GetGrammarPartID("article_singular",
+      m_wArticleSingularGrammarPartID)
+      )
+      m_wArticleSingularGrammarPartID = 65535 ;
+    if( ! mp_parsebyrise->GetGrammarPartID("plural_noun" ,
+      m_wPluralNounGrammarPartID)
+      )
+      m_wPluralNounGrammarPartID = 65535 ;
   }
 
   TranslateTreeTraverser::~TranslateTreeTraverser()
@@ -49,6 +57,8 @@ namespace ParseTreeTraverser
     if( //mp_grammarpartStartNode
         p_grammarpart->
         m_wGrammarPartID == m_wSubjectGrammarPartID
+//        || p_grammarpart->m_wGrammarPartID == m_wArticleSingularGrammarPartID
+//        || p_grammarpart->m_wGrammarPartID == m_wPluralNounGrammarPartID
         )
       //Get the person index bitfield, i.e.
     {

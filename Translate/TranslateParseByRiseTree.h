@@ -70,10 +70,10 @@ class TranslateParseByRiseTree
   ParseByRise * mp_parsebyrise ;
   //Sores the current path within the syntax tree of grammar part IDs.
   //So it can be compared whether a translation rule exists for it.
-  //E.g. a translation rule "subject.noun_construct.noun" exists.
+  //E.g. a translation rule "subject.def_article_noun.noun" exists.
   //Example: at first it starts at "clause" . Then "clause.subject"
-  // "clause.subject.noun_construct" -> "clause.subject.noun_construct.noun".
-  //the rule applies to the subtree "subject.noun_construct.noun"
+  // "clause.subject.def_article_noun" -> "clause.subject.def_article_noun.noun".
+  //the rule applies to the subtree "subject.def_article_noun.noun"
   std::vector<WORD> m_stdvec_wCurrentGrammarPartPath ;
   std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
 
@@ -86,6 +86,10 @@ class TranslateParseByRiseTree
   std::map<TranslationRule *,ConditionsAndTranslation>
     m_stdmap_translationrule2ConditionsAndTranslation ;
 public:
+  void Add3rdPersonPluralTranslationRules() ;
+  void Add3rdPersonSingularTranslationRules() ;
+  void AddDefiniteArticleNounTranslationRules() ;
+  void AddPersonalPronounTranslationRules() ;
   void AddVocAndTranslDefinition(
     //e.g. "noun.German.plural"
     //const std::string & r_stdstrWordClassAndAttributeName ,
@@ -101,6 +105,7 @@ public:
     //bit length
     WORD wLenght
     ) ;
+  void AddVocAndTranslDefinitions() ;
   void AddTranslationArray(
     const std::string & r_stdstrTranslationArrayName,
     const std::string & r_stdstrNewlineTerminatedArrayElements ) ;

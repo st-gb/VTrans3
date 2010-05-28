@@ -59,7 +59,7 @@ public:
   #ifdef _DEBUG
   ~ConditionsAndTranslation()
   {
-    int i = 0 ;
+//    int i = 0 ;
     DEBUG_COUT("~ConditionsAndTranslation\n")
   }
   #endif //#ifdef _DEBUG

@@ -28,7 +28,13 @@ namespace ParseTreeTraverser
     std::vector<WORD> m_vec_wGrammarPartIDcurrentParsePath ;
     std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
 
+    //Necessary because these are the direct node neighbours of the predicate.
+    // and a translation rule is defined that refers it /
+    // to summarize the person index of the subtree of a node with 1 of these
+    // IDs.
     WORD m_wSubjectGrammarPartID ;
+    WORD m_wArticleSingularGrammarPartID ;
+    WORD m_wPluralNounGrammarPartID ;
     ParseByRise & mr_parsebyrise ;
   public:
     std::string m_stdstrWholeTranslation ;

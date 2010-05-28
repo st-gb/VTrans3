@@ -60,6 +60,7 @@ public:
     // nothing).
     noun = //0
       //ENGLISH_NOUN
+      //starting with the same indices as in the vocabulary file
       49
     , main_verb //Vollverb
     , adjective
@@ -68,13 +69,20 @@ public:
     , pronoun
     , auxiliary_verb
     , conjunction
+    //after the same indices as in the vocabulary file
+    , conjunction_and
     , English_definite_article
     , English_indefinite_article
     , personal_pronoun
+    , personal_pronoun_objective_form //"her","him",...
+    , personal_pronoun_he
+    , personal_pronoun_she
+    , personal_pronoun_it
     //For parsing (constructing a grammar rule ) "a >>singular<<"
     //(if the rule was just "a >>noun<<", then
     // "a cars" would also be possible.
     , singular
+    , plural_noun
     //For parsing (constructing a grammar rule ) "the sheep >>3rd_pers_sing_pres"
     //(if the rule was just "the >>noun<< >>main verb<<", then the
     //  "person index" -> "finite verb form" match could

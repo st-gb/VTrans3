@@ -86,6 +86,8 @@
     , public IVocabularyInMainMem
   {
   private:
+    //needed for HandleVocabularyAndTranslationPointerInsertion()
+    static const bool s_bDoInsertNewVocabularyAndTranslation = true ;
     //Needed only for the creation of the char to array index mapping.
     std::vector<CHAR> m_vecch ;
     BYTE m_byArrayIndexRespSize ;
@@ -169,6 +171,17 @@
     void createMapping() ;
 
     void InsertPersonalPronouns() ;
+    void InsertPersonalPronounsObjectiveForm() ;
+    void InsertPluralNounReferringNounAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      ) ;
+    void InsertSingularNounReferringNounAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      ) ;
 
     LetterTree(//I_UserInterface * p_userinterface
       )
@@ -249,6 +262,8 @@
     ) ;
   //static //inline
     void InsertIntoTrieAndHandleVocabularyAndTranslation(
+      //this set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
       std::set<LetterNode *> & stdsetpletternodeLastStringChar
     //, LetterNode * pletternodeCurrent
     //, VocabularyAndTranslation * pvocabularyandtranslation

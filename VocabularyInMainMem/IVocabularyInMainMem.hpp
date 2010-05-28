@@ -12,26 +12,27 @@
   {
   public:
     static std::string s_arstdstrPersonalPronoun [] ; //= {"hh", "j"} ;
-  //Because this is a translation for English->German the dictionary resp.
-  //the order of the words is primarily important for English words / word
-  //attributes.
-  //For the
-  enum English_word_class
-  {
-    noun = //0
-      ENGLISH_NOUN
-    , main_verb //Vollverb
-    , adjective
-    , adverb
-    , preposition
-    , pronoun
-    , auxiliary_verb
-    , conjunction
-    , English_definite_article
-    , English_indefinite_article
-    //, personal_pronoun
-    , comma
-  } ;
+    //Use the English_word_class enum in class EnglishWord instead
+//  //Because this is a translation for English->German the dictionary resp.
+//  //the order of the words is primarily important for English words / word
+//  //attributes.
+//  //For the
+//  enum English_word_class
+//  {
+//    noun = //0
+//      ENGLISH_NOUN
+//    , main_verb //Vollverb
+//    , adjective
+//    , adverb
+//    , preposition
+//    , pronoun
+//    , auxiliary_verb
+//    , conjunction
+//    , English_definite_article
+//    , English_indefinite_article
+//    //, personal_pronoun
+//    , comma
+//  } ;
   enum personal_pronoun
   {
     _1_st_person_singular = 0
@@ -51,6 +52,7 @@
 //    virtual BYTE GetTranslationType() = 0 ;
 //    virtual std::string GetGermanSingular() = 0 ;
     virtual void InsertPersonalPronouns() {} ;
+    virtual void InsertPersonalPronounsObjectiveForm() {}
     IVocabularyInMainMem() ;
 //    virtual void NextNoun() = 0 ;
     void InsertFundamentalWords() ;

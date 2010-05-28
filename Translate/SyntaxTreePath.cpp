@@ -169,10 +169,10 @@ std::string SyntaxTreePath::GetAs_std_string( ) const
 }
 
 //Gets the leaf node ausgehend from the the back of vector.
-//So for instance if we want to get the leaf of "noun_construction.noun" , i.e.
-// get the node "noun" ausgehend from "noun_construct.definite_aricle"
-// The 1st common node from the back is "noun_construct", so advance from
-// this node to "noun_construct.noun"
+//So for instance if we want to get the leaf of "def_article_noun.noun" , i.e.
+// get the node "noun" ausgehend from "def_article_noun.definite_aricle"
+// The 1st common node from the back is "def_article_noun", so advance from
+// this node to "def_article_noun.noun"
 GrammarPart * SyntaxTreePath::GetLeaf(
   //The parse tree path, first element is the root or closer to the root than
   // the last element.
@@ -196,8 +196,8 @@ GrammarPart * SyntaxTreePath::GetLeaf(
   if( m_wNumberOfElements > 0 )
   {
     GrammarPart * p_grammarpart = NULL ;
-    //e.g. find "noun_construct.noun" in
-    // "subject.noun_construct.definite_article"
+    //e.g. find "def_article_noun.noun" in
+    // "subject.def_article_noun.definite_article"
     //
     for( std::vector<GrammarPart *>::const_reverse_iterator r_iter =
       //Start from the end (leaf, at least closer to the leaf than the begin)
@@ -219,30 +219,30 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       }
     #endif
 
-      // e.g. "noun_construct" from the parse tree path
-      //  "noun_construct.noun" found in
-      //    "subject.noun_construct.definite_article" .
+      // e.g. "def_article_noun" from the parse tree path
+      //  "def_article_noun.noun" found in
+      //    "subject.def_article_noun.definite_article" .
       if( (*r_iter)->m_wGrammarPartID == m_ar_wElements[0] )
       {
         p_grammarpart = *r_iter ;
         break ;
       }
     }
-    //e.g. now we have "noun_construct" from syntax tree path 
-    // "noun_construct.noun".
+    //e.g. now we have "def_article_noun" from syntax tree path 
+    // "def_article_noun.noun".
     if( p_grammarpart )
     {
       //bool
       GrammarPart * p_grammarpartChild = NULL ;
       //"Walk" directing the leaf in the
-      //e.g. beginning from "noun_construct" go further the way that the rule
+      //e.g. beginning from "def_article_noun" go further the way that the rule
       //IDs define.
       //  e.g. the tree is
       //    the            car
       // definite_article  noun
       //         \         /
-      //         noun_construct  <-starting here. the grammar part ID defines
-      // the way directing the leaf as "noun_construct->definite_article",
+      //         def_article_noun  <-starting here. the grammar part ID defines
+      // the way directing the leaf as "def_article_noun->definite_article",
       // So take the child node that has the grammar part ID of "definite_article"
       for( WORD wIndex = 1 ; wIndex < m_wNumberOfElements ; ++ wIndex )
       {
@@ -273,8 +273,8 @@ GrammarPart * SyntaxTreePath::GetLeaf(
   return p_grammarpartRet ;
 }
 
-//e.g. test if "noun_construct.noun" is a part of
-// "subject.noun_construct.definite aricle" (true)
+//e.g. test if "def_article_noun.noun" is a part of
+// "subject.def_article_noun.definite aricle" (true)
 bool SyntaxTreePath::IsPartOf(std::vector<WORD> & r_stdvec_wGrammarPartPath )
 {
   bool bIsPartOf = false ;

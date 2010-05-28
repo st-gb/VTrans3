@@ -65,7 +65,7 @@ namespace ParseTreeTraverser
 
       //
       //
-      //e.g.: noun_construct
+      //e.g.: def_article_noun
       //        /       \
       //     article  noun
       //when at article: parse level is 1,
@@ -88,7 +88,7 @@ namespace ParseTreeTraverser
   //  in this example the iterations start at "subject"
   //  subject
   //   /
-  // noun_construct
+  // def_article_noun
   //  /        \
   //article  noun
   //
@@ -246,7 +246,7 @@ namespace ParseTreeTraverser
           << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
     //            << " current size=" << m_stdvec_p_grammarpartRightNodeToProcess.size()
           << "\n" )
-        //e.g.: noun_construct
+        //e.g.: def_article_noun
         //        /       \
         //     article  noun
         //when at article: parse level is 1,
@@ -312,8 +312,8 @@ namespace ParseTreeTraverser
         //          //If 2 already processed children found.
         //          //e.g. "the car"
         //          //       \  /
-        //          //     noun_construct
-        //          //when at "noun_construct"
+        //          //     def_article_noun
+        //          //when at "def_article_noun"
         //&& iterRight != m_stdset_p_grammarpartProcessedYet.end()
         )
       {
@@ -450,10 +450,10 @@ namespace ParseTreeTraverser
           //Left child was processed, but not right child yet:
           // the car        sucks
           //  \  /           /
-          // noun_construct /
+          // def_article_noun /
           //             \ /
           //           clause
-          // when at "clause" and "the", "car" , and "noun_construct" have
+          // when at "clause" and "the", "car" , and "def_article_noun" have
           // been processed yet in previous iterations.
         {
           m_stdset_p_grammarpartProcessedYet.insert( //p_grammarpart

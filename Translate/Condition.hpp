@@ -36,7 +36,7 @@ public:
   #ifdef _DEBUG
   ~Condition()
   {
-    int i = 0 ;
+//    int i = 0 ;
     DEBUG_COUT("~Condition\n")
   }
   #endif //#ifdef _DEBUG

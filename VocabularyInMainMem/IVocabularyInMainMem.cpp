@@ -32,8 +32,16 @@ IVocabularyInMainMem::IVocabularyInMainMem()
 void IVocabularyInMainMem::InsertFundamentalWords()
 {
   //Inserts e.g. into a trie structure.
-  Insert("the", English_definite_article ) ;
-  Insert("a", English_indefinite_article ) ;
+  Insert("the", EnglishWord::English_definite_article ) ;
+  Insert("a", EnglishWord::English_indefinite_article ) ;
+
+  Insert("he", EnglishWord::personal_pronoun_he ) ;
+  Insert("she", EnglishWord::personal_pronoun_she) ;
+  Insert("it", EnglishWord::personal_pronoun_it) ;
+
+  //Because "and" is a special conjunction that changes the "person index" of
+  // a subject/ object
+  Insert("and", EnglishWord::conjunction_and ) ;
   GermanVerb germanverbSein ("sein\nbin\nbist\nist\nsind\nseid\nsind\nwar\n"
     "warst\nwar\nwaren\nward\nwaren\ngewesen\n", GermanVerb::nominative );
   EnglishAuxiliaryVerb englishauxiliaryverbBe(
@@ -43,6 +51,8 @@ void IVocabularyInMainMem::InsertFundamentalWords()
 	germanverbSein.m_bCase = GermanVerb::nominative ;
 	germanverbSein.m_bMove = 0 ;
 	InsertPersonalPronouns() ;
+	//"her","him","me",...
+  InsertPersonalPronounsObjectiveForm() ;
 
 //  Insert("a", English_indefinite_article ) ;
 //  Insert(",", comma ) ;

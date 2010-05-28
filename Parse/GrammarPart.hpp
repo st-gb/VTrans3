@@ -10,6 +10,7 @@
 
 #include <windef.h> //for BYTE, DWORD etc.
 #include "Token.h" //class PositionStringVector
+#include "Word.hpp" //class EnglishWord
 
 //pre-declare (so no include of a file that declares this class->faster compilation)
 class VocabularyAndTranslation ;
@@ -20,7 +21,7 @@ class VocabularyAndTranslation ;
 //the vacuum cleaner  sucks.
 //--------------clause---------
 //              /     \
-//-noun_construct--- -main_verb
+//-def_article_noun--- -main_verb
 // /     \
 //DA  ----noun------  DA=Definite Article
 //
@@ -32,7 +33,7 @@ class VocabularyAndTranslation ;
 //     /       |        \
 //    /      CJ_EE      |
 //   /       /   \      |
-//--NC--  -CJ ---NC-- -main_verb   NC=Noun_Construct CJ=ConJunction
+//--NC--  -CJ ---NC-- -main_verb   NC=def_article_noun CJ=ConJunction
 //
 //e.g.
 //the car , the dog and the cat suck.
@@ -44,7 +45,7 @@ class VocabularyAndTranslation ;
 //     /     |        \
 //    /    C_EE       CJ_EE      |    C=Comma
 //   /     /   \      /   \      |
-//--NC--- C ---NC-- -CJ ---NC-- main_verb   NC=Noun_Construct CJ=ConJunction
+//--NC--- C ---NC-- -CJ ---NC-- main_verb   NC=def_article_noun CJ=ConJunction
 //
 //e.g.
 //I  , he , it and the cat suck.
@@ -58,7 +59,7 @@ class VocabularyAndTranslation ;
 //   /   /  \       \         PP=Personal Pronoun
 //  / C_EE C_EE       CJ_EE      |    C=Comma
 // / /  \  / \   /   \      |
-//PP C PP C PP -CJ ---NC-- main_verb   NC=Noun_Construct CJ=ConJunction
+//PP C PP C PP -CJ ---NC-- main_verb   NC=def_article_noun CJ=ConJunction
 class GrammarPart
 {
 public:
@@ -69,18 +70,18 @@ public:
   //      \       /
   //    leftmost: 1, rightmost: 2
   //  \     |
-  //aricle noun  <-rule: article + noun = noun_construct
+  //aricle noun  <-rule: article + noun = def_article_noun
   //
   //The vacuum cleaner
   //+----------------+
-  //    noun_construct: leftmost: 0, rightmost:2
+  //    def_article_noun: leftmost: 0, rightmost:2
   //
   DWORD m_dwLeftmostIndex ;
   DWORD m_dwRightmostIndex ;
   //for translation: refer to the subordinate elements.
-  //e.g. when parsing: "the man" , rule: article + noun = noun_construct:
-  //noun_construct->leftchild = article
-  //noun_construct->rightchild = noun
+  //e.g. when parsing: "the man" , rule: article + noun = def_article_noun:
+  //def_article_noun->leftchild = article
+  //def_article_noun->rightchild = noun
   GrammarPart * mp_grammarpartLeftChild ;
 #ifdef COMPILE_WITH_POINTER_TO_PARENT
   GrammarPart * mp_grammarpartParent ;
@@ -167,8 +168,27 @@ public:
   //Define a < operator in order to insert into a container like std::set.
   bool operator < (const GrammarPart & ) const ;
 
-  void setGrammarPartID(WORD wGrammarPartID )
+  inline void SetGrammarPartID(WORD wGrammarPartID )
   {
+    switch( wGrammarPartID )
+    {
+      //the person index is alos important : e.g. if noun has the same string
+    // for plural and singular then the person index of the verb gives info
+    // about how its finite verbform should be in German:
+    // The sheep run>>s<<. -> Das Schaf läuft.
+    // The sheep run. -> Die Schaf>>e<< laufen.
+    case EnglishWord::third_person_singular_present :
+      m_byPersonIndex = 3 ;
+      break ;
+    case EnglishWord::singular :
+      m_byPersonIndex = 3 ;
+      break ;
+      //indefinite article ("a man") is singular per definition
+    case EnglishWord::English_indefinite_article :
+      m_byPersonIndex = 3 ;
+      break ;
+    }
+
     m_wGrammarPartID = wGrammarPartID ;
   }
 };

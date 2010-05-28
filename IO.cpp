@@ -112,12 +112,66 @@ LetterTree g_lettertree ;
 
 #define _INSERT_INTO_HASH_TREE
 
+//void OneLinePerWordPair::InsertSingularNounReferringNounAttributes()
+//{
+//  VocabularyAndTranslation * p_vocabularyandtranslationEnglishNoun =
+//    g_lettertree.s_pvocabularyandtranslation ;
+//
+//  //        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+//  //          stdsetpletternodeLastStringChar
+//  //          //, LetterNode * pletternodeCurrent
+//  //          //, VocabularyAndTranslation * pvocabularyandtranslation
+//  //          , bInsertNewVocabularyAndTranslation
+//  //          , EnglishWord::singular
+//  //          , strCurrentWordData
+//  //          , //nIndexOfCurrentChar - nIndexOf1stChar
+//  //            nLength
+//  //          , nIndexOf1stChar
+//  //          ) ;
+//  //Force insertion of new VocAndTransl(singular) object.
+//  bool bDoInsertNewVocabularyAndTranslation = true ;
+//  //For parsing (constructing a grammar rule ) "a >>singular<<"
+//  //(if the rule was just "a >>noun<<", then
+//  // "a cars" would also be possible.
+//  g_lettertree.HandleVocabularyAndTranslationPointerInsertion(
+//    stdsetpletternodeLastStringChar
+//  //          , p_letternodeLastForInsertedWord
+//    //, pvocabularyandtranslation
+//    , bDoInsertNewVocabularyAndTranslation
+//    , EnglishWord::singular
+//    ) ;
+//  //object for singular
+//  //refer/ point to the attributes of the "main verb" (saves storage instead
+//  // of allocating array for the singular, too)
+//  g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord =
+//      p_vocabularyandtranslationEnglishNoun->m_arstrEnglishWord ;
+//  g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord=
+//      p_vocabularyandtranslationEnglishNoun->m_arstrGermanWord ;
+//  g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute=
+//      p_vocabularyandtranslationEnglishNoun->m_arbyAttribute ;
+//
+//  //The pointer points to the singular VocAndTransl object. Set it back
+//  //to the address of the noun object in order to assign the plural etc.
+//  //correctly.
+//  g_lettertree.s_pvocabularyandtranslation =
+//    p_vocabularyandtranslationEnglishNoun ;
+//  //              en->m_strSingular = //str.Mid(start,i-start);
+//  //                str.substr(start,i-start);
+//
+//  //If the singular and the plural are identical: add only once to
+//  //the "trie" structure/ add only 1 VocabularyAndTranslation to the
+//  //last LetterNode.
+////  bInsertNewVocabularyAndTranslation = false ;
+//  }
+
 void OneLinePerWordPair::InsertEnglishNoun(
   const std::string & strCurrentWordData
   , BYTE byVocabularyType
   )
 {
   bool bInsertNewVocabularyAndTranslation = true ;
+  //This set is to ensure that if strings for the SAME vocabulary
+  // not 2 or more VocAndTransl object should be inserted.
   std::set<LetterNode *> stdsetpletternodeLastStringChar ;
   EnglishNoun * en = new EnglishNoun;
   BYTE delemiterCount = 0 ;
@@ -210,7 +264,7 @@ void OneLinePerWordPair::InsertEnglishNoun(
             //   If we parse the grammar of "the car drives", we find
             //   "car" within the lettertree.
             //  But at least when we want to translate we need to know
-            //  it "car" is singular or plural.
+            //  if "car" is singular or plural.
             //  So if we store the letternode within the grammar parse
             //  tree we can see if it was a singular or plural in the
             //  cases where both differ (=mostly).
@@ -226,8 +280,8 @@ void OneLinePerWordPair::InsertEnglishNoun(
             //         +--pointer to last letternode of "car" (index 0)
             //         +--pointer to last letternode of "cars" (index 1)
             //
-            // So by comparing the pointer addresses one can see if it
-            // was singular or plural.
+            // So by comparing the pointer addresses stored for the tokens
+            //one can see if it was singular or plural.
             g_lettertree.s_pvocabularyandtranslation->
               m_arpletternodeLastEngChar[
               delemiterCount] = pletternode ;
@@ -241,54 +295,16 @@ void OneLinePerWordPair::InsertEnglishNoun(
 #endif //#ifdef _INSERT_INTO_HASH_TREE
       if(delemiterCount == 0) //singular noun
       {
-        VocabularyAndTranslation * p_vocabularyandtranslationEnglishNoun =
-          g_lettertree.s_pvocabularyandtranslation ;
-
-//        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
-//          stdsetpletternodeLastStringChar
-//          //, LetterNode * pletternodeCurrent
-//          //, VocabularyAndTranslation * pvocabularyandtranslation
-//          , bInsertNewVocabularyAndTranslation
-//          , EnglishWord::singular
-//          , strCurrentWordData
-//          , //nIndexOfCurrentChar - nIndexOf1stChar
-//            nLength
-//          , nIndexOf1stChar
-//          ) ;
-        //Force insertion of new VocAndTransl(singular) object.
-        bool bDoInsertNewVocabularyAndTranslation = true ;
-        g_lettertree.HandleVocabularyAndTranslationPointerInsertion(
-          stdsetpletternodeLastStringChar
-//          , p_letternodeLastForInsertedWord
-          //, pvocabularyandtranslation
-          , bDoInsertNewVocabularyAndTranslation
-          , EnglishWord::singular
-          ) ;
-        //object for singular
-        //refer/ point to the attributes of the "main verb" (saves storage)
-        g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord =
-            p_vocabularyandtranslationEnglishNoun->m_arstrEnglishWord ;
-        g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord=
-            p_vocabularyandtranslationEnglishNoun->m_arstrGermanWord ;
-        g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute=
-            p_vocabularyandtranslationEnglishNoun->m_arbyAttribute ;
-
-        g_lettertree.s_pvocabularyandtranslation =
-          p_vocabularyandtranslationEnglishNoun ;
-//						  en->m_strSingular = //str.Mid(start,i-start);
-//                str.substr(start,i-start);
-//            #ifdef _DEBUG
-//            const char * pch = en->m_strSingular.c_str() ;
-//            pch = 0 ;
-//            #endif
-        //If the singular and the plural are identical: add only once to
-        //the "trie" structure/ add only 1 VocabularyAndTranslation to the
-        //last LetterNode.
-        bInsertNewVocabularyAndTranslation = false ;
+        g_lettertree.InsertSingularNounReferringNounAttributes(
+          stdsetpletternodeLastStringChar ) ;
       }
-//					  if(delemiterCount == 1)
+      if(delemiterCount == 1 )
+      {
 //						  en->m_strPlural = //str.Mid(start,i-start);
 //                str.substr(start,i-start);
+        g_lettertree.InsertPluralNounReferringNounAttributes(
+          stdsetpletternodeLastStringChar ) ;
+      }
       nIndexOf1stChar = nIndexOfCurrentChar + 1 ;
       ++ delemiterCount ;
       if( delemiterCount == 2 )
@@ -441,6 +457,14 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
           g_lettertree.s_pvocabularyandtranslation ;
 
         EnglishVerb::Get3rdPersonForm( vtransstr3rdPersSingularPresent ) ;
+        //For parsing (constructing a grammar rule ) "the sheep >>3rd_pers_sing_pres"
+        //(if the rule was just "the >>noun<< >>main verb<<", then the
+        //  "person index" -> "finite verb form" match could
+        // be done after the parse tree was created at first.
+        // If using a rule ">>third_person_singular_present<<
+        //And so "The cars sits" could not be a parse tree by using the rule
+        //  "the >>singular<< >>3rd_pers_sing_pres<<"
+        // would also be possible parse tree at first.
         g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
           stdsetpletternodeLastStringChar
           //, LetterNode * pletternodeCurrent

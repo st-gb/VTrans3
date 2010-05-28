@@ -7,6 +7,7 @@
 
 #include "wxTextInputDlg.h"
 #include "wxParseTreePanel.h"
+#include <wx/filedlg.h>
 #include <wx/textctrl.h>
 #include <wx/event.h> //for EVT_CLOSE
 
@@ -17,16 +18,21 @@
 //An enum guarantees a unique number for each element.
 enum
 {
-  ID_Translate = 1,
-  ID_Close
+  ID_Close = 1 ,
+  ID_LoadDictionary ,
+  ID_ReInitGrammarRules ,
+  ID_Translate ,
 };
 
 BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
   EVT_BUTTON( ID_Translate , wxTextInputDlg::OnTranslateButton)
+  EVT_BUTTON( ID_LoadDictionary , wxTextInputDlg::OnLoadDictionaryButton)
+  EVT_BUTTON( ID_ReInitGrammarRules , wxTextInputDlg::OnReInitGrammarRulesButton)
   EVT_CLOSE( wxTextInputDlg::OnClose)
 END_EVENT_TABLE()
 
-wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style )
+wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id,
+  const wxString& title, const wxPoint& pos, const wxSize& size, long style )
 : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -123,6 +129,7 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString&
     0,
     0 );
   wxBoxSizer * p_boxsizerOuter = new wxBoxSizer( wxVERTICAL ) ;
+  wxBoxSizer * p_boxsizerButtons = new wxBoxSizer( wxHORIZONTAL ) ;
 	
 //	gSizer3->Add( m_textCtrl7, 1, wxALL|wxEXPAND, 5 );
 
@@ -147,17 +154,7 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString&
     ID_Translate
     , wxT("translate")
     ) ;
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    //this
-    , //wxID_ANY
-    ID_Translate
-    , wxT("translate")
-    ) ;
-  p_boxsizerOuter->Add(
+  p_boxsizerButtons->Add(
     p_wxbutton
     //m_textCtrl7
     //p_wxbutton
@@ -167,6 +164,47 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id, const wxString&
     , //wxEXPAND |
       wxBOTTOM
     , 2 );
+  p_wxbutton = new wxButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    //this
+    , //wxID_ANY
+    ID_ReInitGrammarRules
+    , wxT("re-init grammar")
+    ) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    //m_textCtrl7
+    //p_wxbutton
+    //strech factor. 0=do not stretch
+    , 0
+      //0
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_wxbutton = new wxButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    //this
+    , //wxID_ANY
+    ID_LoadDictionary
+    , wxT("re-load dict...")
+    ) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    //m_textCtrl7
+    //p_wxbutton
+    //strech factor. 0=do not stretch
+    , 0
+      //0
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_boxsizerOuter->Add( p_boxsizerButtons ) ;
 	//gSizer3->Add( m_panel1, 1, wxEXPAND | wxALL, 5 );
   //gSizer3->Add( p_wxbutton, 0 , wxALL, 5 );
 	//p_gridsizerOuter->Add(
@@ -209,6 +247,25 @@ void wxTextInputDlg::OnClose( wxCloseEvent & wxcmd )
   //::wxGetApp().ExitMainLoop() ;
 }
 
+void wxTextInputDlg::OnLoadDictionaryButton( wxCommandEvent & wxcmd )
+{
+  wxFileDialog wxfiled(
+    this ,
+    "Choose a dict file" ,
+    "" , //defaultDir
+    "" //const wxString&  defaultFile = ""
+    , "*.txt" //const wxString&  wildcard = "*.*"
+    , wxOPEN | wxFILE_MUST_EXIST //long style = 0,
+    ) ;
+  wxfiled.ShowModal() ;
+}
+
+void wxTextInputDlg::OnReInitGrammarRulesButton( wxCommandEvent & wxcmd )
+{
+  m_parsebyrise.ClearAllGrammarStuff() ;
+  m_parsebyrise.InitGrammarRules() ;
+}
+
 void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
 {
   std::string stdstrText ;
@@ -218,14 +275,17 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
   wxstringWholeText = mp_textctrlEnglishText->GetRange(0 ,
     wxtextposNumberOfCharacters) ;
   stdstrText = std::string( wxstringWholeText.c_str() ) ;
+
   m_parsebyrise.ClearParseTree() ;
   m_parsebyrise.CreateInitialGrammarParts ( stdstrText ) ;
   DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
   m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
+
   TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise ) ;
   DEBUG_COUT("before translation\n")
   std::string stdstrWholeTransl ;
   translateParseByRiseTree.Translate( m_parsebyrise, stdstrWholeTransl ) ;
+
   mp_textctrlGermanText->SetValue( stdstrWholeTransl ) ;
   m_panelParseTree->DrawParseTree(m_parsebyrise) ;
   DEBUG_COUT("end of OnTranslateButton\n")

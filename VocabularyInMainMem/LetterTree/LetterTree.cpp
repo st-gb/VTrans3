@@ -302,7 +302,11 @@ VocabularyAndTranslation * LetterTree::insert(
   }
 
   //"inline makes it faster (->no function call)
+  //The word whose last char sp_letternodeLastForInsertedWord points to
+  //must have been inserted into the tree previously.
  inline void LetterTree::HandleVocabularyAndTranslationPointerInsertion(
+   //this set is to ensure that if strings for the SAME vocabulary
+   // not 2 or more VocAndTransl object should be inserted.
   std::set<LetterNode *> & stdsetpletternodeLastStringChar
 //  , LetterNode * p_letternodeLastForInsertedWord
   //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -362,8 +366,10 @@ VocabularyAndTranslation * LetterTree::insert(
     else
       if(
         //If the LetterNode-pointer does NOT exist in the std::set yet:
-        //If for instance for the verb "love" the simple past "loved" was inserted
-        //then for the past participle "loved" that has the same LetterNode pointer
+        //If for instance for the verb "love" the simple past
+        //"loved" was inserted
+        //then for the past participle
+        //"loved" that has the same LetterNode pointer
         //there should not be inserted a VocabularyAndTranslation pointer again.
         stdsetpletternodeLastStringChar.find( p_letternodeLastForInsertedWord ) ==
         stdsetpletternodeLastStringChar.end()
@@ -387,6 +393,8 @@ VocabularyAndTranslation * LetterTree::insert(
 //VocabularyAndTranslation often needs to be done in conjunction. So implement
 //this conjunction here.
 void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
+  //this set is to ensure that if strings for the SAME vocabulary
+  // not 2 or more VocAndTransl object should be inserted.
   std::set<LetterNode *> & stdsetpletternodeLastStringChar
   //, LetterNode * pletternodeCurrent
   //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -432,20 +440,164 @@ void LetterTree::InsertPersonalPronouns()
 {
   Insert("I", EnglishWord::personal_pronoun ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _1_st_person_singular ;
+  s_pvocabularyandtranslation->m_arstrGermanWord[0] = "ich" ;
   Insert("you", EnglishWord::personal_pronoun ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_singular ;
+  s_pvocabularyandtranslation->m_arstrGermanWord[0] = "du" ;
   Insert("he", EnglishWord::personal_pronoun ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  s_pvocabularyandtranslation->m_arstrGermanWord[0] = "er" ;
   Insert("she", EnglishWord::personal_pronoun ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  s_pvocabularyandtranslation->m_arstrGermanWord[0] = "sie" ;
   Insert("it", EnglishWord::personal_pronoun ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  s_pvocabularyandtranslation->m_arstrGermanWord[0] = "es" ;
   Insert("we", EnglishWord::personal_pronoun ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _1st_person_plural ;
+  s_pvocabularyandtranslation->m_arstrGermanWord[0] = "wir" ;
   Insert("you", EnglishWord::personal_pronoun ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_plural ;
+  s_pvocabularyandtranslation->m_arstrGermanWord[0] = "ihr" ;
   Insert("they", EnglishWord::personal_pronoun ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_plural ;
+  s_pvocabularyandtranslation->m_arstrGermanWord[0] = "sie" ;
+}
+
+void LetterTree::InsertPersonalPronounsObjectiveForm()
+{
+  Insert("me", EnglishWord::personal_pronoun_objective_form ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _1_st_person_singular ;
+  Insert("you", EnglishWord::personal_pronoun_objective_form ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_singular ;
+  Insert("him", EnglishWord::personal_pronoun_objective_form ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  Insert("her", EnglishWord::personal_pronoun_objective_form ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  Insert("it", EnglishWord::personal_pronoun_objective_form ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
+  Insert("us", EnglishWord::personal_pronoun_objective_form ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _1st_person_plural ;
+  Insert("you", EnglishWord::personal_pronoun_objective_form ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_plural ;
+  Insert("them", EnglishWord::personal_pronoun_objective_form ) ;
+  s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_plural ;
+}
+
+void LetterTree::InsertPluralNounReferringNounAttributes(
+  //This set is to ensure that if strings for the SAME vocabulary
+  // not 2 or more VocAndTransl object should be inserted.
+  std::set<LetterNode *> & stdsetpletternodeLastStringChar
+  )
+{
+  VocabularyAndTranslation * p_vocabularyandtranslationEnglishNoun =
+    s_pvocabularyandtranslation ;
+
+  //        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+  //          stdsetpletternodeLastStringChar
+  //          //, LetterNode * pletternodeCurrent
+  //          //, VocabularyAndTranslation * pvocabularyandtranslation
+  //          , bInsertNewVocabularyAndTranslation
+  //          , EnglishWord::singular
+  //          , strCurrentWordData
+  //          , //nIndexOfCurrentChar - nIndexOf1stChar
+  //            nLength
+  //          , nIndexOf1stChar
+  //          ) ;
+  //Force insertion of new VocAndTransl(singular) object.
+  //For parsing (constructing a grammar rule ) "a >>singular<<"
+  //(if the rule was just "a >>noun<<", then
+  // "a cars" would also be possible.
+  HandleVocabularyAndTranslationPointerInsertion(
+    stdsetpletternodeLastStringChar
+  //          , p_letternodeLastForInsertedWord
+    //, pvocabularyandtranslation
+    , s_bDoInsertNewVocabularyAndTranslation
+    , EnglishWord::plural_noun
+    ) ;
+  //object for singular
+  //refer/ point to the attributes of the "main verb" (saves storage instead
+  // of allocating array for the singular, too)
+  s_pvocabularyandtranslation->m_arstrEnglishWord =
+      p_vocabularyandtranslationEnglishNoun->m_arstrEnglishWord ;
+  s_pvocabularyandtranslation->m_arstrGermanWord=
+      p_vocabularyandtranslationEnglishNoun->m_arstrGermanWord ;
+  s_pvocabularyandtranslation->m_arbyAttribute=
+      p_vocabularyandtranslationEnglishNoun->m_arbyAttribute ;
+
+    //This should not be necessary as long as the pointers to the attribute data
+    // refer the noun object's arrays.
+  //The pointer points to the singular VocAndTransl object. Set it back
+  //to the address of the noun object in order to assign the plural etc.
+  //correctly.
+  s_pvocabularyandtranslation =
+    p_vocabularyandtranslationEnglishNoun ;
+
+  //              en->m_strSingular = //str.Mid(start,i-start);
+  //                str.substr(start,i-start);
+  //If the singular and the plural are identical: add only once to
+  //the "trie" structure/ add only 1 VocabularyAndTranslation to the
+  //last LetterNode.
+//  bInsertNewVocabularyAndTranslation = false ;
+}
+
+void LetterTree::InsertSingularNounReferringNounAttributes(
+  //This set is to ensure that if strings for the SAME vocabulary
+  // not 2 or more VocAndTransl object should be inserted.
+  std::set<LetterNode *> & stdsetpletternodeLastStringChar
+  )
+{
+  VocabularyAndTranslation * p_vocabularyandtranslationEnglishNoun =
+    s_pvocabularyandtranslation ;
+
+  //        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+  //          stdsetpletternodeLastStringChar
+  //          //, LetterNode * pletternodeCurrent
+  //          //, VocabularyAndTranslation * pvocabularyandtranslation
+  //          , bInsertNewVocabularyAndTranslation
+  //          , EnglishWord::singular
+  //          , strCurrentWordData
+  //          , //nIndexOfCurrentChar - nIndexOf1stChar
+  //            nLength
+  //          , nIndexOf1stChar
+  //          ) ;
+  //Force insertion of new VocAndTransl(singular) object.
+  //For parsing (constructing a grammar rule ) "a >>singular<<"
+  //(if the rule was just "a >>noun<<", then
+  // "a cars" would also be possible.
+  HandleVocabularyAndTranslationPointerInsertion(
+    stdsetpletternodeLastStringChar
+  //          , p_letternodeLastForInsertedWord
+    //, pvocabularyandtranslation
+    , s_bDoInsertNewVocabularyAndTranslation
+    , EnglishWord::singular
+    ) ;
+  //object for singular
+  //refer/ point to the attributes of the "main verb" (saves storage instead
+  // of allocating array for the singular, too)
+  s_pvocabularyandtranslation->m_arstrEnglishWord =
+      p_vocabularyandtranslationEnglishNoun->m_arstrEnglishWord ;
+  s_pvocabularyandtranslation->m_arstrGermanWord=
+      p_vocabularyandtranslationEnglishNoun->m_arstrGermanWord ;
+  s_pvocabularyandtranslation->m_arbyAttribute=
+      p_vocabularyandtranslationEnglishNoun->m_arbyAttribute ;
+
+  ////This should not be necessary as long as the pointers to the attribute data
+  // // refer the noun object's arrays.
+  //The pointer points to the singular VocAndTransl object. Set it back
+  //to the address of the noun object in order to assign the plural etc.
+  //correctly.
+  //Without this assignment for a plural noun string a singular VocAndTrnsl
+  // object existed.
+  s_pvocabularyandtranslation =
+    p_vocabularyandtranslationEnglishNoun ;
+
+  //              en->m_strSingular = //str.Mid(start,i-start);
+  //                str.substr(start,i-start);
+  //If the singular and the plural are identical: add only once to
+  //the "trie" structure/ add only 1 VocabularyAndTranslation to the
+  //last LetterNode.
+//  bInsertNewVocabularyAndTranslation = false ;
 }
 
   //Called by a GLR (created by bison parser generator; similar to yacc)

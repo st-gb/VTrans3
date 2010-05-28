@@ -39,6 +39,11 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     m_arstrGermanWord = new std::string[1] ;
     m_arbyAttribute = new BYTE[1] ;
     break;
+  case EnglishWord::personal_pronoun_objective_form :
+    m_arstrEnglishWord = new std::string[1] ;
+    m_arstrGermanWord = new std::string[1] ;
+    m_arbyAttribute = new BYTE[1] ;
+    break;
     //Only the singular (for parsing "indefinite article" + "singular"
     // ( if the rule was "indefinite article" + "noun",
     //  "indefinite article" + "plural" which is wrong would also be possible)
