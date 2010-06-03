@@ -7,6 +7,7 @@
 
 #include <Translate/TranslateTreeTraverser.hpp>
 #include <Translate/SummarizePersonIndex.hpp>
+#include <Translate/SetSameConsecutiveIDforLeaves.hpp>
 
 namespace ParseTreeTraverser
 {
@@ -21,6 +22,7 @@ namespace ParseTreeTraverser
       p_grammarpartStartNode ,
       & r_parsebyrise
       )
+    , m_wConsecutiveID(0)
     , mr_parsebyrise (r_parsebyrise)
     , mr_translateparsebyrisetree( r_translateparsebyrisetree )
   {
@@ -85,16 +87,33 @@ namespace ParseTreeTraverser
   {
     BYTE byPersonIndex ;
     std::string stdstrTranslation ;
+    WORD wConsecutiveID ;
+    const GrammarPart * p_grammarpart ;
     if( mr_translateparsebyrisetree.TranslationRuleApplies(
         stdstrTranslation ,
         byPersonIndex ,
         m_vec_wGrammarPartIDcurrentParsePath ,
-        m_stdvec_p_grammarpartPath
+        m_stdvec_p_grammarpartPath ,
+//        wConsecutiveID
+        p_grammarpart
         )
       )
     {
-      DEBUG_COUT( "translation rule applies\n" ) ;
+      DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
+        stdstrTranslation ) ;
       m_stdstrWholeTranslation += stdstrTranslation + " " ;
+      //The consecutive ID is set to the grammar part AFTER we arrive here.
+      //Because this ID is needed, store the grammar part, too.
+      m_stdvecTranslationAndGrammarPart.push_back(
+        TranslationAndGrammarPart(stdstrTranslation,
+//          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
+          p_grammarpart
+          )
+        ) ;
+      m_stdvec_translation_and_consecutive_id.push_back(
+        TranslationAndConsecutiveID( stdstrTranslation,
+          wConsecutiveID)
+        ) ;
       //TODO combine the person indices _until_ the parent is "subject"
       // because:
       // If clause with relative clause:
@@ -116,15 +135,34 @@ namespace ParseTreeTraverser
   {
     std::string stdstrTranslation ;
     BYTE byPersonIndex ;
+    WORD wConsecutiveID ;
+    const GrammarPart * p_grammarpart ;
+    if( m_vec_wGrammarPartIDcurrentParsePath.size() > 0 )
+    {
+      WORD wGrammarPartIDcurrentParsePath =
+          m_vec_wGrammarPartIDcurrentParsePath.back() ;
+      std::string stdstr = mp_parsebyrise->GetGrammarPartName(
+        wGrammarPartIDcurrentParsePath) ;
+      if( stdstr == "article_singular"
+          || stdstr == "definite_article_plural" )
+      {
+        GrammarPart * p_grammarpart =
+          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
+//        SetSameConsecutiveIDforLeaves(p_grammarpart) ;
+      }
+    }
+//    if( m_vec_wGrammarPartIDcurrentParsePath)
     if( mr_translateparsebyrisetree.TranslationRuleApplies(
         stdstrTranslation ,
         byPersonIndex ,
         m_vec_wGrammarPartIDcurrentParsePath ,
-        m_stdvec_p_grammarpartPath
+        m_stdvec_p_grammarpartPath ,
+//        wConsecutiveID
+        p_grammarpart
         )
       )
     {
-      DEBUG_COUT( "translation rule applies\n" ) ;
+      DEBUG_COUT( "UnprocessedHighestLevelNodeFound--translation rule applies\n" ) ;
       m_stdstrWholeTranslation += stdstrTranslation + " " ;
       //TODO combine the person indices _until_ the parent is "subject"
       // because:
@@ -147,6 +185,20 @@ namespace ParseTreeTraverser
     std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
 #endif
+    if( m_vec_wGrammarPartIDcurrentParsePath.size() > 0 )
+    {
+      WORD wGrammarPartIDcurrentParsePath =
+          m_vec_wGrammarPartIDcurrentParsePath.back() ;
+      std::string stdstr = mp_parsebyrise->GetGrammarPartName(
+        wGrammarPartIDcurrentParsePath) ;
+      if( stdstr == "article_singular"
+          || stdstr == "definite_article_plural" )
+      {
+        GrammarPart * p_grammarpart =
+          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
+        p_grammarpart->m_wConsecutiveID = m_wConsecutiveID ++ ;
+      }
+    }
     HandlePossibleSubject() ;
   }
 
@@ -171,14 +223,27 @@ namespace ParseTreeTraverser
       //if the right node was at parse level 1 (2nd level), then 1 element
       //should remain.
       m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ) ;
-    m_vec_wGrammarPartIDcurrentParsePath.push_back( m_grammarpartpointer_and_parselevelCurrent.
+    m_vec_wGrammarPartIDcurrentParsePath.push_back(
+      m_grammarpartpointer_and_parselevelCurrent.
         m_p_grammarpart->m_wGrammarPartID ) ;
-    m_stdvec_p_grammarpartPath.push_back( m_grammarpartpointer_and_parselevelCurrent.
-      m_p_grammarpart ) ;
+    m_stdvec_p_grammarpartPath.push_back(
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
 #ifdef _DEBUG
     stdstr = mr_parsebyrise.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
 #endif
     HandlePossibleSubject() ;
+  }
+
+  //This is needed for _many_ dropdown lists to select the same indices.
+  void TranslateTreeTraverser::SetSameConsecutiveIDforLeaves(
+    const GrammarPart * p_grammarpart)
+  {
+    ParseTreeTraverser::SetSameConsecutiveIDforLeaves trav(
+      p_grammarpart ,
+      mp_parsebyrise ,
+      ++ m_wConsecutiveID
+      ) ;
+    trav.Traverse() ;
   }
 }

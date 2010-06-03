@@ -21,10 +21,12 @@
 #include <wx/dialog.h>
 
 #include <Parse/ParseByRise.hpp>
-#include <wxWidgets/wxParseTreePanel.h>
+#include <wxWidgets/wxParseTreePanel.hpp>
 
 ///////////////////////////////////////////////////////////////////////////
 
+class wxHtmlWindow ;
+//class wxWebKitCtrl ;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class wxTextInputDlg
@@ -34,11 +36,13 @@ class wxTextInputDlg : public wxDialog
 	private:
 	
 	protected:
+  wxHtmlWindow * mp_wxhtmlwindow ;
+//  wxWebKitCtrl * mp_wxwebkitctrl;
     ParseByRise m_parsebyrise ;
 		wxTextCtrl * mp_textctrlEnglishText;
 		wxTextCtrl * mp_textctrlGermanText ;
-		//wxPanel * m_panelParseTree;
-		wxParseTreePanel * m_panelParseTree;
+		//wxPanel * mp_wxparsetreepanel;
+		wxParseTreePanel * mp_wxparsetreepanel;
 //    wxPanel * mp_wxpanelTop;
     wxSplitterWindow * mp_wxsplitterwindow ;
 	
@@ -46,9 +50,14 @@ class wxTextInputDlg : public wxDialog
 		wxTextInputDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 690,557 ), long style = wxCLOSE_BOX|wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~wxTextInputDlg();
 
+  //std::string
+		void GetEntireInputText(std::string & r_stdstrInputText) ;
 	void OnClose( wxCloseEvent & wxcmd ) ;
 	void OnLoadDictionaryButton(wxCommandEvent & wxcmd ) ;
 	void OnReInitGrammarRulesButton( wxCommandEvent & wxcmd ) ;
+	void OnResolveSuperclassGrammarParts( wxCommandEvent & wxcmd ) ;
+	void OnResolve1ParseLevelButton( wxCommandEvent & wxcmd ) ;
+	void OnShowTokenIndex2GrammarPartButton( wxCommandEvent & wxcmd ) ;
   void OnTranslateButton( wxCommandEvent & wxcmd ) ;
   //Neccessary in order to get scroll events; to avoid compilation errors.
   DECLARE_EVENT_TABLE()

@@ -172,6 +172,15 @@
 
     void InsertPersonalPronouns() ;
     void InsertPersonalPronounsObjectiveForm() ;
+    void InsertProgressiveReferringVerbAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      //"const" because: The infinitive should not be modified because it may
+      //be needed afterwards.
+      , const std::string & r_stdstrInfinitive
+      , BYTE byNumberOfObjectsAllowed
+      ) ;
     void InsertPluralNounReferringNounAttributes(
       //This set is to ensure that if strings for the SAME vocabulary
       // not 2 or more VocAndTransl object should be inserted.
@@ -254,12 +263,24 @@
     
   //static
     inline void HandleVocabularyAndTranslationPointerInsertion(
+      //This set is to ensure that for identical strings for the SAME vocabulary
+      //not 2 or more VocAndTransl object should be inserted into the same
+      //LetterNode of the last character.
     std::set<LetterNode *> & stdsetpletternodeLastStringChar
 //    , LetterNode * p_letternodeLastForInsertedWord
     //, VocabularyAndTranslation * pvocabularyandtranslation
     , bool  bInsertNewVocabularyAndTranslation
     , BYTE byVocabularyType
     ) ;
+    void Insert3rdPersonSingularPresentReferringNounAttributes(
+       //This set is to ensure that if strings for the SAME vocabulary
+       // not 2 or more VocAndTransl object should be inserted.
+       std::set<LetterNode *> & stdsetpletternodeLastStringChar
+       //"const" because: The infinitive should not be modified because it may
+       //be needed afterwards.
+       , const std::string & r_stdstrInfinitive
+       , BYTE byNumberOfObjectsAllowed
+       ) ;
   //static //inline
     void InsertIntoTrieAndHandleVocabularyAndTranslation(
       //this set is to ensure that if strings for the SAME vocabulary

@@ -35,6 +35,7 @@ class ParseByRise
 {
 //private:
 public:
+  WORD m_wParseLevel ;
   //This map is for generalisation (grammar rule x IS A superclass grammar
   //rule y ) in order to minimize the grammar rules needed:
   //so we can define
@@ -58,7 +59,7 @@ public:
   //  insert:
   //   "<0,grammar part "def_article_noun" for "the vacuum cleaner">
   //   "<0,grammar part "clause" for "the vacuum cleaner sucks">
-  std::multimap<DWORD, GrammarPart> m_stdmultimap_dwLeftmostIndex2grammarpart ;
+//  std::multimap<DWORD, GrammarPart> m_stdmultimap_dwLeftmostIndex2grammarpart ;
   //This list stores the rightmost indices of the grammar parts:
   // initially only word classes are grammar parts:
   //   0    1       2      3      <- token index
@@ -72,11 +73,24 @@ public:
   //  insert:
   //   "<2,grammar part "def_article_noun" for "the vacuum cleaner">
   //   "<3,grammar part "clause" for "the vacuum cleaner sucks">
-  std::multimap<DWORD, GrammarPart> m_stdmultimap_dwRightmostIndex2grammarpart ;
+//  std::multimap<DWORD, GrammarPart> m_stdmultimap_dwRightmostIndex2grammarpart ;
+  std::multimap<DWORD, GrammarPart *>
+    m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
+  std::multimap<DWORD, GrammarPart *>
+    m_stdmultimap_dwRightmostIndex2p_grammarpart ;
   std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2wGrammarPartID ;
   std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2SuperordinateID ;
   std::multimap<WORD, GrammarRule>
     m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule ;
+  std::multimap<DWORD, GrammarPart *>
+    m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate ;
+  std::multimap<DWORD, GrammarPart* >
+    m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate ;
+  std::multimap<DWORD, GrammarPart *>
+    m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel ;
+  std::multimap<DWORD, GrammarPart* >
+    m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel ;
+
   std::map<WORD, std::string> m_stdmap_wRuleID2RuleName ;
   std::map<std::string,WORD> m_stdmap_RuleName2RuleID ;
 
@@ -91,6 +105,8 @@ public:
     m_iter_stdmap_wParseLevelIndex2stdmultimap_dwRightmostIndex2grammarpart ;
   typedef std::multimap<DWORD, GrammarPart>::const_iterator
     c_iter_mmap_dw2grammarpart ;
+  typedef std::multimap<DWORD, GrammarPart *>::const_iterator
+    c_iter_mmap_dw2p_grammarpart ;
 
   std::multimap<DWORD, GrammarPart> *
     mp_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate ;
@@ -195,20 +211,22 @@ public:
     //EXISTING rule / grammar part ID
     WORD wSuperordinateGrammarRuleID ) ;
   void InsertGrammarRulesFor3rdPersonSingular() ;
-  void InsertRuleIDsForWordClasses() ;
+  void InsertGrammarPartID2NameMappingForWordClasses() ;
   void InsertRule_ID2NameAndName2IDmapping( WORD wGrammarRuleID
       , const char * cp_ch ) ;
   WORD InsertSuperClassGrammarRule(
-    const char * cp_chLeftGrammarRuleName
+    WORD wSubclassGrammarRuleID
     , //std::string
     const char * cp_chSuperordinateGrammarRuleName
+    ) ;
+  WORD InsertSuperClassGrammarRule(
+    const char * cp_chSubclassGrammarRuleName
+    , //std::string
+    const char * cp_chSuperclassGrammarRuleName
     ) ;
   ParseByRise();
   ParseByRise(const ParseByRise& orig);
   bool InsertIfGrammarRuleAppliesTo(
-  //  std::map <WORD, std::set<VocabularyAndTranslation *> *>::iterator & iter
-  //  , std::map <WORD, std::set<VocabularyAndTranslation *> *>::iterator &
-  //    iterRightOf
     //Maintaining 2 maps with both leftnost and rightmost indexes should be faster
     //when searching for neighboured grammar parts:
     //  0    1       2      3      <-index
@@ -216,12 +234,10 @@ public:
     // +----------------+
     //   e.g. current grammar part: rightmost index: 2: find neighbour with
     //     leftmost index "3".
-//    std::map<DWORD, GrammarPart> & r_stdmapwLeftmostIndex2grammarpart
-//    , std::map<DWORD, GrammarPart> & r_stdmapwRightmostIndex2grammarpart
-//    WORD wLeftGrammarPartIDForRule
-//    , WORD wRightGrammarPartIDForRule
-    std::multimap<DWORD, GrammarPart>::iterator iterLeftGrammarPart
-    , std::multimap<DWORD, GrammarPart>::iterator iterRightGrammarPart
+//    std::multimap<DWORD, GrammarPart>::iterator iterLeftGrammarPart
+//    , std::multimap<DWORD, GrammarPart>::iterator iterRightGrammarPart
+    std::multimap<DWORD, GrammarPart *>::iterator iterLeftGrammarPart
+    , std::multimap<DWORD, GrammarPart *>::iterator iterRightGrammarPart
   ) ;
 //  void InsertIntoPossibilityTree(
 //  //  std::map <WORD, std::set<VocabularyAndTranslation *> *>::iterator & iter
@@ -231,12 +247,7 @@ public:
 //    , std::multimap<DWORD, GrammarPart>::iterator iterRightGrammarPart
 //    , WORD wGrammarPartIDOfRule
 //    ) ;
-  void ResolveGrammarRules(
-  //  std::map <WORD, std::set<VocabularyAndTranslation *> *> &
-  //    stdmap_wIndex2p_set_p_vocabularyandtranslation
-  //  std::vector <GrammarRule>, std::set<VocabularyAndTranslation *> *> &
-  //    stdmap_wIndex2p_set_p_vocabularyandtranslation
-
+  BYTE ResolveGrammarRules(
     //Maintaining 2 maps with both leftnost and rightmost indexes should be faster
     //when searching for neighboured grammar parts:
     //  0    1       2      3      <-index
@@ -244,26 +255,25 @@ public:
     // +----------------+
     //   e.g. current grammar part: rightmost index: 2: find neighbour with
     //     leftmost index "3".
-  //  std::map<DWORD, GrammarPart> & r_stdmapwLeftmostIndex2grammarpart
-  //  , std::map<DWORD, GrammarPart> & r_stdmapwRightmostIndex2grammarpart
 
 //    //Use a multimap because at an index x more than 1 grammar part may exist.
 //    //E.g. for "I love you.": love" can be grammar part "noun" or grammar part
 //    //"verb".
-    std::multimap<DWORD, GrammarPart> &
-      r_stdmultimap_dwLeftmostIndex2grammarpart
-    , std::multimap<DWORD, GrammarPart> &
-      r_stdmultimap_dwRightmostIndex2grammarpart
-    , std::multimap<DWORD, GrammarPart> &
-      r_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate
-    , std::multimap<DWORD, GrammarPart> &
-      r_stdmultimap_dwRightmostIndex2grammarpartSuperordinate
+//    std::multimap<DWORD, GrammarPart> &
+//      r_stdmultimap_dwLeftmostIndex2grammarpart
+//    , std::multimap<DWORD, GrammarPart> &
+//      r_stdmultimap_dwRightmostIndex2grammarpart
+//    , std::multimap<DWORD, GrammarPart> &
+//      r_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate
+//    , std::multimap<DWORD, GrammarPart> &
+//      r_stdmultimap_dwRightmostIndex2grammarpartSuperordinate
     ) ;
 
   bool ReplaceGrammarPartIDsBySuperordinate() ;
   void ResolveGrammarRulesForAllParseLevels() ;
   bool InsertSuperordinateGrammarPart(
-    std::multimap<DWORD, GrammarPart> & mm_idx2grammarpt
+//    std::multimap<DWORD, GrammarPart> & mm_idx2grammarpt
+    std::multimap<DWORD, GrammarPart *> & mm_idx2grammarpt
     , bool bMemorizeInsertion
     ) ;
 

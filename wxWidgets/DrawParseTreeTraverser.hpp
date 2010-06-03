@@ -9,7 +9,7 @@
 #define DRAWPARSETREETRAVERSER_H_
 
 #include <wxWidgets/DrawGrammarPartAttributes.hpp>
-#include <Parse/DirectingLeavesMultipleIterTraverser.h>
+#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <map>
 #include <wx/dc.h>
 
@@ -19,6 +19,7 @@ class DrawParseTreeTraverser
   : public ParseTreeTraverser::DirectingLeavesMultipleIterTraverser
 {
 public:
+  bool m_bShowGrammarPartAddress ;
   wxDC * mp_wxdc ;
   WORD m_wParseLevelCountedFromRoot ;
   WORD m_wCurrentParseTreeLeftEndInPixels ;

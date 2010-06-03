@@ -8,7 +8,7 @@
 #ifndef TRANSLATETREETRAVERSER_HPP_
 #define TRANSLATETREETRAVERSER_HPP_
 
-#include <Parse/DirectingLeavesMultipleIterTraverser.h>
+#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <map>
 #include <vector>
@@ -16,6 +16,36 @@
 //pre-declaration (faster than to include)
 class ParseByRise ;
 class TranslateParseByRiseTree ;
+
+class TranslationAndGrammarPart
+{
+public:
+  TranslationAndGrammarPart(
+    std::string & r_stdstrTranslation ,
+    const GrammarPart * p_grammarpart
+    )
+  {
+    m_stdstrTranslation = r_stdstrTranslation ;
+    mp_grammarpart = p_grammarpart ;
+  }
+  std::string m_stdstrTranslation ;
+  const GrammarPart * mp_grammarpart ;
+} ;
+
+class TranslationAndConsecutiveID
+{
+public:
+  TranslationAndConsecutiveID(
+    std::string & r_stdstrTranslation ,
+    WORD wConsecutiveID
+    )
+  {
+    m_stdstrTranslation = r_stdstrTranslation ;
+    m_wConsecutiveID = wConsecutiveID ;
+  }
+  std::string m_stdstrTranslation ;
+  WORD m_wConsecutiveID ;
+} ;
 
 namespace ParseTreeTraverser
 {
@@ -37,7 +67,11 @@ namespace ParseTreeTraverser
     WORD m_wPluralNounGrammarPartID ;
     ParseByRise & mr_parsebyrise ;
   public:
+    WORD m_wConsecutiveID ;
     std::string m_stdstrWholeTranslation ;
+    std::vector<TranslationAndGrammarPart> m_stdvecTranslationAndGrammarPart ;
+    std::vector<TranslationAndConsecutiveID>
+      m_stdvec_translation_and_consecutive_id ;
     TranslateTreeTraverser(
       const GrammarPart * p_grammarpartStartNode
       , ParseByRise & r_parsebyrise
@@ -54,6 +88,8 @@ namespace ParseTreeTraverser
     void ParseTreePathAdded() ;
 //    void RightChildAdded(WORD wCurrentParseTreeLevel) ;
     void UnprocessedHighestLevelNodeFound() ;
+    void SetSameConsecutiveIDforLeaves(
+        const GrammarPart * p_grammarpart) ;
   };
 }
 

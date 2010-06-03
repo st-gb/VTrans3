@@ -5,11 +5,12 @@
  *      Author: Stefan
  */
 
-#include <wxWidgets/DrawParseTreeTraverser.h>
+#include "DrawParseTreeTraverser.hpp"
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
+#include <wx/font.h>
 
 DrawParseTreeTraverser::DrawParseTreeTraverser(
   wxDC * p_wxdc ,
@@ -20,13 +21,16 @@ DrawParseTreeTraverser::DrawParseTreeTraverser(
     p_grammarpart ,
     p_parsebyrise
     )
+  , m_bShowGrammarPartAddress( true )
   , mp_wxdc ( p_wxdc )
   , mp_parsebyrise (p_parsebyrise)
   , m_wParseLevelCountedFromRoot(0)
   , m_wCurrentParseTreeLeftEndInPixels(0)
 {
   // TODO Auto-generated constructor stub
-
+  wxFont wxfont = p_wxdc->GetFont() ;
+  wxfont.SetPointSize( 8 ) ;
+  p_wxdc->SetFont( wxfont) ;
 }
 
 DrawParseTreeTraverser::~DrawParseTreeTraverser()
@@ -126,12 +130,22 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   wxString & wxstrGrammarPartName
   )
 {
+  bool bShowHexAddress = true ;
   const std::string & r_stdstrGrammarPartName = //citer->second.
     //m_stdstrGrammarPartName ;
     mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID ) ;
+  //if( m_bShowGrammarPartID )
   wxString wxstrGrammarPartID = wxString::Format( wxT("%u_") ,
     p_grammarpart->m_wGrammarPartID ) ;
   wxstrGrammarPartName = wxstrGrammarPartID + wxString( r_stdstrGrammarPartName ) ;
+  if( m_bShowGrammarPartAddress )
+  {
+    //hex. addresses are easier to compare with values in debugger mode.
+    if( bShowHexAddress )
+      wxstrGrammarPartName += wxString::Format( wxT("%x_") , p_grammarpart ) ;
+    else
+      wxstrGrammarPartName += wxString::Format( wxT("%u_") , p_grammarpart ) ;
+  }
   wxstrGrammarPartName += wxString::Format( "%u",
     p_grammarpart->m_byPersonIndex ) ;
 

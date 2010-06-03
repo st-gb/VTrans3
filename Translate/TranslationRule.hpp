@@ -21,17 +21,27 @@ class TranslationRule
 public:
 //  WORD * m_ar_wElements ;
 //  WORD m_wNumberOfElements ;
-
+  ParseByRise * mp_parsebyrise ;
   //This path is compared with the current parse tree path: if identical,
   //proceed with the ConditionAndTranslation value of the
   //TranslationRule->ConditionAndTranslation map
-  SyntaxTreePath m_SyntaxTreePath ;
+  SyntaxTreePath m_syntaxtreepathCompareWithCurrentPath ;
+  SyntaxTreePath m_syntaxtreepathConsecutiveID ;
 //  TranslationRule( WORD * ar_wElements , WORD wNumberOfElements)
 //  {
 //    m_ar_wElements = ar_wElements ;
 //    m_wNumberOfElements = wNumberOfElements ;
 //  }
-
+  WORD GetConsecutiveID( const std::vector<GrammarPart *> &
+    r_stdvec_p_grammarpartPath ) const ;
+  const GrammarPart * GetGrammarPartWithConsecutiveID(
+    const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const ;
+  bool Matches(
+    const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath ) const ;
+  void SetConsecutiveIDSyntaxTreePath(
+    const std::string & r_stdstrSyntaxTreePath
+//    , ParseByRise * p_parsebyrise
+    ) ;
   TranslationRule( const std::string & r_stdstrSyntaxTreePath
       , ParseByRise * p_parsebyrise ) ;
   TranslationRule( const char * p_ch_SyntaxTreePath

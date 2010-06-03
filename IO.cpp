@@ -391,7 +391,10 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
   TRACE("englisches Verb\n");
   EnglishVerb * ev = new EnglishVerb;
   BYTE delemiterCount = 0 ;
-  int nIndexOf1stChar = 1 ;
+  BYTE byNumberOfObjectsAllowed = 0 ;
+  BYTE byAllowsProgressiveForm = 0 ;
+  int nIndexOf1stWordChar = 1 ;
+  std::string stdstrInfinitive ;
 #ifdef _INSERT_INTO_HASH_TREE
 //        LetterNode * pletternodeLastForInsertedWord = NULL ;
   //VocabularyAndTranslation * pvocabularyandtranslation = NULL ;
@@ -400,183 +403,125 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
   for( int nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
     strCurrentWordData.length() ; nIndexOfCurrentChar++ )
   {
+    if( nIndexOfCurrentChar == 1 &&
+        strCurrentWordData[nIndexOfCurrentChar] != '9' )
+    {
+      nIndexOf1stWordChar = 2 ;
+      byNumberOfObjectsAllowed = strCurrentWordData[nIndexOfCurrentChar] - '1' ;
+    }
+    if( nIndexOfCurrentChar == 2 &&
+        strCurrentWordData[nIndexOfCurrentChar] != '9' )
+    {
+      nIndexOf1stWordChar = 3 ;
+      byAllowsProgressiveForm = strCurrentWordData[nIndexOfCurrentChar] - '1' ;
+    }
     if( strCurrentWordData[nIndexOfCurrentChar] == STRING_DELIMITER)
     {
-      if( delemiterCount == STRING_INDEX_FOR_INIFINITIVE )
+      switch( delemiterCount )
       {
-        ev->m_strInfinitive = //str.Mid(start,i-start);
-          strCurrentWordData.substr(
-            nIndexOf1stChar
-            , nIndexOfCurrentChar - nIndexOf1stChar );
-#ifdef _INSERT_INTO_HASH_TREE
-        //TODO if last letter = consonant, e.g. "refer": "refeRRing"
-        std::string strIng = ev->m_strInfinitive + "ing" ;
-        //Also save the verb forms that do not stand within the
-        //vocabulary file.
-//              pvocabularyandtranslationReturn =
-//                g_lettertree.insert(
-//                strIng.c_str(),0,strIng.length()
-////                //If not assigned yet within THIS function.
-////                !pvocabularyandtranslation
-//                bInsertNewVocabularyAndTranslation
-//                , pletternodeLastForInsertedWord
-//                , byVocabularyType
-//                ) ;
-//              if( pvocabularyandtranslationReturn)
-//              {
-//                //pvocabularyandtranslationReturn->m_arpletternodeBeginOfWord = new
-//                //  LetterNode * [2] ;
-//                //pvocabularyandtranslationReturn->m_word
-//                pvocabularyandtranslation = pvocabularyandtranslationReturn ;
-//                //For assigning VocabularyAndTranslation part of LetterNode
-//                //when THIS function is called with a German vocabulary.
-//                g_pvocabularyandtranslation = pvocabularyandtranslation ;
-//              }
-//              HandleVocabularyAndTranslationPointerInsertion(
-//                stdsetpletternodeLastStringChar
-//                , pletternodeLastForInsertedWord
-//                //, pvocabularyandtranslation
-//                , bInsertNewVocabularyAndTranslation
-//                , byVocabularyType
-//                ) ;
-        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
-          stdsetpletternodeLastStringChar
-          //, LetterNode * pletternodeCurrent
-          //, VocabularyAndTranslation * pvocabularyandtranslation
-          , bInsertNewVocabularyAndTranslation
-          , byVocabularyType
-          , strIng
-          , strIng.length()
-          , 0
-          ) ;
-        bool bDoInsertNewVocabularyAndTranslation = true ;
-        VTrans::string_type vtransstr3rdPersSingularPresent =
-            ev->m_strInfinitive ;
-
-        VocabularyAndTranslation * p_vocabularyandtranslationEnglishVerb =
-          g_lettertree.s_pvocabularyandtranslation ;
-
-        EnglishVerb::Get3rdPersonForm( vtransstr3rdPersSingularPresent ) ;
-        //For parsing (constructing a grammar rule ) "the sheep >>3rd_pers_sing_pres"
-        //(if the rule was just "the >>noun<< >>main verb<<", then the
-        //  "person index" -> "finite verb form" match could
-        // be done after the parse tree was created at first.
-        // If using a rule ">>third_person_singular_present<<
-        //And so "The cars sits" could not be a parse tree by using the rule
-        //  "the >>singular<< >>3rd_pers_sing_pres<<"
-        // would also be possible parse tree at first.
-        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
-          stdsetpletternodeLastStringChar
-          //, LetterNode * pletternodeCurrent
-          //, VocabularyAndTranslation * pvocabularyandtranslation
-          , bDoInsertNewVocabularyAndTranslation
-          , EnglishWord::third_person_singular_present
-          , vtransstr3rdPersSingularPresent
-          , //nIndexOfCurrentChar - nIndexOf1stChar
-            vtransstr3rdPersSingularPresent.length()
-          , 0 //nIndexOf1stChar
-          ) ;
-        //Set to NULL if "insert()" failed.
-        if( g_lettertree.sp_letternodeLastForInsertedWord )
+        case STRING_INDEX_FOR_INFINITIVE :
         {
-          //refer/ point to the attributes of the "main verb" (saves storage)
-          g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord =
-              p_vocabularyandtranslationEnglishVerb->m_arstrEnglishWord ;
-          g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord=
-              p_vocabularyandtranslationEnglishVerb->m_arstrGermanWord ;
-          g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute=
-              p_vocabularyandtranslationEnglishVerb->m_arbyAttribute ;
-          //Set back the current pointer to the vocandtransl for the main verb.
-          g_lettertree.s_pvocabularyandtranslation =
-            p_vocabularyandtranslationEnglishVerb ;
-        }
+          #ifdef _DEBUG
+          std::string stdstrCurrrentWord = strCurrentWordData.substr(
+            nIndexOf1stWordChar , nIndexOfCurrentChar - nIndexOf1stWordChar ) ;
+          #endif
+          stdstrInfinitive = strCurrentWordData.substr(
+            nIndexOf1stWordChar , nIndexOfCurrentChar - nIndexOf1stWordChar ) ;
+          switch( byNumberOfObjectsAllowed )
+          {
+          case 0 :
+          g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+            stdsetpletternodeLastStringChar
+            //, LetterNode * pletternodeCurrent
+            //, VocabularyAndTranslation * pvocabularyandtranslation
+            , bInsertNewVocabularyAndTranslation
+//            , byVocabularyType
+            , EnglishVerb::main_verb_allows_0object_infinitive
+            , strCurrentWordData
+            , nIndexOfCurrentChar - nIndexOf1stWordChar
+            , nIndexOf1stWordChar
+            ) ;
+          case 1:
+            g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+              stdsetpletternodeLastStringChar
+              //, LetterNode * pletternodeCurrent
+              //, VocabularyAndTranslation * pvocabularyandtranslation
+              , bInsertNewVocabularyAndTranslation
+              , EnglishWord::main_verb_allows_1object_infinitive
+              , strCurrentWordData
+              , nIndexOfCurrentChar - nIndexOf1stWordChar
+              , nIndexOf1stWordChar
+              ) ;
+          case 2:
+            g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+              stdsetpletternodeLastStringChar
+              //, LetterNode * pletternodeCurrent
+              //, VocabularyAndTranslation * pvocabularyandtranslation
+              , bInsertNewVocabularyAndTranslation
+              , EnglishWord::main_verb_allows_2objects_infinitive
+              , strCurrentWordData
+              , nIndexOfCurrentChar - nIndexOf1stWordChar
+              , nIndexOf1stWordChar
+              ) ;
+          }
+  //        ev->m_strInfinitive = //str.Mid(start,i-start);
+  //          strCurrentWordData.substr(
+  //            nIndexOf1stChar
+  //            , nIndexOfCurrentChar - nIndexOf1stChar );
+  #ifdef _INSERT_INTO_HASH_TREE
+          if( byAllowsProgressiveForm )
+            g_lettertree.InsertProgressiveReferringVerbAttributes(
+              //This set is to ensure that if strings for the SAME vocabulary
+              // not 2 or more VocAndTransl object should be inserted.
+              stdsetpletternodeLastStringChar
+              , stdstrInfinitive
+              , byNumberOfObjectsAllowed
+              ) ;
+          g_lettertree.Insert3rdPersonSingularPresentReferringNounAttributes(
+               //This set is to ensure that if strings for the SAME vocabulary
+               // not 2 or more VocAndTransl object should be inserted.
+               stdsetpletternodeLastStringChar
+               , stdstrInfinitive
+               , byNumberOfObjectsAllowed
+               ) ;
 
-#endif //#ifdef _INSERT_INTO_HASH_TREE
-      }
-      if(delemiterCount==1)
+  #endif //#ifdef _INSERT_INTO_HASH_TREE
+        }
+        break ;
+        case string_index_for_past_tense :
         ev->m_strPastTense = //str.Mid(start,i-start);
-          strCurrentWordData.substr( nIndexOf1stChar
-          , nIndexOfCurrentChar - nIndexOf1stChar );
-      if(delemiterCount==2)
+          strCurrentWordData.substr( nIndexOf1stWordChar
+          , nIndexOfCurrentChar - nIndexOf1stWordChar );
+        break ;
+      //if(delemiterCount==2)
+        case string_index_for_past_participle :
         ev->m_strPastParticiple = //str.Mid(start,i-start);
-          strCurrentWordData.substr(nIndexOf1stChar
-          , nIndexOfCurrentChar - nIndexOf1stChar );
-      if(delemiterCount == 3)
-        ev->m_strPreposition = //str.Mid(start,i-start);
-          strCurrentWordData.substr( nIndexOf1stChar
-          , nIndexOfCurrentChar - nIndexOf1stChar );
+          strCurrentWordData.substr(nIndexOf1stWordChar
+          , nIndexOfCurrentChar - nIndexOf1stWordChar );
+        break ;
+//      if(delemiterCount == 3)
+//        ev->m_strPreposition = //str.Mid(start,i-start);
+//          strCurrentWordData.substr( nIndexOf1stChar
+//          , nIndexOfCurrentChar - nIndexOf1stChar );
 #ifdef _INSERT_INTO_HASH_TREE
 #ifdef _DEBUG
         if( ev->m_strInfinitive == _T("talk") )
           //Senseless line just for ability to set breakpoints.
           ev->m_strInfinitive += "" ;
 #endif
-//              //pvocabularyandtranslationReturn =
-//                g_lettertree.insert(
-//                //std::string(
-//                (LPCSTR)strCurrentWordData.c_str() //)
-//                ,nIndexOf1stChar,nIndexOfCurrentChar-nIndexOf1stChar,
-//                //If not assigned yet within THIS function.
-//                !pvocabularyandtranslation,
-//                pletternodeLastForInsertedWord,
-//                byVocabularyType ) ;
-//              //pvocabularyandtranslationReturn->m_byType = ENGLISH_NOUN ;
-//              //If not assigned yet within THIS function.
-//              //If nothing was added to "pletternode->m_psetvocabularyandtranslation".
-//              if( pvocabularyandtranslationReturn)
-//              {
-//                //pvocabularyandtranslationReturn->m_arpletternodeBeginOfWord = new
-//                //  LetterNode * [2] ;
-//                //pvocabularyandtranslationReturn->m_word
-//                pvocabularyandtranslation = pvocabularyandtranslationReturn ;
-//                //For assigning VocabularyAndTranslation part of LetterNode
-//                //when THIS function is called with a German vocabulary.
-//                g_pvocabularyandtranslation = pvocabularyandtranslation ;
-//                //;
-//                //pvocabularyandtranslationReturn->m_byType = WORD_TYPE_MAIN_VERB ;
-//              }
-//              else
-//              {
-//                if(pletternodeLastForInsertedWord &&
-//                  //pvocabularyandtranslation was NULL sometimes.
-//                  pvocabularyandtranslation)//If the pointer is assigned yet.
-//#ifdef _DEBUG
-//                {
-//                  TRACE("extract(...): inserting into set for node \"%x\"\n",
-//                    pletternodeLastForInsertedWord ) ;
-//#endif//#ifdef _DEBUG
-//                  pletternodeLastForInsertedWord->insert(pvocabularyandtranslation) ;
-//#ifdef _DEBUG
-//                }
-//#endif//#ifdef _DEBUG
-//
-//              }
+      } //switch
         if(delemiterCount < NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB )
         {
-          #ifdef _DEBUG
-          std::string stdstrCurrrentWord = strCurrentWordData.substr(
-            nIndexOf1stChar , nIndexOfCurrentChar - nIndexOf1stChar ) ;
-          #endif
-          g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
-            stdsetpletternodeLastStringChar
-            //, LetterNode * pletternodeCurrent
-            //, VocabularyAndTranslation * pvocabularyandtranslation
-            , bInsertNewVocabularyAndTranslation
-            , byVocabularyType
-            , strCurrentWordData
-            , nIndexOfCurrentChar - nIndexOf1stChar
-            , nIndexOf1stChar
-            ) ;
           if( g_lettertree.s_pvocabularyandtranslation )
             g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord[
               delemiterCount] = //str.Mid(start,i-start);
-              strCurrentWordData.substr( nIndexOf1stChar
-                , nIndexOfCurrentChar - nIndexOf1stChar ) ;
+              strCurrentWordData.substr( nIndexOf1stWordChar
+                , nIndexOfCurrentChar - nIndexOf1stWordChar ) ;
         }
 #endif //#ifdef _INSERT_INTO_HASH_TREE
       delemiterCount++;
-      nIndexOf1stChar = nIndexOfCurrentChar + 1 ;
-    }
+      nIndexOf1stWordChar = nIndexOfCurrentChar + 1 ;
+    } //if(strCurrentWordData[nIndexOfCurrentChar] == STRING_DELIMITER)
     if( delemiterCount == 5
       &&
       ( strCurrentWordData[nIndexOfCurrentChar] == '1' ||
@@ -593,7 +538,14 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
         ev->m_bAllowsToPlusInfinitive = 1 ;
       if( strCurrentWordData[nIndexOfCurrentChar] == '1' ||
         strCurrentWordData[nIndexOfCurrentChar] == '3' )
+      {
         ev->m_bAllowsIngForm=1;
+//        g_lettertree.InsertProgressiveReferringVerbAttributes(
+//          //This set is to ensure that if strings for the SAME vocabulary
+//          // not 2 or more VocAndTransl object should be inserted.
+//          stdsetpletternodeLastStringChar
+//          ) ;
+      }
 #ifdef _INSERT_INTO_HASH_TREE
       g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[0] = 0 ;
 #endif

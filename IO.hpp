@@ -21,7 +21,7 @@
 #define WORD_TYPE_CONJUNCTION '8'
 //Used for: IDs for German word types are English word type + NUMBER_OF_WORD_TYPES.
 #define NUMBER_OF_WORD_TYPES 10
-#define STRING_INDEX_FOR_INIFINITIVE 0
+#define STRING_INDEX_FOR_INFINITIVE 0
 
 //const char * readInputText(const std::string & strFilePath) ;
 
@@ -30,6 +30,13 @@ class LetterNode ;
 
 class OneLinePerWordPair
 {
+  //Use an enum to because that lets the values automatically be unique.
+  enum verb_string_indices
+  {
+    string_index_for_inifinitive = 0 ,
+    string_index_for_past_tense ,
+    string_index_for_past_participle
+  };
 private :
 //  static VocabularyAndTranslation * s_pvocabularyandtranslation ; //= NULL ;
 public:

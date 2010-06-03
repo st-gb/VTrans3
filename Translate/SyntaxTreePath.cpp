@@ -199,7 +199,8 @@ GrammarPart * SyntaxTreePath::GetLeaf(
     //e.g. find "def_article_noun.noun" in
     // "subject.def_article_noun.definite_article"
     //
-    for( std::vector<GrammarPart *>::const_reverse_iterator r_iter =
+    for( std::vector<GrammarPart *>::const_reverse_iterator
+        c_reverse_iter_stdvec_p_grammarpart =
       //Start from the end (leaf, at least closer to the leaf than the begin)
       //e.g. for the parse tree path "definite_article_noun.noun"
       //  e.g. for  the car
@@ -208,23 +209,26 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       //start from "the" ("noun")
       //of the current parse tree path.
       r_stdvec_p_grammarpartPath.rbegin() ;
-      r_iter != r_stdvec_p_grammarpartPath.rend() ; ++ r_iter )
+      c_reverse_iter_stdvec_p_grammarpart != r_stdvec_p_grammarpartPath.rend() ;
+      ++ c_reverse_iter_stdvec_p_grammarpart
+      )
     {
       //for( WORD wArrayIndex = m_wNumberOfElements )
-      DEBUG_COUTN("* r_iter: " << *r_iter )
+      DEBUG_COUTN("* r_iter: " << *c_reverse_iter_stdvec_p_grammarpart )
 #ifdef _DEBUG
-      if( *r_iter )
+      if( *c_reverse_iter_stdvec_p_grammarpart )
       {
 //        DEBUG_COUTN("* r_iter: " << r_iter->GetG )
       }
     #endif
 
       // e.g. "def_article_noun" from the parse tree path
-      //  "def_article_noun.noun" found in
+      //  "def_article_noun.noun" found in the grammar part path
       //    "subject.def_article_noun.definite_article" .
-      if( (*r_iter)->m_wGrammarPartID == m_ar_wElements[0] )
+      if( (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID ==
+          m_ar_wElements[0] )
       {
-        p_grammarpart = *r_iter ;
+        p_grammarpart = *c_reverse_iter_stdvec_p_grammarpart ;
         break ;
       }
     }

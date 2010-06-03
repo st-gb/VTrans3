@@ -7,7 +7,7 @@
 
 #include "VTransApp.hpp"
 #include <wx/wx.h>
-#include "wxTextInputDlg.h"
+#include "wxTextInputDlg.hpp"
 #include <IO.hpp> //OneLinePerWordPair::LoadWords()
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp>
 #include <fstream> //for std::ofstream

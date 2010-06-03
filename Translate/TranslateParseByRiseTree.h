@@ -58,6 +58,9 @@ public:
   }
 } ;
 
+class TranslationAndGrammarPart ;
+class TranslationAndConsecutiveID ;
+
 //Translates the parse tree of type "ParseByRise"
 class TranslateParseByRiseTree
 {
@@ -133,7 +136,13 @@ public:
   TranslateParseByRiseTree(ParseByRise & r_parsebyrise );
   ~TranslateParseByRiseTree();
   void Translate( ParseByRise & r_parsebyrise
-    , std::string & stdstrWholeTransl
+//    , std::string & stdstrWholeTransl
+    , std::vector<std::string> & r_stdvec_stdstrWholeTransl
+    //The outer vector is for the different translation possibilities ;
+    , std::vector<std::vector<TranslationAndGrammarPart> > &
+      r_stdvec_stdvecTranslationAndGrammarPart
+//    , std::vector<std::vector<TranslationAndConsecutiveID> > &
+//      r_stdvec_stdvecTranslationAndConsecutiveID
     ) ;
   bool TranslationRuleApplies(
     std::string & r_stdstrTranslation
@@ -141,6 +150,8 @@ public:
     // So it can be used with data from outside this class.
     , const std::vector<WORD> & r_stdvec_wGrammarPartPath
     , const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
+//    , WORD & r_wConsecutiveID
+    , const GrammarPart * & p_grammarpart
     ) ;
 };
 

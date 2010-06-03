@@ -5,7 +5,7 @@
  *      Author: Stefan
  */
 
-#include <Parse/DirectingLeavesMultipleIterTraverser.h>
+#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/GrammarPart.hpp>
 #ifdef _DEBUG //for getting a string from an grammar part ID vector
   #include <Parse/ParseByRise.hpp>
@@ -47,6 +47,8 @@ namespace ParseTreeTraverser
     std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
       m_vecGrammarPartID) ;
 #endif
+    WORD wConsecutiveID ;
+    const GrammarPart * p_grammarpart ;
     //If the leave is e.g. a noun then for the person index we need to know
     //whether it is singular or plural. This is what TranslationRuleApplies()
     //does.
@@ -56,6 +58,8 @@ namespace ParseTreeTraverser
         , byPersonIndex
         , m_vecGrammarPartID
         , m_stdvec_p_grammarpartPath
+//        , wConsecutiveID
+        , p_grammarpart
         )
       )
     {

@@ -94,37 +94,14 @@ public:
   //Additionally use numbers corresponding to the rule name because they can
   //be compared faster than strings.
   WORD m_wGrammarPartID ;
+  //for listboxes in GUI->same selection for multiple listboxes.
+  WORD m_wConsecutiveID ;
 //  VTrans::string_type m_vtrans_strTranslation ;
   std::string m_stdstrTranslation ;
 
-  void AddLeftChild(GrammarPart & r_grammarpart)
-  {
-    mp_grammarpartLeftChild = & r_grammarpart ;
-#ifdef COMPILE_WITH_POINTER_TO_PARENT
-    //This is important for traversing from the leaves directing root.
-    //This should be done for getting the "person index" (for finite verbforms):
-    //"the car    and    I  like you"
-    //  \   /            |
-    // 3rd person sing  1st person sing
-    //      \           /
-    //  1st person sing ("we") -> "mögen"
-    mp_grammarpartLeftChild->mp_grammarpartParent = this ;
-#endif
-  }
-  void AddRightChild(GrammarPart & r_grammarpart)
-  {
-    mp_grammarpartRightChild = & r_grammarpart ;
-#ifdef COMPILE_WITH_POINTER_TO_PARENT
-    //This is important for traversing from the leaves directing root.
-    //This should be done for getting the "person index" (for finite verbforms):
-    //"the car    and    I  like you"
-    //  \   /            |
-    // 3rd person sing  1st person sing
-    //      \           /
-    //  1st person sing ("we") -> "mögen"
-    mp_grammarpartRightChild->mp_grammarpartParent = this ;
-#endif
-  }
+  void AddLeftChild(GrammarPart & r_grammarpart) ;
+
+  void AddRightChild(GrammarPart & r_grammarpart) ;
 
   void BuildTokenVector(
     const std::string & stdstrText
@@ -137,60 +114,22 @@ public:
 //    return
 //  }
 
-  GrammarPart(DWORD dwTokenIndexLeftMost, DWORD dwTokenIndexRightMost )
-  {
-    Init() ;
-    m_dwLeftmostIndex = dwTokenIndexLeftMost ;
-    m_dwRightmostIndex = dwTokenIndexRightMost ;
-  }
+  GrammarPart(DWORD dwTokenIndexLeftMost, DWORD dwTokenIndexRightMost ) ;
 
   GrammarPart(
     DWORD dwTokenIndexLeftMost,
     DWORD dwTokenIndexRightMost ,
-    WORD wGrammarPartID )
-  {
-    Init() ;
-    m_dwLeftmostIndex = dwTokenIndexLeftMost ;
-    m_dwRightmostIndex = dwTokenIndexRightMost ;
-    m_wGrammarPartID = wGrammarPartID ;
-  }
+    WORD wGrammarPartID ) ;
 
-  void Init()
-  {
-#ifdef COMPILE_WITH_POINTER_TO_PARENT
-    mp_grammarpartParent = NULL ;
-#endif
-    m_byPersonIndex = 0 ;
-    mp_grammarpartLeftChild = NULL ;
-    mp_grammarpartRightChild = NULL ;
-  }
+  //Code that should be executed by every constructor.
+  void Init() ;
 
   //Define a < operator in order to insert into a container like std::set.
   bool operator < (const GrammarPart & ) const ;
 
-  inline void SetGrammarPartID(WORD wGrammarPartID )
-  {
-    switch( wGrammarPartID )
-    {
-      //the person index is alos important : e.g. if noun has the same string
-    // for plural and singular then the person index of the verb gives info
-    // about how its finite verbform should be in German:
-    // The sheep run>>s<<. -> Das Schaf läuft.
-    // The sheep run. -> Die Schaf>>e<< laufen.
-    case EnglishWord::third_person_singular_present :
-      m_byPersonIndex = 3 ;
-      break ;
-    case EnglishWord::singular :
-      m_byPersonIndex = 3 ;
-      break ;
-      //indefinite article ("a man") is singular per definition
-    case EnglishWord::English_indefinite_article :
-      m_byPersonIndex = 3 ;
-      break ;
-    }
+//  inline
+  void SetGrammarPartID(WORD wGrammarPartID ) ;
 
-    m_wGrammarPartID = wGrammarPartID ;
-  }
 };
 
 #endif /* GRAMMARPART_HPP_ */

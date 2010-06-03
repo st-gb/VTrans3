@@ -5,7 +5,7 @@
  *      Author: Stefan
  */
 
-#include <Parse/DirectingLeavesMultipleIterTraverser.h>
+#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <rest.h> //DEBUG_COUT
@@ -141,6 +141,7 @@ namespace ParseTreeTraverser
     ParseTreePathAdded() ;
     do
     {
+      //TODO SIGSEV here
       if( //mcp_grammarpartCurrent->mp_grammarpartRightChild
           m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
           mp_grammarpartRightChild
