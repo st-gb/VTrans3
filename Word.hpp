@@ -47,10 +47,20 @@ public:
   //the order of the words is primarily important for English words / word
   //attributes.
   //For the
+  //TODO: if the word class shares its attributes with another word class it
+  // must NOT free the memory for the attributes. Else this is done more than
+  // once-> a potential error.
   enum English_word_class
   {
+    //These types are for building the parse tree (these are the leaves of the
+    // tree) / for excluding incorrect grammatical construction when
+    //building the parse tree (could be also possible afterwards, but that
+    // would be less efficient because a lot of (parts of) parse trees can
+    //  be unnecessarily incorrect then--the building of the tree was for
+    // nothing).
     noun = //0
       //ENGLISH_NOUN
+      //starting with the same indices as in the vocabulary file
       49
     , main_verb //Vollverb
     , adjective
@@ -59,8 +69,51 @@ public:
     , pronoun
     , auxiliary_verb
     , conjunction
+    //after the same indices as in the vocabulary file
+    , conjunction_and
     , English_definite_article
     , English_indefinite_article
+    , personal_pronoun
+    , personal_pronoun_objective_form //"her","him",...
+    , personal_pronoun_I
+    , personal_pronoun_you_sing
+    , personal_pronoun_he
+    , personal_pronoun_she
+    , personal_pronoun_it
+    , personal_pronoun_we
+    , personal_pronoun_you_plur
+    , personal_pronoun_they
+    //see http://en.wikipedia.org/wiki/Reflexive_pronoun:
+    , reflexive_pronoun_myself
+    , reflexive_pronoun_yourself
+    , reflexive_pronoun_himself
+    , reflexive_pronoun_herself
+    , reflexive_pronoun_itself
+    , reflexive_pronoun_ourselves
+    , reflexive_pronoun_yourselves
+    , reflexive_pronoun_themselves
+    //For parsing (constructing a grammar rule ) "a >>singular<<"
+    //(if the rule was just "a >>noun<<", then
+    // "a cars" would also be possible.
+    , singular
+    , plural_noun
+    //For parsing (constructing a grammar rule ) "the sheep >>3rd_pers_sing_pres"
+    //(if the rule was just "the >>noun<< >>main verb<<", then the
+    //  "person index" -> "finite verb form" match could
+    // be done after the parse tree was created at first.
+    // If using a rule ">>mainVerbAllows0object3rdPersonSingularPresent<<
+    //And so "The cars sits" could not be a parse tree by using the rule
+    //  "the >>singular<< >>3rd_pers_sing_pres<<"
+    // would also be possible parse tree at first.
+    , mainVerbAllows0object3rdPersonSingularPresent
+    , mainVerbAllows1object3rdPersonSingularPresent
+    , mainVerbAllows2objects3rdPersonSingularPresent
+    , main_verb_allows_0object_progressive_form //e.g. "have been walking"
+    , main_verb_allows_1object_progressive_form //e.g. "am hitting you"
+    , main_verb_allows_2objects_progressive_form //e.g. "was giving you a car"
+    , main_verb_allows_0object_infinitive
+    , main_verb_allows_1object_infinitive
+    , main_verb_allows_2objects_infinitive
     , beyond_last_entry
   } ;
   BYTE m_byIndex ;
@@ -225,6 +278,11 @@ public:
 	BYTE m_bDescriptionType;
 	EnglishVerb(){m_bIntegral=FALSE;}
   EnglishVerb( BYTE byObjectType ) { m_byObjectType = byObjectType ; }
+  //"static" should be faster because no "this" pointer is IMPLICITELY copied
+  // as function argument.
+  //inline
+  static void Get3rdPersonForm( VTrans::string_type & r_vtransstr ) ;
+  static void GetProgressiveForm( VTrans::string_type & r_vtransstr ) ;
   //For ability to iterate over all of the word's strings.
   bool GetNextString( std::string & r_stdstr ) { return false ; } ;
   //Needed for English words to determine the word class resp. for

@@ -159,9 +159,9 @@ EnglishAuxiliaryVerb::EnglishAuxiliaryVerb(
 		}
 		i++ ;
 	}
-	//ein modales Hilfsverb wird NICHT f�r die �berstzung 
-	//unbedingt ben�tigt f�r einige Zeitformen (im Gegensatz
-	//zu "to be" f�r fortschreitenden Pr�sens ("I am working.")
+	//ein modales Hilfsverb wird NICHT fï¿½r die ï¿½berstzung 
+	//unbedingt benï¿½tigt fï¿½r einige Zeitformen (im Gegensatz
+	//zu "to be" fï¿½r fortschreitenden Prï¿½sens ("I am working.")
 	m_bIntegral = ! bModalAuxiliary ;
 }
 
@@ -185,6 +185,109 @@ BYTE EnglishAuxiliaryVerb::GetWordClass()
 {
   return auxiliary_verb ;
 }
+
+//inline
+void EnglishVerb::Get3rdPersonForm(
+  VTrans::string_type & r_vtransstr )
+{
+  WORD wStringSize = r_vtransstr.size() ;
+  if ( wStringSize > 2 )
+  {
+    VTrans::string_type vtransstrEnding = r_vtransstr.substr(
+      wStringSize - 2 ) ;
+   if( vtransstrEnding == //"wish->wishes"
+       "sh" || vtransstrEnding ==
+           //"switch->switches"
+       "ch"
+     )
+   {
+     r_vtransstr += "es" ;
+     return ;
+   }
+  }
+  else
+    if ( wStringSize > 1 )
+    {
+      VTrans::string_type vtransstrEnding = r_vtransstr.substr(
+        wStringSize - 1 ) ;
+      if( vtransstrEnding ==
+          //"go->goes"
+          "o"
+        )
+      {
+        r_vtransstr += "es" ;
+        return ;
+
+      }
+    }
+  r_vtransstr += "s" ;
+}
+
+BYTE IsConsonant( char ch )
+{
+//  char ch;
+//  str.MakeLower();
+//  ch=str[0];
+  ch = tolower(ch);
+  return ch=='b' || ch=='c' || ch=='d' || ch=='f' || ch=='g' || ch=='h'
+    || ch=='j' || ch=='k' || ch=='l' || ch=='m' || ch=='n' || ch=='p'
+    || ch=='q' || ch=='r' || ch=='s' || ch=='t' || ch=='v' || ch=='w'
+    || ch=='x' || ch=='y' || ch=='z';
+}
+
+//liefert zurück, ob das erste Zeichen der Zeichenkette ein Vokal ist
+//sollte KEINE Referenz sein, da str verändert wird
+BYTE IsVowel(TCHAR ch)
+{
+  ch = tolower(ch);
+  return ch=='a' || ch=='e' || ch=='i' || ch=='o'|| ch=='u';
+}
+
+void EnglishVerb::GetProgressiveForm(
+  VTrans::string_type & r_vtransstr )
+{
+  WORD wStringSize = r_vtransstr.size() ;
+  if ( wStringSize > 2 )
+  {
+    VTrans::string_type vtransstrEnding = r_vtransstr.substr(
+      wStringSize - 2 ) ;
+    if( vtransstrEnding[1] ==
+       //e.g. "prepare->preparing"
+       'e'
+     )
+    {
+     r_vtransstr.erase( r_vtransstr.length() , 1 ) ;
+    }
+    if( //E.g. "refer->refer>>r<<ing", "put->put>>t<<ing"
+       //but not e.g. "talk->talk>>r<<ing"
+       IsVowel(vtransstrEnding[0] ) &&
+       IsConsonant(vtransstrEnding[1] )
+     )
+    {
+     //Double the consonant
+     r_vtransstr += vtransstrEnding[1] ;
+
+    }
+    r_vtransstr += "ing" ;
+  }
+//  else
+//    if ( wStringSize > 1 )
+//    {
+//      VTrans::string_type vtransstrEnding = r_vtransstr.substr(
+//        wStringSize - 1 ) ;
+//      if( vtransstrEnding ==
+//          //"go->goes"
+//          "o"
+//        )
+//      {
+//        r_vtransstr += "es" ;
+//        return ;
+//
+//      }
+//    }
+//  r_vtransstr += "s" ;
+}
+
 
 GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 {
@@ -245,7 +348,7 @@ void InitDictionary()
 #ifdef _DEBUG
 	printf("void LoadWords(WordNode * pWordNode) ANFANG\n");
 #endif
-//	//zuerst die integralen Vokabeln der verketteten Liste hinzuf�gen, Anfang
+//	//zuerst die integralen Vokabeln der verketteten Liste hinzufï¿½gen, Anfang
 //	wordList.m_pWordNodeFirst = new WordNode();
 //	wordList.m_pWordNodeFirst->m_pWord = new EnglishAuxiliaryVerb(
 //		"be\nam\nare\nis\nare\nare\nare\nwas\nwere\n"

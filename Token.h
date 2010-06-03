@@ -10,14 +10,14 @@
   //	#include <StdString.h> //for class compatible to MFC's "CString"  
   //#endif//#ifndef _WINDOWS
 
-  class PositionCString
+  class PositionString
   {
   public:
 	  BYTE m_color;
 	  DWORD m_dwLength;
 	  DWORD m_dwStart;
 	  VTrans::string_type m_Str;
-	  PositionCString(VTrans::string_type str,DWORD dwStart,DWORD dwLength)
+	  PositionString(VTrans::string_type str,DWORD dwStart,DWORD dwLength)
 	  {
 		  m_Str=str;
 		  m_dwStart=dwStart;
@@ -33,8 +33,8 @@
 	  DWORD m_dwLength;
 	  DWORD m_dwStart;
     //std::string m_str;
-    //Use the same attribute name as "PositionCString": so it's easier to
-    //replace "PositionCString" by "Positionstdstring" when no 
+    //Use the same attribute name as "PositionString": so it's easier to
+    //replace "PositionString" by "Positionstdstring" when no 
     //"rename refactoring" is available.
     std::string m_Str;
 	  Positionstdstring(std::string & str,DWORD dwStart,DWORD dwLength)
@@ -45,7 +45,7 @@
 	  };
   }; // end class class Positionstdstring
 
-  typedef	std::vector<PositionCString> PositionCStringVector;
+  typedef	std::vector<PositionString> PositionStringVector;
   //Use std::string to be more (Linux) compiler compatible.
   typedef	std::vector<Positionstdstring> PositionstdstringVector;
 
@@ -68,22 +68,27 @@
     , int first
     , int last );
   VTrans_string_typeVector		GetBetween(
-    VTrans_string_typeVector sv
+    const VTrans_string_typeVector & sv
     , int first
-    , int last );
-  PositionCStringVector				GetBetween(
-    const PositionCStringVector & sv,
+    , int last
+    );
+  PositionStringVector				GetBetween(
+    const PositionStringVector & sv,
 		int first, int last );
   VTrans_string_typeVector		GetBetweenAsCStringVector(
-    const PositionCStringVector & pcstrv
+    const PositionStringVector & pcstrv
     ,int first
     ,int last );
+  std::string GetBetweenAsStdString(
+    const PositionStringVector & rc_pstrv
+    ,int first
+    ,int last ) ;
   VTrans_string_typeVector		GetCStringVector( VTrans::string_type str);
   VTrans_string_typeVector		GetCStringVector2( const VTrans::string_type & str);
   std::vector<VTrans_string_typeVector>	GetCStringVectorVector(
     const VTrans::string_type & str);
-  PositionCStringVector GetPositionCStringVector(VTrans::string_type & str) ;
-  PositionCStringVector       GetPositionCStringVector(
+  PositionStringVector GetPositionCStringVector(VTrans::string_type & str) ;
+  PositionStringVector       GetPositionCStringVector(
     VTrans::string_type & str
     , DWORD dwAdd ) ;
   BOOL										    IsFirstLetterUpper(VTrans::string_type & str);

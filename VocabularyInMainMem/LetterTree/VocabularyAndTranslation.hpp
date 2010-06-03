@@ -45,6 +45,16 @@ class LetterNode ;
       , auxiliary_verb
       , conjunction
     } ;
+    enum German_main_verb
+    {
+      infinitive = 0
+      , first_person_singular
+      , second_person_singular
+      , third_person_singular
+      , first_person_plural
+      , second_person_plural
+      , third_person_plural
+    } ;
 
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
     //Currently only for English needed because it's only needed 
@@ -52,9 +62,10 @@ class LetterNode ;
     LetterNode ** m_arpletternodeLastEngChar ;
     //LetterNode ** m_arpletternodeLastGerChar ;
 #endif //COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
-    Word * m_pword ;
-    Word m_word ;
-    Word * m_pwordTranslation ;
+
+//    Word * m_pword ;
+//    Word m_word ;
+//    Word * m_pwordTranslation ;
     //std::string * m_arstrEnglishWord ;
     VTrans::string_type * m_arstrEnglishWord ;
     //std::string * m_arstrGermanWord ;
@@ -67,8 +78,8 @@ class LetterNode ;
       //const
       Word & rwordTranslation)
     {
-      m_pword = & rword ;
-      m_pwordTranslation = & rwordTranslation ;
+//      m_pword = & rword ;
+//      m_pwordTranslation = & rwordTranslation ;
     }
 
     VocabularyAndTranslation(BYTE byVocabularyType) ;
@@ -99,10 +110,12 @@ class LetterNode ;
       m_arbyAttribute[0] |= (by >> BIT_POSITION_FOR_TRANSLATION_TYPE) ;
     }
 
-    //for std::set::insert(): there must NOT be: " (this<right)==false && (right<this)==false"
+    //for std::set::insert(): there must NOT be:
+    //" (this<right)==false && (right<this)==false"
     bool operator <(const VocabularyAndTranslation & right) const
     {
       //return m_pword < right.m_pword ;
-      return &m_word < &right.m_word ;
+//      return &m_word < &right.m_word ;
+      return this < & right ;
     }
   }; //end class

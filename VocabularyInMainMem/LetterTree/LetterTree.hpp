@@ -30,7 +30,7 @@
   //for GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated,
   // PointerToWordNodeWhereAnEnglishNounIsEncapsulated
   //#include "../../GetAndTestWord.h"
-  #include "../../Token.h" //for PositionCStringVector
+  #include "../../Token.h" //for PositionStringVector
   #include "../../I_UserInterface.hpp"
   //#include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
   #include "VocabularyAndTranslation.hpp"
@@ -86,6 +86,8 @@
     , public IVocabularyInMainMem
   {
   private:
+    //needed for HandleVocabularyAndTranslationPointerInsertion()
+    static const bool s_bDoInsertNewVocabularyAndTranslation = true ;
     //Needed only for the creation of the char to array index mapping.
     std::vector<CHAR> m_vecch ;
     BYTE m_byArrayIndexRespSize ;
@@ -96,6 +98,9 @@
     //For access to the last inserted VocabularyAndTranslation pointer for
     //OneLinePerWordPair::extract(...)
     static VocabularyAndTranslation * s_pvocabularyandtranslation ;
+    //for being able to insert a VocAnsTranls after inseting into lettertree
+    //easily (without using "return" or a parameter as reference(->a bit faster).
+    static LetterNode * sp_letternodeLastForInsertedWord ;
     LetterNode * //pnodeCurrent ; //= m_pletternodeRoot;
       m_pletternodeRoot ;
     BYTE m_pbyMappingTableFromCharacterToLetterNodePointerArrayIndex[
@@ -165,6 +170,28 @@
     //node to be have less than 255 elements.
     void createMapping() ;
 
+    void InsertPersonalPronouns() ;
+    void InsertPersonalPronounsObjectiveForm() ;
+    void InsertProgressiveReferringVerbAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      //"const" because: The infinitive should not be modified because it may
+      //be needed afterwards.
+      , const std::string & r_stdstrInfinitive
+      , BYTE byNumberOfObjectsAllowed
+      ) ;
+    void InsertPluralNounReferringNounAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      ) ;
+    void InsertSingularNounReferringNounAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      ) ;
+
     LetterTree(//I_UserInterface * p_userinterface
       )
       //Initializations .
@@ -197,12 +224,13 @@
     VocabularyAndTranslation * insert(
       const char * pch,
       int start,
-      int length,
-      bool bInsertNewVocabularyAndTranslation,
-      LetterNode * & pletternode,
-      BYTE byVocabularyType) ;
+      int length //,
+//      bool bInsertNewVocabularyAndTranslation,
+//      LetterNode * & rp_letternodeLastForInsertedWord
+//      ,BYTE byVocabularyType
+      ) ;
 
-    void Insert(std::string stdstr, BYTE byWordClass ) ;
+    void Insert(const std::string & r_stdstr, BYTE byWordClass ) ;
     void Insert(EnglishWord & ew , GermanWord & gw ) ;
 
     //std::set<VocabularyAndTranslation> * search(
@@ -235,14 +263,28 @@
     
   //static
     inline void HandleVocabularyAndTranslationPointerInsertion(
+      //This set is to ensure that for identical strings for the SAME vocabulary
+      //not 2 or more VocAndTransl object should be inserted into the same
+      //LetterNode of the last character.
     std::set<LetterNode *> & stdsetpletternodeLastStringChar
-    , LetterNode * pletternodeCurrent
+//    , LetterNode * p_letternodeLastForInsertedWord
     //, VocabularyAndTranslation * pvocabularyandtranslation
     , bool  bInsertNewVocabularyAndTranslation
     , BYTE byVocabularyType
     ) ;
+    void Insert3rdPersonSingularPresentReferringNounAttributes(
+       //This set is to ensure that if strings for the SAME vocabulary
+       // not 2 or more VocAndTransl object should be inserted.
+       std::set<LetterNode *> & stdsetpletternodeLastStringChar
+       //"const" because: The infinitive should not be modified because it may
+       //be needed afterwards.
+       , const std::string & r_stdstrInfinitive
+       , BYTE byNumberOfObjectsAllowed
+       ) ;
   //static //inline
     void InsertIntoTrieAndHandleVocabularyAndTranslation(
+      //this set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
       std::set<LetterNode *> & stdsetpletternodeLastStringChar
     //, LetterNode * pletternodeCurrent
     //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -267,14 +309,15 @@
     ////vocabulary entry for "vacuum cleaner" is returned and index
     ////is set to the last token of the vocabulary within psv.
     //std::set<VocabularyAndTranslation *> * search(
-    //  const PositionCStringVector & psv, 
+    //  const PositionStringVector & psv, 
     //  DWORD & r_dwIndex) ;
     //{
     //  return search(pchCurrentChar,0,strlen(pchCurrentChar) ) ;
     //}
 
     std::set<VocabularyAndTranslation *> * search(
-      const PositionstdstringVector & psv, 
+//      const PositionstdstringVector & psv,
+      const PositionStringVector & psv,
       DWORD & r_dwTokenIndex);
 
     LetterNode * searchAndReturnLetterNode(
@@ -353,8 +396,8 @@
     }
 
     LetterNode * searchAndReturnLetterNode(
-      //const PositionCStringVector & psv, 
-      const PositionstdstringVector & psv, 
+      const PositionStringVector & psv,
+//      const PositionstdstringVector & psv,
       DWORD & r_dwTokenIndex
       );
 
@@ -362,8 +405,8 @@
     //lexer.
     //std::set<VocabularyAndTranslation *> *
     bool IsPlural(
-      //const PositionCStringVector & psv
-      const PositionstdstringVector & psv ,
+      const PositionStringVector & psv ,
+//      const PositionstdstringVector & psv ,
       DWORD & r_dwTokenIndex,
       std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
       ) ;
@@ -372,8 +415,8 @@
     //lexer.
     //std::set<VocabularyAndTranslation *> *
     bool IsSingular(
-      //const PositionCStringVector & psv
-      const PositionstdstringVector & psv ,
+      const PositionStringVector & psv ,
+//      const PositionstdstringVector & psv ,
       DWORD & r_dwTokenIndex,
       std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
       ) ;

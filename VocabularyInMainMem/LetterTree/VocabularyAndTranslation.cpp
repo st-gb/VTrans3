@@ -7,6 +7,8 @@
 #include <windef.h> //for BYTE
 #include <typeinfo> //for typeid()
 
+#define SET_FREED_MEM_TO_NULL
+
 VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
 {
   m_byType = byVocabularyType ;
@@ -15,7 +17,7 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
   switch(byVocabularyType)
   {
   case ENGLISH_NOUN:
-    m_pword = new EnglishNoun() ;
+//    m_pword = new EnglishNoun() ;
     m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN] ;
     m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
     byArraySizeForEng = NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN ;
@@ -24,16 +26,49 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     memset(m_arbyAttribute,0,2) ;
     break;
   case ENGLISH_MAIN_VERB:
+  case EnglishWord::main_verb_allows_0object_infinitive:
+  case EnglishWord::main_verb_allows_1object_infinitive:
+  case EnglishWord::main_verb_allows_2objects_infinitive:
     m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB] ;
     m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
     m_arbyAttribute = new BYTE[2] ;
     break;
+  case WORD_TYPE_CONJUNCTION:
+    m_arstrEnglishWord = new std::string[1] ;
+    m_arstrGermanWord = new std::string[1] ;
+    m_arbyAttribute = new BYTE[1] ;
+    break;
+  //case LetterTree::personal_pronoun :
+  case EnglishWord::personal_pronoun :
+    m_arstrEnglishWord = new std::string[1] ;
+    m_arstrGermanWord = new std::string[1] ;
+    m_arbyAttribute = new BYTE[1] ;
+    break;
+  case EnglishWord::personal_pronoun_objective_form :
+    m_arstrEnglishWord = new std::string[1] ;
+    m_arstrGermanWord = new std::string[1] ;
+    m_arbyAttribute = new BYTE[1] ;
+    break;
+    //Only the singular (for parsing "indefinite article" + "singular"
+    // ( if the rule was "indefinite article" + "noun",
+    //  "indefinite article" + "plural" which is wrong would also be possible)
+    // singular type is only needed for parsing. It shares the same attr as
+    // the noun.
+//  case EnglishWord::singular :
+//    m_arstrEnglishWord = new std::string[1] ;
+//    m_arstrGermanWord = new std::string[1] ;
+//    m_arbyAttribute = new BYTE[1] ;
+//    break;
+
   //case GERMAN_NOUN:
   //  m_pword = new GermanNoun() ;
   //  m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
   //  break;
   default:
-    m_pword = new Word() ; 
+    //For vocabulary types that just refer another vocandtransl object's
+    // attributes and for types that do not need (e.g. "definite article")
+    //these attributes etc.
+//    m_pword = new Word() ;
     m_arstrEnglishWord = NULL ;
     m_arstrGermanWord = NULL ;
     m_arbyAttribute = NULL ;
@@ -44,34 +79,67 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
   //m_arpletternodeLastGerChar = new LetterNode * [byArraySizeForGer];
   //Important for the destructor: init. with "NULL".
   //m_pword = NULL ;
-  m_pwordTranslation = NULL ;
+//  m_pwordTranslation = NULL ;
 }
+
+//#define _DEBUG_FREEING_MEM
 
 VocabularyAndTranslation::~VocabularyAndTranslation()
 {
   //if ( m_pword )
   //  delete m_pword ;
-  if( m_pwordTranslation )
-    delete m_pwordTranslation ;
-  if(m_arstrEnglishWord)
+//  if( m_pwordTranslation )
+//    delete m_pwordTranslation ;
+
+  switch( m_byType )
   {
-#ifdef _DEBUG_FREEING_MEM
-    TRACE("~VocabularyAndTranslation()--%x ",this);
-    BYTE byNumWords = g_arbyNumberOfEnglishWords[ m_byType - ENGLISH_NOUN ] ;
-    for(int i = 0 ; i < byNumWords ; i++ )
-      TRACE("\"%s\"", m_arstrEnglishWord[i].c_str() ) ;
-    TRACE("\n") ;
+  // singular type is only needed for parsing. It shares the same attr as
+  // the noun. Because for the noun the storage is freed it should NOT be done again
+  // for the singular.
+  case EnglishWord::singular :
+  case EnglishWord::plural_noun :
+  case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
+  case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent :
+  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent :
+    break ;
+  default:
+    DEBUG_COUTN("freeing voc type" << (WORD) m_byType)
+//    assert(m_arstrEnglishWord) ;
+    if(m_arstrEnglishWord)
+    {
+  #ifdef _DEBUG_FREEING_MEM
+      TRACE("~VocabularyAndTranslation()--%x ",this);
+      BYTE byNumWords = g_arbyNumberOfEnglishWords[ m_byType - ENGLISH_NOUN ] ;
+      for(int i = 0 ; i < byNumWords ; i++ )
+        TRACE("\"%s\"", m_arstrEnglishWord[i].c_str() ) ;
+      TRACE("\n") ;
+  #endif
+      delete [] m_arstrEnglishWord ;
+#ifdef SET_FREED_MEM_TO_NULL
+      m_arstrEnglishWord = NULL ;
 #endif
-    delete [] m_arstrEnglishWord ;
-  }
-  if(m_arstrGermanWord)
-    delete [] m_arstrGermanWord ;
-  if(m_arbyAttribute)
-    delete [] m_arbyAttribute ;
-#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
-  delete [] m_arpletternodeLastEngChar ;
-#endif //#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
+    }
+//    assert(m_arstrGermanWord) ;
+    if(m_arstrGermanWord)
+    {
+      delete [] m_arstrGermanWord ;
+#ifdef SET_FREED_MEM_TO_NULL
+      m_arstrGermanWord = NULL ;
+#endif
+    }
+//    assert(m_arbyAttribute) ;
+    if(m_arbyAttribute)
+    {
+      delete [] m_arbyAttribute ;
+#ifdef SET_FREED_MEM_TO_NULL
+      m_arbyAttribute = NULL ;
+#endif
+    }
+  #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
+    delete [] m_arpletternodeLastEngChar ;
+  #endif //#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   //delete m_arpletternodeLastGerChar ;
+  }
 }
 
 //Word 

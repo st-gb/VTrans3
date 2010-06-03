@@ -21,7 +21,7 @@
 #define WORD_TYPE_CONJUNCTION '8'
 //Used for: IDs for German word types are English word type + NUMBER_OF_WORD_TYPES.
 #define NUMBER_OF_WORD_TYPES 10
-#define STRING_INDEX_FOR_INIFINITIVE 0
+#define STRING_INDEX_FOR_INFINITIVE 0
 
 //const char * readInputText(const std::string & strFilePath) ;
 
@@ -30,13 +30,86 @@ class LetterNode ;
 
 class OneLinePerWordPair
 {
+  //Use an enum to because that lets the values automatically be unique.
+  enum verb_string_indices
+  {
+    string_index_for_inifinitive = 0 ,
+    string_index_for_past_tense ,
+    string_index_for_past_participle
+  };
 private :
 //  static VocabularyAndTranslation * s_pvocabularyandtranslation ; //= NULL ;
 public:
-  static Word * extract(
+  static //Word *
+    void extract(
     const VTrans::string_type & str
     , BYTE bEnglishWord
     , int & ret
+    ) ;
+  static void InsertEnglishAdjective(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertEnglishAdverb(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertEnglishAuxiliaryVerb(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertEnglishConjunction(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertEnglishMainVerb(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    , std::set<LetterNode *> stdsetpletternodeLastStringChar
+    ) ;
+  static void InsertEnglishNoun(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertEnglishPreposition(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertEnglishPonoun(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertGermanNoun(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertGermanMainVerb(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertGermanAdjective(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertGermanAdverb(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertGermanPreposition(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertGermanPronoun(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertGermanAuxiliaryVerb(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
+    ) ;
+  static void InsertGermanConjunction(
+    const std::string & strCurrentWordData
+    , BYTE byVocabularyType
     ) ;
 //  static inline void HandleVocabularyAndTranslationPointerInsertion(
 //    std::set<LetterNode *> & stdsetpletternodeLastStringChar
