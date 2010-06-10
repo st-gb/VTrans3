@@ -9,6 +9,20 @@
 #define	_CONDITIONSANDTRANSLATION_HPP
 
 #include "Condition.hpp"
+#include <map>
+#include <vector>
+//#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
+#include <Translate/AttributeTypeAndPosAndSize.hpp>
+
+class GrammarPart ;
+
+//Function pointer for a function that is able to change a string.
+//That is important e.g. for changing "Männer" to "Männern" for
+//"I trust the men."
+//A function is more univerally usable than a Vorschrift/ Syntax: it can
+// use a more variety because it is not restricted to pre-defined rules but
+// used machine code.
+typedef void ( * pfnTransformString) (std::string & r_stdstr ) ;
 
 //For a translation to German there may be at least 1 condition:
 // e.g. for translating the English definite article "the" to the German
@@ -24,6 +38,12 @@ public:
   //for 3rd person singular belongs to a singular noun.
   //This is important for getting the correct finite verb form when translating(?)
   BYTE m_byPersonIndex ;
+  pfnTransformString m_pfn_TransformString ;
+  //A translation rule may have multiple / more than 1 condition:
+  //e.g. for translating "the" to "das" into German,
+  //-the German translation must be singular (do not rely on the English noun
+  //  to be singular because e.g. "The glasses are red" = "Die Brille ist rot.")
+  //-the German gender must be "saechlich"
   //std::vector<std::string> conditions ;
   std::vector<Condition> m_conditions ;
   //The attribute name to use for translation. this name must exist as key
@@ -47,12 +67,24 @@ public:
   std::string m_stdstrGermanTranslation ;
   //
   SyntaxTreePath m_syntaxtreepath ;
+
+  //for all objects the same
+  static ParseByRise * sp_parsebyrise ;
+  static std::map<std::string, //VocabularyAndTranslation
+    AttributeTypeAndPosAndSize > *
+    sp_stdmap_AttrName2VocAndTranslAttrDef ;
   void AddCondition(Condition & cond)
   {
     m_conditions.push_back(cond) ;
   }
+  bool AllConditionsMatch(
+    // So it can be used with data from outside this class.
+    //, const std::vector<WORD> & r_stdvec_wGrammarPartPath
+    const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
+    ) const ;
   ConditionsAndTranslation()
     : m_byPersonIndex (0)
+    , m_pfn_TransformString( NULL)
   {
 
   }
@@ -64,6 +96,10 @@ public:
   }
   #endif //#ifdef _DEBUG
 
+  std::string GetTranslationEquivalent(
+    //A leaf contain the needed pointer to a VocabularyAndTranslation object.
+    const GrammarPart * const p_grammarpartLeaf
+    ) const ;
   void SetSyntaxTreePath(const char * p_ch_SyntaxTreePath
      , ParseByRise * p_parsebyrise )
   {

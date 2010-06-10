@@ -6,6 +6,7 @@
  */
 
 #include <Parse/ParseByRise.hpp>
+#include <Translate/AttributeTypeAndPosAndSize.hpp>
 #include <Translate/SummarizePersonIndex.hpp>
 #include <Translate/TranslateParseByRiseTree.h>
 #include <Translate/Translationrule.hpp>
@@ -13,6 +14,10 @@
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 
 #include <string>
+
+std::map<std::string, AttributeTypeAndPosAndSize > *
+  ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef ;
+ParseByRise * ConditionsAndTranslation::sp_parsebyrise ;
 
 //E.g. add "German_definite_article" , "der\ndie\ndas\ndie"
 void TranslateParseByRiseTree::AddTranslationArray(
@@ -136,7 +141,7 @@ void TranslateParseByRiseTree::AddTranslationRule(
     std::pair<std::map<TranslationRule*,ConditionsAndTranslation>::iterator,bool>
       _pair =
 #endif
-    m_stdmap_translationrule2ConditionsAndTranslation.insert(
+    m_stdmap_p_translationrule2ConditionsAndTranslation.insert(
       std::pair<TranslationRule *,ConditionsAndTranslation>
       ( //tr
         //Create here, else ar_wElements is deleted in TranslationRule d'tor?!
@@ -171,7 +176,7 @@ void TranslateParseByRiseTree::AddTranslationRule(
     std::pair<std::map<TranslationRule*,ConditionsAndTranslation>::iterator,bool>
       _pair =
 #endif
-    m_stdmap_translationrule2ConditionsAndTranslation.insert(
+    m_stdmap_p_translationrule2ConditionsAndTranslation.insert(
       std::pair<TranslationRule *,ConditionsAndTranslation>
       ( //tr
         //Create here, else ar_wElements is deleted in TranslationRule d'tor?!
@@ -179,6 +184,13 @@ void TranslateParseByRiseTree::AddTranslationRule(
         p_tr , rc_cnt
       )
       ) ;
+    m_stdmap_translationrule2ConditionsAndTranslation.insert(
+      std::pair<TranslationRule,ConditionsAndTranslation>
+        (
+          *p_tr , rc_cnt
+        )
+      ) ;
+
 #ifdef _DEBUG
     if( _pair.second )
     {
@@ -484,6 +496,17 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinitions()
     1 // length
     );
   AddVocAndTranslDefinition(
+//    "main_verb",
+    "mainVerbInf0Obj" ,
+    "IsDativeVerb" , //attribute name to use as a map key value
+    AttributeTypeAndPosAndSize::German, //language
+    AttributeTypeAndPosAndSize::bit, //attribute is a string or some bits
+    //GERMAN_VERB_3RD_PERSON_PLURAL_INDEX , //index
+    VocabularyAndTranslation::array_index_for_case ,
+    1 // length
+    );
+
+  AddVocAndTranslDefinition(
     "noun",
     "Eng_singular" , //attribute name to use as a map key value
     AttributeTypeAndPosAndSize::English, //language
@@ -563,7 +586,7 @@ void TranslateParseByRiseTree::Add3rdPersonPluralTranslationRules()
   ) ;
   ConditionsAndTranslation cntThirdPersPluralVerb;
   cntThirdPersPluralVerb.SetSyntaxTreePath( //"main_verb.3rdPersPluralClause",
-    "mainVerbInf0Obj.3rdPersPluralClause" ,
+    "mainVerbInf0Obj" ,//.3rdPersPluralClause" ,
     mp_parsebyrise ) ;
   //="If subject is in third person plural, use German verb attribute value
   //for plural."
@@ -572,21 +595,51 @@ void TranslateParseByRiseTree::Add3rdPersonPluralTranslationRules()
   cntThirdPersPluralVerb.m_byPersonIndex = //THIRD_PERSON_SINGULAR ;
       VocabularyAndTranslation::third_person_plural ;
 
-  //must create on heap.
-  TranslationRule * p_tr3rd_pers_sing_pres = new TranslationRule(
+  //Creating on heap is faster when inserting into a container: only the pointer
+  //address is copied into the container instead of a whole object.
+  TranslationRule * p_tr3rd_pers_plur_pres = new TranslationRule(
     // For this syntax tree GrammarPart path in syntax tree.
     //"3rdPersPluralClause.main_verb"
     "3rdPersPluralClause.mainVerbInf0Obj"
     , mp_parsebyrise ) ;
   AddTranslationRule(
     //"def_article_noun.definite_article" ,
-    p_tr3rd_pers_sing_pres ,
+    p_tr3rd_pers_plur_pres ,
     //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
     //cond ,
     //, ""
     cntThirdPersPluralVerb
   ) ;
-
+  //Creating on heap is faster when inserting into a container: only the pointer
+  //address is copied into the container instead of a whole object.
+  TranslationRule * p_tr3rd_pers_plur_pres1obj = new TranslationRule(
+    // For this syntax tree GrammarPart path in syntax tree.
+    //"3rdPersPluralClause.main_verb"
+    "3rdPersPluralClause1Obj.mainVerbInf1Obj"
+    , mp_parsebyrise ) ;
+  AddTranslationRule(
+    //"def_article_noun.definite_article" ,
+    p_tr3rd_pers_plur_pres1obj ,
+    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+    //cond ,
+    //, ""
+    cntThirdPersPluralVerb
+  ) ;
+  //Creating on heap is faster when inserting into a container: only the pointer
+  //address is copied into the container instead of a whole object.
+  TranslationRule * p_tr3rd_pers_plur_pres2obj = new TranslationRule(
+    // For this syntax tree GrammarPart path in syntax tree.
+    //"3rdPersPluralClause.main_verb"
+    "3rdPersPluralClause1Obj.mainVerbInf2Obj"
+    , mp_parsebyrise ) ;
+  AddTranslationRule(
+    //"def_article_noun.definite_article" ,
+    p_tr3rd_pers_plur_pres2obj ,
+    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+    //cond ,
+    //, ""
+    cntThirdPersPluralVerb
+  ) ;
 //  Condition condMatchesSingular ;
 //  condMatchesSingular.SetSyntaxTreePath(
 //    "definite_article_singular.singular_noun" , mp_parsebyrise ) ;
@@ -673,8 +726,7 @@ void TranslateParseByRiseTree::Add3rdPersonSingularTranslationRules()
   // VocabularyAndTranslation object.
   condGermanArticleForNoun.m_stdstrAttributeName = "German_noun_article" ;
   condGermanArticleForNoun.m_byAttributeValue =
-      //0==maennlich
-      0 ;
+      VocabularyAndTranslation::noun_gender_male ;
   ConditionsAndTranslation cntDefiniteSingularMaleArticle ;
   cntDefiniteSingularMaleArticle.AddCondition(//condGermanMaleArticleForNoun
     condGermanArticleForNoun) ;
@@ -707,8 +759,7 @@ void TranslateParseByRiseTree::Add3rdPersonSingularTranslationRules()
 //  condGermanFemaleArticleForNoun.m_stdstrAttributeName = "German_noun_article" ;
 //  condGermanFemaleArticleForNoun.m_byAttributeValue =
   condGermanArticleForNoun.m_byAttributeValue =
-      //1==weiblich
-      1 ;
+      VocabularyAndTranslation::noun_gender_female ;
   ConditionsAndTranslation cntDefiniteSingularFemaleArticle ;
   cntDefiniteSingularFemaleArticle.AddCondition(condGermanArticleForNoun) ;
   cntDefiniteSingularFemaleArticle.m_stdstrGermanTranslation =
@@ -861,9 +912,9 @@ void TranslateParseByRiseTree::AddDefiniteArticleNounTranslationRules()
   ) ;
 #ifdef _DEBUG
   std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator ci =
-      m_stdmap_translationrule2ConditionsAndTranslation.find(p_tr2) ;
+      m_stdmap_p_translationrule2ConditionsAndTranslation.find(p_tr2) ;
   if( ci !=
-      m_stdmap_translationrule2ConditionsAndTranslation.end() )
+      m_stdmap_p_translationrule2ConditionsAndTranslation.end() )
   {
     const Condition & cr_cond = ci->second.m_conditions.front() ;
     std::string stdstr = cr_cond.m_syntaxtreepath.
@@ -904,6 +955,169 @@ void TranslateParseByRiseTree::AddDefiniteArticleNounTranslationRules()
   ) ;
 }
 
+void GetDativeFormForGermanPluralNoun( std::string & r_stdstr )
+{
+  WORD wStringLen = r_stdstr.length() ;
+  // z.B. bei "Frauen" KEIN "n" anhaengen (because the rightmost char
+  // already is an "n") .
+  if( wStringLen > 0 && r_stdstr.at(wStringLen - 1) != 'n' )
+    //Ich vertraue Tiere>>n<<.
+    //Ich vertraue Männer>>n<<.
+    r_stdstr += "n" ;
+}
+
+void GetDativeFormForGermanSingularNoun( std::string & r_stdstr )
+{
+  WORD wStringLen = r_stdstr.length() ;
+  // "e" at the end -> "en"
+  if( wStringLen > 0 && r_stdstr.at(wStringLen - 1) == 'e' )
+    //Ich vertraue dem Junge>>n<<.
+    r_stdstr += "n" ;
+}
+
+void TranslateParseByRiseTree::AddObjectTranslationRules()
+{
+  Condition conditonVerbIsDative ;
+  conditonVerbIsDative.SetSyntaxTreePath( "3rdPersPluralClauseWith1Obj."
+    "3rdPersPluralClause1Obj.mainVerbInf1Obj" , mp_parsebyrise ) ;
+  conditonVerbIsDative.m_stdstrAttributeName = "IsDativeVerb" ;
+  conditonVerbIsDative.m_byAttributeValue = VocabularyAndTranslation::dative ;
+
+  ConditionsAndTranslation cntDefiniteArticlePlur ;
+  cntDefiniteArticlePlur.AddCondition( conditonVerbIsDative ) ;
+  //"I trust the men" -> "ich vertraue >>den<< Männern."
+  cntDefiniteArticlePlur.m_stdstrGermanTranslation = "den" ;
+  //must create on heap.
+  TranslationRule * p_trObjArticle = new TranslationRule(
+    // For this syntax tree GrammarPart path in syntax tree.
+    "3rdPersPluralClauseWith1Obj.obj."
+    //"obj_enum_ele.SubjOrObjEnumEle."
+    //"3rdPersPlurSubjOrObjEnumEle."
+//    "article_singular.definite_article_plural."
+//    "definite_article"
+    //"plural_noun_superclass."
+    "*."
+    "definite_article_plural.definite_article"
+    , mp_parsebyrise ) ;
+  AddTranslationRule(
+    p_trObjArticle ,
+    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+    cntDefiniteArticlePlur
+  ) ;
+  ConditionsAndTranslation cntObjectPlurNoun ;
+  cntObjectPlurNoun.AddCondition( conditonVerbIsDative ) ;
+  cntObjectPlurNoun.m_pfn_TransformString = ::GetDativeFormForGermanPluralNoun ;
+  cntObjectPlurNoun.m_stdstrAttributeName = "German_plural" ;
+  //must create on heap.
+  TranslationRule * p_trPluralNounDative = new TranslationRule(
+    // For this syntax tree GrammarPart path in syntax tree.
+    "3rdPersPluralClauseWith1Obj.obj."
+    //"obj_enum_ele.SubjOrObjEnumEle."
+    //"3rdPersPlurSubjOrObjEnumEle."
+//    "article_singular.definite_article_plural."
+//    "definite_article"
+    //"plural_noun_superclass."
+    "*."
+    //"definite_article_plural."
+    "plural_noun"
+    , mp_parsebyrise ) ;
+  AddTranslationRule(
+    p_trPluralNounDative ,
+    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+    cntObjectPlurNoun
+  ) ;
+
+  Condition condGermanArticleForNoun ;
+  condGermanArticleForNoun.SetSyntaxTreePath(
+    "definite_article_singular.singular_noun" ,
+    mp_parsebyrise ) ;
+  //= If the token for grammar part "noun" matches the singular in the
+  // VocabularyAndTranslation object.
+  condGermanArticleForNoun.m_stdstrAttributeName = "German_noun_article" ;
+
+  ConditionsAndTranslation cntDefiniteMaleArticleSing ;
+  condGermanArticleForNoun.m_byAttributeValue =
+      VocabularyAndTranslation::noun_gender_male ;
+  cntDefiniteMaleArticleSing.AddCondition( conditonVerbIsDative ) ;
+  cntDefiniteMaleArticleSing.AddCondition( condGermanArticleForNoun ) ;
+
+  ConditionsAndTranslation cntObjectSingNoun ;
+  cntObjectSingNoun.AddCondition( conditonVerbIsDative ) ;
+  cntObjectSingNoun.AddCondition( condGermanArticleForNoun ) ;
+  //"I trust the boy" -> "ich vertraue >>dem<< Junge>>n<<."
+  cntObjectSingNoun.m_pfn_TransformString = ::GetDativeFormForGermanSingularNoun ;
+  cntObjectSingNoun.m_stdstrAttributeName = "German_plural" ;
+  //must create on heap.
+  TranslationRule * p_trSingularNounDative = new TranslationRule(
+    // For this syntax tree GrammarPart path in syntax tree.
+    "3rdPersPluralClauseWith1Obj.obj."
+    //"obj_enum_ele.SubjOrObjEnumEle."
+    //"3rdPersPlurSubjOrObjEnumEle."
+//    "article_singular.definite_article_plural."
+//    "definite_article"
+    //"plural_noun_superclass."
+    "*."
+    //"definite_article_plural."
+    "singular_noun"
+    , mp_parsebyrise ) ;
+  AddTranslationRule(
+    p_trSingularNounDative ,
+    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+    cntObjectSingNoun
+  ) ;
+  //"I trust the boy" -> "ich vertraue >>dem<< Junge>>n<<."
+  cntDefiniteMaleArticleSing.m_stdstrGermanTranslation = "dem" ;
+  //must create on heap.
+  p_trObjArticle = new TranslationRule(
+    // For this syntax tree GrammarPart path in syntax tree.
+    "3rdPersPluralClauseWith1Obj.obj."
+    "*."
+    "definite_article_singular.definite_article"
+    , mp_parsebyrise ) ;
+  AddTranslationRule(
+    p_trObjArticle ,
+    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+    cntDefiniteMaleArticleSing
+  ) ;
+  condGermanArticleForNoun.m_byAttributeValue =
+      VocabularyAndTranslation::noun_gender_female ;
+  //"I trust the woman" -> "ich vertraue >>der<< Frau."
+  ConditionsAndTranslation cntDefiniteFemaleArticleSing ;
+  cntDefiniteFemaleArticleSing.m_stdstrGermanTranslation = "der" ;
+  cntDefiniteFemaleArticleSing.AddCondition( conditonVerbIsDative ) ;
+  cntDefiniteFemaleArticleSing.AddCondition( condGermanArticleForNoun ) ;
+  //must create on heap.
+  p_trObjArticle = new TranslationRule(
+    // For this syntax tree GrammarPart path in syntax tree.
+    "3rdPersPluralClauseWith1Obj.obj."
+    "*."
+    "definite_article_singular.definite_article"
+    , mp_parsebyrise ) ;
+  AddTranslationRule(
+    p_trObjArticle ,
+    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+    cntDefiniteFemaleArticleSing
+  ) ;
+  condGermanArticleForNoun.m_byAttributeValue =
+      VocabularyAndTranslation::noun_gender_neuter ;
+  //"I trust the child" -> "ich vertraue >>dem<< Kind."
+  ConditionsAndTranslation cntDefiniteNeuterArticleSing ;
+  cntDefiniteNeuterArticleSing.m_stdstrGermanTranslation = "dem" ;
+  cntDefiniteNeuterArticleSing.AddCondition( conditonVerbIsDative ) ;
+  cntDefiniteNeuterArticleSing.AddCondition( condGermanArticleForNoun ) ;
+  //must create on heap.
+  p_trObjArticle = new TranslationRule(
+    // For this syntax tree GrammarPart path in syntax tree.
+    "3rdPersPluralClauseWith1Obj.obj."
+    "*."
+    "definite_article_singular.definite_article"
+    , mp_parsebyrise ) ;
+  AddTranslationRule(
+    p_trObjArticle ,
+    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+    cntDefiniteNeuterArticleSing
+  ) ;
+}
 
 void TranslateParseByRiseTree::AddPersonalPronounTranslationRules()
 {
@@ -1018,6 +1232,9 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   std::string strGerman = "adverb_at_clause_begin\nGerman_subject\nobject\n"
     "predicate" ;
   mp_parsebyrise = & r_parsebyrise ;
+  ConditionsAndTranslation::sp_parsebyrise = & r_parsebyrise ;
+  ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef =
+      & m_stdmap_AttrName2VocAndTranslAttrDef ;
 
   AddDefiniteArticleNounTranslationRules() ;
   AddPersonalPronounTranslationRules() ;
@@ -1071,6 +1288,7 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 
   Add3rdPersonPluralTranslationRules() ;
   Add3rdPersonSingularTranslationRules() ;
+  AddObjectTranslationRules() ;
 
   AddVocAndTranslDefinitions() ;
 
@@ -1272,7 +1490,7 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   , const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
 //  , WORD & r_wConsecutiveID
   //reference to pointer address to >>const<<ant content
-  , const GrammarPart * & rp_grammarpart
+  , const GrammarPart * & rp_grammarpartWithConsecutiveID
   )
 {
   bool bIdentical = false ;
@@ -1281,12 +1499,32 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
       m_stdmap_translationrule2ConditionsAndTranslation.size() << "\n")
 //   ;
 //  m_stdvec_wCurrentGrammarPartPath ;
-  for( std::map<TranslationRule * ,ConditionsAndTranslation>::const_iterator
-      c_iter_p_translationrule2conditionsandtranslation =
-        m_stdmap_translationrule2ConditionsAndTranslation.begin() ;
-      c_iter_p_translationrule2conditionsandtranslation !=
-        m_stdmap_translationrule2ConditionsAndTranslation.end() ;
-      ++ c_iter_p_translationrule2conditionsandtranslation
+//  for( std::map<TranslationRule * ,ConditionsAndTranslation>::const_iterator
+//      c_iter_p_translationrule2conditionsandtranslation =
+//        m_stdmap_p_translationrule2ConditionsAndTranslation.begin() ;
+//      c_iter_p_translationrule2conditionsandtranslation !=
+//        m_stdmap_p_translationrule2ConditionsAndTranslation.end() ;
+//      ++ c_iter_p_translationrule2conditionsandtranslation
+//      )
+  for( std::map<TranslationRule ,ConditionsAndTranslation>::
+      //Using const_reverse_iterator produced a g++ error for comparison
+      // " != std::map::rend()"
+      //const_reverse_iterator
+      reverse_iterator
+      c_rev_iter_translationrule2conditionsandtranslation =
+      //The container is also sorted by the length of the syntax it applies to.
+      //It is senseful to apply the with the largest syntax tree path:
+      //If e.g. the current syntax tree path is "obj_ele"."def_noun"."the"
+      //and there are 2 translation rules with parse tree pathes
+      // -"def_noun"."the"
+      // -"obj_ele"."def_noun"."the"
+      // then the larger path should be given priority:
+      //  the translation "dem" for "the man" for "obj_ele"."def_noun"."the"
+      // is more correct than "der" for "the man"
+        m_stdmap_translationrule2ConditionsAndTranslation.rbegin() ;
+      c_rev_iter_translationrule2conditionsandtranslation !=
+        m_stdmap_translationrule2ConditionsAndTranslation.rend() ;
+      ++ c_rev_iter_translationrule2conditionsandtranslation
       )
   {
     //E.g. m_stdvec_wCurrentGrammarPartPath is
@@ -1300,13 +1538,15 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
     // m_stdvec_wGrammarPartPathw with just 4 elements.
     if ( //m_stdvec_wCurrentGrammarPartPath.size()
         r_stdvec_wCurrentGrammarPartPath.size() >= //iter->first->m_wNumberOfElements
-        c_iter_p_translationrule2conditionsandtranslation->first->
+        //c_iter_p_translationrule2conditionsandtranslation->first->
+        c_rev_iter_translationrule2conditionsandtranslation->first.
         m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
         )
     {
       //Use a pointer, else the TranslationRule destructor is called.
       const TranslationRule * p_translationrule =
-          c_iter_p_translationrule2conditionsandtranslation->first ;
+        //c_iter_p_translationrule2conditionsandtranslation->first ;
+        & c_rev_iter_translationrule2conditionsandtranslation->first ;
 #ifdef _DEBUG
       std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
         r_stdvec_wCurrentGrammarPartPath ) ;
@@ -1339,19 +1579,24 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
           stdstr += "" ;
 #endif
         const ConditionsAndTranslation & r_cnt =
-            c_iter_p_translationrule2conditionsandtranslation->second ;
-        if( AllConditionsMatch(
-            r_cnt ,
-            r_stdvec_p_grammarpartPath )
+          //c_iter_p_translationrule2conditionsandtranslation->second ;
+          c_rev_iter_translationrule2conditionsandtranslation->second ;
+        if( //AllConditionsMatch(
+//            r_cnt ,
+//            r_stdvec_p_grammarpartPath )
+            r_cnt.AllConditionsMatch( r_stdvec_p_grammarpartPath )
           )
         {
            //std::string str =
-           r_stdstrTranslation = GetTranslationEquivalent(
-              r_cnt ,
-              r_stdvec_p_grammarpartPath
-              ) ;
+           r_stdstrTranslation = //GetTranslationEquivalent(
+              //r_cnt ,
+              //r_stdvec_p_grammarpartPath
+//              ) ;
+              r_cnt.GetTranslationEquivalent(
+                r_stdvec_p_grammarpartPath.back() ) ;
 //           r_wConsecutiveID = p_translationrule->ConsecutiveID(
-           rp_grammarpart = p_translationrule->GetGrammarPartWithConsecutiveID(
+           rp_grammarpartWithConsecutiveID = p_translationrule->
+               GetGrammarPartWithConsecutiveID(
              r_stdvec_p_grammarpartPath ) ;
            r_byPersonIndex = r_cnt.m_byPersonIndex ;
            return true ;
@@ -1368,8 +1613,8 @@ TranslateParseByRiseTree::~TranslateParseByRiseTree()
 {
   DEBUG_COUT("begin of ~TranslateParseByRiseTree\n")
   for( std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator
-      it = m_stdmap_translationrule2ConditionsAndTranslation.begin() ; it !=
-      m_stdmap_translationrule2ConditionsAndTranslation.end() ; ++ it )
+      it = m_stdmap_p_translationrule2ConditionsAndTranslation.begin() ; it !=
+      m_stdmap_p_translationrule2ConditionsAndTranslation.end() ; ++ it )
   {
     //Release memory occupied by creation on heap.
     delete it->first ;

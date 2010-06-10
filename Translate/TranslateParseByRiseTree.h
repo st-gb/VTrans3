@@ -28,36 +28,7 @@ class TranslationRule ;
 #define SECOND_PERSON_PLURAL 16 //2^4 = 16
 #define THIRD_PERSON_PLURAL 32 //2^5 = 32
 
-//This class models an easy access to the data in a VocabularyAndTranslation
-//object.
-//So one can define an attribute name, bit start etc. with an object of this
-//class. E.g. define "Eng_singular", index "0", length 1.
-//And then when used.
-class AttributeTypeAndPosAndSize
-{
-public:
-  enum attribute_type { string, bit } ;
-  enum language { German, English } ;
-  BYTE m_byLanguage ;
-  //attribute is a string or some bits (=whether the indedx refers to the
-  // string or byte array)
-  BYTE m_byAttrDataType ;
-  BYTE m_byWordClass ; //e.g. ID for word class "noun",
-  //String or bit index
-  WORD m_wIndex ;
-  //bit length of the attribute data.
-  WORD m_wLenght ;
-  AttributeTypeAndPosAndSize( BYTE byType, WORD wIndex, WORD wLenght,
-    BYTE byWordClass , BYTE byLanguage )
-  {
-    m_byLanguage = byLanguage ;
-    m_byWordClass = byWordClass ;
-    m_byAttrDataType = byType ;
-    m_wIndex = wIndex ;
-    m_wLenght = wLenght ;
-  }
-} ;
-
+class AttributeTypeAndPosAndSize ;
 class TranslationAndGrammarPart ;
 class TranslationAndConsecutiveID ;
 
@@ -87,11 +58,24 @@ class TranslateParseByRiseTree
   std::map<std::string,AttributeTypeAndPosAndSize>
     m_stdmap_AttrName2VocAndTranslAttrDef ;
   std::map<TranslationRule *,ConditionsAndTranslation>
+    m_stdmap_p_translationrule2ConditionsAndTranslation ;
+  //use a multimap because more than 1 translation rule may have the same syntax
+  //tree path: the rules for translating a singular article for an object for
+  //each noun gender male, neuter and female have all the same syntax tree path:
+  //  "3rdPersPluralClauseWith1Obj.obj.*.definite_article_singular."
+  //  "definite_article"
+  //Else using a std::map because of "TranslationRule::operator <" only
+  // 1 rule can with the inserted.
+  std::multimap<
+    //Use object rather then a pointer because then the "TranslationRule::<"
+    //operator that is important for applying translation rules is used.
+    TranslationRule,ConditionsAndTranslation>
     m_stdmap_translationrule2ConditionsAndTranslation ;
 public:
   void Add3rdPersonPluralTranslationRules() ;
   void Add3rdPersonSingularTranslationRules() ;
   void AddDefiniteArticleNounTranslationRules() ;
+  void AddObjectTranslationRules() ;
   void AddPersonalPronounTranslationRules() ;
   void AddVocAndTranslDefinition(
     //e.g. "noun.German.plural"

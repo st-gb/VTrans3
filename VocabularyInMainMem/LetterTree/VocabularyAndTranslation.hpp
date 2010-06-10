@@ -55,6 +55,23 @@ class LetterNode ;
       , second_person_plural
       , third_person_plural
     } ;
+    enum German_main_verb_byte_array_index
+    {
+      array_index_for_case = 0
+    };
+    enum German_noun_gender
+    {
+      noun_gender_male = 0
+      , noun_gender_female
+      , noun_gender_neuter
+    };
+    enum German_verb_case
+    {
+      no_object = 0
+      , dative
+      , dative_and_accusative
+      , accusative
+    } ;
 
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
     //Currently only for English needed because it's only needed 

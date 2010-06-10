@@ -94,12 +94,23 @@ void SyntaxTreePath::CreateGrammarPartIDArray(
     {
       ++ wNumberOfElements ;
       wStringStart = i + 1 ;
-      if( mp_parsebyrise->GetGrammarPartID( stdstrCurrentElement ,
-          wGrammarPartID )
-        )
+      //If e.g. definite_article_plural.definite_article it is important if
+      // a direct or indirect parent node is "object" so that it is translated.
+      //The syntax tree path may vary because between
+      //  definite_article_plural.definite_article and object can be other nodes
+      // that e.g. are used for conjunctions.
+      // So the "Kleene star operator" is useful for these situations.
+      if( stdstrCurrentElement == "*" )
       {
-        vec_wElements.push_back(wGrammarPartID) ;
+        vec_wElements.push_back(KLEENE_STAR_OPERATOR) ;
       }
+      else
+        if( mp_parsebyrise->GetGrammarPartID( stdstrCurrentElement ,
+            wGrammarPartID )
+          )
+        {
+          vec_wElements.push_back(wGrammarPartID) ;
+        }
       bNewEle = false ;
     }
   }
@@ -173,6 +184,24 @@ std::string SyntaxTreePath::GetAs_std_string( ) const
 // get the node "noun" ausgehend from "def_article_noun.definite_aricle"
 // The 1st common node from the back is "def_article_noun", so advance from
 // this node to "def_article_noun.noun"
+
+//1.Iterates from the end of the vector heading its begin
+//  -this vector is usually sorted that it has the grammar part leaf node at
+//   its end. So it walks heading root at first:  here from "car" to "def_noun"
+//   the  car
+//    \   /
+//   def_noun  <-  "forking": from here it walks heading leaf
+//2.If a node with a grammar part ID that equals the 1st grammar part ID of
+//   the own grammar part ID array is found, then this is the "forking":
+//   the  car
+//    \  /
+//   def_noun  <-  "forking": from here it walks heading leaf
+//3. walks heading leaf following the grammar part node with the same ID as in
+//   the cintained grammar part ID array:
+//   e.g. if array is [def_noun;"the"]: it walks from "def_noun" to "the"
+//   the  car
+//    \  /
+//   def_noun  <-  "forking": from here it walks heading leaf
 GrammarPart * SyntaxTreePath::GetLeaf(
   //The parse tree path, first element is the root or closer to the root than
   // the last element.
@@ -214,7 +243,13 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       )
     {
       //for( WORD wArrayIndex = m_wNumberOfElements )
-      DEBUG_COUTN("* r_iter: " << *c_reverse_iter_stdvec_p_grammarpart )
+//      DEBUG_COUTN("* r_iter: " << *c_reverse_iter_stdvec_p_grammarpart )
+      DEBUG_COUTN("SyntaxTreePath--current grammar part: "
+        << *c_reverse_iter_stdvec_p_grammarpart
+        << " ID:" << (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID
+        << " as string:" << mp_parsebyrise->GetGrammarPartName(
+          (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID )
+        )
 #ifdef _DEBUG
       if( *c_reverse_iter_stdvec_p_grammarpart )
       {
@@ -250,9 +285,14 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       // So take the child node that has the grammar part ID of "definite_article"
       for( WORD wIndex = 1 ; wIndex < m_wNumberOfElements ; ++ wIndex )
       {
+        DEBUG_COUTN("the next child should have grammar part ID: "
+          << m_ar_wElements[ wIndex ]
+          << " as string: "
+          << mp_parsebyrise->GetGrammarPartName( m_ar_wElements[ wIndex ] )
+          )
         p_grammarpartChild = p_grammarpart->mp_grammarpartLeftChild ;
         if( p_grammarpartChild &&
-          p_grammarpart->m_wGrammarPartID == m_ar_wElements[ wIndex ] )
+          p_grammarpartChild->m_wGrammarPartID == m_ar_wElements[ wIndex ] )
         {
           p_grammarpart = p_grammarpartChild ;
         }
@@ -264,9 +304,11 @@ GrammarPart * SyntaxTreePath::GetLeaf(
           {
             p_grammarpart = p_grammarpartChild ;
           }
+          else //neither right nor left child match the syntax tree path.
+            return NULL ;
         }
-        if( ! p_grammarpartChild )
-          break ;
+//        if( ! p_grammarpartChild )
+//          break ;
       }
       if( p_grammarpartChild )
         p_grammarpartRet = p_grammarpartChild ;
