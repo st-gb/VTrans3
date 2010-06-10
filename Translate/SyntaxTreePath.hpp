@@ -13,6 +13,35 @@
 #include <rest.h> //DEBUG_COUT(...)
 
 typedef unsigned short WORD ;
+
+//If e.g. definite_article_plural.definite_article it is important if
+// a direct or indirect parent node is "object" so that it is translated to
+// e.g. either "die" or "den" (if dative).
+//The syntax tree path may vary because between
+//  "definite_article_plural.definite_article" and "object" can be other nodes
+// that e.g. are used for conjunctions:
+//I  trust           the         men.
+// \ mainVerbInf1Obj defArticle  pluralNoun
+//  \  /                   \   /
+// clause1Obj       defArticlePlural
+//        \           object
+//         \          /
+//         ClauseWith1Obj
+//
+//I  trust           the        men       and the          women.
+// \ mainVerbInf1Obj defArticle pluralNoun /  DefArticle pluralNoun
+//  \  /                      \   /       /            \  /
+//   clause1Obj       defArticlePlural   / DefArticlePlural
+//            \                      \  / /
+//             \     defArticlePluralAnd /
+//              \                     \ /
+//               \                object
+//                \              /
+//                 ClauseWith1Obj
+// So the "Kleene star operator" is useful for these situations:
+// "definite_article_plural.definite_article.*.object"
+#define KLEENE_STAR_OPERATOR 65535
+
 class ParseByRise ;
 class GrammarPart ;
 

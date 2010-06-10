@@ -977,7 +977,12 @@ void OneLinePerWordPair::InsertGermanMainVerb(
         if(strCurrentWordData[nIndexOfCurrentChar] == '2' ) // Verb verlangt Objekt im 3. Fall
           gv->m_bCase = 1 ;
         if(strCurrentWordData[nIndexOfCurrentChar]=='3') // Verb verlangt Objekt im 4. Fall
+        {
           gv->m_bCase = 2 ;
+          g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[
+              VocabularyAndTranslation::array_index_for_case ] =
+              VocabularyAndTranslation::dative ;
+        }
         if(strCurrentWordData[nIndexOfCurrentChar]=='4') // Verb verlangt 2 Objekte im 3. und 4. Fall
           gv->m_bCase = 3 ;
       }

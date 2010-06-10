@@ -8,6 +8,10 @@
 #ifndef _CONDITION_HPP
 #define	_CONDITION_HPP
 
+#include <windef.h> //for BYTE
+#include <string> //std::string
+#include <Translate/SyntaxTreePath.hpp>
+
 //Condition for translation. E.g. that could mean:
 //current grammar part: English definite article.
 //condition: "If token from noun grammar part equals the plural of this
