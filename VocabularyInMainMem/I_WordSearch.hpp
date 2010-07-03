@@ -53,4 +53,9 @@ class I_WordSearch
     , Word ** p_wordGerman
     ) = 0 ;
 //  void InsertFundamentalWords() ;
+public:
+  //Define virtual constructor to avoid g++ warning in subclasses like
+  //"`class EngNounsLetterTree' has virtual functions but non-virtual
+  //destructor"
+  virtual ~I_WordSearch() {}
 };

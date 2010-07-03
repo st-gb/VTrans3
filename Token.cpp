@@ -3,6 +3,7 @@
 #include "rest.h" //for CStringVector etc.
 #include "Token.h"
 #include <vector>
+#include <supress_unused_variable.h>
 
 extern std::ofstream ofstreamLogFile; //for "LOGN" macro
 
@@ -190,6 +191,7 @@ PositionStringVector GetBetween(
 //  DEBUG_COUT("GetBetween ANFANG\n");
 #ifdef _DEBUG
 	int size = pcstrv.size() ;
+	SUPRESS_UNUSED_VARIABLE_WARNING(size)
 #endif
 	PositionStringVector retPCStrVec;
 	#ifdef _DEBUG

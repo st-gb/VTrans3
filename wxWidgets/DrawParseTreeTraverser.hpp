@@ -20,10 +20,10 @@ class DrawParseTreeTraverser
 {
 public:
   bool m_bShowGrammarPartAddress ;
-  wxDC * mp_wxdc ;
-  WORD m_wParseLevelCountedFromRoot ;
-  WORD m_wCurrentParseTreeLeftEndInPixels ;
   ParseByRise * mp_parsebyrise ;
+  WORD m_wCurrentParseTreeLeftEndInPixels ;
+  WORD m_wParseLevelCountedFromRoot ;
+  wxDC * mp_wxdc ;
   DrawParseTreeTraverser(
     wxDC * p_wxdcm ,
     ParseByRise * p_parsebyrise ,

@@ -11,7 +11,7 @@
   #include <Parse/ParseByRise.hpp>
 #endif
 #include <Translate/SummarizePersonIndex.hpp>
-#include <Translate/TranslateParseByRiseTree.h>
+#include <Translate/TranslateParseByRiseTree.hpp>
 //for "personindex" enum "German_main_verb"
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 
@@ -27,8 +27,8 @@ namespace ParseTreeTraverser
       p_grammarpartStartNode ,
       p_parsebyrise
       )
-    , mp_translateparsebyrisetree ( & r_translateparsebyrisetree )
     , mr_parsebyrise( * p_parsebyrise )
+    , mp_translateparsebyrisetree ( & r_translateparsebyrisetree )
   {
     // TODO Auto-generated constructor stub
 
@@ -47,7 +47,7 @@ namespace ParseTreeTraverser
     std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
       m_vecGrammarPartID) ;
 #endif
-    WORD wConsecutiveID ;
+//    WORD wConsecutiveID ;
     const GrammarPart * p_grammarpart ;
     //If the leave is e.g. a noun then for the person index we need to know
     //whether it is singular or plural. This is what TranslationRuleApplies()

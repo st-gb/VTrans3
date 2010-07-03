@@ -22,10 +22,10 @@ DrawParseTreeTraverser::DrawParseTreeTraverser(
     p_parsebyrise
     )
   , m_bShowGrammarPartAddress( true )
-  , mp_wxdc ( p_wxdc )
   , mp_parsebyrise (p_parsebyrise)
-  , m_wParseLevelCountedFromRoot(0)
   , m_wCurrentParseTreeLeftEndInPixels(0)
+  , m_wParseLevelCountedFromRoot(0)
+  , mp_wxdc ( p_wxdc )
 {
   // TODO Auto-generated constructor stub
   wxFont wxfont = p_wxdc->GetFont() ;
@@ -51,8 +51,8 @@ void DrawParseTreeTraverser::CurrentNodeIsLastAddedRightChild()
 }
 void DrawParseTreeTraverser::LeaveFound()
 {
-  WORD wStringWidthLeftChild ;
-  WORD wXcoord = 0
+//  WORD wStringWidthLeftChild ;
+//  WORD wXcoord = 0
       //wLeftEndOfLeftmostTokenInPixels
       ;
   WORD wTextWidthInPixels ;
@@ -142,9 +142,10 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   {
     //hex. addresses are easier to compare with values in debugger mode.
     if( bShowHexAddress )
-      wxstrGrammarPartName += wxString::Format( wxT("%x_") , p_grammarpart ) ;
+      wxstrGrammarPartName += wxString::Format( wxT("%lx_") , p_grammarpart ) ;
     else
-      wxstrGrammarPartName += wxString::Format( wxT("%u_") , p_grammarpart ) ;
+      wxstrGrammarPartName += wxString::Format( wxT("%lu_") ,
+        (DWORD) p_grammarpart ) ;
   }
   wxstrGrammarPartName += wxString::Format( "%u",
     p_grammarpart->m_byPersonIndex ) ;
@@ -181,8 +182,8 @@ void DrawParseTreeTraverser::UnprocessedHighestLevelNodeFound()
   DrawGrammarPartAttributes * p_dgpaRight ;
   std::map<GrammarPart *,DrawGrammarPartAttributes>::iterator iterLeft ;
   std::map<GrammarPart *,DrawGrammarPartAttributes>::iterator iterRight ;
-  WORD wStringWidthLeftChild ;
-  WORD wXcoord = 0 ;
+//  WORD wStringWidthLeftChild ;
+//  WORD wXcoord = 0 ;
   WORD wMiddleBetweenLeftAndRightChild ;
   WORD wLeftTextEndInPixels ;
   WORD wThisY, wChildY ;

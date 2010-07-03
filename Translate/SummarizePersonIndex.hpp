@@ -9,7 +9,7 @@
 #define SUMMARIZEPERSONINDEX_HPP_
 
 #include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
-#include <Translate/TranslateParseByRiseTree.h>
+#include <Translate/TranslateParseByRiseTree.hpp>
 #include <map>
 #include <vector>
 

@@ -19,10 +19,10 @@ class AttributeTypeAndPosAndSize
 public:
   enum attribute_type { string, bit } ;
   enum language { German, English } ;
-  BYTE m_byLanguage ;
-  //attribute is a string or some bits (=whether the indedx refers to the
+  //attribute is a string or some bits (=whether the index refers to the
   // string or byte array)
   BYTE m_byAttrDataType ;
+  BYTE m_byLanguage ;
   BYTE m_byWordClass ; //e.g. ID for word class "noun",
   //String or bit index
   WORD m_wIndex ;

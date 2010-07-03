@@ -120,8 +120,8 @@ void wxHTMLfileOutput::writeFile(
     wxstrHTML += "</head>\n" ;
     WORD wIndex = 0 ;
     std::set<std::string> stdset_stdstr ;
-    WORD wStringLength ;
-    std::string::size_type stdstr_sizeFindPos ;
+//    WORD wStringLength ;
+//    std::string::size_type stdstr_sizeFindPos ;
     std::string stdstrToken ;
     wxstrHTML += "<select name=\"t\" size=\"2\">\n" ;
     wxstrHTML += "<option>" ;

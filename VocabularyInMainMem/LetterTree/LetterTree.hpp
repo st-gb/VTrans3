@@ -31,7 +31,7 @@
   // PointerToWordNodeWhereAnEnglishNounIsEncapsulated
   //#include "../../GetAndTestWord.h"
   #include "../../Token.h" //for PositionStringVector
-  #include "../../I_UserInterface.hpp"
+  #include <UserInterface/I_UserInterface.hpp>
   //#include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
   #include "VocabularyAndTranslation.hpp"
   #include "LetterNode.hpp"

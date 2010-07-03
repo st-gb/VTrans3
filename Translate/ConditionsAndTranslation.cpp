@@ -10,6 +10,7 @@
 #include <Parse/ParseByRise.hpp>
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 #include <map> //std::map
+#include <supress_unused_variable.h>
 
 bool ConditionsAndTranslation::AllConditionsMatch(
   // So it can be used with data from outside this class.
@@ -212,11 +213,13 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
               if( r_atapas.m_byLanguage ==
                 AttributeTypeAndPosAndSize::German )
               {
-//                BYTE by =
+                //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//                #pragma GCC diagnostic ignored  "-Wunused"
+                BYTE by =
                   p_grammarpartLeaf->
                   m_pvocabularyandtranslation->m_arbyAttribute[
                   r_atapas.m_wIndex ] ;
-
+                SUPRESS_UNUSED_VARIABLE_WARNING(by)
               }
           }//switch
         }

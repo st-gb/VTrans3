@@ -126,14 +126,20 @@
     //#include <stdio.h>//for fflush()
     ////ofstream ofstreamLogFile;
     ////FILE * pfileLog;//=NULL;
-    //#define LOG(str) fprintf(pfileLog,_T(str)); \
-    //  /*fflush is important to ensure the last output was REALLY written to medium*/\
+    //#define LOG(str) \ if "\"=last char:g++ warning:"multi-line comment"
+    //fprintf(pfileLog,_T(str)); \ _
+    //  /*fflush is important to ensure the last output was REALLY written
+    // to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
     //  fflush(pfileLog);
-    //#define LOG1(str,var) fprintf(pfileLog,_T(str),var); \
-    //  /*fflush is important to ensure the last output was REALLY written to medium*/\
+    //#define LOG1(str,var) \ if "\"=last char:g++ warning:"multi-line comment"
+    //fprintf(pfileLog,_T(str),var); \  _
+    //  /*fflush is important to ensure the last output was REALLY written
+    // to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
     //  fflush(pfileLog);
-    //#define LOG2(str,var1,var2) fprintf(pfileLog,_T(str),var1,var2); \
-    //  /*fflush is important to ensure the last output was REALLY written to medium*/\
+    //#define LOG2(str,var1,var2) \ _
+    // fprintf(pfileLog,_T(str),var1,var2); \ _
+    //  /*fflush is important to ensure the last output was REALLY written
+    //  to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
     //  fflush(pfileLog);
     #include <iostream>//for fflush()
     #include <fstream>
@@ -156,9 +162,11 @@
     #define LOG
     #define LOG1
     #define LOG2
-    //#ifdef _DEBUG
-    //  #define LOG2N(outstreamRelease,outstreamDebug) ofstreamLogFile<< outstreamDebug<<"\n"; \
-    //    /*fflush is important to ensure the last output was REALLY written to medium*/\
+    //#ifdef _DEBUG     if "\"=last char:g++ warning:"multi-line comment"
+    //  #define LOG2N(outstreamRelease,outstreamDebug) \ _
+    //  ofstreamLogFile<< outstreamDebug<<"\n"; \  _
+    //    /*fflush is important to ensure the last output was REALLY written
+    //   to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
     //    ofstreamLogFile.flush();
     //#endif//#ifdef _DEBUG
   #endif//ifdef _LOG

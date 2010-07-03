@@ -10,6 +10,7 @@
 #include <map> //multimap
 #include <unistd.h> //sleep()
 #include "DrawParseTreeTraverser.hpp"
+#include <supress_unused_variable.h>
 
 BEGIN_EVENT_TABLE(wxParseTreePanel, wxPanel)
   EVT_PAINT  (wxParseTreePanel::OnPaint)
@@ -183,11 +184,15 @@ void wxParseTreePanel::DrawGrammarPartChildren(
       p_grammarpartChild )
    {
 #ifdef _DEBUG
+  //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//  #pragma GCC diagnostic ignored  "-Wunused"
     const std::string & r_stdstrGrammarPartName = //citer->second.
        //m_stdstrGrammarPartName ;
         mp_parsebyrise->GetGrammarPartName(
        //p_grammarpart->mp_grammarpartLeftChild->
        p_grammarpartChild->m_wGrammarPartID ) ;
+//  #pragma GCC diagnostic pop //"command line options are restored."
+    SUPRESS_UNUSED_VARIABLE_WARNING(r_stdstrGrammarPartName)
 #endif
      DrawGrammarPartNameAndPossiblyToken(//p_grammarpart->mp_grammarpartLeftChild
          p_grammarpartChild ,r_wxdc, wChildHorizTextCenter ) ;
@@ -213,6 +218,7 @@ void wxParseTreePanel::DrawGrammarPartChildren(
       mp_parsebyrise->GetGrammarPartName(
        //p_grammarpart->mp_grammarpartRightChild->
           p_grammarpartChild->m_wGrammarPartID ) ;
+    SUPRESS_UNUSED_VARIABLE_WARNING(r_stdstrGrammarPartName)
 #endif
      DrawGrammarPartNameAndPossiblyToken( //p_grammarpart->mp_grammarpartRightChild,
        p_grammarpartChild, r_wxdc, wChildHorizTextCenter ) ;
@@ -263,7 +269,7 @@ WORD wxParseTreePanel::DrawLeavesOfParseTree(
 {
   m_stdvecNodesToProcess.clear();
 //  GrammarPart * p_grammarpart ;
-  WORD wStringWidthLeftChild ;
+//  WORD wStringWidthLeftChild ;
   WORD wXcoord = //0
       wLeftEndOfLeftmostTokenInPixels ;
   WORD wTextWidthInPixels ;
@@ -344,7 +350,7 @@ WORD wxParseTreePanel::DrawLeavesOfParseTree(
       //
       //
       //e.g.: def_article_noun
-      //        /       \
+      //        /       \   if "\"=last char:g++ warning:"multi-line comment"
       //     article  noun
       //when at article: parse level is 1,
       //because "noun" was the last pushed it is the next
@@ -393,7 +399,7 @@ GrammarPart * wxParseTreePanel::GetNextRightGrammarPartNotProcessedYet()
     //
     //
     //e.g.: def_article_noun
-    //        /       \
+    //        /       \  if "\"=last char:g++ warning:"multi-line comment"
     //     article  noun
     //when at article: parse level is 1,
     //because "noun" was the last pushed it is the next
@@ -428,8 +434,8 @@ void wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
   DrawGrammarPartAttributes * p_dgpaRight ;
   std::map<GrammarPart *,DrawGrammarPartAttributes>::iterator iterLeft ;
   std::map<GrammarPart *,DrawGrammarPartAttributes>::iterator iterRight ;
-  WORD wStringWidthLeftChild ;
-  WORD wXcoord = 0 ;
+//  WORD wStringWidthLeftChild ;
+//  WORD wXcoord = 0 ;
   WORD wMiddleBetweenLeftAndRightChild ;
   WORD wLeftTextEndInPixels ;
 //  WORD wHorizCenterInPixelsOfLeftChild ;
@@ -587,7 +593,7 @@ void wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
     //        DrawGrammarPartNameAndPossiblyToken( p_grammarpart, wxpaintdc
     //           , wHorizTextCenter ) ;
         wxString wxstrTokens ;
-        WORD wWidth ;
+//        WORD wWidth ;
 //  //      wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
 //        wxsizeString = GetGrammarPartNameExtent( wxpaintdc, p_grammarpart,
 //            wxstrGrammarPartName ) ;
@@ -629,15 +635,16 @@ void wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
 //
 
 //the tree is traversed starting from the root (clause):
+// "_" because: if "\"=last char:g++ warning:"multi-line comment"
 //                                clause
-//                                /     \
+//                                /     \  _
 //     noun_constr,conj,noun_constr     verb
-//              /             \
+//              /             \ _
 // noun_constr,conj          noun_constr
-//    /          \               /\
-// noun_constr conjunction      /  \
-//   /      \        |         /    \
-// article  noun     |        /      \
+//    /          \               /\ _
+// noun_constr conjunction      /  \ _
+//   /      \        |         /    \ _
+// article  noun     |        /      \ _
 // the      car     and     the      cat
 // At first, directing leaves take the left child and store the right child
 //  in the nodes that should be processed later.
@@ -650,10 +657,10 @@ void wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
 void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     wxDC & r_wxdc )
 {
-  DWORD dwNumberOfAlreadyDrawnItems = 0 ;
+//  DWORD dwNumberOfAlreadyDrawnItems = 0 ;
   DWORD dwLeftMostTokenIndex = 0 ;
   GrammarPart * p_grammarpart ;
-  int y = 10 ;
+//  int y = 10 ;
 //  typedef std::multimap<DWORD, GrammarPart > stdmmap_token_index2grammarpart ;
   typedef std::multimap<DWORD, GrammarPart *> stdmmap_token_index2grammarpart ;
   stdmmap_token_index2grammarpart::const_iterator citer ;
@@ -700,14 +707,14 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
   std::vector<GrammarPart * > vecCurrentParseTreePath ;
   //stores the string width for every node of the parse tree path.
   std::set<WORD> setStringWidthsOfCurrentParseTreePath ;
-  WORD wXcoord = 0 ;
+//  WORD wXcoord = 0 ;
   wxSize wxsizeString ;
 //  wxSize wxsizeStringLeftChild ;
 //  wxSize wxsizeStringRightChild ;
-  WORD wStringWidthLeftChild ;
-  WORD wStringWidthRightChild ;
+//  WORD wStringWidthLeftChild ;
+//  WORD wStringWidthRightChild ;
   WORD wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens = 0 ;
-  bool bRightChild = false ;
+//  bool bRightChild = false ;
   m_stdmap_p_grammarpart2HorizCenter.clear() ;
 
   WORD wCurrentParseTreeLeftEndInPixels = 0 ;
@@ -739,7 +746,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
           << p_grammarpart->m_dwRightmostIndex << "] :"
           << p_grammarpart
           << "\n" )
-        WORD wHorizTextCenter = 0 ;
+//        WORD wHorizTextCenter = 0 ;
         const std::string & r_stdstrGrammarPartName = //citer->second.
           //m_stdstrGrammarPartName ;
           mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID ) ;
@@ -921,7 +928,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromRoots(
 //      //
 //      //
 //      //e.g.: def_article_noun
-//      //        /       \
+//      //        /       \  if "\"=last char:g++ warning:"multi-line comment"
 //      //     article  noun
 //      //when at article: parse level is 1,
 //      //because "noun" was the last pushed it is the next

@@ -28,6 +28,9 @@
 class Word
 {
 public:
+  //Define destructor to prevent g++ warnings in subclasses like
+  // " `class EnglishAdverb' has virtual functions but non-virtual destructor"
+  virtual ~Word() { }
 	//wenn die Vokabel ein integraler Bestandteil der �bersetzung ist, wird
 	//m_bIntegral auf TRUE gesetzt diese Vokabeln werden in der Funktion
 	//LoadVocables() hinzugef�gt. Die Vokabeln, die das Attribut integral 
@@ -36,6 +39,9 @@ public:
 	//Speicherplatz im Hauptspeicher ein
 	BYTE m_bIntegral;
 	//wird - so glaube ich - fuer Run Time Type Information benoetigt
+	//sonst g++ Fehlermeldungen "cannot dynamic_cast `pWordCompare' (of type
+	//`class Word*') to type `class GermanAdjective*' (source type is not
+	//polymorphic)"
 	virtual void virtfunc(){};
 	BOOL operator==(Word * pWordFirst);
 };

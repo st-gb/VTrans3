@@ -8,10 +8,13 @@
 #include <Parse/ParseByRise.hpp>
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
 #include <Translate/SummarizePersonIndex.hpp>
-#include <Translate/TranslateParseByRiseTree.h>
+#include <Translate/TranslateParseByRiseTree.hpp>
 #include <Translate/Translationrule.hpp>
 #include <Translate/TranslateTreeTraverser.hpp>
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
+#include <Xerces/ReadViaSAX2.hpp>
+#include <Xerces/SAX2TranslationRuleHandler.hpp>
+#include <supress_unused_variable.h>
 
 #include <string>
 
@@ -130,6 +133,8 @@ void TranslateParseByRiseTree::AddTranslationRule(
 //    TranslationRule * p_tr = new TranslationRule(ar_wElements,
 //        vec_wElements.size() ) ;
       //Must create on heap, else its d'tor is called.
+    try
+    {
     TranslationRule * p_tr = new TranslationRule( r_stdstrSyntaxTreePath
         , mp_parsebyrise ) ;
 
@@ -162,6 +167,11 @@ void TranslateParseByRiseTree::AddTranslationRule(
           "\"\n" )
     }
 #endif
+    }
+    catch( std::exception & e )
+    {
+      DEBUG_COUT("std::exception")
+    }
 //  }
 }
 
@@ -223,7 +233,7 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
   )
 {
   WORD wID ;
-  //e.g. get coorresponding ID for word class "noun".
+  //e.g. get corresponding ID for word class "noun".
   if( mp_parsebyrise->GetGrammarPartID(r_stdstrWordClass,wID) )
   {
     AttributeTypeAndPosAndSize a( byType, wIndex, wLenght, wID , byLanguage) ;
@@ -430,11 +440,11 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
               if( r_atapas.m_byLanguage ==
                 AttributeTypeAndPosAndSize::German )
               {
-//                BYTE by =
+                BYTE by =
                   p_grammarpartLeaf->
                   m_pvocabularyandtranslation->m_arbyAttribute[
                   r_atapas.m_wIndex ] ;
-
+                SUPRESS_UNUSED_VARIABLE_WARNING(by)
               }
           }//switch
         }
@@ -475,10 +485,25 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinitions()
     VocabularyAndTranslation::second_person_singular ,
     1 // length
     );
+  //TODO only 1 attribute name for all object types (0 obj, 1objs, 2objs)
+  // to make it easier for a translation rule (only 1 translation rule no matter if
+  // the verb allows 0,1 or 2 objects )
   AddVocAndTranslDefinition(
     //"main_verb",
     "mainVerbInf0Obj" ,
-    "Ger_main_verb_3rd_person_singular" , //attribute name to use as a map key value
+//    "Ger_main_verb_3rd_person_singular" , //attribute name to use as a map key value
+    "GerMainVerb0Obj3rdPersSing" , //attribute name to use as a map key value
+    AttributeTypeAndPosAndSize::German, //language
+    AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
+    //GERMAN_VERB_3RD_PERSON_SINGULAR_INDEX , //index
+    VocabularyAndTranslation::third_person_singular ,
+    1 // length
+    );
+  AddVocAndTranslDefinition(
+    //"main_verb",
+    "mainVerbInf1Obj" ,
+//    "Ger_main_verb_3rd_person_singular" , //attribute name to use as a map key value
+    "GerMainVerb1Obj3rdPersSing" , //attribute name to use as a map key value
     AttributeTypeAndPosAndSize::German, //language
     AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
     //GERMAN_VERB_3RD_PERSON_SINGULAR_INDEX , //index
@@ -488,7 +513,7 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinitions()
   AddVocAndTranslDefinition(
 //    "main_verb",
     "mainVerbInf0Obj" ,
-    "Ger_main_verb_3rd_person_plural" , //attribute name to use as a map key value
+    "GerMainVerb3rdPersPlur" , //attribute name to use as a map key value
     AttributeTypeAndPosAndSize::German, //language
     AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
     //GERMAN_VERB_3RD_PERSON_PLURAL_INDEX , //index
@@ -924,7 +949,7 @@ void TranslateParseByRiseTree::AddDefiniteArticleNounTranslationRules()
   }
 #endif
 
-  //TODO some nouns are singualr in English but plural in German, e.g. "the news
+  //TODO some nouns are singular in English but plural in German, e.g. "the news
   //is on." (singular) -> "Die Nachrichten (plural) fangen an."
   //Therefore a(n additional) condition for the appropriate bit value.
   Condition conditionMatchesEngPlural;
@@ -1222,7 +1247,10 @@ void TranslateParseByRiseTree::AddPersonalPronounTranslationRules()
 }
 
 TranslateParseByRiseTree::TranslateParseByRiseTree(
-  ParseByRise & r_parsebyrise )
+  ParseByRise & r_parsebyrise
+  , I_UserInterface & r_i_userinterface
+  )
+  : mr_i_userinterface (r_i_userinterface)
 {
   // TODO Auto-generated constructor stub
   // e.g. "If I see you" ( adverb, clause)
@@ -1236,8 +1264,8 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef =
       & m_stdmap_AttrName2VocAndTranslAttrDef ;
 
-  AddDefiniteArticleNounTranslationRules() ;
-  AddPersonalPronounTranslationRules() ;
+//  AddDefiniteArticleNounTranslationRules() ;
+//  AddPersonalPronounTranslationRules() ;
 
   ConditionsAndTranslation cntAnd ;
 //  cntAnd.SetSyntaxTreePath( "and", mp_parsebyrise ) ;
@@ -1261,34 +1289,40 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   conditonSubject.m_stdstrAttributeName = "person_index" ;
   //TODO
 //  cond3.m_wAttributeValue = THIRD_PERSON_PLURAL ;
-  ConditionsAndTranslation cntMainVerb ;
-  cntMainVerb.AddCondition(conditonSubject) ;
-  cntMainVerb.SetSyntaxTreePath( "main_verb", mp_parsebyrise ) ;
-  //="If subject is in third person plural, use German verb attribute value
-  //for plural."
-  cntMainVerb.m_stdstrAttributeName = "Ger_main_verb_3rd_person_plural" ;
-  //cnt3.m_byPersonIndex = THIRD_PERSON_PLURAL ;
-  //must create on heap.
-  TranslationRule * p_tr3 = new TranslationRule(
-    "main_verb" // For this syntax tree GrammarPart path in syntax tree.
-    , mp_parsebyrise ) ;
-  AddTranslationRule(
-    //"def_article_noun.definite_article" ,
-    p_tr3 ,
-    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
-    //cond ,
-    //, ""
-    cntMainVerb
-  ) ;
+//  ConditionsAndTranslation cntMainVerb ;
+//  cntMainVerb.AddCondition(conditonSubject) ;
+//  cntMainVerb.SetSyntaxTreePath( "main_verb", mp_parsebyrise ) ;
+//  //="If subject is in third person plural, use German verb attribute value
+//  //for plural."
+//  cntMainVerb.m_stdstrAttributeName = "Ger_main_verb_3rd_person_plural" ;
+//  //cnt3.m_byPersonIndex = THIRD_PERSON_PLURAL ;
+//  //must create on heap.
+//  TranslationRule * p_tr3 = new TranslationRule(
+//    "main_verb" // For this syntax tree GrammarPart path in syntax tree.
+//    , mp_parsebyrise ) ;
+//  AddTranslationRule(
+//    //"def_article_noun.definite_article" ,
+//    p_tr3 ,
+//    //"def_article_noun.noun.English.isSingular=1" //English attribute (condition)
+//    //cond ,
+//    //, ""
+//    cntMainVerb
+//  ) ;
 //  Condition conditonSubject ;
 //  conditonSubject.SetSyntaxTreePath( "article_singular" , mp_parsebyrise ) ;
 //  conditonSubject.m_stdstrAttributeName = "person_index" ;
 //  //TODO
 ////  cond3.m_wAttributeValue = THIRD_PERSON_PLURAL ;
 
-  Add3rdPersonPluralTranslationRules() ;
-  Add3rdPersonSingularTranslationRules() ;
-  AddObjectTranslationRules() ;
+//  Add3rdPersonPluralTranslationRules() ;
+//  Add3rdPersonSingularTranslationRules() ;
+//  AddObjectTranslationRules() ;
+  //Must create on heap, else the callback functions like "startElement" aren't
+  //called?!
+  SAX2TranslationRuleHandler * p_sax2grammarrulehandler = new
+      SAX2TranslationRuleHandler(*this, * mp_parsebyrise , mr_i_userinterface ) ;
+  ReadViaSAX2AndDeleteContentHandler( "translation_rules.xml",
+    p_sax2grammarrulehandler ) ;
 
   AddVocAndTranslDefinitions() ;
 
@@ -1417,7 +1451,7 @@ void TranslateParseByRiseTree::Translate(
   if( mp_parsebyrise )
   {
     DWORD dwLeftMostTokenIndex = 0 ;
-    GrammarPart * p_grammarpart ;
+//    GrammarPart * p_grammarpart ;
 //    GrammarPart * p_grammarpartChild ;
     //int y = 10 ;
     //  typedef std::multimap<DWORD, GrammarPart > stdmmap_token_index2grammarpart ;
@@ -1476,9 +1510,9 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   //within the parse tree there is at a time only 1 current path in 1 direction:
   //from root node to the current node.
   // e.g.     "clause"
-  //          /     \
-  //    "subject"    \
-  //     /            \
+  //          /     \ (if "\"= last char:g++ warning:"multi-line comment")
+  //    "subject"    \  _
+  //     /            \ (if "\"= last char:g++ warning:"multi-line comment")
   //personal_pronoun  verb
   //->the current parse tree path may be (always beginning from root node "clause")
   // -"clause"
@@ -1570,6 +1604,7 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
         r_stdvec_wCurrentGrammarPartPath ) ;
       if( bIdentical )
       {
+        DEBUG_COUT("the current syntax tree path matches the rule' syntax tree path")
 //        GrammarPart * p_grammarpartClosestToTreeRoot =
 //            r_stdvec_p_grammarpartPath.at(wIndex + wLenghtDiff ) ;
 #ifdef _DEBUG

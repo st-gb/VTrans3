@@ -16,9 +16,9 @@ AttributeTypeAndPosAndSize::AttributeTypeAndPosAndSize(
   BYTE byLanguage // Language that is referred by the other parameters.
   )
   :
+  m_byAttrDataType ( byType ) ,
   m_byLanguage ( byLanguage ) ,
   m_byWordClass ( byWordClass ) ,
-  m_byAttrDataType ( byType ) ,
   m_wIndex ( wIndex ) ,
   m_wLenght ( wLenght )
 {

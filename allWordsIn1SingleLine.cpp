@@ -4,3 +4,5 @@ namespace allWordsIn1SingleLine
 {
 
 }
+//Keep 1 newlina at the end of the file to avoid g++ warning
+// "no newline at end of file"

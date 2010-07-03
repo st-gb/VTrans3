@@ -1,0 +1,200 @@
+<translation_rules>
+  <translation_rule 
+    syntax_tree_path="plural_noun"
+    attribute_name="German_plural"
+  />
+  <translation_rule 
+    syntax_tree_path="singular_noun"
+    attribute_name="German_singular"
+  />
+  <translation_rule 
+    syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
+    attribute_name="GerMainVerb3rdPersPlur" 
+  />
+  <translation_rule 
+    syntax_tree_path="3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+    attribute_name="GerMainVerb3rdPersPlur" 
+  />
+  <!--<translation_rule 
+    syntax_tree_path="3rdPersSingClauseAllows0Obj.MainVerb3rdPersSingPres0Obj"
+    attribute_name="GerMainVerb3rdPersSing" 
+  />
+  <translation_rule 
+    syntax_tree_path="3rdPersPlurClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
+    attribute_name="GerMainVerb3rdPersSing" 
+  />-->
+  <translation_rule 
+    syntax_tree_path="MainVerb3rdPersSingPres1Obj"
+    attribute_name="GerMainVerb1Obj3rdPersSing" 
+  />
+
+  <!--personal pronouns begin-->
+  <translation_rule 
+    syntax_tree_path="I"
+    translation="ich">
+  </translation_rule>  
+  <!--<translation_rule 
+    syntax_tree_path="you"
+    translation="du">
+  </translation_rule>-->
+  <translation_rule 
+    syntax_tree_path="he"
+    translation="er">
+  </translation_rule>  
+  <translation_rule 
+    syntax_tree_path="she"
+    translation="sie">
+  </translation_rule>  
+  <translation_rule 
+    syntax_tree_path="it"
+    translation="es">
+  </translation_rule>  
+  <translation_rule 
+    syntax_tree_path="we"
+    translation="wir">
+  </translation_rule>  
+  <!--<translation_rule 
+    syntax_tree_path="you"
+    translation="ihr">
+  </translation_rule>-->
+  <translation_rule 
+    syntax_tree_path="they"
+    translation="sie">
+  </translation_rule>  
+  
+  <!--article translation begin-->
+  <translation_rule 
+    syntax_tree_path="definite_article_plural.definite_article"
+    translation="die">
+  </translation_rule>
+
+  <!--define article singular-->
+  <translation_rule 
+    syntax_tree_path="definite_article_singular.definite_article"
+    translation="der">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="definite_article_singular.definite_article"
+    translation="die">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="definite_article_singular.definite_article"
+    translation="das">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+  </translation_rule>
+  <!--INdefine article singular-->
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="ein">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="eine">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="ein">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+  </translation_rule>
+  <!--singular end-->
+  
+  <!--reflexive pronouns-->
+  <!--"sich", no matter which case (dative: "er vertraut sich", 4th case:"er mag sich")-->
+  <translation_rule 
+    syntax_tree_path="himself"
+    translation="sich">
+  </translation_rule>
+    <!--"sich", no matter which case (dative: "sie vertraut sich", 4th case:"sie mag sich")-->
+  <translation_rule 
+    syntax_tree_path="herself"
+    translation="sich">
+  </translation_rule>
+    <!--"sich", no matter which case (dative: "es vertraut sich", 4th case:"es mag sich")-->
+  <translation_rule 
+    syntax_tree_path="itself"
+    translation="sich">
+  </translation_rule>
+    <!--"sich", no matter which case (dative: "wie vertrauen uns", 4th case:"wie moegen uns")-->
+  <translation_rule 
+    syntax_tree_path="ourselves"
+    translation="uns">
+  </translation_rule>
+    <!--"sich", no matter which case (dative: "ihr vertraut euch", 4th case:"ihr moegt euch")-->
+  <translation_rule 
+    syntax_tree_path="yourselves"
+    translation="euch">
+  </translation_rule>
+    <!--always "sich" (dative: "sie vertrauen sich", accusative: "sie moegen sich")-->
+  <translation_rule 
+    syntax_tree_path="themselves"
+    translation="sich">
+  </translation_rule>
+  
+  <!--dative obj transl-->
+  <translation_rule 
+    syntax_tree_path="myself"
+    translation="mir">
+    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="pers_pron_obj"
+    translation="ihm">
+    <condition syntax_tree_path="pers_pron_obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="3rdPersPlurClauseWith1Obj.obj.*.definite_article_plural.definite_article"
+    translation="den">
+    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="3rdPersPlurClauseWith1Obj.obj.*.definite_article_singular.definite_article"
+    translation="dem">
+    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="3rdPersPlurClauseWith1Obj.themselves_ObjEnumEle.*.definite_article_plural.definite_article"
+    translation="den">
+    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+</translation_rules>
