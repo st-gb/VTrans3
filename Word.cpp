@@ -145,7 +145,7 @@ EnglishAuxiliaryVerb::EnglishAuxiliaryVerb(
 	bool bModalAuxiliary
   )
 {
-	int i=0;
+	WORD i=0;
 	int start=0;
 	WORD wIndex=0;
 	m_bIntegral=TRUE;
@@ -291,7 +291,7 @@ void EnglishVerb::GetProgressiveForm(
 
 GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 {
-	int i=0;
+	WORD i=0;
 	int start=0;
 	WORD wIndex=0;
 	m_bIntegral=TRUE;
@@ -309,7 +309,7 @@ GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 
 void GermanVerb::CreateFromString(const VTrans::string_type & str)
 {
-	int i=0;
+	WORD i=0;
 	int start=0;
 	WORD wIndex=0;
 	m_bIntegral=TRUE;
@@ -344,7 +344,7 @@ void InitDictionary()
 {
 	WordNode * pWordNodeCurrent=NULL;
 	WordNode * pWordNodePrevious=NULL;
-	Word * pWord=NULL;
+//	Word * pWord=NULL;
 #ifdef _DEBUG
 	printf("void LoadWords(WordNode * pWordNode) ANFANG\n");
 #endif

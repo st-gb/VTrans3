@@ -10,10 +10,13 @@
 #include "wxTextInputDlg.hpp"
 #include <IO.hpp> //OneLinePerWordPair::LoadWords()
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp>
+#include <Translate/SyntaxTreePath.hpp>
 #include <fstream> //for std::ofstream
 
 std::ofstream ofstreamLogFile ;
 extern LetterTree g_lettertree ;
+
+I_UserInterface * SyntaxTreePath::sp_userinterface ;
 
 IMPLEMENT_APP(VTransApp)
 
@@ -24,6 +27,11 @@ VTransApp::VTransApp(const VTransApp& orig) {
 }
 
 VTransApp::~VTransApp() {
+}
+
+void VTransApp::Message( const std::string & str )
+{
+  ::wxMessageBox( str ) ;
 }
 
 bool VTransApp::OnInit()
@@ -44,7 +52,10 @@ bool VTransApp::OnInit()
        //wxDEFAULT_DIALOG_STYLE | wxCLOSE_BOX
        );
      if( frame )
+     {
+       SyntaxTreePath::sp_userinterface = this ;
        frame->Show(true);
+     }
      else
        std::cerr << "error: couldn't create window\n" ;
      return true;

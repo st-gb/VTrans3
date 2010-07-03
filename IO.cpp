@@ -175,7 +175,7 @@ void OneLinePerWordPair::InsertEnglishNoun(
   std::set<LetterNode *> stdsetpletternodeLastStringChar ;
   EnglishNoun * en = new EnglishNoun;
   BYTE delemiterCount = 0 ;
-  BYTE otherCount = 0 ;
+//  BYTE otherCount = 0 ;
   int nIndexOf1stChar = 1;
   int nIndexOfCurrentChar ;
   //TRACE("englisches Substantiv: %s\n", str);
@@ -400,7 +400,7 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
   //VocabularyAndTranslation * pvocabularyandtranslation = NULL ;
   //VocabularyAndTranslation * pvocabularyandtranslationReturn = NULL ;
 #endif //#ifdef _INSERT_INTO_HASH_TREE
-  for( int nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
+  for( WORD nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
     strCurrentWordData.length() ; nIndexOfCurrentChar++ )
   {
     if( nIndexOfCurrentChar == 1 &&
@@ -570,7 +570,7 @@ void OneLinePerWordPair::InsertEnglishAdjective(
   if(ea)
   {
     BYTE delemiterCount=0;
-    BYTE bMoreMost=2;
+//    BYTE bMoreMost=2;
     int start=3;
     if(strCurrentWordData[1]=='1' || strCurrentWordData[1]=='2')
     {
@@ -580,7 +580,7 @@ void OneLinePerWordPair::InsertEnglishAdjective(
     {
       ea->m_bAllowedPlace=strCurrentWordData[2]-ASCII_CODE_FOR_DIGIT_1;
     }
-    for(int i=3; i < strCurrentWordData.length(); i++)
+    for( WORD i=3; i < strCurrentWordData.length(); i++)
     {
       if(strCurrentWordData[i]=='9')
       {
@@ -631,7 +631,7 @@ void OneLinePerWordPair::InsertEnglishAdverb(
 {
   EnglishAdverb * ea = new EnglishAdverb;
   BYTE delemiterCount=0;
-  for(int i = 1 ; i < strCurrentWordData.length(); ++i )
+  for( WORD i = 1 ; i < strCurrentWordData.length(); ++i )
   {
     if( strCurrentWordData[i] == '9' )
     {
@@ -663,9 +663,9 @@ void OneLinePerWordPair::InsertEnglishAuxiliaryVerb(
   TRACE("englisches Verb\n");;
   EnglishAuxiliaryVerb * eav=new EnglishAuxiliaryVerb;
   BYTE delemiterCount=0;
-  BYTE otherCount=0;
+//  BYTE otherCount=0;
   int start=1;
-  for(int i=1;i < strCurrentWordData.length();i++)
+  for( WORD i=1;i < strCurrentWordData.length();i++)
   {
     if(strCurrentWordData[i]=='9') // finite (gebeugte) Verbformen
     {
@@ -690,7 +690,7 @@ void OneLinePerWordPair::InsertEnglishConjunction(
   int nIndexOf1stChar = 1 ;
   std::set<LetterNode *> stdsetpletternodeLastStringChar ;
 //  EnglishConjunction * ec=new EnglishConjunction;
-  for( int nIndexOfCurrentChar = 1; nIndexOfCurrentChar <
+  for( WORD nIndexOfCurrentChar = 1; nIndexOfCurrentChar <
     strCurrentWordData.length() ; nIndexOfCurrentChar ++ )
   {
     if( strCurrentWordData[nIndexOfCurrentChar] == '9' ) // finite (gebeugte) Verbformen
@@ -729,7 +729,7 @@ void OneLinePerWordPair::InsertEnglishPreposition(
   )
 {
   EnglishPreposition * ep = new EnglishPreposition;
-  for(int i=1 ; i < strCurrentWordData.length(); ++i)
+  for( WORD i=1 ; i < strCurrentWordData.length(); ++i)
   {
     if( strCurrentWordData[i] == STRING_DELIMITER )
     {
@@ -752,7 +752,7 @@ void OneLinePerWordPair::InsertEnglishPonoun(
   EnglishPronoun * ep = new EnglishPronoun;
   BYTE delemiterCount=0;
   DWORD dwStart=0;
-  for(int i=1; i < strCurrentWordData.length(); i++)
+  for( WORD i=1; i < strCurrentWordData.length(); i++)
   {
     if(strCurrentWordData[i]=='9')
     {
@@ -784,7 +784,7 @@ void OneLinePerWordPair::InsertGermanAdjective(
   GermanAdjective * ga=new GermanAdjective;
   BYTE delemiterCount=0;
   int start=1;
-  for(int i=1;i < strCurrentWordData.length();++i)
+  for( WORD i=1;i < strCurrentWordData.length();++i)
   {
     if(strCurrentWordData[i]=='9')
     {
@@ -821,7 +821,7 @@ void OneLinePerWordPair::InsertGermanAdverb(
 {
   GermanAdverb * ga=new GermanAdverb;
   BYTE delemiterCount=0;
-  for(int i=1; i < strCurrentWordData.length(); ++i)
+  for( WORD i=1; i < strCurrentWordData.length(); ++i)
   {
     if(strCurrentWordData[i]=='9')
     {
@@ -848,7 +848,7 @@ void OneLinePerWordPair::InsertGermanAuxiliaryVerb(
   BYTE delemiterCount=0;
   BYTE otherCount=0;
   int start=1;
-  for(int i=1;i < strCurrentWordData.length(); ++i)
+  for( WORD i=1;i < strCurrentWordData.length(); ++i)
   {
     if(strCurrentWordData[i] == '9') // finite (gebeugte) Verbformen
     {
@@ -880,9 +880,9 @@ void OneLinePerWordPair::InsertGermanConjunction(
   bool bInsertNewVocabularyAndTranslation = true ;
 //  GermanConjunction * gc = new GermanConjunction;
   BYTE bDelemiterOccured=FALSE;
-  BYTE otherCount=0;
+//  BYTE otherCount=0;
   std::set<LetterNode *> stdsetpletternodeLastStringChar ;
-  for(int nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
+  for( WORD nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
     strCurrentWordData.length(); ++ nIndexOfCurrentChar )
   {
     if( strCurrentWordData[nIndexOfCurrentChar] == '9' ) // finite (gebeugte) Verbformen
@@ -932,7 +932,7 @@ void OneLinePerWordPair::InsertGermanMainVerb(
   BYTE byDelemiterCount = 0 ;
   BYTE otherCount = 0 ;
   int nIndexOf1stChar = 1 ;
-  for( int nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
+  for( WORD nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
     strCurrentWordData.length() ; nIndexOfCurrentChar ++ )
   {
     if( strCurrentWordData[nIndexOfCurrentChar] == STRING_DELIMITER ) // finite (gebeugte) Verbformen,
@@ -1013,8 +1013,8 @@ void OneLinePerWordPair::InsertGermanNoun(
   GermanNoun * gn = new GermanNoun;
   BYTE delemiterCount=0;
   int nIndexOf1stChar = 1 ;
-  LetterNode * pletternode = NULL ;
-  for( int nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
+//  LetterNode * pletternode = NULL ;
+  for( WORD nIndexOfCurrentChar = 1 ; nIndexOfCurrentChar <
     strCurrentWordData.length() ; nIndexOfCurrentChar ++ )
   {
     if( strCurrentWordData[nIndexOfCurrentChar] == '9' )
@@ -1097,8 +1097,8 @@ void OneLinePerWordPair::InsertGermanPreposition(
 {
   GermanPreposition * gp = new GermanPreposition;
   BYTE delemiterCount=0;
-  int i = 1 ;
-  for(;i < strCurrentWordData.length();i++)
+  WORD i = 1 ;
+  for( ;i < strCurrentWordData.length();i++)
   {
     if(strCurrentWordData[i]==STRING_DELIMITER)
     {
@@ -1129,7 +1129,7 @@ void OneLinePerWordPair::InsertGermanPronoun(
   )
 {
   GermanPronoun * gp = new GermanPronoun;
-  for(int i=1;i < strCurrentWordData.length();++i)
+  for( WORD i=1;i < strCurrentWordData.length();++i)
   {
     if(strCurrentWordData[i]=='9')
     {
@@ -1264,14 +1264,14 @@ BYTE OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
   BYTE byRet = 0 ;
 	FILE * p_fileWords ;
 	int i;
-	BOOL break_while = FALSE ;
-	BOOL flag = FALSE ;
+//	BOOL break_while = FALSE ;
+//	BOOL flag = FALSE ;
 	VTrans::string_type concatenate;
   VTrans::string_type strWordFile = //_T(
     //"http://www.f4.fhtw-berlin.de/~s0518039/"
     "words.txt" //);
     ;
-  WordNode * pWordNodePrevious=NULL;
+//  WordNode * pWordNodePrevious=NULL;
 
 	//zuerst die integralen Vokabeln der verketteten Liste hinzuf�gen, Ende
   LOGN("05.06.2008 22.22.17");
@@ -1281,7 +1281,7 @@ BYTE OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
 	  byRet = 1 ;
     LOGN("05.06.2008 22.22.26");
 		concatenate = "" ;
-		BYTE bEnglishWord = TRUE;
+//		BYTE bEnglishWord = TRUE;
 		VTrans::string_type str;
 		DWORD dwOffset = 0;
 		DWORD dwOffsetOfBeginOfEntry = 0;//Offset (Position) des Anfanges eines

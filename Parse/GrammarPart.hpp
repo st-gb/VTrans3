@@ -20,17 +20,17 @@ class VocabularyAndTranslation ;
 //e.g.:
 //the vacuum cleaner  sucks.
 //--------------clause---------
-//              /     \
+//              /     \  ( if "\"= last char:g++ warning:"multi-line comment")
 //-def_article_noun--- -main_verb
-// /     \
+// /     \_
 //DA  ----noun------  DA=Definite Article
 //
 //e.g.:
 //the car and the cat suck.
 //--------------clause---------
-//              /     \
-//      EE_CJ_EE       \
-//     /       |        \
+//              /     \   _( if "\"= last char:g++ warning:"multi-line comment")
+//      EE_CJ_EE       \  _( if "\"= last char:g++ warning:"multi-line comment")
+//     /       |        \ _( if "\"= last char:g++ warning:"multi-line comment")
 //    /      CJ_EE      |
 //   /       /   \      |
 //--NC--  -CJ ---NC-- -main_verb   NC=def_article_noun CJ=ConJunction
@@ -38,11 +38,11 @@ class VocabularyAndTranslation ;
 //e.g.
 //the car , the dog and the cat suck.
 //--------------clause---------
-//              /     \
+//              /     \   ( if "\"= last char:g++ warning:"multi-line comment")
 //      EE_C_EE_CJ_EE
-//            /     \
+//            /     \  _ ( if "\"= last char:g++ warning:"multi-line comment")
 //      EE_C_EE      \           EE=Enumeration element
-//     /     |        \
+//     /     |        \   (if "\"= last char:g++ warning:"multi-line comment")
 //    /    C_EE       CJ_EE      |    C=Comma
 //   /     /   \      /   \      |
 //--NC--- C ---NC-- -CJ ---NC-- main_verb   NC=def_article_noun CJ=ConJunction
@@ -50,9 +50,9 @@ class VocabularyAndTranslation ;
 //e.g.
 //I  , he , it and the cat suck.
 //--------------clause---------
-//              /     \
+//              /     \  ( if "\"= last char:g++ warning:"multi-line comment")
 //      EE_C_EE_CJ_EE
-//            /     \
+//            /     \ _ ( if "\"= last char:g++ warning:"multi-line comment")
 //     EE_C_EE      \           EE=Enumeration element
 //     /  |
 //    /  C_EE

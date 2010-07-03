@@ -1,0 +1,87 @@
+<grammar_rules>
+  <grammar_rule left_child="definite_article" right_child="singular_noun" superordinate="definite_article_singular"/>
+  <grammar_rule left_child="definite_article" right_child="plural_noun" superordinate="definite_article_plural"/>
+  <grammar_rule left_child="indefinite_article" right_child="singular_noun" superordinate="indefinite_article_singular"/>
+  <grammar_rule left_child="indefinite_article_singular" superordinate="article_singular"/>
+  <grammar_rule left_child="definite_article_singular" superordinate="article_singular"/>
+  
+  <!--3rd person singular begin-->
+  <grammar_rule left_child="article_singular" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+  <grammar_rule left_child="he" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+  <grammar_rule left_child="she" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+  <grammar_rule left_child="it" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="and" superordinate="3rdPersSingSubjOrObjEnumEle_AND"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle_AND" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle_AND" right_child="3rdPersPlurSubjOrObjEnumEle" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres1Obj" superordinate="3rdPersSingClause1Obj"/>
+  <grammar_rule left_child="3rdPersSingClause1Obj" superordinate="clause1Obj"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" superordinate="SubjOrObjEnumEle"/>
+  <!--3rd person singular end-->
+
+  <!--3rd person plural begin-->
+  <grammar_rule left_child="they" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="and" superordinate="3rdPersPlurSubjOrObjEnumEle_AND"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle_AND" right_child="3rdPersPlurSubjOrObjEnumEle" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle_AND" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle_AND" right_child="I" superordinate="we"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres0Obj" superordinate="3rdPersSingClauseAllows0Obj"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres1Obj" superordinate="3rdPersSingClauseAllows1Obj"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres2Obj" superordinate="3rdPersSingClauseAllows2Obj"/>
+  <grammar_rule left_child="plural_noun" superordinate="plural_noun_superclass"/>
+  <grammar_rule left_child="definite_article_plural" superordinate="plural_noun_superclass"/>
+  <grammar_rule left_child="plural_noun_superclass" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" superordinate="SubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf0Obj" superordinate="3rdPersPlurClauseAllows0Obj"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf1Obj" superordinate="3rdPersPlurClauseAllows1Obj"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf2Obj" superordinate="3rdPersPlurClauseAllows2Obj"/>
+  <!--3rd person plural end-->
+  
+  <!--objects-->
+  <grammar_rule left_child="SubjOrObjEnumEle" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="pers_pron_obj" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle"  right_child="and" superordinate="ObjEnumEle_and"/>
+  <!--  e.g. for "the car and the cars and" -->
+  <grammar_rule left_child="ObjEnumEle_and"  right_child="ObjEnumEle_and" superordinate="ObjEnumEle_and"/>
+  <grammar_rule left_child="ObjEnumEle_and"  right_child="ObjEnumEle" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle"  superordinate="obj"/>
+  
+  <!--the following rules are for permitting false reflexive forms ("I like yourself" / 
+    for only allowing the reflexive forms for the appropriate person in the subject ("I like myself")-->
+  <grammar_rule left_child="myself" superordinate="myself_ObjEnumEle"/>
+  <grammar_rule left_child="myself_ObjEnumEle" right_child="and" superordinate="myself_ObjEnumEle_and"/>
+  <grammar_rule left_child="myself_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="myself_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="myself_ObjEnumEle" superordinate="myself_ObjEnumEle"/>
+  <grammar_rule left_child="myself_ObjEnumEle" superordinate="3rdPersPlurObj"/>
+
+  <grammar_rule left_child="himself" superordinate="himself_ObjEnumEle"/>
+  <grammar_rule left_child="himself_ObjEnumEle" right_child="and" superordinate="himself_ObjEnumEle_and"/>
+  <grammar_rule left_child="himself_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="himself_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="himself_ObjEnumEle" superordinate="himself_ObjEnumEle"/>
+  <grammar_rule left_child="himself_ObjEnumEle" superordinate="3rdPersPlurObj"/>
+
+  <grammar_rule left_child="themselves" superordinate="themselves_ObjEnumEle"/>
+  <grammar_rule left_child="themselves_ObjEnumEle" right_child="and" superordinate="themselves_ObjEnumEle_and"/>
+  <grammar_rule left_child="themselves_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="themselves_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="themselves_ObjEnumEle" superordinate="themselves_ObjEnumEle"/>
+  <grammar_rule left_child="themselves_ObjEnumEle" superordinate="3rdPersPlurObj"/>
+  <!--objects end-->
+  
+  <!-- clauses with object(s) -->
+  <grammar_rule left_child="3rdPersPlurClauseAllows1Obj" right_child="3rdPersPlurObj" superordinate="3rdPersPlurClauseWith1Obj"/>
+  <grammar_rule left_child="3rdPersPlurClauseAllows1Obj" right_child="obj" superordinate="3rdPersPlurClauseWith1Obj"/>
+  <!-- clauses with object(s) -->
+    
+  <!--1st person singular begin-->
+  <grammar_rule left_child="I" right_child="and" superordinate="I_and"/>
+  <!--this rule is to avoid determining the person ("person index") -> faster -->
+  <grammar_rule left_child="I" right_child="mainVerbInf0Obj" superordinate="1stPersSingSimplePresentClause"/>
+  <grammar_rule left_child="I" right_child="mainVerbInf1Obj" superordinate="1stPersSingSimplePresentClauseAllow1Obj"/>  
+  <grammar_rule left_child="I" right_child="mainVerbInf1Obj" superordinate="1stPersSingSimplePresentClauseAllow1Obj"/>  
+  <!--1st person singular end-->
+
+  <grammar_rule left_child="SubjOrObjEnumEle" superordinate="obj"/>
+  
+  <grammar_rule left_child="clause1Obj" right_child="obj" superordinate="clauseWith1Obj"/>
+  
+  <grammar_rule left_child="clause" right_child="obj" superordinate="clause_with_obj"/>
+</grammar_rules>

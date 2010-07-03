@@ -8,6 +8,8 @@
 #include "TranslationRule.hpp"
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
+#include <exception> //for std::exception
+#include <supress_unused_variable.h>
 
 WORD TranslationRule::GetConsecutiveID(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const
@@ -18,6 +20,7 @@ WORD TranslationRule::GetConsecutiveID(
   {
 #ifdef _DEBUG
         WORD wConsecutiveID = p_grammarpart->m_wConsecutiveID ;
+        SUPRESS_UNUSED_VARIABLE_WARNING(wConsecutiveID)
         return p_grammarpart->m_wConsecutiveID ;
 #else
         return p_grammarpart->m_wConsecutiveID ;
@@ -30,7 +33,7 @@ WORD TranslationRule::GetConsecutiveID(
 const GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const
 {
-  GrammarPart * const p_grammarpart = NULL ;
+//  GrammarPart * const p_grammarpart = NULL ;
   if( r_stdvec_p_grammarpartPath.size() >=
       m_syntaxtreepathConsecutiveID.m_wNumberOfElements
       //&& m_syntaxtreepathConsecutiveID.m_wNumberOfElements > 0
@@ -114,7 +117,7 @@ bool TranslationRule::Matches(
         wIndex != MAXWORD
         && rev_iter != r_stdvec_wCurrentGrammarPartPath.rend()
             ; //-- wIndex
-        ++ rev_iter
+//        ++ rev_iter
         )
     {
       DEBUG_COUT("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
@@ -153,6 +156,7 @@ bool TranslationRule::Matches(
           bCurrentlyKleeneStarOperator = false ;
           -- wIndex ;
         }
+        ++ rev_iter ;
       }
       else
       {
@@ -180,6 +184,10 @@ bool TranslationRule::Matches(
             break ;
           }
           -- wIndex ;
+          //Only advance if the current grammar part ID is not Kleene star operator
+          //because the ID after Kleene star *must* match the (indirect) ID of
+          //the vector.
+          ++ rev_iter ;
         }
       }
     }
@@ -204,14 +212,21 @@ void TranslationRule::SetConsecutiveIDSyntaxTreePath(
     , mp_parsebyrise ) ;
 }
 
+//http://www.parashift.com/c++-faq-lite/exceptions.html#faq-17.2:
+//"The best way to signal constructor failure is therefore to throw an exception."
+//Throws a string that is an _unknown_ token of the syntax tree path as exception.
 TranslationRule::TranslationRule(
     const std::string & r_stdstrSyntaxTreePath
     , ParseByRise * p_parsebyrise )
   : mp_parsebyrise(p_parsebyrise)
 {
-  m_syntaxtreepathCompareWithCurrentPath.CreateGrammarPartIDArray(
+  if( !
+      m_syntaxtreepathCompareWithCurrentPath.CreateGrammarPartIDArray(
       r_stdstrSyntaxTreePath
-      , p_parsebyrise ) ;
+      , p_parsebyrise )
+//      ;
+    )
+    throw std::exception() ;
 }
 
 TranslationRule::TranslationRule( //const std::string & r_stdstrSyntaxTreePath

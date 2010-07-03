@@ -27,13 +27,14 @@
 #include <wx/html/htmlwin.h>
 
 #include "wxTextInputDlg.hpp"
+#include "VTransApp.hpp" //::wxGetApp()
 #include <Translate/TranslateTreeTraverser.hpp> //TranslationAndGrammarPart
 #include "wxParseTreePanel.hpp"
 #include "wxHTMLfileOutput.hpp"
 
 #include <sstream>
 
-#include <Translate/TranslateParseByRiseTree.h>
+#include <Translate/TranslateParseByRiseTree.hpp>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -452,7 +453,8 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
   DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
   m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
 
-  TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise ) ;
+  TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise
+    , ::wxGetApp() ) ;
   DEBUG_COUT("before translation\n")
 //  std::string stdstrWholeTransl ;
   std::vector<std::string> stdvec_stdstrWholeTransl ;

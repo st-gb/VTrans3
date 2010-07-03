@@ -347,7 +347,7 @@ Word * LetterTree::GetPreviousOccurance(
    void LetterTree::Insert(const std::string & stdstr, BYTE byWordClass )
    {
      bool bInsertNewVocabularyAndTranslation = true ;
-     LetterNode * pletternode ;
+//     LetterNode * pletternode ;
      std::set<LetterNode *> stdsetpletternodeLastStringChar ;
  //    insert(
  //      stdstr.c_str() //const char * pch,
@@ -1138,10 +1138,10 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
   bool bSeperatorOccured = false ;
   //const char chCurrentChar ;
   char chCurrentChar ;
-  DWORD dwTokenIndex = r_dwTokenIndex ;
+//  DWORD dwTokenIndex = r_dwTokenIndex ;
   //const char * pch = strVocabularyEntry.c_str() ;
   //std::set<VocabularyAndTranslation> * psetvocabularyandtranslation = NULL ;
-  std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation = NULL ;
+//  std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation = NULL ;
   LetterNode * pletternodeCurrent = //NULL ;
     m_pletternodeRoot;
   LetterNode * pletternodeCurrentWithMostTokens = NULL ;

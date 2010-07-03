@@ -52,6 +52,7 @@ namespace ParseTreeTraverser
   class TranslateTreeTraverser
   : public DirectingLeavesMultipleIterTraverser
   {
+    ParseByRise & mr_parsebyrise ;
     TranslateParseByRiseTree & mr_translateparsebyrisetree ;
     std::map<GrammarPart *,WORD>
       m_map_grammarpartRightUnprocessedChild2wParseTreeLevel ;
@@ -65,7 +66,6 @@ namespace ParseTreeTraverser
     WORD m_wSubjectGrammarPartID ;
     WORD m_wArticleSingularGrammarPartID ;
     WORD m_wPluralNounGrammarPartID ;
-    ParseByRise & mr_parsebyrise ;
   public:
     WORD m_wConsecutiveID ;
     std::string m_stdstrWholeTranslation ;

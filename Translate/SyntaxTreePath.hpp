@@ -11,6 +11,22 @@
 #include <string>
 #include <vector>
 #include <rest.h> //DEBUG_COUT(...)
+#include <exception>
+
+class GetGrammarPartIDexception
+//  : public std::exception
+{
+public:
+  std::string m_stdstr ;
+  GetGrammarPartIDexception( const std::string & cr_stdstr )
+  {
+    m_stdstr = cr_stdstr ;
+  }
+//  const char* what() const //throw()
+//  {
+//    return m_stdstr ;
+//  }
+} ;
 
 typedef unsigned short WORD ;
 
@@ -44,6 +60,7 @@ typedef unsigned short WORD ;
 
 class ParseByRise ;
 class GrammarPart ;
+class I_UserInterface ;
 
 //Used to compare whether a condition of a translation rule applies.
 //Therefore it created a syntax tree path as an ID array from the
@@ -62,6 +79,8 @@ class SyntaxTreePath
   //unsigned char  m_byOtherReferencesToGrammarPartIDArray ;
   bool m_bReferringOthersGrammarPartIDArray ;
 public:
+  //for showing an error message when getting ID from grammar part name failed.
+  static I_UserInterface * sp_userinterface ;
   ParseByRise * mp_parsebyrise ;
   WORD * m_ar_wElements ;
   WORD m_wNumberOfElements ;
@@ -82,7 +101,7 @@ public:
   ~SyntaxTreePath() ;
   SyntaxTreePath(std::string & r_stdstrSyntaxTreePath
       ,     ParseByRise * p_parsebyrise ) ;
-  void CreateGrammarPartIDArray(
+  BYTE CreateGrammarPartIDArray(
       const std::string & r_stdstrSyntaxTreePath
       ,     ParseByRise * p_parsebyrise ) ;
   std::string GetAs_std_string() const ;

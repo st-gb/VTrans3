@@ -8,6 +8,7 @@
 #include <Translate/TranslateTreeTraverser.hpp>
 #include <Translate/SummarizePersonIndex.hpp>
 #include <Translate/SetSameConsecutiveIDforLeaves.hpp>
+#include <supress_unused_variable.h>
 
 namespace ParseTreeTraverser
 {
@@ -22,11 +23,11 @@ namespace ParseTreeTraverser
       p_grammarpartStartNode ,
       & r_parsebyrise
       )
-    , m_wConsecutiveID(0)
     , mr_parsebyrise (r_parsebyrise)
     , mr_translateparsebyrisetree( r_translateparsebyrisetree )
+    , m_wConsecutiveID(0)
   {
-    m_wSubjectGrammarPartID ;
+//    m_wSubjectGrammarPartID ;
     if( ! mp_parsebyrise->GetGrammarPartID("subject", m_wSubjectGrammarPartID)
       )
       m_wSubjectGrammarPartID = 65535 ;
@@ -135,7 +136,7 @@ namespace ParseTreeTraverser
   {
     std::string stdstrTranslation ;
     BYTE byPersonIndex ;
-    WORD wConsecutiveID ;
+//    WORD wConsecutiveID ;
     const GrammarPart * p_grammarpart ;
     if( m_vec_wGrammarPartIDcurrentParsePath.size() > 0 )
     {
@@ -146,9 +147,14 @@ namespace ParseTreeTraverser
       if( stdstr == "article_singular"
           || stdstr == "definite_article_plural" )
       {
+#ifdef _DEBUG
+        //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//        #pragma GCC diagnostic ignored  "-Wunused"
         GrammarPart * p_grammarpart =
           m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
+        SUPRESS_UNUSED_VARIABLE_WARNING(p_grammarpart)
 //        SetSameConsecutiveIDforLeaves(p_grammarpart) ;
+#endif
       }
     }
 //    if( m_vec_wGrammarPartIDcurrentParsePath)

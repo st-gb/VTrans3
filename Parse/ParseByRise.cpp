@@ -14,6 +14,9 @@
 #include <VocabularyInMainMem/LetterTree/LetterNode.hpp>
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp>
 #include <Token.h> //for PositionstdstringVector
+#include <Xerces/ReadViaSAX2.hpp>
+#include <Xerces/SAX2GrammarRuleHandler.hpp>
+#include <supress_unused_variable.h>
 
 extern LetterTree g_lettertree ;
 
@@ -21,8 +24,8 @@ ParseByRise::ParseByRise()
   :
    //m_wNumberOfSuperordinateRules( 0 )
   //,
-  m_dwMapIndex(0)
-  , m_wParseLevel(0)
+  m_wParseLevel(0)
+  , m_dwMapIndex(0)
 {
   InitGrammarRules() ;
 }
@@ -274,14 +277,22 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
     {
 #ifdef _DEBUG
       //This instruction is just for setting a breakpoint.
+      //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//      #pragma GCC diagnostic ignored  "-Wunused"
+      //Useless instruction just for breakpoint possibility.
       int i = 0 ;
+      SUPRESS_UNUSED_VARIABLE_WARNING(i)
 #endif
     }
   }
 #ifdef _DEBUG
   if( ! p_gp )
     {
+    //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//    #pragma GCC diagnostic ignored  "-Wunused"
+    //Useless instruction just for breakpoint possibility.
     int i = 0 ;
+    SUPRESS_UNUSED_VARIABLE_WARNING(i)
     }
 #endif
   return p_gp ;
@@ -346,7 +357,11 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
     {
 #ifdef _DEBUG
       //This instruction is just for setting a breakpoint.
+      //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//      #pragma GCC diagnostic ignored  "-Wunused"
+      //Useless instruction just for breakpoint possibility.
       int i = 0 ;
+      SUPRESS_UNUSED_VARIABLE_WARNING(i)
 #endif
       p_grammarpart = //(GrammarPart * ) & iterCurrent->second ;
           iterCurrent->second ;
@@ -356,7 +371,11 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
 #ifdef _DEBUG
   if( ! p_grammarpart )
     {
+    //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//    #pragma GCC diagnostic ignored  "-Wunused"
+    //Useless instruction just for breakpoint possibility.
     int i = 0 ;
+    SUPRESS_UNUSED_VARIABLE_WARNING(i)
     }
 #endif
 //  return p_grammarpart ;
@@ -443,7 +462,7 @@ std::string ParseByRise::GetPathAs_std_string(
 // ee_comma node: \   ee_conj_ee node:
 // 3rd pers. sing. |  1st pers. pl. ("we")
 //       /  \        /   |
-//  +-----+   +-----+   / \
+//  +-----+   +-----+   / \ (if "\"= last char:g++ warning:"multi-line comment")
 //  the car , the cat and I
 BYTE ParseByRise::GetSubjectPersonIndex( GrammarPart * p_grammarpart)
 {
@@ -539,6 +558,7 @@ BYTE ParseByRise::GetSubjectPersonIndex( GrammarPart * p_grammarpart)
 //    while( ! m_stdvecNodesToProcess.empty() ) ;
 //  }
 //  ParseTreeTraverser::SummarizePersonIndex spi(
+  return 0 ;
 }
 
 void ParseByRise::GetTokensAsSpaceSeparatedString(
@@ -619,7 +639,7 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
 
   InsertGrammarRule( EnglishWord::English_definite_article,
     "definite_article" ) ;
-  InsertGrammarRule( EnglishWord::English_definite_article,
+  InsertGrammarRule( EnglishWord::English_indefinite_article,
     "indefinite_article" ) ;
 
   InsertGrammarRule( EnglishWord::personal_pronoun_I , "I" ) ;
@@ -630,6 +650,15 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
   InsertGrammarRule( EnglishWord::personal_pronoun_we, "we" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun_you_plur, "you_plur" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun_they, "they" ) ;
+
+  InsertGrammarRule( EnglishWord::reflexive_pronoun_myself, "myself" ) ;
+  InsertGrammarRule( EnglishWord::reflexive_pronoun_yourself, "yourself" ) ;
+  InsertGrammarRule( EnglishWord::reflexive_pronoun_himself, "himself" ) ;
+  InsertGrammarRule( EnglishWord::reflexive_pronoun_herself, "herself" ) ;
+  InsertGrammarRule( EnglishWord::reflexive_pronoun_itself, "itself" ) ;
+  InsertGrammarRule( EnglishWord::reflexive_pronoun_ourselves, "ourselves" ) ;
+  InsertGrammarRule( EnglishWord::reflexive_pronoun_yourselves, "yourselves" );
+  InsertGrammarRule( EnglishWord::reflexive_pronoun_themselves, "themselves") ;
 
   InsertGrammarRule( EnglishWord::conjunction_and ,"and" ) ;
   InsertGrammarRule( EnglishWord::conjunction, "conjunction" ) ;
@@ -709,69 +738,70 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    , EnglishWord::main_verb
 //    , "clause"
 //    ) ;
-  InsertGrammarRule(
-    EnglishWord::English_definite_article,
-    EnglishWord::singular ,
-    "definite_article_singular"
-    ) ;
-  InsertGrammarRule(
-    EnglishWord::English_definite_article,
-    EnglishWord::plural_noun ,
-    "definite_article_plural"
-    ) ;
-  InsertGrammarRule(
-    EnglishWord::English_indefinite_article,
-    EnglishWord::singular ,
-    "indefinite_article_singular"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "indefinite_article_singular"
-    , "article_singular"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "definite_article_singular"
-    , "article_singular"
-    ) ;
 
-  InsertGrammarRulesFor3rdPersonSingular() ;
+//  InsertGrammarRule(
+//    EnglishWord::English_definite_article,
+//    EnglishWord::singular ,
+//    "definite_article_singular"
+//    ) ;
+//  InsertGrammarRule(
+//    EnglishWord::English_definite_article,
+//    EnglishWord::plural_noun ,
+//    "definite_article_plural"
+//    ) ;
+//  InsertGrammarRule(
+//    EnglishWord::English_indefinite_article,
+//    EnglishWord::singular ,
+//    "indefinite_article_singular"
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "indefinite_article_singular"
+//    , "article_singular"
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "definite_article_singular"
+//    , "article_singular"
+//    ) ;
 
-  InsertGrammarRule(
-    "3rdPersPlurSubjOrObjEnumEle"
-    , EnglishWord::conjunction_and
-    , "3rdPersPlurSubjOrObjEnumEle_AND"
-    ) ;
-  InsertGrammarRule(
-    "3rdPersPlurSubjOrObjEnumEle_AND"
-    , "3rdPersPlurSubjOrObjEnumEle"
-    , "3rdPersPlurSubjOrObjEnumEle"
-    ) ;
-  InsertGrammarRule(
-    "3rdPersPlurSubjOrObjEnumEle_AND"
-    , "3rdPersSingSubjOrObjEnumEle"
-    , "3rdPersPlurSubjOrObjEnumEle"
-    ) ;
+//  InsertGrammarRulesFor3rdPersonSingular() ;
 
-  InsertGrammarRule(
-    "3rdPersPlurSubjOrObjEnumEle_AND" //"the cars and"
-    , "I"  // "I"
-    , "1stPersPlurSubjOrObjEnumEle" // = 1st person plural index / "we"
-    ) ;
-  InsertGrammarRule(
-    "I" //"I"
-    , EnglishWord::conjunction_and  // "and"
-    , "I_and" // = 1st person plural index / "we"
-    ) ;
-  InsertGrammarRule(
-    "I" //"I"
-//    , "mainVerbInfinitive"  // "and"
-    , "mainVerbInf0Obj"
-    , "1stPersSingSimplePresentClause" // = 1st person plural index / "we"
-    ) ;
-  InsertGrammarRule(
-    "I" //"I"
-    , "mainVerbInf1Obj"
-    , "1stPersSingSimplePresentSP1Obj" // = 1st person plural index / "we"
-    ) ;
+//  InsertGrammarRule(
+//    "3rdPersPlurSubjOrObjEnumEle"
+//    , EnglishWord::conjunction_and
+//    , "3rdPersPlurSubjOrObjEnumEle_AND"
+//    ) ;
+//  InsertGrammarRule(
+//    "3rdPersPlurSubjOrObjEnumEle_AND"
+//    , "3rdPersPlurSubjOrObjEnumEle"
+//    , "3rdPersPlurSubjOrObjEnumEle"
+//    ) ;
+//  InsertGrammarRule(
+//    "3rdPersPlurSubjOrObjEnumEle_AND"
+//    , "3rdPersSingSubjOrObjEnumEle"
+//    , "3rdPersPlurSubjOrObjEnumEle"
+//    ) ;
+//
+//  InsertGrammarRule(
+//    "3rdPersPlurSubjOrObjEnumEle_AND" //"the cars and"
+//    , "I"  // "I"
+//    , "1stPersPlurSubjOrObjEnumEle" // = 1st person plural index / "we"
+//    ) ;
+//  InsertGrammarRule(
+//    "I" //"I"
+//    , EnglishWord::conjunction_and  // "and"
+//    , "I_and" // = 1st person plural index / "we"
+//    ) ;
+//  InsertGrammarRule(
+//    "I" //"I"
+////    , "mainVerbInfinitive"  // "and"
+//    , "mainVerbInf0Obj"
+//    , "1stPersSingSimplePresentClause" // = 1st person plural index / "we"
+//    ) ;
+//  InsertGrammarRule(
+//    "I" //"I"
+//    , "mainVerbInf1Obj"
+//    , "1stPersSingSimplePresentSP1Obj" // = 1st person plural index / "we"
+//    ) ;
   InsertSuperClassGrammarRule(
     EnglishWord::reflexive_pronoun_myself ,
     "myself_object"
@@ -792,100 +822,100 @@ void ParseByRise::InsertFundamentalRuleIDs()
     , "2ndPersPlurSimplePresentClause" // = 1st person plural index / "we"
     ) ;
 
-  //This rule exists especially for cases where the singular and plural are the
-  //same for a noun (e.g. "1 sheep"; "2 sheep").
-  //So if only 1 enum ele as singular noun in the subject and the finite verb of the predicate
-  //matches the 3rd person singular we do not need the summarize function that
-  // examines all subject enum eles.
-  InsertGrammarRule(
-    //"article_singular"
-    "3rdPersSingSubjOrObjEnumEle"
-    , EnglishWord::mainVerbAllows0object3rdPersonSingularPresent
-    , //"singular_clause"
-      "3rdPersSingClause"
-    ) ;
-  InsertGrammarRule(
-    "3rdPersSingSubjOrObjEnumEle"
-    , EnglishWord::mainVerbAllows1object3rdPersonSingularPresent
-    , "3rdPersSingClause1Obj"
-    ) ;
-  //Insert superclass in order to treat all plural nouns possibilities
-  //(article or not, ...) the same way.
-  InsertSuperClassGrammarRule(
-    "plural_noun" ,
-    "plural_noun_superclass"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "definite_article_plural" ,
-    "plural_noun_superclass"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "plural_noun_superclass" ,
-    "3rdPersPlurSubjOrObjEnumEle"
-    ) ;
-
-  //For an object:
-  InsertSuperClassGrammarRule(
-    "3rdPersPlurSubjOrObjEnumEle" ,
-    "SubjOrObjEnumEle" ) ;
-  InsertSuperClassGrammarRule(
-    "3rdPersSingSubjOrObjEnumEle" ,
-    "SubjOrObjEnumEle" ) ;
-
-  //This rule exists especially for cases where the singular and plural are the
-  //same for a noun (e.g. "1 sheep"; "2 sheep").
-  //So if only 1 enum ele in the subject and the finite verb of the predicate
-  //matches the 3rd person plural we do not need the summarize function that
-  // examines all subject enum eles.
-  InsertGrammarRule(
+//  //This rule exists especially for cases where the singular and plural are the
+//  //same for a noun (e.g. "1 sheep"; "2 sheep").
+//  //So if only 1 enum ele as singular noun in the subject and the finite verb of the predicate
+//  //matches the 3rd person singular we do not need the summarize function that
+//  // examines all subject enum eles.
+//  InsertGrammarRule(
+//    //"article_singular"
+//    "3rdPersSingSubjOrObjEnumEle"
+//    , EnglishWord::mainVerbAllows0object3rdPersonSingularPresent
+//    , //"singular_clause"
+//      "3rdPersSingClause"
+//    ) ;
+//  InsertGrammarRule(
+//    "3rdPersSingSubjOrObjEnumEle"
+//    , EnglishWord::mainVerbAllows1object3rdPersonSingularPresent
+//    , "3rdPersSingClause1Obj"
+//    ) ;
+//  //Insert superclass in order to treat all plural nouns possibilities
+//  //(article or not, ...) the same way.
+//  InsertSuperClassGrammarRule(
+//    "plural_noun" ,
 //    "plural_noun_superclass"
-    "3rdPersPlurSubjOrObjEnumEle"
-    //means "infinitive"
-//    , EnglishWord::main_verb
-//    , "mainVerbInfinitive"
-    , "mainVerbInf0Obj"
-    , "3rdPersPluralClause"
-    ) ;
-  InsertGrammarRule(
-    "3rdPersPlurSubjOrObjEnumEle"
-    , "mainVerbInf1Obj"
-    , "3rdPersPluralClause1Obj"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "plural_noun_superclass"
-    , "SubjOrObjEnumEle"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "SubjOrObjEnumEle"
-    , "obj_enum_ele"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "pers_pron_obj"
-    , "obj_enum_ele"
-    ) ;
-  InsertGrammarRule(
-    "obj_enum_ele"
-    , EnglishWord::conjunction_and
-    , "obj_enum_ele_and"
-    ) ;
-  InsertGrammarRule(
-    "obj_enum_ele_and"
-    , "obj_enum_ele_and"
-    , "obj_enum_ele_and"
-    ) ;
-  InsertGrammarRule(
-    "obj_enum_ele_and"
-    , "obj_enum_ele"
-    , "obj_enum_ele_and_obj_enum_ele"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "obj_enum_ele_and_obj_enum_ele"
-    , "obj"
-    ) ;
-  InsertSuperClassGrammarRule(
-    "obj_enum_ele"
-    , "obj"
-    ) ;
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "definite_article_plural" ,
+//    "plural_noun_superclass"
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "plural_noun_superclass" ,
+//    "3rdPersPlurSubjOrObjEnumEle"
+//    ) ;
+//
+//  //For an object:
+//  InsertSuperClassGrammarRule(
+//    "3rdPersPlurSubjOrObjEnumEle" ,
+//    "SubjOrObjEnumEle" ) ;
+//  InsertSuperClassGrammarRule(
+//    "3rdPersSingSubjOrObjEnumEle" ,
+//    "SubjOrObjEnumEle" ) ;
+
+//  //This rule exists especially for cases where the singular and plural are the
+//  //same for a noun (e.g. "1 sheep"; "2 sheep").
+//  //So if only 1 enum ele in the subject and the finite verb of the predicate
+//  //matches the 3rd person plural we do not need the summarize function that
+//  // examines all subject enum eles.
+//  InsertGrammarRule(
+////    "plural_noun_superclass"
+//    "3rdPersPlurSubjOrObjEnumEle"
+//    //means "infinitive"
+////    , EnglishWord::main_verb
+////    , "mainVerbInfinitive"
+//    , "mainVerbInf0Obj"
+//    , "3rdPersPluralClause"
+//    ) ;
+//  InsertGrammarRule(
+//    "3rdPersPlurSubjOrObjEnumEle"
+//    , "mainVerbInf1Obj"
+//    , "3rdPersPluralClause1Obj"
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "plural_noun_superclass"
+//    , "SubjOrObjEnumEle"
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "SubjOrObjEnumEle"
+//    , "ObjEnumEle"
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "pers_pron_obj"
+//    , "ObjEnumEle"
+//    ) ;
+//  InsertGrammarRule(
+//    "ObjEnumEle"
+//    , EnglishWord::conjunction_and
+//    , "ObjEnumEle_and"
+//    ) ;
+//  InsertGrammarRule(
+//    "ObjEnumEle_and"
+//    , "ObjEnumEle_and"
+//    , "ObjEnumEle_and"
+//    ) ;
+//  InsertGrammarRule(
+//    "ObjEnumEle_and"
+//    , "ObjEnumEle"
+//    , "ObjEnumEle_and_ObjEnumEle"
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "ObjEnumEle_and_ObjEnumEle"
+//    , "obj"
+//    ) ;
+//  InsertSuperClassGrammarRule(
+//    "ObjEnumEle"
+//    , "obj"
+//    ) ;
   InsertGrammarRule(
     "3rdPersPluralClause1Obj"
     , "obj"
@@ -1019,6 +1049,15 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    //z.B. "you , I", "I , the car"
 //    , "subj_or_obj_ele_comma_and_subj_or_obj_ele"
 //    ) ;
+
+//  SAX2GrammarRuleHandler sax2grammarrulehandler(*this) ;
+//  ReadViaSAX2("grammar_rules.xml", & sax2grammarrulehandler ) ;
+  //Must create on heap, else the callback functions like "startElement" aren't
+  //called?!
+  SAX2GrammarRuleHandler * p_sax2grammarrulehandler = new
+      SAX2GrammarRuleHandler(*this) ;
+  ReadViaSAX2AndDeleteContentHandler("grammar_rules.xml",
+    p_sax2grammarrulehandler ) ;
 }
 
 //return: new rule ID
@@ -1131,7 +1170,7 @@ void ParseByRise::InsertGrammarRule(
     //When parsing, compare the neighboured grammar parts' IDs for a shared
     //superordinate grammar part ID.
     //e.g.    def_article_noun (superordinate grammar part)
-    //        /          \
+    //        /          \ (if "\"= last char:g++ warning:"multi-line comment")
     //definite article  noun
     m_stdmultimap_wGrammarPartID2SuperordinateID.insert(
       std::pair<WORD,WORD> (wGrammarRuleIDLeft,
@@ -1203,7 +1242,7 @@ WORD ParseByRise::InsertSuperClassGrammarRule(
     //e.g.   subj_or_obj_ee
     //         |
     //   definite_article_noun (superordinate grammar part)
-    //         /          \
+    //         /          \ (if "\"= last char:g++ warning:"multi-line comment")
     // definite article  noun
     m_stdmap_wGrammarPartID2SuperordinateID.insert(
       std::pair<WORD,WORD> (
@@ -1233,6 +1272,7 @@ WORD ParseByRise::InsertSuperClassGrammarRule(
     InsertRule_ID2NameAndName2IDmapping( m_wNumberOfSuperordinateRules
       , cp_chSuperclassGrammarRuleName ) ;
     ++ m_wNumberOfSuperordinateRules ;
+    return m_wNumberOfSuperordinateRules - 1 ;
   }
   else
   {
@@ -1244,6 +1284,7 @@ WORD ParseByRise::InsertSuperClassGrammarRule(
         iter->second
         )
       ) ;
+    return iter->second ;
   }
 }
 
@@ -1304,7 +1345,7 @@ void ParseByRise::InsertGrammarRule(
     //When parsing, compare the neighboured grammar parts' IDs for a shared
     //superordinate grammar part ID.
     //e.g.    def_article_noun (superordinate grammar part)
-    //        /          \
+    //        /          \ (if "\"= last char:g++ warning:"multi-line comment")
     //definite article  noun
     m_stdmultimap_wGrammarPartID2SuperordinateID.insert(
       std::pair<WORD,WORD> (wGrammarRuleIDLeft,
@@ -1332,12 +1373,18 @@ void ParseByRise::InsertGrammarRule(
   else
   {
 #ifdef _DEBUG //because I can't show iter's value with Cygwin gdb Debugger
+    //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//    #pragma GCC diagnostic ignored  "-Wunused"
     WORD wSuperordinateGrammarPartID = c_iter->second ;
+    SUPRESS_UNUSED_VARIABLE_WARNING(wSuperordinateGrammarPartID)
+    //Useless instruction just for breakpoint possibility.
+    int i ;
+    SUPRESS_UNUSED_VARIABLE_WARNING(i)
 #endif
     //When parsing, compare the neighboured grammar parts' IDs for a shared
     //superordinate grammar part ID.
     //e.g.    def_article_noun (superordinate grammar part)
-    //        /          \
+    //        /          \ (if "\"= last char:g++ warning:"multi-line comment")
     //definite article  noun
     m_stdmultimap_wGrammarPartID2SuperordinateID.insert(
       std::pair<WORD,WORD> (wGrammarRuleIDLeft,
@@ -1597,8 +1644,13 @@ bool ParseByRise:://GrammarRuleAppliesTo(
         //equivalent value in the ordering"
         if( pair_.second == false )
         {
+          //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//          #pragma GCC diagnostic ignored  "-Wunused"
           const GrammarPart & r_gp = *(pair_.first) ;
+          SUPRESS_UNUSED_VARIABLE_WARNING(r_gp)
+//          #pragma GCC diagnostic pop
           int i = 0 ;
+          SUPRESS_UNUSED_VARIABLE_WARNING(i)
           DEBUG_COUT( "already contained")
         }
 #endif
@@ -1714,8 +1766,11 @@ bool ParseByRise:://GrammarRuleAppliesTo(
           //<< "]"
           << "\n"
           );
-        //breakpoint poss.
+        //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//        #pragma GCC diagnostic ignored  "-Wunused"
+        //Useless instruction just for breakpoint possibility.
         int i = 0 ;
+        SUPRESS_UNUSED_VARIABLE_WARNING(i)
         #endif
       }
       else
@@ -2176,10 +2231,14 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
       {
 #ifdef _DEBUG
        std::string stdstrGrammarPart = GetGrammarPartName(wGrammarPartID ) ;
+       //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//       #pragma GCC diagnostic ignored  "-Wunused-variable"
        GrammarPart & r_grammarpartSubclass = //iter_mm_idx2grammarpt->second ;
            * iter_mm_token_idx2p_grammarpt->second ;
+       SUPRESS_UNUSED_VARIABLE_WARNING(r_grammarpartSubclass)
 //       WORD wGrammarPartIDsubclass = iter_mm_idx2grammarpt->first ;
        WORD wGrammarPartIDsubclass = iter_mm_token_idx2p_grammarpt->first ;
+       SUPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDsubclass)
 #endif
         //e.g. "the car"
         //     def_noun
@@ -2217,7 +2276,11 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
   //          grammarpartSuperordinate ;
   #ifdef _DEBUG
 //        WORD wIndex = iter_mm_idx2grammarpt->first ;
+    //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//    #pragma GCC diagnostic ignored  "-Wunused"
         WORD wIndex = iter_mm_token_idx2p_grammarpt->first ;
+        SUPRESS_UNUSED_VARIABLE_WARNING(wIndex)
+//    #pragma GCC diagnostic pop
   #endif
         //Do not store 1 and the same grammar part more than once in
         // -the container "leftmost token index -> grammar part"

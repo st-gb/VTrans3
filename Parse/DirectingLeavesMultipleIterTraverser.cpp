@@ -18,9 +18,9 @@ namespace ParseTreeTraverser
     , ParseByRise * p_parsebyrise
     )
     :
-    mp_grammarpartStartNode ( p_grammarpartStartNode )
-    , m_grammarpartpointer_and_parselevelCurrent (
-        p_grammarpartStartNode , 0 )
+    m_grammarpartpointer_and_parselevelCurrent (
+      p_grammarpartStartNode , 0 )
+    , mp_grammarpartStartNode ( p_grammarpartStartNode )
     , m_wParseLevel( 0)
   {
     mp_parsebyrise = p_parsebyrise ;
@@ -66,7 +66,7 @@ namespace ParseTreeTraverser
       //
       //
       //e.g.: def_article_noun
-      //        /       \
+      //        /       \_ ( if "\"= last char:g++ warning:"multi-line comment")
       //     article  noun
       //when at article: parse level is 1,
       //because "noun" was the last pushed it is the next
@@ -89,7 +89,7 @@ namespace ParseTreeTraverser
   //  subject
   //   /
   // def_article_noun
-  //  /        \
+  //  /        \       (if "\"= last char:g++ warning: "multi-line comment" )
   //article  noun
   //
   // When the algorithm reaches a node
@@ -175,7 +175,7 @@ namespace ParseTreeTraverser
         //Can be used as a callback method in subclasses of this class to keep
         // track of the current parse tree path:
         //    clause
-        //   /      \
+        //   /      \  _ (if "\"= last char:g++ warning:"multi-line comment")
         // subject verb
         // before node "clause", now at node "subject"-> parse tree path is
         //  "clause"->"subject" now
@@ -211,7 +211,7 @@ namespace ParseTreeTraverser
           //Can be used as a callback method in subclasses of this class to keep
           // track of the current parse tree path:
           //    clause
-          //   /      \
+          //   /      \   (if "\"= last char:g++ warning:"multi-line comment")
           // subject verb
           // before at node "subject", now at node "clause"-> parse tree path is
           //  "clause" now
@@ -227,7 +227,7 @@ namespace ParseTreeTraverser
           //Can be used as a callback method in subclasses of this class to keep
           // track of the current parse tree path:
           //    clause
-          //   /      \
+          //   /      \    (if "\"= last char:g++ warning:"multi-line comment")
           // subject verb
           // before at node "subject", now at node "verb"-> parse tree path is
           //  "clause"->"verb" now
@@ -248,7 +248,7 @@ namespace ParseTreeTraverser
     //            << " current size=" << m_stdvec_p_grammarpartRightNodeToProcess.size()
           << "\n" )
         //e.g.: def_article_noun
-        //        /       \
+        //        /       \ (if "\"= last char:g++ warning:"multi-line comment")
         //     article  noun
         //when at article: parse level is 1,
         //because "noun" was the last pushed it is the next

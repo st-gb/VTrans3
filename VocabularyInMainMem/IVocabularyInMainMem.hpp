@@ -52,6 +52,10 @@
 //    virtual BYTE GetTranslationType() = 0 ;
 //    virtual std::string GetGermanSingular() = 0 ;
     virtual void InsertPersonalPronouns() {} ;
+    //Define virtual constructor to avoid g++ warning in subclasses like
+    //"`class EngNounsLetterTree' has virtual functions but non-virtual
+    //destructor"
+    virtual ~IVocabularyInMainMem() {}
     virtual void InsertPersonalPronounsObjectiveForm() {}
     IVocabularyInMainMem() ;
 //    virtual void NextNoun() = 0 ;

@@ -29,6 +29,7 @@ class TranslationRule ;
 #define THIRD_PERSON_PLURAL 32 //2^5 = 32
 
 class AttributeTypeAndPosAndSize ;
+class I_UserInterface ;
 class TranslationAndGrammarPart ;
 class TranslationAndConsecutiveID ;
 
@@ -41,6 +42,7 @@ class TranslateParseByRiseTree
   std::map<std::string,std::vector<std::string> >
     m_stdmap_stdstrTranslationArrayName2vec_stdstrArrayElements ;
   std::vector<GrammarPart *> m_stdvecNodesToProcess ;
+  I_UserInterface & mr_i_userinterface ;
   ParseByRise * mp_parsebyrise ;
   //Sores the current path within the syntax tree of grammar part IDs.
   //So it can be compared whether a translation rule exists for it.
@@ -117,7 +119,8 @@ public:
     const ConditionsAndTranslation & r_cnt
     , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
     ) ;
-  TranslateParseByRiseTree(ParseByRise & r_parsebyrise );
+  TranslateParseByRiseTree(ParseByRise & r_parsebyrise ,
+    I_UserInterface & r_i_userinterface );
   ~TranslateParseByRiseTree();
   void Translate( ParseByRise & r_parsebyrise
 //    , std::string & stdstrWholeTransl

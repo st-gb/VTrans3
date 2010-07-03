@@ -7,6 +7,7 @@
 
 #include "SyntaxTreePath.hpp"
 #include <Parse/ParseByRise.hpp>
+#include <UserInterface/I_UserInterface.hpp>
 #include <string>
 #include <rest.h> //DEBUG_COUT
 #include <windef.h>
@@ -65,7 +66,8 @@ SyntaxTreePath::~SyntaxTreePath()
   }
 }
 
-void SyntaxTreePath::CreateGrammarPartIDArray(
+//0: failure
+BYTE SyntaxTreePath::CreateGrammarPartIDArray(
     const std::string & r_stdstrSyntaxTreePath
     ,     ParseByRise * p_parsebyrise )
 {
@@ -111,6 +113,17 @@ void SyntaxTreePath::CreateGrammarPartIDArray(
         {
           vec_wElements.push_back(wGrammarPartID) ;
         }
+        else //no such string in the map->return failure.
+          //return 0 ;
+          //According to http://www.cplusplus.com/doc/tutorial/exceptions/
+          //exceptions can also be data types like strings
+//          throw //stdstrCurrentElement ;
+//           GetGrammarPartIDexception(stdstrCurrentElement ) ;
+        {
+          sp_userinterface->Message( "unknown grammar part name:" +
+            stdstrCurrentElement ) ;
+          return 0 ;
+        }
       bNewEle = false ;
     }
   }
@@ -134,7 +147,9 @@ void SyntaxTreePath::CreateGrammarPartIDArray(
       "--array as string:"
       << str )
 #endif
+    return 1 ;
   }
+  return 0 ;
 }
 
 bool SyntaxTreePath::operator < ( const SyntaxTreePath & r) const
