@@ -8,16 +8,18 @@
 #ifndef _CONDITIONSANDTRANSLATION_HPP
 #define	_CONDITIONSANDTRANSLATION_HPP
 
-#include "Condition.hpp"
-#include <map>
-#include <vector>
-//#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
+#include "Condition.hpp" //class Condition
+#include <map>//class std::map
+#include <vector> //class std::vector
+#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+//class AttributeTypeAndPosAndSize
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
+//#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 
 class GrammarPart ;
 
 //Function pointer for a function that is able to change a string.
-//That is important e.g. for changing "Männer" to "Männern" for
+//That is important e.g. for changing "MÃ¤nner" to "MÃ¤nnern" for
 //"I trust the men."
 //A function is more univerally usable than a Vorschrift/ Syntax: it can
 // use a more variety because it is not restricted to pre-defined rules but

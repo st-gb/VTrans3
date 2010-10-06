@@ -8,12 +8,17 @@
 #ifndef DRAWPARSETREETRAVERSER_H_
 #define DRAWPARSETREETRAVERSER_H_
 
-#include <wxWidgets/DrawGrammarPartAttributes.hpp>
+//class DrawGrammarPartAttributes
+#include <Attributes/DrawGrammarPartAttributes.hpp>
+//base class ParseTreeTraverser::DirectingLeavesMultipleIterTraverser
 #include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
-#include <map>
-#include <wx/dc.h>
+#include <map> //class std::map
+//#include <wx/dc.h>
+#include <wx/gdicmn.h> //class wxSize
 
+//Forward declarations
 class GrammarPart ;
+class wxDC ;
 
 class DrawParseTreeTraverser
   : public ParseTreeTraverser::DirectingLeavesMultipleIterTraverser

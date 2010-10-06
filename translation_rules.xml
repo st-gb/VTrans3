@@ -7,6 +7,8 @@
     syntax_tree_path="singular_noun"
     attribute_name="German_singular"
   />
+  
+  <!--translation of predicate/ (finite) verb-->
   <translation_rule 
     syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
     attribute_name="GerMainVerb3rdPersPlur" 
@@ -15,6 +17,21 @@
     syntax_tree_path="3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
     attribute_name="GerMainVerb3rdPersPlur" 
   />
+  
+  <!-- translation of finite verb for "I" / 1st person sing.-->
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePresentClause.mainVerbInf0Obj"
+    attribute_name="GermanMainVerb1stPersonSingular" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj"
+    attribute_name="GermanMainVerb1stPersonSingular" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePresentClauseAllow2Obj.mainVerbInf2Obj"
+    attribute_name="GermanMainVerb1stPersonSingular" 
+  />
+
   <!--<translation_rule 
     syntax_tree_path="3rdPersSingClauseAllows0Obj.MainVerb3rdPersSingPres0Obj"
     attribute_name="GerMainVerb3rdPersSing" 
@@ -68,13 +85,52 @@
     translation="die">
   </translation_rule>
 
-  <!--define article singular-->
+  <!--definite article singular-->
   <translation_rule 
     syntax_tree_path="definite_article_singular.definite_article"
     translation="der">
     <condition syntax_tree_path="definite_article_singular.singular_noun"
       attribute_name="German_noun_article"
       byte_attribute_value="0"
+    />
+  </translation_rule>
+  <!-- e.g. I trust the man." -> ich vertraue DEM Mann-->
+  <translation_rule 
+    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    translation="dem">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+    <condition syntax_tree_path="1stPersSingSimplePresentClause1Obj.1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <!-- e.g. the sheep trusts the man." -> ...vertraut DEM Mann-->
+  <translation_rule 
+    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    translation="dem">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <!-- e.g. the sheep trusts the child." -> ...vertraut DEM Kind-->
+  <translation_rule 
+    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    translation="dem">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
     />
   </translation_rule>
   <translation_rule 
@@ -93,6 +149,7 @@
       byte_attribute_value="2"
     />
   </translation_rule>
+  
   <!--INdefine article singular-->
   <translation_rule 
     syntax_tree_path="indefinite_article_singular.indefinite_article"
@@ -156,7 +213,7 @@
   <translation_rule 
     syntax_tree_path="myself"
     translation="mir">
-    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+    <condition syntax_tree_path="1stPersSingSimplePresentClause1Obj.1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj"
       attribute_name="IsDativeVerb"
       byte_attribute_value="1"
     />
@@ -173,10 +230,20 @@
       byte_attribute_value="1"
     />
   </translation_rule>
+  <!--Die Schafe vertrauen den Kindern-->
   <translation_rule 
     syntax_tree_path="3rdPersPlurClauseWith1Obj.obj.*.definite_article_plural.definite_article"
     translation="den">
     <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+      attribute_name="IsDativeVerb"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <!--Das Schaf vertraut den Kindern-->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.obj.*.definite_article_plural.definite_article"
+    translation="den">
+    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
       attribute_name="IsDativeVerb"
       byte_attribute_value="1"
     />
@@ -197,4 +264,5 @@
       byte_attribute_value="1"
     />
   </translation_rule>
+  
 </translation_rules>

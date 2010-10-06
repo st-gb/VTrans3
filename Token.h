@@ -3,7 +3,7 @@
 
   #include <vector>
   #include <string>
-  #include "rest.h" //for CStringVector etc.
+  #include "rest.h" //for VTrans_string_typeVector etc.
   #include <string_type.hpp>
   //#ifndef _WINDOWS
   //	#include <typedefs.h> //for DWORD etc.

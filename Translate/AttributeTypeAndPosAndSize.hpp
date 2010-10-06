@@ -7,6 +7,7 @@
 
 #ifndef ATTRIBUTETYPEANDPOSANDSIZE_HPP_
 #define ATTRIBUTETYPEANDPOSANDSIZE_HPP_
+
 #include <windef.h> //BYTE, WORD
 
 //This class models an easy access to the data in a VocabularyAndTranslation
@@ -28,6 +29,13 @@ public:
   WORD m_wIndex ;
   //bit length of the attribute data.
   WORD m_wLenght ;
+  //By defining a default constructor avoid g++ warning "In member function
+  // `void TranslateParseByRiseTree::AddTranslationRule(TranslationRule*,
+  // const ConditionsAndTranslation&)':
+  // c:/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/c++/3.4.5/bits/
+  // stl_uninitialized.h:82: warning: '__cur' might be used uninitialized in
+  // this function.
+  AttributeTypeAndPosAndSize() {}
   AttributeTypeAndPosAndSize(
     BYTE byType,
     WORD wIndex,

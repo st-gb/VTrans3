@@ -22,33 +22,32 @@
 //#include <wx/filedlg.h>
 //#include <wx/defs.h>
 //#include <wx/frame.h>
-//#include <wx/textctrl.h>
 //#include <wx/event.h> //for EVT_CLOSE
-#include <wx/html/htmlwin.h>
+//#include <wx/html/htmlwin.h>
+#include <wx/sizer.h> //class wxBoxSizer
+#include <wx/splitter.h> //class wxSplitterWindow
+#include <wx/textctrl.h> //class wxTextCtrl
 
 #include "wxTextInputDlg.hpp"
-#include "VTransApp.hpp" //::wxGetApp()
+#include <IO.hpp> //class OneLinePerWordPair
+#include <bitmaps/resolve_superclasses.xpm> //for array resolve_superclasses_xpm
+#include <bitmaps/resolve_1parse_level.xpm> //for array resolve_1parse_level_xpm
+#include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
 #include <Translate/TranslateTreeTraverser.hpp> //TranslationAndGrammarPart
-#include "wxParseTreePanel.hpp"
-#include "wxHTMLfileOutput.hpp"
-
-#include <sstream>
-
+//class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
+#include <wxWidgets/user_interface_control_actions.h> //for enum
+#include <wxWidgets/VTransApp.hpp> //::wxGetApp()
+//UnLoadAndLoadDictionary(wxWindow *);
+#include <wxWidgets/UserInterface/UserInterface.hpp>
+#include <wxWidgets/UserInterface/wxParseTreePanel.hpp>//class wxParseTreePanel
+#include <wxWidgets/wxHTMLfileOutput.hpp> //class wxHTMLfileOutput
+
+#include <sstream>//class std::stringstream
+
+using namespace wxWidgets ;
 
 ///////////////////////////////////////////////////////////////////////////
-
-//An enum guarantees a unique number for each element.
-enum
-{
-  ID_Close = 1 ,
-  ID_LoadDictionary ,
-  ID_ReInitGrammarRules ,
-  ID_ShowTokenIndex2GrammarPart ,
-  ID_ResolveSuperclass ,
-  ID_Resolve1ParseLevel ,
-  ID_Translate ,
-};
 
 BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
   EVT_BUTTON( ID_Translate , wxTextInputDlg::OnTranslateButton)
@@ -59,15 +58,153 @@ BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
   EVT_BUTTON( ID_ResolveSuperclass,
     wxTextInputDlg::OnResolveSuperclassGrammarParts )
   EVT_BUTTON( ID_Resolve1ParseLevel , wxTextInputDlg::OnResolve1ParseLevelButton)
+  EVT_BUTTON( ID_Info, wxTextInputDlg::OnInfoButton)
   EVT_CLOSE( wxTextInputDlg::OnClose)
 END_EVENT_TABLE()
 
-wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id,
-  const wxString& title, const wxPoint& pos, const wxSize& size, long style )
-: wxDialog( parent, id, title, pos, size, style )
- , mp_wxhtmlwindow( NULL)
+void wxTextInputDlg::AddButtons()
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+  wxButton * p_wxbutton ;
+  wxBoxSizer * p_boxsizerButtons = new wxBoxSizer( wxHORIZONTAL ) ;
+  p_wxbutton = new //wxButton(
+    wxBitmapButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_Translate
+//    , wxT("t")
+    , wxBitmap( translate_bitmap_xpm)
+    ) ;
+  p_wxbutton->SetToolTip( wxT("translate")) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_wxbutton = new //wxButton(
+    wxBitmapButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_Resolve1ParseLevel
+//    , wxT("1 L")
+    , wxBitmap( resolve_1parse_level_xpm )
+    ) ;
+  p_wxbutton->SetToolTip( wxT("resolve 1 parse level")) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_wxbutton = new //wxButton(
+    wxBitmapButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_ResolveSuperclass
+//    , wxT("res SC")
+    , wxBitmap( resolve_superclasses_xpm)
+    ) ;
+  p_wxbutton->SetToolTip( wxT("resolve superclasses")) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_wxbutton = new wxButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_ReInitGrammarRules
+    , wxT("re G")
+    ) ;
+  p_wxbutton->SetToolTip( wxT("re-init grammar")) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    , 0 //stretch factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_wxbutton = new wxButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_ShowTokenIndex2GrammarPart
+    , wxT("i2g")
+    ) ;
+  p_wxbutton->SetToolTip( wxT("show token index 2 grammar part map content")) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_wxbutton = new wxButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_LoadDictionary
+    , wxT("dict")
+    ) ;
+  p_wxbutton->SetToolTip(wxT("re-load dictionary...")) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    //stretch factor. 0=do not stretch
+    , 0
+      //0
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_wxbutton = new wxButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_Info
+    , wxT("info")
+    ) ;
+  p_wxbutton->SetToolTip( wxT("show information")) ;
+  p_boxsizerButtons->Add(
+    p_wxbutton
+    //stretch factor. 0=do not stretch
+    , 0
+      //0
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+  p_boxsizerOuter->Add( p_boxsizerButtons ) ;
+}
+
+wxTextInputDlg::wxTextInputDlg(
+  wxWindow * p_wxwindowParent,
+  wxWindowID wxwindow_id,
+  const wxString & cr_wxstrTitle,
+  const wxPoint & cr_wxpointWindowPosition,
+  const wxSize & cr_wxsizeWindow,
+  long style
+  )
+  : wxDialog( p_wxwindowParent, wxwindow_id, cr_wxstrTitle,
+    cr_wxpointWindowPosition, cr_wxsizeWindow, style )
+//  , mp_wxhtmlwindow( NULL)
+  , m_parsebyrise( ::wxGetApp() )
+{
+	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 //  if( ! mp_wxhtmlwindow )
 //  {
@@ -87,10 +224,7 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id,
 //        "<p>\n"
 //          "<select name=\"top5\" size=\"3\">\n"
 //            "<option>Heino</option>\n"
-//            "<option>Michael Jackson</option>\n"
 //            "<option>Tom Waits</option>\n"
-//            "<option>Nina Hagen</option>\n"
-//            "<option>Marianne Rosenberg</option>\n"
 //          "</select>\n"
 //        "</p>\n"
 //      "</form>\n"
@@ -103,8 +237,6 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id,
 //    mp_wxhtmlwindow->SetRelatedStatusBar(0);
 //    mp_wxhtmlwindow->Show(true) ;
 //  }
-
-  wxButton * p_wxbutton ;
 
   mp_wxsplitterwindow = new wxSplitterWindow( this, wxID_ANY ) ;
 //  mp_wxpanelTop = new wxPanel( mp_wxsplitterwindow ) ;
@@ -195,8 +327,8 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id,
     1, //cols
     0,
     0 );
-  wxBoxSizer * p_boxsizerOuter = new wxBoxSizer( wxVERTICAL ) ;
-  wxBoxSizer * p_boxsizerButtons = new wxBoxSizer( wxHORIZONTAL ) ;
+  p_boxsizerOuter = new wxBoxSizer( wxVERTICAL ) ;
+  AddButtons() ;
 	
 //	gSizer3->Add( m_textCtrl7, 1, wxALL|wxEXPAND, 5 );
 
@@ -211,108 +343,6 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id,
 //    , mp_wxparsetreepanel
 //    ) ;
 
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    , //wxID_ANY
-    ID_Translate
-    , wxT("t")
-    ) ;
-  p_wxbutton->SetToolTip( wxT("translate")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    , 0 //strech factor. 0=do not stretch
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    , //wxID_ANY
-    ID_Resolve1ParseLevel
-    , wxT("1 L")
-    ) ;
-  p_wxbutton->SetToolTip( wxT("resolve 1 parse level")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    , 0 //strech factor. 0=do not stretch
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    , //wxID_ANY
-    ID_ResolveSuperclass
-    , wxT("res SC")
-    ) ;
-  p_wxbutton->SetToolTip( wxT("resolve superclasses")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    , 0 //strech factor. 0=do not stretch
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    , //wxID_ANY
-    ID_ReInitGrammarRules
-    , wxT("re G")
-    ) ;
-  p_wxbutton->SetToolTip( wxT("re-init grammar")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    , 0 //strech factor. 0=do not stretch
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    , //wxID_ANY
-    ID_ShowTokenIndex2GrammarPart
-    , wxT("i2g")
-    ) ;
-  p_wxbutton->SetToolTip( wxT("show token index 2 grammar part map content")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    , 0 //strech factor. 0=do not stretch
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    //this
-    , //wxID_ANY
-    ID_LoadDictionary
-    , wxT("dict")
-    ) ;
-  p_wxbutton->SetToolTip(wxT("re-load dictionary...")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    //m_textCtrl7
-    //p_wxbutton
-    //strech factor. 0=do not stretch
-    , 0
-      //0
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
-  p_boxsizerOuter->Add( p_boxsizerButtons ) ;
 	//gSizer3->Add( m_panel1, 1, wxEXPAND | wxALL, 5 );
   //gSizer3->Add( p_wxbutton, 0 , wxALL, 5 );
 	//p_gridsizerOuter->Add(
@@ -336,12 +366,11 @@ wxTextInputDlg::wxTextInputDlg( wxWindow* parent, wxWindowID id,
 //    , 2 );
 	
   //m_panelSplitterTop->Layout() ;
-	this->SetSizer( //p_gridsizerOuter
+	SetSizer( //p_gridsizerOuter
     p_boxsizerOuter
     );
-	this->SetAutoLayout(true);
-
-	this->Layout();
+	SetAutoLayout(true);
+	Layout();
 }
 
 wxTextInputDlg::~wxTextInputDlg()
@@ -352,10 +381,11 @@ void wxTextInputDlg::GetEntireInputText(std::string & r_stdstrInputText)
 {
 //  std::string stdstrInputText ;
   wxString wxstringWholeInputText ;
-  wxTextPos wxtextposNumberOfCharacters  ;
-  wxtextposNumberOfCharacters = mp_textctrlEnglishText->GetLastPosition() ;
-  wxstringWholeInputText = mp_textctrlEnglishText->GetRange(0 ,
-    wxtextposNumberOfCharacters) ;
+//  wxTextPos wxtextposNumberOfCharacters  ;
+//  wxtextposNumberOfCharacters = mp_textctrlEnglishText->GetLastPosition() ;
+//  wxstringWholeInputText = mp_textctrlEnglishText->GetRange(0 ,
+//    wxtextposNumberOfCharacters) ;
+  wxstringWholeInputText = mp_textctrlEnglishText->GetValue() ;
   r_stdstrInputText = std::string( wxstringWholeInputText.c_str() ) ;
 //  return stdstrInputText ;
 }
@@ -367,17 +397,19 @@ void wxTextInputDlg::OnClose( wxCloseEvent & wxcmd )
   //::wxGetApp().ExitMainLoop() ;
 }
 
+void wxTextInputDlg::OnInfoButton( wxCommandEvent & wxcmd )
+{
+  ::wxMessageBox(
+    wxString::Format(
+      wxT("# voc pairs:%lu") ,
+      OneLinePerWordPair::s_dwNumberOfVocabularyPairs
+      )
+    , wxT("info") ) ;
+}
+
 void wxTextInputDlg::OnLoadDictionaryButton( wxCommandEvent & wxcmd )
 {
-  wxFileDialog wxfiled(
-    this ,
-    "Choose a dict file" ,
-    "" , //defaultDir
-    "" //const wxString&  defaultFile = ""
-    , "*.txt" //const wxString&  wildcard = "*.*"
-    , wxOPEN | wxFILE_MUST_EXIST //long style = 0,
-    ) ;
-  wxfiled.ShowModal() ;
+  UnLoadAndLoadDictionary( this ) ;
 }
 
 void wxTextInputDlg::OnReInitGrammarRulesButton( wxCommandEvent & wxcmd )
@@ -443,48 +475,29 @@ void wxTextInputDlg::OnShowTokenIndex2GrammarPartButton( wxCommandEvent & wxcmd 
   mp_textctrlGermanText->SetValue( stdstr ) ;
 }
 
-void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
-{
-  std::string stdstrWholeInputText ;
-  GetEntireInputText(stdstrWholeInputText) ;
-
-  m_parsebyrise.ClearParseTree() ;
-  m_parsebyrise.CreateInitialGrammarParts ( stdstrWholeInputText ) ;
-  DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
-  m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
-
-  TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise
-    , ::wxGetApp() ) ;
-  DEBUG_COUT("before translation\n")
-//  std::string stdstrWholeTransl ;
-  std::vector<std::string> stdvec_stdstrWholeTransl ;
-  std::vector<std::vector<TranslationAndGrammarPart> >
-    stdvec_stdvecTranslationAndGrammarPart ;
-  std::vector<std::vector<TranslationAndConsecutiveID> >
-    stdvec_stdvecTranslationAndConsecutiveID ;
-  translateParseByRiseTree.Translate( m_parsebyrise,
-    stdvec_stdstrWholeTransl ,
+std::string wxTextInputDlg::GetAllTranslationPossibilites(
+  const std::vector<std::string> & stdvec_stdstrWholeTransl ,
+  const std::vector<std::vector<TranslationAndGrammarPart> > &
     stdvec_stdvecTranslationAndGrammarPart
-//    stdvec_stdvecTranslationAndConsecutiveID
-    ) ;
-
-  std::string stdstrAllPoss ;
+  )
+{
+  std::string stdstrAllPossibilities ;
   for( std::vector<std::string>::const_iterator c_iter_stdvec_stdstr =
       stdvec_stdstrWholeTransl.begin() ;
       c_iter_stdvec_stdstr != stdvec_stdstrWholeTransl.end()
       ; ++ c_iter_stdvec_stdstr
       )
   {
-    stdstrAllPoss += *c_iter_stdvec_stdstr + "\n" ;
+    stdstrAllPossibilities += *c_iter_stdvec_stdstr + "\n" ;
   }
   for( std::vector< std::vector<TranslationAndGrammarPart
-//      TranslationAndConsecutiveID
+  //      TranslationAndConsecutiveID
       > >::const_iterator
       c_iter_stdvec_stdvec =
       stdvec_stdvecTranslationAndGrammarPart.begin() ;
-//      stdvec_stdvecTranslationAndConsecutiveID.begin() ;
+  //      stdvec_stdvecTranslationAndConsecutiveID.begin() ;
       c_iter_stdvec_stdvec != stdvec_stdvecTranslationAndGrammarPart.end() ;
-//          stdvec_stdvecTranslationAndConsecutiveID.end() ;
+  //          stdvec_stdvecTranslationAndConsecutiveID.end() ;
       ++ c_iter_stdvec_stdvec
       )
   {
@@ -507,11 +520,46 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
           << " addr. with ID:"
           << std::ios::hex << c_iter_stdvec->mp_grammarpart << " " ;
       }
-//          << c_iter_stdvec->m_wConsecutiveID  ;
+  //          << c_iter_stdvec->m_wConsecutiveID  ;
     }
-    stdstrAllPoss += stdstrstream.str() + "\n";
+    stdstrAllPossibilities += stdstrstream.str() + "\n";
   }
-  mp_textctrlGermanText->SetValue(stdstrAllPoss ) ;
+  return stdstrAllPossibilities ;
+}
+
+void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
+{
+  std::string stdstrWholeInputText ;
+  GetEntireInputText(stdstrWholeInputText) ;
+
+  m_parsebyrise.ClearParseTree() ;
+  m_parsebyrise.CreateInitialGrammarParts ( stdstrWholeInputText ) ;
+  DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
+  m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
+
+  TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise
+    , ::wxGetApp() ) ;
+  DEBUG_COUT("before translation\n")
+//  std::string stdstrWholeTransl ;
+  std::vector<std::string> stdvec_stdstrWholeTransl ;
+  std::vector<std::vector<TranslationAndGrammarPart> >
+    stdvec_stdvecTranslationAndGrammarPart ;
+  std::vector<std::vector<TranslationAndConsecutiveID> >
+    stdvec_stdvecTranslationAndConsecutiveID ;
+
+  translateParseByRiseTree.Translate(
+    m_parsebyrise,
+    stdvec_stdstrWholeTransl ,
+    stdvec_stdvecTranslationAndGrammarPart
+//    stdvec_stdvecTranslationAndConsecutiveID
+    ) ;
+
+  std::string stdstrAllPossibilities = GetAllTranslationPossibilites(
+    stdvec_stdstrWholeTransl,
+    stdvec_stdvecTranslationAndGrammarPart ) ;
+
+  mp_textctrlGermanText->SetValue(stdstrAllPossibilities ) ;
+
   wxHTMLfileOutput wxhtml_file_output(
 //    stdvec_stdvecTranslationAndConsecutiveID
     stdvec_stdvecTranslationAndGrammarPart

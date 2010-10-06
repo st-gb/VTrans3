@@ -11,17 +11,17 @@
     #pragma hdrstop
 #endif
 
-// for all others, include the necessary headers (this file is usually all you
-// need because it includes almost all "standard" wxWidgets headers)
+// "for all others, include the necessary headers (this file is usually all you
+// need because it includes almost all "standard" wxWidgets headers)"
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
 #endif
 
-#include <wx/file.h>
+#include <wx/file.h>//class wxFile
 
 #include "wxHTMLfileOutput.hpp"
-#include <Translate/TranslateTreeTraverser.hpp>
-#include <set>
+#include <Translate/TranslateTreeTraverser.hpp>//class TranslationAndGrammarPart
+#include <set>//class std::set
 
 wxHTMLfileOutput::wxHTMLfileOutput(
 //  const std::vector<std::vector<TranslationAndConsecutiveID> > &
@@ -97,14 +97,15 @@ void wxHTMLfileOutput::writeFile(
     wxstrHTML += "<head>\n" ;
     wxstrHTML += "<script type=\"text/javascript\">\n" ;
     //http://de.selfhtml.org/javascript/intro.htm:
-    //"Wenn Sie dies verhindern mˆchten, sollten Sie den JavaScript-Code
+    //"Wenn Sie dies verhindern m√∂chten, sollten Sie den JavaScript-Code
     //zwischen <script type="text/javascript"> und </script>  in einen Seite
-    //HTML-Kommentar  einschlieﬂen."
+    //HTML-Kommentar  einschlie√üen."
     wxstrHTML += "<!--\n"
         "function selected_options_to_textarea() {\n "
         //"document.transl.transl_text.value = \"lllsd\" ;\n "
         " strAllToken = \"\";\n"
-        "for( var i=0; i<document.formTranslationsSelects.elements.length ; i ++ )\n"
+        "for( var i=0; i<document.formTranslationsSelects.elements.length ; "
+        "i ++ )\n"
         "{\n"
           "strAllToken += "
 //          "document.transl.select0.options["
@@ -119,7 +120,8 @@ void wxHTMLfileOutput::writeFile(
     "</script>\n" ;
     wxstrHTML += "</head>\n" ;
     WORD wIndex = 0 ;
-    std::set<std::string> stdset_stdstr ;
+    std::set<std::string>
+      stdset_stdstrTranslationPossibilitiesForCurrentWordIndex ;
 //    WORD wStringLength ;
 //    std::string::size_type stdstr_sizeFindPos ;
     std::string stdstrToken ;
@@ -161,7 +163,7 @@ void wxHTMLfileOutput::writeFile(
     do
     {
       stdset_wTokenIndex.clear() ;
-      stdset_stdstr.clear() ;
+      stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.clear() ;
       wTranslationPossibilityIndex = 0 ;
       //loop for every possibility.
 //      for( std::vector<std::vector<TranslationAndConsecutiveID> >::
@@ -195,18 +197,23 @@ void wxHTMLfileOutput::writeFile(
   #ifdef _DEBUG
           const std::string & r_stdstrToken =
               ar_c_iter_vec[wTranslationPossibilityIndex]->m_stdstrTranslation ;
-          stdset_stdstr.insert( r_stdstrToken ) ;
+          stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.insert(
+            r_stdstrToken ) ;
   #else
-          stdset_stdstr.insert( ar_c_iter_vec[wTranslationPossibilityIndex]->
+          stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.insert(
+            ar_c_iter_vec[wTranslationPossibilityIndex]->
             m_stdstrTranslation ) ;
   #endif
           ++ ar_c_iter_vec[wTranslationPossibilityIndex] ;
         }
       }
-      if( stdset_stdstr.size() > 0 )
+      if( stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.size() > 0 )
       {
-        stdstrWholeTranslation += *stdset_stdstr.begin() + " " ;
-        if( stdset_stdstr.size() > 1 )
+        stdstrWholeTranslation +=
+          * stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin()
+          + " " ;
+        if( stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.size()
+          > 1 )
         {
           bMultipleOptions = true ;
           //http://de.selfhtml.org/html/formulare/auswahl.htm:
@@ -236,10 +243,11 @@ void wxHTMLfileOutput::writeFile(
           }
           wxstrHTML += " size=1>\n" ;
           for( std::set<std::string>::const_iterator c_iterToken =
-              stdset_stdstr.begin() ;
-              c_iterToken != stdset_stdstr.end() ;
-              ++ c_iterToken
-              )
+            stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin() ;
+            c_iterToken !=
+            stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.end() ;
+            ++ c_iterToken
+             )
           {
             wxstrHTML += "<option>" ;
             wxstrHTML += *c_iterToken ;
@@ -247,20 +255,24 @@ void wxHTMLfileOutput::writeFile(
           }
           wxstrHTML += "</select>\n" ;
         }
-        else
+        else //if( stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.
+          // size() > 1 )
         {
-          wxstrHTML += *stdset_stdstr.begin() ;
+          wxstrHTML +=
+            * stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin() ;
           wxstrHTML += "<select " ;
           wxstrHTML += wxString::Format("name=\"select%u\" ", wTokenIndex ) ;
           wxstrHTML += " style=\"visibility:hidden;\" >\n" ;
           wxstrHTML += "<option>" ;
-          wxstrHTML += *stdset_stdstr.begin() ;
+          wxstrHTML +=
+            * stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin() ;
           wxstrHTML += "</option>\n" ;
           wxstrHTML += "</select>" ;
         }
       }
       ++ wTokenIndex ;
-    }while( ! stdset_stdstr.empty() ) ;
+    }while( ! stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.empty()
+        ) ;
     wxstrHTML += "</form>\n" ;
 
     wxstrHTML +=

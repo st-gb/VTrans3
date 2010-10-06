@@ -8,10 +8,11 @@
 #ifndef SYNTAXTREEPATH_HPP_
 #define SYNTAXTREEPATH_HPP_
 
-#include <string>
-#include <vector>
-#include <rest.h> //DEBUG_COUT(...)
-#include <exception>
+#include <string> //class std::string
+#include <vector> //class std::vector
+//#include <rest.h> //DEBUG_COUT(...)
+#include <windef.h> //for BYTE
+//#include <exception>//class std::exception
 
 class GetGrammarPartIDexception
 //  : public std::exception
@@ -58,9 +59,10 @@ typedef unsigned short WORD ;
 // "definite_article_plural.definite_article.*.object"
 #define KLEENE_STAR_OPERATOR 65535
 
-class ParseByRise ;
+//Forward declarations
 class GrammarPart ;
 class I_UserInterface ;
+class ParseByRise ;
 
 //Used to compare whether a condition of a translation rule applies.
 //Therefore it created a syntax tree path as an ID array from the
@@ -79,6 +81,12 @@ class SyntaxTreePath
   //unsigned char  m_byOtherReferencesToGrammarPartIDArray ;
   bool m_bReferringOthersGrammarPartIDArray ;
 public:
+  enum CreateGrammarPartIDArray_return_values
+  {
+    unknown_grammar_part_name = 0 ,
+    all_grammar_parts_resolved ,
+    no_grammar_part_resolved
+  };
   //for showing an error message when getting ID from grammar part name failed.
   static I_UserInterface * sp_userinterface ;
   ParseByRise * mp_parsebyrise ;

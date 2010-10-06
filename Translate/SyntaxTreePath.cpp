@@ -6,11 +6,13 @@
  */
 
 #include "SyntaxTreePath.hpp"
-#include <Parse/ParseByRise.hpp>
+#include <Parse/ParseByRise.hpp>//class ParseByRise
+#include <preprocessor_macros/logging_preprocessor_macros.h>//DEBUG_COUTN(...)
+//for sp_userinterface->Message(const std::string & )
 #include <UserInterface/I_UserInterface.hpp>
-#include <string>
-#include <rest.h> //DEBUG_COUT
-#include <windef.h>
+#include <string>//class std::string
+//#include <rest.h> //DEBUG_COUT
+#include <windef.h>//for WORD
 
 SyntaxTreePath::SyntaxTreePath(
     std::string & r_stdstrSyntaxTreePath
@@ -122,7 +124,7 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
         {
           sp_userinterface->Message( "unknown grammar part name:" +
             stdstrCurrentElement ) ;
-          return 0 ;
+          return unknown_grammar_part_name ;
         }
       bNewEle = false ;
     }
@@ -130,7 +132,7 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
   DEBUG_COUT("SyntaxTreePath::CreateGrammarPartIDArray size:" <<
       vec_wElements.size() + "\n" )
   WORD * ar_wElements = new WORD [ vec_wElements.size() ] ;
-  if( ar_wElements )
+  if( ar_wElements ) //<> 0
   {
     WORD wIndex = 0 ;
     for( std::vector<WORD>::const_iterator iter = vec_wElements.begin() ;
@@ -147,9 +149,9 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
       "--array as string:"
       << str )
 #endif
-    return 1 ;
+    return all_grammar_parts_resolved ;
   }
-  return 0 ;
+  return no_grammar_part_resolved ;
 }
 
 bool SyntaxTreePath::operator < ( const SyntaxTreePath & r) const

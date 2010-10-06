@@ -10,7 +10,8 @@
 
 #include <windef.h> //for BYTE
 #include <string> //std::string
-#include <Translate/SyntaxTreePath.hpp>
+#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+#include <Translate/SyntaxTreePath.hpp>//class SyntaxTreePath
 
 //Condition for translation. E.g. that could mean:
 //current grammar part: English definite article.
@@ -30,13 +31,20 @@ public:
   SyntaxTreePath m_syntaxtreepath ;
 
   //void SetSyntaxTreePath(std::string & r_stdstrSyntaxTreePath)
-  void SetSyntaxTreePath(const char * p_ch_SyntaxTreePath
+  BYTE SetSyntaxTreePath(const char * p_ch_SyntaxTreePath
      , ParseByRise * p_parsebyrise )
   {
     std::string stdstrSyntaxTreePath (p_ch_SyntaxTreePath) ;
-    m_syntaxtreepath.CreateGrammarPartIDArray( //r_stdstrSyntaxTreePath
+    return m_syntaxtreepath.CreateGrammarPartIDArray( //r_stdstrSyntaxTreePath
         stdstrSyntaxTreePath , p_parsebyrise  ) ;
   }
+  //By defining a default constructor avoid g++ warning "In member function
+  // `void TranslateParseByRiseTree::AddTranslationRule(TranslationRule*,
+  // const ConditionsAndTranslation&)':
+  // c:/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/c++/3.4.5/bits/
+  // stl_uninitialized.h:82: warning: '__cur' might be used uninitialized in
+  // this function.
+  Condition() {}
   #ifdef _DEBUG
   ~Condition()
   {

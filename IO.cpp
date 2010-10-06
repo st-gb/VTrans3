@@ -4,7 +4,8 @@
 //waehrend der Suche nach dem vorkompilierten Header.
 #include "StdAfx.h"
 #include "IO.hpp"
-#include "rest.h" //for LOGN() etc.
+//#include "rest.h"
+#include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include "Word.hpp" //for "class Word" etc.
 #include <fstream> //for std::ofstream
 #include <ios>//fo ios_base
@@ -27,6 +28,9 @@ extern std::ofstream ofstreamLogFile; //for LOGN(...)
 extern WordList wordList;
 
 LetterTree g_lettertree ;
+
+DWORD OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
+
 //VocabularyAndTranslation * g_pvocabularyandtranslation ;
 
 //CString EncodeToUTF8(LPCTSTR szSource)
@@ -1304,6 +1308,7 @@ BYTE OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
 //					pWordNodeCurrent->m_pWordNodeNext=new WordNode();
 //					pWordNodeCurrent->m_pWordNodeNext->m_pWord=extract(str,TRUE,ret);
           OneLinePerWordPair::extract(str,TRUE,ret);
+          ++ OneLinePerWordPair::s_dwNumberOfVocabularyPairs ;
           #ifdef _DEBUG
           const char * pch = str.c_str() ;
           pch = 0 ;

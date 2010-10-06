@@ -8,8 +8,8 @@
 #ifndef _VTRANSAPP_HPP
 #define	_VTRANSAPP_HPP
 
-#include <wx/app.h>
-#include <UserInterface/I_UserInterface.hpp>
+#include <wx/app.h>//base class wxApp
+#include <UserInterface/I_UserInterface.hpp>//base class I_UserInterface
 
 class VTransApp 
   : public wxApp
@@ -19,7 +19,8 @@ public:
   virtual bool OnInit();
   VTransApp();
   VTransApp(const VTransApp& orig);
-  void Message( const std::string & str ) ;
+  void Message( const std::string & cr_stdstr ) ;
+  void Message( const std::wstring & cr_stdwstr ) ;
   virtual ~VTransApp();
 private:
 

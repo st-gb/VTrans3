@@ -1,4 +1,4 @@
-#pragma once
+#pragma once //Include guard
 
 //#include "../IVocabularyInMainMem.hpp"
 
@@ -66,6 +66,7 @@ public:
   std::set<VocabularyAndTranslation *> *
     m_psetpvocabularyandtranslationDeletedYet ;
 
+  void FreeMemory() ;
   LetterNode(BYTE byArraySize, LetterTree * plt ) ;
 
   bool NotDeletedYet(VocabularyAndTranslation * pvoc)

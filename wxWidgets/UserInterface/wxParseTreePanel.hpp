@@ -8,15 +8,19 @@
 #ifndef WXPARSETREEPANEL_H_
 #define WXPARSETREEPANEL_H_
 
-#include <wx/panel.h>
-#include <wx/dcclient.h> //for class wxPaintDC
-#include <map> //std::map
-#include <vector> //std::vector
+#include <wx/panel.h> //base class wxPanel
+//#include <wx/dcclient.h> //for class wxPaintDC
+#include <map> //class std::map
+#include <vector> //class std::vector
 #include <windef.h> //for WORD
-#include "DrawGrammarPartAttributes.hpp"
+////class DrawGrammarPartAttributes
+//#include <Attributes/DrawGrammarPartAttributes.hpp>
 
-class ParseByRise ;
+//Forward declarations (faster than #include)
+class DrawGrammarPartAttributes ;
 class GrammarPart ;
+class ParseByRise ;
+class wxDC ;
 
 class wxParseTreePanel
   : public wxPanel

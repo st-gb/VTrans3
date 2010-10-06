@@ -9,12 +9,14 @@
 #define	_PARSEBYRISE_HPP
 
 #include <windef.h> //for DWORD
-#include <string> //std::string
-#include <map>
-#include <set>
-#include "Token.h" //for PositionstdstringVector
-#include "GrammarPart.hpp"
+#include <string> //class std::string
+#include <map> //class std::map
+#include <set> //class std::set
+#include "Token.h" //class PositionStringVector
+#include "GrammarPart.hpp" //class GrammarPart
 
+//Forward declarations (faster than #include)
+class I_UserInterface ;
 class VocabularyAndTranslation ;
 
 class GrammarRule
@@ -33,9 +35,12 @@ public:
 
 class ParseByRise
 {
-//private:
 public:
-  WORD m_wParseLevel ;
+  DWORD m_dwMapIndex ;
+private:
+  //For showing (XML) error messages.
+  I_UserInterface & mr_userinterface ;
+public:
   //This map is for generalisation (grammar rule x IS A superclass grammar
   //rule y ) in order to minimize the grammar rules needed:
   //so we can define
@@ -112,7 +117,6 @@ public:
     mp_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate ;
   std::multimap<DWORD, GrammarPart> *
     mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
-  DWORD m_dwMapIndex ;
 //  PositionstdstringVector m_psv ;
   PositionStringVector m_psv ;
   //Memorize the applied rules to enable a parse break condition.
@@ -136,8 +140,8 @@ public:
   //serves as a break condition so that is known that no more
   WORD m_wBiggestNumberOfTokensForAppliedGrammarRule ;
   WORD m_wNumberOfTokensForAppliedGrammarRule ;
+  WORD m_wParseLevel ;
 public:
-
   //For the re-init of grammar to be like at the first init all grammar data
   // (grammar ID<-->grammar name mapping, grammar rules, ...
   //must be deleted first.
@@ -224,8 +228,8 @@ public:
     , //std::string
     const char * cp_chSuperclassGrammarRuleName
     ) ;
-  ParseByRise();
-  ParseByRise(const ParseByRise& orig);
+  ParseByRise( I_UserInterface & r_userinterface );
+//  ParseByRise(const ParseByRise& orig);
   bool InsertIfGrammarRuleAppliesTo(
     //Maintaining 2 maps with both leftnost and rightmost indexes should be faster
     //when searching for neighboured grammar parts:

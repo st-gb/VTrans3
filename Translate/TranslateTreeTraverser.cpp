@@ -89,7 +89,8 @@ namespace ParseTreeTraverser
     BYTE byPersonIndex ;
     std::string stdstrTranslation ;
     WORD wConsecutiveID ;
-    const GrammarPart * p_grammarpart ;
+    //const GrammarPart * p_grammarpart ;
+    GrammarPart * p_grammarpart ;
     if( mr_translateparsebyrisetree.TranslationRuleApplies(
         stdstrTranslation ,
         byPersonIndex ,
@@ -137,7 +138,8 @@ namespace ParseTreeTraverser
     std::string stdstrTranslation ;
     BYTE byPersonIndex ;
 //    WORD wConsecutiveID ;
-    const GrammarPart * p_grammarpart ;
+    //const GrammarPart * p_grammarpart ;
+    GrammarPart * p_grammarpart ;
     if( m_vec_wGrammarPartIDcurrentParsePath.size() > 0 )
     {
       WORD wGrammarPartIDcurrentParsePath =

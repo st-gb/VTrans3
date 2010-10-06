@@ -8,16 +8,12 @@
 #ifndef TRANSLATEPARSEBYRISETREE_H_
 #define TRANSLATEPARSEBYRISETREE_H_
 
-#include <map>
-#include <vector>
+#include <map>//class std::map
+#include <vector>//class std::vector
 #include <windef.h> //DWORD
-#include "SyntaxTreePath.hpp"
-#include "ConditionsAndTranslation.hpp"
+//#include "SyntaxTreePath.hpp"
+#include "ConditionsAndTranslation.hpp" //class ConditionsAndTranslation
 //#include "TranslationRule.hpp"
-
-class GrammarPart ;
-class ParseByRise ;
-class TranslationRule ;
 
 //use  a power of 2 in order to enable all values at the same time
 //(for different BIT indices)
@@ -28,10 +24,14 @@ class TranslationRule ;
 #define SECOND_PERSON_PLURAL 16 //2^4 = 16
 #define THIRD_PERSON_PLURAL 32 //2^5 = 32
 
+//Forward declarations
 class AttributeTypeAndPosAndSize ;
+class GrammarPart ;
 class I_UserInterface ;
+class ParseByRise ;
 class TranslationAndGrammarPart ;
 class TranslationAndConsecutiveID ;
+class TranslationRule ;
 
 //Translates the parse tree of type "ParseByRise"
 class TranslateParseByRiseTree
@@ -138,7 +138,8 @@ public:
     , const std::vector<WORD> & r_stdvec_wGrammarPartPath
     , const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
 //    , WORD & r_wConsecutiveID
-    , const GrammarPart * & p_grammarpart
+    , //const
+    GrammarPart * & p_grammarpart
     ) ;
 };
 

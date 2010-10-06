@@ -5,18 +5,24 @@
  *      Author: Stefan
  */
 
-#include <Parse/ParseByRise.hpp>
+#include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <UserInterface/I_UserInterface.hpp> //for I_UserInterface::Message(...)
+//class AttributeTypeAndPosAndSize
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
-#include <Translate/SummarizePersonIndex.hpp>
+//#include <Translate/SummarizePersonIndex.hpp>//class SummarizePersonIndex
+//header file of this TranslateParseByRiseTree class
 #include <Translate/TranslateParseByRiseTree.hpp>
-#include <Translate/Translationrule.hpp>
+#include <Translate/Translationrule.hpp>//class TranslationRule
+//class ParseTreeTraverser::TranslateTreeTraverser
 #include <Translate/TranslateTreeTraverser.hpp>
+//class VocabularyAndTranslation
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
-#include <Xerces/ReadViaSAX2.hpp>
+#include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
+//class SAX2TranslationRuleHandler
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
-#include <supress_unused_variable.h>
+#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
 
-#include <string>
+#include <string>//class std::string
 
 std::map<std::string, AttributeTypeAndPosAndSize > *
   ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef ;
@@ -135,23 +141,23 @@ void TranslateParseByRiseTree::AddTranslationRule(
       //Must create on heap, else its d'tor is called.
     try
     {
-    TranslationRule * p_tr = new TranslationRule( r_stdstrSyntaxTreePath
-        , mp_parsebyrise ) ;
+    TranslationRule * p_translation_rule = new TranslationRule(
+      r_stdstrSyntaxTreePath, mp_parsebyrise ) ;
 
 //    DEBUG_COUT( "added translation rule for syntax tree path \"" <<
 //        GetSyntaxTreePathAsName( ar_wElements, vec_wElements.size() ) <<
 //        "\"\n" )
-    ConditionsAndTranslation c ;
+    ConditionsAndTranslation conditions_and_translation ;
 #ifdef _DEBUG
-    std::pair<std::map<TranslationRule*,ConditionsAndTranslation>::iterator,bool>
-      _pair =
+    std::pair<std::map<TranslationRule*,ConditionsAndTranslation>::iterator,
+      bool> _pair =
 #endif
     m_stdmap_p_translationrule2ConditionsAndTranslation.insert(
       std::pair<TranslationRule *,ConditionsAndTranslation>
       ( //tr
         //Create here, else ar_wElements is deleted in TranslationRule d'tor?!
         //TranslationRule(ar_wElements, vec_wElements.size() )
-        p_tr , c
+        p_translation_rule , conditions_and_translation
       )
       ) ;
 #ifdef _DEBUG
@@ -987,7 +993,7 @@ void GetDativeFormForGermanPluralNoun( std::string & r_stdstr )
   // already is an "n") .
   if( wStringLen > 0 && r_stdstr.at(wStringLen - 1) != 'n' )
     //Ich vertraue Tiere>>n<<.
-    //Ich vertraue Männer>>n<<.
+    //Ich vertraue MÃ¤nner>>n<<.
     r_stdstr += "n" ;
 }
 
@@ -1010,7 +1016,7 @@ void TranslateParseByRiseTree::AddObjectTranslationRules()
 
   ConditionsAndTranslation cntDefiniteArticlePlur ;
   cntDefiniteArticlePlur.AddCondition( conditonVerbIsDative ) ;
-  //"I trust the men" -> "ich vertraue >>den<< Männern."
+  //"I trust the men" -> "ich vertraue >>den<< MÃ¤nnern."
   cntDefiniteArticlePlur.m_stdstrGermanTranslation = "den" ;
   //must create on heap.
   TranslationRule * p_trObjArticle = new TranslationRule(
@@ -1317,12 +1323,25 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 //  Add3rdPersonPluralTranslationRules() ;
 //  Add3rdPersonSingularTranslationRules() ;
 //  AddObjectTranslationRules() ;
+
   //Must create on heap, else the callback functions like "startElement" aren't
   //called?!
-  SAX2TranslationRuleHandler * p_sax2grammarrulehandler = new
-      SAX2TranslationRuleHandler(*this, * mp_parsebyrise , mr_i_userinterface ) ;
-  ReadViaSAX2AndDeleteContentHandler( "translation_rules.xml",
-    p_sax2grammarrulehandler ) ;
+//  SAX2TranslationRuleHandler * p_sax2grammarrulehandler = new
+//    SAX2TranslationRuleHandler( * this, * mp_parsebyrise , mr_i_userinterface ) ;
+  SAX2TranslationRuleHandler sax2grammarrulehandler ( * this,
+    * mp_parsebyrise , mr_i_userinterface ) ;
+  std::wstring wstr ;
+  // <> 0 = error
+  if( ReadViaSAX2InitAndTermXerces(
+      "translation_rules.xml",
+  //    p_sax2grammarrulehandler ,
+      & sax2grammarrulehandler ,
+      wstr
+      )
+    )
+  {
+    mr_i_userinterface.Message( wstr ) ;
+  }
 
   AddVocAndTranslDefinitions() ;
 
@@ -1524,7 +1543,8 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   , const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
 //  , WORD & r_wConsecutiveID
   //reference to pointer address to >>const<<ant content
-  , const GrammarPart * & rp_grammarpartWithConsecutiveID
+  , //const GrammarPart * & rp_grammarpartWithConsecutiveID
+    GrammarPart * & rp_grammarpartWithConsecutiveID
   )
 {
   bool bIdentical = false ;

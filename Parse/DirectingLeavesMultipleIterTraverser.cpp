@@ -8,7 +8,8 @@
 #include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
-#include <rest.h> //DEBUG_COUT
+#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+//#include <rest.h> //DEBUG_COUT
 
 namespace ParseTreeTraverser
 {

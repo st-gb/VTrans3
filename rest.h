@@ -12,8 +12,9 @@
 //	  #include <StdString.h> //for class compatible to MFC's "CString"
 //  #endif//#ifndef _WINDOWS
 
-  //Diese Header-Datei ist daf�r da, um unendliche Rekursionen (die Compiler-Fehler verursachen) 
-  //zu vermeiden und f�r Deklarationen, die sonst inhaltlich nicht in eine 
+  //Diese Header-Datei ist dafür da, um unendliche Rekursionen (die
+  //Compiler-Fehler verursachen)
+  //zu vermeiden und für Deklarationen, die sonst inhaltlich nicht in eine
   //andere Header-Datei passen.
 
   //Unendliche Rekursion entsehen dadurch, dass eine 2. Datei, die von der 1. 
@@ -40,17 +41,19 @@
   //of strings should be allocated.
   #define COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
 
-  //Flags/Schalter/Optionen f�r Ausgangstext(werden in Parse...(...) �bergeben), Anfang
+  //Flags/Schalter/Optionen für Ausgangstext(werden in Parse...(...) übergeben)
+  //, Anfang
   #define CASE_SENSITIVE 1
   #define ADOPT_GRAMMATICALLY_INCORRECT_SENTENCES 2
   #define ALLOW_LOW_LETTER_AT_THE_BEGINNING_OF_SENTENCE 4
-  #define DO_NOT_PARSE_SUBJECT_FOR_REL_CLAUSES 2147483648//bin�r:10000000000000000000000000000000
+  //binär:10000000000000000000000000000000
+  #define DO_NOT_PARSE_SUBJECT_FOR_REL_CLAUSES 2147483648
   #define PREDICATE_VERB_ALLOWS_GERUND 1073741824
   #define LEAVE_OUT_1ST_OBJECT 536870912 
   #define ENUMERATION_ELEMENT_CONTAINS_REL_CLAUSE 128
-  #define THIRD_PERSON_SINGULAR 3
+//  #define THIRD_PERSON_SINGULAR 3
   #define ENUMERATION_ELEMENT_CONTAINS_PROPER_NAME 128
-  #define CONTAINS_FIRST_TOKEN_OF_SENTENCE 256//bin�r: 100000000
+  #define CONTAINS_FIRST_TOKEN_OF_SENTENCE 256//binär: 100000000
   //Flags, Ende
 
   //std::ofstream ofstreamLogFile;//(LOG_FILE_PATH);
@@ -83,7 +86,10 @@
     BYTE byReturnOfSentenceParsing;
     std::vector<VTrans_string_typeVector> vecvecstrSentenceTokens;
     std::vector<Range> vecrangeProperName;
-    //This vector is therefore:# wenn das ausgew�hlte Element einer Drop-Down-Box, die die Elemente "du","Sie" beinhaltet, ge�ndert wird, sollte sich auch die Auswahl der damit zusammenh�ngenden anderen Drop-Down-Box (z.B. die finite Verbform ) �ndern
+    //This vector is therefore:# wenn das ausgewählte Element einer
+    //Drop-Down-Box, die die Elemente "du","Sie" beinhaltet, geändert wird,
+    //sollte sich auch die Auswahl der damit zusammenhängenden anderen
+    //Drop-Down-Box (z.B. die finite Verbform ) ändern
     std::vector<IntPair> m_vecintpairConntectedWords;
 
     SentenceAndValidityAndProperName(){
@@ -112,64 +118,47 @@
 
   //#define FILE_PATH_FOR_INTERRUPTED_TRANSLATION "int_resp_crashed_trans_exe.txt"
 
-#if defined( _DEBUG) || defined(DEBUG)
-#define DEBUG_COUT(out) std::cout << out ; std::cout.flush() ;
-#define DEBUG_COUTN(out) { std::cout << out << "\n" ; std::cout.flush() ; }
-#else
-#define DEBUG_COUT(out) { }
-#define DEBUG_COUTN(out) { }
-#endif
-
-
-  #ifdef _LOG
-    #define LOG_FILE_PATH "release_log.txt"
-    //#include <stdio.h>//for fflush()
-    ////ofstream ofstreamLogFile;
-    ////FILE * pfileLog;//=NULL;
-    //#define LOG(str) \ if "\"=last char:g++ warning:"multi-line comment"
-    //fprintf(pfileLog,_T(str)); \ _
-    //  /*fflush is important to ensure the last output was REALLY written
-    // to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
-    //  fflush(pfileLog);
-    //#define LOG1(str,var) \ if "\"=last char:g++ warning:"multi-line comment"
-    //fprintf(pfileLog,_T(str),var); \  _
-    //  /*fflush is important to ensure the last output was REALLY written
-    // to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
-    //  fflush(pfileLog);
-    //#define LOG2(str,var1,var2) \ _
-    // fprintf(pfileLog,_T(str),var1,var2); \ _
-    //  /*fflush is important to ensure the last output was REALLY written
-    //  to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
-    //  fflush(pfileLog);
-    #include <iostream>//for fflush()
-    #include <fstream>
-    //std::ofstream ofstreamLogFile(LOG_FILE_PATH);
-    #define LOG(var) ofstreamLogFile<< var; \
-      /*fflush is important to ensure the last output was REALLY written to medium*/\
-      ofstreamLogFile.flush();
-    #define LOGN(var) ofstreamLogFile<< var<<"\n"; \
-      /*fflush is important to ensure the last output was REALLY written to medium*/\
-      ofstreamLogFile.flush();
-    //Achtung: der Compiler gibt keinen Fehler aus, wenn nur 1 Parameter �bergeben wird!
-    //->mit Vorsicht einsetzen
-    #define LOG2N(outstreamRelease,outstreamDebug) ofstreamLogFile<< outstreamRelease<<"\n"; \
-      /*fflush is important to ensure the last output was REALLY written to medium*/\
-      ofstreamLogFile.flush();
-
-  #else
-  /*If "_LOG" is not defined, replace any "LOG","LOG1","LOG2" by "" 
-  (->so NO overhead/ressources are claimed).*/
-    #define LOG
-    #define LOG1
-    #define LOG2
-    //#ifdef _DEBUG     if "\"=last char:g++ warning:"multi-line comment"
-    //  #define LOG2N(outstreamRelease,outstreamDebug) \ _
-    //  ofstreamLogFile<< outstreamDebug<<"\n"; \  _
-    //    /*fflush is important to ensure the last output was REALLY written
-    //   to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
-    //    ofstreamLogFile.flush();
-    //#endif//#ifdef _DEBUG
-  #endif//ifdef _LOG
+//  #ifdef _LOG
+//    #define LOG_FILE_PATH "release_log.txt"
+//    //#include <stdio.h>//for fflush()
+//    ////ofstream ofstreamLogFile;
+//    ////FILE * pfileLog;//=NULL;
+//    //#define LOG(str) \ if "\"=last char:g++ warning:"multi-line comment"
+//    //fprintf(pfileLog,_T(str)); \ _
+//    //  /*fflush is important to ensure the last output was REALLY written
+//    // to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
+//    //  fflush(pfileLog);
+//    //#define LOG1(str,var) \ if "\"=last char:g++ warning:"multi-line comment"
+//    //fprintf(pfileLog,_T(str),var); \  _
+//    //  /*fflush is important to ensure the last output was REALLY written
+//    // to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
+//    //  fflush(pfileLog);
+//    //#define LOG2(str,var1,var2) \ _
+//    // fprintf(pfileLog,_T(str),var1,var2); \ _
+//    //  /*fflush is important to ensure the last output was REALLY written
+//    //  to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
+//    //  fflush(pfileLog);
+//    //Achtung: der Compiler gibt keinen Fehler aus, wenn nur 1 Parameter �bergeben wird!
+//    //->mit Vorsicht einsetzen
+//    #define LOG2N(outstreamRelease,outstreamDebug) \ _
+//      ofstreamLogFile<< outstreamRelease<<"\n"; \ _
+//      /*fflush is important to ensure the last output was REALLY written to medium*/\ _
+//      ofstreamLogFile.flush();
+//
+//  #else
+//  /*If "_LOG" is not defined, replace any "LOG","LOG1","LOG2" by ""
+//  (->so NO overhead/ressources are claimed).*/
+//    #define LOG
+//    #define LOG1
+//    #define LOG2
+//    //#ifdef _DEBUG     if "\"=last char:g++ warning:"multi-line comment"
+//    //  #define LOG2N(outstreamRelease,outstreamDebug) \ _
+//    //  ofstreamLogFile<< outstreamDebug<<"\n"; \  _
+//    //    /*fflush is important to ensure the last output was REALLY written
+//    //   to medium*/\  if "\"=last char:g++ warning:"multi-line comment"
+//    //    ofstreamLogFile.flush();
+//    //#endif//#ifdef _DEBUG
+//  #endif//ifdef _LOG
 
   //#include <atlstr.h>//This include is needed for "CString" when compiling as DLL.
 

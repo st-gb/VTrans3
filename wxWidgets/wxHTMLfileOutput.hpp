@@ -8,9 +8,9 @@
 #ifndef WXHTMLFILEOUTPUT_H_
 #define WXHTMLFILEOUTPUT_H_
 
-#include <vector>
-#include <set>
-#include <string>
+#include <set>//class std::set
+#include <vector>//class std::vector
+#include <string>//class std::string
 
 class TranslationAndConsecutiveID ;
 class TranslationAndGrammarPart ;
