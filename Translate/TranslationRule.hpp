@@ -8,8 +8,9 @@
 #ifndef TRANSLATIONRULE_HPP_
 #define TRANSLATIONRULE_HPP_
 
-#include "SyntaxTreePath.hpp"
-#include <rest.h> //DEBUG_COUT
+#include "SyntaxTreePath.hpp" //class SyntaxTreePath
+//#include <rest.h> //DEBUG_COUT
+#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 
 //A translationrule desribes the path within a syntax tree.
 //It is inserted into a <TranslationRule*,ConditionAndTranslation> map
@@ -34,7 +35,8 @@ public:
 //  }
   WORD GetConsecutiveID( const std::vector<GrammarPart *> &
     r_stdvec_p_grammarpartPath ) const ;
-  const GrammarPart * GetGrammarPartWithConsecutiveID(
+  //const
+  GrammarPart * GetGrammarPartWithConsecutiveID(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const ;
   bool Matches(
     const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath ) const ;

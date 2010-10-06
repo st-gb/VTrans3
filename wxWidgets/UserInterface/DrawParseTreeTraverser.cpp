@@ -6,11 +6,13 @@
  */
 
 #include "DrawParseTreeTraverser.hpp"
-#include <Parse/GrammarPart.hpp>
-#include <Parse/ParseByRise.hpp>
-#include <wx/gdicmn.h>
-#include <wx/string.h>
-#include <wx/font.h>
+//#include <Parse/GrammarPart.hpp>
+#include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
+#include <wx/dc.h> //class wxDC
+//#include <wx/gdicmn.h>
+#include <wx/string.h> //class wxString
+#include <wx/font.h> //class wxFont
 
 DrawParseTreeTraverser::DrawParseTreeTraverser(
   wxDC * p_wxdc ,

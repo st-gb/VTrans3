@@ -8,13 +8,16 @@
 #ifndef SAX2TRANSLATIONRULEHANDLER_HPP_
 #define SAX2TRANSLATIONRULEHANDLER_HPP_
 
-#include <xercesc/sax2/Attributes.hpp> //for "xercesc_2_8::Attributes"
+#include <xercesc/sax2/Attributes.hpp> //for "XERCES_CPP_NAMESPACE::Attributes"
+//base class XERCES_CPP_NAMESPACE::DefaultHandler
 #include <xercesc/sax2/DefaultHandler.hpp>
+//class ConditionsAndTranslation
 #include <Translate/ConditionsAndTranslation.hpp>
 
-//Needed for verzichten auf the exact namespace.
-XERCES_CPP_NAMESPACE_USE
+////Needed for verzichten auf the exact namespace.
+//XERCES_CPP_NAMESPACE_USE
 
+//Forward declarations.
 class ParseByRise ;
 class I_UserInterface ;
 
@@ -22,6 +25,7 @@ class SAX2TranslationRuleHandler
   : public XERCES_CPP_NAMESPACE::DefaultHandler
 {
 private:
+  XERCES_CPP_NAMESPACE::Locator const * m_pc_locator ;
   ConditionsAndTranslation m_conditionsandtranslation;
   I_UserInterface & mr_i_userinterface ;
   ParseByRise & mr_parsebyrise ;
@@ -50,7 +54,8 @@ public:
     const XMLCh* const localname,
     const XMLCh* const qname
   );
-
+  void setDocumentLocator( const XERCES_CPP_NAMESPACE::Locator *
+    const cpc_locator ) ;
   void startElement(
       const   XMLCh* const    uri,
       const   XMLCh* const    localname,

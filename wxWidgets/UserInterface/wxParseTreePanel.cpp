@@ -5,12 +5,15 @@
  *      Author: Stefan
  */
 
-#include <wxWidgets/wxParseTreePanel.hpp>
-#include <Parse/ParseByRise.hpp> //for class GrammerPart
-#include <map> //multimap
-#include <unistd.h> //sleep()
-#include "DrawParseTreeTraverser.hpp"
-#include <supress_unused_variable.h>
+#include <map> //std::multimap
+//#include <unistd.h> //usleep()
+#include "DrawParseTreeTraverser.hpp" //class DrawParseTreeTraverser
+#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING
+#include <wx/dc.h> //class wxDC
+#include <wx/dcclient.h> //for class wxPaintDC
+#include <Parse/ParseByRise.hpp> //for class GrammarPart
+#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+#include <wxWidgets/UserInterface/wxParseTreePanel.hpp>//class wxParseTreePanel
 
 BEGIN_EVENT_TABLE(wxParseTreePanel, wxPanel)
   EVT_PAINT  (wxParseTreePanel::OnPaint)

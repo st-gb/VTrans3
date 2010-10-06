@@ -48,7 +48,8 @@ namespace ParseTreeTraverser
       m_vecGrammarPartID) ;
 #endif
 //    WORD wConsecutiveID ;
-    const GrammarPart * p_grammarpart ;
+    //const GrammarPart * p_grammarpart ;
+    GrammarPart * p_grammarpart ;
     //If the leave is e.g. a noun then for the person index we need to know
     //whether it is singular or plural. This is what TranslationRuleApplies()
     //does.

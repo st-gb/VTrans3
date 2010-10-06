@@ -1,12 +1,15 @@
 //Ohne das folgende include/wenn Pfad in den Eigenschaften dieser Datei 
 //unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
-//"fatal error C1010: Unerwartetes Dateiende w�hrend der Suche nach dem vorkompilierten Header.[...]"
+//"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem
+// vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
-#include "../../Word.hpp"
+#include "../../Word.hpp" //class Word, EnglishWord, EnglishNoun
+//header file for this VocabularyAndTranslation class
 #include "VocabularyAndTranslation.hpp"
+#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
 #include <windef.h> //for BYTE
 #include <typeinfo> //for typeid()
-#include <supress_unused_variable.h>
+#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
 
 #define SET_FREED_MEM_TO_NULL
 

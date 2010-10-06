@@ -5,11 +5,11 @@
  *      Author: Stefan
  */
 
-#include "TranslationRule.hpp"
-#include <Parse/GrammarPart.hpp>
-#include <Parse/ParseByRise.hpp>
-#include <exception> //for std::exception
-#include <supress_unused_variable.h>
+#include "TranslationRule.hpp" //header file for this TranslationRule class
+#include <Parse/GrammarPart.hpp> //class GrammarPart
+//#include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <exception> //for class std::exception
+#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
 
 WORD TranslationRule::GetConsecutiveID(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const
@@ -30,7 +30,8 @@ WORD TranslationRule::GetConsecutiveID(
 }
 
 //pointer address to >>const<<ant content
-const GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
+//const GrammarPart *
+GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const
 {
 //  GrammarPart * const p_grammarpart = NULL ;
@@ -39,9 +40,19 @@ const GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
       //&& m_syntaxtreepathConsecutiveID.m_wNumberOfElements > 0
       )
   {
+    //TODO if "the little sheep" is translated as an (object) enumumeration
+    //element,2 possibilities must be offered: "die kleinen Schafe",
+    // "das kleine Schaf"
+    DEBUGN("TranslationRule::GetGrammarPartWithConsecutiveID"
+      "m_syntaxtreepathConsecutiveID:"
+      << m_syntaxtreepathConsecutiveID.GetAs_std_string() )
     if( m_syntaxtreepathConsecutiveID.m_wNumberOfElements > 0 )
     {
-      const GrammarPart * p_grammarpartContainingConsecutiveID ;
+//      const GrammarPart * p_grammarpartContainingConsecutiveID ;
+      GrammarPart * p_grammarpartContainingConsecutiveID ;
+      //Avoid g++ warning "'p_grammarpartContainingConsecutiveID' might be
+      // used uninitialized in this function"
+      SUPRESS_UNUSED_VARIABLE_WARNING(p_grammarpartContainingConsecutiveID)
       bool bIdentical = true ;
       //Compare from end to begin.
       WORD wIndex ;
@@ -85,6 +96,9 @@ const GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
       {
 //        GrammarPart * const p_grammarpart = r_stdvec_p_grammarpartPath.front() ;
 //        return p_grammarpart ;
+        LOGN("GetGrammarPartWithConsecutiveID(...) "
+          "p_grammarpartContainingConsecutiveID:" <<
+          p_grammarpartContainingConsecutiveID )
         return p_grammarpartContainingConsecutiveID ;
       }
     }
@@ -110,6 +124,9 @@ bool TranslationRule::Matches(
     //Compare from end to begin.
     WORD wIndex ;
     WORD wGrammarPartIDforTranslationRule ;
+    //Avoid g++ warning "'wGrammarPartIDforTranslationRule' might be used
+    // uninitialized in this function"
+    SUPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDforTranslationRule)
     for( wIndex = //p_tr->m_wNumberOfElements - 1 ;
         //p_translationrule->
         m_syntaxtreepathCompareWithCurrentPath.

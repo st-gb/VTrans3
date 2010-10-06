@@ -2,10 +2,10 @@
 //unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
 //"fatal error C1010: Unerwartetes Dateiende w�hrend der Suche nach dem vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
-#include "LetterTree.hpp"
+#include "LetterTree.hpp" //header file of this LetterTree class
 
 #ifdef _DEBUG
-#define _DEBUG_FREEING_MEM
+  #define _DEBUG_FREEING_MEM
 #endif
 
 //Static variables also need to defined. Else g++ error:
@@ -32,7 +32,7 @@ LetterNode * LetterTree::sp_letternodeLastForInsertedWord ;
     addToCharValueToArrayIndexMapping('0','9') ; // (e.g. "4x4 drive")
     addToCharValueToArrayIndexMapping('A','Z') ;
     addToCharValueToArrayIndexMapping('a','z') ;
-    addToCharValueToArrayIndexMapping('�') ; //Apr�s Ski
+    addToCharValueToArrayIndexMapping('è') ; //Après Ski
     addToCharValueToArrayIndexMapping(228) ; //"ae" (falls wieder anderer Zeichensatz)
     addToCharValueToArrayIndexMapping(246) ; //"oe" (falls wieder anderer Zeichensatz)
     addToCharValueToArrayIndexMapping(252) ; //"ue" (falls wieder anderer Zeichensatz)
@@ -981,7 +981,8 @@ void LetterTree::DeleteCompleteList()
   //The root node is deleted as a result of the loop
   //The root node SHOULD ALWAYS be allocated due to simplification
   //of operations like inserting a node.
-  m_pletternodeRoot = new LetterNode(0, this);
+//  m_pletternodeRoot = new LetterNode(0, this);
+  m_pletternodeRoot = new LetterNode(m_byArrayIndexRespSize, this) ;
 }
 
 LetterTree::~LetterTree()

@@ -9,29 +9,35 @@
 #include <set> //for std::set
 
 //class VocabularyAndTranslation 
+#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
+
+#include "ParseByRise.hpp" //class ParseByRise
+#include <Token.h> //class PositionStringVector
+#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+#include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
+#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
+#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
+//class VocabularyAndTranslation
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
-#include "ParseByRise.hpp"
-#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>
-#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>
-#include <Token.h> //for PositionstdstringVector
-#include <Xerces/ReadViaSAX2.hpp>
-#include <Xerces/SAX2GrammarRuleHandler.hpp>
-#include <supress_unused_variable.h>
+#include <Xerces/ReadViaSAX2.hpp>//ReadViaSAX2InitAndTermXerces(...)
+#include <Xerces/SAX2GrammarRuleHandler.hpp>//class SAX2GrammarRuleHandler
 
 extern LetterTree g_lettertree ;
 
-ParseByRise::ParseByRise()
+ParseByRise::ParseByRise(
+  I_UserInterface & r_userinterface )
   :
    //m_wNumberOfSuperordinateRules( 0 )
   //,
-  m_wParseLevel(0)
-  , m_dwMapIndex(0)
+  m_dwMapIndex(0)
+  , mr_userinterface (r_userinterface)
+  , m_wParseLevel(0)
 {
   InitGrammarRules() ;
 }
 
-ParseByRise::ParseByRise(const ParseByRise& orig) {
-}
+//ParseByRise::ParseByRise(const ParseByRise& orig) {
+//}
 
 ParseByRise::~ParseByRise()
 {
@@ -1054,10 +1060,22 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //  ReadViaSAX2("grammar_rules.xml", & sax2grammarrulehandler ) ;
   //Must create on heap, else the callback functions like "startElement" aren't
   //called?!
-  SAX2GrammarRuleHandler * p_sax2grammarrulehandler = new
-      SAX2GrammarRuleHandler(*this) ;
-  ReadViaSAX2AndDeleteContentHandler("grammar_rules.xml",
-    p_sax2grammarrulehandler ) ;
+//  SAX2GrammarRuleHandler * p_sax2grammarrulehandler = new
+//    SAX2GrammarRuleHandler( * this ) ;
+  SAX2GrammarRuleHandler sax2grammarrulehandler( * this ) ;
+
+  std::wstring stdwstrErrorMessage ;
+  // <> 0 = error
+  if( ReadViaSAX2InitAndTermXerces(
+    "grammar_rules.xml",
+//    p_sax2grammarrulehandler ,
+    & sax2grammarrulehandler ,
+    stdwstrErrorMessage )
+    )
+  {
+    //::wxGetApp().Message( stdwstrErrorMessage ) ;
+    mr_userinterface.Message( stdwstrErrorMessage ) ;
+  }
 }
 
 //return: new rule ID

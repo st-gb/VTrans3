@@ -1,11 +1,12 @@
 //Ohne das folgende include/wenn Pfad in den Eigenschaften dieser Datei 
-//unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
-//"fatal error C1010: Unerwartetes Dateiende w�hrend der Suche nach dem vorkompilierten Header.[...]"
+//unter C/C++->vorkompilierte Header->"PCH durch..." falsch ist:
+//"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem
+// vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
-#include "LetterTree.hpp"
+#include "LetterTree.hpp" //class LetterTree
 #include <stdlib.h> //calloc(), free()
 
-LetterNode::LetterNode(BYTE byArraySize, LetterTree * plt )
+LetterNode::LetterNode(BYTE byArraySize, LetterTree * p_lettertree )
 {
   //m_psetvocabularyandtranslation = NULL ; 
   m_psetpvocabularyandtranslation = NULL ; 
@@ -23,14 +24,20 @@ LetterNode::LetterNode(BYTE byArraySize, LetterTree * plt )
 	  sizeof(LetterNode *));
 //#ifdef _DEBUG
 //    for(int i = 0 ; i < byArraySize ; i ++ )
-//      TRACE("m_arpletternode1LevelLower[%u]: %u" , i , m_arpletternode1LevelLower[i]);
+//      TRACE("m_arpletternode1LevelLower[%u]: %u" , i ,
+//        m_arpletternode1LevelLower[i]);
 //#endif
-  m_psetpvocabularyandtranslationDeletedYet = & plt->
+  m_psetpvocabularyandtranslationDeletedYet = & p_lettertree->
     m_setpvocabularyandtranslationDeletedYet ;
+}
+
+void LetterNode::FreeMemory()
+{
 }
 
 LetterNode::~LetterNode()
 {
+//  FreeMemory() ;
   //Use "free" because "calloc(..)" was used for allocating memory.
   free(m_arpletternode1LevelLower) ;
   if( m_psetpvocabularyandtranslation )
@@ -41,9 +48,9 @@ LetterNode::~LetterNode()
       isetpvocabularyandtranslation !=
       m_psetpvocabularyandtranslation->end() ; 
       ++ isetpvocabularyandtranslation )
-#ifdef _DEBUG_FREEING_MEM
+  #ifdef _DEBUG_FREEING_MEM
     {
-#endif
+  #endif
       //1 and the same vocandtrans must not be deleted twice!
       //(more than 1 letter node may contain the same
       //vocandtrans in its set.)
@@ -59,11 +66,11 @@ LetterNode::~LetterNode()
         delete *isetpvocabularyandtranslation ;
       }
       else
-        TRACE("~LetterNode()--alreaded deleted vocabularyandtranslation at \"%x\"\n",
-          *isetpvocabularyandtranslation) ;
-#ifdef _DEBUG_FREEING_MEM
+        TRACE("~LetterNode()--alreaded deleted vocabularyandtranslation at "
+          "\"%x\"\n", * isetpvocabularyandtranslation) ;
+  #ifdef _DEBUG_FREEING_MEM
     }
-#endif
+  #endif
     //m_psetpvocabularyandtranslation->clear() ;
     delete m_psetpvocabularyandtranslation ;
   }
