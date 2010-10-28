@@ -10,7 +10,8 @@
 #include <Parse/ParseByRise.hpp>
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 #include <map> //std::map
-#include <supress_unused_variable.h>
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 bool ConditionsAndTranslation::AllConditionsMatch(
   // So it can be used with data from outside this class.
@@ -219,7 +220,7 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                   p_grammarpartLeaf->
                   m_pvocabularyandtranslation->m_arbyAttribute[
                   r_atapas.m_wIndex ] ;
-                SUPRESS_UNUSED_VARIABLE_WARNING(by)
+                SUPPRESS_UNUSED_VARIABLE_WARNING(by)
               }
           }//switch
         }

@@ -8,12 +8,25 @@
 #include <map> //std::multimap
 //#include <unistd.h> //usleep()
 #include "DrawParseTreeTraverser.hpp" //class DrawParseTreeTraverser
-#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING
+//SUPPRESS_UNUSED_VARIABLE_WARNING
+#include <preprocessor_macros/suppress_unused_variable.h>
 #include <wx/dc.h> //class wxDC
 #include <wx/dcclient.h> //for class wxPaintDC
 #include <Parse/ParseByRise.hpp> //for class GrammarPart
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <wxWidgets/UserInterface/wxParseTreePanel.hpp>//class wxParseTreePanel
+
+//http://www.wxwidgets.org/docs/faqmsw.htm#asuffix:
+//"If you get errors like no matching function for call to
+//'wxDC::DrawTextA(const char[5], int, int)' or similar ones for the other
+//functions, i.e. the compiler error messages mention the function with the
+//'A' suffix while you didn't use it in your code, the explanation is that you
+//had included <windows.h> header which redefines many symbols to have such
+//suffix (or 'W' in the Unicode builds).
+//
+//The fix is to either not include <windows.h> at all or include
+//"wx/msw/winundef.h" immediately after it. "
+#include "wx/msw/winundef.h"
 
 BEGIN_EVENT_TABLE(wxParseTreePanel, wxPanel)
   EVT_PAINT  (wxParseTreePanel::OnPaint)
@@ -195,7 +208,7 @@ void wxParseTreePanel::DrawGrammarPartChildren(
        //p_grammarpart->mp_grammarpartLeftChild->
        p_grammarpartChild->m_wGrammarPartID ) ;
 //  #pragma GCC diagnostic pop //"command line options are restored."
-    SUPRESS_UNUSED_VARIABLE_WARNING(r_stdstrGrammarPartName)
+    SUPPRESS_UNUSED_VARIABLE_WARNING(r_stdstrGrammarPartName)
 #endif
      DrawGrammarPartNameAndPossiblyToken(//p_grammarpart->mp_grammarpartLeftChild
          p_grammarpartChild ,r_wxdc, wChildHorizTextCenter ) ;
@@ -221,7 +234,7 @@ void wxParseTreePanel::DrawGrammarPartChildren(
       mp_parsebyrise->GetGrammarPartName(
        //p_grammarpart->mp_grammarpartRightChild->
           p_grammarpartChild->m_wGrammarPartID ) ;
-    SUPRESS_UNUSED_VARIABLE_WARNING(r_stdstrGrammarPartName)
+    SUPPRESS_UNUSED_VARIABLE_WARNING(r_stdstrGrammarPartName)
 #endif
      DrawGrammarPartNameAndPossiblyToken( //p_grammarpart->mp_grammarpartRightChild,
        p_grammarpartChild, r_wxdc, wChildHorizTextCenter ) ;

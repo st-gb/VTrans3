@@ -8,7 +8,8 @@
 #include <Translate/TranslateTreeTraverser.hpp>
 #include <Translate/SummarizePersonIndex.hpp>
 #include <Translate/SetSameConsecutiveIDforLeaves.hpp>
-#include <supress_unused_variable.h>
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 namespace ParseTreeTraverser
 {
@@ -154,7 +155,7 @@ namespace ParseTreeTraverser
 //        #pragma GCC diagnostic ignored  "-Wunused"
         GrammarPart * p_grammarpart =
           m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
-        SUPRESS_UNUSED_VARIABLE_WARNING(p_grammarpart)
+        SUPPRESS_UNUSED_VARIABLE_WARNING(p_grammarpart)
 //        SetSameConsecutiveIDforLeaves(p_grammarpart) ;
 #endif
       }

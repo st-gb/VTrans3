@@ -20,7 +20,8 @@
 #include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
 //class SAX2TranslationRuleHandler
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
-#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 #include <string>//class std::string
 
@@ -450,7 +451,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
                   p_grammarpartLeaf->
                   m_pvocabularyandtranslation->m_arbyAttribute[
                   r_atapas.m_wIndex ] ;
-                SUPRESS_UNUSED_VARIABLE_WARNING(by)
+                SUPPRESS_UNUSED_VARIABLE_WARNING(by)
               }
           }//switch
         }
