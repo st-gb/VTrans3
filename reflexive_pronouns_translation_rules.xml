@@ -1,0 +1,58 @@
+<translation_rules>
+  <!--reflexive pronouns-->
+  <!--"sich", no matter which case (dative: "er vertraut sich", 4th case:"er mag sich")-->
+  <translation_rule 
+    syntax_tree_path="himself"
+    translation="sich">
+  </translation_rule>
+    <!--"sich", no matter which case (dative: "sie vertraut sich", 4th case:"sie mag sich")-->
+  <translation_rule 
+    syntax_tree_path="herself"
+    translation="sich">
+  </translation_rule>
+    <!--"sich", no matter which case (dative: "es vertraut sich", 4th case:"es mag sich")-->
+  <translation_rule 
+    syntax_tree_path="itself"
+    translation="sich">
+  </translation_rule>
+    <!--"sich", no matter which case (dative: "wie vertrauen uns", 4th case:"wie moegen uns")-->
+  <translation_rule 
+    syntax_tree_path="ourselves"
+    translation="uns">
+  </translation_rule>
+    <!--"sich", no matter which case (dative: "ihr vertraut euch", 4th case:"ihr moegt euch")-->
+  <translation_rule 
+    syntax_tree_path="yourselves"
+    translation="euch">
+  </translation_rule>
+    <!--always "sich" (dative: "sie vertrauen sich", accusative: "sie moegen sich")-->
+  <translation_rule 
+    syntax_tree_path="themselves"
+    translation="sich">
+  </translation_rule>
+  
+  <!--dative obj transl-->
+  <translation_rule 
+    syntax_tree_path="myself"
+    translation="mir">
+    <!--grammatical_case=1 <=> dative verb-->
+    <condition syntax_tree_path="1stPersSingSimplePresentClause1Obj.1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="pers_pron_obj"
+    translation="ihm">
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="pers_pron_obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+  </translation_rule>
+</translation_rules>

@@ -45,7 +45,8 @@ class wxTextInputDlg
 	protected:
 //  wxHtmlWindow * mp_wxhtmlwindow ;
 //  wxWebKitCtrl * mp_wxwebkitctrl;
-    ParseByRise m_parsebyrise ;
+//    ParseByRise m_parsebyrise ;
+    ParseByRise & m_parsebyrise ;
     wxBoxSizer * p_boxsizerOuter ;
 		wxTextCtrl * mp_textctrlEnglishText;
 		wxTextCtrl * mp_textctrlGermanText ;

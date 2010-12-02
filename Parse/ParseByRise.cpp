@@ -14,7 +14,7 @@
 #include <preprocessor_macros/suppress_unused_variable.h>
 
 #include "ParseByRise.hpp" //class ParseByRise
-#include <Token.h> //class PositionStringVector
+#include <Attributes/Token.h> //class PositionStringVector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
 #include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
@@ -58,6 +58,22 @@ ParseByRise::~ParseByRise()
   }
 }
 
+inline bool isStringTokenDelimiter(char ch)
+{
+  switch( //* pch
+      ch )
+  {
+    case '\t':
+    case ' ':
+    case '\0':
+    case '.':
+    case '?':
+    case '!':
+      return true ;
+  }
+  return false ;
+}
+
 void BuildTokenVector(
   const std::string & stdstrText
 //  , PositionstdstringVector & psv
@@ -77,41 +93,41 @@ void BuildTokenVector(
 //  while( *pch )
   do
   {
-    switch( *pch )
+    if( isStringTokenDelimiter( * pch ) )
     {
-      case '\t':
-      case ' ':
-      case '\0':
-        //If unset.
-        if( wEndOfTokenIndex == MAXWORD )
-        {
-          wEndOfTokenIndex = wCharIndex ;
-          stdstrToken = stdstrText.substr(
-              wBeginOfTokenIndex,wEndOfTokenIndex-wBeginOfTokenIndex) ;
-          psv.push_back(
+      //If unset.
+      if( wEndOfTokenIndex == MAXWORD )
+      {
+        wEndOfTokenIndex = wCharIndex ;
+        stdstrToken = stdstrText.substr(
+            wBeginOfTokenIndex,wEndOfTokenIndex-wBeginOfTokenIndex) ;
+        psv.push_back(
 //            Positionstdstring( stdstrToken ,
-            PositionString( stdstrToken ,
-              wBeginOfTokenIndex,wBeginOfTokenIndex)
-            ) ;
-          //std::cout << ""
-        }
-        if( *pch == '\0' )
-           bDoLoop = false ;
-        //Always setting the value is ~ as fast to first compare
-        //( if( "wBeginOfTokenIndex == MAXWORD" ) )
-        wBeginOfTokenIndex = MAXWORD ;
-        break;
-      default:
+          PositionString( stdstrToken ,
+            wBeginOfTokenIndex,wBeginOfTokenIndex)
+          ) ;
+        //std::cout << ""
+      }
+      if( * pch == '\0' )
+         bDoLoop = false ;
+      //Always setting the value is ~ as fast to first compare
+      //( if( "wBeginOfTokenIndex == MAXWORD" ) )
+      wBeginOfTokenIndex = MAXWORD ;
+//        break;
+//      default:
+    }
+    else
+    {
 //        if( bBeginOfNewToken )
 //          bBeginOfNewToken = false
 //        else
 //          bBeginOfNewToken = true ;
-        //If unset.
-        if( wBeginOfTokenIndex == MAXWORD )
-          wBeginOfTokenIndex = wCharIndex ;
-        //Always setting the value is ~ as fast to first compare
-        //( if( "wEndOfTokenIndex == MAXWORD" ) )
-        wEndOfTokenIndex = MAXWORD ;
+      //If unset.
+      if( wBeginOfTokenIndex == MAXWORD )
+        wBeginOfTokenIndex = wCharIndex ;
+      //Always setting the value is ~ as fast to first compare
+      //( if( "wEndOfTokenIndex == MAXWORD" ) )
+      wEndOfTokenIndex = MAXWORD ;
     }
     //if( bBeginOfNewToken )
     ++ pch ;

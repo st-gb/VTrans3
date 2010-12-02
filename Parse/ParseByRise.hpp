@@ -12,7 +12,7 @@
 #include <string> //class std::string
 #include <map> //class std::map
 #include <set> //class std::set
-#include "Token.h" //class PositionStringVector
+#include <Attributes/Token.h> //class PositionStringVector
 #include "GrammarPart.hpp" //class GrammarPart
 
 //Forward declarations (faster than #include)

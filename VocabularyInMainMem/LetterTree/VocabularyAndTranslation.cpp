@@ -3,7 +3,7 @@
 //"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem
 // vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
-#include "../../Word.hpp" //class Word, EnglishWord, EnglishNoun
+#include <Attributes/Word.hpp> //class Word, EnglishWord, EnglishNoun
 //header file for this VocabularyAndTranslation class
 #include "VocabularyAndTranslation.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)

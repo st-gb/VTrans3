@@ -6,7 +6,7 @@
 #include "IO.hpp"
 //#include "rest.h"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
-#include "Word.hpp" //for "class Word" etc.
+#include <Attributes/Word.hpp> //for "class Word" etc.
 #include <fstream> //for std::ofstream
 #include <ios>//fo ios_base
 #include "charsetconv.h"
@@ -930,9 +930,10 @@ void OneLinePerWordPair::InsertGermanMainVerb(
   , BYTE byVocabularyType
   )
 {
-  TRACE("deutsches Verb\n");;
-  GermanVerb * gv = new GermanVerb;
-  gv->m_bAuxiliaryVerb = FALSE;
+  TRACE("deutsches Verb\n");
+  char chCurrentChar ;
+//  GermanVerb * gv = new GermanVerb;
+//  gv->m_bAuxiliaryVerb = FALSE;
   BYTE byDelemiterCount = 0 ;
   BYTE otherCount = 0 ;
   int nIndexOf1stChar = 1 ;
@@ -944,9 +945,9 @@ void OneLinePerWordPair::InsertGermanMainVerb(
     {
       if( byDelemiterCount < 16 )
       {
-        gv->m_strWords[byDelemiterCount] = //str.Mid(start,i-start);
-          strCurrentWordData.substr( nIndexOf1stChar
-          , nIndexOfCurrentChar - nIndexOf1stChar );
+//        gv->m_strWords[byDelemiterCount] = //str.Mid(start,i-start);
+//          strCurrentWordData.substr( nIndexOf1stChar
+//          , nIndexOfCurrentChar - nIndexOf1stChar );
         //Add to the stucture that also contains the English strings.
         //So the German equivalent can be retrieved when the last
         //character (LetterNode) of the English string inside the Trie
@@ -956,46 +957,51 @@ void OneLinePerWordPair::InsertGermanMainVerb(
           strCurrentWordData.substr( nIndexOf1stChar ,
           nIndexOfCurrentChar - nIndexOf1stChar );
       }
-      if( byDelemiterCount == 16 )
-        gv->m_strPreposition = //str.Mid(start,i-start);
-          strCurrentWordData.substr( nIndexOf1stChar
-          , nIndexOfCurrentChar - nIndexOf1stChar );
-        byDelemiterCount ++ ;
+//      if( byDelemiterCount == 16 )
+//        gv->m_strPreposition = //str.Mid(start,i-start);
+//          strCurrentWordData.substr( nIndexOf1stChar
+//          , nIndexOfCurrentChar - nIndexOf1stChar );
+      byDelemiterCount ++ ;
       nIndexOf1stChar = nIndexOfCurrentChar + 1 ;
     }
-    // in welchem/welchen Fall/F�llen steht/stehen das/die Objekt(e)
-    if( strCurrentWordData[nIndexOfCurrentChar] == '1' ||
+    chCurrentChar = strCurrentWordData[nIndexOfCurrentChar] ;
+    // in welchem/welchen Fall/Fällen steht/stehen das/die Objekt(e)
+    if( chCurrentChar == '1' ||
       strCurrentWordData[nIndexOfCurrentChar] == '2' ||
       strCurrentWordData[nIndexOfCurrentChar] == '3' ||
       strCurrentWordData[nIndexOfCurrentChar] == '4'
       )
     {
-      if( otherCount == 0 )
-        gv->m_bMove = strCurrentWordData[nIndexOfCurrentChar] - 49 ;
-      if( otherCount == 1 )
-        gv->m_bBe = strCurrentWordData[nIndexOfCurrentChar] - 49 ;
-      if( otherCount == 2 )
+//      if( otherCount == OneLinePerWordPair::movement_verb )
+//        gv->m_bMove = chCurrentChar - 49 ;
+//      if( otherCount == OneLinePerWordPair::auxiliary_verb_type )
+//        gv->m_bBe = chCurrentChar - 49 ;
+      if( otherCount == OneLinePerWordPair::grammatical_case )
       {
-        if( strCurrentWordData[nIndexOfCurrentChar] == '1' ) // Verb verlangt kein Objekt
-          gv->m_bCase = 0 ;
-        if(strCurrentWordData[nIndexOfCurrentChar] == '2' ) // Verb verlangt Objekt im 3. Fall
-          gv->m_bCase = 1 ;
-        if(strCurrentWordData[nIndexOfCurrentChar]=='3') // Verb verlangt Objekt im 4. Fall
-        {
-          gv->m_bCase = 2 ;
-          g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[
-              VocabularyAndTranslation::array_index_for_case ] =
-              VocabularyAndTranslation::dative ;
-        }
-        if(strCurrentWordData[nIndexOfCurrentChar]=='4') // Verb verlangt 2 Objekte im 3. und 4. Fall
-          gv->m_bCase = 3 ;
+//        //Verb verlangt kein Objekt.
+//        if( chCurrentChar == '1' )
+//          gv->m_bCase = 0 ;
+//        //Verb verlangt Objekt im 3. Fall.
+//        if( chCurrentChar == '2' )
+//          gv->m_bCase = 1 ;
+//        //Verb verlangt Objekt im 4. Fall.
+//        if( chCurrentChar == '3' )
+//        {
+//          gv->m_bCase = 2 ;
+//        }
+//        if( chCurrentChar == '4') // Verb verlangt 2 Objekte im 3. und 4. Fall
+//          gv->m_bCase = 3 ;
+        g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[
+          VocabularyAndTranslation::array_index_for_case ] =
+          chCurrentChar - //49
+          '0';
       }
-      if( otherCount == 3 )
+      if( otherCount == OneLinePerWordPair::reflexive_or_not )
       {
-        if(strCurrentWordData[nIndexOfCurrentChar]=='1')
-          gv->m_bReflexive=FALSE;
-        if(strCurrentWordData[nIndexOfCurrentChar]=='2')
-          gv->m_bReflexive=TRUE;
+//        if( chCurrentChar == '1' )
+//          gv->m_bReflexive = FALSE ;
+//        if( chCurrentChar == '2' )
+//          gv->m_bReflexive = TRUE ;
       }
       if( byDelemiterCount == 17 && otherCount==3)
       {
@@ -1156,7 +1162,8 @@ void OneLinePerWordPair::extract(
   , BYTE bEnglishWord
   , int & ret )
 {
-	LOGN("extract--new word from file") ;
+	LOGN("OneLinePerWordPair::extract--word data: " << strCurrentWordData
+	  << "English word:" << (bEnglishWord ? "yes" : "no" ) )
   std::set<LetterNode *> stdsetpletternodeLastStringChar ;
   if( strCurrentWordData.length() > 0 )
   {
@@ -1173,7 +1180,7 @@ void OneLinePerWordPair::extract(
       //The other last LetterNodes should point to its address.
       bInsertNewVocabularyAndTranslation = true ;
       BYTE byVocabularyType = strCurrentWordData[ WORD_TYPE_CHAR_INDEX ] ;
-
+      LOGN("vocabulary type: " << (WORD) byVocabularyType )
 //      byVocabularyType = WordFileWordClassValueToZeroBasedIndex(
 //        byVocabularyType) ;
 
@@ -1184,35 +1191,43 @@ void OneLinePerWordPair::extract(
       switch( byVocabularyType )
       {
       case WORD_TYPE_NOUN : // Substantiv
+        LOGN("inserting English noun")
         InsertEnglishNoun(strCurrentWordData,byVocabularyType) ;
         return ;
         break;
       case WORD_TYPE_MAIN_VERB : // englisches Vollverb
+        LOGN("inserting English main verb")
         InsertEnglishMainVerb(strCurrentWordData,byVocabularyType,
             stdsetpletternodeLastStringChar) ;
         return ;
         break;
       case WORD_TYPE_ADJECTIVE : // englisches Adjektiv
+        LOGN("inserting English adjective")
         InsertEnglishAdjective(strCurrentWordData,byVocabularyType) ;
         return ;
         break ;
       case WORD_TYPE_ADVERB : // Adverb
+        LOGN("inserting English adverb")
         InsertEnglishAdverb(strCurrentWordData,byVocabularyType) ;
         return ;
         break ;
-      case WORD_TYPE_PREPOSITION : // Pr�position
+      case WORD_TYPE_PREPOSITION : // Präposition
+        LOGN("inserting English preposition")
         InsertEnglishPreposition(strCurrentWordData,byVocabularyType) ;
         return ;
         break ;
       case WORD_TYPE_PRONOUN : // Pronomen
+        LOGN("inserting English pronoun")
         InsertEnglishPonoun(strCurrentWordData,byVocabularyType) ;
         return ;
         break ;
       case WORD_TYPE_AUX_VERB : // Hilfsverb
+        LOGN("inserting English auxiliary verb")
         InsertEnglishAuxiliaryVerb(strCurrentWordData,byVocabularyType) ;
         return ;
         break ;
       case WORD_TYPE_CONJUNCTION : // englische Konjunktion
+        LOGN("inserting English conjunction")
         InsertEnglishConjunction(strCurrentWordData,byVocabularyType) ;
         return ;
         break ;
@@ -1220,6 +1235,7 @@ void OneLinePerWordPair::extract(
 	  }
 	  else // deutsch
 	  {
+      LOGN("inserting German word")
       BYTE byVocabularyType = strCurrentWordData[ WORD_TYPE_CHAR_INDEX ] ;
       //switch ( str[ WORD_TYPE_CHAR_INDEX ] )
       switch ( byVocabularyType )

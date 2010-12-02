@@ -7,7 +7,7 @@
 
 #include "TranslationRule.hpp" //header file for this TranslationRule class
 #include <Parse/GrammarPart.hpp> //class GrammarPart
-//#include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <Parse/ParseByRise.hpp> //class ParseByRise for DEBUG_COUTN(...)
 #include <exception> //for class std::exception
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <preprocessor_macros/suppress_unused_variable.h>
@@ -66,7 +66,8 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
          ; -- wIndex
          )
       {
-        DEBUG_COUT("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
+//        DEBUG_COUTN
+        DEBUGN("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
             //p_translationrule->
             m_syntaxtreepathConsecutiveID.
             m_ar_wElements [ wIndex ] <<
@@ -79,7 +80,6 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
           << (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID
           << mp_parsebyrise->GetGrammarPartName(
             (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID )
-          << "\n"
           )
         if( //p_tr->m_ar_wElements [ wIndex ] !=
             m_syntaxtreepathConsecutiveID.m_ar_wElements [ wIndex ] !=
@@ -138,7 +138,9 @@ bool TranslationRule::Matches(
 //        ++ rev_iter
         )
     {
-      DEBUG_COUT("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
+//      DEBUG_COUTN
+      DEBUGN
+      ( "comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
           //p_translationrule->
         m_syntaxtreepathCompareWithCurrentPath.
           m_ar_wElements [ wIndex ] <<
@@ -154,7 +156,6 @@ bool TranslationRule::Matches(
             //r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
           *rev_iter
           )
-        << "\n"
         )
 //      if( //p_tr->m_ar_wElements [ wIndex ] !=
 //          //p_translationrule->

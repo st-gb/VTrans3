@@ -2,7 +2,7 @@
 
 #include <string>
 #include <windef.h> //for BYTE etc.
-#include <Word.hpp>
+#include <Attributes/Word.hpp>
 
 #include "LetterTree/VocabularyAndTranslation.hpp" //class EnglishWord
 

@@ -23,6 +23,8 @@
 #include <string.h> //for wcscmp (const wchar_t*, const wchar_t*);
 #include <string> //class std::string
 
+#define TRANSLATION_RULE_XML_ELEMENT_ANSI "translation_rule"
+
 SAX2TranslationRuleHandler::SAX2TranslationRuleHandler(
   TranslateParseByRiseTree & r_translateparsebyrise ,
   ParseByRise & r_parsebyrise
@@ -44,16 +46,28 @@ SAX2TranslationRuleHandler::~SAX2TranslationRuleHandler()
 //This callback funtion is needed because a translation rule can be added
 // at first when all inner possible conditions were got.
 void SAX2TranslationRuleHandler::endElement(
-  const XMLCh * const uri,
+  const XMLCh * const cpc_xmlchURI,
   const XMLCh * const cpc_xmlchLocalName,
-  const XMLCh * const qname
+  const XMLCh * const cpc_xmlchQualifiedName
   )
 {
-  if( //http://www.gnu.org/s/libc/manual/html_node/String_002fArray-Comparison.html:
-      //"If the two strings are equal, wcscmp returns 0."
-     ! wcscmp ( cpc_xmlchLocalName , L"translation_rule" )
+  if(
+//      //http://www.gnu.org/s/libc/manual/html_node/
+//      // String_002fArray-Comparison.html:
+//      //"If the two strings are equal, wcscmp returns 0."
+       //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
+//     ! wcscmp ( cpc_xmlchLocalName , L"translation_rule" )
+
+      //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
+      ! Xerces::ansi_or_wchar_string_compare(
+          cpc_xmlchLocalName,
+          ANSI_OR_WCHAR( //TRANSLATION_RULE_XML_ELEMENT_ANSI
+          "translation_rule" )
+        )
     )
   {
+    LOGN( //TRANSLATION_RULE_XML_ELEMENT_ANSI
+      "translation_rule" << " element" )
     if( ! m_stdstrTranslationRuleSyntaxTreePath.empty() )
     {
       TranslationRule * p_translationrule ;
@@ -62,6 +76,8 @@ void SAX2TranslationRuleHandler::endElement(
         p_translationrule = new TranslationRule(
           m_stdstrTranslationRuleSyntaxTreePath
           , & mr_parsebyrise ) ;
+        LOGN("SAX2TranslationRuleHandler::endElement(...)--adding translation "
+          "rule")
         mr_translateparsebyrise.AddTranslationRule(
           p_translationrule
           , m_conditionsandtranslation ) ;
@@ -93,19 +109,19 @@ void SAX2TranslationRuleHandler::setDocumentLocator(
 
 void SAX2TranslationRuleHandler::startElement
   (
-  const   XMLCh * const    uri,
-  const   XMLCh * const    cpc_xmlchLocalName,
-  const   XMLCh * const    qname,
-  const   //use namespace prefix here for clarifications that Attributes is
+  const XMLCh * const cpc_xmlchURI,
+  const XMLCh * const cpc_xmlchLocalName,
+  const XMLCh * const cpc_xmlchQualifiedName,
+  const //Use namespace prefix here for clarifications that Attributes is
     //part of / belongs to Xerces
     XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes
-//      XercesAttributesHelper & attrs
   )
 {
   char * pchXMLelementName = XERCES_CPP_NAMESPACE::XMLString::transcode(
     cpc_xmlchLocalName);
   if( pchXMLelementName )
   {
+    LOGN("XML element:" << pchXMLelementName )
     m_strElementName = std::string(pchXMLelementName) ;
     if( m_strElementName == "translation_rule" )
     {
@@ -122,23 +138,37 @@ void SAX2TranslationRuleHandler::startElement
         if( XercesAttributesHelper::getValue(
             cr_xercesc_attributes ,
             m_stdstrTranslationRuleAttributeName,
-            //This is the name for the attribute value to choose for translation
-            //if the syntax tree path and the conditions match:
-            // e.g. attribute_name is "German_plural", current syntax tree path is
-            // "definite_plural.plural", translation rule's syntax tree path is
-            // "plural" then:
-            // use attribute name "German_plural" from the VocabularyAndTranslation
-            // data.
+            //This is the name for the attribute value to choose for
+            //translation if the syntax tree path and the conditions match:
+            // e.g. attribute_name is "German_plural", current syntax tree
+            // path is "definite_plural.plural", translation rule's syntax
+            // tree path is "plural" then:
+            // use attribute name "German_plural" from the
+            // VocabularyAndTranslation data.
             "attribute_name"
             )
           )
+        {
+          //The translation definition may refer a definition of an vocabulary
+          //attribute definition (e.g. "German_noun_plural: string attribute
+          //type, string at string array index 2).
+          if( mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.
+            find( m_stdstrTranslationRuleAttributeName) ==
+            mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.end()
+            )
+          {
+            mr_i_userinterface.Message( "The translation attribute definition "
+              "for the name \"" + m_stdstrTranslationRuleAttributeName
+              + "\" is not available.") ;
+          }
           m_conditionsandtranslation.m_stdstrAttributeName =
               m_stdstrTranslationRuleAttributeName ;
+        }
         else if ( XercesAttributesHelper::getValue(
             cr_xercesc_attributes ,
             m_stdstrTranslation
-            //Using directly a word for translation rather than an attribute value
-            // of a VocabularyAndTranslation object is an alternative.
+            //Using directly a word for translation rather than an attribute
+            // value of a VocabularyAndTranslation object is an alternative.
             , L"translation"
             )
           )
@@ -149,9 +179,16 @@ void SAX2TranslationRuleHandler::startElement
     //Release memory AFTER comparing.
     XERCES_CPP_NAMESPACE::XMLString::release(&pchXMLelementName);
   }
-  if( //http://www.gnu.org/s/libc/manual/html_node/String_002fArray-Comparison.html:
+  if( //http://www.gnu.org/s/libc/manual/html_node/
+      //String_002fArray-Comparison.html:
       //"If the two strings are equal, wcscmp returns 0."
-     ! wcscmp ( cpc_xmlchLocalName , L"condition" )
+      //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
+//     ! wcscmp ( cpc_xmlchLocalName , L"condition" )
+     //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
+     ! Xerces::ansi_or_wchar_string_compare(
+         cpc_xmlchLocalName ,
+         ANSI_OR_WCHAR("condition")
+         )
     )
   {
     if( m_stdstrTranslationRuleAttributeName != "" || m_stdstrTranslation != ""
@@ -169,8 +206,8 @@ void SAX2TranslationRuleHandler::startElement
         && XercesAttributesHelper::getValue(
           cr_xercesc_attributes ,
           m_stdstrConditionAttributeName,
-          //Use attribute name "German_plural" from the VocabularyAndTranslation
-          // data.
+          //Use attribute name "German_plural" from the
+          // VocabularyAndTranslation data.
           L"attribute_name"
           )
         && m_stdstrConditionAttributeName != ""
@@ -178,8 +215,8 @@ void SAX2TranslationRuleHandler::startElement
 //            XercesAttributesHelper::getValue(
 //          attrs ,
 //          m_stdstrConditionByteAttrValue,
-//          //Use attribute name "German_plural" from the VocabularyAndTranslation
-//          // data.
+//          //Use attribute name "German_plural" from the
+//          // VocabularyAndTranslation data.
 //          L"byte_attribute_value"
 //          )
             ConvertXercesAttributesValue<//BYTE
@@ -193,8 +230,8 @@ void SAX2TranslationRuleHandler::startElement
           XercesAttributesHelper::getValue(
           cr_xercesc_attributes ,
           m_stdstrConditionStringAttrValue ,
-          //Use attribute name "German_plural" from the VocabularyAndTranslation
-          // data.
+          //Use attribute name "German_plural" from the
+          // VocabularyAndTranslation data.
           L"string_attribute_value"
           )
         )
@@ -220,6 +257,7 @@ void SAX2TranslationRuleHandler::startElement
 //        if( m_stdstrConditionByteAttrValue != "" )
         cond.m_byAttributeValue = //byAttributeValue ;
             wAttributeValue ;
+        LOGN("SAX2TranslationRuleHandler::startElement(...)--adding condition")
         m_conditionsandtranslation.AddCondition( cond ) ;
       }
     }

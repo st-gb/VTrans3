@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "WordNode.hpp"
-#include "../../Word.hpp"
+#include <Attributes/Word.hpp>
 #include "../../rest.h" //for CStringVector
-#include "../../Token.h" //for GetCStringVector2(...)
+#include <Attributes/Token.h> //for GetCStringVector2(...)
 #include <string>
 
 extern WordNode * m_first ;

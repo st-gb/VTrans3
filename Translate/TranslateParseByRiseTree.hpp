@@ -42,8 +42,10 @@ class TranslateParseByRiseTree
   std::map<std::string,std::vector<std::string> >
     m_stdmap_stdstrTranslationArrayName2vec_stdstrArrayElements ;
   std::vector<GrammarPart *> m_stdvecNodesToProcess ;
+public:
   I_UserInterface & mr_i_userinterface ;
   ParseByRise * mp_parsebyrise ;
+private:
   //Sores the current path within the syntax tree of grammar part IDs.
   //So it can be compared whether a translation rule exists for it.
   //E.g. a translation rule "subject.def_article_noun.noun" exists.
@@ -52,13 +54,14 @@ class TranslateParseByRiseTree
   //the rule applies to the subtree "subject.def_article_noun.noun"
   std::vector<WORD> m_stdvec_wCurrentGrammarPartPath ;
   std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
-
+public:
   //e.g. define std::string "Eng_singular",
   // AttributeTypeAndPosAndSize ( string, 0 ,1 )
   //what means that the string data inside the VocabularyAndTranslation object
   //  at string array index 0 is defined as "English_singular".
   std::map<std::string,AttributeTypeAndPosAndSize>
     m_stdmap_AttrName2VocAndTranslAttrDef ;
+private:
   std::map<TranslationRule *,ConditionsAndTranslation>
     m_stdmap_p_translationrule2ConditionsAndTranslation ;
   //use a multimap because more than 1 translation rule may have the same syntax

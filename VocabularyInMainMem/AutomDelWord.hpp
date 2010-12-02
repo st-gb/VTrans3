@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Word.hpp"
+#include <Attributes/Word.hpp>
 
 class AutomDelWord
 {

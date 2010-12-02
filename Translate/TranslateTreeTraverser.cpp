@@ -104,6 +104,11 @@ namespace ParseTreeTraverser
     {
       DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
         stdstrTranslation ) ;
+      DEBUGN( "TranslateTreeTraverser::LeaveFound(): "
+        << mr_parsebyrise.GetPathAs_std_string(
+          m_vec_wGrammarPartIDcurrentParsePath)
+        << "--translation rule applies. "
+        "translation:" << stdstrTranslation ) ;
       m_stdstrWholeTranslation += stdstrTranslation + " " ;
       //The consecutive ID is set to the grammar part AFTER we arrive here.
       //Because this ID is needed, store the grammar part, too.

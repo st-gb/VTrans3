@@ -28,8 +28,13 @@
 #include <wx/splitter.h> //class wxSplitterWindow
 #include <wx/textctrl.h> //class wxTextCtrl
 
+#define COMPILE_WITH_TEXT_TO_SPEECH
+#ifdef COMPILE_WITH_TEXT_TO_SPEECH
+  #include <ax/ax_speech.h>
+#endif
+
 #include "wxTextInputDlg.hpp"
-#include <IO.hpp> //class OneLinePerWordPair
+#include <IO/IO.hpp> //class OneLinePerWordPair
 #include <bitmaps/resolve_superclasses.xpm> //for array resolve_superclasses_xpm
 #include <bitmaps/resolve_1parse_level.xpm> //for array resolve_1parse_level_xpm
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
@@ -202,7 +207,8 @@ wxTextInputDlg::wxTextInputDlg(
   : wxDialog( p_wxwindowParent, wxwindow_id, cr_wxstrTitle,
     cr_wxpointWindowPosition, cr_wxsizeWindow, style )
 //  , mp_wxhtmlwindow( NULL)
-  , m_parsebyrise( ::wxGetApp() )
+//  , m_parsebyrise( ::wxGetApp() )
+  , m_parsebyrise ( ::wxGetApp().m_parsebyrise )
 {
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -531,14 +537,20 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
 {
   std::string stdstrWholeInputText ;
   GetEntireInputText(stdstrWholeInputText) ;
+//  AxSpeech axspeech ;
+//  axspeech.Say( stdstrWholeInputText ) ;
 
   m_parsebyrise.ClearParseTree() ;
   m_parsebyrise.CreateInitialGrammarParts ( stdstrWholeInputText ) ;
   DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
   m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
 
-  TranslateParseByRiseTree translateParseByRiseTree( m_parsebyrise
-    , ::wxGetApp() ) ;
+//  TranslateParseByRiseTree translateParseByRiseTree(
+//    m_parsebyrise
+//    , ::wxGetApp()
+//    ) ;
+  TranslateParseByRiseTree & translateParseByRiseTree =
+    ::wxGetApp().m_translateparsebyrisetree ;
   DEBUG_COUT("before translation\n")
 //  std::string stdstrWholeTransl ;
   std::vector<std::string> stdvec_stdstrWholeTransl ;
