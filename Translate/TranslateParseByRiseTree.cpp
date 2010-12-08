@@ -473,16 +473,16 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
 
 void TranslateParseByRiseTree::AddVocAndTranslDefinitions()
 {
-  AddVocAndTranslDefinition(
-    //"main_verb",
-    "mainVerbInf0Obj" ,
-    "GermanMainVerb1stPersonSingular" , //attribute name to use as a map key value
-    AttributeTypeAndPosAndSize::German, //language
-    AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
-    //GERMAN_VERB_3RD_PERSON_SINGULAR_INDEX , //index
-    VocabularyAndTranslation::first_person_singular ,
-    1 // length
-    );
+//  AddVocAndTranslDefinition(
+//    //"main_verb",
+//    "mainVerbInf0Obj" ,
+//    "GermanMainVerb1stPersonSingular" , //attribute name to use as a map key value
+//    AttributeTypeAndPosAndSize::German, //language
+//    AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
+//    //GERMAN_VERB_3RD_PERSON_SINGULAR_INDEX , //index
+//    VocabularyAndTranslation::first_person_singular ,
+//    1 // length
+//    );
   AddVocAndTranslDefinition(
     //"main_verb",
     "mainVerbInf0Obj" ,
@@ -1411,6 +1411,33 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 //
 //}
 
+void TranslateParseByRiseTree::FreeMemoryForTranslationRule()
+{
+//  std::multimap<TranslationRule,ConditionsAndTranslation> &
+//    r_stdmmap_translationrule2conditionsandtranslation =
+//    //wxGetApp().m_translateparsebyrisetree.
+//    m_stdmap_translationrule2ConditionsAndTranslation ;
+//  for( std::multimap<TranslationRule,ConditionsAndTranslation>::const_iterator
+//      c_iter_stdmmap_translationrule2conditionsandtranslation =
+//      r_stdmmap_translationrule2conditionsandtranslation.begin() ;
+//      c_iter_stdmmap_translationrule2conditionsandtranslation !=
+//      r_stdmmap_translationrule2conditionsandtranslation.end() ;
+//      ++ c_iter_stdmmap_translationrule2conditionsandtranslation
+//      )
+//    //Was created on the heap.
+//    delete & c_iter_stdmmap_translationrule2conditionsandtranslation->first ;
+  for( std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator
+      it = m_stdmap_p_translationrule2ConditionsAndTranslation.begin() ; it !=
+      m_stdmap_p_translationrule2ConditionsAndTranslation.end() ; ++ it )
+  {
+    LOGN("freeing memory for translation rule " << it->first )
+    //Release memory occupied by creation on heap.
+    delete it->first ;
+  }
+  m_stdmap_translationrule2ConditionsAndTranslation.clear() ;
+  m_stdmap_p_translationrule2ConditionsAndTranslation.clear() ;
+}
+
 std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
   //ParseByRise & r_parsebyrise
   const std::vector<WORD> & r_stdvec_wGrammarPartPath
@@ -1679,12 +1706,6 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 TranslateParseByRiseTree::~TranslateParseByRiseTree()
 {
   DEBUG_COUT("begin of ~TranslateParseByRiseTree\n")
-  for( std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator
-      it = m_stdmap_p_translationrule2ConditionsAndTranslation.begin() ; it !=
-      m_stdmap_p_translationrule2ConditionsAndTranslation.end() ; ++ it )
-  {
-    //Release memory occupied by creation on heap.
-    delete it->first ;
-  }
+  FreeMemoryForTranslationRule() ;
   DEBUG_COUT("end of ~TranslateParseByRiseTree\n")
 }

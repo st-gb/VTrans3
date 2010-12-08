@@ -9,7 +9,7 @@
 #define SAX2TRANSLATIONRULEHANDLER_HPP_
 
 #include <xercesc/sax2/Attributes.hpp> //for "XERCES_CPP_NAMESPACE::Attributes"
-//base class XERCES_CPP_NAMESPACE::DefaultHandler
+//Base class XERCES_CPP_NAMESPACE::DefaultHandler
 #include <xercesc/sax2/DefaultHandler.hpp>
 //class ConditionsAndTranslation
 #include <Translate/ConditionsAndTranslation.hpp>

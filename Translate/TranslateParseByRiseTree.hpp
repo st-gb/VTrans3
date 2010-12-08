@@ -61,9 +61,9 @@ public:
   //  at string array index 0 is defined as "English_singular".
   std::map<std::string,AttributeTypeAndPosAndSize>
     m_stdmap_AttrName2VocAndTranslAttrDef ;
-private:
   std::map<TranslationRule *,ConditionsAndTranslation>
     m_stdmap_p_translationrule2ConditionsAndTranslation ;
+//private:
   //use a multimap because more than 1 translation rule may have the same syntax
   //tree path: the rules for translating a singular article for an object for
   //each noun gender male, neuter and female have all the same syntax tree path:
@@ -114,6 +114,7 @@ public:
     //, const std::vector<WORD> & r_stdvec_wGrammarPartPath
     , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
     ) ;
+  void FreeMemoryForTranslationRule() ;
   std::string GetSyntaxTreePathAsName( //ParseByRise & r_parsebyrise
    const std::vector<WORD> & ) ;
   std::string GetSyntaxTreePathAsName(WORD * ar_wGrammarPartPath,

@@ -33,19 +33,22 @@ I_UserInterface * SyntaxTreePath::sp_userinterface ;
 IMPLEMENT_APP(VTransApp)
 
 VTransApp::VTransApp()
-  :
-  m_parsebyrise( * this ) ,
-  m_translateparsebyrisetree(
-    m_parsebyrise
-    , * this
-    )
+//  :
+//  m_parsebyrise( * this ) ,
+//  m_translateparsebyrisetree(
+//    m_parsebyrise
+//    , * this
+//    )
 {
+  //m_parsebyrise.m_
 }
 
 //VTransApp::VTransApp(const VTransApp& orig) {
 //}
 
-VTransApp::~VTransApp() {
+VTransApp::~VTransApp()
+{
+  LOGN("VTransApp::~VTransApp()")
 }
 
 void VTransApp::CreateAndShowMainWindow()
@@ -167,7 +170,9 @@ void VTransApp::ReadMainConfigFile(const std::string & cr_stdstrFilePath )
 {
   std::wstring stdwstrErrorMessage ;
   Xerces::SAX2MainConfigHandler sax2mainconfighandler(
-    m_translateparsebyrisetree) ;
+    //m_translateparsebyrisetree
+    * this
+    ) ;
   if( //ReadViaSAX2InitAndTermXerces(
       ReadXMLfile_Inline(
         cr_stdstrFilePath.c_str() ,

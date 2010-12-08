@@ -1,6 +1,7 @@
 <!--  -->
 <VTrans_main_cfg>
  <vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" />
+ <vocabulary_attribute_definition_file path="Vocabulary_attribute_definitions.xml" />
  <translation_rule_file path="translation_rules.xml" />
  <translation_rule_file path="reflexive_pronouns_translation_rules.xml" />
 </VTrans_main_cfg>

@@ -3,6 +3,7 @@
 //"fatal error C1010: Unerwartetes Dateiende w�hrend der Suche nach dem vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
 #include "LetterTree.hpp" //header file of this LetterTree class
+#include <preprocessor_macros/logging_preprocessor_macros.h>
 
 #ifdef _DEBUG
   #define _DEBUG_FREEING_MEM
@@ -987,7 +988,9 @@ void LetterTree::DeleteCompleteList()
 
 LetterTree::~LetterTree()
 {
+  LOGN("~LetterTree() begin")
   DeleteCompleteList() ;
+  LOGN("~LetterTree() end")
 }
 
 

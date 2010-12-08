@@ -43,7 +43,7 @@ SAX2TranslationRuleHandler::~SAX2TranslationRuleHandler()
   // TODO Auto-generated destructor stub
 }
 
-//This callback funtion is needed because a translation rule can be added
+//This callback function is needed because a translation rule can be added
 // at first when all inner possible conditions were got.
 void SAX2TranslationRuleHandler::endElement(
   const XMLCh * const cpc_xmlchURI,
@@ -117,6 +117,7 @@ void SAX2TranslationRuleHandler::startElement
     XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes
   )
 {
+  LOGN("SAX2TranslationRuleHandler::startElement begin")
   char * pchXMLelementName = XERCES_CPP_NAMESPACE::XMLString::transcode(
     cpc_xmlchLocalName);
   if( pchXMLelementName )
@@ -177,7 +178,7 @@ void SAX2TranslationRuleHandler::startElement
       }
     }
     //Release memory AFTER comparing.
-    XERCES_CPP_NAMESPACE::XMLString::release(&pchXMLelementName);
+    XERCES_CPP_NAMESPACE::XMLString::release( & pchXMLelementName);
   }
   if( //http://www.gnu.org/s/libc/manual/html_node/
       //String_002fArray-Comparison.html:
