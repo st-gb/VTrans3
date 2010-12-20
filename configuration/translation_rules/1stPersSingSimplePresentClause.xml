@@ -1,0 +1,16 @@
+<translation_rules>
+  <!-- translation of finite verb for "I" / 1st person sing.-->
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePresentClause.mainVerbInf0Obj"
+    attribute_name="GermanMainVerb1stPersonSingular" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj"
+    attribute_name="GermanMainVerb1stPersonSingular" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePresentClauseAllow2Obj.mainVerbInf2Obj"
+    attribute_name="GermanMainVerb1stPersonSingular" 
+  />
+
+</translation_rules>

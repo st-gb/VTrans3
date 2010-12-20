@@ -9,7 +9,7 @@
 #include <Attributes/Word.hpp> //for "class Word" etc.
 #include <fstream> //for std::ofstream
 #include <ios>//fo ios_base
-#include "charsetconv.h"
+#include "Controller/charsetconv.h"
 #include "VocabularyInMainMem/LetterTree/LetterTree.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordList.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp" //for "class WordNode" etc.
@@ -24,10 +24,13 @@
 
 //class WordList ;
 
-extern std::ofstream ofstreamLogFile; //for LOGN(...)
-extern WordList wordList;
+//extern std::ofstream ofstreamLogFile; //for LOGN(...)
+//extern WordList wordList;
 
-LetterTree g_lettertree ;
+//LetterTree g_lettertree ;
+//Static variables need also to be declared in the source file.
+LetterTree * OneLinePerWordPair::s_p_lettertree ;
+//extern LetterTree & g_lettertree ;
 
 DWORD OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
 
@@ -229,7 +232,8 @@ void OneLinePerWordPair::InsertEnglishNoun(
           if( stdstrCurrrentWord == "love" )
             nLength = nLength ;
           #endif
-        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+//        g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+        s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
           stdsetpletternodeLastStringChar
           //, LetterNode * pletternodeCurrent
           //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -245,18 +249,21 @@ void OneLinePerWordPair::InsertEnglishNoun(
         {
           //Is NULL if e.g. an English noun that only has a plural
           //and thus the singular string is empty.
-          if( g_lettertree.s_pvocabularyandtranslation )
+//          if( g_lettertree.s_pvocabularyandtranslation )
+          if( s_p_lettertree->s_pvocabularyandtranslation )
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
           {
 #endif
-            g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord[
+//            g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord[
+            s_p_lettertree->s_pvocabularyandtranslation->m_arstrEnglishWord[
               delemiterCount] = //str.Mid(start,i-start);
               strCurrentWordData.substr( nIndexOf1stChar
               , nIndexOfCurrentChar - nIndexOf1stChar );
 #ifdef _DEBUG
             std::cout << "eng noun read:" <<
-                g_lettertree.s_pvocabularyandtranslation->
-                m_arstrEnglishWord[delemiterCount] << "\n" ;
+//              g_lettertree.s_pvocabularyandtranslation->
+              s_p_lettertree->s_pvocabularyandtranslation->
+              m_arstrEnglishWord[delemiterCount] << "\n" ;
 #endif
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
             //Reason: in the lettertrie the reference to ...
@@ -286,7 +293,8 @@ void OneLinePerWordPair::InsertEnglishNoun(
             //
             // So by comparing the pointer addresses stored for the tokens
             //one can see if it was singular or plural.
-            g_lettertree.s_pvocabularyandtranslation->
+//            g_lettertree.s_pvocabularyandtranslation->
+            s_p_lettertree->s_pvocabularyandtranslation->
               m_arpletternodeLastEngChar[
               delemiterCount] = pletternode ;
           }
@@ -299,14 +307,16 @@ void OneLinePerWordPair::InsertEnglishNoun(
 #endif //#ifdef _INSERT_INTO_HASH_TREE
       if(delemiterCount == 0) //singular noun
       {
-        g_lettertree.InsertSingularNounReferringNounAttributes(
+//        g_lettertree.InsertSingularNounReferringNounAttributes(
+        s_p_lettertree->InsertSingularNounReferringNounAttributes(
           stdsetpletternodeLastStringChar ) ;
       }
       if(delemiterCount == 1 )
       {
 //						  en->m_strPlural = //str.Mid(start,i-start);
 //                str.substr(start,i-start);
-        g_lettertree.InsertPluralNounReferringNounAttributes(
+//        g_lettertree.InsertPluralNounReferringNounAttributes(
+        s_p_lettertree->InsertPluralNounReferringNounAttributes(
           stdsetpletternodeLastStringChar ) ;
       }
       nIndexOf1stChar = nIndexOfCurrentChar + 1 ;
@@ -349,9 +359,11 @@ void OneLinePerWordPair::InsertEnglishNoun(
 #ifdef _INSERT_INTO_HASH_TREE
               //May be NULL if (the first) string (= singular) is
               //empty.
-              if(g_lettertree.s_pvocabularyandtranslation )
-                g_lettertree.s_pvocabularyandtranslation->SetNounTranslationType(
-                  en->m_bTranslationType) ;
+//              if( g_lettertree.s_pvocabularyandtranslation )
+              if( s_p_lettertree->s_pvocabularyandtranslation )
+//                g_lettertree.s_pvocabularyandtranslation->
+                s_p_lettertree->s_pvocabularyandtranslation->
+                  SetNounTranslationType( en->m_bTranslationType) ;
 #endif //#ifdef _INSERT_INTO_HASH_TREE
               bCorrect = true ;
               break;
@@ -434,7 +446,8 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
           switch( byNumberOfObjectsAllowed )
           {
           case 0 :
-          g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+//          g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+          s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
             stdsetpletternodeLastStringChar
             //, LetterNode * pletternodeCurrent
             //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -446,7 +459,8 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
             , nIndexOf1stWordChar
             ) ;
           case 1:
-            g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+//            g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+            s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
               stdsetpletternodeLastStringChar
               //, LetterNode * pletternodeCurrent
               //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -457,7 +471,8 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
               , nIndexOf1stWordChar
               ) ;
           case 2:
-            g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+//            g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+            s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
               stdsetpletternodeLastStringChar
               //, LetterNode * pletternodeCurrent
               //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -474,20 +489,22 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
   //            , nIndexOfCurrentChar - nIndexOf1stChar );
   #ifdef _INSERT_INTO_HASH_TREE
           if( byAllowsProgressiveForm )
-            g_lettertree.InsertProgressiveReferringVerbAttributes(
+//            g_lettertree.InsertProgressiveReferringVerbAttributes(
+            s_p_lettertree->InsertProgressiveReferringVerbAttributes(
               //This set is to ensure that if strings for the SAME vocabulary
               // not 2 or more VocAndTransl object should be inserted.
               stdsetpletternodeLastStringChar
               , stdstrInfinitive
               , byNumberOfObjectsAllowed
               ) ;
-          g_lettertree.Insert3rdPersonSingularPresentReferringNounAttributes(
-               //This set is to ensure that if strings for the SAME vocabulary
-               // not 2 or more VocAndTransl object should be inserted.
-               stdsetpletternodeLastStringChar
-               , stdstrInfinitive
-               , byNumberOfObjectsAllowed
-               ) ;
+//          g_lettertree.Insert3rdPersonSingularPresentReferringNounAttributes(
+          s_p_lettertree->Insert3rdPersonSingularPresentReferringNounAttributes(
+             //This set is to ensure that if strings for the SAME vocabulary
+             // not 2 or more VocAndTransl object should be inserted.
+             stdsetpletternodeLastStringChar
+             , stdstrInfinitive
+             , byNumberOfObjectsAllowed
+             ) ;
 
   #endif //#ifdef _INSERT_INTO_HASH_TREE
         }
@@ -516,8 +533,10 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
       } //switch
         if(delemiterCount < NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB )
         {
-          if( g_lettertree.s_pvocabularyandtranslation )
-            g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord[
+//          if( g_lettertree.s_pvocabularyandtranslation )
+          if( s_p_lettertree->s_pvocabularyandtranslation )
+//            g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord[
+            s_p_lettertree->s_pvocabularyandtranslation->m_arstrEnglishWord[
               delemiterCount] = //str.Mid(start,i-start);
               strCurrentWordData.substr( nIndexOf1stWordChar
                 , nIndexOfCurrentChar - nIndexOf1stWordChar ) ;
@@ -551,7 +570,8 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
 //          ) ;
       }
 #ifdef _INSERT_INTO_HASH_TREE
-      g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[0] = 0 ;
+//      g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[0] = 0 ;
+      s_p_lettertree->s_pvocabularyandtranslation->m_arbyAttribute[0] = 0 ;
 #endif
 //            return ev;
       return ;
@@ -703,7 +723,8 @@ void OneLinePerWordPair::InsertEnglishConjunction(
 //        strCurrentWordData.substr(1,i-1);
 //            if( i + 1 == strCurrentWordData.length() )
 //              return ec;
-      g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+//      g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+      s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
           stdsetpletternodeLastStringChar
           //, LetterNode * pletternodeCurrent
           //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -715,8 +736,10 @@ void OneLinePerWordPair::InsertEnglishConjunction(
           , //1
           nIndexOf1stChar
           ) ;
-        if( g_lettertree.s_pvocabularyandtranslation )
-          g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord[
+//        if( g_lettertree.s_pvocabularyandtranslation )
+        if( s_p_lettertree->s_pvocabularyandtranslation )
+//          g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord[
+          s_p_lettertree->s_pvocabularyandtranslation->m_arstrEnglishWord[
             //delemiterCount
           0 ] = //str.Mid(start,i-start);
             strCurrentWordData.substr( 1 //nIndexOf1stChar
@@ -894,7 +917,8 @@ void OneLinePerWordPair::InsertGermanConjunction(
 //      gc->m_strWord = //str.Mid(1,i-1);
 //        strCurrentWordData.substr(1,nIndexOfCurrentChar-1);
       bDelemiterOccured = TRUE ;
-      g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+//      g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+      s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
         stdsetpletternodeLastStringChar
         //, LetterNode * pletternodeCurrent
         //, VocabularyAndTranslation * pvocabularyandtranslation
@@ -906,8 +930,10 @@ void OneLinePerWordPair::InsertGermanConjunction(
         , 1
         //nIndexOf1stChar
         ) ;
-        if( g_lettertree.s_pvocabularyandtranslation )
-          g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
+//        if( g_lettertree.s_pvocabularyandtranslation )
+        if( s_p_lettertree->s_pvocabularyandtranslation )
+//          g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
+          s_p_lettertree->s_pvocabularyandtranslation->m_arstrGermanWord[
             //delemiterCount
           0 ] = //str.Mid(start,i-start);
             strCurrentWordData.substr( 1 //nIndexOf1stChar
@@ -952,7 +978,8 @@ void OneLinePerWordPair::InsertGermanMainVerb(
         //So the German equivalent can be retrieved when the last
         //character (LetterNode) of the English string inside the Trie
         //is got.
-        g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
+//        g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
+        s_p_lettertree->s_pvocabularyandtranslation->m_arstrGermanWord[
           byDelemiterCount ] = //str.Mid(start,i-start);
           strCurrentWordData.substr( nIndexOf1stChar ,
           nIndexOfCurrentChar - nIndexOf1stChar );
@@ -991,7 +1018,8 @@ void OneLinePerWordPair::InsertGermanMainVerb(
 //        }
 //        if( chCurrentChar == '4') // Verb verlangt 2 Objekte im 3. und 4. Fall
 //          gv->m_bCase = 3 ;
-        g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[
+//        g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[
+        s_p_lettertree->s_pvocabularyandtranslation->m_arbyAttribute[
           VocabularyAndTranslation::array_index_for_case ] =
           chCurrentChar - //49
           '0';
@@ -1069,13 +1097,15 @@ void OneLinePerWordPair::InsertGermanNoun(
         //So the German equivalent can be retrieved when the last
         //character (LetterNode) of the English string inside the Trie
         //is got.
-        g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
+//        g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
+        s_p_lettertree->s_pvocabularyandtranslation->m_arstrGermanWord[
           delemiterCount ] = //str.Mid(start,i-start);
           strCurrentWordData.substr( nIndexOf1stChar
           , nIndexOfCurrentChar - nIndexOf1stChar );
 #ifdef _DEBUG
         std::cout << "German noun read:" <<
-            g_lettertree.s_pvocabularyandtranslation->
+//            g_lettertree.s_pvocabularyandtranslation->
+            s_p_lettertree->s_pvocabularyandtranslation->
             m_arstrGermanWord[delemiterCount] << "\n" ;
 #endif
 #endif //#ifdef _INSERT_INTO_HASH_TREE
@@ -1093,7 +1123,8 @@ void OneLinePerWordPair::InsertGermanNoun(
         //voc=dynamic_cast<Vocable*>(gn);
         //return 0;
 //                return gn;
-        g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[
+//        g_lettertree.s_pvocabularyandtranslation->m_arbyAttribute[
+        s_p_lettertree->s_pvocabularyandtranslation->m_arbyAttribute[
           0 ] = ( strCurrentWordData[nIndexOfCurrentChar] - '1' ) ;
         return ;
       }

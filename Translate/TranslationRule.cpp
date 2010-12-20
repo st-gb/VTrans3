@@ -254,12 +254,12 @@ TranslationRule::TranslationRule( //const std::string & r_stdstrSyntaxTreePath
   : mp_parsebyrise(p_parsebyrise)
 {
   std::string stdstrSyntaxTreePath(p_ch_SyntaxTreePath) ;
-  DEBUG_COUT("TranslationRule::TranslationRule\n")
+  DEBUG_COUT("TranslationRule::TranslationRule begin\n")
   //TODO uncomment
   m_syntaxtreepathCompareWithCurrentPath.CreateGrammarPartIDArray(
       stdstrSyntaxTreePath
       , p_parsebyrise ) ;
-  DEBUG_COUT("TranslationRule::TranslationRule\n")
+  DEBUG_COUT("TranslationRule::TranslationRule end\n")
 }
 
 bool TranslationRule::operator < ( const TranslationRule & r) const
@@ -280,5 +280,6 @@ bool TranslationRule::operator < ( const TranslationRule & r) const
 //      //here: Contents are identical.
 //      return false ;
 //    }
-  return m_syntaxtreepathCompareWithCurrentPath < r.m_syntaxtreepathCompareWithCurrentPath ;
+  return m_syntaxtreepathCompareWithCurrentPath <
+      r.m_syntaxtreepathCompareWithCurrentPath ;
 }

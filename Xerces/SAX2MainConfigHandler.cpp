@@ -33,6 +33,7 @@ namespace Xerces
     mp_translateparsebyrisetree( //& r_translateparsebyrisetree
       & r_translationcontrollerbase.m_translateparsebyrisetree ) ,
     m_r_translationcontrollerbase( r_translationcontrollerbase ) ,
+    m_sax2grammarrulehandler ( r_translationcontrollerbase.m_parsebyrise ) ,
     //Must create on heap, else the callback functions like "startElement"
     //aren't called?!
   //  SAX2TranslationRuleHandler * p_sax2grammarrulehandler = new
@@ -53,6 +54,24 @@ namespace Xerces
   SAX2MainConfigHandler::~SAX2MainConfigHandler()
   {
     TerminateXerces() ;
+  }
+
+  void SAX2MainConfigHandler::HandleReadGrammarRuleFileXMLelement(
+      const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes )
+  {
+    std::string stdstrPath ;
+    if( XercesAttributesHelper::GetAttributeValue(
+      cr_xercesc_attributes,
+      "path",
+      stdstrPath)
+      )
+    {
+      LOGN("got path: " << stdstrPath )
+      m_r_translationcontrollerbase.ReadGrammarRuleFile(
+        m_sax2grammarrulehandler , stdstrPath ) ;
+    }
+    else
+      LOGN("Failed to get path.")
   }
 
   void SAX2MainConfigHandler::HandleReadTranslationRuleFileXMLelement(
@@ -89,28 +108,30 @@ namespace Xerces
         * mp_translateparsebyrisetree ,
         mp_translateparsebyrisetree->mr_i_userinterface ) ;
       LOGN("got path: " << stdstrPath )
-      // <> 0 = error
-      if( //ReadViaSAX2InitAndTermXerces(
-          ! ReadXMLfile_Inline(
-          //"translation_rules.xml",
-          stdstrPath.c_str() ,
-      //    p_sax2grammarrulehandler ,
-          & sax2vocattributedefinitionhandler ,
-          stdwstrErrorMessage
-          )
-        )
-      {
-        LOGN("Successfully read voc attrib def file \"" << stdstrPath
-          << "\"" )
-  //          mr_i_userinterface.Message( wstr ) ;
-      }
-      else
-      {
-        LOGN("Failed to read voc attrib def file \"" << stdstrPath
-          << "\"" )
-        mp_translateparsebyrisetree->mr_i_userinterface.Message(
-          stdwstrErrorMessage ) ;
-      }
+//      // <> 0 = error
+//      if( //ReadViaSAX2InitAndTermXerces(
+//          ! ReadXMLfile_Inline(
+//          //"translation_rules.xml",
+//          stdstrPath.c_str() ,
+//      //    p_sax2grammarrulehandler ,
+//          & sax2vocattributedefinitionhandler ,
+//          stdwstrErrorMessage
+//          )
+//        )
+//      {
+//        LOGN("Successfully read voc attrib def file \"" << stdstrPath
+//          << "\"" )
+//  //          mr_i_userinterface.Message( wstr ) ;
+//      }
+//      else
+//      {
+//        LOGN("Failed to read voc attrib def file \"" << stdstrPath
+//          << "\"" )
+//        mp_translateparsebyrisetree->mr_i_userinterface.Message(
+//          stdwstrErrorMessage ) ;
+//      }
+      m_r_translationcontrollerbase.ReadVocAttributeDefinitionFile(
+        sax2vocattributedefinitionhandler , stdstrPath ) ;
     }
     else
       LOGN("Failed to get path.")
@@ -131,6 +152,10 @@ namespace Xerces
       m_strElementName = std::string(pchXMLelementName) ;
       //LOG( "uri:" << uri << " localname:" << localname << " qname:" <<
       // qname << endl );
+      if( m_strElementName == "grammar_rule_file" )
+      {
+        HandleReadGrammarRuleFileXMLelement( cr_xercesc_attributes ) ;
+      }
       if( m_strElementName == "translation_rule_file" )
       {
         HandleReadTranslationRuleFileXMLelement( cr_xercesc_attributes ) ;

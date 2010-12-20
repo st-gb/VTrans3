@@ -984,13 +984,14 @@ void LetterTree::DeleteCompleteList()
   //of operations like inserting a node.
 //  m_pletternodeRoot = new LetterNode(0, this);
   m_pletternodeRoot = new LetterNode(m_byArrayIndexRespSize, this) ;
+  //DEBUGN("DeleteCompleteList end")
 }
 
 LetterTree::~LetterTree()
 {
-  LOGN("~LetterTree() begin")
+//  LOGN("~LetterTree() begin")
   DeleteCompleteList() ;
-  LOGN("~LetterTree() end")
+//  LOGN("~LetterTree() end")
 }
 
 

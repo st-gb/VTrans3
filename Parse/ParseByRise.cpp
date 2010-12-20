@@ -10,6 +10,8 @@
 
 //class VocabularyAndTranslation 
 
+//TranslationControllerBase::s_lettertree
+#include <Controller/TranslationControllerBase.hpp>
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <preprocessor_macros/suppress_unused_variable.h>
 
@@ -26,16 +28,29 @@
 
 extern LetterTree g_lettertree ;
 
+ParseByRise::ParseByRise()
+  :
+  m_dwMapIndex(0) ,
+  m_p_userinterface(NULL)
+  , m_wParseLevel(0)
+{
+  DEBUGN("ParseByRise begin")
+  InitGrammarRules() ;
+  DEBUGN("ParseByRise end")
+}
+
 ParseByRise::ParseByRise(
   I_UserInterface & r_userinterface )
   :
    //m_wNumberOfSuperordinateRules( 0 )
   //,
   m_dwMapIndex(0)
-  , mr_userinterface (r_userinterface)
+//  , mr_userinterface (r_userinterface)
+  , m_p_userinterface( & r_userinterface )
   , m_wParseLevel(0)
 {
   InitGrammarRules() ;
+  DEBUG_COUTN("ParseByRise(I_UserInterface &) end")
 }
 
 //ParseByRise::ParseByRise(const ParseByRise& orig) {
@@ -43,6 +58,7 @@ ParseByRise::ParseByRise(
 
 ParseByRise::~ParseByRise()
 {
+  LOGN("~ParseByRise() begin")
   std::multimap<DWORD,GrammarPart *>::const_iterator c_iter =
       m_stdmultimap_dwLeftmostIndex2p_grammarpart.begin() ;
   for( ; c_iter != m_stdmultimap_dwLeftmostIndex2p_grammarpart.end() ;
@@ -56,6 +72,7 @@ ParseByRise::~ParseByRise()
     //FIXME SIGSEV here
     delete c_iter->second ;
   }
+  LOGN("~ParseByRise() end")
 }
 
 inline bool isStringTokenDelimiter(char ch)
@@ -405,16 +422,21 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
 //  return p_grammarpart ;
 }
 
-bool ParseByRise::GetGrammarPartID( const std::string & r_str , WORD & wID )
+bool ParseByRise::GetGrammarPartID(
+  const std::string & cr_stdstrGrammarPartName , WORD & r_wGrammarPartID )
 {
+  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
+    cr_stdstrGrammarPartName << ",...) begin")
   bool bSuccess = false ;
   std::map<std::string,WORD>::const_iterator iter =
-    m_stdmap_RuleName2RuleID.find(r_str) ;
+    m_stdmap_RuleName2RuleID.find(cr_stdstrGrammarPartName) ;
   if( iter != m_stdmap_RuleName2RuleID.end() )
   {
-    wID = iter->second ;
+    r_wGrammarPartID = iter->second ;
     bSuccess = true ;
   }
+  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
+    cr_stdstrGrammarPartName << ",...) return " << bSuccess )
   return bSuccess ;
 }
 
@@ -714,8 +736,10 @@ bool ParseByRise::GrammarPartIDIsWordClass( WORD wGrammarPartID )
 
 void ParseByRise::InitGrammarRules()
 {
+  DEBUGN("ParseByRise::InitGrammarRules() begin")
   m_wNumberOfSuperordinateRules = EnglishWord::beyond_last_entry ;
   InsertFundamentalRuleIDs() ;
+  DEBUG_COUTN("ParseByRise::InitGrammarRules() end")
 }
 
 void ParseByRise::InsertGrammarRulesFor3rdPersonSingular()
@@ -747,6 +771,7 @@ void ParseByRise::InsertGrammarRulesFor3rdPersonSingular()
 
 void ParseByRise::InsertFundamentalRuleIDs()
 {
+  LOGN("InsertFundamentalRuleIDs begin")
 //  for( BYTE by = 0 ; by < NUMBER_OF_ENGLISH_WORD_CLASSES ; ++ by )
 //  {
 //
@@ -1074,26 +1099,7 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    , "subj_or_obj_ele_comma_and_subj_or_obj_ele"
 //    ) ;
 
-//  SAX2GrammarRuleHandler sax2grammarrulehandler(*this) ;
-//  ReadViaSAX2("grammar_rules.xml", & sax2grammarrulehandler ) ;
-  //Must create on heap, else the callback functions like "startElement" aren't
-  //called?!
-//  SAX2GrammarRuleHandler * p_sax2grammarrulehandler = new
-//    SAX2GrammarRuleHandler( * this ) ;
-  SAX2GrammarRuleHandler sax2grammarrulehandler( * this ) ;
-
-  std::wstring stdwstrErrorMessage ;
-  // <> 0 = error
-  if( ReadViaSAX2InitAndTermXerces(
-    "grammar_rules.xml",
-//    p_sax2grammarrulehandler ,
-    & sax2grammarrulehandler ,
-    stdwstrErrorMessage )
-    )
-  {
-    //::wxGetApp().Message( stdwstrErrorMessage ) ;
-    mr_userinterface.Message( stdwstrErrorMessage ) ;
-  }
+  LOGN("InsertFundamentalRuleIDs end")
 }
 
 //return: new rule ID
@@ -1174,6 +1180,8 @@ void ParseByRise::InsertGrammarRule(
       wGrammarRuleIDLeft
       , wGrammarRuleIDRight
       , cp_chSuperordinateGrammarRuleName ) ;
+    DEBUG_COUTN("After inserting rule \"" << cp_chSuperordinateGrammarRuleName
+      << "\" " )
   }
 }
 
@@ -1888,6 +1896,12 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 //    , grammarpart ) ;
 //}
 
+void ParseByRise::Message(const std::wstring & cr_stdwstr )
+{
+  if( m_p_userinterface )
+    m_p_userinterface->Message(cr_stdwstr) ;
+}
+
 //Minimizes, e.g. "article + noun" = "def_article_noun"
 BYTE ParseByRise::ResolveGrammarRules(
   //Maintaining 2 maps with both leftmost and rightmost indexes should be faster
@@ -2109,7 +2123,8 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
 //    = & m_stdmultimap_dwRightmostIndex2grammarpart ;
   std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
   DWORD dwTokenIndexRightMost = dwTokenIndex ;
-  LetterNode * p_letternode = g_lettertree.searchAndReturnLetterNode( psv,
+  LetterNode * p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
+    TranslationControllerBase::s_lettertree.searchAndReturnLetterNode( psv,
     //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
     dwTokenIndexRightMost );
   //If the word was found.

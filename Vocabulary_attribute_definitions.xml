@@ -1,9 +1,0 @@
-<vocabulary_attribute_definitons>
-  <!-- -->
-  <vocabulary_attribute_definiton attribute_name="GermanMainVerb1stPersonSingular" word_class="mainVerbInf0Obj" 
-    language="German"
-    attribute_type="string"
-    attribute_index="1"
-    attribute_lenght="1" 
-    />
-</vocabulary_attribute_definitons>

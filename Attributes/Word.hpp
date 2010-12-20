@@ -1,7 +1,7 @@
 #if !defined (WORD_H_INCLUDED)
 	    #define WORD_H_INCLUDED
 
-#include <string_type.hpp>
+#include <Controller/string_type.hpp>//for typedef VTrans::string_type
 
 //#ifdef _WINDOWS
 #ifdef _MSC_VER //MS Compiler (internal MSVC preprocessor macro)

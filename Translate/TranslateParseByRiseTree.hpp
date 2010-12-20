@@ -77,11 +77,6 @@ public:
     TranslationRule,ConditionsAndTranslation>
     m_stdmap_translationrule2ConditionsAndTranslation ;
 public:
-  void Add3rdPersonPluralTranslationRules() ;
-  void Add3rdPersonSingularTranslationRules() ;
-  void AddDefiniteArticleNounTranslationRules() ;
-  void AddObjectTranslationRules() ;
-  void AddPersonalPronounTranslationRules() ;
   void AddVocAndTranslDefinition(
     //e.g. "noun.German.plural"
     //const std::string & r_stdstrWordClassAndAttributeName ,
@@ -97,7 +92,6 @@ public:
     //bit length
     WORD wLenght
     ) ;
-  void AddVocAndTranslDefinitions() ;
   void AddTranslationArray(
     const std::string & r_stdstrTranslationArrayName,
     const std::string & r_stdstrNewlineTerminatedArrayElements ) ;
@@ -114,6 +108,10 @@ public:
     //, const std::vector<WORD> & r_stdvec_wGrammarPartPath
     , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
     ) ;
+  void FreeMemoryForVocAttrDefs()
+  {
+    m_stdmap_AttrName2VocAndTranslAttrDef.clear() ;
+  }
   void FreeMemoryForTranslationRule() ;
   std::string GetSyntaxTreePathAsName( //ParseByRise & r_parsebyrise
    const std::vector<WORD> & ) ;
