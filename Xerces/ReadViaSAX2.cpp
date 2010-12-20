@@ -87,6 +87,8 @@ unsigned char ReadViaSAX2InitAndTermXerces(
   )
 {
   unsigned char by = 1 ;
+  LOGN("ReadViaSAX2InitAndTermXerces begin")
+  DEBUG_COUTN("ReadViaSAX2InitAndTermXerces begin")
 //  LOG( "read XML configuration--filename: \"" << cp_chXMLfilePath << "\"" );
   bool bXercesSuccessfullyInitialized = false ;
   //from http://xerces.apache.org/xerces-c/program-sax2-3.html:
@@ -139,5 +141,7 @@ unsigned char ReadViaSAX2InitAndTermXerces(
 //    LOG( "Xerces access terminated"//"\n"
 //      )
   }
+  LOGN("ReadViaSAX2InitAndTermXerces end")
+  DEBUG_COUTN("ReadViaSAX2InitAndTermXerces end")
   return by ;
 }

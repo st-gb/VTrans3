@@ -26,8 +26,9 @@
 //const char * readInputText(const std::string & strFilePath) ;
 
 //Forward declarations.
-class VocabularyAndTranslation ;
 class LetterNode ;
+class LetterTree ;
+class VocabularyAndTranslation ;
 
 class OneLinePerWordPair
 {
@@ -49,6 +50,7 @@ class OneLinePerWordPair
 private :
 //  static VocabularyAndTranslation * s_pvocabularyandtranslation ; //= NULL ;
 public:
+  static LetterTree * s_p_lettertree ;
   static DWORD s_dwNumberOfVocabularyPairs ;
   static //Word *
     void extract(

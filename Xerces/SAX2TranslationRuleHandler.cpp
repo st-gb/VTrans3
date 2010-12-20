@@ -67,7 +67,8 @@ void SAX2TranslationRuleHandler::endElement(
     )
   {
     LOGN( //TRANSLATION_RULE_XML_ELEMENT_ANSI
-      "translation_rule" << " element" )
+      "SAX2TranslationRuleHandler::endElement(...)--translation_rule"
+      << " element" )
     if( ! m_stdstrTranslationRuleSyntaxTreePath.empty() )
     {
       TranslationRule * p_translationrule ;
@@ -77,7 +78,7 @@ void SAX2TranslationRuleHandler::endElement(
           m_stdstrTranslationRuleSyntaxTreePath
           , & mr_parsebyrise ) ;
         LOGN("SAX2TranslationRuleHandler::endElement(...)--adding translation "
-          "rule")
+          "rule\"" << m_stdstrTranslationRuleSyntaxTreePath << "\"" )
         mr_translateparsebyrise.AddTranslationRule(
           p_translationrule
           , m_conditionsandtranslation ) ;
@@ -93,6 +94,9 @@ void SAX2TranslationRuleHandler::endElement(
 //        delete p_translationrule ;
 //        mr_i_userinterface.Message( "\"" + e.m_stdstr + "\" is an unknown"
 //          "grammar part name") ;
+        LOGN("SAX2TranslationRuleHandler::endElement(...)--creating translation "
+          "rule for \"" << m_stdstrTranslationRuleSyntaxTreePath
+          << "\" failed." )
       }
     }
     m_conditionsandtranslation.m_conditions.clear() ;
@@ -130,12 +134,14 @@ void SAX2TranslationRuleHandler::startElement
       //tree path then it is checked whether conditons (if exist) are true and
       //if yes: applies the translation.
       if( XercesAttributesHelper::getValue(
-        cr_xercesc_attributes ,
-        m_stdstrTranslationRuleSyntaxTreePath ,
-        "syntax_tree_path"
+          cr_xercesc_attributes ,
+          m_stdstrTranslationRuleSyntaxTreePath ,
+          "syntax_tree_path"
+          )
         )
-      )
       {
+        LOGN("Successfully got syntax tree path:"
+          << m_stdstrTranslationRuleSyntaxTreePath )
         if( XercesAttributesHelper::getValue(
             cr_xercesc_attributes ,
             m_stdstrTranslationRuleAttributeName,
@@ -160,7 +166,15 @@ void SAX2TranslationRuleHandler::startElement
           {
             mr_i_userinterface.Message( "The translation attribute definition "
               "for the name \"" + m_stdstrTranslationRuleAttributeName
-              + "\" is not available.") ;
+              + "\" is not available."
+              "It is referenced in in document\n"
+              + Xerces::ToStdString( m_pc_locator->//getPublicId()
+                getSystemId() )
+              + "\nin line:"
+              + to_stdstring<XMLFileLoc>( m_pc_locator->getLineNumber() )
+              + ", column:"
+              + to_stdstring<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+              ) ;
           }
           m_conditionsandtranslation.m_stdstrAttributeName =
               m_stdstrTranslationRuleAttributeName ;

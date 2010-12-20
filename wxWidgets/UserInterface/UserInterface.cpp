@@ -17,6 +17,8 @@
     #include "wx/wx.h"
 #endif
 
+//class TranslationControllerBase
+#include <Controller/TranslationControllerBase.hpp>
 #include <IO/IO.hpp> //class OneLinePerWordPair
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp> //class LetterTree
 //GetStdString(...)
@@ -24,7 +26,10 @@
 #include <wxWidgets/UserInterface/UserInterface.hpp>
 #include <string> //class std::string
 
-extern LetterTree g_lettertree ;
+//extern LetterTree g_lettertree ;
+
+////Static variables need also to be defined in the source file.
+//LetterTree TranslationControllerBase::s_lettertree ;
 
 namespace wxWidgets
 {
@@ -61,9 +66,11 @@ namespace wxWidgets
       wxString wxstrLabel = p_wxwindow->GetLabel() ;
 //      ::wxMessageBox( wxT("freeing memory for existing vocabulary") ) ;
       p_wxwindow->SetLabel( wxT("freeing memory for existing vocabulary") ) ;
-      g_lettertree.DeleteCompleteList() ;
+//      g_lettertree.DeleteCompleteList() ;
+      TranslationControllerBase::s_lettertree.DeleteCompleteList() ;
       //MUST be inserted, else some grammar rules can't be applied.
-      g_lettertree.InsertFundamentalWords() ;
+//      g_lettertree.InsertFundamentalWords() ;
+      TranslationControllerBase::s_lettertree.InsertFundamentalWords() ;
       OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
 //      wxMessageDialog * p_dlg = new wxMessageDialog( //NULL,
 //        p_wxwindow ,

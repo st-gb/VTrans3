@@ -73,6 +73,8 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
     const std::string & r_stdstrSyntaxTreePath
     ,     ParseByRise * p_parsebyrise )
 {
+  LOGN("SyntaxTreePath::CreateGrammarPartIDArray(" <<
+    r_stdstrSyntaxTreePath << "," << p_parsebyrise << ") begin")
   bool bNewEle = false ;
   std::string stdstrCurrentElement ;
   std::vector<WORD> vec_wElements ;
@@ -124,11 +126,13 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
         {
           sp_userinterface->Message( "unknown grammar part name:" +
             stdstrCurrentElement ) ;
+          LOGN("SyntaxTreePath::CreateGrammarPartIDArray(...)--"
+            "unknown grammar part name:" << r_stdstrSyntaxTreePath )
           return unknown_grammar_part_name ;
         }
       bNewEle = false ;
     }
-  }
+  } //"for"-loop
   DEBUG_COUT("SyntaxTreePath::CreateGrammarPartIDArray size:" <<
       vec_wElements.size() + "\n" )
   WORD * ar_wElements = new WORD [ vec_wElements.size() ] ;

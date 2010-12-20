@@ -44,7 +44,11 @@ class wxTextInputDlg
 	private:
   wxButton * mp_wxbutton ;
   void AddButtons() ;
+  void AddAddGrammarRulesButton( wxSizer * p_sizer ) ;
+  void AddRemoveGrammarRulesButton( wxSizer * p_sizer ) ;
+  void AddRemoveVocAttrDefsButton( wxSizer * p_sizer ) ;
   void AddAddTranslationRulesButton( wxSizer * p_sizer ) ;
+  void AddAddVocAttrDefsButton( wxSizer * p_sizer ) ;
   void AddRemoveTranslationRulesButton( wxSizer * p_sizer ) ;
   void AddResolve1ParseLevelButton( wxSizer * p_sizer ) ;
   void AddResolveSuperClassesButton( wxSizer * p_sizer ) ;
@@ -81,16 +85,22 @@ class wxTextInputDlg
     ) ;
   //std::string
 		void GetEntireInputText(std::string & r_stdstrInputText) ;
+  void OnAddGrammarRules( wxCommandEvent & wxcmd ) ;
 	void OnAddTranslationRules( wxCommandEvent & wxcmd ) ;
+	void OnAddVocAttrDefs( wxCommandEvent & wxcmd ) ;
 	void OnClose( wxCloseEvent & wxcmd ) ;
 	void OnInfoButton( wxCommandEvent & wxcmd ) ;
 	void OnLoadDictionaryButton(wxCommandEvent & wxcmd ) ;
 	void OnReInitGrammarRulesButton( wxCommandEvent & wxcmd ) ;
+	void OnRemoveGrammarRules( wxCommandEvent & wxcmd ) ;
 	void OnRemoveTranslationRules( wxCommandEvent & wxcmd ) ;
+	void OnRemoveVocAttrDefs( wxCommandEvent & wxcmd ) ;
 	void OnResolveSuperclassGrammarParts( wxCommandEvent & wxcmd ) ;
 	void OnResolve1ParseLevelButton( wxCommandEvent & wxcmd ) ;
 	void OnShowTokenIndex2GrammarPartButton( wxCommandEvent & wxcmd ) ;
   void OnTranslateButton( wxCommandEvent & wxcmd ) ;
+  int ShowMultipleFileSelectionDialog( const wxString & cr_wxstrTitle ,
+    wxArrayString & wxarraystringPaths ) ;
   //Neccessary in order to get scroll events; to avoid compilation errors.
   DECLARE_EVENT_TABLE()
 };

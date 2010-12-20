@@ -12,11 +12,15 @@
 enum
 {
   ID_Close = 1 ,
+  ID_AddGrammarRules ,
   ID_AddTranslationRules ,
+  ID_AddVocAttrDefs ,
   ID_LoadDictionary ,
   ID_ReInitGrammarRules ,
   ID_ShowTokenIndex2GrammarPart ,
+  ID_RemoveGrammarRules ,
   ID_RemoveTranslationRules ,
+  ID_RemoveVocAttrDefs ,
   ID_ResolveSuperclass ,
   ID_Resolve1ParseLevel ,
   ID_Translate ,

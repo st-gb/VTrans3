@@ -1,0 +1,105 @@
+<translation_rules>
+  <translation_rule 
+    syntax_tree_path="singular_noun"
+    attribute_name="German_singular"
+  />
+  <translation_rule 
+    syntax_tree_path="MainVerb3rdPersSingPres1Obj"
+    attribute_name="GerMainVerb1Obj3rdPersSing" 
+  />
+  <!--definite article singular-->
+  <translation_rule 
+    syntax_tree_path="definite_article_singular.definite_article"
+    translation="der">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+  </translation_rule>
+  <!-- e.g. the sheep trusts the man." -> ...vertraut DEM Mann-->
+  <translation_rule 
+    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    translation="dem">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+  </translation_rule>
+  <!-- e.g. the sheep trusts the child." -> ...vertraut DEM Kind-->
+  <translation_rule 
+    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    translation="dem">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="definite_article_singular.definite_article"
+    translation="die">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="definite_article_singular.definite_article"
+    translation="das">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+  </translation_rule>
+  
+  <!--INdefine article singular-->
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="ein">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="eine">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="ein">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+  </translation_rule>
+  <!--singular end-->
+  
+  <!--Das Kind vertraut >>den<< Kindern-->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.obj.*.definite_article_plural.definite_article"
+    translation="den">
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+  </translation_rule>
+  <!--translation_rule 
+    syntax_tree_path="3rdPersSingClauseAllows0Obj.mainVerbInf0Obj"
+    attribute_name="Ger0ObjMainVerb3rdPersSing" 
+  /-->
+</translation_rules>

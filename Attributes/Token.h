@@ -4,7 +4,7 @@
   #include <vector>
   #include <string>
   #include "rest.h" //for VTrans_string_typeVector etc.
-  #include <string_type.hpp>
+  #include <Controller/string_type.hpp> //typedef VTrans::string_type
   //#ifndef _WINDOWS
   //	#include <typedefs.h> //for DWORD etc.
   //	#include <StdString.h> //for class compatible to MFC's "CString"  

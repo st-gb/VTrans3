@@ -11,6 +11,10 @@
 #include <wx/app.h>//base class wxApp
 #include <Controller/TranslationControllerBase.hpp>
 #include <UserInterface/I_UserInterface.hpp>//base class I_UserInterface
+#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
+
+//Fwd decl.
+class wxTextInputDlg ;
 
 class VTransApp 
   : public wxApp
@@ -18,9 +22,12 @@ class VTransApp
   , public TranslationControllerBase
 {
 public:
+//  static LetterTree s_lettertree ;
+  wxTextInputDlg * m_p_wx_text_input_dialog ;
   std::string m_stdstrVocabularyFilePath ;
   void CreateAndShowMainWindow() ;
   bool HandleCommandLineArgs() ;
+  virtual int OnExit();
   virtual bool OnInit();
   VTransApp();
 //  VTransApp(const VTransApp& orig);

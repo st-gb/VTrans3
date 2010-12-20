@@ -39,7 +39,8 @@ public:
   DWORD m_dwMapIndex ;
 private:
   //For showing (XML) error messages.
-  I_UserInterface & mr_userinterface ;
+//  I_UserInterface & mr_userinterface ;
+  I_UserInterface * m_p_userinterface ;
 public:
   //This map is for generalisation (grammar rule x IS A superclass grammar
   //rule y ) in order to minimize the grammar rules needed:
@@ -228,6 +229,7 @@ public:
     , //std::string
     const char * cp_chSuperclassGrammarRuleName
     ) ;
+  ParseByRise() ;
   ParseByRise( I_UserInterface & r_userinterface );
 //  ParseByRise(const ParseByRise& orig);
   bool InsertIfGrammarRuleAppliesTo(
@@ -251,6 +253,12 @@ public:
 //    , std::multimap<DWORD, GrammarPart>::iterator iterRightGrammarPart
 //    , WORD wGrammarPartIDOfRule
 //    ) ;
+  bool InsertSuperordinateGrammarPart(
+//    std::multimap<DWORD, GrammarPart> & mm_idx2grammarpt
+    std::multimap<DWORD, GrammarPart *> & mm_idx2grammarpt
+    , bool bMemorizeInsertion
+    ) ;
+  void Message(const std::wstring & cr_stdwstr ) ;
   BYTE ResolveGrammarRules(
     //Maintaining 2 maps with both leftnost and rightmost indexes should be faster
     //when searching for neighboured grammar parts:
@@ -275,12 +283,10 @@ public:
 
   bool ReplaceGrammarPartIDsBySuperordinate() ;
   void ResolveGrammarRulesForAllParseLevels() ;
-  bool InsertSuperordinateGrammarPart(
-//    std::multimap<DWORD, GrammarPart> & mm_idx2grammarpt
-    std::multimap<DWORD, GrammarPart *> & mm_idx2grammarpt
-    , bool bMemorizeInsertion
-    ) ;
-
+  void SetUserInterface( I_UserInterface * p_userinterface)
+  {
+    m_p_userinterface = p_userinterface ;
+  }
   void StoreWordTypeAndGermanTranslation(
 //    PositionstdstringVector & psv
     PositionStringVector & psv

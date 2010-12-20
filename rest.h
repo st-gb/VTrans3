@@ -32,7 +32,7 @@
   //volatile DWORD g_dwTokensInSentence=0;
   #include <windef.h> //for types DWORD, BYTE (,...)
   #include <vector> //for typedef	std::vector<CString> CStringVector;
-  #include <string_type.hpp> //for VTrans::string_type
+  #include <Controller/string_type.hpp> //for typedef VTrans::string_type
   #ifdef _WINDOWS
 	  #include <afxstr.h> //for class CString
   #endif

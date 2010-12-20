@@ -1,0 +1,31 @@
+<translation_rules>
+  <translation_rule 
+    syntax_tree_path="plural_noun"
+    attribute_name="German_plural"
+  />
+  
+  <!--<translation_rule 
+    syntax_tree_path="3rdPersSingClauseAllows0Obj.MainVerb3rdPersSingPres0Obj"
+    attribute_name="GerMainVerb3rdPersSing" 
+  />
+  <translation_rule 
+    syntax_tree_path="3rdPersPlurClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
+    attribute_name="GerMainVerb3rdPersSing" 
+  />-->
+  
+  <!-- e.g. I trust the man." -> ich vertraue DEM Mann-->
+  <translation_rule 
+    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    translation="dem">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="1stPersSingSimplePresentClause1Obj.1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+  </translation_rule>
+      
+</translation_rules>

@@ -146,7 +146,7 @@ namespace Xerces
           GettingXMLattributeValueFailed( stdstrXMLattributeName ) ;
         }
 
-        stdstrXMLattributeName = "attribute_lenght" ;
+        stdstrXMLattributeName = "attribute_length" ;
         //Bit length
         if( XercesAttributesHelper::GetAttributeValue(
             cr_xercesc_attributes ,

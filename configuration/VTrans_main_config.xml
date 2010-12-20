@@ -1,0 +1,16 @@
+<!--  -->
+<VTrans_main_cfg>
+ <vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" />
+ <vocabulary_attribute_definition_file path="configuration/Vocabulary_attribute_definitions.xml" />
+ 
+ <!--grammar_rule_file must appear before translation_rule_file with translation_rules 
+   that depend on the grammar rule within the grammar_rule_file -->
+ <grammar_rule_file path="configuration/grammar_rules.xml" />
+ 
+ <translation_rule_file path="configuration/translation_rules/3rdPersPlurClauseAllows1Obj_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/3rdPersSingClauseAllows0Obj_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePresentClause.xml" />
+ <translation_rule_file path="configuration/translation_rules/personal_pronouns_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/reflexive_pronouns_translation_rules.xml" />
+</VTrans_main_cfg>

@@ -75,9 +75,9 @@
   class LetterNode ;
   class Word ;
 
-  static BYTE g_arbyNumberOfEnglishWords [] = {
-    NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN ,
-    NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB } ;
+//  static BYTE g_arbyNumberOfEnglishWords [] = {
+//    NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN ,
+//    NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB } ;
 
   #define MAPPING_ARRAY_SIZE 255
 
