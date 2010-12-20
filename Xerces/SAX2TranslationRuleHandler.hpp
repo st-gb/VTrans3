@@ -9,7 +9,7 @@
 #define SAX2TRANSLATIONRULEHANDLER_HPP_
 
 #include <xercesc/sax2/Attributes.hpp> //for "XERCES_CPP_NAMESPACE::Attributes"
-//base class XERCES_CPP_NAMESPACE::DefaultHandler
+//Base class XERCES_CPP_NAMESPACE::DefaultHandler
 #include <xercesc/sax2/DefaultHandler.hpp>
 //class ConditionsAndTranslation
 #include <Translate/ConditionsAndTranslation.hpp>
@@ -20,6 +20,7 @@
 //Forward declarations.
 class ParseByRise ;
 class I_UserInterface ;
+class TranslateParseByRiseTree ;
 
 class SAX2TranslationRuleHandler
   : public XERCES_CPP_NAMESPACE::DefaultHandler
@@ -50,18 +51,17 @@ public:
   //If all conditions were added at first the translation rule can be added.
   void endElement
   (
-    const XMLCh* const uri,
-    const XMLCh* const localname,
-    const XMLCh* const qname
+    const XMLCh* const cpc_xmlchURI,
+    const XMLCh* const cpc_xmlchLocalName,
+    const XMLCh* const cpc_xmlchQualifiedName
   );
   void setDocumentLocator( const XERCES_CPP_NAMESPACE::Locator *
     const cpc_locator ) ;
   void startElement(
-      const   XMLCh* const    uri,
-      const   XMLCh* const    localname,
-      const   XMLCh* const    qname,
-      const   XERCES_CPP_NAMESPACE::Attributes&     attrs
-//        XercesAttributesHelper &
+    const XMLCh * const cpc_xmlchURI,
+    const XMLCh * const cpc_xmlchLocalName,
+    const XMLCh * const cpc_xmlchQualifiedName,
+    const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes
   );
 //  void fatalError(const XERCES_CPP_NAMESPACE::SAXParseException&);
 };

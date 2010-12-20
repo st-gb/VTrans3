@@ -17,9 +17,10 @@
     #include "wx/wx.h"
 #endif
 
-#include <IO.hpp> //class OneLinePerWordPair
+#include <IO/IO.hpp> //class OneLinePerWordPair
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp> //class LetterTree
-#include <wxWidgets/Controller/wxStringHelper.hpp> //GetStdString(...)
+//GetStdString(...)
+#include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <wxWidgets/UserInterface/UserInterface.hpp>
 #include <string> //class std::string
 

@@ -9,10 +9,12 @@
 #include <set> //for std::set
 
 //class VocabularyAndTranslation 
-#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
+
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 #include "ParseByRise.hpp" //class ParseByRise
-#include <Token.h> //class PositionStringVector
+#include <Attributes/Token.h> //class PositionStringVector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
 #include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
@@ -56,6 +58,22 @@ ParseByRise::~ParseByRise()
   }
 }
 
+inline bool isStringTokenDelimiter(char ch)
+{
+  switch( //* pch
+      ch )
+  {
+    case '\t':
+    case ' ':
+    case '\0':
+    case '.':
+    case '?':
+    case '!':
+      return true ;
+  }
+  return false ;
+}
+
 void BuildTokenVector(
   const std::string & stdstrText
 //  , PositionstdstringVector & psv
@@ -75,41 +93,41 @@ void BuildTokenVector(
 //  while( *pch )
   do
   {
-    switch( *pch )
+    if( isStringTokenDelimiter( * pch ) )
     {
-      case '\t':
-      case ' ':
-      case '\0':
-        //If unset.
-        if( wEndOfTokenIndex == MAXWORD )
-        {
-          wEndOfTokenIndex = wCharIndex ;
-          stdstrToken = stdstrText.substr(
-              wBeginOfTokenIndex,wEndOfTokenIndex-wBeginOfTokenIndex) ;
-          psv.push_back(
+      //If unset.
+      if( wEndOfTokenIndex == MAXWORD )
+      {
+        wEndOfTokenIndex = wCharIndex ;
+        stdstrToken = stdstrText.substr(
+            wBeginOfTokenIndex,wEndOfTokenIndex-wBeginOfTokenIndex) ;
+        psv.push_back(
 //            Positionstdstring( stdstrToken ,
-            PositionString( stdstrToken ,
-              wBeginOfTokenIndex,wBeginOfTokenIndex)
-            ) ;
-          //std::cout << ""
-        }
-        if( *pch == '\0' )
-           bDoLoop = false ;
-        //Always setting the value is ~ as fast to first compare
-        //( if( "wBeginOfTokenIndex == MAXWORD" ) )
-        wBeginOfTokenIndex = MAXWORD ;
-        break;
-      default:
+          PositionString( stdstrToken ,
+            wBeginOfTokenIndex,wBeginOfTokenIndex)
+          ) ;
+        //std::cout << ""
+      }
+      if( * pch == '\0' )
+         bDoLoop = false ;
+      //Always setting the value is ~ as fast to first compare
+      //( if( "wBeginOfTokenIndex == MAXWORD" ) )
+      wBeginOfTokenIndex = MAXWORD ;
+//        break;
+//      default:
+    }
+    else
+    {
 //        if( bBeginOfNewToken )
 //          bBeginOfNewToken = false
 //        else
 //          bBeginOfNewToken = true ;
-        //If unset.
-        if( wBeginOfTokenIndex == MAXWORD )
-          wBeginOfTokenIndex = wCharIndex ;
-        //Always setting the value is ~ as fast to first compare
-        //( if( "wEndOfTokenIndex == MAXWORD" ) )
-        wEndOfTokenIndex = MAXWORD ;
+      //If unset.
+      if( wBeginOfTokenIndex == MAXWORD )
+        wBeginOfTokenIndex = wCharIndex ;
+      //Always setting the value is ~ as fast to first compare
+      //( if( "wEndOfTokenIndex == MAXWORD" ) )
+      wEndOfTokenIndex = MAXWORD ;
     }
     //if( bBeginOfNewToken )
     ++ pch ;
@@ -287,7 +305,7 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
 //      #pragma GCC diagnostic ignored  "-Wunused"
       //Useless instruction just for breakpoint possibility.
       int i = 0 ;
-      SUPRESS_UNUSED_VARIABLE_WARNING(i)
+      SUPPRESS_UNUSED_VARIABLE_WARNING(i)
 #endif
     }
   }
@@ -298,7 +316,7 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
 //    #pragma GCC diagnostic ignored  "-Wunused"
     //Useless instruction just for breakpoint possibility.
     int i = 0 ;
-    SUPRESS_UNUSED_VARIABLE_WARNING(i)
+    SUPPRESS_UNUSED_VARIABLE_WARNING(i)
     }
 #endif
   return p_gp ;
@@ -367,7 +385,7 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
 //      #pragma GCC diagnostic ignored  "-Wunused"
       //Useless instruction just for breakpoint possibility.
       int i = 0 ;
-      SUPRESS_UNUSED_VARIABLE_WARNING(i)
+      SUPPRESS_UNUSED_VARIABLE_WARNING(i)
 #endif
       p_grammarpart = //(GrammarPart * ) & iterCurrent->second ;
           iterCurrent->second ;
@@ -381,7 +399,7 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
 //    #pragma GCC diagnostic ignored  "-Wunused"
     //Useless instruction just for breakpoint possibility.
     int i = 0 ;
-    SUPRESS_UNUSED_VARIABLE_WARNING(i)
+    SUPPRESS_UNUSED_VARIABLE_WARNING(i)
     }
 #endif
 //  return p_grammarpart ;
@@ -1394,10 +1412,10 @@ void ParseByRise::InsertGrammarRule(
     //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 //    #pragma GCC diagnostic ignored  "-Wunused"
     WORD wSuperordinateGrammarPartID = c_iter->second ;
-    SUPRESS_UNUSED_VARIABLE_WARNING(wSuperordinateGrammarPartID)
+    SUPPRESS_UNUSED_VARIABLE_WARNING(wSuperordinateGrammarPartID)
     //Useless instruction just for breakpoint possibility.
     int i ;
-    SUPRESS_UNUSED_VARIABLE_WARNING(i)
+    SUPPRESS_UNUSED_VARIABLE_WARNING(i)
 #endif
     //When parsing, compare the neighboured grammar parts' IDs for a shared
     //superordinate grammar part ID.
@@ -1665,10 +1683,10 @@ bool ParseByRise:://GrammarRuleAppliesTo(
           //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 //          #pragma GCC diagnostic ignored  "-Wunused"
           const GrammarPart & r_gp = *(pair_.first) ;
-          SUPRESS_UNUSED_VARIABLE_WARNING(r_gp)
+          SUPPRESS_UNUSED_VARIABLE_WARNING(r_gp)
 //          #pragma GCC diagnostic pop
           int i = 0 ;
-          SUPRESS_UNUSED_VARIABLE_WARNING(i)
+          SUPPRESS_UNUSED_VARIABLE_WARNING(i)
           DEBUG_COUT( "already contained")
         }
 #endif
@@ -1788,7 +1806,7 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 //        #pragma GCC diagnostic ignored  "-Wunused"
         //Useless instruction just for breakpoint possibility.
         int i = 0 ;
-        SUPRESS_UNUSED_VARIABLE_WARNING(i)
+        SUPPRESS_UNUSED_VARIABLE_WARNING(i)
         #endif
       }
       else
@@ -2253,10 +2271,10 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
 //       #pragma GCC diagnostic ignored  "-Wunused-variable"
        GrammarPart & r_grammarpartSubclass = //iter_mm_idx2grammarpt->second ;
            * iter_mm_token_idx2p_grammarpt->second ;
-       SUPRESS_UNUSED_VARIABLE_WARNING(r_grammarpartSubclass)
+       SUPPRESS_UNUSED_VARIABLE_WARNING(r_grammarpartSubclass)
 //       WORD wGrammarPartIDsubclass = iter_mm_idx2grammarpt->first ;
        WORD wGrammarPartIDsubclass = iter_mm_token_idx2p_grammarpt->first ;
-       SUPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDsubclass)
+       SUPPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDsubclass)
 #endif
         //e.g. "the car"
         //     def_noun
@@ -2297,7 +2315,7 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
     //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 //    #pragma GCC diagnostic ignored  "-Wunused"
         WORD wIndex = iter_mm_token_idx2p_grammarpt->first ;
-        SUPRESS_UNUSED_VARIABLE_WARNING(wIndex)
+        SUPPRESS_UNUSED_VARIABLE_WARNING(wIndex)
 //    #pragma GCC diagnostic pop
   #endif
         //Do not store 1 and the same grammar part more than once in

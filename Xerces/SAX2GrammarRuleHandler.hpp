@@ -1,17 +1,14 @@
 #ifndef _SAX2_GRAMMAR_RULE_HANDLER_HPP
 #define _SAX2_GRAMMAR_RULE_HANDLER_HPP
 
-//#include "XercesAttributesHelper.hpp"
-
 //#ifdef COMPILE_WITH_XERCES
-#include <xercesc/sax2/Attributes.hpp> //for "xercesc_2_8::Attributes"
+//class "XERCES_CPP_NAMESPACE::Attributes"
+#include <xercesc/sax2/Attributes.hpp>
+//class "XERCES_CPP_NAMESPACE::DefaultHandler
 #include <xercesc/sax2/DefaultHandler.hpp>
 //#include "../global.h" //for DEBUG(...) etc.
 #include <string> //for std::string
 //#include <string> //std::string
-
-//Needed for verzichten auf the exact namespace.
-XERCES_CPP_NAMESPACE_USE
 
 //http://xerces.apache.org/xerces-c/build-3.html:
 //If you are linking your application to the static Xerces-C++ library,
@@ -28,7 +25,8 @@ XERCES_CPP_NAMESPACE_USE
 class ParseByRise ;
 
 class SAX2GrammarRuleHandler
-  : public DefaultHandler
+  :
+  public XERCES_CPP_NAMESPACE::DefaultHandler
   //ContentHandler
 {
 private:
@@ -36,19 +34,18 @@ private:
   std::string m_strElementName ;
 
 public:
-  //MySAX2Handler(PStates & pstates);
   SAX2GrammarRuleHandler(
     ParseByRise & r_parsebyrise
     );
 
   void startElement(
-      const   XMLCh* const    uri,
-      const   XMLCh* const    localname,
-      const   XMLCh* const    qname,
-      const   Attributes&     attrs
+    const XMLCh * const cpc_xmlchURI,
+    const XMLCh * const cpc_xmlchLocalName,
+    const XMLCh * const cpc_xmlchQualifiedName,
+    const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes
 //        XercesAttributesHelper &
   );
-  void fatalError(const SAXParseException&);
+  void fatalError(const XERCES_CPP_NAMESPACE::SAXParseException & );
 };
 
 #endif //_SAX2_GRAMMAR_RULE_HANDLER_HPP

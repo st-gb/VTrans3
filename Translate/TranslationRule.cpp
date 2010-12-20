@@ -7,9 +7,10 @@
 
 #include "TranslationRule.hpp" //header file for this TranslationRule class
 #include <Parse/GrammarPart.hpp> //class GrammarPart
-//#include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <Parse/ParseByRise.hpp> //class ParseByRise for DEBUG_COUTN(...)
 #include <exception> //for class std::exception
-#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 WORD TranslationRule::GetConsecutiveID(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const
@@ -20,7 +21,7 @@ WORD TranslationRule::GetConsecutiveID(
   {
 #ifdef _DEBUG
         WORD wConsecutiveID = p_grammarpart->m_wConsecutiveID ;
-        SUPRESS_UNUSED_VARIABLE_WARNING(wConsecutiveID)
+        SUPPRESS_UNUSED_VARIABLE_WARNING(wConsecutiveID)
         return p_grammarpart->m_wConsecutiveID ;
 #else
         return p_grammarpart->m_wConsecutiveID ;
@@ -52,7 +53,7 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
       GrammarPart * p_grammarpartContainingConsecutiveID ;
       //Avoid g++ warning "'p_grammarpartContainingConsecutiveID' might be
       // used uninitialized in this function"
-      SUPRESS_UNUSED_VARIABLE_WARNING(p_grammarpartContainingConsecutiveID)
+      SUPPRESS_UNUSED_VARIABLE_WARNING(p_grammarpartContainingConsecutiveID)
       bool bIdentical = true ;
       //Compare from end to begin.
       WORD wIndex ;
@@ -65,7 +66,8 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
          ; -- wIndex
          )
       {
-        DEBUG_COUT("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
+//        DEBUG_COUTN
+        DEBUGN("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
             //p_translationrule->
             m_syntaxtreepathConsecutiveID.
             m_ar_wElements [ wIndex ] <<
@@ -78,7 +80,6 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
           << (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID
           << mp_parsebyrise->GetGrammarPartName(
             (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID )
-          << "\n"
           )
         if( //p_tr->m_ar_wElements [ wIndex ] !=
             m_syntaxtreepathConsecutiveID.m_ar_wElements [ wIndex ] !=
@@ -126,7 +127,7 @@ bool TranslationRule::Matches(
     WORD wGrammarPartIDforTranslationRule ;
     //Avoid g++ warning "'wGrammarPartIDforTranslationRule' might be used
     // uninitialized in this function"
-    SUPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDforTranslationRule)
+    SUPPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDforTranslationRule)
     for( wIndex = //p_tr->m_wNumberOfElements - 1 ;
         //p_translationrule->
         m_syntaxtreepathCompareWithCurrentPath.
@@ -137,7 +138,9 @@ bool TranslationRule::Matches(
 //        ++ rev_iter
         )
     {
-      DEBUG_COUT("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
+//      DEBUG_COUTN
+      DEBUGN
+      ( "comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
           //p_translationrule->
         m_syntaxtreepathCompareWithCurrentPath.
           m_ar_wElements [ wIndex ] <<
@@ -153,7 +156,6 @@ bool TranslationRule::Matches(
             //r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
           *rev_iter
           )
-        << "\n"
         )
 //      if( //p_tr->m_ar_wElements [ wIndex ] !=
 //          //p_translationrule->

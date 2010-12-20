@@ -10,7 +10,8 @@
 #include <Parse/ParseByRise.hpp>
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 #include <map> //std::map
-#include <supress_unused_variable.h>
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 bool ConditionsAndTranslation::AllConditionsMatch(
   // So it can be used with data from outside this class.
@@ -133,6 +134,8 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
 {
   bool bAllConditionsMatch = false ;
   std::string stdstr ;
+  DEBUGN("ConditionsAndTranslation::GetTranslationEquivalent(...)"
+    << "german transltation " << m_stdstrGermanTranslation )
 //  int i = 0 ;
   //TODO implement this
 //        if( r_cnt.conditions.m_byCompareType == ConditionsAndTranslation::equals
@@ -144,6 +147,13 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
   //If no simple replacement (like use "die" for "the" + "English_plural"
   if( m_stdstrGermanTranslation ==  "" )
   {
+    DEBUGN("German translation string is empty -> use attribute value"
+      << "p_grammarpartLeaf:" << p_grammarpartLeaf )
+#ifdef COMPILE_WITH_LOG
+    if( p_grammarpartLeaf )
+      DEBUGN("p_grammarpartLeaf->m_pvocabularyandtranslation:"
+        << p_grammarpartLeaf->m_pvocabularyandtranslation )
+#endif //#ifdef COMPILE_WITH_LOG
     bAllConditionsMatch = true ;
     //if( r_cond.m_syntaxtreepath.IsPartOf(m_stdvec_wCurrentGrammarPartPath) )
     //TODO get pointer to leaf node of r_cond.m_syntaxtreepath
@@ -154,17 +164,25 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
     {
       //if( p_grammarpartLeaf )
       {
-        DEBUG_COUT("GetTranslationEquivalent()--grammar part leaf found:" <<
+//        DEBUG_COUTN
+        DEBUGN("GetTranslationEquivalent()--grammar part leaf found:" <<
           sp_parsebyrise->GetGrammarPartName(
-          p_grammarpartLeaf->m_wGrammarPartID) << "\n")
+          p_grammarpartLeaf->m_wGrammarPartID) )
       }
       std::map<std::string,AttributeTypeAndPosAndSize>::const_iterator
         c_iter_stdstrSttrName2atapas =
             sp_stdmap_AttrName2VocAndTranslAttrDef->find(
           m_stdstrAttributeName ) ;
-      if( c_iter_stdstrSttrName2atapas !=
-        sp_stdmap_AttrName2VocAndTranslAttrDef->end() )
+      if( c_iter_stdstrSttrName2atapas ==
+          sp_stdmap_AttrName2VocAndTranslAttrDef->end()
+        )
+//        DEBUG_COUTN
+        DEBUGN("GetTranslationEquivalent()--no AttributeTypeAndPosAndSize "
+          "for attribute name" << m_stdstrAttributeName << " found" )
+      else
       {
+        DEBUGN("AttributeTypeAndPosAndSize for attribute name "
+          << m_stdstrAttributeName << " found ")
         //p_grammarpartLeaf->m_psetpvocabularyandtranslation  ;
         //if( p_grammarpartLeaf->m_psetpvocabularyandtranslation )
         {
@@ -174,11 +192,14 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
           {
             case AttributeTypeAndPosAndSize::string :
             {
-              DEBUG_COUTN("data type for choosing attribute value is string")
+//              DEBUG_COUTN
+              DEBUGN("data type for choosing attribute value is string")
               switch( r_atapas.m_byLanguage )
               {
                 case AttributeTypeAndPosAndSize::English :
                 {
+                  DEBUGN("language for choosing attribute value is "
+                    "English, index:" << r_atapas.m_wIndex )
                   std::string & r_stdstrAttrVal = p_grammarpartLeaf->
                     m_pvocabularyandtranslation->m_arstrEnglishWord[
                     r_atapas.m_wIndex ] ;
@@ -188,8 +209,10 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                   break ;
                 case AttributeTypeAndPosAndSize::German :
                   {
-                  DEBUG_COUTN("language for choosing attribute value is "
-                    "German, index:" << r_atapas.m_wIndex )
+//                  DEBUG_COUTN
+                  DEBUGN("language for choosing attribute value is "
+                    "German, index:" << r_atapas.m_wIndex
+                    << "m_pfn_TransformString:" << m_pfn_TransformString )
                   std::string & r_stdstrAttrVal = p_grammarpartLeaf->
                     m_pvocabularyandtranslation->m_arstrGermanWord[
                     r_atapas.m_wIndex ] ;
@@ -219,15 +242,12 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                   p_grammarpartLeaf->
                   m_pvocabularyandtranslation->m_arbyAttribute[
                   r_atapas.m_wIndex ] ;
-                SUPRESS_UNUSED_VARIABLE_WARNING(by)
+                SUPPRESS_UNUSED_VARIABLE_WARNING(by)
               }
           }//switch
         }
         //if( r_cond.m_byCompareType == Condition::equals )
       }
-      else
-        DEBUG_COUTN("GetTranslationEquivalent()--attribute name" <<
-          m_stdstrAttributeName << "not found" )
     }
   }
   else

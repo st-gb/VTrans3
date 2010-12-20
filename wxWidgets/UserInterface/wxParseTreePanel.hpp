@@ -8,6 +8,18 @@
 #ifndef WXPARSETREEPANEL_H_
 #define WXPARSETREEPANEL_H_
 
+//http://www.wxwidgets.org/docs/faqmsw.htm#asuffix:
+//"If you get errors like no matching function for call to
+//'wxDC::DrawTextA(const char[5], int, int)' or similar ones for the other
+//functions, i.e. the compiler error messages mention the function with the
+//'A' suffix while you didn't use it in your code, the explanation is that you
+//had included <windows.h> header which redefines many symbols to have such
+//suffix (or 'W' in the Unicode builds).
+//
+//The fix is to either not include <windows.h> at all or include
+//"wx/msw/winundef.h" immediately after it. "
+//If not included: ~"undefined reference to wxWindow::[...] in DEBUG version"
+#include "wx/msw/winundef.h"
 #include <wx/panel.h> //base class wxPanel
 //#include <wx/dcclient.h> //for class wxPaintDC
 #include <map> //class std::map

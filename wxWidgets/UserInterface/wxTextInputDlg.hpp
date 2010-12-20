@@ -29,6 +29,7 @@
 class TranslationAndGrammarPart ;
 //class wxHtmlWindow ;
 class wxBoxSizer ;
+class wxButton ;
 class wxParseTreePanel ;
 class wxSplitterWindow ;
 class wxTextCtrl ;
@@ -41,11 +42,19 @@ class wxTextInputDlg
   : public wxDialog
 {
 	private:
+  wxButton * mp_wxbutton ;
   void AddButtons() ;
+  void AddAddTranslationRulesButton( wxSizer * p_sizer ) ;
+  void AddRemoveTranslationRulesButton( wxSizer * p_sizer ) ;
+  void AddResolve1ParseLevelButton( wxSizer * p_sizer ) ;
+  void AddResolveSuperClassesButton( wxSizer * p_sizer ) ;
+  void AddShowInformationButton( wxSizer * p_sizer ) ;
+  void AddTranslateButton( wxSizer * p_sizer ) ;
 	protected:
 //  wxHtmlWindow * mp_wxhtmlwindow ;
 //  wxWebKitCtrl * mp_wxwebkitctrl;
-    ParseByRise m_parsebyrise ;
+//    ParseByRise m_parsebyrise ;
+    ParseByRise & m_parsebyrise ;
     wxBoxSizer * p_boxsizerOuter ;
 		wxTextCtrl * mp_textctrlEnglishText;
 		wxTextCtrl * mp_textctrlGermanText ;
@@ -72,10 +81,12 @@ class wxTextInputDlg
     ) ;
   //std::string
 		void GetEntireInputText(std::string & r_stdstrInputText) ;
+	void OnAddTranslationRules( wxCommandEvent & wxcmd ) ;
 	void OnClose( wxCloseEvent & wxcmd ) ;
 	void OnInfoButton( wxCommandEvent & wxcmd ) ;
 	void OnLoadDictionaryButton(wxCommandEvent & wxcmd ) ;
 	void OnReInitGrammarRulesButton( wxCommandEvent & wxcmd ) ;
+	void OnRemoveTranslationRules( wxCommandEvent & wxcmd ) ;
 	void OnResolveSuperclassGrammarParts( wxCommandEvent & wxcmd ) ;
 	void OnResolve1ParseLevelButton( wxCommandEvent & wxcmd ) ;
 	void OnShowTokenIndex2GrammarPartButton( wxCommandEvent & wxcmd ) ;

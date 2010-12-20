@@ -3,13 +3,14 @@
 //"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem
 // vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
-#include "../../Word.hpp" //class Word, EnglishWord, EnglishNoun
+#include <Attributes/Word.hpp> //class Word, EnglishWord, EnglishNoun
 //header file for this VocabularyAndTranslation class
 #include "VocabularyAndTranslation.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
 #include <windef.h> //for BYTE
 #include <typeinfo> //for typeid()
-#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 #define SET_FREED_MEM_TO_NULL
 
@@ -180,7 +181,7 @@ void VocabularyAndTranslation::GetWord(//Word & word
       //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 //      #pragma GCC diagnostic ignored  "-Wunused"
       int i = 0 ;
-      SUPRESS_UNUSED_VARIABLE_WARNING(i)
+      SUPPRESS_UNUSED_VARIABLE_WARNING(i)
     }
 #endif //#ifdef _DEBUG
   }

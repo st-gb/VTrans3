@@ -26,11 +26,11 @@
   //#include "../../IO.h" //for NUMBER_OF_WORD_TYPES
   #include <string>
   //#include <map>
-  #include <set>
+  #include <set> //class std::set
   //for GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated,
   // PointerToWordNodeWhereAnEnglishNounIsEncapsulated
   //#include "../../GetAndTestWord.h"
-  #include "../../Token.h" //for PositionStringVector
+  #include <Attributes/Token.h> //for PositionStringVector
   #include <UserInterface/I_UserInterface.hpp>
   //#include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
   #include "VocabularyAndTranslation.hpp"

@@ -20,7 +20,8 @@
 #include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
 //class SAX2TranslationRuleHandler
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
-#include <supress_unused_variable.h> //SUPRESS_UNUSED_VARIABLE_WARNING(...)
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 #include <string>//class std::string
 
@@ -274,7 +275,8 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
     bAllConditionsMatch = true ;
 //    const Condition & cr_condition =
 //      r_conditions_and_translation.m_conditions.front() ;
-    std::vector<Condition> r_vec_condition =
+//    std::vector<Condition> r_vec_condition =
+    const std::vector<Condition> & r_vec_condition =
       r_conditions_and_translation.m_conditions ;
     for( std::vector<Condition>::const_iterator c_iter =
         r_vec_condition.begin() ;
@@ -450,7 +452,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
                   p_grammarpartLeaf->
                   m_pvocabularyandtranslation->m_arbyAttribute[
                   r_atapas.m_wIndex ] ;
-                SUPRESS_UNUSED_VARIABLE_WARNING(by)
+                SUPPRESS_UNUSED_VARIABLE_WARNING(by)
               }
           }//switch
         }
@@ -471,16 +473,16 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
 
 void TranslateParseByRiseTree::AddVocAndTranslDefinitions()
 {
-  AddVocAndTranslDefinition(
-    //"main_verb",
-    "mainVerbInf0Obj" ,
-    "GermanMainVerb1stPersonSingular" , //attribute name to use as a map key value
-    AttributeTypeAndPosAndSize::German, //language
-    AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
-    //GERMAN_VERB_3RD_PERSON_SINGULAR_INDEX , //index
-    VocabularyAndTranslation::first_person_singular ,
-    1 // length
-    );
+//  AddVocAndTranslDefinition(
+//    //"main_verb",
+//    "mainVerbInf0Obj" ,
+//    "GermanMainVerb1stPersonSingular" , //attribute name to use as a map key value
+//    AttributeTypeAndPosAndSize::German, //language
+//    AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
+//    //GERMAN_VERB_3RD_PERSON_SINGULAR_INDEX , //index
+//    VocabularyAndTranslation::first_person_singular ,
+//    1 // length
+//    );
   AddVocAndTranslDefinition(
     //"main_verb",
     "mainVerbInf0Obj" ,
@@ -517,6 +519,15 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinitions()
     1 // length
     );
   AddVocAndTranslDefinition(
+    "mainVerbInf1Obj" ,
+    "GerMainVerb1Obj3rdPersPlur" , //attribute name to use as a map key value
+    AttributeTypeAndPosAndSize::German, //language
+    AttributeTypeAndPosAndSize::string, //attribute is a string or some bits
+    //GERMAN_VERB_3RD_PERSON_SINGULAR_INDEX , //index
+    VocabularyAndTranslation::third_person_plural ,
+    1 // length
+    );
+  AddVocAndTranslDefinition(
 //    "main_verb",
     "mainVerbInf0Obj" ,
     "GerMainVerb3rdPersPlur" , //attribute name to use as a map key value
@@ -529,7 +540,7 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinitions()
   AddVocAndTranslDefinition(
 //    "main_verb",
     "mainVerbInf0Obj" ,
-    "IsDativeVerb" , //attribute name to use as a map key value
+    "grammatical_case" , //attribute name to use as a map key value
     AttributeTypeAndPosAndSize::German, //language
     AttributeTypeAndPosAndSize::bit, //attribute is a string or some bits
     //GERMAN_VERB_3RD_PERSON_PLURAL_INDEX , //index
@@ -1011,7 +1022,7 @@ void TranslateParseByRiseTree::AddObjectTranslationRules()
   Condition conditonVerbIsDative ;
   conditonVerbIsDative.SetSyntaxTreePath( "3rdPersPluralClauseWith1Obj."
     "3rdPersPluralClause1Obj.mainVerbInf1Obj" , mp_parsebyrise ) ;
-  conditonVerbIsDative.m_stdstrAttributeName = "IsDativeVerb" ;
+  conditonVerbIsDative.m_stdstrAttributeName = "grammatical_case" ;
   conditonVerbIsDative.m_byAttributeValue = VocabularyAndTranslation::dative ;
 
   ConditionsAndTranslation cntDefiniteArticlePlur ;
@@ -1324,24 +1335,25 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 //  Add3rdPersonSingularTranslationRules() ;
 //  AddObjectTranslationRules() ;
 
-  //Must create on heap, else the callback functions like "startElement" aren't
-  //called?!
-//  SAX2TranslationRuleHandler * p_sax2grammarrulehandler = new
-//    SAX2TranslationRuleHandler( * this, * mp_parsebyrise , mr_i_userinterface ) ;
-  SAX2TranslationRuleHandler sax2grammarrulehandler ( * this,
-    * mp_parsebyrise , mr_i_userinterface ) ;
-  std::wstring wstr ;
-  // <> 0 = error
-  if( ReadViaSAX2InitAndTermXerces(
-      "translation_rules.xml",
-  //    p_sax2grammarrulehandler ,
-      & sax2grammarrulehandler ,
-      wstr
-      )
-    )
-  {
-    mr_i_userinterface.Message( wstr ) ;
-  }
+//  //Must create on heap, else the callback functions like "startElement"
+//  //aren't called?!
+////  SAX2TranslationRuleHandler * p_sax2translationrulehandler = new
+////    SAX2TranslationRuleHandler( * this, * mp_parsebyrise ,
+////    mr_i_userinterface ) ;
+//  SAX2TranslationRuleHandler sax2translationrulehandler ( * this,
+//    * mp_parsebyrise , mr_i_userinterface ) ;
+//  std::wstring wstr ;
+//  // <> 0 = error
+//  if( ReadViaSAX2InitAndTermXerces(
+//      "translation_rules.xml",
+//  //    p_sax2translationrulehandler ,
+//      & sax2translationrulehandler ,
+//      wstr
+//      )
+//    )
+//  {
+//    mr_i_userinterface.Message( wstr ) ;
+//  }
 
   AddVocAndTranslDefinitions() ;
 
@@ -1398,6 +1410,33 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 //{
 //
 //}
+
+void TranslateParseByRiseTree::FreeMemoryForTranslationRule()
+{
+//  std::multimap<TranslationRule,ConditionsAndTranslation> &
+//    r_stdmmap_translationrule2conditionsandtranslation =
+//    //wxGetApp().m_translateparsebyrisetree.
+//    m_stdmap_translationrule2ConditionsAndTranslation ;
+//  for( std::multimap<TranslationRule,ConditionsAndTranslation>::const_iterator
+//      c_iter_stdmmap_translationrule2conditionsandtranslation =
+//      r_stdmmap_translationrule2conditionsandtranslation.begin() ;
+//      c_iter_stdmmap_translationrule2conditionsandtranslation !=
+//      r_stdmmap_translationrule2conditionsandtranslation.end() ;
+//      ++ c_iter_stdmmap_translationrule2conditionsandtranslation
+//      )
+//    //Was created on the heap.
+//    delete & c_iter_stdmmap_translationrule2conditionsandtranslation->first ;
+  for( std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator
+      it = m_stdmap_p_translationrule2ConditionsAndTranslation.begin() ; it !=
+      m_stdmap_p_translationrule2ConditionsAndTranslation.end() ; ++ it )
+  {
+    LOGN("freeing memory for translation rule " << it->first )
+    //Release memory occupied by creation on heap.
+    delete it->first ;
+  }
+  m_stdmap_translationrule2ConditionsAndTranslation.clear() ;
+  m_stdmap_p_translationrule2ConditionsAndTranslation.clear() ;
+}
 
 std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
   //ParseByRise & r_parsebyrise
@@ -1667,12 +1706,6 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 TranslateParseByRiseTree::~TranslateParseByRiseTree()
 {
   DEBUG_COUT("begin of ~TranslateParseByRiseTree\n")
-  for( std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator
-      it = m_stdmap_p_translationrule2ConditionsAndTranslation.begin() ; it !=
-      m_stdmap_p_translationrule2ConditionsAndTranslation.end() ; ++ it )
-  {
-    //Release memory occupied by creation on heap.
-    delete it->first ;
-  }
+  FreeMemoryForTranslationRule() ;
   DEBUG_COUT("end of ~TranslateParseByRiseTree\n")
 }

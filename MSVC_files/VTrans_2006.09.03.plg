@@ -1,0 +1,130 @@
+<html>
+<body>
+<pre>
+<h1>Erstellungsprotokoll</h1>
+<h3>
+--------------------Konfiguration: VTrans - Win32 Debug--------------------
+</h3>
+<h3>Befehlszeilen</h3>
+Erstellen der temporären Datei  "C:\DOKUME~1\Stefan\LOKALE~1\Temp\RSP29.tmp" mit Inhalten
+[
+/nologo /MDd /W3 /GR /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Debug/" /Fp"Debug/VTrans.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp"
+]
+Creating command line "cl.exe @C:\DOKUME~1\Stefan\LOKALE~1\Temp\RSP29.tmp" 
+Erstellen der temporären Datei  "C:\DOKUME~1\Stefan\LOKALE~1\Temp\RSP2A.tmp" mit Inhalten
+[
+/nologo /subsystem:windows /incremental:yes /pdb:"Debug/VTrans.pdb" /debug /machine:I386 /out:"Debug/VTrans.exe" /pdbtype:sept 
+".\Debug\ChildFrm.obj"
+".\Debug\EnglishView.obj"
+".\Debug\GermanView.obj"
+".\Debug\LoadStatusDialog.obj"
+".\Debug\MainFrm.obj"
+".\Debug\OptionsDialog.obj"
+".\Debug\SearchFormBar.obj"
+".\Debug\sizecbar.obj"
+".\Debug\StatusDialog.obj"
+".\Debug\StdAfx.obj"
+".\Debug\Text.obj"
+".\Debug\Translate.obj"
+".\Debug\UnknownWordsBar.obj"
+".\Debug\VTrans.obj"
+".\Debug\VTransDoc.obj"
+".\Debug\VTransView.obj"
+".\Debug\Word.obj"
+".\Debug\WordEditorBar.obj"
+".\Debug\VTrans.res"
+]
+Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\Stefan\LOKALE~1\Temp\RSP2A.tmp"
+<h3>Ausgabefenster</h3>
+Kompilierung läuft...
+Translate.cpp
+c:\programme\microsoft visual studio 6.0\vc98\include\vector(48) : warning C4786: '??0?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@QAE@IABV?$vector@VCString@@V?$allocator@VCString@@@std@@@1@ABV?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@1@@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+        c:\dokumente und einstellungen\stefan\eigene dateien\vtrans-2\englishview.h(88) : Siehe Verweis auf Instantiierung der kompilierten Klassenvorlage 'std::vector<class std::vector<class CString,class std::allocator<class CString> >,class std::allocator<class std::vector<class CString,class std::allocator<class CString> > > >'
+c:\programme\microsoft visual studio 6.0\vc98\include\vector(61) : warning C4786: '??0?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@QAE@PBV?$vector@VCString@@V?$allocator@VCString@@@std@@@1@0ABV?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@1@@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+        c:\dokumente und einstellungen\stefan\eigene dateien\vtrans-2\englishview.h(88) : Siehe Verweis auf Instantiierung der kompilierten Klassenvorlage 'std::vector<class std::vector<class CString,class std::allocator<class CString> >,class std::allocator<class std::vector<class CString,class std::allocator<class CString> > > >'
+c:\programme\microsoft visual studio 6.0\vc98\include\vector(48) : warning C4786: '??0?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@QAE@IABVPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@ABV?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@1@@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+        c:\dokumente und einstellungen\stefan\eigene dateien\vtrans-2\translate.h(112) : Siehe Verweis auf Instantiierung der kompilierten Klassenvorlage 'std::vector<class PointerToWordNodeWhereAnEnglishNounIsEncapsulated,class std::allocator<class PointerToWordNodeWhereAnEnglishNounIsEncapsulated> >'
+c:\programme\microsoft visual studio 6.0\vc98\include\vector(61) : warning C4786: '??0?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@QAE@PBVPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@0ABV?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@1@@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+        c:\dokumente und einstellungen\stefan\eigene dateien\vtrans-2\translate.h(112) : Siehe Verweis auf Instantiierung der kompilierten Klassenvorlage 'std::vector<class PointerToWordNodeWhereAnEnglishNounIsEncapsulated,class std::allocator<class PointerToWordNodeWhereAnEnglishNounIsEncapsulated> >'
+c:\dokumente und einstellungen\stefan\eigene dateien\vtrans-2\translate.h(727) : warning C4786: '?GetVecPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@ABK@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+c:\dokumente und einstellungen\stefan\eigene dateien\vtrans-2\translate.h(737) : warning C4786: '?IfIsEnglishNounThenReturnEnglishNounEncapsulatedInWord@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+c:\dokumente und einstellungen\stefan\eigene dateien\vtrans-2\mainfrm.h(196) : warning C4786: '??0TranslateParameters@@QAE@PAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@std@@PAV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@3@PAVStatusDialog@@PAPAUHWND__@@@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(2240) : warning C4101: 'personIndex' : Unreferenzierte lokale Variable
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(13231) : warning C4786: '?IfIsEnglishNounThenReturnEnglishNounEncapsulatedInWord@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(33558) : warning C4786: '?GetVecPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@ABK@Z' : Bezeichner wurde auf '255' Zeichen in den Browser-Informationen reduziert
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(34158) : warning C4805: '==' : unsichere Kombination von Typ 'unsigned char' mit Typ 'const bool' in einer Operation
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(13322) : Warnung C4786: '__ehhandler$?IfIsEnglishNounThenReturnEnglishNounEncapsulatedInWord@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@@Z' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(13322) : Warnung C4786: '__unwindfunclet$?IfIsEnglishNounThenReturnEnglishNounEncapsulatedInWord@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@@Z$4' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(13322) : Warnung C4786: '__unwindfunclet$?IfIsEnglishNounThenReturnEnglishNounEncapsulatedInWord@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@@Z$3' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(13322) : Warnung C4786: '__unwindfunclet$?IfIsEnglishNounThenReturnEnglishNounEncapsulatedInWord@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@@Z$2' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(13322) : Warnung C4786: '__unwindfunclet$?IfIsEnglishNounThenReturnEnglishNounEncapsulatedInWord@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@@Z$1' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$37' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$35' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$34' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$33' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$31' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$29' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$28' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$27' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$26' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$25' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$23' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$22' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$20' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$18' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$17' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$16' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$15' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$14' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$13' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$12' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$11' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$10' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$9' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$8' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$7' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$5' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$3' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$2' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$1' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(31072) : Warnung C4786: '__unwindfunclet$?TranslateText@@YA?AV?$vector@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@V?$allocator@V?$vector@VCString@@V?$allocator@VCString@@@std@@@std@@@2@@std@@AAVText@@AAV?$vector@VRange@@V?$allocator@VRange@@@std@@@2@ABKPAVEnglishView@@@Z$0' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(-31890) : Warnung C4786: '__ehhandler$?GetVecPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@ABK@Z' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(-31890) : Warnung C4786: '__unwindfunclet$?GetVecPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@ABK@Z$4' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(-31890) : Warnung C4786: '__unwindfunclet$?GetVecPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@ABK@Z$3' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(-31890) : Warnung C4786: '__unwindfunclet$?GetVecPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@ABK@Z$2' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+C:\Dokumente und Einstellungen\Stefan\Eigene Dateien\VTrans-2\Translate.cpp(-31890) : Warnung C4786: '__unwindfunclet$?GetVecPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@YA?AV?$vector@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@V?$allocator@VPointerToWordNodeWhereAnEnglishNounIsEncapsulated@@@std@@@std@@ABV?$vector@VCString@@V?$allocator@VCString@@@std@@@2@ABK@Z$1' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+c:\programme\microsoft visual studio 6.0\vc98\include\vector(60) : Warnung C4786: 'std::vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated,std::allocator<PointerToWordNodeWhereAnEnglishNounIsEncapsulated> >::~vector<PointerToWordNodeWhereAnEnglishNounIsEncapsulated,std::allocator<PointerToWordNodeWhereAnEnglishNounIsEncapsulated> >' : Bezeichner wurde auf '255' Zeichen in den Debug-Informationen verkürzt
+Linker-Vorgang läuft...
+Erstellen der temporären Datei  "C:\DOKUME~1\Stefan\LOKALE~1\Temp\RSP2B.tmp" mit Inhalten
+[
+/nologo /o"Debug/VTrans.bsc" 
+".\Debug\StdAfx.sbr"
+".\Debug\ChildFrm.sbr"
+".\Debug\EnglishView.sbr"
+".\Debug\GermanView.sbr"
+".\Debug\LoadStatusDialog.sbr"
+".\Debug\MainFrm.sbr"
+".\Debug\OptionsDialog.sbr"
+".\Debug\SearchFormBar.sbr"
+".\Debug\sizecbar.sbr"
+".\Debug\StatusDialog.sbr"
+".\Debug\Text.sbr"
+".\Debug\Translate.sbr"
+".\Debug\UnknownWordsBar.sbr"
+".\Debug\VTrans.sbr"
+".\Debug\VTransDoc.sbr"
+".\Debug\VTransView.sbr"
+".\Debug\Word.sbr"
+".\Debug\WordEditorBar.sbr"]
+Erstellen der Befehlzeile "bscmake.exe @C:\DOKUME~1\Stefan\LOKALE~1\Temp\RSP2B.tmp"
+Browse-Informationsdatei wird erstellt...
+<h3>Ausgabefenster</h3>
+
+
+
+<h3>Ergebnisse</h3>
+VTrans.exe - 0 Fehler, 11 Warnung(en)
+</pre>
+</body>
+</html>

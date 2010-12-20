@@ -1,7 +1,7 @@
 #include <bits/stringfwd.h>
 
 #include "IVocabularyInMainMem.hpp"
-#include "Word.hpp"
+#include <Attributes/Word.hpp>
 
 //IVocabularyInMainMem::s_arstdstrPersonalPronoun = {"hh", "j"} ;
 //

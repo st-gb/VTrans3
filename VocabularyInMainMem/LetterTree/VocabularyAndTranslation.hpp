@@ -3,7 +3,7 @@
 #include <string>
 #include "../AutomDelWord.hpp"
   //use a relative path, else "VC/include/IO.h" is used
-  #include "../../IO.hpp" //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
+  #include <IO/IO.hpp> //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
 
   #define BIT_POSITION_FOR_TRANSLATION_TYPE 2
 
@@ -20,7 +20,7 @@
 
 class LetterNode ;
 //class Word ;
-#include <Word.hpp>
+#include <Attributes/Word.hpp>
 
     static std::string g_ar_stdstrWordClass [] = {
       "noun"

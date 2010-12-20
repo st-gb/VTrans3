@@ -9,8 +9,8 @@
 #define GRAMMARPART_HPP_
 
 #include <windef.h> //for BYTE, DWORD etc.
-#include "Token.h" //class PositionStringVector
-#include "Word.hpp" //class EnglishWord
+#include <Attributes/Token.h> //class PositionStringVector
+#include <Attributes/Word.hpp> //class EnglishWord
 
 //pre-declare (so no include of a file that declares this class->faster compilation)
 class VocabularyAndTranslation ;

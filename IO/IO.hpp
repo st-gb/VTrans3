@@ -4,7 +4,7 @@
 #include <fstream> //for ofstream
 #include "xmlwriter.h"
 #include "rest.h" //for class SentenceAndValidityAndProperName
-#include "Word.hpp" //for class Word
+#include <Attributes/Word.hpp> //for class Word
 #include <set> //std::set
 
 //The following characters are used in the vocabulary file:
@@ -37,6 +37,14 @@ class OneLinePerWordPair
     string_index_for_inifinitive = 0 ,
     string_index_for_past_tense ,
     string_index_for_past_participle
+  };
+  //Use an enum to because that lets the values automatically be unique.
+  enum verb_byte_attribiute_indices
+  {
+    movement_verb = 0 ,
+    auxiliary_verb_type ,
+    grammatical_case ,
+    reflexive_or_not
   };
 private :
 //  static VocabularyAndTranslation * s_pvocabularyandtranslation ; //= NULL ;

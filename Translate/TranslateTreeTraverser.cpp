@@ -8,7 +8,8 @@
 #include <Translate/TranslateTreeTraverser.hpp>
 #include <Translate/SummarizePersonIndex.hpp>
 #include <Translate/SetSameConsecutiveIDforLeaves.hpp>
-#include <supress_unused_variable.h>
+//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <preprocessor_macros/suppress_unused_variable.h>
 
 namespace ParseTreeTraverser
 {
@@ -103,6 +104,11 @@ namespace ParseTreeTraverser
     {
       DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
         stdstrTranslation ) ;
+      DEBUGN( "TranslateTreeTraverser::LeaveFound(): "
+        << mr_parsebyrise.GetPathAs_std_string(
+          m_vec_wGrammarPartIDcurrentParsePath)
+        << "--translation rule applies. "
+        "translation:" << stdstrTranslation ) ;
       m_stdstrWholeTranslation += stdstrTranslation + " " ;
       //The consecutive ID is set to the grammar part AFTER we arrive here.
       //Because this ID is needed, store the grammar part, too.
@@ -154,7 +160,7 @@ namespace ParseTreeTraverser
 //        #pragma GCC diagnostic ignored  "-Wunused"
         GrammarPart * p_grammarpart =
           m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
-        SUPRESS_UNUSED_VARIABLE_WARNING(p_grammarpart)
+        SUPPRESS_UNUSED_VARIABLE_WARNING(p_grammarpart)
 //        SetSameConsecutiveIDforLeaves(p_grammarpart) ;
 #endif
       }
