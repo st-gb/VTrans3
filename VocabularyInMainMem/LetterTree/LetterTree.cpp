@@ -912,9 +912,7 @@ void LetterTree::DeleteCompleteList()
 	  //The root node is always allocated due to simplification
 	  //of operations like inserting a node.
 	  m_pletternodeRoot;
-  #ifdef _DEBUG
-	  cout << "DeleteCompleteList() begin\n";
-  #endif
+  DEBUGN( "DeleteCompleteList() begin" )
   //At the beginning of this vector the entries of the lowest 
   //levels are stored.
   //A vector is not the best data structure: it operates best

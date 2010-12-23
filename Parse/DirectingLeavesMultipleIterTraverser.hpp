@@ -46,11 +46,19 @@ public:
   }
 } ;
 
+//A parse tree is a tree of the allowed syntax.
 namespace ParseTreeTraverser
 {
   class DirectingLeavesMultipleIterTraverser
   {
   public:
+    enum directionOfCurrentNodeRelatedToParentNode
+    {
+      RootNodeOrMiddle,
+      Left,
+      Right
+    };
+    bool m_bTraverseTree ; //Set to "false" to terminate further traversing.
     //This node can be used in subclassed when callback methods are called:
     // then this means that the affect node is this node.
   //  const GrammarPart * mcp_grammarpartCurrent ;
@@ -64,17 +72,29 @@ namespace ParseTreeTraverser
     WORD m_wParseLevel ;
     //e.g. gives the poss. to clear containers that track the current parse tree
     //path.
+    //Must be "virtual" because this is a callback method for subclasses.
     virtual void BeforeBeginAtRoot() {} ;
+    //Must be "virtual" because this is a callback method for subclasses.
     virtual void CurrentNodeIsLastAddedRightChild() {} ;
     DirectingLeavesMultipleIterTraverser(
         const GrammarPart * p_grammarpart ,
         ParseByRise * p_parsebyrise );
     virtual
     ~DirectingLeavesMultipleIterTraverser();
+//    void GetGrammarPartPathAsGrammarPartIDvector( std::vector<WORD> & ) ;
+//    WORD * GetGrammarPartPathAsGrammarPartIDarray() ;
 //    const GrammarPart * GetNextRightGrammarPartNotProcessedYet() ;
     GrammarPartPointerAndParseLevel * GetNextRightGrammarPartNotProcessedYet() ;
+
+    //Must be "virtual" because this is a callback method for subclasses.
     virtual void ParseTreePathAdded() {} ;
+    //Must be "virtual" because this is a callback method for subclasses.
     virtual void ParseTreePathPopped() { } ;
+    inline void PopElementsTillNextRightChild(//WORD wNumberOfElementsToPop
+      GrammarPartPointerAndParseLevel *
+        p_grammarpartpointerandparselevelRightChild
+      ) ;
+    inline void ProcessLastAddedRightNode() ;
     void ProcessLeavesOfParseTree() ;
     void ProcessNextParseTreeLevelDirectingRoot(
         //const GrammarPart * p_grammarpart
@@ -111,9 +131,10 @@ namespace ParseTreeTraverser
     //       "def_noun_conj" when "and" was added to the right nodes
     //        not processed yet
     //   then at "and": def_noun_conj->conj
+    //Must be "virtual" because this is a callback method for subclasses.
     virtual void RightChildAdded( unsigned short) {} ;
     void Traverse() ;
-    //virtual because this is the callback method for the subclasses.
+    //Must be "virtual" because this is a callback method for subclasses.
     virtual void LeaveFound() {}
     //The traverser traverses the tree until 1 or 2 processed node(s) was/ were
     //found: e.g.

@@ -107,16 +107,34 @@ public:
   //we simply set a flag that we are referring this array.
   SyntaxTreePath( const SyntaxTreePath & stpToCopyFrom ) ;
   ~SyntaxTreePath() ;
-  SyntaxTreePath(std::string & r_stdstrSyntaxTreePath
-      ,     ParseByRise * p_parsebyrise ) ;
+  SyntaxTreePath(
+    const std::string & r_stdstrSyntaxTreePath
+    , ParseByRise * p_parsebyrise
+    ) ;
   BYTE CreateGrammarPartIDArray(
-      const std::string & r_stdstrSyntaxTreePath
-      ,     ParseByRise * p_parsebyrise ) ;
+    const std::string & r_stdstrSyntaxTreePath
+    , ParseByRise * p_parsebyrise
+    ) ;
   std::string GetAs_std_string() const ;
+  static void GetAsGrammarPartIDvector(
+    std::vector<GrammarPart *> & r_stdvector_p_grammarpartParseTreePath ,
+    std::vector<WORD> & r_stdvec_w_grammarpartPath) ;
   GrammarPart * GetLeaf(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const ;
   bool operator < ( const SyntaxTreePath & r) const ;
   bool IsPartOf(std::vector<WORD> & r_stdvec_wGrammarPartPath ) ;
-};
+ static bool Matches(
+    WORD * ar_wElements ,
+    WORD wNumberOfElements ,
+    const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath
+    ) ;
+//  static bool Matches(
+//    const std::vector<WORD> & cr_stdvec_wGrammarPartPath ,
+//    const std::vector<GrammarPart *> & cr_stdvec_grammarpartPath
+//    ) const ;
+  bool Matches(
+    const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath
+    ) const ;
+}; //end class
 
 #endif /* SYNTAXTREEPATH_HPP_ */

@@ -9,12 +9,15 @@
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
 #include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <Translate/TransformationRule.hpp> //class TransformationRule
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 
+#include <map> //class std::map
 #include <string> //class std::string
+#include <vector> //class std::vector
 
 //Forward declarations:
 class SAX2GrammarRuleHandler ;
@@ -32,7 +35,12 @@ class TranslationControllerBase
 public:
   static LetterTree s_lettertree ;
   ParseByRise m_parsebyrise ;
+//  std::map<std::string,TransformationRule>
+//    m_stdmap_stdstrTransformationRule2transformationrule ;
+  std::map<SyntaxTreePath,TransformationRule>
+    m_stdmap_syntaxtreepath2transformationrule ;
   TranslateParseByRiseTree m_translateparsebyrisetree ;
+  void Init() ;
   //These virtual methods need to be re-declared (and implemented in
   //subclasses), else error like this: "pure virtual method called".
   virtual void Message(const std::string & cr_stdstr ) //= 0;
@@ -55,6 +63,13 @@ public:
     Xerces::SAX2VocAttributeDefinitionHandler &
       sax2vocattributedefinitionhandler ,
     const std::string & cr_stdstrFilePath
+    ) ;
+  void Transform() ;
+  void Translate(
+    const std::string & cr_stdstrWholeInputText ,
+    std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
+    std::vector<std::vector<TranslationAndGrammarPart> > &
+      r_stdvec_stdvecTranslationAndGrammarPart
     ) ;
   TranslationControllerBase();
   virtual

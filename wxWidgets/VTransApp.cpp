@@ -141,6 +141,7 @@ bool VTransApp::HandleCommandLineArgs()
 //    }
 //    m_translateparsebyrisetree.AddVocAndTranslDefinitions() ;
     ReadMainConfigFile(stdstrFilePath) ;
+    Init() ;
     if( m_stdstrVocabularyFilePath.empty() )
       ::wxMessageBox(
         wxString::Format( "error: The vocabulary file path is empty"

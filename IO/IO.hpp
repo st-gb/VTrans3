@@ -2,7 +2,7 @@
 	    #define IO_H_INCLUDED
 
 #include <fstream> //for ofstream
-#include "xmlwriter.h"
+//#include "xmlwriter.h"
 #include "rest.h" //for class SentenceAndValidityAndProperName
 #include <Attributes/Word.hpp> //for class Word
 #include <set> //std::set
@@ -87,7 +87,7 @@ public:
     const std::string & strCurrentWordData
     , BYTE byVocabularyType
     ) ;
-  static void InsertEnglishPonoun(
+  static void InsertEnglishPronoun(
     const std::string & strCurrentWordData
     , BYTE byVocabularyType
     ) ;

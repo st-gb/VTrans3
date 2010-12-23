@@ -63,6 +63,9 @@ void DrawParseTreeTraverser::LeaveFound()
 
   GrammarPart * p_grammarpart = m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart ;
+  LOGN("DrawParseTreeTraverser::LeaveFound()--"
+    << mp_parsebyrise->GetGrammarPartName(p_grammarpart->m_wGrammarPartID)
+    )
   wxString wxstrTokens ;
 //      wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
   wxsizeString = GetGrammarPartNameExtent( * mp_wxdc, p_grammarpart,
@@ -144,7 +147,8 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   {
     //hex. addresses are easier to compare with values in debugger mode.
     if( bShowHexAddress )
-      wxstrGrammarPartName += wxString::Format( wxT("%lx_") , p_grammarpart ) ;
+      wxstrGrammarPartName += wxString::Format( wxT("%lx_") ,
+        (DWORD) p_grammarpart ) ;
     else
       wxstrGrammarPartName += wxString::Format( wxT("%lu_") ,
         (DWORD) p_grammarpart ) ;

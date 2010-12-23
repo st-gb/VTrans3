@@ -108,117 +108,119 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
 }
 
 bool TranslationRule::Matches(
-  const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath ) const
+  const std::vector<WORD> & cr_stdvec_wCurrentGrammarPartPath ) const
 {
-  bool bIdentical = false ;
-  bool bCurrentlyKleeneStarOperator = false ;
-  if( r_stdvec_wCurrentGrammarPartPath.size() >=
-      m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
-      && m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
-    )
-  {
-    bIdentical = true ;
-//    WORD wLenghtDiff = r_stdvec_wCurrentGrammarPartPath.size() -
-//        m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements ;
-    std::vector<WORD>::const_reverse_iterator rev_iter =
-        r_stdvec_wCurrentGrammarPartPath.rbegin() ;
-    //Compare from end to begin.
-    WORD wIndex ;
-    WORD wGrammarPartIDforTranslationRule ;
-    //Avoid g++ warning "'wGrammarPartIDforTranslationRule' might be used
-    // uninitialized in this function"
-    SUPPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDforTranslationRule)
-    for( wIndex = //p_tr->m_wNumberOfElements - 1 ;
-        //p_translationrule->
-        m_syntaxtreepathCompareWithCurrentPath.
-        m_wNumberOfElements - 1 ;
-        wIndex != MAXWORD
-        && rev_iter != r_stdvec_wCurrentGrammarPartPath.rend()
-            ; //-- wIndex
-//        ++ rev_iter
-        )
-    {
-//      DEBUG_COUTN
-      DEBUGN
-      ( "comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
-          //p_translationrule->
-        m_syntaxtreepathCompareWithCurrentPath.
-          m_ar_wElements [ wIndex ] <<
-        mp_parsebyrise->GetGrammarPartName( //p_tr->m_ar_wElements [ wIndex ]
-            //p_translationrule->
-          m_syntaxtreepathCompareWithCurrentPath.
-            m_ar_wElements [ wIndex ]
-        )
-        << " and "
-//        << r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
-        << *rev_iter
-        << mp_parsebyrise->GetGrammarPartName(
-            //r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
-          *rev_iter
-          )
-        )
-//      if( //p_tr->m_ar_wElements [ wIndex ] !=
-//          //p_translationrule->
-//          m_syntaxtreepathCompareWithCurrentPath.
-//          m_ar_wElements [ wIndex ] !=
-//        r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
+//  bool bIdentical = false ;
+//  bool bCurrentlyKleeneStarOperator = false ;
+//  if( r_stdvec_wCurrentGrammarPartPath.size() >=
+//      m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
+//      && m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
+//    )
+//  {
+//    bIdentical = true ;
+////    WORD wLenghtDiff = r_stdvec_wCurrentGrammarPartPath.size() -
+////        m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements ;
+//    std::vector<WORD>::const_reverse_iterator rev_iter =
+//        r_stdvec_wCurrentGrammarPartPath.rbegin() ;
+//    //Compare from end to begin.
+//    WORD wIndex ;
+//    WORD wGrammarPartIDforTranslationRule ;
+//    //Avoid g++ warning "'wGrammarPartIDforTranslationRule' might be used
+//    // uninitialized in this function"
+//    SUPPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDforTranslationRule)
+//    for( wIndex = //p_tr->m_wNumberOfElements - 1 ;
+//        //p_translationrule->
+//        m_syntaxtreepathCompareWithCurrentPath.
+//        m_wNumberOfElements - 1 ;
+//        wIndex != MAXWORD
+//        && rev_iter != r_stdvec_wCurrentGrammarPartPath.rend()
+//            ; //-- wIndex
+////        ++ rev_iter
 //        )
+//    {
+////      DEBUG_COUTN
+//      DEBUGN
+//      ( "comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
+//          //p_translationrule->
+//        m_syntaxtreepathCompareWithCurrentPath.
+//          m_ar_wElements [ wIndex ] <<
+//        mp_parsebyrise->GetGrammarPartName( //p_tr->m_ar_wElements [ wIndex ]
+//            //p_translationrule->
+//          m_syntaxtreepathCompareWithCurrentPath.
+//            m_ar_wElements [ wIndex ]
+//        )
+//        << " and "
+////        << r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
+//        << *rev_iter
+//        << mp_parsebyrise->GetGrammarPartName(
+//            //r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
+//          *rev_iter
+//          )
+//        )
+////      if( //p_tr->m_ar_wElements [ wIndex ] !=
+////          //p_translationrule->
+////          m_syntaxtreepathCompareWithCurrentPath.
+////          m_ar_wElements [ wIndex ] !=
+////        r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
+////        )
+////        {
+////          bIdentical = false ;
+////          DEBUG_COUT("TranslationRuleApplies--not identical\n")
+////          break ;
+////        }
+//      if( bCurrentlyKleeneStarOperator )
+//      {
+//        if( wGrammarPartIDforTranslationRule == *rev_iter )
 //        {
-//          bIdentical = false ;
-//          DEBUG_COUT("TranslationRuleApplies--not identical\n")
-//          break ;
+//          bCurrentlyKleeneStarOperator = false ;
+//          -- wIndex ;
 //        }
-      if( bCurrentlyKleeneStarOperator )
-      {
-        if( wGrammarPartIDforTranslationRule == *rev_iter )
-        {
-          bCurrentlyKleeneStarOperator = false ;
-          -- wIndex ;
-        }
-        ++ rev_iter ;
-      }
-      else
-      {
-        wGrammarPartIDforTranslationRule =
-            m_syntaxtreepathCompareWithCurrentPath.m_ar_wElements [ wIndex ] ;
-        if( wGrammarPartIDforTranslationRule == KLEENE_STAR_OPERATOR )
-        {
-          if( wIndex - 1 >= 0 )
-            -- wIndex ;
-          else
-            return false ;
-          bCurrentlyKleeneStarOperator = true ;
-          wGrammarPartIDforTranslationRule =
-              m_syntaxtreepathCompareWithCurrentPath.m_ar_wElements [ wIndex ] ;
-        }
-        else
-        {
-          if( wGrammarPartIDforTranslationRule !=
-              //r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
-              *rev_iter
-            )
-          {
-            bIdentical = false ;
-            DEBUG_COUT("TranslationRuleApplies--not identical\n")
-            break ;
-          }
-          -- wIndex ;
-          //Only advance if the current grammar part ID is not Kleene star operator
-          //because the ID after Kleene star *must* match the (indirect) ID of
-          //the vector.
-          ++ rev_iter ;
-        }
-      }
-    }
-  }
-  //If currently there is a Kleene star operand, the rule is NOT identical
-  //because a next (indirect) vector's grammar part ID must match the
-  //translation rule's grammar part ID:
-  //e.g. for translation grammar part path
-  //"obj.*.def_article_plural.def_article"
-  //the vector's grammar part path must contain an "obj" grammar part after
-  // a def_article_plural gramar part.
-  return !bCurrentlyKleeneStarOperator && bIdentical ;
+//        ++ rev_iter ;
+//      }
+//      else
+//      {
+//        wGrammarPartIDforTranslationRule =
+//            m_syntaxtreepathCompareWithCurrentPath.m_ar_wElements [ wIndex ] ;
+//        if( wGrammarPartIDforTranslationRule == KLEENE_STAR_OPERATOR )
+//        {
+//          if( wIndex - 1 >= 0 )
+//            -- wIndex ;
+//          else
+//            return false ;
+//          bCurrentlyKleeneStarOperator = true ;
+//          wGrammarPartIDforTranslationRule =
+//              m_syntaxtreepathCompareWithCurrentPath.m_ar_wElements [ wIndex ] ;
+//        }
+//        else
+//        {
+//          if( wGrammarPartIDforTranslationRule !=
+//              //r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
+//              *rev_iter
+//            )
+//          {
+//            bIdentical = false ;
+//            DEBUG_COUT("TranslationRuleApplies--not identical\n")
+//            break ;
+//          }
+//          -- wIndex ;
+//          //Only advance if the current grammar part ID is not Kleene star operator
+//          //because the ID after Kleene star *must* match the (indirect) ID of
+//          //the vector.
+//          ++ rev_iter ;
+//        }
+//      }
+//    }
+//  }
+//  //If currently there is a Kleene star operand, the rule is NOT identical
+//  //because a next (indirect) vector's grammar part ID must match the
+//  //translation rule's grammar part ID:
+//  //e.g. for translation grammar part path
+//  //"obj.*.def_article_plural.def_article"
+//  //the vector's grammar part path must contain an "obj" grammar part after
+//  // a def_article_plural gramar part.
+//  return !bCurrentlyKleeneStarOperator && bIdentical ;
+  return m_syntaxtreepathCompareWithCurrentPath.Matches(
+    cr_stdvec_wCurrentGrammarPartPath ) ;
 }
 
 void TranslationRule::SetConsecutiveIDSyntaxTreePath(

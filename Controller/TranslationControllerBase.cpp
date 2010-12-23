@@ -6,6 +6,8 @@
  */
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <Controller/TranslationControllerBase.hpp>
+//class ParseTreeTraverser::TransformTreeTraverser
+#include <Translate/TransformTreeTraverser.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 #include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
 //Class SAX2GrammarRuleHandler
@@ -23,13 +25,29 @@ TranslationControllerBase::TranslationControllerBase()
     , * this
     )
 {
-  // TODO Auto-generated constructor stub
-
 }
 
 TranslationControllerBase::~TranslationControllerBase()
 {
   // TODO Auto-generated destructor stub
+}
+
+void TranslationControllerBase::Init()
+{
+//  TransformationRule transformationrule ;
+//  transformationrule.m_stdstrParseTreePathWhereToInsert = "clauseWith1Obj.obj" ;
+//  transformationrule.m_bInsertLeftChild = false ;
+////  m_stdmap_stdstrTransformationRule2transformationrule.insert(
+////    std::make_pair( "clauseWith1Obj.*.adverb" , transformationrule
+////      )
+////    ) ;
+//  std::string stdstr = "clauseWith1Obj.*.adverb" ;
+//  m_stdmap_syntaxtreepath2transformationrule.insert(
+//    std::make_pair(
+//      SyntaxTreePath( stdstr , & m_parsebyrise ) ,
+//      transformationrule
+//      )
+//    ) ;
 }
 
 void TranslationControllerBase::ReadGrammarRuleFile(
@@ -135,4 +153,60 @@ void TranslationControllerBase::ReadVocAttributeDefinitionFile(
     m_translateparsebyrisetree.mr_i_userinterface.Message(
       stdwstrErrorMessage ) ;
   }
+}
+
+void TranslationControllerBase::Transform()
+{
+  DWORD dwLeftMostTokenIndex = 0 ;
+  std::vector<GrammarPart *> stdvec_p_grammarpartRootNode ;
+  m_parsebyrise.GetGrammarPartCoveringMostTokens(
+    dwLeftMostTokenIndex ,
+    stdvec_p_grammarpartRootNode
+    ) ;
+  for( std::vector<GrammarPart *>::const_iterator c_iter_p_grammarpartRootNode
+    = stdvec_p_grammarpartRootNode.begin() ; c_iter_p_grammarpartRootNode <
+      stdvec_p_grammarpartRootNode.end() ; ++ c_iter_p_grammarpartRootNode
+     )
+  {
+    ParseTreeTraverser::TransformTreeTraverser transformtreetransverser(
+//      m_stdmap_stdstrTransformationRule2transformationrule ,
+      m_stdmap_syntaxtreepath2transformationrule ,
+      * c_iter_p_grammarpartRootNode ,
+      m_parsebyrise
+      ) ;
+    transformtreetransverser.Traverse() ;
+  }
+}
+
+void TranslationControllerBase::Translate(
+//  ParseByRise & r_parsebyrise ,
+  const std::string & cr_stdstrWholeInputText ,
+  std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
+  std::vector<std::vector<TranslationAndGrammarPart> > &
+    r_stdvec_stdvecTranslationAndGrammarPart
+//  , std::vector<std::vector<TranslationAndConsecutiveID> > &
+//    r_stdvec_stdvecTranslationAndConsecutiveID
+  )
+{
+  m_parsebyrise.ClearParseTree() ;
+  m_parsebyrise.CreateInitialGrammarParts ( cr_stdstrWholeInputText ) ;
+  DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
+  m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
+
+  Transform() ;
+//  TranslateParseByRiseTree translateParseByRiseTree(
+//    m_parsebyrise
+//    , ::wxGetApp()
+//    ) ;
+  TranslateParseByRiseTree & translateParseByRiseTree =
+    //::wxGetApp().
+    m_translateparsebyrisetree ;
+  DEBUG_COUT("before translation\n")
+
+  translateParseByRiseTree.Translate(
+    m_parsebyrise,
+    r_stdvec_stdstrWholeTransl ,
+    r_stdvec_stdvecTranslationAndGrammarPart
+//    stdvec_stdvecTranslationAndConsecutiveID
+    ) ;
 }

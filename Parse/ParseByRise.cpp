@@ -189,7 +189,8 @@ void ParseByRise::ClearParseTree()
 // def_article_noun    /           <- tree struct: parse tree
 //              \   /
 //              clause       <- tree struct: parse tree
-void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
+void ParseByRise::CreateInitialGrammarParts ( const std::string &
+  cr_stdstrText )
 {
   //PositionstdstringVector psv ;
   m_wParseLevel = 1 ;
@@ -197,7 +198,7 @@ void ParseByRise::CreateInitialGrammarParts (std::string & stdstrText )
 //  std::map<DWORD, GrammarPart> stdmapwLeftmostIndex2grammarpart ;
 //  std::map<DWORD, GrammarPart> stdmapwRightmostIndex2grammarpart ;
 
-  BuildTokenVector(stdstrText,m_psv) ;
+  BuildTokenVector(cr_stdstrText,m_psv) ;
 #ifdef _DEBUG
   DWORD dwSize ;
 #endif
@@ -682,6 +683,8 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
     "MainVerbProgressive1Obj" ) ;
   InsertGrammarRule( EnglishWord::main_verb_allows_2objects_progressive_form,
     "MainVerbProgressive2Obj" ) ;
+
+  InsertGrammarRule( EnglishWord::adverb, "adverb" ) ;
 
   InsertGrammarRule( EnglishWord::English_definite_article,
     "definite_article" ) ;

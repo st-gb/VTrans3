@@ -1,0 +1,37 @@
+<transformation_rules>
+  <!--adverb -> right of the object.
+      e.g. "I still haven't found you." -> "Ich habe dich immer noch nicht gefunden." 
+      -->
+  <transformation_rule
+    syntax_tree_path="clauseWith1Obj.*.adverb"
+    parse_tree_branch_to_move="adverb"
+    place_near_syntax_tree_path="clauseWith1Obj.obj"
+    direction="right"
+    >
+  </transformation_rule>
+  <!--adverb -> right of the finite verb: "I still worked very hard. -> Ich arbeitete immer noch sehr hart.
+    -->
+  <!--<transformation_rule
+    syntax_tree_path="0Objclause.*.adverb"
+    place_near_syntax_tree_path="ObjclauseWith1.obj"
+    direction="right"
+    >
+  </transformation_rule>-->
+  <!--questions: 
+      "But if you  see  me I will follow you." -> 
+              subj pre obj
+      "Aber falls ich dich sehe arbeitete immer nich sehr hart.
+                  subj obj pred
+      "Only if you  see  me.
+               subj pre obj
+      "Nur falls ich dich sehe.
+                 subj obj pred
+    -->
+  <!--<transformation_rule
+    syntax_tree_path="clauseWith0Obj.*.subj"
+    parse_tree_path_to_move="subj"
+    place_near_syntax_tree_path="clauseWith1Obj.obj"
+    direction="right"
+    >
+  </transformation_rule>-->
+</transformation_rules>

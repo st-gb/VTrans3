@@ -760,8 +760,10 @@ void TranslateParseByRiseTree::Translate(
 //    GrammarPart * p_grammarpart ;
 //    GrammarPart * p_grammarpartChild ;
     //int y = 10 ;
-    //  typedef std::multimap<DWORD, GrammarPart > stdmmap_token_index2grammarpart ;
-    typedef std::multimap<DWORD, GrammarPart *> stdmmap_token_index2grammarpart ;
+    //  typedef std::multimap<DWORD, GrammarPart >
+    //  stdmmap_token_index2grammarpart ;
+    typedef std::multimap<DWORD, GrammarPart *>
+      stdmmap_token_index2grammarpart ;
     stdmmap_token_index2grammarpart::const_iterator citer ;
     stdmmap_token_index2grammarpart &
       r_stdmultimap_dwLeftmostIndex2grammarpart = mp_parsebyrise->
@@ -778,10 +780,10 @@ void TranslateParseByRiseTree::Translate(
         stdvec_p_grammarpart
         ) ;
     WORD wConsecutiveID = 0 ;
-    for( std::vector<GrammarPart *>::const_iterator c_iter =
-        stdvec_p_grammarpart.begin() ; c_iter < stdvec_p_grammarpart.end() ;
-        ++ c_iter
-        )
+    for( std::vector<GrammarPart *>::const_iterator c_iter_p_grammarpart =
+        stdvec_p_grammarpart.begin() ; c_iter_p_grammarpart <
+        stdvec_p_grammarpart.end() ; ++ c_iter_p_grammarpart
+       )
     {
 //    if( p_grammarpart )
 //    {
@@ -789,7 +791,7 @@ void TranslateParseByRiseTree::Translate(
 
       ParseTreeTraverser::TranslateTreeTraverser translatetreetraverser(
 //        p_grammarpart
-        * c_iter
+        * c_iter_p_grammarpart
         , * mp_parsebyrise
         , * this
         );
@@ -907,7 +909,8 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 //      std::vector<WORD>::const_iterator c_iter_wGrammarPartPath =
 //          r_stdvec_wGrammarPartPath ;
       //DEBUG_COUT
-      bIdentical = p_translationrule->Matches(
+      bIdentical = //p_translationrule->Matches(
+          p_translationrule->m_syntaxtreepathCompareWithCurrentPath.Matches(
         r_stdvec_wCurrentGrammarPartPath ) ;
       if( bIdentical )
       {
