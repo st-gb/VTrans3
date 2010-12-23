@@ -13,7 +13,11 @@
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="and" superordinate="3rdPersSingSubjOrObjEnumEle_AND"/>
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle_AND" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle_AND" right_child="3rdPersPlurSubjOrObjEnumEle" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
-  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres1Obj" superordinate="3rdPersSingClause1Obj"/>
+  <!--grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres1Obj" superordinate="3rdPersSingClause1Obj"/-->
+  <grammar_rule left_child="MainVerb3rdPersSingPres1Obj" superordinate="Middle3rdPersSing1Obj"/>
+  <grammar_rule left_child="adverb" right_child="MainVerb3rdPersSingPres1Obj" superordinate="Middle3rdPersSing1Obj"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="Middle3rdPersSing1Obj" superordinate="3rdPersSingClause1Obj"/>
+  
   <grammar_rule left_child="3rdPersSingClause1Obj" superordinate="clause1Obj"/>
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" superordinate="SubjOrObjEnumEle"/>
   

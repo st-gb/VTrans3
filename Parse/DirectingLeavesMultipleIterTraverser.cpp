@@ -13,12 +13,12 @@
 
 namespace ParseTreeTraverser
 {
-
   DirectingLeavesMultipleIterTraverser::DirectingLeavesMultipleIterTraverser(
     const GrammarPart * p_grammarpartStartNode
     , ParseByRise * p_parsebyrise
     )
     :
+    m_bTraverseTree( true ) ,
     m_grammarpartpointer_and_parselevelCurrent (
       p_grammarpartStartNode , 0 )
     , mp_grammarpartStartNode ( p_grammarpartStartNode )
@@ -31,6 +31,44 @@ namespace ParseTreeTraverser
   {
     // TODO Auto-generated destructor stub
   }
+
+//  WORD * DirectingLeavesMultipleIterTraverser::
+//    GetGrammarPartPathAsGrammarPartIDarray( )
+//  {
+//    WORD * ar_wGrammarPartID = new WORD[
+//      m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.size() ];
+//    if( ar_wGrammarPartID )
+//    {
+//      WORD wArrayIndex = 0 ;
+//      std::vector<GrammarPartPointerAndParseLevel>::const_iterator c_iter =
+//        m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.begin() ;
+//      while( c_iter != m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.
+//          end()
+//          )
+//      {
+//        ar_wGrammarPartID[ wArrayIndex ++ ] = c_iter->m_p_grammarpart->
+//          m_wGrammarPartID ;
+//        ++ c_iter ;
+//      }
+//    }
+//  }
+//
+//  void DirectingLeavesMultipleIterTraverser::
+//    GetGrammarPartPathAsGrammarPartIDvector(
+//      std::vector<WORD> & stdvec_wGrammarPartID )
+//  {
+////    std::vector<WORD> stdvec_wGrammarPartID ;
+//    std::vector<GrammarPartPointerAndParseLevel>::const_iterator c_iter =
+//      m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.begin() ;
+//    while( c_iter != m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.
+//        end()
+//        )
+//    {
+//      stdvec_wGrammarPartID.push_back( c_iter->m_p_grammarpart->
+//        m_wGrammarPartID ) ;
+//      ++ c_iter ;
+//    }
+//  }
 
 //  const GrammarPart *
   GrammarPartPointerAndParseLevel *
@@ -107,9 +145,10 @@ namespace ParseTreeTraverser
     ProcessLeavesOfParseTree() ;
 //    m_grammarpartpointer_and_parselevelCurrent = GrammarPartPointerAndParseLevel(
 //        mp_grammarpartStartNode , 0 ) ;
-    if( //If the root has not been drawn yet (for trees that have only 1 node
+    if( m_bTraverseTree &&
+      //If the root has not been drawn yet (for trees that have only 1 node
         //that is root and leaf at the same time ).
-        //If this case is not catched this may result in an endless loop
+        //If this case is not caught this may result in an endless loop
         //below.
       m_stdset_p_grammarpartProcessedYet.find( p_grammarpart ) ==
         m_stdset_p_grammarpartProcessedYet.end()
@@ -130,8 +169,142 @@ namespace ParseTreeTraverser
     }
   }
 
+  inline void DirectingLeavesMultipleIterTraverser::
+    PopElementsTillNextRightChild(//WORD wNumberOfElementsToPop
+      GrammarPartPointerAndParseLevel *
+        p_grammarpartpointerandparselevelRightChild
+      )
+  {
+    WORD wCurrentParseTreeLevel = m_grammarpartpointer_and_parselevelCurrent.
+      m_wParseLevel ;
+    WORD wParseTrreLevelOfNextRightChild =
+      //m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.back().
+      p_grammarpartpointerandparselevelRightChild->
+      m_wParseLevel ;
+    WORD wNumberOfElementsToPop = wCurrentParseTreeLevel -
+      wParseTrreLevelOfNextRightChild
+      //If right child is added at level 0, it gets level 1; if then left
+      //child is leave it als has level 1; 1-1 = 0, but 1 element should be
+      //poppped, so add a value of "1".
+      + 1 ;
+    LOGN("DirectingLeavesMultipleIterTraverser::ProcessLastAddedRightNode()"
+      "--should pop " << wNumberOfElementsToPop << " elements from"
+      << mp_parsebyrise->GetGrammarPartName(
+        p_grammarpartpointerandparselevelRightChild->m_p_grammarpart->
+        m_wGrammarPartID )
+      << " to "
+      << mp_parsebyrise->GetGrammarPartName(
+        p_grammarpartpointerandparselevelRightChild->m_p_grammarpart->
+        m_wGrammarPartID )
+        )
+//    if( wNumberOfElementsToPop )
+    do
+    {
+      //TODO handle correctly if just 1 child exists:
+      // e.g. subject
+      //      /
+      //    subj_enum_ele
+      //     /
+      // def_article_noun
+      //Then more than 1 node must be popped from the current parse tree
+      // path: "def_article_moun" and "subj_enum_ele"
+
+      //Can be used as a callback method in subclasses of this class to keep
+      // track of the current parse tree path:
+      //    clause
+      //   /      \   (if "\"= last char:g++ warning:"multi-line comment")
+      // subject verb
+      // before at node "subject", now at node "clause"-> parse tree path is
+      //  "clause" now
+      ParseTreePathPopped() ;
+    //std::vector<GrammarPart *>::iterator iter =
+  //          mcp_grammarpartCurrent =
+  //          m_stdvec_p_grammarpartRightNodeToProcess.
+  //          //"Returns a read/write reference to the data at the last
+  //          //*  element of the %vector."
+  //          back() ;
+
+  //      bRightChild = true ;
+  //      vecCurrentParseTreePath.push_back(p_grammarpart) ;
+      //p_grammarpart = *iter ;
+
+  //        DEBUG_COUT
+//      DEBUGN( "DrawLeavesOfParseTree--popping " <<
+//        mp_parsebyrise->GetGrammarPartName(
+//          //mcp_grammarpartCurrent->m_wGrammarPartID
+//          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+//            m_wGrammarPartID
+//            )
+//    //          << mcp_grammarpartCurrent
+//        << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
+//    //            << " current size=" << m_stdvec_p_grammarpartRightNodeToProcess.size()
+//        << "\n" )
+    }
+    while( -- wNumberOfElementsToPop ) ;
+  }
+
+  inline void DirectingLeavesMultipleIterTraverser::ProcessLastAddedRightNode()
+  {
+    //Not every node has 2 child nodes: it may be just 1 child node:
+    //definite_article singular_noun
+    //               \ /
+    //    definite_article_singular
+    //               |
+    //          article_singular <- has just 1 child node.
+
+    //Leave found->all left branches/ nodes from root to this leave were
+    //processed -> Process the right node next to this leave node in
+    //directing the root node.
+  //        UnprocessedHighestLevelNodeFound() ;
+  //      if( bRightChild )
+  //      { //At this point: both the left and the right child have been drawn.
+  //        //So the parent can be drawn at their horizontal center now.
+  //      }
+    if( //! m_stdvec_p_grammarpartRightNodeToProcess.empty()
+      ! m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.empty()
+      )
+    {
+      PopElementsTillNextRightChild(//wNumberOfElementsToPop
+        & m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.back()
+        ) ;
+
+      m_grammarpartpointer_and_parselevelCurrent =
+        m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.
+        //"Returns a read/write reference to the data at the last
+        //*  element of the %vector."
+        back() ;
+
+      //Can be used as a callback method in subclasses of this class to keep
+      // track of the current parse tree path:
+      //    clause
+      //   /      \    (if "\"= last char:g++ warning:"multi-line comment")
+      // subject verb
+      // before at node "subject", now at node "verb"-> parse tree path is
+      //  "clause"->"verb" now
+  //          ParseTreePathAdded() ;
+      CurrentNodeIsLastAddedRightChild() ;
+      //e.g.: def_article_noun
+      //        /       \ (if "\"= last char:g++ warning:"multi-line comment")
+      //     article  noun
+      //when at article: parse level is 1,
+      //because "noun" was the last pushed it is the next
+    //        m_wParseLevel = m_stdvec_p_grammarpartRightNodeToProcess.size() + 1 ;
+    //        m_stdvec_p_grammarpartRightNodeToProcess.pop_back() ;
+      m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.pop_back() ;
+
+    //std::cout.flush() ;
+    //usleep(100000) ;
+  //          -- m_wParseLevel ;
+    }
+    else
+      //mcp_grammarpartCurrent = NULL ;
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart = NULL ;
+  }
+
   void DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree()
   {
+    LOGN("DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree() "
+      "begin")
 //    m_stdvec_p_grammarpartRightNodeToProcess.clear();
     m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.clear() ;
 //    const GrammarPart * p_grammarpart = mp_grammarpartStartNode;
@@ -167,7 +340,8 @@ namespace ParseTreeTraverser
         ++ m_wParseLevel ;
 //        mcp_grammarpartCurrent =
 //            mcp_grammarpartCurrent->mp_grammarpartLeftChild ;
-        m_grammarpartpointer_and_parselevelCurrent.SetGrammarPartPointerAndParseLevel(
+        m_grammarpartpointer_and_parselevelCurrent.
+          SetGrammarPartPointerAndParseLevel(
           m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
           mp_grammarpartLeftChild ,
           //m_wParseLevel
@@ -190,79 +364,10 @@ namespace ParseTreeTraverser
             m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
           ) ;
         //Can be used as a callback method in subclasses of this class.
+        LOGN("DirectingLeavesMultipleIterTraverser::"
+          "ProcessLeavesOfParseTree()--LeaveFound" )
         LeaveFound() ;
-//        UnprocessedHighestLevelNodeFound() ;
-  //      if( bRightChild )
-  //      { //At this point: both the left and the right child have been drawn.
-  //        //So the parent can be drawn at their horizontal center now.
-  //      }
-        if( //! m_stdvec_p_grammarpartRightNodeToProcess.empty()
-          ! m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.empty()
-          )
-        {
-          //TODO handle correctly if just 1 child exists:
-          // e.g. subject
-          //      /
-          //    subj_enum_ele
-          //     /
-          // def_article_noun
-          //Then more than 1 node must be popped from the current parse tree
-          // path: "def_article_moun" and "subj_enum_ele"
-
-          //Can be used as a callback method in subclasses of this class to keep
-          // track of the current parse tree path:
-          //    clause
-          //   /      \   (if "\"= last char:g++ warning:"multi-line comment")
-          // subject verb
-          // before at node "subject", now at node "clause"-> parse tree path is
-          //  "clause" now
-          ParseTreePathPopped() ;
-        //std::vector<GrammarPart *>::iterator iter =
-//          mcp_grammarpartCurrent =
-//          m_stdvec_p_grammarpartRightNodeToProcess.
-//          //"Returns a read/write reference to the data at the last
-//          //*  element of the %vector."
-//          back() ;
-          m_grammarpartpointer_and_parselevelCurrent =
-            m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.back() ;
-          //Can be used as a callback method in subclasses of this class to keep
-          // track of the current parse tree path:
-          //    clause
-          //   /      \    (if "\"= last char:g++ warning:"multi-line comment")
-          // subject verb
-          // before at node "subject", now at node "verb"-> parse tree path is
-          //  "clause"->"verb" now
-//          ParseTreePathAdded() ;
-          CurrentNodeIsLastAddedRightChild() ;
-
-  //      bRightChild = true ;
-  //      vecCurrentParseTreePath.push_back(p_grammarpart) ;
-        //p_grammarpart = *iter ;
-        DEBUG_COUT ( "DrawLeavesOfParseTree--popping " <<
-          mp_parsebyrise->GetGrammarPartName(
-            //mcp_grammarpartCurrent->m_wGrammarPartID
-            m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
-              m_wGrammarPartID
-              )
-//          << mcp_grammarpartCurrent
-          << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
-    //            << " current size=" << m_stdvec_p_grammarpartRightNodeToProcess.size()
-          << "\n" )
-        //e.g.: def_article_noun
-        //        /       \ (if "\"= last char:g++ warning:"multi-line comment")
-        //     article  noun
-        //when at article: parse level is 1,
-        //because "noun" was the last pushed it is the next
-    //        m_wParseLevel = m_stdvec_p_grammarpartRightNodeToProcess.size() + 1 ;
-//        m_stdvec_p_grammarpartRightNodeToProcess.pop_back() ;
-        m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.pop_back() ;
-        //std::cout.flush() ;
-        //usleep(100000) ;
-    //          -- m_wParseLevel ;
-        }
-        else
-          //mcp_grammarpartCurrent = NULL ;
-          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart = NULL ;
+        ProcessLastAddedRightNode() ;
       }
       DEBUG_COUT ( "DrawLeavesOfParseTree--"
           << " nodes to process size="
@@ -278,14 +383,17 @@ namespace ParseTreeTraverser
      ) ;
   }
 
+  //This method is e.g. useful for drawing a level of parse tree nodes.
   void DirectingLeavesMultipleIterTraverser::
     ProcessNextParseTreeLevelDirectingRoot(
 //    const GrammarPart * p_grammarpart
     )
   {
+    LOGN("DirectingLeavesMultipleIterTraverser::"
+      "ProcessNextParseTreeLevelDirectingRoot() begin")
     bool bProcessedYet = false ;
-    m_grammarpartpointer_and_parselevelCurrent = GrammarPartPointerAndParseLevel(
-        mp_grammarpartStartNode , 0 ) ;
+    m_grammarpartpointer_and_parselevelCurrent =
+      GrammarPartPointerAndParseLevel( mp_grammarpartStartNode , 0 ) ;
     //for the root node.
     ParseTreePathAdded() ;
     GrammarPartPointerAndParseLevel * p_grammarpartpointerandparselevel =
@@ -461,6 +569,8 @@ namespace ParseTreeTraverser
           m_stdset_p_grammarpartProcessedYet.insert( //p_grammarpart
             //mp_grammarpartLeftChild->m_p_grammarpart
             p_grammarpartpointerandparselevel->m_p_grammarpart ) ;
+          LOGN("DirectingLeavesMultipleIterTraverser::"
+            "ProcessNextParseTreeLevelDirectingRoot()--LeaveFound" )
           LeaveFound() ;
           bGetNextUnprocessedRightChild = true ;
         }
@@ -469,7 +579,7 @@ namespace ParseTreeTraverser
 //        {
 //        }
 //        bGetNextUnprocessedRightChild = true ;
-      }
+      } ////left node has not been processed yet.
 //      else ////Not both left and right child that have already been  found.
 //      { //Left child has not already been processed found.
 //
@@ -502,6 +612,11 @@ namespace ParseTreeTraverser
         } while( //while the node exists in the list
             iter_p_grammarpartRight != m_stdset_p_grammarpartProcessedYet.end()
             ) ;
+
+        PopElementsTillNextRightChild(//wNumberOfElementsToPop
+          p_grammarpartpointerandparselevel
+          ) ;
+
         //Copy from found node.
         m_grammarpartpointer_and_parselevelCurrent =
             * p_grammarpartpointerandparselevel ;

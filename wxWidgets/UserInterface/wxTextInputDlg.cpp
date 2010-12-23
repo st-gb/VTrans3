@@ -870,18 +870,6 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
 //  AxSpeech axspeech ;
 //  axspeech.Say( stdstrWholeInputText ) ;
 
-  m_parsebyrise.ClearParseTree() ;
-  m_parsebyrise.CreateInitialGrammarParts ( stdstrWholeInputText ) ;
-  DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
-  m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
-
-//  TranslateParseByRiseTree translateParseByRiseTree(
-//    m_parsebyrise
-//    , ::wxGetApp()
-//    ) ;
-  TranslateParseByRiseTree & translateParseByRiseTree =
-    ::wxGetApp().m_translateparsebyrisetree ;
-  DEBUG_COUT("before translation\n")
 //  std::string stdstrWholeTransl ;
   std::vector<std::string> stdvec_stdstrWholeTransl ;
   std::vector<std::vector<TranslationAndGrammarPart> >
@@ -889,11 +877,10 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
   std::vector<std::vector<TranslationAndConsecutiveID> >
     stdvec_stdvecTranslationAndConsecutiveID ;
 
-  translateParseByRiseTree.Translate(
-    m_parsebyrise,
+  ::wxGetApp().Translate(
+    stdstrWholeInputText ,
     stdvec_stdstrWholeTransl ,
     stdvec_stdvecTranslationAndGrammarPart
-//    stdvec_stdvecTranslationAndConsecutiveID
     ) ;
 
   std::string stdstrAllPossibilities = GetAllTranslationPossibilites(

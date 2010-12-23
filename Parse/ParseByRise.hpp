@@ -151,7 +151,7 @@ public:
   //This should be done for a next parse tree generation .
   void ClearParseTree() ;
 
-  void CreateInitialGrammarParts (std::string & stdstrText ) ;
+  void CreateInitialGrammarParts ( const std::string & cr_stdstrText ) ;
 
   GrammarPart * GetGrammarPartCoveringMostTokens(
     DWORD dwLeftMostTokenIndex ) ;

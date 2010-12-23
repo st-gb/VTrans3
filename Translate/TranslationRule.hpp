@@ -39,7 +39,7 @@ public:
   GrammarPart * GetGrammarPartWithConsecutiveID(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const ;
   bool Matches(
-    const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath ) const ;
+    const std::vector<WORD> & cr_stdvec_wCurrentGrammarPartPath ) const ;
   void SetConsecutiveIDSyntaxTreePath(
     const std::string & r_stdstrSyntaxTreePath
 //    , ParseByRise * p_parsebyrise

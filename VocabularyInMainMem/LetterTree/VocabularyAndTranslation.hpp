@@ -9,6 +9,8 @@
 
   //#define WORD_TYPE_NOUN '1'
   //#define WORD_TYPE_MAIN_VERB '2' //Vollverb
+  #define NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB 1
+  #define NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB 1
   #define NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN 2 //2 strings: singular and plural
   #define NUMBER_OF_STRINGS_FOR_GERMAN_NOUN 2 //2 strings: singular and plural
   #define ENGLISH_NOUN WORD_TYPE_NOUN

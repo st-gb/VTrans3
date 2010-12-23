@@ -34,6 +34,7 @@ namespace Xerces
       & r_translationcontrollerbase.m_translateparsebyrisetree ) ,
     m_r_translationcontrollerbase( r_translationcontrollerbase ) ,
     m_sax2grammarrulehandler ( r_translationcontrollerbase.m_parsebyrise ) ,
+    m_sax2transformationrulehandler( r_translationcontrollerbase ) ,
     //Must create on heap, else the callback functions like "startElement"
     //aren't called?!
   //  SAX2TranslationRuleHandler * p_sax2grammarrulehandler = new
@@ -69,6 +70,23 @@ namespace Xerces
       LOGN("got path: " << stdstrPath )
       m_r_translationcontrollerbase.ReadGrammarRuleFile(
         m_sax2grammarrulehandler , stdstrPath ) ;
+    }
+    else
+      LOGN("Failed to get path.")
+  }
+
+  void SAX2MainConfigHandler::HandleReadTransformationRuleFileXMLelement(
+    const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes )
+  {
+    std::string stdstrPath ;
+    if( XercesAttributesHelper::GetAttributeValue(
+      cr_xercesc_attributes,
+      "path",
+      stdstrPath)
+      )
+    {
+      LOGN("got path: " << stdstrPath )
+      ReadXMLfile( m_sax2transformationrulehandler , stdstrPath ) ;
     }
     else
       LOGN("Failed to get path.")
@@ -137,6 +155,38 @@ namespace Xerces
       LOGN("Failed to get path.")
   }
 
+  void SAX2MainConfigHandler::ReadXMLfile(
+    XERCES_CPP_NAMESPACE::DefaultHandler & r_xerces_defaulthandler ,
+    const std::string & cr_stdstrFilePath
+    )
+  {
+    LOGN("TranslationControllerBase::ReadTranslationRuleFile( \"" <<
+      cr_stdstrFilePath << "\")" )
+    std::wstring stdwstrErrorMessage ;
+    // <> 0 = error
+    if( //ReadViaSAX2InitAndTermXerces(
+        ! ReadXMLfileInitAndTermXerces_Inline(
+        //"translation_rules.xml",
+        cr_stdstrFilePath.c_str() ,
+    //    p_sax2grammarrulehandler ,
+        & r_xerces_defaulthandler ,
+        stdwstrErrorMessage
+        )
+      )
+    {
+      LOGN("Successfully read XML file \"" << cr_stdstrFilePath
+        << "\"" )
+    //          mr_i_userinterface.Message( wstr ) ;
+    }
+    else
+    {
+      LOGN("Failed to read XML file \"" << cr_stdstrFilePath
+        << "\"" )
+      m_r_translationcontrollerbase.Message(
+        stdwstrErrorMessage ) ;
+    }
+  }
+
   void SAX2MainConfigHandler::startElement(
     const XMLCh * const cpc_xmlchURI,
     const XMLCh * const cpc_xmlchLocalName,
@@ -156,7 +206,11 @@ namespace Xerces
       {
         HandleReadGrammarRuleFileXMLelement( cr_xercesc_attributes ) ;
       }
-      if( m_strElementName == "translation_rule_file" )
+      else if( m_strElementName == "transformation_rule_file" )
+      {
+        HandleReadTransformationRuleFileXMLelement( cr_xercesc_attributes ) ;
+      }
+      else if( m_strElementName == "translation_rule_file" )
       {
         HandleReadTranslationRuleFileXMLelement( cr_xercesc_attributes ) ;
       }

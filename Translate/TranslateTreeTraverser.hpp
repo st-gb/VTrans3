@@ -52,12 +52,12 @@ namespace ParseTreeTraverser
   class TranslateTreeTraverser
   : public DirectingLeavesMultipleIterTraverser
   {
-    ParseByRise & mr_parsebyrise ;
+    ParseByRise & m_r_parsebyrise ;
     TranslateParseByRiseTree & mr_translateparsebyrisetree ;
     std::map<GrammarPart *,WORD>
       m_map_grammarpartRightUnprocessedChild2wParseTreeLevel ;
     std::vector<WORD> m_vec_wGrammarPartIDcurrentParsePath ;
-    std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
+    std::vector<GrammarPart *> m_stdvector_p_grammarpartCurrentParseTreePath ;
 
     //Necessary because these are the direct node neighbours of the predicate.
     // and a translation rule is defined that refers it /
@@ -86,6 +86,7 @@ namespace ParseTreeTraverser
     void LeaveFound() ;
     //In order to keep track of the current parse tree path.
     void ParseTreePathAdded() ;
+    void ParseTreePathPopped() ;
 //    void RightChildAdded(WORD wCurrentParseTreeLevel) ;
     void UnprocessedHighestLevelNodeFound() ;
     void SetSameConsecutiveIDforLeaves(

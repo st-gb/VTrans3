@@ -24,10 +24,11 @@ namespace ParseTreeTraverser
       p_grammarpartStartNode ,
       & r_parsebyrise
       )
-    , mr_parsebyrise (r_parsebyrise)
+    , m_r_parsebyrise (r_parsebyrise)
     , mr_translateparsebyrisetree( r_translateparsebyrisetree )
     , m_wConsecutiveID(0)
   {
+    LOGN("TranslateTreeTraverser()")
 //    m_wSubjectGrammarPartID ;
     if( ! mp_parsebyrise->GetGrammarPartID("subject", m_wSubjectGrammarPartID)
       )
@@ -44,14 +45,14 @@ namespace ParseTreeTraverser
 
   TranslateTreeTraverser::~TranslateTreeTraverser()
   {
-    // TODO Auto-generated destructor stub
+    LOGN("~TranslateTreeTraverser()")
   }
 
   void TranslateTreeTraverser::BeforeBeginAtRoot()
   {
     //Important. else pathes with previous node(s) (->too long) are created.
     m_vec_wGrammarPartIDcurrentParsePath.clear() ;
-    m_stdvec_p_grammarpartPath.clear() ;
+    m_stdvector_p_grammarpartCurrentParseTreePath.clear() ;
   }
 
   void TranslateTreeTraverser::HandlePossibleSubject()
@@ -87,6 +88,10 @@ namespace ParseTreeTraverser
 
   void TranslateTreeTraverser::LeaveFound()
   {
+    LOGN("TranslateTreeTraverser::LeaveFound()--current parse tree "
+      "path: " << m_r_parsebyrise.GetPathAs_std_string(
+        m_stdvector_p_grammarpartCurrentParseTreePath)
+      )
     BYTE byPersonIndex ;
     std::string stdstrTranslation ;
     WORD wConsecutiveID ;
@@ -96,16 +101,16 @@ namespace ParseTreeTraverser
         stdstrTranslation ,
         byPersonIndex ,
         m_vec_wGrammarPartIDcurrentParsePath ,
-        m_stdvec_p_grammarpartPath ,
+        m_stdvector_p_grammarpartCurrentParseTreePath ,
 //        wConsecutiveID
         p_grammarpart
         )
       )
     {
-      DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
-        stdstrTranslation ) ;
+//      DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
+//        stdstrTranslation ) ;
       DEBUGN( "TranslateTreeTraverser::LeaveFound(): "
-        << mr_parsebyrise.GetPathAs_std_string(
+        << m_r_parsebyrise.GetPathAs_std_string(
           m_vec_wGrammarPartIDcurrentParsePath)
         << "--translation rule applies. "
         "translation:" << stdstrTranslation ) ;
@@ -170,7 +175,7 @@ namespace ParseTreeTraverser
         stdstrTranslation ,
         byPersonIndex ,
         m_vec_wGrammarPartIDcurrentParsePath ,
-        m_stdvec_p_grammarpartPath ,
+        m_stdvector_p_grammarpartCurrentParseTreePath ,
 //        wConsecutiveID
         p_grammarpart
         )
@@ -191,12 +196,13 @@ namespace ParseTreeTraverser
 
   void TranslateTreeTraverser::ParseTreePathAdded()
   {
-    m_vec_wGrammarPartIDcurrentParsePath.push_back( m_grammarpartpointer_and_parselevelCurrent.
+    m_vec_wGrammarPartIDcurrentParsePath.push_back(
+      m_grammarpartpointer_and_parselevelCurrent.
         m_p_grammarpart->m_wGrammarPartID ) ;
-    m_stdvec_p_grammarpartPath.push_back( m_grammarpartpointer_and_parselevelCurrent.
-      m_p_grammarpart) ;
+    m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart) ;
 #ifdef _DEBUG
-    std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
+    std::string stdstr = m_r_parsebyrise.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
 #endif
     if( m_vec_wGrammarPartIDcurrentParsePath.size() > 0 )
@@ -216,16 +222,35 @@ namespace ParseTreeTraverser
     HandlePossibleSubject() ;
   }
 
+  void TranslateTreeTraverser::ParseTreePathPopped()
+  {
+    m_stdvector_p_grammarpartCurrentParseTreePath.pop_back() ;
+    m_vec_wGrammarPartIDcurrentParsePath.pop_back() ;
+    LOGN("TranslateTreeTraverser::ParseTreePathPopped()--current parse tree "
+      "path: " << m_r_parsebyrise.GetPathAs_std_string(
+        m_stdvector_p_grammarpartCurrentParseTreePath)
+      )
+  }
+
   void TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild(
     //WORD wCurrentParseTreeLevel
     )
   {
+//    m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
+//      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
+//    m_vec_wGrammarPartIDcurrentParsePath.push_back(
+//      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
+    LOGN("TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild() begin"
+      "--current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
+        m_stdvector_p_grammarpartCurrentParseTreePath)
+      )
 #ifdef _DEBUG
-    std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
+    std::string stdstr = m_r_parsebyrise.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
 #endif
 //    m_map_grammarpartRightUnprocessedChild2wParseTreeLevel.insert(
 //      std::pair<mcp_grammarpartCurrent,wCurrentParseTreeLevel> ) ;
+
     //http://www.cplusplus.com/reference/stl/vector/resize/:
     //"If sz is smaller than the current vector size, the content is reduced
     //to its first sz elements, the rest being dropped."
@@ -233,18 +258,22 @@ namespace ParseTreeTraverser
       //if the right node was at parse level 1 (2nd level), then 1 element
       //should remain.
       m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ) ;
-    m_stdvec_p_grammarpartPath.resize(
+    m_stdvector_p_grammarpartCurrentParseTreePath.resize(
       //if the right node was at parse level 1 (2nd level), then 1 element
       //should remain.
       m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ) ;
     m_vec_wGrammarPartIDcurrentParsePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent.
         m_p_grammarpart->m_wGrammarPartID ) ;
-    m_stdvec_p_grammarpartPath.push_back(
+    m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
 #ifdef _DEBUG
-    stdstr = mr_parsebyrise.GetPathAs_std_string(
+    stdstr = m_r_parsebyrise.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
+    LOGN("TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild() end"
+      "--current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
+        m_stdvector_p_grammarpartCurrentParseTreePath)
+      )
 #endif
     HandlePossibleSubject() ;
   }

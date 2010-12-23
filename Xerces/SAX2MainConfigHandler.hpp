@@ -17,6 +17,8 @@
 #include <Xerces/SAX2GrammarRuleHandler.hpp>
 //class Xerces::SAX2TranslationRuleHandler
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
+//class Xerces::SAX2TransformationRuleHandler
+#include <Xerces/SAX2TransformationRuleHandler.hpp>
 
 //class SAX2TranslationRuleHandler ;
 class TranslateParseByRiseTree ;
@@ -34,14 +36,21 @@ namespace Xerces
     TranslateParseByRiseTree * mp_translateparsebyrisetree ;
     TranslationControllerBase & m_r_translationcontrollerbase ;
     SAX2GrammarRuleHandler m_sax2grammarrulehandler ;
+    SAX2TransformationRuleHandler m_sax2transformationrulehandler ;
     SAX2TranslationRuleHandler m_sax2translationrulehandler ;
     std::string m_strElementName ;
     inline void HandleReadGrammarRuleFileXMLelement(
+      const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes ) ;
+    inline void HandleReadTransformationRuleFileXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes ) ;
     inline void HandleReadTranslationRuleFileXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes ) ;
     inline void HandleReadVocabularyAttributeDefinitionFileXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes ) ;
+    void ReadXMLfile(
+      XERCES_CPP_NAMESPACE::DefaultHandler & r_xerces_defaulthandler ,
+      const std::string & cr_stdstrFilePath
+      ) ;
     SAX2MainConfigHandler(
 //      TranslateParseByRiseTree & r_translateparsebyrisetree
       TranslationControllerBase & r_translationcontrollerbase
