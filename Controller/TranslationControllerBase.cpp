@@ -155,8 +155,41 @@ void TranslationControllerBase::ReadVocAttributeDefinitionFile(
   }
 }
 
+void TranslationControllerBase::ReadXMLfile(
+  XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
+  const std::string & cr_stdstrFilePath
+  )
+{
+  LOGN("TranslationControllerBase::ReadTranslationRuleFile( \"" <<
+    cr_stdstrFilePath << "\")" )
+  std::wstring stdwstrErrorMessage ;
+  // <> 0 = error
+  if( //ReadViaSAX2InitAndTermXerces(
+      ! ReadXMLfileInitAndTermXerces_Inline(
+      //"translation_rules.xml",
+      cr_stdstrFilePath.c_str() ,
+  //    p_sax2grammarrulehandler ,
+      & r_xercesc_defaulthandler ,
+      stdwstrErrorMessage
+      )
+    )
+  {
+    LOGN("Successfully read translation rule file \"" << cr_stdstrFilePath
+      << "\"" )
+  //          mr_i_userinterface.Message( wstr ) ;
+  }
+  else
+  {
+    LOGN("Failed to read translation rule file \"" << cr_stdstrFilePath
+      << "\"" )
+    m_translateparsebyrisetree.mr_i_userinterface.Message(
+      stdwstrErrorMessage ) ;
+  }
+}
+
 void TranslationControllerBase::Transform()
 {
+  LOGN("TranslationControllerBase::Transform() begin")
   DWORD dwLeftMostTokenIndex = 0 ;
   std::vector<GrammarPart *> stdvec_p_grammarpartRootNode ;
   m_parsebyrise.GetGrammarPartCoveringMostTokens(
@@ -176,6 +209,7 @@ void TranslationControllerBase::Transform()
       ) ;
     transformtreetransverser.Traverse() ;
   }
+  LOGN("TranslationControllerBase::Transform() end")
 }
 
 void TranslationControllerBase::Translate(

@@ -796,6 +796,11 @@ void TranslateParseByRiseTree::Translate(
         , * this
         );
       translatetreetraverser.m_wConsecutiveID = wConsecutiveID;
+
+      //The transformation of the tree may lead to a crash/
+      // only the leaves need to be processed-> set to "false".
+      translatetreetraverser.m_bTraverseTree = false ;
+
       translatetreetraverser.Traverse() ;
       wConsecutiveID = translatetreetraverser.m_wConsecutiveID ;
 //      stdstrWholeTransl = translatetreetraverser.m_stdstrWholeTranslation ;
@@ -914,7 +919,9 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
         r_stdvec_wCurrentGrammarPartPath ) ;
       if( bIdentical )
       {
-        DEBUG_COUT("the current syntax tree path matches the rule' syntax tree path")
+//        DEBUG_COUT
+        LOGN("the current syntax tree path matches the rule' syntax "
+          "tree path")
 //        GrammarPart * p_grammarpartClosestToTreeRoot =
 //            r_stdvec_p_grammarpartPath.at(wIndex + wLenghtDiff ) ;
 #ifdef _DEBUG
@@ -932,6 +939,10 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
             r_cnt.AllConditionsMatch( r_stdvec_p_grammarpartPath )
           )
         {
+          std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
+            r_stdvec_wCurrentGrammarPartPath ) ;
+          LOGN("All conditions match for STP \"" << stdstrCurrentParseTreePath
+            << "\"" )
            //std::string str =
            r_stdstrTranslation = //GetTranslationEquivalent(
               //r_cnt ,

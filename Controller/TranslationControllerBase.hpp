@@ -14,6 +14,7 @@
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
+#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 
 #include <map> //class std::map
 #include <string> //class std::string
@@ -27,6 +28,10 @@ namespace Xerces
   class SAX2VocAttributeDefinitionHandler ;
 }
 //class std::string ;
+namespace XERCES_CPP_NAMESPACE
+{
+  class DefaultHandler ;
+}
 
 //Base class for e.g. wxApp and CWinApp-derived classes.
 class TranslationControllerBase
@@ -62,6 +67,10 @@ public:
   void ReadVocAttributeDefinitionFile(
     Xerces::SAX2VocAttributeDefinitionHandler &
       sax2vocattributedefinitionhandler ,
+    const std::string & cr_stdstrFilePath
+    ) ;
+  void ReadXMLfile(
+    XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
     const std::string & cr_stdstrFilePath
     ) ;
   void Transform() ;

@@ -109,7 +109,7 @@ namespace ParseTreeTraverser
     {
 //      DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
 //        stdstrTranslation ) ;
-      DEBUGN( "TranslateTreeTraverser::LeaveFound(): "
+      LOGN( "TranslateTreeTraverser::LeaveFound(): "
         << m_r_parsebyrise.GetPathAs_std_string(
           m_vec_wGrammarPartIDcurrentParsePath)
         << "--translation rule applies. "

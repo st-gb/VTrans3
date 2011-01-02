@@ -9,6 +9,13 @@
     direction="right"
     >
   </transformation_rule>
+  <transformation_rule
+    syntax_tree_path="Middle3rdPersSing0Obj.adverb"
+    parse_tree_branch_to_move="adverb"
+    place_near_syntax_tree_path="Middle3rdPersSing0Obj.MainVerb3rdPersSingPres0Obj"
+    direction="right"
+    >
+  </transformation_rule>
   <!--adverb -> right of the finite verb: "I still worked very hard. -> Ich arbeitete immer noch sehr hart.
     -->
   <!--<transformation_rule

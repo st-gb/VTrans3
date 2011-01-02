@@ -45,6 +45,42 @@ namespace wxWidgets
     // TODO Auto-generated destructor stub
   }
 
+  int ShowMultipleFileSelectionDialog(
+    const wxString & cr_wxstrTitle ,
+    wxArrayString & wxarraystringPaths ,
+    wxWindow * p_wxwindow
+    )
+  {
+    LOGN("wxTextInputDlg::ShowMultipleFileSelectionDialog(" << cr_wxstrTitle
+      << ")" )
+    wxFileDialog wxfiledialog(
+      //this ,
+      p_wxwindow ,
+      cr_wxstrTitle ,
+      wxT("") , //defaultDir
+      wxT("") //const wxString&  defaultFile = ""
+      //" A wildcard, such as "*.*" or
+      // "BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif". "
+      , wxT("XML files(*.xml)|*.xml|all files(*.*)|*.*") //const wxString&  wildcard = "*.*"
+      , wxOPEN
+        //"For open dialog only: allows selecting multiple files."
+        | wxFD_MULTIPLE
+        | wxFILE_MUST_EXIST //long style = 0,
+      ) ;
+    int n = wxfiledialog.ShowModal() ;
+    if( n == wxID_OK )
+    {
+      wxfiledialog.
+        //http://docs.wxwidgets.org/2.8/wx_wxfiledialog.html
+        // #wxfiledialoggetpaths:
+        // "Fills the array paths with the full paths of the files chosen.
+        //This function should only be used with the dialogs which have
+        //wxFD_MULTIPLE style, use GetPath for the others."
+        GetPaths(wxarraystringPaths) ;
+    }
+    return n ;
+  }
+
   void UnLoadAndLoadDictionary(wxWindow * p_wxwindow)
   {
     wxFileDialog wxfiledialog(

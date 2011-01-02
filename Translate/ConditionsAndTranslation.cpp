@@ -64,6 +64,9 @@ bool ConditionsAndTranslation::AllConditionsMatch(
           sp_stdmap_AttrName2VocAndTranslAttrDef->end()
           )
         {
+          LOGN( "ConditionsAndTranslation::AllConditionsMatch(...)--\""
+            << cr_condition.m_stdstrAttributeName
+            << "\" could be found in the attribute names container.")
           //p_grammarpartLeaf->m_psetpvocabularyandtranslation  ;
           //if( p_grammarpartLeaf->m_psetpvocabularyandtranslation )
           {
@@ -115,6 +118,13 @@ bool ConditionsAndTranslation::AllConditionsMatch(
             }//switch
           }
           //if( r_cond.m_byCompareType == Condition::equals )
+        }
+        else //Not found in the vocable attribute defintions.
+        {
+          LOGN( "ConditionsAndTranslation::AllConditionsMatch(...)--\""
+            << cr_condition.m_stdstrAttributeName
+            << "\" could not be found in the attribute names container.")
+          bAllConditionsMatch = false ;
         }
       }
       else

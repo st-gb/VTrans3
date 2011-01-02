@@ -55,6 +55,10 @@ public:
     const XMLCh* const cpc_xmlchLocalName,
     const XMLCh* const cpc_xmlchQualifiedName
   );
+  inline void HandleConditionXMLelement(
+    const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes) ;
+  inline void HandleTranslationRuleElementName(
+    const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes) ;
   void setDocumentLocator( const XERCES_CPP_NAMESPACE::Locator *
     const cpc_locator ) ;
   void startElement(

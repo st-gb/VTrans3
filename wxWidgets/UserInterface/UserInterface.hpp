@@ -9,6 +9,8 @@
 #define USERINTERFACE_HPP_
 
 //Forward declarations (faster than #include)
+class wxArrayString ;
+class wxString ;
 class wxWindow ;
 
 namespace wxWidgets
@@ -21,6 +23,11 @@ namespace wxWidgets
     virtual
     ~UserInterface();
   };
+  int ShowMultipleFileSelectionDialog(
+    const wxString & cr_wxstrTitle ,
+    wxArrayString & wxarraystringPaths ,
+    wxWindow *
+    ) ;
   void UnLoadAndLoadDictionary(wxWindow * p_wxwindow) ;
 }
 
