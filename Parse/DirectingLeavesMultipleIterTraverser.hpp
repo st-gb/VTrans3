@@ -58,6 +58,7 @@ namespace ParseTreeTraverser
       Left,
       Right
     };
+    static char * s_ar_chDirection [] ;
     bool m_bTraverseTree ; //Set to "false" to terminate further traversing.
     //This node can be used in subclassed when callback methods are called:
     // then this means that the affect node is this node.

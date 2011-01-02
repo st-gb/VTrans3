@@ -49,6 +49,10 @@ namespace ParseTreeTraverser
         cr_insertintotreetransverser
       ) ;
     GrammarPart * Get2ndLastGrammarPart() ;
+    void GetGrammarPartToMove(
+      GrammarPart * p_grammarpartParentOfGrammarPartToMove ,
+      GrammarPart * & p_r_grammarpartBranchToMove
+      ) ;
     void LeaveFound() ;
     void MoveParseTreeBranch(
       ParseTreeTraverser::InsertIntoTreeTransverser & insertintotreetransverser,
@@ -59,9 +63,7 @@ namespace ParseTreeTraverser
     void ParseTreePathPopped() ;
     void RightChildAdded( unsigned short) ;
     void SetChildNodeAtGrammarPartToMoveToNULL(
-      GrammarPart * p_grammarpartParentOfGrammarPartToMove ,
-      GrammarPart * & p_r_grammarpartBranchToMove
-      ) ;
+      GrammarPart * p_grammarpartParentOfGrammarPartToMove) ;
     TransformTreeTraverser(
 //      const std::map<std::string,TransformationRule> & ,
       const std::map<SyntaxTreePath,TransformationRule> &

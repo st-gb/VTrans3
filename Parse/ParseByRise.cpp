@@ -155,6 +155,7 @@ void BuildTokenVector(
 
 void ParseByRise::ClearAllGrammarStuff()
 {
+  LOGN("ParseByRise::ClearAllGrammarStuff() begin")
   m_stdmap_wRuleID2RuleName.clear() ;
   m_stdmap_RuleName2RuleID.clear() ;
   m_stdmultimap_wGrammarPartID2SuperordinateID.clear() ;
@@ -165,6 +166,7 @@ void ParseByRise::ClearAllGrammarStuff()
   m_stdmultimap_wGrammarPartID2wGrammarPartID.clear() ;
 //  m_stdmap_RuleName2RuleID.clear() ;
   m_stdmap_wGrammarPartID2SuperordinateID.clear() ;
+  LOGN("ParseByRise::ClearAllGrammarStuff() end")
 }
 
 //Clears (empties) the previously generated parse tree.

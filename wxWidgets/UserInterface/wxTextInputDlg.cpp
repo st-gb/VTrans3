@@ -44,10 +44,14 @@
 #include <bitmaps/remove_vocable_attribute_definitions.xpm>
 //For array "add_translation_rules_xpm" .
 #include <bitmaps/add_translation_rules.xpm>
+//For array "add_transformation_rules_xpm" .
+#include <bitmaps/add_transformation_rules.xpm>
 //For array "remove_grammar_rules_xpm" .
 #include <bitmaps/remove_grammar_rules.xpm>
 //For array "remove_translation_rules_xpm" .
 #include <bitmaps/remove_translation_rules.xpm>
+//For array "remove_transformation_rules_xpm" .
+#include <bitmaps/remove_transformation_rules.xpm>
 #include <bitmaps/resolve_superclasses.xpm> //for array resolve_superclasses_xpm
 #include <bitmaps/resolve_1parse_level.xpm> //for array resolve_1parse_level_xpm
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
@@ -65,6 +69,8 @@
 #include <wxWidgets/wxHTMLfileOutput.hpp> //class wxHTMLfileOutput
 //class SAX2GrammarRuleHandler
 #include <Xerces/SAX2GrammarRuleHandler.hpp>
+//class SAX2TransformationRuleHandler
+#include <Xerces/SAX2TransformationRuleHandler.hpp>
 //class SAX2TranslationRuleHandler
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
 //class SAX2VocAttributeDefintionHandler
@@ -78,6 +84,8 @@ using namespace wxWidgets ;
 
 BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
   EVT_BUTTON( ID_AddGrammarRules , wxTextInputDlg::OnAddGrammarRules )
+  EVT_BUTTON( ID_AddTransformationRules ,
+    wxTextInputDlg::OnAddTransformationRules )
   EVT_BUTTON( ID_AddTranslationRules , wxTextInputDlg::OnAddTranslationRules )
   EVT_BUTTON( ID_AddVocAttrDefs, wxTextInputDlg::OnAddVocAttrDefs )
   EVT_BUTTON( ID_Translate , wxTextInputDlg::OnTranslateButton)
@@ -88,6 +96,8 @@ BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
     wxTextInputDlg::OnReInitGrammarRulesButton)
   EVT_BUTTON( ID_RemoveGrammarRules ,
     wxTextInputDlg::OnRemoveGrammarRules )
+  EVT_BUTTON( ID_RemoveTransformationRules ,
+    wxTextInputDlg::OnRemoveTransformationRules )
   EVT_BUTTON( ID_RemoveTranslationRules ,
     wxTextInputDlg::OnRemoveTranslationRules )
   EVT_BUTTON( ID_RemoveVocAttrDefs ,
@@ -108,6 +118,8 @@ void wxTextInputDlg::AddButtons()
 
   AddAddTranslationRulesButton( p_boxsizerButtons ) ;
   AddRemoveTranslationRulesButton( p_boxsizerButtons ) ;
+  AddAddTransformationRulesButton( p_boxsizerButtons ) ;
+  AddRemoveTransformationRulesButton( p_boxsizerButtons ) ;
   AddAddGrammarRulesButton( p_boxsizerButtons ) ;
   AddRemoveGrammarRulesButton( p_boxsizerButtons ) ;
   AddAddVocAttrDefsButton( p_boxsizerButtons ) ;
@@ -182,7 +194,29 @@ void wxTextInputDlg::AddAddTranslationRulesButton( wxSizer * p_sizer )
   //    , wxT("1 L")
     , wxBitmap( add_translation_rules_xpm )
     ) ;
-  mp_wxbutton->SetToolTip( wxT("add translations rules")) ;
+  mp_wxbutton->SetToolTip( wxT("add translation rules")) ;
+  p_sizer->Add(
+    mp_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+}
+
+void wxTextInputDlg::AddAddTransformationRulesButton( wxSizer * p_sizer )
+{
+  mp_wxbutton = new //wxButton(
+    wxBitmapButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_AddTransformationRules
+  //    , wxT("1 L")
+    , wxBitmap( add_transformation_rules_xpm )
+    ) ;
+  mp_wxbutton->SetToolTip( wxT("add transformation rules")) ;
   p_sizer->Add(
     mp_wxbutton
     , 0 //strech factor. 0=do not stretch
@@ -204,7 +238,7 @@ void wxTextInputDlg::AddAddVocAttrDefsButton( wxSizer * p_sizer )
   //    , wxT("1 L")
     , wxBitmap( add_vocable_attribute_definitions_xpm )
     ) ;
-  mp_wxbutton->SetToolTip( wxT("add translations rules")) ;
+  mp_wxbutton->SetToolTip( wxT("add vocable attribute definitions")) ;
   p_sizer->Add(
     mp_wxbutton
     , 0 //strech factor. 0=do not stretch
@@ -227,6 +261,28 @@ void wxTextInputDlg::AddRemoveTranslationRulesButton( wxSizer * p_sizer )
     , wxBitmap( remove_translation_rules_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("remove translations rules")) ;
+  p_sizer->Add(
+    mp_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+}
+
+void wxTextInputDlg::AddRemoveTransformationRulesButton( wxSizer * p_sizer )
+{
+  mp_wxbutton = new //wxButton(
+    wxBitmapButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_RemoveTransformationRules
+  //    , wxT("1 L")
+    , wxBitmap( remove_transformation_rules_xpm )
+    ) ;
+  mp_wxbutton->SetToolTip( wxT("remove transformation rules")) ;
   p_sizer->Add(
     mp_wxbutton
     , 0 //strech factor. 0=do not stretch
@@ -292,7 +348,7 @@ void wxTextInputDlg::AddRemoveVocAttrDefsButton( wxSizer * p_sizer )
   //    , wxT("1 L")
     , wxBitmap( remove_vocable_attribute_definitions_xpm )
     ) ;
-  mp_wxbutton->SetToolTip( wxT("remove translations rules")) ;
+  mp_wxbutton->SetToolTip( wxT("remove vocable attribute definitions")) ;
   p_sizer->Add(
     mp_wxbutton
     , 0 //strech factor. 0=do not stretch
@@ -650,26 +706,23 @@ void wxTextInputDlg::OnAddGrammarRules( wxCommandEvent & wxcmd )
   SAX2GrammarRuleHandler sax2grammarrulehandler(
     wxGetApp().m_parsebyrise
     ) ;
-  wxArrayString wxarraystringPaths ;
-  if( ShowMultipleFileSelectionDialog(
-      wxT("Choose at least 1 grammar rule file") ,
-      wxarraystringPaths) == wxID_OK
-      )
-  {
-    std::string stdstrFilePath ;
-    wxString wxstrFullPath ;
-    for( size_t size_tArrayIndex = 0 ;
-        size_tArrayIndex < wxarraystringPaths.GetCount() ;
-        ++ size_tArrayIndex
-       )
-    {
-      wxstrFullPath = wxarraystringPaths.Item(size_tArrayIndex ) ;
-      stdstrFilePath = GetStdString( wxstrFullPath ) ;
-      wxGetApp().ReadGrammarRuleFile(
-        sax2grammarrulehandler ,
-        stdstrFilePath ) ;
-    }
-  }
+  wxString wxstr("Choose at least 1 grammar rule file") ;
+  wxGetApp().ProcessSelectedXMLfiles(
+    sax2grammarrulehandler ,
+    wxstr
+    );
+}
+
+void wxTextInputDlg::OnAddTransformationRules( wxCommandEvent & wxcmd )
+{
+//  AddTranslationRules() ;
+  Xerces::SAX2TransformationRuleHandler sax2transformationrulehandler(
+    wxGetApp()
+    ) ;
+  wxGetApp().ProcessSelectedXMLfiles(
+    sax2transformationrulehandler,
+    wxString( wxT("Choose at least 1 transFORMation rule file") )
+    ) ;
 }
 
 void wxTextInputDlg::OnAddTranslationRules( wxCommandEvent & wxcmd )
@@ -680,27 +733,10 @@ void wxTextInputDlg::OnAddTranslationRules( wxCommandEvent & wxcmd )
     wxGetApp().m_parsebyrise ,
     wxGetApp()
     ) ;
-  wxArrayString wxarraystringPaths ;
-  if( ShowMultipleFileSelectionDialog(
-      wxT("Choose at least 1 translation rule file") ,
-      wxarraystringPaths) == wxID_OK
-      )
-  {
-    std::string stdstrFilePath ;
-    wxString wxstrFullPath ;
-    for( size_t size_tArrayIndex = 0 ;
-        size_tArrayIndex < wxarraystringPaths.GetCount() ;
-        ++ size_tArrayIndex
-       )
-    {
-      wxstrFullPath = wxarraystringPaths.Item(size_tArrayIndex ) ;
-      stdstrFilePath = GetStdString( wxstrFullPath ) ;
-      std::string stdstrFilePath = GetStdString( wxstrFullPath ) ;
-      wxGetApp().ReadTranslationRuleFile(
-        sax2translationrulehandler ,
-        stdstrFilePath ) ;
-    }
-  }
+  wxGetApp().ProcessSelectedXMLfiles(
+    sax2translationrulehandler ,
+    wxT("Choose at least 1 translation rule file")
+    ) ;
 }
 
 void wxTextInputDlg::OnAddVocAttrDefs( wxCommandEvent & wxcmd )
@@ -710,26 +746,10 @@ void wxTextInputDlg::OnAddVocAttrDefs( wxCommandEvent & wxcmd )
     wxGetApp().m_translateparsebyrisetree ,
     wxGetApp()
     ) ;
-  wxArrayString wxarraystringPaths ;
-  if( ShowMultipleFileSelectionDialog(
-      wxT("Choose at least 1 vocabulary attribute definitions file") ,
-      wxarraystringPaths) == wxID_OK
-    )
-  {
-    std::string stdstrFilePath ;
-    wxString wxstrFullPath ;
-    for( size_t size_tArrayIndex = 0 ;
-        size_tArrayIndex < wxarraystringPaths.GetCount() ;
-        ++ size_tArrayIndex
-       )
-    {
-      wxstrFullPath = wxarraystringPaths.Item(size_tArrayIndex ) ;
-      stdstrFilePath = GetStdString( wxstrFullPath ) ;
-      wxGetApp().ReadVocAttributeDefinitionFile(
-        sax2vocattributedefintionhandler ,
-        stdstrFilePath ) ;
-    }
-  }
+  wxGetApp().ProcessSelectedXMLfiles(
+    sax2vocattributedefintionhandler ,
+    wxT("Choose at least 1 vocabulary attribute definitions file")
+    );
 }
 
 void wxTextInputDlg::OnClose( wxCloseEvent & wxcmd )
@@ -751,12 +771,14 @@ void wxTextInputDlg::OnInfoButton( wxCommandEvent & wxcmd )
       wxT("# voc pairs:%lu\n"
           "# grammar rules:%u\n"
           "# translation rules:%u\n"
+          "# transFORMation rules:%u\n"
           "# vocabulary attribute definitions:%u"
         ) ,
       OneLinePerWordPair::s_dwNumberOfVocabularyPairs
       , wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.size()
       , wxGetApp().m_translateparsebyrisetree.
         m_stdmap_p_translationrule2ConditionsAndTranslation.size()
+      , wxGetApp().m_stdmap_syntaxtreepath2transformationrule.size()
       , wxGetApp().m_translateparsebyrisetree.
         m_stdmap_AttrName2VocAndTranslAttrDef.size()
       )
@@ -777,12 +799,22 @@ void wxTextInputDlg::OnReInitGrammarRulesButton( wxCommandEvent & wxcmd )
 void wxTextInputDlg::OnRemoveGrammarRules(wxCommandEvent & wxcmd )
 {
   LOGN("wxTextInputDlg::OnRemoveGrammarRules begin")
-  wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.clear() ;
-  wxGetApp().m_parsebyrise.m_stdmap_wRuleID2RuleName.clear() ;
-  wxGetApp().m_parsebyrise.m_stdmap_wGrammarPartID2SuperordinateID.clear() ;
-  //Absolutely necessary?!
-  wxGetApp().m_parsebyrise.InsertFundamentalRuleIDs() ;
+//  wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.clear() ;
+//  wxGetApp().m_parsebyrise.m_stdmap_wRuleID2RuleName.clear() ;
+//  wxGetApp().m_parsebyrise.m_stdmap_wGrammarPartID2SuperordinateID.clear() ;
+//  //Absolutely necessary?!
+//  wxGetApp().m_parsebyrise.InsertFundamentalRuleIDs() ;
+
+  m_parsebyrise.ClearAllGrammarStuff() ;
+  m_parsebyrise.InitGrammarRules() ;
   LOGN("wxTextInputDlg::OnRemoveGrammarRules end")
+}
+
+void wxTextInputDlg::OnRemoveTransformationRules(wxCommandEvent & wxcmd )
+{
+  LOGN("wxTextInputDlg::OnRemoveTransformationRules begin")
+  wxGetApp().m_stdmap_syntaxtreepath2transformationrule.clear() ;
+  LOGN("wxTextInputDlg::OnRemoveTransformationRules end")
 }
 
 void wxTextInputDlg::OnRemoveTranslationRules(wxCommandEvent & wxcmd )
@@ -903,38 +935,4 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
   DEBUG_COUT("end of OnTranslateButton\n")
   //You can also trigger this call by calling Refresh()/Update()
   //m_panel1->Refresh() ;
-}
-
-int wxTextInputDlg::ShowMultipleFileSelectionDialog(
-  const wxString & cr_wxstrTitle ,
-  wxArrayString & wxarraystringPaths
-  )
-{
-  LOGN("wxTextInputDlg::ShowMultipleFileSelectionDialog(" << cr_wxstrTitle
-    << ")" )
-  wxFileDialog wxfiledialog(
-    this , //p_wxwindow ,
-    cr_wxstrTitle ,
-    wxT("") , //defaultDir
-    wxT("") //const wxString&  defaultFile = ""
-    //" A wildcard, such as "*.*" or
-    // "BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif". "
-    , wxT("XML files(*.xml)|*.xml|all files(*.*)|*.*") //const wxString&  wildcard = "*.*"
-    , wxOPEN
-      //"For open dialog only: allows selecting multiple files."
-      | wxFD_MULTIPLE
-      | wxFILE_MUST_EXIST //long style = 0,
-    ) ;
-  int n = wxfiledialog.ShowModal() ;
-  if( n == wxID_OK )
-  {
-    wxfiledialog.
-      //http://docs.wxwidgets.org/2.8/wx_wxfiledialog.html
-      // #wxfiledialoggetpaths:
-      // "Fills the array paths with the full paths of the files chosen.
-      //This function should only be used with the dialogs which have
-      //wxFD_MULTIPLE style, use GetPath for the others."
-      GetPaths(wxarraystringPaths) ;
-  }
-  return n ;
 }
