@@ -8,7 +8,9 @@
 #ifndef TRANSLATIONCONTROLLERBASE_HPP_
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
+#include "TranslateControllerBaseReturnCodes.h" //enum Init_return_codes
 #include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TransformationRule.hpp> //class TransformationRule
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
@@ -40,17 +42,21 @@ class TranslationControllerBase
 public:
   static LetterTree s_lettertree ;
   ParseByRise m_parsebyrise ;
+  std::string m_stdstrVocabularyFilePath ;
 //  std::map<std::string,TransformationRule>
 //    m_stdmap_stdstrTransformationRule2transformationrule ;
   std::map<SyntaxTreePath,TransformationRule>
     m_stdmap_syntaxtreepath2transformationrule ;
   TranslateParseByRiseTree m_translateparsebyrisetree ;
-  void Init() ;
+  virtual void CreateAndShowMainWindow() {};
+  BYTE Init(const std::string & cr_stdstrFilePath) ;
+  virtual void LoadingVocabularyFileFailed(
+    const std::string & cr_stdstrFilePath) {} // = 0;
   //These virtual methods need to be re-declared (and implemented in
   //subclasses), else error like this: "pure virtual method called".
   virtual void Message(const std::string & cr_stdstr ) //= 0;
   {
-
+    LOGN(cr_stdstr)
   }
   virtual void Message(const std::wstring & cr_stdwstr ) //= 0;
   {
@@ -60,6 +66,7 @@ public:
     SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
     const std::string & cr_stdstrFilePath
     ) ;
+  void ReadMainConfigFile(const std::string & cr_stdstrFilePath ) ;
   void ReadTranslationRuleFile(
     SAX2TranslationRuleHandler & r_sax2translationrulehandler ,
     const std::string & cr_stdstrFilePath

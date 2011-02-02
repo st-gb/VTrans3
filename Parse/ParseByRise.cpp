@@ -360,21 +360,26 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
 //    stdpair_iter =
 //    m_stdmultimap_dwLeftmostIndex2grammarpart.equal_range(
   std::pair<c_iter_mmap_dw2p_grammarpart,c_iter_mmap_dw2p_grammarpart>
-    stdpair_iter =
+    stdpair_iter_multimap_dwTokenIndex2p_grammarpart_ElementsAtTokenIndex =
     m_stdmultimap_dwLeftmostIndex2p_grammarpart.equal_range(
     dwLeftmostTokenIndex) ;
 #ifdef _DEBUG
   WORD wNumberOfGrammapartsStartingAtPos = 0 ;
 #endif
   for( //c_iter_mmap_dw2grammarpart
-      c_iter_mmap_dw2p_grammarpart iterCurrent = stdpair_iter.first ;
-      iterCurrent != stdpair_iter.second ; ++ iterCurrent )
+      c_iter_mmap_dw2p_grammarpart c_iter_mmap_dw2p_grammarpartCurrent =
+        stdpair_iter_multimap_dwTokenIndex2p_grammarpart_ElementsAtTokenIndex.
+        first ;
+      c_iter_mmap_dw2p_grammarpartCurrent !=
+        stdpair_iter_multimap_dwTokenIndex2p_grammarpart_ElementsAtTokenIndex.
+        second ;
+      ++ c_iter_mmap_dw2p_grammarpartCurrent )
   {
 #ifdef _DEBUG
     ++ wNumberOfGrammapartsStartingAtPos ;
 #endif
     dwNumberOfTokensCoveredCurrent = //iterCurrent->second.m_dwRightmostIndex -
-        iterCurrent->second->m_dwRightmostIndex -
+        c_iter_mmap_dw2p_grammarpartCurrent->second->m_dwRightmostIndex -
       dwLeftmostTokenIndex
       //to include grammar parts with 1 token
       + 1 ;
@@ -384,7 +389,7 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
       r_stdvec_p_grammarpart.clear() ;
 //#ifdef _DEBUG
       p_grammarpart = //(GrammarPart * ) & iterCurrent->second ;
-          iterCurrent->second ;
+          c_iter_mmap_dw2p_grammarpartCurrent->second ;
       r_stdvec_p_grammarpart.push_back( p_grammarpart ) ;
 //#endif
       dwNumberOfTokensCoveredMax = dwNumberOfTokensCoveredCurrent ;
@@ -408,7 +413,7 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
       SUPPRESS_UNUSED_VARIABLE_WARNING(i)
 #endif
       p_grammarpart = //(GrammarPart * ) & iterCurrent->second ;
-          iterCurrent->second ;
+          c_iter_mmap_dw2p_grammarpartCurrent->second ;
       r_stdvec_p_grammarpart.push_back( p_grammarpart ) ;
     }
   }

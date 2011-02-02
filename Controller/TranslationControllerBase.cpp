@@ -12,10 +12,16 @@
 #include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
 //Class SAX2GrammarRuleHandler
 #include <Xerces/SAX2GrammarRuleHandler.hpp>
+#include <Xerces/SAX2MainConfigHandler.hpp> //class SAX2MainConfigHandler
 //Class SAX2TranslationRuleHandler
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
 //Class SAX2TranslationRuleHandler
 #include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
+
+//Static variables need also to be defined in 1 source file.
+I_UserInterface * SyntaxTreePath::sp_userinterface ;
+//LetterTree VTransApp::s_lettertree ;
+LetterTree TranslationControllerBase::s_lettertree ;
 
 TranslationControllerBase::TranslationControllerBase()
   :
@@ -32,7 +38,7 @@ TranslationControllerBase::~TranslationControllerBase()
   // TODO Auto-generated destructor stub
 }
 
-void TranslationControllerBase::Init()
+BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 {
 //  TransformationRule transformationrule ;
 //  transformationrule.m_stdstrParseTreePathWhereToInsert = "clauseWith1Obj.obj" ;
@@ -48,6 +54,37 @@ void TranslationControllerBase::Init()
 //      transformationrule
 //      )
 //    ) ;
+  SyntaxTreePath::sp_userinterface = this ;
+  s_lettertree.InsertFundamentalWords() ;
+  ReadMainConfigFile(cr_stdstrFilePath) ;
+  if( m_stdstrVocabularyFilePath.empty() )
+  {
+    Message( "error: The vocabulary file path is empty") ;
+    return TranslationControllerBaseClass::InitFunction::
+      vocabularyFilePathIsEmpty;
+  }
+  else
+  {
+    OneLinePerWordPair::s_p_lettertree = & s_lettertree ;
+    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
+         //stdstrFilePath
+          m_stdstrVocabularyFilePath
+        )
+      )
+    {
+//        CreateAndShowMainWindow() ;
+      //Return true to continue to run the (main loop of ) this program.
+//        return true ;
+    }
+    else
+    {
+      LoadingVocabularyFileFailed(m_stdstrVocabularyFilePath);
+      return TranslationControllerBaseClass::InitFunction::
+        loadingVocabularyFileFailed;
+    }
+    CreateAndShowMainWindow() ;
+  }
+  return TranslationControllerBaseClass::InitFunction::success;
 }
 
 void TranslationControllerBase::ReadGrammarRuleFile(
@@ -87,6 +124,32 @@ void TranslationControllerBase::ReadGrammarRuleFile(
 //    mp_translateparsebyrisetree->mr_i_userinterface.Message(
     m_translateparsebyrisetree.mr_i_userinterface.Message(
       stdwstrErrorMessage ) ;
+  }
+}
+
+void TranslationControllerBase::ReadMainConfigFile(
+  const std::string & cr_stdstrFilePath )
+{
+  std::wstring stdwstrErrorMessage ;
+  Xerces::SAX2MainConfigHandler sax2mainconfighandler(
+    //m_translateparsebyrisetree
+    * this
+    ) ;
+  if( //ReadViaSAX2InitAndTermXerces(
+      ReadXMLfile_Inline(
+      cr_stdstrFilePath.c_str() ,
+      & sax2mainconfighandler ,
+      stdwstrErrorMessage
+      )
+    )
+  {
+    Message("Failed to read main config file" + cr_stdstrFilePath ) ;
+  }
+  else
+  {
+    LOGN("successfully read main config file " << cr_stdstrFilePath )
+    m_stdstrVocabularyFilePath = sax2mainconfighandler.
+      m_stdstrVocabularyFilePath ;
   }
 }
 

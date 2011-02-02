@@ -249,12 +249,12 @@ namespace ParseTreeTraverser
     LOGN("TransformTreeTraverser::ParseTreePathAdded() current parse tree "
       "path: " << stdstrCurrentParseTreePath ) ;
 #else
-    std::map<std::string,TransformationRule>::const_iterator
-      c_iter_syntaxtreepath2transformationrule =
-      m_stdmap_stdstrTransformationRule2transformationrule.find(
-        m_r_parsebyrise.GetPathAs_std_string(
-          m_stdvector_p_grammarpartCurrentParseTreePath)
-        ) ;
+//    std::map<std::string,TransformationRule>::const_iterator
+//      c_iter_syntaxtreepath2transformationrule =
+//      m_stdmap_stdstrTransformationRule2transformationrule.find(
+//        m_r_parsebyrise.GetPathAs_std_string(
+//          m_stdvector_p_grammarpartCurrentParseTreePath)
+//        ) ;
 #endif
 //    std::map<WORD *,TransformationRule>::const_iterator c_iter =
       //m_stdmap_ar_wTransformationRuleParseTreePath2transformationrule.begin() ;
