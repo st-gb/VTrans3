@@ -35,7 +35,8 @@ LetterTree TranslationControllerBase::s_lettertree ;
 
 //LetterTree & g_lettertree = VTransApp::s_lettertree ;
 
-Logger g_logger ;
+//The global logger object is already in the preprocessor_macros.cpp file.
+//Logger g_logger ;
 
 I_UserInterface * SyntaxTreePath::sp_userinterface ;
 

@@ -4,6 +4,9 @@
  *  Created on: 22.02.2010
  *      Author: Stefan
  */
+//Include wxParseTreePanel.hpp at first to solve build errors in conjunction
+//with wxWidgets 2.9?!
+#include <wxWidgets/UserInterface/wxParseTreePanel.hpp>//class wxParseTreePanel
 
 #include <map> //std::multimap
 //#include <unistd.h> //usleep()
@@ -14,7 +17,6 @@
 #include <wx/dcclient.h> //for class wxPaintDC
 #include <Parse/ParseByRise.hpp> //for class GrammarPart
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
-#include <wxWidgets/UserInterface/wxParseTreePanel.hpp>//class wxParseTreePanel
 
 //http://www.wxwidgets.org/docs/faqmsw.htm#asuffix:
 //"If you get errors like no matching function for call to
