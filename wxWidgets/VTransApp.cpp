@@ -22,23 +22,23 @@
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 
 #include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
-#include <Xerces/SAX2MainConfigHandler.hpp> //class SAX2MainConfigHandler
+//#include <Xerces/SAX2MainConfigHandler.hpp> //class SAX2MainConfigHandler
 
 //#include <fstream> //for std::ofstream
 
 //std::ofstream ofstreamLogFile ;
 //extern LetterTree g_lettertree ;
 
-//Static variables need also to be defined in the source file.
-//LetterTree VTransApp::s_lettertree ;
-LetterTree TranslationControllerBase::s_lettertree ;
+////Static variables need also to be defined in the source file.
+////LetterTree VTransApp::s_lettertree ;
+//LetterTree TranslationControllerBase::s_lettertree ;
 
 //LetterTree & g_lettertree = VTransApp::s_lettertree ;
 
 //The global logger object is already in the preprocessor_macros.cpp file.
 //Logger g_logger ;
 
-I_UserInterface * SyntaxTreePath::sp_userinterface ;
+//I_UserInterface * SyntaxTreePath::sp_userinterface ;
 
 IMPLEMENT_APP(VTransApp)
 
@@ -112,6 +112,8 @@ void VTransApp::Message( const std::wstring & cr_stdwstr )
 //@return true: continue to run the (main loop of ) this program.
 bool VTransApp::HandleCommandLineArgs()
 {
+  WRITE_TO_LOG_FILE_AND_STDOUT_NEWLINE("usage: <this_program> "
+    "<path to main config_file> <path to root directory for all config files>")
 //  bool bRet = false ;
   if( argc > 1 )
   {
@@ -121,7 +123,6 @@ bool VTransApp::HandleCommandLineArgs()
       //"germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
       argv[1] ) ;
 //    g_lettertree.InsertFundamentalWords() ;
-    s_lettertree.InsertFundamentalWords() ;
 
 //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
 //         stdstrFilePath )
@@ -143,52 +144,40 @@ bool VTransApp::HandleCommandLineArgs()
 //        ) ;
 //    }
 //    m_translateparsebyrisetree.AddVocAndTranslDefinitions() ;
-    ReadMainConfigFile(stdstrFilePath) ;
-    Init() ;
-    if( m_stdstrVocabularyFilePath.empty() )
-      ::wxMessageBox(
-        wxString::Format( "error: The vocabulary file path is empty"
-          //"->exiting"
-          )
-        ) ;
-//    else
+
+    if( argc > 2 )
     {
-      OneLinePerWordPair::s_p_lettertree = & s_lettertree ;
-      if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
-           //stdstrFilePath
-            m_stdstrVocabularyFilePath
-          )
-        )
-      {
-//        CreateAndShowMainWindow() ;
-        //Return true to continue to run the (main loop of ) this program.
-//        return true ;
-      }
-      else
-      {
-        wxString wxstrCwd = wxGetCwd() ;
-        ::wxMessageBox(
-            wxString::Format( "Error loading vocabulary file \"%s\""
-            "\%s\" "
-            //"->exiting"
-            ,
-            wxstrCwd.c_str(),
-            stdstrFilePath.c_str()
-            )
-          ) ;
-      }
-      CreateAndShowMainWindow() ;
+      LOGN("Before setting current directory to \"" //main config file's full path"
+        << argv[2] << "\"")
+      ::wxSetWorkingDirectory(argv[2] );
+      LOGN("After setting current directory to \"" //main config file's full path"
+        << argv[2] << "\"")
     }
+    Init(stdstrFilePath) ;
   }
   else
   {
-    ::wxMessageBox( wxT("No vocabulary file specified as 1st command line "
+    ::wxMessageBox( wxT("No main config file specified as 1st command line "
       "argument ->exiting" )
       ) ;
   }
   //Return true to continue to run the (main loop of ) this program.
   return //false ;
     true ;
+}
+
+void VTransApp::LoadingVocabularyFileFailed(const std::string & stdstrFilePath)
+{
+  wxString wxstrCwd = wxGetCwd() ;
+  ::wxMessageBox(
+      wxString::Format( "Error loading vocabulary file \"%s\""
+      "\%s\" "
+      //"->exiting"
+      ,
+      wxstrCwd.c_str(),
+      stdstrFilePath.c_str()
+      )
+    ) ;
 }
 
 //http://docs.wxwidgets.org/stable/wx_wxappoverview.html:
@@ -249,30 +238,5 @@ void VTransApp::ProcessSelectedXMLfiles(
         r_xercesc_defaulthandler ,
         stdstrFilePath ) ;
     }
-  }
-}
-
-void VTransApp::ReadMainConfigFile(const std::string & cr_stdstrFilePath )
-{
-  std::wstring stdwstrErrorMessage ;
-  Xerces::SAX2MainConfigHandler sax2mainconfighandler(
-    //m_translateparsebyrisetree
-    * this
-    ) ;
-  if( //ReadViaSAX2InitAndTermXerces(
-      ReadXMLfile_Inline(
-      cr_stdstrFilePath.c_str() ,
-      & sax2mainconfighandler ,
-      stdwstrErrorMessage
-      )
-    )
-  {
-    Message("failed to read main config file" + cr_stdstrFilePath ) ;
-  }
-  else
-  {
-    LOGN("successfully read main config file " << cr_stdstrFilePath )
-    m_stdstrVocabularyFilePath = sax2mainconfighandler.
-      m_stdstrVocabularyFilePath ;
   }
 }

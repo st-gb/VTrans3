@@ -29,20 +29,20 @@ class VTransApp
 public:
 //  static LetterTree s_lettertree ;
   wxTextInputDlg * m_p_wx_text_input_dialog ;
-  std::string m_stdstrVocabularyFilePath ;
+//  std::string m_stdstrVocabularyFilePath ;
   void CreateAndShowMainWindow() ;
   bool HandleCommandLineArgs() ;
   virtual int OnExit();
   virtual bool OnInit();
   VTransApp();
 //  VTransApp(const VTransApp& orig);
+  void LoadingVocabularyFileFailed(const std::string & cr_stdstrFilePath);
   void Message( const std::string & cr_stdstr ) ;
   void Message( const std::wstring & cr_stdwstr ) ;
   void ProcessSelectedXMLfiles(
     XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
     const wxString & r_wxstrTitle
     );
-  void ReadMainConfigFile(const std::string & cr_stdstrFilePath ) ;
   virtual ~VTransApp();
 private:
 

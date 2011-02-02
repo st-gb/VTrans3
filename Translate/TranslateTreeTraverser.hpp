@@ -8,6 +8,7 @@
 #ifndef TRANSLATETREETRAVERSER_HPP_
 #define TRANSLATETREETRAVERSER_HPP_
 
+#include <Attributes/TranslationAndGrammarPart.hpp>
 #include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <map>
@@ -16,21 +17,6 @@
 //pre-declaration (faster than to include)
 class ParseByRise ;
 class TranslateParseByRiseTree ;
-
-class TranslationAndGrammarPart
-{
-public:
-  TranslationAndGrammarPart(
-    std::string & r_stdstrTranslation ,
-    const GrammarPart * p_grammarpart
-    )
-  {
-    m_stdstrTranslation = r_stdstrTranslation ;
-    mp_grammarpart = p_grammarpart ;
-  }
-  std::string m_stdstrTranslation ;
-  const GrammarPart * mp_grammarpart ;
-} ;
 
 class TranslationAndConsecutiveID
 {
