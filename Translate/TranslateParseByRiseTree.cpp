@@ -742,6 +742,7 @@ void TranslateParseByRiseTree::Translate(
   ParseByRise & r_parsebyrise
 //  , std::string & stdstrWholeTransl
   , std::vector<std::string> & r_stdvec_stdstrWholeTransl
+  //A vector of sentences that each contains a vector of words.
   , std::vector<std::vector<TranslationAndGrammarPart> > &
     r_stdvec_stdvecTranslationAndGrammarPart
 //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
@@ -752,7 +753,8 @@ void TranslateParseByRiseTree::Translate(
   ParseByRise * mp_parsebyrise = & r_parsebyrise ;
 //  std::string stdstrWholeTransl ;
   std::string stdstrTranslation ;
-  std::vector<GrammarPart *> stdvec_p_grammarpart ;
+  std::vector<GrammarPart *>
+    stdvec_p_grammarpartCoveringMostTokensATokentIndex ;
   DEBUG_COUT( "Translate(): \n" )
   if( mp_parsebyrise )
   {
@@ -769,49 +771,62 @@ void TranslateParseByRiseTree::Translate(
       r_stdmultimap_dwLeftmostIndex2grammarpart = mp_parsebyrise->
       //m_stdmultimap_dwLeftmostIndex2grammarpart ;
       m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
-    //Before each draw in order to begin at x position "0".
-    m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
-    m_wParseLevel = 0 ;
-    DEBUG_COUT( "Translate(): mp_parsebyrise != NULL\n")
-    citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
-    //p_grammarpart =
-      mp_parsebyrise->GetGrammarPartCoveringMostTokens(
-        dwLeftMostTokenIndex ,
-        stdvec_p_grammarpart
-        ) ;
-    WORD wConsecutiveID = 0 ;
-    for( std::vector<GrammarPart *>::const_iterator c_iter_p_grammarpart =
-        stdvec_p_grammarpart.begin() ; c_iter_p_grammarpart <
-        stdvec_p_grammarpart.end() ; ++ c_iter_p_grammarpart
-       )
+    do
     {
-//    if( p_grammarpart )
-//    {
-      DEBUG_COUT( "Translate: GetGrammarPartCoveringMostTokens found \n" );
+      //Before each draw in order to begin at x position "0".
+      m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
+      m_wParseLevel = 0 ;
+      DEBUG_COUT( "Translate(): mp_parsebyrise != NULL\n")
+      citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
+      //p_grammarpart =
+        mp_parsebyrise->GetGrammarPartCoveringMostTokens(
+          dwLeftMostTokenIndex ,
+          stdvec_p_grammarpartCoveringMostTokensATokentIndex
+          ) ;
+      WORD wConsecutiveID = 0 ;
+      for( std::vector<GrammarPart *>::const_iterator
+          c_iter_p_grammarpartCoveringMostTokensATokentIndex =
+          stdvec_p_grammarpartCoveringMostTokensATokentIndex.begin() ;
+          c_iter_p_grammarpartCoveringMostTokensATokentIndex <
+          stdvec_p_grammarpartCoveringMostTokensATokentIndex.end() ;
+          ++ c_iter_p_grammarpartCoveringMostTokensATokentIndex
+         )
+      {
+  //    if( p_grammarpart )
+  //    {
+        DEBUG_COUT( "Translate: GetGrammarPartCoveringMostTokens found \n" );
 
-      ParseTreeTraverser::TranslateTreeTraverser translatetreetraverser(
-//        p_grammarpart
-        * c_iter_p_grammarpart
-        , * mp_parsebyrise
-        , * this
-        );
-      translatetreetraverser.m_wConsecutiveID = wConsecutiveID;
+        ParseTreeTraverser::TranslateTreeTraverser translatetreetraverser(
+  //        p_grammarpart
+          * c_iter_p_grammarpartCoveringMostTokensATokentIndex
+          , * mp_parsebyrise
+          , * this
+          );
+        translatetreetraverser.m_wConsecutiveID = wConsecutiveID;
 
-      //The transformation of the tree may lead to a crash/
-      // only the leaves need to be processed-> set to "false".
-      translatetreetraverser.m_bTraverseTree = false ;
+        //The transformation of the tree may lead to a crash/
+        // only the leaves need to be processed-> set to "false".
+        translatetreetraverser.m_bTraverseTree = false ;
 
-      translatetreetraverser.Traverse() ;
-      wConsecutiveID = translatetreetraverser.m_wConsecutiveID ;
-//      stdstrWholeTransl = translatetreetraverser.m_stdstrWholeTranslation ;
-      r_stdvec_stdstrWholeTransl.push_back( translatetreetraverser.
-        m_stdstrWholeTranslation) ;
-      r_stdvec_stdvecTranslationAndGrammarPart.push_back(
-//      r_stdvec_stdvecTranslationAndConsecutiveID.push_back(
-        translatetreetraverser.m_stdvecTranslationAndGrammarPart
-//        m_stdvec_translation_and_consecutive_id
-        ) ;
+        translatetreetraverser.Traverse() ;
+        wConsecutiveID = translatetreetraverser.m_wConsecutiveID ;
+  //      stdstrWholeTransl = translatetreetraverser.m_stdstrWholeTranslation ;
+        r_stdvec_stdstrWholeTransl.push_back( translatetreetraverser.
+          m_stdstrWholeTranslation) ;
+        r_stdvec_stdvecTranslationAndGrammarPart.push_back(
+  //      r_stdvec_stdvecTranslationAndConsecutiveID.push_back(
+          translatetreetraverser.m_stdvecTranslationAndGrammarPart
+  //        m_stdvec_translation_and_consecutive_id
+          ) ;
+      }
+      if( stdvec_p_grammarpartCoveringMostTokensATokentIndex.empty() )
+        dwLeftMostTokenIndex = 0;
+      else
+        dwLeftMostTokenIndex =
+          stdvec_p_grammarpartCoveringMostTokensATokentIndex.at(0)->
+          m_dwRightmostIndex + 1;
     }
+    while( dwLeftMostTokenIndex );
   }
 //  DEBUG_COUT("translation: " << stdstrWholeTransl << "\n") ;
 }

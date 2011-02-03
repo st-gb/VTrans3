@@ -4,15 +4,21 @@
  *  Created on: May 12, 2010
  *      Author: Stefan
  */
+//Include wxWidgets at first to avoid wxWidgets 2.9 errors like
+//"error: cannot convert 'const TCHAR*' to 'const WCHAR*' for argument '2' to
+//'HWND__* CreateDialogParamW(HINSTANCE__*, const WCHAR*, HWND__*, BOOL (*)
+//(HWND__*, UINT, WPARAM, LPARAM), LPARAM)' "
+#include <wx/dc.h> //class wxDC
+//#include <wx/gdicmn.h>
+#include <wx/string.h> //class wxString
+#include <wx/font.h> //class wxFont
 
 #include "DrawParseTreeTraverser.hpp"
 //#include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
-#include <wx/dc.h> //class wxDC
-//#include <wx/gdicmn.h>
-#include <wx/string.h> //class wxString
-#include <wx/font.h> //class wxFont
+//avoid g++ error like "'class wxDC' has no member named 'DrawTextW'"
+#include <wx/msw/winundef.h>
 
 DrawParseTreeTraverser::DrawParseTreeTraverser(
   wxDC * p_wxdc ,

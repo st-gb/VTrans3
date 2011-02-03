@@ -456,6 +456,7 @@ namespace ParseTreeTraverser
           //           |
           // definite_article_noun <- left child,  no right child
 //          || *iter_p_grammarpartRight == NULL
+          //Or no right child (->only a superclass grammar rule).
           || ! p_grammarpartpointerandparselevel->m_p_grammarpart->
           mp_grammarpartRightChild
           )
@@ -463,20 +464,26 @@ namespace ParseTreeTraverser
           //The children inside the container are not needed anymore now because
           //its parent will be inserted.
           //Also searching
-          //inside the container the next time is faster is less elements are
-          //inside it.
+          //inside the container the next time is faster the less elements are
+          //inside it, e.g. for:
+          //"the" "car"
+          //    \ /
+          //def_article_noun
+          // -> delete "the" and "car" from the "processed yet" list.
           m_stdset_p_grammarpartProcessedYet.erase(iter_p_grammarpartLeft) ;
 
           if( //*iter_p_grammarpartRight
               bProcessedYet )
             m_stdset_p_grammarpartProcessedYet.erase(iter_p_grammarpartRight) ;
+          //Call the callback funktion that might be overridden in a
+          //subclass if this class.
           UnprocessedHighestLevelNodeFound() ;
           bGetNextUnprocessedRightChild = true ;
           m_stdset_p_grammarpartProcessedYet.insert( //p_grammarpart
             //mp_grammarpartLeftChild->m_p_grammarpart
             p_grammarpartpointerandparselevel->m_p_grammarpart ) ;
         }
-        else
+        else//->not(Right child is processed yet or right child is NULL).
         {
           if( //p_grammarpart->mp_grammarpartRightChild
               p_grammarpartpointerandparselevel->m_p_grammarpart->

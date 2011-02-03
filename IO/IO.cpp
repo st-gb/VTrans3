@@ -1424,7 +1424,7 @@ gibt es anf�nglich keine Vokabeln.\nM�gliche Ursachen:\
  \n 1. sie existiert nicht\n 2. Fehler beim �ffnen der Datei");
 		AfxMessageBox(strMessage,MB_OK,0);
 #endif
-    std::cout << "file \"" << r_strWordsFilePath << "\" could not be opened\n" ;
+    LOGN( "file \"" << r_strWordsFilePath << "\" could not be opened")
 	}
 //	wordList.m_pWordNodeLast=pWordNodeCurrent;
 //	wordList.m_pWordNodeLast->m_pWordNodeNext=NULL;

@@ -16,6 +16,7 @@
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
 #endif
+#include <wx/filedlg.h> //wxFD_OPEN / wxOPEN
 
 //class TranslationControllerBase
 #include <Controller/TranslationControllerBase.hpp>
@@ -62,10 +63,14 @@ namespace wxWidgets
       //" A wildcard, such as "*.*" or
       // "BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif". "
       , wxT("XML files(*.xml)|*.xml|all files(*.*)|*.*") //const wxString&  wildcard = "*.*"
-      , wxOPEN
+      , //wxOPEN
+        //wxWidgets 2.9 has no "wxOPEN"
+        wxFD_OPEN
         //"For open dialog only: allows selecting multiple files."
         | wxFD_MULTIPLE
-        | wxFILE_MUST_EXIST //long style = 0,
+        | //wxFILE_MUST_EXIST //long style = 0,
+        //wxWidgets 2.9 has no "wxFILE_MUST_EXIST"
+        wxFD_FILE_MUST_EXIST
       ) ;
     int n = wxfiledialog.ShowModal() ;
     if( n == wxID_OK )
@@ -89,7 +94,9 @@ namespace wxWidgets
       wxT("") , //defaultDir
       wxT("") //const wxString&  defaultFile = ""
       , wxT("*.txt") //const wxString&  wildcard = "*.*"
-      , wxOPEN | wxFILE_MUST_EXIST //long style = 0,
+      , //wxOPEN | wxFILE_MUST_EXIST //long style = 0,
+      //wxWidgets 2.9 has no "wxOPEN" or "wxFILE_MUST_EXIST"
+      wxFD_OPEN | wxFD_FILE_MUST_EXIST //long style = 0,
       ) ;
     if( wxfiledialog.ShowModal() == wxID_OK )
     {
