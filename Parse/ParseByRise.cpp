@@ -344,14 +344,17 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
 
 void ParseByRise::GetGrammarPartCoveringMostTokens(
   DWORD dwLeftmostTokenIndex ,
-  std::vector<GrammarPart *> & r_stdvec_p_grammarpart
+  //Should be a vector because it may be more then 1 token groups may have
+  //different translations like "the sheep" -> "das Schaf", "die Schafe"
+  std::vector<GrammarPart *> &
+    r_stdvec_p_grammarpartCoveringMostTokensATokentIndex
   )
 {
   DWORD dwNumberOfTokensCoveredMax = 0 ;
   DWORD dwNumberOfTokensCoveredCurrent ;
   GrammarPart * p_grammarpart = NULL ;
   //May not be empty at the beginning.
-  r_stdvec_p_grammarpart.clear() ;
+  r_stdvec_p_grammarpartCoveringMostTokensATokentIndex.clear() ;
   //std::multimap<DWORD, GrammarPart>::const_iterator iter ;
 
   //Get a list with all parse trees that have the leftmost token at index
@@ -386,11 +389,12 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
     if( dwNumberOfTokensCoveredCurrent > dwNumberOfTokensCoveredMax )
     {
       //drop the added items with less # of tokens
-      r_stdvec_p_grammarpart.clear() ;
+      r_stdvec_p_grammarpartCoveringMostTokensATokentIndex.clear() ;
 //#ifdef _DEBUG
       p_grammarpart = //(GrammarPart * ) & iterCurrent->second ;
-          c_iter_mmap_dw2p_grammarpartCurrent->second ;
-      r_stdvec_p_grammarpart.push_back( p_grammarpart ) ;
+        c_iter_mmap_dw2p_grammarpartCurrent->second ;
+      r_stdvec_p_grammarpartCoveringMostTokensATokentIndex.push_back(
+        p_grammarpart ) ;
 //#endif
       dwNumberOfTokensCoveredMax = dwNumberOfTokensCoveredCurrent ;
     }
@@ -414,7 +418,8 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
 #endif
       p_grammarpart = //(GrammarPart * ) & iterCurrent->second ;
           c_iter_mmap_dw2p_grammarpartCurrent->second ;
-      r_stdvec_p_grammarpart.push_back( p_grammarpart ) ;
+      r_stdvec_p_grammarpartCoveringMostTokensATokentIndex.push_back(
+        p_grammarpart ) ;
     }
   }
 #ifdef _DEBUG

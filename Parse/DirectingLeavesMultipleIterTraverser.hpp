@@ -69,6 +69,14 @@ namespace ParseTreeTraverser
   //  std::vector<const GrammarPart *> m_stdvec_p_grammarpartRightNodeToProcess ;
     std::vector<GrammarPartPointerAndParseLevel>
       m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess ;
+    //The list of nodes that have been processed yet for a previous/ higher
+    //parse tree level: if for e.g.
+    // the car
+    //   \ /
+    // def_article_noun
+    // both "the" and "car" have been processed yet, the traversal for the
+    //next level should only reach until "def_article_noun" and neither "car"
+    //nor "the".
     std::set<const GrammarPart*> m_stdset_p_grammarpartProcessedYet ;
     WORD m_wParseLevel ;
     //e.g. gives the poss. to clear containers that track the current parse tree

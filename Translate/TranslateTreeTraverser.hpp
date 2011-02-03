@@ -69,6 +69,7 @@ namespace ParseTreeTraverser
     //In order to keep track of the current parse tree path.
     void CurrentNodeIsLastAddedRightChild() ;
     inline void HandlePossibleSubject() ;
+    //Callback function from superclass.
     void LeaveFound() ;
     //In order to keep track of the current parse tree path.
     void ParseTreePathAdded() ;

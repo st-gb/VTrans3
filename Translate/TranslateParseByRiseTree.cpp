@@ -753,7 +753,8 @@ void TranslateParseByRiseTree::Translate(
   ParseByRise * mp_parsebyrise = & r_parsebyrise ;
 //  std::string stdstrWholeTransl ;
   std::string stdstrTranslation ;
-  std::vector<GrammarPart *> stdvec_p_grammarpart ;
+  std::vector<GrammarPart *>
+    stdvec_p_grammarpartCoveringMostTokensATokentIndex ;
   DEBUG_COUT( "Translate(): \n" )
   if( mp_parsebyrise )
   {
@@ -780,12 +781,15 @@ void TranslateParseByRiseTree::Translate(
       //p_grammarpart =
         mp_parsebyrise->GetGrammarPartCoveringMostTokens(
           dwLeftMostTokenIndex ,
-          stdvec_p_grammarpart
+          stdvec_p_grammarpartCoveringMostTokensATokentIndex
           ) ;
       WORD wConsecutiveID = 0 ;
-      for( std::vector<GrammarPart *>::const_iterator c_iter_p_grammarpart =
-          stdvec_p_grammarpart.begin() ; c_iter_p_grammarpart <
-          stdvec_p_grammarpart.end() ; ++ c_iter_p_grammarpart
+      for( std::vector<GrammarPart *>::const_iterator
+          c_iter_p_grammarpartCoveringMostTokensATokentIndex =
+          stdvec_p_grammarpartCoveringMostTokensATokentIndex.begin() ;
+          c_iter_p_grammarpartCoveringMostTokensATokentIndex <
+          stdvec_p_grammarpartCoveringMostTokensATokentIndex.end() ;
+          ++ c_iter_p_grammarpartCoveringMostTokensATokentIndex
          )
       {
   //    if( p_grammarpart )
@@ -794,7 +798,7 @@ void TranslateParseByRiseTree::Translate(
 
         ParseTreeTraverser::TranslateTreeTraverser translatetreetraverser(
   //        p_grammarpart
-          * c_iter_p_grammarpart
+          * c_iter_p_grammarpartCoveringMostTokensATokentIndex
           , * mp_parsebyrise
           , * this
           );
@@ -815,11 +819,12 @@ void TranslateParseByRiseTree::Translate(
   //        m_stdvec_translation_and_consecutive_id
           ) ;
       }
-      if( stdvec_p_grammarpart.empty() )
+      if( stdvec_p_grammarpartCoveringMostTokensATokentIndex.empty() )
         dwLeftMostTokenIndex = 0;
       else
-        dwLeftMostTokenIndex = stdvec_p_grammarpart.at(0)->m_dwRightmostIndex
-          + 1;
+        dwLeftMostTokenIndex =
+          stdvec_p_grammarpartCoveringMostTokensATokentIndex.at(0)->
+          m_dwRightmostIndex + 1;
     }
     while( dwLeftMostTokenIndex );
   }
