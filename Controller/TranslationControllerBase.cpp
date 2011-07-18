@@ -285,6 +285,7 @@ void TranslationControllerBase::Translate(
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   )
 {
+  LOGN("TranslationControllerBase::Translate(...) begin")
   m_parsebyrise.ClearParseTree() ;
   m_parsebyrise.CreateInitialGrammarParts ( cr_stdstrWholeInputText ) ;
   DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
@@ -306,4 +307,5 @@ void TranslationControllerBase::Translate(
     r_stdvec_stdvecTranslationAndGrammarPart
 //    stdvec_stdvecTranslationAndConsecutiveID
     ) ;
+  LOGN("TranslationControllerBase::Translate(...) end")
 }

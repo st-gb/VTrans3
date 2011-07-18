@@ -5,11 +5,12 @@
  *      Author: Stefan
  */
 #include <Attributes/TranslationAndGrammarPart.hpp>
-#include <preprocessor_macros/export_function_symbols.h>
-#include <Controller/TranslationControllerBase.hpp>
+#include <Controller/character_string/stdstring_format.hpp>//to_stdstring(...)
 #include <Controller/Logger/Logger.hpp> //class Logger
+#include <Controller/TranslationControllerBase.hpp>
+#include <preprocessor_macros/export_function_symbols.h>
 
-Logger g_logger;
+//Logger g_logger;
 //TranslationControllerBase g_translationcontrollerbase;
 TranslationControllerBase * g_p_translationcontrollerbase = NULL ;
 
@@ -35,9 +36,11 @@ EXPORT BYTE
   const char * p_chConfigFilesRootPath
   )
 {
-  LOGN("Init--begin")
+//  LOGN("Init--begin")
   std::string stdstrLogFilePath = "VTrans_log.txt" ;
   g_logger.OpenFile2(stdstrLogFilePath) ;
+  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
+  LOGN("Init--begin")
   //Create on heap because of g_logger access that causes a crash when the log
   //file has not been opened yet?!
   g_p_translationcontrollerbase = new TranslationControllerBase();
@@ -80,6 +83,7 @@ EXPORT BYTE
  */
 EXPORT char * Translate(const char * p_chEnglishText)
 {
+  LOGN("::Translate(...) begin")
   char * ar_chTranslation;
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
@@ -106,6 +110,7 @@ EXPORT char * Translate(const char * p_chEnglishText)
       stdstrAllPossibilities.length() );
     ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
   }
+  LOGN("::Translate(...) end")
   return ar_chTranslation;
 }
 
@@ -117,6 +122,7 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
   //WORD * p_wNuberOfBytes
   )
 {
+  LOGN("::TranslateAsXML(...) begin")
   char * ar_chTranslation;
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
@@ -149,7 +155,17 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
         ; ++ c_iter_stdvec_translationandgrammarpart
         )
     {
-      stdstrAllPossibilities += "<word><translation>";
+      LOGN("::TranslateAsXML(...) TranslationAndGrammarPart iterator--"
+        "c_iter_stdvec_translationandgrammarpart->mp_grammarpart:" <<
+        c_iter_stdvec_translationandgrammarpart->mp_grammarpart )
+//      stdstrAllPossibilities += "<word><translation>";
+      WORD wGrammarPartID = c_iter_stdvec_translationandgrammarpart->
+        mp_grammarpart->m_wGrammarPartID;
+      stdstrAllPossibilities += "<word><translation "
+        "grammar_part_ID=\"" + to_stdstring( wGrammarPartID ) + "\"" +
+        " grammar_part_name=\"" + g_p_translationcontrollerbase->m_parsebyrise.
+        GetGrammarPartName( wGrammarPartID) + "\""
+        ">";
       stdstrAllPossibilities += c_iter_stdvec_translationandgrammarpart->
         m_stdstrTranslation;
       stdstrAllPossibilities += "</translation></word>";
@@ -164,5 +180,6 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
       stdstrAllPossibilities.length() );
     ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
   }
+  LOGN("::TranslateAsXML(...) end")
   return ar_chTranslation;
 }

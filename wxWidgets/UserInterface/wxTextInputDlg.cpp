@@ -36,6 +36,10 @@
 
 #include "wxTextInputDlg.hpp"
 #include <IO/IO.hpp> //class OneLinePerWordPair
+
+//see http://stackoverflow.com/questions/59670/how-to-get-rid-of-deprecated-conversion-from-string-constant-to-char-warning
+//to ignore "warning: deprecated conversion from string constant to 'char*'"
+#pragma GCC diagnostic ignored "-Wno-write-strings"
 //For array "add_grammar_rules_xpm" .
 #include <bitmaps/add_grammar_rules.xpm>
 //For array "add_vocable_attribute_definitions_xpm" .
@@ -56,6 +60,8 @@
 #include <bitmaps/resolve_1parse_level.xpm> //for array resolve_1parse_level_xpm
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
 #include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
+//see //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+#pragma GCC diagnostic pop
 #include <Translate/TranslateTreeTraverser.hpp> //TranslationAndGrammarPart
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>

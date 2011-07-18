@@ -749,6 +749,7 @@ void TranslateParseByRiseTree::Translate(
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   )
 {
+  LOGN("TranslateParseByRiseTree::Translate(...) begin")
 //  BYTE byPersonIndex ;
   ParseByRise * mp_parsebyrise = & r_parsebyrise ;
 //  std::string stdstrWholeTransl ;
@@ -825,10 +826,13 @@ void TranslateParseByRiseTree::Translate(
         dwLeftMostTokenIndex =
           stdvec_p_grammarpartCoveringMostTokensATokentIndex.at(0)->
           m_dwRightmostIndex + 1;
+      LOGN("TranslateParseByRiseTree::Translate(...)--dwLeftMostTokenIndex:"
+        << dwLeftMostTokenIndex )
     }
     while( dwLeftMostTokenIndex );
   }
 //  DEBUG_COUT("translation: " << stdstrWholeTransl << "\n") ;
+  LOGN("TranslateParseByRiseTree::Translate(...) end")
 }
 
 bool TranslateParseByRiseTree::TranslationRuleApplies( 

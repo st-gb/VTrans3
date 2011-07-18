@@ -96,14 +96,14 @@ namespace ParseTreeTraverser
     std::string stdstrTranslation ;
     WORD wConsecutiveID ;
     //const GrammarPart * p_grammarpart ;
-    GrammarPart * p_grammarpart ;
+    GrammarPart * p_grammarpartWithConsecutiveID ;
     if( mr_translateparsebyrisetree.TranslationRuleApplies(
         stdstrTranslation ,
         byPersonIndex ,
         m_vec_wGrammarPartIDcurrentParsePath ,
         m_stdvector_p_grammarpartCurrentParseTreePath ,
 //        wConsecutiveID
-        p_grammarpart
+        p_grammarpartWithConsecutiveID
         )
       )
     {
@@ -119,8 +119,8 @@ namespace ParseTreeTraverser
       //Because this ID is needed, store the grammar part, too.
       m_stdvecTranslationAndGrammarPart.push_back(
         TranslationAndGrammarPart(stdstrTranslation,
-//          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
-          p_grammarpart
+          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
+//          p_grammarpartWithConsecutiveID
           )
         ) ;
       m_stdvec_translation_and_consecutive_id.push_back(
