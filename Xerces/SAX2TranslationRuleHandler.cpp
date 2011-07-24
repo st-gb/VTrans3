@@ -151,9 +151,9 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
             + Xerces::ToStdString( m_pc_locator->//getPublicId()
               getSystemId() )
             + "\nin line:"
-            + to_stdstring<XMLFileLoc>( m_pc_locator->getLineNumber() )
+            + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
             + ", column:"
-            + to_stdstring<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+            + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
             ) ;
         }
         if( m_stdstrConditionAttributeName != ""
@@ -196,9 +196,9 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
               + Xerces::ToStdString( m_pc_locator->//getPublicId()
                 getSystemId() )
               + "\nin line:"
-              + to_stdstring<XMLFileLoc>( m_pc_locator->getLineNumber() )
+              + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
               + ", column:"
-              + to_stdstring<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+              + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
               ) ;
           }
           cond.m_stdstrAttributeName = m_stdstrConditionAttributeName ;
@@ -209,8 +209,21 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
           m_conditionsandtranslation.AddCondition( cond ) ;
         }
         else
+        {
           LOGN("Neither a \"byte_attribute_value\" nor a "
             "\"string_attribute_value\" attribute")
+          mr_i_userinterface.Message( "Neither a \"byte_attribute_value\" nor a "
+              "\"string_attribute_value\" attribute\n"
+              "-> NOT adding condition to the rule."
+            "It is referenced in in document\n"
+            + Xerces::ToStdString( m_pc_locator->//getPublicId()
+              getSystemId() )
+            + "\nin line:"
+            + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
+            + ", column:"
+            + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+            ) ;
+        }
       }
     }
   }
@@ -265,9 +278,9 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
           + Xerces::ToStdString( m_pc_locator->//getPublicId()
             getSystemId() )
           + "\nin line:"
-          + to_stdstring<XMLFileLoc>( m_pc_locator->getLineNumber() )
+          + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
           + ", column:"
-          + to_stdstring<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+          + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
           ) ;
       }
       m_conditionsandtranslation.m_stdstrAttributeName =

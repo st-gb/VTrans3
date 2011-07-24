@@ -20,6 +20,8 @@ bool ConditionsAndTranslation::AllConditionsMatch(
   ) const
 {
   bool bAllConditionsMatch = false ;
+  LOGN("# of conditions for current translation rule:" <<
+      m_conditions.size() )
 //  int i = 0 ;
   //TODO implement this
 //        if( r_cnt.conditions.m_byCompareType == ConditionsAndTranslation::equals
@@ -41,6 +43,8 @@ bool ConditionsAndTranslation::AllConditionsMatch(
         )
     {
       const Condition & cr_condition = *c_iter ;
+      LOGN("current condition's syntax tree path:" <<
+          cr_condition.m_syntaxtreepath.GetAs_std_string() )
       //if( r_cond.m_syntaxtreepath.IsPartOf(m_stdvec_wCurrentGrammarPartPath) )
       //TODO get pointer to leaf node of r_cond.m_syntaxtreepath
       p_grammarpartLeaf = cr_condition.m_syntaxtreepath.GetLeaf(
@@ -49,11 +53,14 @@ bool ConditionsAndTranslation::AllConditionsMatch(
         p_grammarpartLeaf->m_pvocabularyandtranslation )
       {
         //if( p_grammarpartLeaf )
-        {
-          DEBUG_COUT("grammar part leaf found:" <<
+//        {
+//          DEBUG_COUT
+          LOGN("grammar part leaf found:" <<
             sp_parsebyrise->GetGrammarPartName(
-            p_grammarpartLeaf->m_wGrammarPartID) << "\n")
-        }
+            p_grammarpartLeaf->m_wGrammarPartID)
+            //<< "\n"
+            )
+//        }
         std::map<std::string,AttributeTypeAndPosAndSize>::const_iterator
           c_iter_stdstrSttrName2atapas =
               sp_stdmap_AttrName2VocAndTranslAttrDef->find(
@@ -128,7 +135,11 @@ bool ConditionsAndTranslation::AllConditionsMatch(
         }
       }
       else
+      {
+        LOGN("NO grammar part leaf found.")
+        bAllConditionsMatch = false;
         return false ;
+      }
     } //loop over all conditions
   }
   else
@@ -145,7 +156,7 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
   bool bAllConditionsMatch = false ;
   std::string stdstr ;
   DEBUGN("ConditionsAndTranslation::GetTranslationEquivalent(...)"
-    << "german transltation " << m_stdstrGermanTranslation )
+    << "german translation " << m_stdstrGermanTranslation )
 //  int i = 0 ;
   //TODO implement this
 //        if( r_cnt.conditions.m_byCompareType == ConditionsAndTranslation::equals

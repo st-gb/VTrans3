@@ -1641,7 +1641,7 @@ bool ParseByRise:://GrammarRuleAppliesTo(
           m_stdset_grammarpartAllSuperordinate.end()
           )
       {
-        GrammarPart & grammarpart = * p_grammarpart ;
+//        GrammarPart & grammarpart = * p_grammarpart ;
         bRuleApplied = true ;
 //        //e.g. for the grammar part "def_article_noun" add "the" (article) and
 //        //"car" (noun)
@@ -1805,26 +1805,26 @@ bool ParseByRise:://GrammarRuleAppliesTo(
           )
           stdstrLeftChild = ci_stdmap_wLeftGrammarPartID2stdstrRuleName->
           second ;
-        DEBUG_COUT( "children rule \"" << stdstrSuperordinate
-          << "(" << & grammarpart << ",ID=" << wSuperordinateGrammarPartID << ")"
-          <<  "\" found for "
-          //"the token range"
-          //<< dwLeftMostTokenIndexOfRule << "..."
-          //<< dwRightMostTokenIndexOfRule
-          << stdstrLeftChild
-          << "(" << & r_grammarpartLeft << "ID=" << r_grammarpartLeft.m_wGrammarPartID << ")"
-          << r_grammarpartLeft.m_dwLeftmostIndex
-          << ","
-          << r_grammarpartLeft.m_dwRightmostIndex
-          << ";"
-          << stdstrRightChild
-          << "(" << & r_grammarpartRight << ",ID=" << r_grammarpartRight.m_wGrammarPartID << ")"
-          << r_grammarpartRight.m_dwLeftmostIndex
-          << ","
-          << r_grammarpartRight.m_dwRightmostIndex
-          //<< "]"
-          << "\n"
-          );
+//        DEBUG_COUT( "children rule \"" << stdstrSuperordinate
+//          << "(" << & grammarpart << ",ID=" << wSuperordinateGrammarPartID << ")"
+//          <<  "\" found for "
+//          //"the token range"
+//          //<< dwLeftMostTokenIndexOfRule << "..."
+//          //<< dwRightMostTokenIndexOfRule
+//          << stdstrLeftChild
+//          << "(" << & r_grammarpartLeft << "ID=" << r_grammarpartLeft.m_wGrammarPartID << ")"
+//          << r_grammarpartLeft.m_dwLeftmostIndex
+//          << ","
+//          << r_grammarpartLeft.m_dwRightmostIndex
+//          << ";"
+//          << stdstrRightChild
+//          << "(" << & r_grammarpartRight << ",ID=" << r_grammarpartRight.m_wGrammarPartID << ")"
+//          << r_grammarpartRight.m_dwLeftmostIndex
+//          << ","
+//          << r_grammarpartRight.m_dwRightmostIndex
+//          //<< "]"
+//          << "\n"
+//          );
         //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 //        #pragma GCC diagnostic ignored  "-Wunused"
         //Useless instruction just for breakpoint possibility.
@@ -2228,7 +2228,7 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
   )
 {
   bool bReplaced = false ;
-  DWORD dwMapIndex = 0 ;
+//  DWORD dwMapIndex = 0 ;
 #ifdef _DEBUG
   std::map<WORD, std::string>::const_iterator ci_stdmap_wRuleID2stdstrRuleName ;
   std::map<WORD, std::string>::const_iterator ci_stdmap_wLeftGrammarPartID2stdstrRuleName ;
@@ -2416,25 +2416,25 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
             stdstrSubclassName = ci_stdmap_wLeftGrammarPartID2stdstrRuleName->
               second ;
           {
-            DEBUG_COUTN( "superclass rule \"" << stdstrSuperordinate
-            << "("
-            //<< & grammarpartSuperordinate
-            << p_grammarpartSuperordinate
-            << ",ID=" << wSuperordinateGrammarPartID << ")"
-            <<  "\" found for "
-            //"the token range"
-            //<< dwLeftMostTokenIndexOfRule << "..."
-            //<< dwRightMostTokenIndexOfRule
-            << stdstrSubclassName
-            << "(address:" << & r_grammarpartLeft
-            << ",mmap index:" << dwMapIndex
-            << "ID=" << r_grammarpartLeft.m_wGrammarPartID << ")"
-            << r_grammarpartLeft.m_dwLeftmostIndex
-            << ","
-            << r_grammarpartLeft.m_dwRightmostIndex
-            << ";"
-            //<< "]"
-            ) ;
+//            DEBUG_COUTN( "superclass rule \"" << stdstrSuperordinate
+//            << "("
+//            //<< & grammarpartSuperordinate
+//            << p_grammarpartSuperordinate
+//            << ",ID=" << wSuperordinateGrammarPartID << ")"
+//            <<  "\" found for "
+//            //"the token range"
+//            //<< dwLeftMostTokenIndexOfRule << "..."
+//            //<< dwRightMostTokenIndexOfRule
+//            << stdstrSubclassName
+//            << "(address:" << & r_grammarpartLeft
+//            << ",mmap index:" << dwMapIndex
+//            << "ID=" << r_grammarpartLeft.m_wGrammarPartID << ")"
+//            << r_grammarpartLeft.m_dwLeftmostIndex
+//            << ","
+//            << r_grammarpartLeft.m_dwRightmostIndex
+//            << ";"
+//            //<< "]"
+//            ) ;
           }
 #endif
 //          //Insert if at the second map, not when at the first map!
@@ -2485,7 +2485,7 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
 //    ++ iter_mm_idx2grammarpt ;
     ++ iter_mm_token_idx2p_grammarpt ;
 #ifdef _DEBUG
-    ++ dwMapIndex ;
+//    ++ dwMapIndex ;
 #endif
   }
   DEBUG_COUTN("InsertSuperordinateGrammarPart end")
@@ -2554,7 +2554,7 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
     map_stdmultimap_dwLeftmostIndex2grammarpart ;
   std::map< DWORD, std::multimap<DWORD, GrammarPart> >
     map_stdmultimap_dwRightmostIndex2grammarpart ;
-  DWORD dwSize ;
+//  DWORD dwSize ;
   m_dwMapIndex = 0 ;
   bool bReplacedGrammarPartIDsBySuperordinate ;
   BYTE byGrammarRuleApplied ;
@@ -2611,16 +2611,16 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
       ) ;
 
     #ifdef _DEBUG
-      dwSize = //parsebyrise.
-//        m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
-        m_stdmultimap_dwRightmostIndex2p_grammarpart.size() ;
-      DEBUG_COUTN("size of rightmost list token index multimap:" << dwSize )
-      dwSize = //parsebyrise.
-//        m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
-        m_stdmultimap_dwLeftmostIndex2p_grammarpart.size() ;
-      DEBUG_COUTN("size of leftmost list token index multimap:" << dwSize )
-//      dwSize = stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.size() ;
-//      dwSize = stdmultimap_dwRightmostIndex2grammarpartSuperordinate.size() ;
+//      dwSize = //parsebyrise.
+////        m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
+//        m_stdmultimap_dwRightmostIndex2p_grammarpart.size() ;
+//      DEBUG_COUTN("size of rightmost list token index multimap:" << dwSize )
+//      dwSize = //parsebyrise.
+////        m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
+//        m_stdmultimap_dwLeftmostIndex2p_grammarpart.size() ;
+//      DEBUG_COUTN("size of leftmost list token index multimap:" << dwSize )
+////      dwSize = stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.size() ;
+////      dwSize = stdmultimap_dwRightmostIndex2grammarpartSuperordinate.size() ;
     #endif
     //Join the grammar parts and the superordinate grammar parts, i.e.
     //for "the vacuum cleaner sucks" join the superordinate grammar part

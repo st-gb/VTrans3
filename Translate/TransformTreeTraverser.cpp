@@ -102,8 +102,8 @@ namespace ParseTreeTraverser
         (WORD) insertintotreetransverser.m_byDirection
         )
   //            if( ! bIsLeftChild )
-       GrammarPart * & r_p_grammarpartParentOfGrammarPartToMove =
-        insertintotreetransverser.m_p_grammarpartParentOfCurrentGrammarPart ;
+//       GrammarPart * & r_p_grammarpartParentOfGrammarPartToMove =
+//        insertintotreetransverser.m_p_grammarpartParentOfCurrentGrammarPart ;
       //Stores the address of a pointer.
       GrammarPart * * p_p_grammarpartChildOfParentGrammarPartWhereToInsert =
         NULL ;
