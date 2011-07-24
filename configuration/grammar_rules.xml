@@ -1,4 +1,4 @@
-<grammar_rules>
+﻿<grammar_rules>
   <grammar_rule left_child="definite_article" right_child="singular_noun" superordinate="definite_article_singular"/>
   <grammar_rule left_child="definite_article" right_child="plural_noun" superordinate="definite_article_plural"/>
   <grammar_rule left_child="indefinite_article" right_child="singular_noun" superordinate="indefinite_article_singular"/>
@@ -24,13 +24,48 @@
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" superordinate="SubjOrObjEnumEle"/>
   
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres0Obj" superordinate="3rdPersSingClauseAllows0Obj"/>
-  <!--e.g. "still burns"-->
+  <!--e.g. "still burns"  
+     adverb_before_finite_verb: "still" 
+	 3rdPersSingSubjOrObjEnumEle: ??
+    -->
   <grammar_rule left_child="adverb_before_finite_verb" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="3rdPersSingPres0ObjMiddle" />
   
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="3rdPersSingPres0ObjMiddle" superordinate="3rdPersSingClauseAllows0Obj"/>
   
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres1Obj" superordinate="3rdPersSingClauseAllows1Obj"/>
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres2Obj" superordinate="3rdPersSingClauseAllows2Obj"/>
+  
+  <!--relative clause -->
+    <!-- can be cascaded (->recursive) : -->
+    <!--the car               the man               you like      likes is pretty.
+	    <sub or obj enum ele> <sub or obj enum ele> <rel. clause>
+		                      +++++++++++relative clause+++++++++++++++
+							  
+	("das Auto, dass der Mann, den du magst, mag, ist schön".)-->
+	
+   <!-- e.g.: "the car he likes":  
+     3rdPersSingSubjOrObjEnumEle: "the car"  
+	 3rdPersSingClauseAllows1Obj: "he likes" (needs 1 object: "the car")  
+    -->
+   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="3rdPersSingClauseAllows1Obj" superordinate="3rdPersSingEnumEleWithRelClause"/>
+   
+   <!-- e.g.: "the car he likes works.":  
+     3rdPersSingSubjOrObjEnumEle: "the car"  
+	 3rdPersSingClauseAllows1Obj: "he likes" (needs 1 object: "the car")  
+     -->
+   <grammar_rule left_child="3rdPersSingEnumEleWithRelClause" right_child="MainVerb3rdPersSingPres0Obj" superordinate="3rdPersSingEnumEleWithRelClauseAllows0Obj"/>
+   
+   <!--to enable casceded rel clauses: 
+        the car               the man               he likes      likes is pretty.
+	    <sub or obj enum ele> <sub or obj enum ele> <rel. clause>
+		                      +++++++++++relative clause+++++++++++++++
+		3rdPersSingEnumEleWithRelClause: "the man he likes"
+		MainVerb3rdPersSingPres1Obj: "likes"
+     -->
+   <grammar_rule left_child="3rdPersSingEnumEleWithRelClause" right_child="MainVerb3rdPersSingPres1Obj" superordinate="3rdPersSingClauseAllows1Obj"/>
+    
+  <!--end of relative clauses -->
+  
   <!--3rd person singular end-->
 
   <!--3rd person plural begin-->

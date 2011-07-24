@@ -914,21 +914,23 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
       const TranslationRule * p_translationrule =
         //c_iter_p_translationrule2conditionsandtranslation->first ;
         & c_rev_iter_translationrule2conditionsandtranslation->first ;
-#ifdef _DEBUG
-      std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
-        r_stdvec_wCurrentGrammarPartPath ) ;
-      std::string stdstr2 = GetSyntaxTreePathAsName(
+      std::string std_strTranslationRuleSyntaxTreePath =
+          GetSyntaxTreePathAsName(
           //p_tr->m_ar_wElements, p_tr->m_wNumberOfElements
           p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
           m_ar_wElements,
           p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
           m_wNumberOfElements
           ) ;
-      if( stdstrCurrentParseTreePath == "clause.main_verb" || stdstr2 == "main_verb" )
+#ifdef _DEBUG
+      std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
+        r_stdvec_wCurrentGrammarPartPath ) ;
+      if( stdstrCurrentParseTreePath == "clause.main_verb" ||
+          std_strTranslationRuleSyntaxTreePath == "main_verb" )
         //Just for setting a breakpoint.
         stdstrCurrentParseTreePath += "" ;
       std::cout << "Comparing " << stdstrCurrentParseTreePath << " and " <<
-          stdstr2 << "\n" ;
+          std_strTranslationRuleSyntaxTreePath << "\n" ;
 #endif
 //      std::vector<WORD>::const_iterator c_iter_wGrammarPartPath =
 //          r_stdvec_wGrammarPartPath ;
@@ -939,8 +941,9 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
       if( bIdentical )
       {
 //        DEBUG_COUT
-        LOGN("the current syntax tree path matches the rule' syntax "
-          "tree path")
+        LOGN( FULL_FUNC_NAME <<
+          "the current syntax tree path matches the rule's syntax tree path"
+            << " \"" << std_strTranslationRuleSyntaxTreePath << "\"")
 //        GrammarPart * p_grammarpartClosestToTreeRoot =
 //            r_stdvec_p_grammarpartPath.at(wIndex + wLenghtDiff ) ;
 #ifdef _DEBUG
@@ -969,12 +972,16 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 //              ) ;
               r_cnt.GetTranslationEquivalent(
                 r_stdvec_p_grammarpartPath.back() ) ;
+          LOGN( FULL_FUNC_NAME << "--adding translation \""
+              << r_stdstrTranslation << "\"" )
 //           r_wConsecutiveID = p_translationrule->ConsecutiveID(
            rp_grammarpartWithConsecutiveID = p_translationrule->
                GetGrammarPartWithConsecutiveID(
              r_stdvec_p_grammarpartPath ) ;
            r_byPersonIndex = r_cnt.m_byPersonIndex ;
+
            return true ;
+//           bIdentical = true;
         }
       }
       DEBUG_COUT("TranslationRuleApplies--after loop\n")

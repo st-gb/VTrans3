@@ -41,9 +41,9 @@ namespace Xerces
       + Xerces::ToStdString( m_pc_locator->//getPublicId()
         getSystemId() )
       + "\nin line:"
-      + to_stdstring<XMLFileLoc>( m_pc_locator->getLineNumber() )
+      + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
       + ", column:"
-      + to_stdstring<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+      + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
       ) ;
   }
 
