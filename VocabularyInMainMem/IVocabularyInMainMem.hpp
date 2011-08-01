@@ -2,11 +2,17 @@
 
 #include <string>
 #include <windef.h> //for BYTE etc.
+#include <Attributes/EnglishWord.hpp> //class EnglishAuxiliaryVerb etc.
+#include <Attributes/GermanWord.hpp> //class GermanAuxiliaryVerb etc.
 #include <Attributes/Word.hpp>
 
 #include "LetterTree/VocabularyAndTranslation.hpp" //class EnglishWord
 
 #define NUMBER_OF_PERSONAL_PRONOUNS 7
+
+//Forward declarations:
+class EnglishWord;
+class GermanWord;
 
   class IVocabularyInMainMem
   {
@@ -59,12 +65,19 @@
     virtual void InsertPersonalPronounsObjectiveForm() {}
     IVocabularyInMainMem() ;
 //    virtual void NextNoun() = 0 ;
+    void InsertAuxiliaryVerbBe();
+    void InsertAuxiliaryVerbHave();
     void InsertFundamentalWords() ;
     //For inserting fundamental words etc.
-    virtual void Insert(const std::string & stdstr, BYTE byWordClass )
+    virtual //void
+      void * Insert(const std::string & stdstr, BYTE byWordClass )
       //If not "= 0 ":
       //"undefined reference to `vtable for IVocabularyInMainMem'" when linking
       //with g++ .
       = 0 ;
-    virtual void Insert(EnglishWord & ew , GermanWord & gw ) = 0 ;
+    virtual void
+      //void *
+      Insert(EnglishWord & ew , GermanWord & gw, void * p_v
+        ) = 0 ;
+    virtual void Insert(const char *, unsigned ui, void * p_v) { };
   };

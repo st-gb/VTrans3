@@ -6,6 +6,7 @@
  */
 
 #include <Controller/character_string/stdstring_format.hpp> //to_stdstring(...)
+#include <Parse/ParseByRise.hpp> //class ParseByRise
 //#include <Translate/ConditionsAndTranslation.hpp>
 #include <Translate/TranslationRule.hpp>//class TranslationRule
 //class TranslateParseByRiseTree
@@ -77,6 +78,34 @@ void SAX2TranslationRuleHandler::endElement(
         p_translationrule = new TranslationRule(
           m_stdstrTranslationRuleSyntaxTreePath
           , & mr_parsebyrise ) ;
+
+        if( ! m_std_strSyntaxTreePathForInsertionForTranslation.empty() )
+        {
+          p_translationrule->m_syntaxtreepathInsertionForTranslation.
+            CreateGrammarPartIDArray(
+            m_std_strSyntaxTreePathForInsertionForTranslation
+            , p_translationrule->mp_parsebyrise );
+          m_std_strSyntaxTreePathForInsertionForTranslation = "";
+        }
+        p_translationrule->m_bySideWhereToInsertChildNode =
+            m_uiTranslationInsertion;
+        p_translationrule->m_bySideWhereToInsertParentNode =
+            m_uiParentNodeInsertion;
+
+//        p_translationrule->m_std_strParentNodeGrammarPartName =
+        if( ! mr_parsebyrise.GetGrammarPartID(
+            m_std_strParentNodeGrammarPartName,
+            p_translationrule->m_uiParentNodeGrammarPartID
+            )
+          )
+          p_translationrule->m_uiParentNodeGrammarPartID = 65534;
+        if( ! mr_parsebyrise.GetGrammarPartID(
+            m_std_strGrammarPartName,
+            p_translationrule->m_uiChildNodeGrammarPartID
+            )
+          )
+          p_translationrule->m_uiChildNodeGrammarPartID = 65534;
+
         LOGN("SAX2TranslationRuleHandler::endElement(...)--adding translation "
           "rule\"" << m_stdstrTranslationRuleSyntaxTreePath << "\"" )
         mr_translateparsebyrise.AddTranslationRule(
@@ -285,7 +314,8 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
       }
       m_conditionsandtranslation.m_stdstrAttributeName =
           m_stdstrTranslationRuleAttributeName ;
-    }
+    } //_either_ "attribute_name" (from main memory vocabulary attributes)
+      //or "translation" (direct translation/ uses a string as translation)
     else if ( XercesAttributesHelper::getValue(
         cr_xercesc_attributes ,
         m_stdstrTranslation
@@ -300,6 +330,73 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
       m_conditionsandtranslation.m_stdstrGermanTranslation =
           m_stdstrTranslation ;
     }
+    if ( XercesAttributesHelper::getValue(
+        cr_xercesc_attributes ,
+        m_std_strSyntaxTreePathForInsertionForTranslation
+        //Using directly a word for translation rather than an attribute
+        // value of a VocabularyAndTranslation object is an alternative.
+        , L"syntax_tree_path_where_to_insert_translation"
+        )
+      )
+    {
+      LOGN("Successfully got attribute value for "
+        "\"syntax_tree_path_where_to_insert_translation\":"
+        << m_std_strSyntaxTreePathForInsertionForTranslation )
+//      m_conditionsandtranslation.m_stdstrGermanTranslation =
+//          m_stdstrTranslation ;
+    }
+    else
+      m_std_strSyntaxTreePathForInsertionForTranslation = "";
+//    if( ! ConvertXercesAttributesValue<//BYTE
+//  //      WORD
+//        unsigned >(
+//        cr_xercesc_attributes ,
+//        //byAttributeValue ,
+//        m_uiTranslationInsertion ,
+//        L"insertion_direction"
+//        )
+//      )
+//      m_uiTranslationInsertion = 0;
+    std::string std_strInsertionForTranslationDirection;
+    if( XercesAttributesHelper::getValue(
+        cr_xercesc_attributes ,
+        std_strInsertionForTranslationDirection,
+        L"child_node_insertion_direction"
+        )
+      )
+    {
+        if( std_strInsertionForTranslationDirection == "left")
+          m_uiTranslationInsertion = TranslationRule::left;
+        else if( std_strInsertionForTranslationDirection == "right")
+          m_uiTranslationInsertion = TranslationRule::right;
+    }
+    std::string std_strInsertionForParentNode;
+    if( XercesAttributesHelper::getValue(
+        cr_xercesc_attributes ,
+        std_strInsertionForParentNode,
+        L"parent_node_insertion_direction"
+        )
+      )
+    {
+        if( std_strInsertionForParentNode == "left")
+          m_uiParentNodeInsertion = TranslationRule::left;
+        else if( std_strInsertionForParentNode == "right")
+          m_uiParentNodeInsertion = TranslationRule::right;
+    }
+    if( ! XercesAttributesHelper::getValue(
+        cr_xercesc_attributes ,
+        m_std_strParentNodeGrammarPartName,
+        L"parent_node_grammar_part_name"
+        )
+      )
+      m_std_strParentNodeGrammarPartName = "";
+    if( ! XercesAttributesHelper::getValue(
+        cr_xercesc_attributes ,
+        m_std_strGrammarPartName,
+        L"grammar_part_name"
+        )
+      )
+      m_std_strGrammarPartName = "";
   }
 }
 

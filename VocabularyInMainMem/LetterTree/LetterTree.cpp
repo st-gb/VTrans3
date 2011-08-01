@@ -2,6 +2,8 @@
 //unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
 //"fatal error C1010: Unerwartetes Dateiende w�hrend der Suche nach dem vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
+#include <Attributes/EnglishWord.hpp> //class EnglishWord's enum
+#include <Attributes/GermanWord.hpp> //class GermanWord
 #include "LetterTree.hpp" //header file of this LetterTree class
 #include <preprocessor_macros/logging_preprocessor_macros.h>
 
@@ -161,7 +163,9 @@ Word * LetterTree::GetPreviousOccurance(
   //"inline makes it faster (->no function call)
   //The word whose last char sp_letternodeLastForInsertedWord points to
   //must have been inserted into the tree previously.
- inline void LetterTree::HandleVocabularyAndTranslationPointerInsertion(
+ inline //void
+   VocabularyAndTranslation *
+   LetterTree::HandleVocabularyAndTranslationPointerInsertion(
    //This set is to ensure that for identical strings for the SAME vocabulary
    //not 2 or more VocAndTransl object should be inserted into the same
    //LetterNode of the last character.
@@ -245,6 +249,7 @@ Word * LetterTree::GetPreviousOccurance(
 //    pletternodeCurrent->insert(pvocabularyandtranslation) ;
 //    stdsetpletternodeLastStringChar.insert( pletternodeCurrent ) ;
 //  }
+  return s_pvocabularyandtranslation;
 }
 
  //Returns NULL if no item was added to "m_psetvocabularyandtranslation".
@@ -256,7 +261,7 @@ Word * LetterTree::GetPreviousOccurance(
  //3rd person plural present for a German verb etc. are stored.
  //"inline makes it faster (->no function call)
  inline
- VocabularyAndTranslation * LetterTree::insert(
+ LetterNode * LetterTree::insert(
    const char * pch,
    int start,
    int length //,
@@ -342,10 +347,11 @@ Word * LetterTree::GetPreviousOccurance(
      //TRACE("LetterTree::insert(...) end--pletternode: \"%x\"\n",
      //  pletternode ) ;
    }
-   return pvocabularyandtranslation ;
+   return sp_letternodeLastForInsertedWord ;
  }
 
-   void LetterTree::Insert(const std::string & stdstr, BYTE byWordClass )
+   //void
+   void * LetterTree::Insert(const std::string & stdstr, BYTE byWordClass )
    {
      bool bInsertNewVocabularyAndTranslation = true ;
 //     LetterNode * pletternode ;
@@ -368,25 +374,85 @@ Word * LetterTree::GetPreviousOccurance(
        , stdstr.length() // int nLength
        , 0 //int nIndexOf1stChar
        ) ;
+     return (void *) s_pvocabularyandtranslation;
    }
 
-   void LetterTree::Insert(EnglishWord & ew , GermanWord & gw )
+   void
+//   VocabularyAndTranslation *
+   //void *
+   LetterTree::Insert(
+       EnglishWord & ew , GermanWord & gw, void * p_v
+       )
    {
      bool bInsertNewVocabularyAndTranslation = true ;
      std::string stdstr ;
      std::set<LetterNode *> stdsetpletternodeLastStringChar ;
      ew.InitGetNextString() ;
+     VocabularyAndTranslation * p_vocabularyandtranslation = //new
+//         VocabularyAndTranslation(ew.GetWordClass() );
+       (VocabularyAndTranslation *) p_v;
+     unsigned uiIndex = 0;
      while( ew.GetNextString(stdstr) )
      {
-       InsertIntoTrieAndHandleVocabularyAndTranslation(
-         stdsetpletternodeLastStringChar
-         //std::set<LetterNode *> & stdsetpletternodeLastStringChar
-         , bInsertNewVocabularyAndTranslation //bool & bInsertNewVocabularyAndTranslation
-         , ew.GetWordClass()
-         , stdstr
-         , stdstr.length()
+//       InsertIntoTrieAndHandleVocabularyAndTranslation(
+//         stdsetpletternodeLastStringChar
+//         //std::set<LetterNode *> & stdsetpletternodeLastStringChar
+//         , bInsertNewVocabularyAndTranslation //bool & bInsertNewVocabularyAndTranslation
+//         , ew.GetWordClass()
+//         , stdstr
+//         , stdstr.length()
+//         , 0
+//         ) ;
+         p_vocabularyandtranslation->m_arstrEnglishWord[uiIndex] = stdstr;
+         ++ uiIndex;
+     }
+     uiIndex = 0;
+     while( gw.GetNextString(stdstr) )
+     {
+         p_vocabularyandtranslation->m_arstrGermanWord[uiIndex] = stdstr;
+         ++ uiIndex;
+     }
+//     return (void *) //s_pvocabularyandtranslation;
+//         p_vocabularyandtranslation;
+   }
+
+   void LetterTree::Insert(const char * c_p_ch, unsigned uiGrammarPartID,
+       void * p_v)
+   {
+     if( p_v)
+     {
+       VocabularyAndTranslation * p_vocabularyandtranslationPointTo =
+           (VocabularyAndTranslation *) p_v;
+       LetterNode * p_letternode = insert(
+         //std::string(
+           c_p_ch //)
          , 0
+         , strlen(c_p_ch)
+     //    , bInsertNewVocabularyAndTranslation
+         ////If not assigned yet within THIS function.
+         //! pvocabularyandtranslation
+     //    , p_letternodeLastForInsertedWord
+     //    , byVocabularyType
          ) ;
+       if( p_letternode)
+       {
+         //Force insertion.
+         bool bInsertNewVocabularyAndTranslation = true;
+         std::set<LetterNode *> stdsetpletternodeLastStringChar;
+         VocabularyAndTranslation * p_vocabularyandtranslationCreated =
+           HandleVocabularyAndTranslationPointerInsertion(
+           //This set is to ensure that for identical strings for the SAME vocabulary
+           //not 2 or more VocAndTransl object should be inserted into the same
+           //LetterNode of the last character.
+          stdsetpletternodeLastStringChar
+        //  , LetterNode * p_letternodeLastForInsertedWord
+          //, VocabularyAndTranslation * pvocabularyandtranslation
+          , bInsertNewVocabularyAndTranslation
+          , (BYTE) uiGrammarPartID
+          );
+         p_vocabularyandtranslationCreated->PointToAttributeData(
+             p_vocabularyandtranslationPointTo);
+       }
      }
    }
 
@@ -452,15 +518,8 @@ Word * LetterTree::GetPreviousOccurance(
            sp_letternodeLastForInsertedWord )
        {
          //refer/ point to the attributes of the "main verb" (saves storage)
-         //g_lettertree.
-         s_pvocabularyandtranslation->m_arstrEnglishWord =
-             p_vocabularyandtranslationEnglishVerb->m_arstrEnglishWord ;
-         //g_lettertree.
-         s_pvocabularyandtranslation->m_arstrGermanWord=
-             p_vocabularyandtranslationEnglishVerb->m_arstrGermanWord ;
-         //g_lettertree.
-         s_pvocabularyandtranslation->m_arbyAttribute=
-             p_vocabularyandtranslationEnglishVerb->m_arbyAttribute ;
+         s_pvocabularyandtranslation->PointToAttributeData(
+             p_vocabularyandtranslationEnglishVerb);
          //Set back the current pointer to the vocandtransl for the main verb.
          //g_lettertree.
          s_pvocabularyandtranslation =
@@ -565,6 +624,9 @@ void LetterTree::InsertPersonalPronounsObjectiveForm()
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_plural ;
 }
 
+//Add a new VocabularyAndTranslation object (because of the grammar part ID for
+//plural) to the trie node but refer to the
+//attribute data of an existing noun to not waste main memory.
 void LetterTree::InsertPluralNounReferringNounAttributes(
   //This set is to ensure that if strings for the SAME vocabulary
   // not 2 or more VocAndTransl object should be inserted.
@@ -599,12 +661,8 @@ void LetterTree::InsertPluralNounReferringNounAttributes(
   //object for singular
   //refer/ point to the attributes of the "main verb" (saves storage instead
   // of allocating array for the singular, too)
-  s_pvocabularyandtranslation->m_arstrEnglishWord =
-      p_vocabularyandtranslationEnglishNoun->m_arstrEnglishWord ;
-  s_pvocabularyandtranslation->m_arstrGermanWord=
-      p_vocabularyandtranslationEnglishNoun->m_arstrGermanWord ;
-  s_pvocabularyandtranslation->m_arbyAttribute=
-      p_vocabularyandtranslationEnglishNoun->m_arbyAttribute ;
+  s_pvocabularyandtranslation->PointToAttributeData(
+    p_vocabularyandtranslationEnglishNoun);
 
     //This should not be necessary as long as the pointers to the attribute data
     // refer the noun object's arrays.
@@ -622,7 +680,55 @@ void LetterTree::InsertPluralNounReferringNounAttributes(
 //  bInsertNewVocabularyAndTranslation = false ;
 }
 
-void LetterTree::InsertProgressiveReferringVerbAttributes(
+
+void LetterTree::InsertIntoTrieAndReferToExistingVocData(
+    std::set<LetterNode *> & stdsetpletternodeLastStringChar,
+    BYTE byVocType,
+    const std::string & c_r_std_strInsertVocAndTranslObjAt
+    )
+{
+  bool bDoInsertNewVocabularyAndTranslation = true ;
+  //Store the address of the infinitive object.
+  VocabularyAndTranslation * p_vocabularyandtranslationPrevious =
+    s_pvocabularyandtranslation ;
+  //Also save the verb forms that do not stand within the
+  //vocabulary file.
+  InsertIntoTrieAndHandleVocabularyAndTranslation(
+    stdsetpletternodeLastStringChar
+    //, LetterNode * pletternodeCurrent
+    //, VocabularyAndTranslation * pvocabularyandtranslation
+  //      , bInsertNewVocabularyAndTranslation
+
+    //Ensure that a VocAndTransl object is created.
+  //      , s_bDoInsertNewVocabularyAndTranslation
+    , bDoInsertNewVocabularyAndTranslation
+    , //byVocabularyType
+    byVocType
+    , //strIng
+    c_r_std_strInsertVocAndTranslObjAt
+    , //strIng.length()
+    c_r_std_strInsertVocAndTranslObjAt.length()
+    , 0
+    ) ;
+  //refer/ point to the attributes of the "main verb" (saves storage instead
+  // of allocating array for the singular, too)
+  s_pvocabularyandtranslation->m_arstrEnglishWord =
+      p_vocabularyandtranslationPrevious->m_arstrEnglishWord ;
+  s_pvocabularyandtranslation->m_arstrGermanWord=
+      p_vocabularyandtranslationPrevious->m_arstrGermanWord ;
+  s_pvocabularyandtranslation->m_arbyAttribute=
+      p_vocabularyandtranslationPrevious->m_arbyAttribute ;
+
+  //Without this assignment for a plural noun string a singular VocAndTrnsl
+  // object existed.
+  s_pvocabularyandtranslation =
+    p_vocabularyandtranslationPrevious ;
+}
+
+//Add a new VocabularyAndTranslation object (because of the grammar part ID for
+//participle progressive) to the trie node but refer to the
+//attribute data of an existing noun to not waste main memory.
+void LetterTree::InsertPresentParticipleReferringVerbAttributes(
   //This set is to ensure that if strings for the SAME vocabulary
   // not 2 or more VocAndTransl object should be inserted.
   std::set<LetterNode *> & stdsetpletternodeLastStringChar
@@ -646,46 +752,80 @@ void LetterTree::InsertProgressiveReferringVerbAttributes(
   }
   if( byVocType )
   {
-    bool bDoInsertNewVocabularyAndTranslation = true ;
     std::string stdstrProgressiveForm = r_stdstrInfinitive ;
-    //Store the address of the infinitive object.
-    VocabularyAndTranslation * p_vocabularyandtranslationEnglishNoun =
-      s_pvocabularyandtranslation ;
     //TODO if last letter = consonant, e.g. "refer": "refeRRing"
   //  std::string strIng = ev->m_strInfinitive + "ing" ;
     EnglishVerb::GetProgressiveForm( stdstrProgressiveForm ) ;
-    //Also save the verb forms that do not stand within the
-    //vocabulary file.
-    InsertIntoTrieAndHandleVocabularyAndTranslation(
-      stdsetpletternodeLastStringChar
-      //, LetterNode * pletternodeCurrent
-      //, VocabularyAndTranslation * pvocabularyandtranslation
-//      , bInsertNewVocabularyAndTranslation
 
-      //Ensure that a VocAndTransl object is created.
-//      , s_bDoInsertNewVocabularyAndTranslation
-      , bDoInsertNewVocabularyAndTranslation
-      , //byVocabularyType
-      byVocType
-      , //strIng
-      stdstrProgressiveForm
-      , //strIng.length()
-      stdstrProgressiveForm.length()
-      , 0
-      ) ;
-    //refer/ point to the attributes of the "main verb" (saves storage instead
-    // of allocating array for the singular, too)
-    s_pvocabularyandtranslation->m_arstrEnglishWord =
-        p_vocabularyandtranslationEnglishNoun->m_arstrEnglishWord ;
-    s_pvocabularyandtranslation->m_arstrGermanWord=
-        p_vocabularyandtranslationEnglishNoun->m_arstrGermanWord ;
-    s_pvocabularyandtranslation->m_arbyAttribute=
-        p_vocabularyandtranslationEnglishNoun->m_arbyAttribute ;
+    InsertIntoTrieAndReferToExistingVocData(
+        stdsetpletternodeLastStringChar,
+        byVocType,
+        stdstrProgressiveForm
+        );
+  }
+}
 
-    //Without this assignment for a plural noun string a singular VocAndTrnsl
-    // object existed.
-    s_pvocabularyandtranslation =
-      p_vocabularyandtranslationEnglishNoun ;
+//Add a new VocabularyAndTranslation object (because of the grammar part ID for
+//participle progressive) to the trie node but refer to the
+//attribute data of an existing noun to not waste main memory.
+void LetterTree::InsertPastTenseReferringVerbAttributes(
+  //This set is to ensure that if strings for the SAME vocabulary
+  // not 2 or more VocAndTransl object should be inserted.
+  std::set<LetterNode *> & stdsetpletternodeLastStringChar
+  //The infinitive should not be modified because it may be needed afterwards.
+  , const std::string & r_std_strPastTense
+  , BYTE byNumberOfObjectsAllowedByVerb
+  )
+{
+  BYTE byVocType = 0 ;
+  switch(byNumberOfObjectsAllowedByVerb)
+  {
+  case 0 :
+    byVocType = EnglishWord::main_verb_allows_0object_past_form ;
+    break ;
+  case 1 :
+    byVocType = EnglishWord::main_verb_allows_1object_past_form ;
+    break ;
+  case 2 :
+    byVocType = EnglishWord::main_verb_allows_2objects_past_form ;
+    break ;
+  }
+  if( byVocType )
+  {
+    InsertIntoTrieAndReferToExistingVocData(stdsetpletternodeLastStringChar,
+        byVocType, r_std_strPastTense);
+  }
+}
+
+//Add a new VocabularyAndTranslation object (because of the grammar part ID for
+//participle progressive) to the trie node but refer to the
+//attribute data of an existing noun to not waste main memory.
+void LetterTree::InsertPastParticipleReferringVerbAttributes(
+  //This set is to ensure that if strings for the SAME vocabulary
+  // not 2 or more VocAndTransl object should be inserted.
+  std::set<LetterNode *> & stdsetpletternodeLastStringChar
+  //The infinitive should not be modified because it may be needed afterwards.
+  , const std::string & r_std_strPastTense
+  , BYTE byNumberOfObjectsAllowedByVerb
+  )
+{
+  BYTE byVocType = 0 ;
+  switch(byNumberOfObjectsAllowedByVerb)
+  {
+  case 0 :
+    byVocType = EnglishWord::mainVerbPastParticiple0Obj ;
+    break ;
+  case 1 :
+    byVocType = EnglishWord::mainVerbPastParticiple1Obj ;
+    break ;
+  case 2 :
+    byVocType = EnglishWord::mainVerbPastParticiple2Obj ;
+    break ;
+  }
+  if( byVocType )
+  {
+    InsertIntoTrieAndReferToExistingVocData(stdsetpletternodeLastStringChar,
+        byVocType, r_std_strPastTense);
   }
 }
 
@@ -725,12 +865,8 @@ void LetterTree::InsertSingularNounReferringNounAttributes(
   //object for singular
   //refer/ point to the attributes of the "main verb" (saves storage instead
   // of allocating array for the singular, too)
-  s_pvocabularyandtranslation->m_arstrEnglishWord =
-      p_vocabularyandtranslationEnglishNoun->m_arstrEnglishWord ;
-  s_pvocabularyandtranslation->m_arstrGermanWord=
-      p_vocabularyandtranslationEnglishNoun->m_arstrGermanWord ;
-  s_pvocabularyandtranslation->m_arbyAttribute=
-      p_vocabularyandtranslationEnglishNoun->m_arbyAttribute ;
+  s_pvocabularyandtranslation->PointToAttributeData(
+      p_vocabularyandtranslationEnglishNoun);
 
   ////This should not be necessary as long as the pointers to the attribute data
   // // refer the noun object's arrays.

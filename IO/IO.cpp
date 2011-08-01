@@ -6,6 +6,7 @@
 #include "IO.hpp"
 //#include "rest.h"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
+#include <Attributes/EnglishWord.hpp> //class EnglishAuxiliaryVerb etc.
 #include <Attributes/Word.hpp> //for "class Word" etc.
 #include <fstream> //for std::ofstream
 #include <ios>//fo ios_base
@@ -323,6 +324,9 @@ void OneLinePerWordPair::InsertEnglishNoun(
 void OneLinePerWordPair::InsertEnglishMainVerb(
   const std::string & strCurrentWordData
   , BYTE byVocabularyType
+  //This set keeps track of whether for the _same_ vocabulary a
+  //"voc and transl" object was added to a trie node, e.g.
+  // to not insert a "voc and transl" for the same vocabulary more than once.
   , std::set<LetterNode *> stdsetpletternodeLastStringChar
   )
 {
@@ -412,8 +416,8 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
   //            , nIndexOfCurrentChar - nIndexOf1stChar );
   #ifdef _INSERT_INTO_HASH_TREE
           if( byAllowsProgressiveForm )
-//            g_lettertree.InsertProgressiveReferringVerbAttributes(
-            s_p_lettertree->InsertProgressiveReferringVerbAttributes(
+//            g_lettertree.InsertPresentParticipleReferringVerbAttributes(
+            s_p_lettertree->InsertPresentParticipleReferringVerbAttributes(
               //This set is to ensure that if strings for the SAME vocabulary
               // not 2 or more VocAndTransl object should be inserted.
               stdsetpletternodeLastStringChar
@@ -433,13 +437,42 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
         }
         break ;
         case string_index_for_past_tense :
+          stdstrInfinitive = strCurrentWordData.substr(
+            nIndexOf1stWordChar , nIndexOfCurrentChar - nIndexOf1stWordChar ) ;
+//        //Ensure insertion into the trie because the grammar part should
+          // not be as for the infinitive.
+//          bInsertNewVocabularyAndTranslation = true;
+
 //        p_englishverb->m_strPastTense = strCurrentWordData.substr(
 //          nIndexOf1stWordChar, nIndexOfCurrentChar - nIndexOf1stWordChar );
+
+//          s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
+//            stdsetpletternodeLastStringChar
+//            //, LetterNode * pletternodeCurrent
+//            //, VocabularyAndTranslation * pvocabularyandtranslation
+//            , bInsertNewVocabularyAndTranslation
+//            , EnglishWord::main_verb_past
+//            , strCurrentWordData
+//            , nIndexOfCurrentChar - nIndexOf1stWordChar
+//            , nIndexOf1stWordChar
+//            ) ;
+          s_p_lettertree->InsertPastTenseReferringVerbAttributes(
+              stdsetpletternodeLastStringChar
+              , stdstrInfinitive
+              , byNumberOfObjectsAllowed
+            );
         break ;
       //if(delemiterCount==2)
         case string_index_for_past_participle :
 //        p_englishverb->m_strPastParticiple = strCurrentWordData.substr(
 //          nIndexOf1stWordChar, nIndexOfCurrentChar - nIndexOf1stWordChar );
+          stdstrInfinitive = strCurrentWordData.substr(
+            nIndexOf1stWordChar , nIndexOfCurrentChar - nIndexOf1stWordChar ) ;
+          s_p_lettertree->InsertPastParticipleReferringVerbAttributes(
+              stdsetpletternodeLastStringChar
+              , stdstrInfinitive
+              , byNumberOfObjectsAllowed
+            );
         break ;
 //      if(delemiterCount == 3)
 //        p_englishverb->m_strPreposition = strCurrentWordData.substr(
@@ -479,7 +512,7 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
       if( chCurrent == '1' || chCurrent == '3' )
       {
 //        p_englishverb->m_bAllowsIngForm = 1;
-//        g_lettertree.InsertProgressiveReferringVerbAttributes(
+//        g_lettertree.InsertPresentParticipleReferringVerbAttributes(
 //          //This set is to ensure that if strings for the SAME vocabulary
 //          // not 2 or more VocAndTransl object should be inserted.
 //          stdsetpletternodeLastStringChar
@@ -1185,7 +1218,7 @@ void OneLinePerWordPair::extract(
 //      byVocabularyType = WordFileWordClassValueToZeroBasedIndex(
 //        byVocabularyType) ;
 
-      //Make empty, else VocabularyAndTranslation kann not be appended to the
+      //Make empty, else VocabularyAndTranslation can not be appended to the
       //last LetterNode if e.g. noun "love" followed by verb "love".
       stdsetpletternodeLastStringChar.clear() ;
       //switch ( str[ WORD_TYPE_CHAR_INDEX ] )

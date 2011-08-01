@@ -25,6 +25,7 @@
 //#include <wx/event.h> //for EVT_CLOSE
 //#include <wx/html/htmlwin.h>
 #include <wx/arrstr.h> //wxArrayString
+#include <wx/bmpbuttn.h> //class wxBitmapButton
 #include <wx/sizer.h> //class wxBoxSizer
 #include <wx/splitter.h> //class wxSplitterWindow
 #include <wx/textctrl.h> //class wxTextCtrl
@@ -50,6 +51,9 @@
 #include <bitmaps/add_translation_rules.xpm>
 //For array "add_transformation_rules_xpm" .
 #include <bitmaps/add_transformation_rules.xpm>
+
+#include <bitmaps/info.xpm>
+
 //For array "remove_grammar_rules_xpm" .
 #include <bitmaps/remove_grammar_rules.xpm>
 //For array "remove_translation_rules_xpm" .
@@ -112,6 +116,8 @@ BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
     wxTextInputDlg::OnResolveSuperclassGrammarParts )
   EVT_BUTTON( ID_Resolve1ParseLevel ,
     wxTextInputDlg::OnResolve1ParseLevelButton)
+  EVT_BUTTON( ID_DrawParseTree ,
+    wxTextInputDlg::OnDrawParseTreeButton)
   EVT_BUTTON( ID_Info, wxTextInputDlg::OnInfoButton)
   EVT_CLOSE( wxTextInputDlg::OnClose)
 END_EVENT_TABLE()
@@ -184,6 +190,7 @@ void wxTextInputDlg::AddButtons()
       wxBOTTOM
     , 2 );
   AddShowInformationButton( p_boxsizerButtons ) ;
+  AddDrawParseTreeButton( p_boxsizerButtons);
   p_boxsizerOuter->Add( p_boxsizerButtons ) ;
 }
 
@@ -245,6 +252,28 @@ void wxTextInputDlg::AddAddVocAttrDefsButton( wxSizer * p_sizer )
     , wxBitmap( add_vocable_attribute_definitions_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("add vocable attribute definitions")) ;
+  p_sizer->Add(
+    mp_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+}
+
+void wxTextInputDlg::AddDrawParseTreeButton( wxSizer * p_sizer )
+{
+  mp_wxbutton = new //wxButton(
+    wxBitmapButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_DrawParseTree
+  //    , wxT("t")
+    , wxBitmap( info_xpm)
+    ) ;
+  mp_wxbutton->SetToolTip( wxT("(re-)draw parse tree")) ;
   p_sizer->Add(
     mp_wxbutton
     , 0 //strech factor. 0=do not stretch
@@ -409,14 +438,16 @@ void wxTextInputDlg::AddResolveSuperClassesButton( wxSizer * p_sizer )
 
 void wxTextInputDlg::AddShowInformationButton( wxSizer * p_sizer )
 {
-  mp_wxbutton = new wxButton(
+  mp_wxbutton = new //wxButton(
+    wxBitmapButton(
     //mp_wxsplitterwindow
     //m_panelSplitterTop
     //p_boxsizerOuter
     this
     , //wxID_ANY
     ID_Info
-    , wxT("info")
+//    , wxT("info")
+    , wxBitmap( info_xpm)
     ) ;
   mp_wxbutton->SetToolTip( wxT("show information")) ;
   p_sizer->Add(
@@ -768,6 +799,11 @@ void wxTextInputDlg::OnClose( wxCloseEvent & wxcmd )
 //  Close() ;
   //::wxGetApp().ExitMainLoop() ;
   LOGN("wxTextInputDlg::OnClose end")
+}
+
+void wxTextInputDlg::OnDrawParseTreeButton(wxCommandEvent & wxcmd )
+{
+  mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
 }
 
 void wxTextInputDlg::OnInfoButton( wxCommandEvent & wxcmd )

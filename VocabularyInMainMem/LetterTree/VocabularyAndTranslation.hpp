@@ -123,6 +123,17 @@ class LetterNode ;
       return g_ar_stdstrWordClass[ m_byType - WORD_TYPE_NOUN ] ;
     }
 
+    void PointToAttributeData(
+        VocabularyAndTranslation * p_vocabularyandtranslationPointTo)
+    {
+      m_arstrEnglishWord =
+          p_vocabularyandtranslationPointTo->m_arstrEnglishWord ;
+      m_arstrGermanWord=
+          p_vocabularyandtranslationPointTo->m_arstrGermanWord ;
+      m_arbyAttribute=
+          p_vocabularyandtranslationPointTo->m_arbyAttribute ;
+    }
+
     //by: only the lowest 2 bit should be used.
     void SetNounTranslationType(BYTE by)
     {

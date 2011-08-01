@@ -257,11 +257,16 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
         )
       ) ;
   }
-#ifdef _DEBUG
+//#ifdef _DEBUG
   else
+  {
+      mr_i_userinterface.Message(
+        "For inserting voc attr def.: word class \"" + r_stdstrWordClass
+        + "\" is not avaible");
     DEBUGN("Couldn't find GetGrammarPartID for word class"
       << r_stdstrWordClass )
-#endif
+  }
+//#endif
 }
 
 bool TranslateParseByRiseTree::AllConditionsMatch(
@@ -861,6 +866,7 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   )
 {
   bool bIdentical = false ;
+  bool bAtLeast1TranslationRuleApplies = false;
   DEBUG_COUT("TranslationRuleApplies--beg\n")
   DEBUG_COUT("number of translation rules:" <<
       m_stdmap_translationrule2ConditionsAndTranslation.size() << "\n")
@@ -911,7 +917,8 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
         )
     {
       //Use a pointer, else the TranslationRule destructor is called.
-      const TranslationRule * p_translationrule =
+//      const TranslationRule * p_translationrule =
+      TranslationRule * p_translationrule = (TranslationRule *)
         //c_iter_p_translationrule2conditionsandtranslation->first ;
         & c_rev_iter_translationrule2conditionsandtranslation->first ;
       std::string std_strTranslationRuleSyntaxTreePath =
@@ -966,7 +973,9 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
           LOGN("All conditions match for STP \"" << stdstrCurrentParseTreePath
             << "\"" )
            //std::string str =
-           r_stdstrTranslation = //GetTranslationEquivalent(
+          if( r_stdstrTranslation != "" )
+            r_stdstrTranslation += "|";
+           r_stdstrTranslation += //GetTranslationEquivalent(
               //r_cnt ,
               //r_stdvec_p_grammarpartPath
 //              ) ;
@@ -974,21 +983,28 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
                 r_stdvec_p_grammarpartPath.back() ) ;
           LOGN( FULL_FUNC_NAME << "--adding translation \""
               << r_stdstrTranslation << "\"" )
+          if(p_translationrule->m_syntaxtreepathInsertionForTranslation.
+              m_wNumberOfElements > 0)
+          {
+              p_translationrule->Insert(r_stdvec_p_grammarpartPath,
+                  r_stdstrTranslation);
+          }
 //           r_wConsecutiveID = p_translationrule->ConsecutiveID(
            rp_grammarpartWithConsecutiveID = p_translationrule->
                GetGrammarPartWithConsecutiveID(
              r_stdvec_p_grammarpartPath ) ;
            r_byPersonIndex = r_cnt.m_byPersonIndex ;
 
-           return true ;
-//           bIdentical = true;
+//           return true ;
+           bAtLeast1TranslationRuleApplies = true;
         }
       }
       DEBUG_COUT("TranslationRuleApplies--after loop\n")
     }
   }
   DEBUG_COUT("TranslationRuleApplies--end\n")
-  return bIdentical ;
+  return //bIdentical ;
+      bAtLeast1TranslationRuleApplies;
 }
 
 TranslateParseByRiseTree::~TranslateParseByRiseTree()

@@ -1,0 +1,35 @@
+<vocabulary_attribute_definitons>
+  <vocabulary_attribute_definiton
+    word_class="adverb"
+    attribute_name="German_adverb"
+    language="German"
+    attribute_type="string"
+    attribute_index="0"
+    attribute_length="1"
+    />
+	
+  <vocabulary_attribute_definiton 
+    attribute_name="GermanMainVerb0ObjParticiplePerfect"
+    word_class="mainVerbInf0Obj" 
+    language="German"
+    attribute_type="string"
+    attribute_index="13"
+    attribute_length="1" 
+    />
+  <vocabulary_attribute_definiton
+    word_class="mainVerbInf0Obj"
+    attribute_name="grammatical_case"
+    language="German"
+    attribute_type="bit"
+    attribute_index="0"
+    attribute_length="1"
+    />
+  <vocabulary_attribute_definiton
+    word_class="pers_pronoun"
+    attribute_name="pers_pronoun_German"
+    language="German"
+    attribute_type="string"
+    attribute_index="0"
+    attribute_length="1"
+    />
+</vocabulary_attribute_definitons>

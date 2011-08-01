@@ -107,6 +107,7 @@ namespace Xerces
           GettingXMLattributeValueFailed( stdstrXMLattributeName ) ;
         }
 
+
         stdstrXMLattributeName = "language" ;
         //->the definition either applies to English or German.
         if( XercesAttributesHelper::GetAttributeValue(

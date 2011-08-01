@@ -36,9 +36,14 @@ private:
   std::string m_stdstrConditionByteAttrValue ;
   std::string m_stdstrConditionStringAttrValue ;
   std::string m_stdstrConditionAttributeName ;
+  std::string m_std_strGrammarPartName;
+  std::string m_std_strParentNodeGrammarPartName;
   std::string m_stdstrTranslationRuleAttributeName ;
   std::string m_stdstrTranslation ;
   std::string m_stdstrTranslationRuleSyntaxTreePath ;
+  std::string m_std_strSyntaxTreePathForInsertionForTranslation;
+  unsigned m_uiTranslationInsertion;
+  unsigned m_uiParentNodeInsertion;
 public:
   SAX2TranslationRuleHandler(
     TranslateParseByRiseTree &

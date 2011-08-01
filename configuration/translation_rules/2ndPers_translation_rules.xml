@@ -1,0 +1,74 @@
+﻿<translation_rules>
+  <translation_rule
+    syntax_tree_path="you"
+	translation="du"
+	concatenation_ID="du"
+  />
+  <translation_rule
+    syntax_tree_path="you"
+	translation="ihr"
+	concatenation_ID="ihr"
+  />
+  <translation_rule
+    syntax_tree_path="you_sing"
+	translation="Sie"
+	concatenation_ID="Sie"
+  />
+ <!-- 0 object verbs -->
+  <translation_rule
+    syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf0Obj"
+    attribute_name="GerMainVerb0Obj2ndPersSing" 
+	concatenation_ID="du"
+  />
+  <translation_rule
+    syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf0Obj"
+    attribute_name="GerMainVerb0Obj2ndPersPlur" 
+	concatenation_ID="ihr"
+  />
+  <!-- e.g. "Sie (Einzahl, förmlich) arbeiten" -->
+  <translation_rule
+    syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf0Obj"
+    attribute_name="GerMainVerb0Obj3rdPersPlur"
+	concatenation_ID="Sie"
+  />
+  <translation_rule
+    syntax_tree_path="2ndPersSingSimplePresentClause.MainVerbPast0Obj"
+    attribute_name="GerMainVerb0Obj2ndPersSing" 
+	concatenation_ID="du"
+  />
+  <translation_rule
+    syntax_tree_path="2ndPersSingSimplePastClause.MainVerbPast0Obj"
+    attribute_name="GerMainVerb0Obj2ndPersSingPast" 
+	concatenation_ID="du"
+  />
+  <!-- perfect tense 0 obj-->
+	  <translation_rule
+		syntax_tree_path="2ndPersSingPerfectClause0Obj.PerfectPredicate0Obj.mainVerbPastParticiple0Obj"
+		attribute_name="GermanMainVerb0ObjParticiplePerfect"
+	  />
+	  <translation_rule
+		syntax_tree_path="2ndPersSingPerfectClause0Obj.PerfectPredicate0Obj.haveInfinitive"
+		attribute_name="haben2ndPersSing"
+	  />
+ <!-- 1 object verbs -->
+	  <translation_rule
+		syntax_tree_path="YouSimplePresent1Obj.mainVerbInf1Obj"
+		attribute_name="GerMainVerb1Obj2ndPersSing"
+	  />
+  <translation_rule
+    syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf1Obj"
+    attribute_name="GerMainVerb1Obj2ndPersSing" 
+	concatenation_ID="du"
+  />
+  <translation_rule
+    syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf1Obj"
+    attribute_name="GerMainVerb0Obj2ndPersPlur" 
+	concatenation_ID="ihr"
+  />
+  <!-- e.g. "Sie (Einzahl, förmlich) arbeiten" -->
+  <translation_rule
+    syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf1Obj"
+    attribute_name="GerMainVerb0Obj3rdPersPlur"
+	concatenation_ID="Sie"
+  />
+</translation_rules>
