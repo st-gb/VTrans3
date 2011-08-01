@@ -1,0 +1,46 @@
+<vocabulary_attribute_definitons>
+  <!--//index (singular is stored at index 0 in VocabularyAndTransaltion
+      // string array)-->
+  <vocabulary_attribute_definiton
+    word_class="noun"
+    attribute_name="Eng_singular"
+    language="English"
+    attribute_type="string"
+    attribute_index="0"
+    attribute_length="1"
+    />
+  <!--//index (plural is stored at index 1 in VocabularyAndTranslation
+      // string array)-->
+  <vocabulary_attribute_definiton
+    word_class="noun"
+    attribute_name="Eng_plural"
+    language="English"
+    attribute_type="string"
+    attribute_index="1"
+    attribute_length="1"
+    />
+  <vocabulary_attribute_definiton
+    word_class="noun"
+    attribute_name="German_singular"
+    language="German"
+    attribute_type="string"
+    attribute_index="0"
+    attribute_length="1"
+    />
+  <vocabulary_attribute_definiton
+    word_class="noun"
+    attribute_name="German_noun_article"
+    language="German"
+    attribute_type="bit"
+    attribute_index="0"
+    attribute_length="1"
+    />
+  <vocabulary_attribute_definiton
+    word_class="noun"
+    attribute_name="German_plural"
+    language="German"
+    attribute_type="string"
+    attribute_index="1"
+    attribute_length="1"
+    />
+</vocabulary_attribute_definitons>

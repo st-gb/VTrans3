@@ -123,6 +123,12 @@ public:
 
   //Code that should be executed by every constructor.
   void Init() ;
+  GrammarPart * InsertChild(GrammarPart * &, unsigned uiGrammarPartID,
+      BYTE bySideWhereToInsertChildNode);
+  GrammarPart * InsertLeftChild(unsigned uiGrammarPartID,
+      BYTE bySideWhereToInsertChildNode);
+  GrammarPart * InsertRightChild(unsigned uiGrammarPartID,
+      BYTE bySideWhereToInsertChildNode);
 
   //Define a < operator in order to insert into a container like std::set.
   bool operator < (const GrammarPart & ) const ;

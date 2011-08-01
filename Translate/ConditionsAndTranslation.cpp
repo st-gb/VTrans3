@@ -43,8 +43,10 @@ bool ConditionsAndTranslation::AllConditionsMatch(
         )
     {
       const Condition & cr_condition = *c_iter ;
+      std::string std_stringSyntaxTreePathOfCondition = cr_condition.
+        m_syntaxtreepath.GetAs_std_string();
       LOGN("current condition's syntax tree path:" <<
-          cr_condition.m_syntaxtreepath.GetAs_std_string() )
+        std_stringSyntaxTreePathOfCondition )
       //if( r_cond.m_syntaxtreepath.IsPartOf(m_stdvec_wCurrentGrammarPartPath) )
       //TODO get pointer to leaf node of r_cond.m_syntaxtreepath
       p_grammarpartLeaf = cr_condition.m_syntaxtreepath.GetLeaf(
@@ -237,6 +239,9 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                   std::string & r_stdstrAttrVal = p_grammarpartLeaf->
                     m_pvocabularyandtranslation->m_arstrGermanWord[
                     r_atapas.m_wIndex ] ;
+                  //If function that modifies as string (like for
+                  //"I trust the children." : for "Kinder" ->
+                  //"Kindern")
                   if( m_pfn_TransformString )
                   {
                     //Use a copy, else the VocAndTransl's string is modified

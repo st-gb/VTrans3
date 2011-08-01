@@ -170,9 +170,36 @@
     //node to be have less than 255 elements.
     void createMapping() ;
 
+    void InsertIntoTrieAndReferToExistingVocData(
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar,
+      BYTE byVocType, const std::string & c_r_std_strInsertVocAndTranslObjAt);
+    //Add a new VocabularyAndTranslation object (because of the grammar part ID for
+    //participle progressive) to the trie node but refer to the
+    //attribute data of an existing noun to not waste main memory.
+    void InsertPastTenseReferringVerbAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      //The infinitive should not be modified because it may be needed afterwards.
+      , const std::string & r_std_strPastTense
+      , BYTE byNumberOfObjectsAllowedByVerb
+      );
+    //Add a new VocabularyAndTranslation object (because of the grammar part ID for
+    //participle progressive) to the trie node but refer to the
+    //attribute data of an existing noun to not waste main memory.
+    void InsertPastParticipleReferringVerbAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      //The infinitive should not be modified because it may be needed afterwards.
+      , const std::string & r_std_strPastTense
+      , BYTE byNumberOfObjectsAllowedByVerb
+      );
     void InsertPersonalPronouns() ;
     void InsertPersonalPronounsObjectiveForm() ;
-    void InsertProgressiveReferringVerbAttributes(
+    // a present participle is a "infinitive + ing"
+    //see http://en.wikipedia.org/wiki/Participle#Modern_English:
+    void InsertPresentParticipleReferringVerbAttributes(
       //This set is to ensure that if strings for the SAME vocabulary
       // not 2 or more VocAndTransl object should be inserted.
       std::set<LetterNode *> & stdsetpletternodeLastStringChar
@@ -221,7 +248,7 @@
 
     //Make faster by inline
     //inline 
-    VocabularyAndTranslation * insert(
+    LetterNode * insert(
       const char * pch,
       int start,
       int length //,
@@ -230,8 +257,16 @@
 //      ,BYTE byVocabularyType
       ) ;
 
-    void Insert(const std::string & r_stdstr, BYTE byWordClass ) ;
-    void Insert(EnglishWord & ew , GermanWord & gw ) ;
+    //void
+    void * Insert(const std::string & r_stdstr, BYTE byWordClass ) ;
+    void Insert(const char * c_p_ch, unsigned uiGrammarPartID,
+           void * p_v);
+    void
+//    VocabularyAndTranslation *
+    //void *
+      Insert(EnglishWord & ew , GermanWord & gw
+      , void * p_v
+      ) ;
 
     //std::set<VocabularyAndTranslation> * search(
     std::set<VocabularyAndTranslation *> * search(
@@ -262,7 +297,8 @@
     }
     
   //static
-    inline void HandleVocabularyAndTranslationPointerInsertion(
+    inline //void
+    VocabularyAndTranslation * HandleVocabularyAndTranslationPointerInsertion(
       //This set is to ensure that for identical strings for the SAME vocabulary
       //not 2 or more VocAndTransl object should be inserted into the same
       //LetterNode of the last character.

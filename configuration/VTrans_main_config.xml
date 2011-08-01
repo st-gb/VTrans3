@@ -1,13 +1,22 @@
 <!--  -->
 <VTrans_main_cfg>
  <vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" />
- <vocabulary_attribute_definition_file path="configuration/Vocabulary_attribute_definitions.xml" />
+ 
+ <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/Vocabulary_attribute_definitions.xml" />
+ <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/finite_verbforms_attribute_definitions.xml" />
+ <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/noun_attribute_definitions.xml" />
  
  <!--grammar_rule_file must appear before translation_rule_file with translation_rules 
    that depend on the grammar rule within the grammar_rule_file -->
- <grammar_rule_file path="configuration/grammar_rules.xml" />
+  <!--ensure the obj grammar rules are loaded at first. -->  
+  <grammar_rule_file path="configuration/grammar_rules/0_grammar_rules.xml" />
+ <grammar_rule_file path="configuration/grammar_rules/reflexive_pronouns_grammar_rules.xml" />
+ <grammar_rule_file path="configuration/grammar_rules/1st_person_singular_grammar_rules.xml" />
+ <grammar_rule_file path="configuration/grammar_rules/2nd_person_grammar_rules.xml" />
  
  <transformation_rule_file path="configuration/transformation_rules.xml" />
+ 
+ <translation_rule_file path="configuration/translation_rules/2ndPers_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersPlurClauseAllows1Obj_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSingClauseAllows0Obj_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePresentClause.xml" />

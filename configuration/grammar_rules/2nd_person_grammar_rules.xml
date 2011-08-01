@@ -1,0 +1,40 @@
+<grammar_rules>
+  <!-- you can be "du", "Sie" (formally) or "ihr" in German. -->
+  <grammar_rule left_child="you" right_child="mainVerbInf0Obj" superordinate="2ndPersSingSimplePresentClause" />
+  
+  <grammar_rule left_child="you" right_child="mainVerbInf0Obj" superordinate="2ndPersSingSimplePresentClause" />
+
+  <!-- you plural : "3rd pers sing" + "you" = "ihr"-->
+	  <!-- you("du") + you("du") = "ihr" you("du") + you("ihr") = "ihr" you("du") + you("Sie") = "ihr"-->
+	  <grammar_rule left_child="you" superordinate="you_plural_part" /> 
+	  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" superordinate="you_plural_part" />
+	  <grammar_rule left_child="they" superordinate="you_plural_part" />
+
+	<grammar_rule left_child="you" right_child="and" superordinate="you_and" />
+	<grammar_rule left_child="you_plural_part" right_child="and" superordinate="you_plural_part_and" />
+    
+	<!-- = "ihr" -->
+	<grammar_rule left_child="you_and" right_child="you_plural_part" superordinate="you_plural" />
+	<grammar_rule left_child="you_plural_part_and" right_child="you" superordinate="you_plural" />
+	
+    <grammar_rule left_child="you_plural" right_child="and" superordinate="you_plural_and" />
+  
+  <grammar_rule left_child="you" right_child="and" superordinate="you_and" />
+  
+  <grammar_rule left_child="you_and" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="you_plural" />
+  <grammar_rule left_child="you_plural_and" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="you_plural" />
+  
+  <!-- clause -->
+  <grammar_rule left_child="you_plural" right_child="mainVerbInf0Obj" superordinate="YouPluralSimplePresent0Obj" />
+  <grammar_rule left_child="you_plural" right_child="mainVerbInf1Obj" superordinate="YouPluralSimplePresent1Obj" />
+
+  <grammar_rule left_child="you" right_child="mainVerbInf1Obj" superordinate="YouSimplePresent1Obj" />
+  <grammar_rule left_child="you" right_child="MainVerbPast1Obj" superordinate="YouSimplePast1Obj" />
+  <grammar_rule left_child="YouSimplePresent1Obj" right_child="obj" superordinate="YouSimplePresentClause1Obj" />
+  
+  <grammar_rule left_child="you" right_child="MainVerbPast0Obj" superordinate="2ndPersSingSimplePastClause" />
+  
+  <!--<grammar_rule left_child="have2ndPersonSingular" right_child="mainVerbPastParticiple0Obj" superordinate="PerfectPredicate0Obj" />-->
+  <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple0Obj" superordinate="PerfectPredicate0Obj" />
+  <grammar_rule left_child="you_sing" right_child="PerfectPredicate0Obj" superordinate="2ndPersSingPerfectClause0Obj" />
+</grammar_rules>

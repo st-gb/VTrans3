@@ -1,0 +1,17 @@
+<grammar_rules>
+  <!--1st person singular begin-->
+  <grammar_rule left_child="I" right_child="and" superordinate="I_and"/>
+  <!--this rule is to avoid determining the person ("person index") -> faster -->
+  <grammar_rule left_child="I" right_child="mainVerbInf0Obj" superordinate="1stPersSingSimplePresentClause"/>
+  <grammar_rule left_child="I" right_child="mainVerbInf1Obj" superordinate="1stPersSingSimplePresentClauseAllow1Obj"/>  
+  <grammar_rule left_child="I" right_child="mainVerbInf2Obj" superordinate="1stPersSingSimplePresentClauseAllow2Obj"/>
+  
+  <grammar_rule left_child="1stPersSingSimplePresentClauseAllow1Obj" right_child="obj"
+    superordinate="1stPersSingSimplePresentClause1Obj"/>
+  <grammar_rule left_child="1stPersSingSimplePresentClauseAllow1Obj" right_child="myself"
+    superordinate="1stPersSingSimplePresentClause1Obj"/>
+  <grammar_rule left_child="1stPersSingSimplePresentClauseAllow2Obj" right_child="obj"
+    superordinate="1stPersSingSimplePresentClause2Obj"/>
+  
+  <!--1st person singular end-->
+</grammar_rules>

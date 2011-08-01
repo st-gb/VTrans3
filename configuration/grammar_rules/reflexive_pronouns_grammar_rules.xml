@@ -1,0 +1,21 @@
+<grammar_rules>
+  <!--the following rules are for permitting false reflexive forms ("I like yourself" / 
+    for only allowing the reflexive forms for the appropriate person in the subject ("I like myself")-->
+  <grammar_rule left_child="myself" superordinate="myself_ObjEnumEle"/>
+  <grammar_rule left_child="myself_ObjEnumEle" right_child="and" superordinate="myself_ObjEnumEle_and"/>
+  <grammar_rule left_child="myself_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="myself_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="myself_ObjEnumEle" superordinate="myself_ObjEnumEle"/>
+  <grammar_rule left_child="myself_ObjEnumEle" superordinate="3rdPersPlurObj"/>
+
+  <grammar_rule left_child="himself" superordinate="himself_ObjEnumEle"/>
+  <grammar_rule left_child="himself_ObjEnumEle" right_child="and" superordinate="himself_ObjEnumEle_and"/>
+  <grammar_rule left_child="himself_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="himself_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="himself_ObjEnumEle" superordinate="himself_ObjEnumEle"/>
+  <grammar_rule left_child="himself_ObjEnumEle" superordinate="3rdPersPlurObj"/>
+
+  <grammar_rule left_child="themselves" superordinate="themselves_ObjEnumEle"/>
+  <grammar_rule left_child="themselves_ObjEnumEle" right_child="and" superordinate="themselves_ObjEnumEle_and"/>
+  <grammar_rule left_child="themselves_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="themselves_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="themselves_ObjEnumEle" superordinate="themselves_ObjEnumEle"/>
+  <grammar_rule left_child="themselves_ObjEnumEle" superordinate="3rdPersPlurObj"/>
+</grammar_rules>

@@ -4,6 +4,8 @@
 // vorkompilierten Header.[...]"
 #include "../../StdAfx.h"
 #include <Attributes/Word.hpp> //class Word, EnglishWord, EnglishNoun
+#include <Attributes/EnglishWord.hpp> //for class EnglishWord's enum
+
 //header file for this VocabularyAndTranslation class
 #include "VocabularyAndTranslation.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
@@ -29,6 +31,11 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     //byArraySizeForGer = NUMBER_OF_STRINGS_FOR_GERMAN_NOUN ;
     m_arbyAttribute = new BYTE[2] ;
     memset(m_arbyAttribute,0,2) ;
+    break;
+  case EnglishWord::auxiliary_verb:
+    m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
+    m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
+    m_arbyAttribute = new BYTE[2] ;
     break;
   case ENGLISH_MAIN_VERB:
   case EnglishWord::main_verb_allows_0object_infinitive:

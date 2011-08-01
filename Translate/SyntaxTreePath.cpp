@@ -140,8 +140,8 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
       bNewEle = false ;
     }
   } //"for"-loop
-  DEBUG_COUT("SyntaxTreePath::CreateGrammarPartIDArray size:" <<
-      vec_wElements.size() + "\n" )
+//  DEBUG_COUT("SyntaxTreePath::CreateGrammarPartIDArray size:" <<
+//      vec_wElements.size() + "\n" )
   WORD * ar_wElements = new WORD [ vec_wElements.size() ] ;
   if( ar_wElements ) //<> 0
   {
@@ -193,16 +193,21 @@ std::string SyntaxTreePath::GetAs_std_string( ) const
 #endif
 //  for(WORD  w=0; w < m_ar_wElements ; ++ w )
 //    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
-  for( WORD wIndex = 0 ; wIndex < m_wNumberOfElements ; ++ wIndex )
+  if( m_wNumberOfElements )
   {
-#ifdef _DEBUG
-    wGrammarPartID = m_ar_wElements[ wIndex ] ;
-    stdstr += mp_parsebyrise->GetGrammarPartName( wGrammarPartID )
-        + "." ;
-#else
-    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[ wIndex ] )
-        + "." ;
-#endif
+    wGrammarPartID = m_ar_wElements[ 0 ] ;
+    stdstr += mp_parsebyrise->GetGrammarPartName( wGrammarPartID );
+
+    for( WORD wIndex = 1 ; wIndex < m_wNumberOfElements ; ++ wIndex )
+    {
+  #ifdef _DEBUG
+      wGrammarPartID = m_ar_wElements[ wIndex ] ;
+      stdstr += "." + mp_parsebyrise->GetGrammarPartName( wGrammarPartID );
+  #else
+      stdstr += "." + mp_parsebyrise->GetGrammarPartName(
+        m_ar_wElements[ wIndex ] );
+  #endif
+    }
   }
   return stdstr ;
 }
@@ -308,6 +313,8 @@ GrammarPart * SyntaxTreePath::GetLeaf(
           m_ar_wElements[0] )
       {
         p_grammarpart = *c_reverse_iter_stdvec_p_grammarpart ;
+        std::string std_strGrammarPartNameGrammarPartPath =
+          mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID);
         break ;
       }
     }
@@ -317,6 +324,9 @@ GrammarPart * SyntaxTreePath::GetLeaf(
     {
       //bool
       GrammarPart * p_grammarpartChild = NULL ;
+      unsigned uiCurrentGrammarPartIDfromThisSyntaxTreePath;
+      std::string std_strCurrentGrammarPartNameFromThisSyntaxTreePath;
+      std::string std_strGrammarPartNameGrammarPartPath;
       //"Walk" directing the leaf in the
       //e.g. beginning from "def_article_noun" go further the way that the rule
       //IDs define.
@@ -329,14 +339,23 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       // So take the child node that has the grammar part ID of "definite_article"
       for( WORD wIndex = 1 ; wIndex < m_wNumberOfElements ; ++ wIndex )
       {
+        uiCurrentGrammarPartIDfromThisSyntaxTreePath = m_ar_wElements[ wIndex ];
+#ifdef _DEBUG
+        std_strCurrentGrammarPartNameFromThisSyntaxTreePath =
+          mp_parsebyrise->GetGrammarPartName(
+          uiCurrentGrammarPartIDfromThisSyntaxTreePath );
+        std_strGrammarPartNameGrammarPartPath =
+          mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID);
+#endif //#ifdef _DEBUG
         DEBUG_COUTN("the next child should have grammar part ID: "
           << m_ar_wElements[ wIndex ]
           << " as string: "
-          << mp_parsebyrise->GetGrammarPartName( m_ar_wElements[ wIndex ] )
+          << std_strCurrentGrammarPartNameFromThisSyntaxTreePath
           )
         p_grammarpartChild = p_grammarpart->mp_grammarpartLeftChild ;
         if( p_grammarpartChild &&
-          p_grammarpartChild->m_wGrammarPartID == m_ar_wElements[ wIndex ] )
+          p_grammarpartChild->m_wGrammarPartID ==
+           uiCurrentGrammarPartIDfromThisSyntaxTreePath )
         {
           p_grammarpart = p_grammarpartChild ;
         }
@@ -344,7 +363,8 @@ GrammarPart * SyntaxTreePath::GetLeaf(
         {
           p_grammarpartChild = p_grammarpart->mp_grammarpartRightChild ;
           if( p_grammarpartChild &&
-            p_grammarpartChild->m_wGrammarPartID == m_ar_wElements[ wIndex ] )
+            p_grammarpartChild->m_wGrammarPartID ==
+             uiCurrentGrammarPartIDfromThisSyntaxTreePath )
           {
             p_grammarpart = p_grammarpartChild ;
           }
@@ -491,7 +511,7 @@ bool SyntaxTreePath::Matches(
             )
           {
             bIdentical = false ;
-            DEBUGN("TranslationRuleApplies--not identical\n")
+//            DEBUGN( FULL_FUNC_NAME << "--not identical\n")
             break ;
           }
           -- wIndex ;

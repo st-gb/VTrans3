@@ -7,14 +7,14 @@
     syntax_tree_path="MainVerb3rdPersSingPres0Obj"
     attribute_name="GerMainVerb0Obj3rdPersSing" 
   />
-  <translation_rule 
+  <!--<translation_rule 
     syntax_tree_path="MainVerb3rdPersSingPres0Obj"
     translation="sich">
     <condition syntax_tree_path="MainVerb3rdPersSingPres0Obj"
      attribute_name="reflexive"
       byte_attribute_value="1"
     />
-  </translation_rule>
+  </translation_rule>-->
   <!--definite article singular-->
   <translation_rule 
     syntax_tree_path="definite_article_singular.definite_article"

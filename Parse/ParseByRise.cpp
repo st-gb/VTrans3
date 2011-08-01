@@ -16,6 +16,7 @@
 #include <preprocessor_macros/suppress_unused_variable.h>
 
 #include "ParseByRise.hpp" //class ParseByRise
+#include <Attributes/EnglishWord.hpp> //for class EnglishWord's English_word_class enum
 #include <Attributes/Token.h> //class PositionStringVector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
@@ -460,7 +461,8 @@ std::string ParseByRise::GetGrammarPartName(WORD wRuleID )
     m_stdmap_wRuleID2RuleName.find( wRuleID ) ;
   if( iter != m_stdmap_wRuleID2RuleName.end() )
     return iter->second ;
-  return std::string("?gram pt") ;
+  return std::string(//"?gram pt"
+      "*") ;
 }
 
 std::string ParseByRise::GetPathAs_std_string(
@@ -669,65 +671,6 @@ void ParseByRise::InitGrammar()
 
 }
 
-// \brief Insert a grammar part <-> grammar part name mapping for word classes.
-void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
-{
-  InsertGrammarRule( EnglishWord::noun, "noun" ) ;
-  InsertGrammarRule( EnglishWord::singular, "singular_noun" ) ;
-  InsertGrammarRule( EnglishWord::plural_noun, "plural_noun" ) ;
-//  InsertGrammarRule( EnglishWord::main_verb, "mainVerbInfinitive" ) ;
-  InsertGrammarRule( EnglishWord::main_verb_allows_0object_infinitive ,
-    "mainVerbInf0Obj" ) ;
-  InsertGrammarRule( EnglishWord::main_verb_allows_1object_infinitive ,
-    "mainVerbInf1Obj" ) ;
-  InsertGrammarRule( EnglishWord::main_verb_allows_2objects_infinitive ,
-    "mainVerbInf2Obj" ) ;
-
-  InsertGrammarRule( EnglishWord::mainVerbAllows0object3rdPersonSingularPresent,
-    "MainVerb3rdPersSingPres0Obj" ) ;
-  InsertGrammarRule( EnglishWord::mainVerbAllows1object3rdPersonSingularPresent,
-    "MainVerb3rdPersSingPres1Obj" ) ;
-  InsertGrammarRule( EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent,
-    "MainVerb3rdPersSingPres2Obj" ) ;
-  InsertGrammarRule( EnglishWord::main_verb_allows_0object_progressive_form,
-    "MainVerbProgressive0Obj" ) ;
-  InsertGrammarRule( EnglishWord::main_verb_allows_1object_progressive_form,
-    "MainVerbProgressive1Obj" ) ;
-  InsertGrammarRule( EnglishWord::main_verb_allows_2objects_progressive_form,
-    "MainVerbProgressive2Obj" ) ;
-
-  InsertGrammarRule( EnglishWord::adverb, "adverb" ) ;
-
-  InsertGrammarRule( EnglishWord::English_definite_article,
-    "definite_article" ) ;
-  InsertGrammarRule( EnglishWord::English_indefinite_article,
-    "indefinite_article" ) ;
-
-  InsertGrammarRule( EnglishWord::personal_pronoun_I , "I" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun_you_sing ,"you_sing" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun_he , "he") ;
-  InsertGrammarRule(EnglishWord::personal_pronoun_she , "she") ;
-  InsertGrammarRule(EnglishWord::personal_pronoun_it, "it" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun_we, "we" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun_you_plur, "you_plur" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun_they, "they" ) ;
-
-  InsertGrammarRule( EnglishWord::reflexive_pronoun_myself, "myself" ) ;
-  InsertGrammarRule( EnglishWord::reflexive_pronoun_yourself, "yourself" ) ;
-  InsertGrammarRule( EnglishWord::reflexive_pronoun_himself, "himself" ) ;
-  InsertGrammarRule( EnglishWord::reflexive_pronoun_herself, "herself" ) ;
-  InsertGrammarRule( EnglishWord::reflexive_pronoun_itself, "itself" ) ;
-  InsertGrammarRule( EnglishWord::reflexive_pronoun_ourselves, "ourselves" ) ;
-  InsertGrammarRule( EnglishWord::reflexive_pronoun_yourselves, "yourselves" );
-  InsertGrammarRule( EnglishWord::reflexive_pronoun_themselves, "themselves") ;
-
-  InsertGrammarRule( EnglishWord::conjunction_and ,"and" ) ;
-  InsertGrammarRule( EnglishWord::conjunction, "conjunction" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun, "pers_pronoun" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun_objective_form ,
-    "pers_pron_obj" ) ;
-}
-
 //Test if the grammar part is a word class.
 //All grammar rules are based on word classes. Word classes are the leaves of
 //the parse trees.
@@ -803,30 +746,7 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    , "clause"
 //    ) ;
 
-//  InsertGrammarRule(
-//    EnglishWord::English_definite_article,
-//    EnglishWord::singular ,
-//    "definite_article_singular"
-//    ) ;
-//  InsertGrammarRule(
-//    EnglishWord::English_definite_article,
-//    EnglishWord::plural_noun ,
-//    "definite_article_plural"
-//    ) ;
-//  InsertGrammarRule(
-//    EnglishWord::English_indefinite_article,
-//    EnglishWord::singular ,
-//    "indefinite_article_singular"
-//    ) ;
-//  InsertSuperClassGrammarRule(
-//    "indefinite_article_singular"
-//    , "article_singular"
-//    ) ;
-//  InsertSuperClassGrammarRule(
-//    "definite_article_singular"
-//    , "article_singular"
-//    ) ;
-
+//  InsertArticleGrammarRules
 //  InsertGrammarRulesFor3rdPersonSingular() ;
 
 //  InsertGrammarRule(
@@ -874,16 +794,6 @@ void ParseByRise::InsertFundamentalRuleIDs()
     "1stPersSingSimplePresentSP1Obj"
     , "myself_object"
     , "1stPersSingSimplePresent1ObjClause"
-    ) ;
-  InsertGrammarRule(
-    "you_sing" //"I"
-    , "mainVerbInf0Obj"
-    , "2ndPersSingSimplePresentClause" // = 1st person plural index / "we"
-    ) ;
-  InsertGrammarRule(
-    "you_sing" //"I"
-    , "mainVerbInf0Obj"
-    , "2ndPersPlurSimplePresentClause" // = 1st person plural index / "we"
     ) ;
 
 //  //This rule exists especially for cases where the singular and plural are the
@@ -1178,9 +1088,15 @@ void ParseByRise::InsertGrammarRule(
   std::map<std::string,WORD>::const_iterator c_iterRight =
     m_stdmap_RuleName2RuleID.find(
         cp_chRightGrammarRuleName ) ;
-  if( c_iterLeft != m_stdmap_RuleName2RuleID.end() &&
+  std::map<std::string,WORD>::const_iterator
+    c_iter_std_map_std_str2wRuleName2RuleIDend =
+    m_stdmap_RuleName2RuleID.end();
+  if( c_iterLeft != //m_stdmap_RuleName2RuleID.end()
+      c_iter_std_map_std_str2wRuleName2RuleIDend
+      &&
       //c_iterLeft
-      c_iterRight != m_stdmap_RuleName2RuleID.end()
+      c_iterRight != //m_stdmap_RuleName2RuleID.end()
+      c_iter_std_map_std_str2wRuleName2RuleIDend
       )
   {
     WORD wGrammarRuleIDLeft = c_iterLeft->second ;

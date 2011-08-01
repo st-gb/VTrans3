@@ -1,0 +1,38 @@
+<translation_rules>
+  <!-- e.g. "the car                    he likes works.":
+               \  /                      \/
+            3rdPersSingSubjOrObjEnumEle  /
+			        \                   /
+			 3rdPersSingEnumEleWithRelClause
+  -->
+    <!--syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingClauseAllows1Obj.*"-->
+	<!-- the syntax tree path _needs_ to start with "relative clause" grammar part.-->
+	<!--    syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingSubjOrObjEnumEle.article_singular.definite_article_singular.singular_noun"
+	-->
+	<!--	syntax_tree_path_where_to_insert_translation="article_singular" -->
+	<!-- 	syntax_tree_path_where_to_insert_translation="3rdPersSingEnumEleWithRelClause"  -->
+  <translation_rule 
+    syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
+    translation=", das"
+	syntax_tree_path_where_to_insert_translation="3rdPersSingEnumEleWithRelClause"
+	child_node_insertion_direction="left"
+	parent_node_insertion_direction="right"
+	grammar_part_name="relative_pronoun"
+	parent_node_grammar_part_name="relative_clause"
+	>
+    <condition syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingSubjOrObjEnumEle.article_singular.definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+  </translation_rule>
+	<!--
+	translation="rel clause"
+	-->
+  <translation_rule 
+    syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
+    attribute_name="GerMainVerb1Obj3rdPersSing"
+	>
+    <!--<condition syntax_tree_path="MainVerb3rdPersSingPres1Obj.3rdPersSingClauseAllows1Obj.3rdPersSingEnumEleWithRelClause"
+    />-->
+  </translation_rule>
+</translation_rules>

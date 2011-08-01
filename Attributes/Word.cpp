@@ -3,6 +3,9 @@
 #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordList.hpp"
 
+#include "EnglishWord.hpp" //class EnglishNoun etc.
+#include "GermanWord.hpp" //class GermanNoun etc.
+
 #include <typeinfo> //for typeid()
 #include "IO.h" //for "::LoadWords(...)"
 //#include "MainFrm.h"
@@ -139,90 +142,6 @@ BOOL Word::operator == (Word * pWordCompare)
 
 //EnglishAuxiliaryVerb::EnglishAuxiliaryVerb(){m_bIntegral=FALSE;}
 
-EnglishAuxiliaryVerb::EnglishAuxiliaryVerb( 
-  //const CString & str,
-  const VTrans::string_type & str,
-	bool bModalAuxiliary
-  )
-{
-	WORD i=0;
-	int start=0;
-	WORD wIndex=0;
-	m_bIntegral=TRUE;
-	while( i < str.length() )
-	{
-		if( str[i] == '\n' )
-		{
-			m_strWords[wIndex++] = //str.Mid(start,i-start);
-        str.substr( start, i - start ) ;
-			start = i + 1 ;
-		}
-		i++ ;
-	}
-	//ein modales Hilfsverb wird NICHT fï¿½r die ï¿½berstzung 
-	//unbedingt benï¿½tigt fï¿½r einige Zeitformen (im Gegensatz
-	//zu "to be" fï¿½r fortschreitenden Prï¿½sens ("I am working.")
-	m_bIntegral = ! bModalAuxiliary ;
-}
-
-//void EnglishAuxiliaryVerb::InitGetNextString( )
-//{
-//  m_byIndex = 0 ;
-//}
-
-bool EnglishAuxiliaryVerb::GetNextString( std::string & r_stdstr )
-{
-  bool bSucc = false ;
-  if( m_byIndex < NUMBER_OF_ENGLISH_AUX_STRINGS )
-  {
-    m_strWords [ m_byIndex ++ ] ;
-    bSucc = true ;
-  }
-  return bSucc ;
-}
-
-BYTE EnglishAuxiliaryVerb::GetWordClass()
-{
-  return auxiliary_verb ;
-}
-
-//inline
-void EnglishVerb::Get3rdPersonForm(
-  VTrans::string_type & r_vtransstr )
-{
-  WORD wStringSize = r_vtransstr.size() ;
-  if ( wStringSize > 2 )
-  {
-    VTrans::string_type vtransstrEnding = r_vtransstr.substr(
-      wStringSize - 2 ) ;
-   if( vtransstrEnding == //"wish->wishes"
-       "sh" || vtransstrEnding ==
-           //"switch->switches"
-       "ch"
-     )
-   {
-     r_vtransstr += "es" ;
-     return ;
-   }
-  }
-  else
-    if ( wStringSize > 1 )
-    {
-      VTrans::string_type vtransstrEnding = r_vtransstr.substr(
-        wStringSize - 1 ) ;
-      if( vtransstrEnding ==
-          //"go->goes"
-          "o"
-        )
-      {
-        r_vtransstr += "es" ;
-        return ;
-
-      }
-    }
-  r_vtransstr += "s" ;
-}
-
 BYTE IsConsonant( char ch )
 {
 //  char ch;
@@ -235,109 +154,12 @@ BYTE IsConsonant( char ch )
     || ch=='x' || ch=='y' || ch=='z';
 }
 
-//liefert zurück, ob das erste Zeichen der Zeichenkette ein Vokal ist
-//sollte KEINE Referenz sein, da str verändert wird
+//liefert zur?ck, ob das erste Zeichen der Zeichenkette ein Vokal ist
+//sollte KEINE Referenz sein, da str ver?ndert wird
 BYTE IsVowel(TCHAR ch)
 {
   ch = tolower(ch);
   return ch=='a' || ch=='e' || ch=='i' || ch=='o'|| ch=='u';
-}
-
-void EnglishVerb::GetProgressiveForm(
-  VTrans::string_type & r_vtransstr )
-{
-  WORD wStringSize = r_vtransstr.size() ;
-  if ( wStringSize > 2 )
-  {
-    VTrans::string_type vtransstrEnding = r_vtransstr.substr(
-      wStringSize - 2 ) ;
-    if( vtransstrEnding[1] ==
-       //e.g. "prepare->preparing"
-       'e'
-     )
-    {
-     r_vtransstr.erase( r_vtransstr.length() , 1 ) ;
-    }
-    if( //E.g. "refer->refer>>r<<ing", "put->put>>t<<ing"
-       //but not e.g. "talk->talk>>r<<ing"
-       IsVowel(vtransstrEnding[0] ) &&
-       IsConsonant(vtransstrEnding[1] )
-     )
-    {
-     //Double the consonant
-     r_vtransstr += vtransstrEnding[1] ;
-
-    }
-    r_vtransstr += "ing" ;
-  }
-//  else
-//    if ( wStringSize > 1 )
-//    {
-//      VTrans::string_type vtransstrEnding = r_vtransstr.substr(
-//        wStringSize - 1 ) ;
-//      if( vtransstrEnding ==
-//          //"go->goes"
-//          "o"
-//        )
-//      {
-//        r_vtransstr += "es" ;
-//        return ;
-//
-//      }
-//    }
-//  r_vtransstr += "s" ;
-}
-
-
-GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
-{
-	WORD i=0;
-	int start=0;
-	WORD wIndex=0;
-	m_bIntegral=TRUE;
-	while( i < str.length() )
-	{
-		if(str[i]=='\n')
-		{
-			m_strWords[wIndex++] = //str.Mid(start,i-start);
-        str.substr( start ,i - start );
-			start = i + 1;
-		}
-		i++;
-	}
-}
-
-void GermanVerb::CreateFromString(const VTrans::string_type & str)
-{
-	WORD i=0;
-	int start=0;
-	WORD wIndex=0;
-	m_bIntegral=TRUE;
-	while( i < str.length() )
-	{
-		if( wIndex == 14 )
-			m_bCase = str[i] - 50 ;
-		if( str[i] == '\n' )
-		{
-			m_strWords[wIndex++] = //str.Mid(start,i-start);
-        str.substr(start,i-start);
-			start=i+1;
-		}
-		i++;
-	}
-	m_bAuxiliaryVerb=TRUE;
-	m_bReflexive=FALSE;
-}
-
-GermanVerb::GermanVerb(const VTrans::string_type & str)
-{
-  CreateFromString(str) ;
-}
-
-GermanVerb::GermanVerb(const VTrans::string_type & str , e_case cas)
-{
-  CreateFromString(str) ;
-  m_bCase = cas ;
 }
 
 void InitDictionary()
@@ -346,9 +168,9 @@ void InitDictionary()
 	WordNode * pWordNodePrevious=NULL;
 //	Word * pWord=NULL;
 #ifdef _DEBUG
-	printf("void LoadWords(WordNode * pWordNode) ANFANG\n");
+//	printf("void LoadWords(WordNode * pWordNode) ANFANG\n");
 #endif
-//	//zuerst die integralen Vokabeln der verketteten Liste hinzufï¿½gen, Anfang
+//	//zuerst die integralen Vokabeln der verketteten Liste hinzuf?gen, Anfang
 //	wordList.m_pWordNodeFirst = new WordNode();
 //	wordList.m_pWordNodeFirst->m_pWord = new EnglishAuxiliaryVerb(
 //		"be\nam\nare\nis\nare\nare\nare\nwas\nwere\n"

@@ -30,30 +30,5 @@
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />
-  </translation_rule>
-      
-  <!-- e.g. "the car                    he likes works.":
-               \  /                      \/
-            3rdPersSingSubjOrObjEnumEle  /
-			        \                   /
-			 3rdPersSingEnumEleWithRelClause
-  -->
-  <translation_rule 
-    syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingClauseAllows1Obj.*"
-    translation=", das">
-    <condition syntax_tree_path="definite_article_singular.singular_noun.*.3rdPersSingEnumEleWithRelClause"
-      attribute_name="German_noun_article"
-      byte_attribute_value="2"
-    />
-  </translation_rule>
-	<!--
-	translation="rel clause"
-	-->
-  <translation_rule 
-    syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
-    attribute_name="GerMainVerb1Obj3rdPersSing"
-	>
-    <!--<condition syntax_tree_path="MainVerb3rdPersSingPres1Obj.3rdPersSingClauseAllows1Obj.3rdPersSingEnumEleWithRelClause"
-    />-->
-  </translation_rule>
+  </translation_rule> 
 </translation_rules>

@@ -45,6 +45,7 @@ class wxTextInputDlg
   wxButton * mp_wxbutton ;
   void AddButtons() ;
   void AddAddGrammarRulesButton( wxSizer * p_sizer ) ;
+  void AddDrawParseTreeButton(wxSizer * p_sizer ) ;
   void AddRemoveGrammarRulesButton( wxSizer * p_sizer ) ;
   void AddRemoveVocAttrDefsButton( wxSizer * p_sizer ) ;
   void AddAddTranslationRulesButton( wxSizer * p_sizer ) ;
@@ -92,6 +93,7 @@ class wxTextInputDlg
 	void OnAddTranslationRules( wxCommandEvent & wxcmd ) ;
 	void OnAddVocAttrDefs( wxCommandEvent & wxcmd ) ;
 	void OnClose( wxCloseEvent & wxcmd ) ;
+  void OnDrawParseTreeButton( wxCommandEvent & wxcmd ) ;
 	void OnInfoButton( wxCommandEvent & wxcmd ) ;
 	void OnLoadDictionaryButton(wxCommandEvent & wxcmd ) ;
 	void OnReInitGrammarRulesButton( wxCommandEvent & wxcmd ) ;

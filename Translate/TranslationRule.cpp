@@ -87,7 +87,7 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
           )
         {
           bIdentical = false ;
-          DEBUG_COUT("TranslationRuleApplies--not identical\n")
+//          DEBUG_COUT("TranslationRuleApplies--not identical\n")
           break ;
         }
         p_grammarpartContainingConsecutiveID = *c_rev_iter_stdvec_p_grammarpart ;
@@ -105,6 +105,90 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
     }
   }
   return NULL ;
+}
+
+bool TranslationRule::Initialize(
+  const std::string & c_r_std_strSyntaxTreePath//,
+//  const std::string & c_r_std_strSyntaxTreePathForInsertionForTranslation
+  )
+{
+  m_bySideWhereToInsertChildNode = uninited;
+  m_bySideWhereToInsertParentNode = uninited;
+  return m_syntaxtreepathCompareWithCurrentPath.CreateGrammarPartIDArray(
+    c_r_std_strSyntaxTreePath
+    , mp_parsebyrise )
+    ;
+}
+
+void TranslationRule::Insert(
+  const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath,
+  const std::string & r_stdstrTranslation
+  )
+{
+//  std::vector<GrammarPart *>::const_iterator ci = r_stdvec_p_grammarpartPath;
+//  for( ; ci != r_stdvec_p_grammarpartPath.en(); ++ ci )
+//  {
+//    if( *ci->m_wGrammarPartID == m_syntaxtreepathInsertionForTranslation.
+//        m_ar_wElements[0] )
+//    {
+//
+//    }
+//  }
+ GrammarPart * p_grammarpartLeaf = m_syntaxtreepathInsertionForTranslation.
+   GetLeaf(r_stdvec_p_grammarpartPath);
+ if( p_grammarpartLeaf )
+ {
+   std::string std_strGrammarPartName = mp_parsebyrise->GetGrammarPartName(
+     p_grammarpartLeaf->m_wGrammarPartID);
+   if( m_bySideWhereToInsertParentNode )
+   {
+     GrammarPart * p_gpChild = NULL;
+     BYTE bySideWhereToInsertPreviousChildNode = 0;
+     switch(m_bySideWhereToInsertChildNode)
+     {
+       case left:
+         bySideWhereToInsertPreviousChildNode = right;
+         break;
+       case right:
+         bySideWhereToInsertPreviousChildNode = left;
+         break;
+     }
+     switch(m_bySideWhereToInsertParentNode)
+     {
+     case left:
+       p_gpChild = p_grammarpartLeaf->InsertLeftChild(
+           m_uiParentNodeGrammarPartID,
+           bySideWhereToInsertPreviousChildNode);
+       break;
+     case right:
+       p_gpChild = p_grammarpartLeaf->InsertRightChild(
+           m_uiParentNodeGrammarPartID,
+           bySideWhereToInsertPreviousChildNode);
+       break;
+     }
+     if( p_gpChild)
+     {
+       GrammarPart * * p_p_grammarpartLeafNode = NULL;
+       switch(m_bySideWhereToInsertChildNode)
+       {
+         case left:
+           p_p_grammarpartLeafNode = & p_gpChild->mp_grammarpartLeftChild;
+           break;
+         case right:
+           p_p_grammarpartLeafNode = & p_gpChild->mp_grammarpartRightChild;
+           break;
+       }
+       if( p_p_grammarpartLeafNode )
+       {
+         * p_p_grammarpartLeafNode = new GrammarPart(0,0,
+           m_uiChildNodeGrammarPartID);
+         (* p_p_grammarpartLeafNode)->m_stdstrTranslation = r_stdstrTranslation;
+//         (* p_p_grammarpartLeafNode)->m_wGrammarPartID =
+//             m_uiChildNodeGrammarPartID;
+       }
+     }
+   }
+ }
 }
 
 bool TranslationRule::Matches(
@@ -241,10 +325,7 @@ TranslationRule::TranslationRule(
     , ParseByRise * p_parsebyrise )
   : mp_parsebyrise(p_parsebyrise)
 {
-  if( !
-      m_syntaxtreepathCompareWithCurrentPath.CreateGrammarPartIDArray(
-      r_stdstrSyntaxTreePath
-      , p_parsebyrise )
+  if( ! Initialize(r_stdstrSyntaxTreePath)
 //      ;
     )
     throw std::exception() ;
@@ -252,15 +333,14 @@ TranslationRule::TranslationRule(
 
 TranslationRule::TranslationRule( //const std::string & r_stdstrSyntaxTreePath
     const char * p_ch_SyntaxTreePath
-    , ParseByRise * p_parsebyrise )
+    , ParseByRise * p_parsebyrise
+    )
   : mp_parsebyrise(p_parsebyrise)
 {
   std::string stdstrSyntaxTreePath(p_ch_SyntaxTreePath) ;
   DEBUG_COUT("TranslationRule::TranslationRule begin\n")
   //TODO uncomment
-  m_syntaxtreepathCompareWithCurrentPath.CreateGrammarPartIDArray(
-      stdstrSyntaxTreePath
-      , p_parsebyrise ) ;
+  Initialize(stdstrSyntaxTreePath);
   DEBUG_COUT("TranslationRule::TranslationRule end\n")
 }
 

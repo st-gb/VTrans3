@@ -5,6 +5,8 @@
  *      Author: Stefan
  */
 #include "GrammarPart.hpp"
+#include <Attributes/EnglishWord.hpp> //class EnglishWord's enum
+#include <Translate/TranslationRule.hpp> //class TranslationRule
 
   void GrammarPart::AddLeftChild(GrammarPart & r_grammarpart)
   {
@@ -16,7 +18,7 @@
     //  \   /            |
     // 3rd person sing  1st person sing
     //      \           /
-    //  1st person sing ("we") -> "mögen"
+    //  1st person sing ("we") -> "mï¿½gen"
     mp_grammarpartLeftChild->mp_grammarpartParent = this ;
 #endif
   }
@@ -31,7 +33,7 @@
     //  \   /            |
     // 3rd person sing  1st person sing
     //      \           /
-    //  1st person sing ("we") -> "mögen"
+    //  1st person sing ("we") -> "mï¿½gen"
     mp_grammarpartRightChild->mp_grammarpartParent = this ;
 #endif
   }
@@ -65,6 +67,62 @@ void GrammarPart::Init()
   mp_grammarpartRightChild = NULL ;
 }
 
+GrammarPart * GrammarPart::InsertChild(
+  //left or right child member var.
+  GrammarPart * & r_p_grammarpartChild,
+  unsigned uiGrammarPartID,
+  BYTE bySideWhereToInsertChildNode
+  )
+{
+  GrammarPart * p_gpToInsert = new GrammarPart(0,0, uiGrammarPartID);
+  if( p_gpToInsert)
+    if( r_p_grammarpartChild )
+    {
+      // ... ...
+      //   l  r
+      //    \/
+      //    gp
+      GrammarPart * p_grammarpartChild = r_p_grammarpartChild;
+
+      // inserting new left child ("*")
+      //    ...
+      // *  r
+      //  \/
+      //  gp
+      r_p_grammarpartChild = p_gpToInsert;
+      // l
+      // \/ ...
+      // *  r
+      //  \/
+      //  gp
+      switch(bySideWhereToInsertChildNode)
+      {
+      case TranslationRule::left:
+        p_gpToInsert->mp_grammarpartLeftChild = p_grammarpartChild;
+        break;
+      case TranslationRule::right:
+        p_gpToInsert->mp_grammarpartRightChild = p_grammarpartChild;
+        break;
+      }
+    }
+    else
+      r_p_grammarpartChild = p_gpToInsert;
+  return p_gpToInsert;
+}
+
+GrammarPart * GrammarPart::InsertLeftChild(unsigned uiGrammarPartID,
+  BYTE bySideWhereToInsertChildNode)
+{
+  return InsertChild(mp_grammarpartLeftChild, uiGrammarPartID,
+      bySideWhereToInsertChildNode);
+}
+GrammarPart * GrammarPart::InsertRightChild(unsigned uiGrammarPartID,
+    BYTE bySideWhereToInsertChildNode)
+{
+  return InsertChild(mp_grammarpartRightChild, uiGrammarPartID,
+      bySideWhereToInsertChildNode);
+}
+
 //inline
 void GrammarPart::SetGrammarPartID(WORD wGrammarPartID )
 {
@@ -73,7 +131,7 @@ void GrammarPart::SetGrammarPartID(WORD wGrammarPartID )
     //the person index is alos important : e.g. if noun has the same string
   // for plural and singular then the person index of the verb gives info
   // about how its finite verbform should be in German:
-  // The sheep run>>s<<. -> Das Schaf läuft.
+  // The sheep run>>s<<. -> Das Schaf lï¿½uft.
   // The sheep run. -> Die Schaf>>e<< laufen.
   case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
     m_byPersonIndex = 3 ;

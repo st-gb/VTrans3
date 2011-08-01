@@ -36,6 +36,7 @@ TranslationControllerBase::TranslationControllerBase()
 TranslationControllerBase::~TranslationControllerBase()
 {
   // TODO Auto-generated destructor stub
+  s_lettertree.DeleteCompleteList();
 }
 
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)

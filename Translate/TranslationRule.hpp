@@ -20,14 +20,29 @@
 class TranslationRule
 {
 public:
+  enum TranslationInsertionPos
+  {
+    uninited = 0,
+    left,
+    right
+  };
 //  WORD * m_ar_wElements ;
 //  WORD m_wNumberOfElements ;
+//  BYTE m_bySideWhereToInsert;
+  BYTE m_bySideWhereToInsertChildNode;
+  BYTE m_bySideWhereToInsertParentNode;
   ParseByRise * mp_parsebyrise ;
+//  std::string m_std_strParentNodeGrammarPartName;
+//  unsigned m_uiParentNodeGrammarPartID;
+  WORD m_uiParentNodeGrammarPartID;
+//  unsigned m_uiChildNodeGrammarPartID;
+  WORD m_uiChildNodeGrammarPartID;
   //This path is compared with the current parse tree path: if identical,
   //proceed with the ConditionAndTranslation value of the
   //TranslationRule->ConditionAndTranslation map
   SyntaxTreePath m_syntaxtreepathCompareWithCurrentPath ;
   SyntaxTreePath m_syntaxtreepathConsecutiveID ;
+  SyntaxTreePath m_syntaxtreepathInsertionForTranslation ;
 //  TranslationRule( WORD * ar_wElements , WORD wNumberOfElements)
 //  {
 //    m_ar_wElements = ar_wElements ;
@@ -38,6 +53,11 @@ public:
   //const
   GrammarPart * GetGrammarPartWithConsecutiveID(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const ;
+  bool Initialize(const std::string & r_std_strSyntaxTreePath//,
+//    const std::string & c_r_std_strSyntaxTreePathForInsertionForTranslation
+      );
+  void Insert(const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath,
+      const std::string & r_stdstrTranslation);
   bool Matches(
     const std::vector<WORD> & cr_stdvec_wCurrentGrammarPartPath ) const ;
   void SetConsecutiveIDSyntaxTreePath(
