@@ -1,0 +1,6 @@
+<grammar_rules> 
+  <!-- present perfect -->  
+  <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple0Obj" superordinate="PerfectPredicate0Obj" />
+  <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple1Obj" superordinate="PerfectPredicate1Obj" />
+  <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple2Obj" superordinate="PerfectPredicate2Obj" />
+</grammar_rules>

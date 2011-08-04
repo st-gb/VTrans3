@@ -8,6 +8,8 @@
 #include "VTransApp.hpp"
 
 #include <wx/wx.h>
+#include <wx/dialog.h> //class wxDialog
+#include <wx/textctrl.h> //class wxTextCtrl
 
 //#include <IO/IO.hpp> //OneLinePerWordPair::LoadWords()
 #include <Controller/Logger/Logger.hpp> //class Logger
@@ -101,7 +103,22 @@ void VTransApp::CreateAndShowMainWindow()
 
 void VTransApp::Message( const std::string & cr_stdstr )
 {
-  ::wxMessageBox( getwxString( cr_stdstr ) , wxT("Translator message") ) ;
+//  ::wxMessageBox( getwxString( cr_stdstr ) , wxT("Translator message") ) ;
+//  ::wxMe
+  wxDialog wxd(NULL, wxID_ANY, wxT("Translator message") );
+
+  wxString wxstrMessage = ::getwxString( cr_stdstr);
+  wxTextCtrl * p_wxtextctrl = new wxTextCtrl(
+      & wxd //wxWindow* parent
+      , wxID_ANY //wxWindowID id
+      , wxstrMessage //const wxString& value = ""
+      , wxDefaultPosition //const wxPoint& pos = wxDefaultPosition,
+      , wxDefaultSize //const wxSize& size = wxDefaultSize
+      , wxTE_READONLY | wxTE_MULTILINE //long style = 0
+      );
+//  wxd.AddChild( p_wxtextctrl);
+  wxd.Layout(); //stretch to the whole client window.
+  wxd.ShowModal();
 }
 
 void VTransApp::Message( const std::wstring & cr_stdwstr )

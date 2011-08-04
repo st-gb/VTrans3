@@ -175,6 +175,15 @@ void TranslateParseByRiseTree::AddTranslationRule(
     }
 #endif
     }
+    catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
+    {
+        mr_i_userinterface.Message(
+          "Error adding translation rule for STP \"" +
+          r_stdstrSyntaxTreePath + "\" : "
+          "unknown grammar part ID \"" +
+             c_r_getgrammarpartidexception.m_stdstr + " \""
+          );
+    }
     catch( std::exception & e )
     {
       DEBUG_COUT("std::exception")

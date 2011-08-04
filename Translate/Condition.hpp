@@ -32,11 +32,14 @@ public:
 
   //void SetSyntaxTreePath(std::string & r_stdstrSyntaxTreePath)
   BYTE SetSyntaxTreePath(const char * p_ch_SyntaxTreePath
-     , ParseByRise * p_parsebyrise )
+     , ParseByRise * p_parsebyrise
+     , std::string & r_std_strUnknownGrammarPartID
+     )
   {
     std::string stdstrSyntaxTreePath (p_ch_SyntaxTreePath) ;
+    std::string std_strUnknownGrammarPartID;
     return m_syntaxtreepath.CreateGrammarPartIDArray( //r_stdstrSyntaxTreePath
-        stdstrSyntaxTreePath , p_parsebyrise  ) ;
+        stdstrSyntaxTreePath , p_parsebyrise , r_std_strUnknownGrammarPartID ) ;
   }
   //By defining a default constructor avoid g++ warning "In member function
   // `void TranslateParseByRiseTree::AddTranslationRule(TranslationRule*,

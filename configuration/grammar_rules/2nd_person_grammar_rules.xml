@@ -25,8 +25,11 @@
   <grammar_rule left_child="you_plural_and" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="you_plural" />
   
   <!-- clause -->
-  <grammar_rule left_child="you_plural" right_child="mainVerbInf0Obj" superordinate="YouPluralSimplePresent0Obj" />
-  <grammar_rule left_child="you_plural" right_child="mainVerbInf1Obj" superordinate="YouPluralSimplePresent1Obj" />
+   <grammar_rule left_child="you_plural" right_child="mainVerbInf0Obj" superordinate="YouPluralSimplePresent0Obj" />
+   <grammar_rule left_child="you_plural" right_child="mainVerbInf1Obj" superordinate="YouPluralSimplePresent1Obj" />
+   <grammar_rule left_child="you_plural" right_child="mainVerbInf2Obj" superordinate="YouPluralSimplePresent2Obj" />
+   
+   <grammar_rule left_child="YouPluralSimplePresent2Obj" superordinate="YouPluralSimplePresent2Obj" />
 
   <grammar_rule left_child="you" right_child="mainVerbInf1Obj" superordinate="YouSimplePresent1Obj" />
   <grammar_rule left_child="you" right_child="MainVerbPast1Obj" superordinate="YouSimplePast1Obj" />
@@ -35,6 +38,24 @@
   <grammar_rule left_child="you" right_child="MainVerbPast0Obj" superordinate="2ndPersSingSimplePastClause" />
   
   <!--<grammar_rule left_child="have2ndPersonSingular" right_child="mainVerbPastParticiple0Obj" superordinate="PerfectPredicate0Obj" />-->
-  <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple0Obj" superordinate="PerfectPredicate0Obj" />
-  <grammar_rule left_child="you_sing" right_child="PerfectPredicate0Obj" superordinate="2ndPersSingPerfectClause0Obj" />
+  <grammar_rule left_child="you" right_child="PerfectPredicate0Obj" superordinate="2ndPersSingPerfectClause0Obj" />
+  <grammar_rule left_child="you" right_child="PerfectPredicate1Obj" superordinate="2ndPersSingPerfectClause1Obj" />
+  <grammar_rule left_child="you" right_child="PerfectPredicate2Obj" superordinate="2ndPersSingPerfectClause2Obj" />
+  
+  <!--relative clause -->
+    <!-- can be cascaded (->recursive) : -->
+    <!--the car               the man               you like      likes is pretty.
+	    <sub or obj enum ele> <sub or obj enum ele> <rel. clause>
+		                      +++++++++++relative clause+++++++++++++++
+							  
+	("das Auto, dass der Mann, den du magst, mag, ist sch??)-->
+	
+   <!-- e.g.: "the car he likes":  
+     3rdPersSingSubjOrObjEnumEle: "the car"  
+	 3rdPersSingClauseAllows1Obj: "he likes" (needs 1 object: "the car")  
+    -->
+   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="2ndPersSingPerfectClause1Obj" superordinate="3rdPersSingEnumEleWithRelClause"/>
+       
+  <!--end of relative clauses -->
+
 </grammar_rules>

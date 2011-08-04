@@ -114,6 +114,7 @@ public:
   BYTE CreateGrammarPartIDArray(
     const std::string & r_stdstrSyntaxTreePath
     , ParseByRise * p_parsebyrise
+    , std::string & r_std_strUnknownGrammarPartID
     ) ;
   std::string GetAs_std_string() const ;
   static void GetAsGrammarPartIDvector(

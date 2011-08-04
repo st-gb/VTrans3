@@ -1,6 +1,8 @@
 <grammar_rules>
   <!--1st person singular begin-->
   <grammar_rule left_child="I" right_child="and" superordinate="I_and"/>
+  <!-- e.g. "the cars and" + "I" = 1st person plural index / "we" -->
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle_AND" right_child="I" superordinate="1stPersPlurSubjOrObjEnumEle"/>
   <!--this rule is to avoid determining the person ("person index") -> faster -->
   <grammar_rule left_child="I" right_child="mainVerbInf0Obj" superordinate="1stPersSingSimplePresentClause"/>
   <grammar_rule left_child="I" right_child="mainVerbInf1Obj" superordinate="1stPersSingSimplePresentClauseAllow1Obj"/>  

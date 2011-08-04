@@ -105,9 +105,10 @@ public:
   void SetSyntaxTreePath(const char * p_ch_SyntaxTreePath
      , ParseByRise * p_parsebyrise )
   {
+    std::string std_strUnknownGrammarPartID;
     std::string stdstrSyntaxTreePath (p_ch_SyntaxTreePath) ;
     m_syntaxtreepath.CreateGrammarPartIDArray( //r_stdstrSyntaxTreePath
-        stdstrSyntaxTreePath , p_parsebyrise  ) ;
+        stdstrSyntaxTreePath , p_parsebyrise, std_strUnknownGrammarPartID ) ;
   }
 };
 

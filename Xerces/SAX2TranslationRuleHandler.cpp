@@ -81,10 +81,26 @@ void SAX2TranslationRuleHandler::endElement(
 
         if( ! m_std_strSyntaxTreePathForInsertionForTranslation.empty() )
         {
-          p_translationrule->m_syntaxtreepathInsertionForTranslation.
-            CreateGrammarPartIDArray(
-            m_std_strSyntaxTreePathForInsertionForTranslation
-            , p_translationrule->mp_parsebyrise );
+          std::string std_strUnknownGrammarPartID;
+          if( p_translationrule->m_syntaxtreepathInsertionForTranslation.
+              CreateGrammarPartIDArray(
+                m_std_strSyntaxTreePathForInsertionForTranslation
+                , p_translationrule->mp_parsebyrise
+                , std_strUnknownGrammarPartID
+              ) ==
+                SyntaxTreePath::unknown_grammar_part_name
+            )
+            mr_i_userinterface.Message( "unknown grammar part name \"" +
+                std_strUnknownGrammarPartID + "\" in STP \"" +
+                m_std_strSyntaxTreePathForInsertionForTranslation +
+                "\" in document\n"
+              + Xerces::ToStdString( m_pc_locator->//getPublicId()
+                getSystemId() )
+              + "\nin line:"
+              + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
+              + ", column:"
+              + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+              ) ;
           m_std_strSyntaxTreePathForInsertionForTranslation = "";
         }
         p_translationrule->m_bySideWhereToInsertChildNode =
@@ -111,6 +127,15 @@ void SAX2TranslationRuleHandler::endElement(
         mr_translateparsebyrise.AddTranslationRule(
           p_translationrule
           , m_conditionsandtranslation ) ;
+      }
+      catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
+      {
+          mr_i_userinterface.Message(
+            "Error adding translation rule for STP \"" +
+            m_stdstrTranslationRuleSyntaxTreePath + "\" : "
+            "unknown grammar part ID \"" +
+               c_r_getgrammarpartidexception.m_stdstr + " \""
+            );
       }
       catch( //std::string e
 //          GetGrammarPartIDexception & e
@@ -215,13 +240,19 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
           LOGN("\"byte_attribute_value\" or "
             "\"string_attribute_value\" attribute")
           Condition cond ;
-          if( cond.SetSyntaxTreePath( m_stdstrConditionSyntaxTreePath.c_str() ,
-            & mr_parsebyrise ) == SyntaxTreePath::unknown_grammar_part_name
+          std::string std_strUnknownGrammarPartID;
+          if( cond.SetSyntaxTreePath(
+                m_stdstrConditionSyntaxTreePath.c_str() ,
+                & mr_parsebyrise ,
+                std_strUnknownGrammarPartID
+              ) == SyntaxTreePath::unknown_grammar_part_name
             )
           {
             //TODO error message
       //          cr_xercesc_attributes.
-            mr_i_userinterface.Message( "unknown grammar part name in document\n"
+            mr_i_userinterface.Message( "unknown grammar part name \n\"" +
+              std_strUnknownGrammarPartID + "\"\n for STP \n\"" +
+              m_stdstrConditionSyntaxTreePath + "\"\n in document\n"
               + Xerces::ToStdString( m_pc_locator->//getPublicId()
                 getSystemId() )
               + "\nin line:"

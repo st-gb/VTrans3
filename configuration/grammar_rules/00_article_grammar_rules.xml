@@ -1,0 +1,7 @@
+<grammar_rules>
+  <grammar_rule left_child="definite_article" right_child="singular_noun" superordinate="definite_article_singular"/>
+  <grammar_rule left_child="definite_article" right_child="plural_noun" superordinate="definite_article_plural"/>
+  <grammar_rule left_child="indefinite_article" right_child="singular_noun" superordinate="indefinite_article_singular"/>
+  <grammar_rule left_child="indefinite_article_singular" superordinate="article_singular"/>
+  <grammar_rule left_child="definite_article_singular" superordinate="article_singular"/>
+</grammar_rules>
