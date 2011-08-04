@@ -16,6 +16,25 @@
     direction="right"
     >
   </transformation_rule>
+ <!-- relative clause:  
+     if e.g. "the car you have seen works": 
+      exchange "have" and "seen" with each other in order to translate to
+     "Das Auto, das du gesehen hast, funktioniert."
+  -->
+  <transformation_rule
+    syntax_tree_path="3rdPersSingEnumEleWithRelClause.2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.mainVerbPastParticiple1Obj"
+    parse_tree_branch_to_move="mainVerbPastParticiple1Obj"
+    place_near_syntax_tree_path="3rdPersSingEnumEleWithRelClause.2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.haveInfinitive"
+    direction="left"
+    >
+  </transformation_rule>
+  <!--transformation_rule
+    syntax_tree_path="3rdPersSingEnumEleWithRelClause.2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.haveInfinitive"
+    parse_tree_branch_to_move="haveInfinitive"
+    place_near_syntax_tree_path="3rdPersSingEnumEleWithRelClause.2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj"
+    direction="right"
+    >
+  </transformation_rule>-->
   <!--adverb -> right of the finite verb: "I still worked very hard. -> Ich arbeitete immer noch sehr hart.
     -->
   <!--<transformation_rule

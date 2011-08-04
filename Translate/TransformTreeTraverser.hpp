@@ -53,6 +53,7 @@ namespace ParseTreeTraverser
       GrammarPart * p_grammarpartParentOfGrammarPartToMove ,
       GrammarPart * & p_r_grammarpartBranchToMove
       ) ;
+    //Overrides/ implements base class' method.
     void LeaveFound() ;
     void MoveParseTreeBranch(
       ParseTreeTraverser::InsertIntoTreeTransverser & insertintotreetransverser,
@@ -61,6 +62,7 @@ namespace ParseTreeTraverser
       ) ;
     void ParseTreePathAdded() ;
     void ParseTreePathPopped() ;
+    void PossiblyMoveParseTreeBranch();
     void RightChildAdded( unsigned short) ;
     void SetChildNodeAtGrammarPartToMoveToNULL(
       GrammarPart * p_grammarpartParentOfGrammarPartToMove) ;

@@ -1,0 +1,17 @@
+﻿<grammar_rules>
+
+  <!--3rd person plural begin-->
+  <grammar_rule left_child="they" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="and" superordinate="3rdPersPlurSubjOrObjEnumEle_AND"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle_AND" right_child="3rdPersPlurSubjOrObjEnumEle" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle_AND" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle_AND" right_child="I" superordinate="we"/>
+  <grammar_rule left_child="plural_noun" superordinate="plural_noun_superclass"/>
+  <grammar_rule left_child="definite_article_plural" superordinate="plural_noun_superclass"/>
+  <grammar_rule left_child="plural_noun_superclass" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" superordinate="SubjOrObjEnumEle"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf0Obj" superordinate="3rdPersPlurClauseAllows0Obj"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf1Obj" superordinate="3rdPersPlurClauseAllows1Obj"/>
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf2Obj" superordinate="3rdPersPlurClauseAllows2Obj"/>
+  <!--3rd person plural end-->
+</grammar_rules>

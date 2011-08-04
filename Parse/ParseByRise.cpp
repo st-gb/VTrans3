@@ -736,15 +736,6 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //  }
   //InsertGrammarRule( EnglishWord::noun, "noun" ) ;
   InsertGrammarPartID2NameMappingForWordClasses() ;
-//  InsertGrammarRule(
-//    EnglishWord::English_definite_article,
-//    EnglishWord::noun,
-//    "def_article_noun") ;
-//  InsertGrammarRule(
-//    "def_article_noun"
-//    , EnglishWord::main_verb
-//    , "clause"
-//    ) ;
 
 //  InsertArticleGrammarRules
 //  InsertGrammarRulesFor3rdPersonSingular() ;
@@ -765,27 +756,6 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    , "3rdPersPlurSubjOrObjEnumEle"
 //    ) ;
 //
-//  InsertGrammarRule(
-//    "3rdPersPlurSubjOrObjEnumEle_AND" //"the cars and"
-//    , "I"  // "I"
-//    , "1stPersPlurSubjOrObjEnumEle" // = 1st person plural index / "we"
-//    ) ;
-//  InsertGrammarRule(
-//    "I" //"I"
-//    , EnglishWord::conjunction_and  // "and"
-//    , "I_and" // = 1st person plural index / "we"
-//    ) ;
-//  InsertGrammarRule(
-//    "I" //"I"
-////    , "mainVerbInfinitive"  // "and"
-//    , "mainVerbInf0Obj"
-//    , "1stPersSingSimplePresentClause" // = 1st person plural index / "we"
-//    ) ;
-//  InsertGrammarRule(
-//    "I" //"I"
-//    , "mainVerbInf1Obj"
-//    , "1stPersSingSimplePresentSP1Obj" // = 1st person plural index / "we"
-//    ) ;
   InsertSuperClassGrammarRule(
     EnglishWord::reflexive_pronoun_myself ,
     "myself_object"
@@ -904,15 +874,17 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    "def_article_noun"
 //    , "SubjOrObjEnumEle"
 //    ) ;
-  InsertSuperClassGrammarRule(
-    "pers_pronoun"
-    , "subj_enum_ele"
-    ) ;
-  InsertGrammarRule(
-    "subj_enum_ele"
-    , EnglishWord::conjunction_and
-    , "subj_enum_ele_and"
-    ) ;
+
+//  InsertSuperClassGrammarRule(
+//    "pers_pronoun"
+//    , "subj_enum_ele"
+//    ) ;
+//  InsertGrammarRule(
+//    "subj_enum_ele"
+//    , EnglishWord::conjunction_and
+//    , "subj_enum_ele_and"
+//    ) ;
+
   //If 1 enum ele can only belong to a subject and the other sum ele can be part
   // of EITHER a subject or an object then the combination can be only a part
   //of a subject.

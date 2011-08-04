@@ -24,10 +24,16 @@ SyntaxTreePath::SyntaxTreePath(
   LOGN("SyntaxTreePath(" << cr_stdstrSyntaxTreePath << "," << p_parsebyrise
     << ")" )
   mp_parsebyrise = p_parsebyrise ;
-  CreateGrammarPartIDArray(
-    cr_stdstrSyntaxTreePath ,
-    p_parsebyrise
-    ) ;
+  std::string std_strUnknownGrammarPartID;
+
+  if( CreateGrammarPartIDArray(
+      cr_stdstrSyntaxTreePath ,
+      p_parsebyrise ,
+      std_strUnknownGrammarPartID
+      ) == SyntaxTreePath::unknown_grammar_part_name
+    )
+    //Cannot return an error code for constructors, so throw an exception.
+    throw GetGrammarPartIDexception(std_strUnknownGrammarPartID);
 }
 
 //The copy contructor needs an own implementation because an array is created
@@ -78,6 +84,7 @@ SyntaxTreePath::~SyntaxTreePath()
 BYTE SyntaxTreePath::CreateGrammarPartIDArray(
     const std::string & r_stdstrSyntaxTreePath
     , ParseByRise * p_parsebyrise
+    , std::string & r_std_strUnknownGrammarPartID
     )
 {
   LOGN("SyntaxTreePath::CreateGrammarPartIDArray(" <<
@@ -133,6 +140,7 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
         {
           sp_userinterface->Message( "unknown grammar part name:" +
             stdstrCurrentElement ) ;
+          r_std_strUnknownGrammarPartID = stdstrCurrentElement;
           LOGN("SyntaxTreePath::CreateGrammarPartIDArray(...)--"
             "unknown grammar part name:" << r_stdstrSyntaxTreePath )
           return unknown_grammar_part_name ;

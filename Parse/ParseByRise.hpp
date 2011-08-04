@@ -37,7 +37,7 @@ class ParseByRise
 {
 public:
   DWORD m_dwMapIndex ;
-private:
+//private:
   //For showing (XML) error messages.
 //  I_UserInterface & mr_userinterface ;
   I_UserInterface * m_p_userinterface ;

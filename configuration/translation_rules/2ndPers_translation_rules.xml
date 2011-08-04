@@ -10,7 +10,7 @@
 	concatenation_ID="ihr"
   />
   <translation_rule
-    syntax_tree_path="you_sing"
+    syntax_tree_path="you"
 	translation="Sie"
 	concatenation_ID="Sie"
   />
@@ -20,6 +20,11 @@
     attribute_name="GerMainVerb0Obj2ndPersSing" 
 	concatenation_ID="du"
   />
+	  <!-- only "ihr" possible -->
+	  <translation_rule
+		syntax_tree_path="YouPluralSimplePresent0Obj.mainVerbInf0Obj"
+		attribute_name="GerMainVerb0Obj2ndPersPlur" 
+	  />
   <translation_rule
     syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf0Obj"
     attribute_name="GerMainVerb0Obj2ndPersPlur" 

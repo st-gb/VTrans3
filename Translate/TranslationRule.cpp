@@ -114,9 +114,12 @@ bool TranslationRule::Initialize(
 {
   m_bySideWhereToInsertChildNode = uninited;
   m_bySideWhereToInsertParentNode = uninited;
+  std::string std_strUnknownGrammarPartID;
   return m_syntaxtreepathCompareWithCurrentPath.CreateGrammarPartIDArray(
     c_r_std_strSyntaxTreePath
-    , mp_parsebyrise )
+    , mp_parsebyrise
+    , std_strUnknownGrammarPartID
+    )
     ;
 }
 
@@ -312,9 +315,17 @@ void TranslationRule::SetConsecutiveIDSyntaxTreePath(
 //  , ParseByRise * p_parsebyrise
   )
 {
-  m_syntaxtreepathConsecutiveID.CreateGrammarPartIDArray(
-    r_stdstrSyntaxTreePath
-    , mp_parsebyrise ) ;
+  std::string std_strUnknownGrammarPartID;
+  if( m_syntaxtreepathConsecutiveID.CreateGrammarPartIDArray(
+        r_stdstrSyntaxTreePath
+        , mp_parsebyrise
+        , std_strUnknownGrammarPartID
+      ) == SyntaxTreePath::unknown_grammar_part_name
+    )
+  {
+//    r_stdstrSyntaxTreePath += "";
+    int i = 8;
+  }
 }
 
 //http://www.parashift.com/c++-faq-lite/exceptions.html#faq-17.2:

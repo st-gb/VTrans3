@@ -84,15 +84,27 @@ namespace Xerces
             true : false ;
           transformationrule.m_stdstrParseTreePathWhereToInsert =
               stdstrPlaceNearSyntaxTreePath ;
-          m_r_translationcontrollerbase.
-            m_stdmap_syntaxtreepath2transformationrule.insert(
-            std::make_pair(
-              SyntaxTreePath( stdstrSyntaxTreePathOfBranchToMove ,
-                //& m_r_parsebyrise
-                & m_r_translationcontrollerbase.m_parsebyrise ) ,
-              transformationrule
-              )
-            ) ;
+          try
+          {
+            m_r_translationcontrollerbase.
+              m_stdmap_syntaxtreepath2transformationrule.insert(
+              std::make_pair(
+                SyntaxTreePath( stdstrSyntaxTreePathOfBranchToMove ,
+                  //& m_r_parsebyrise
+                  & m_r_translationcontrollerbase.m_parsebyrise ) ,
+                transformationrule
+                )
+              ) ;
+          }
+          catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
+          {
+              m_r_translationcontrollerbase.Message(
+                "Error inserting transformation rule for STP \"" +
+                stdstrSyntaxTreePathOfBranchToMove + "\" : "
+                "unknown grammar part ID \"" +
+                   c_r_getgrammarpartidexception.m_stdstr + " \""
+                );
+          }
         }
       }
       //Release memory AFTER comparing.
