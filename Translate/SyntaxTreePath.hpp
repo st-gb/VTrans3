@@ -92,6 +92,9 @@ public:
   ParseByRise * mp_parsebyrise ;
   WORD * m_ar_wElements ;
   WORD m_wNumberOfElements ;
+
+  void copy(const SyntaxTreePath & c_r_syntaxtreepathToCopyFrom);
+
   SyntaxTreePath()
     : //m_byOtherReferencesToGrammarPartIDArray( 0)
     //,
@@ -122,6 +125,7 @@ public:
     std::vector<WORD> & r_stdvec_w_grammarpartPath) ;
   GrammarPart * GetLeaf(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const ;
+  SyntaxTreePath & operator = ( const SyntaxTreePath & r) ;
   bool operator < ( const SyntaxTreePath & r) const ;
   bool IsPartOf(std::vector<WORD> & r_stdvec_wGrammarPartPath ) ;
  static bool Matches(

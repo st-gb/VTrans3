@@ -40,6 +40,38 @@ namespace ParseTreeTraverser
 //      ) ;
   }
 
+  InsertIntoTreeTransverser::InsertIntoTreeTransverser(
+    const TransformationRule & cr_transformationrule ,
+    const SyntaxTreePath & c_r_syntaxtreepath,
+    const GrammarPart * p_grammarpartStartNode ,
+    ParseByRise & r_parsebyrise
+    )
+    :
+    ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
+      p_grammarpartStartNode ,
+      & r_parsebyrise
+      ) ,
+    m_cr_transformationrule ( cr_transformationrule ) ,
+    m_r_parsebyrise( r_parsebyrise ) ,
+    m_p_grammarpartChildOfGrammarPartToInsert( NULL ) ,
+    m_p_grammarpartParentOfGrammarPartToInsert( NULL ) ,
+    m_syntaxtreepath(
+//      c_r_stdstrParseTreePath,
+//      & r_parsebyrise
+      c_r_syntaxtreepath
+      )
+  {
+    LOGN( //"InsertIntoTreeTransverser(...)--"
+        FULL_FUNC_NAME
+//      << cr_transformationrule.m_stdstrParseTreePathWhereToInsert
+        )
+//    SyntaxTreePath syntaxtreepath ;
+//    syntaxtreepath.CreateGrammarPartIDArray(
+//      cr_transformationrule.m_stdstrParseTreePathWhereToInsert,
+//      r_parsebyrise
+//      ) ;
+  }
+
   InsertIntoTreeTransverser::~InsertIntoTreeTransverser()
   {
     // TODO Auto-generated destructor stub

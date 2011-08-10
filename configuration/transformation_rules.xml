@@ -1,14 +1,32 @@
 <transformation_rules>
   <!--adverb -> right of the object.
       e.g. "I still haven't found you." -> "Ich habe dich immer noch nicht gefunden." 
+	  
+	  he still loves                you     -> he loves  you    still
+	   |   |     |                   |         er liebt dich immer noch
+	   | adverb 3rdPersSingularPres obj         |    |    |       |
+	   |   \    /                   /           | 3rdPers obj  adverb
+	   |   Middle3rdPersPresent    /             \   |     \   / 
+	   |     /               \    /               \ /   objAndAdverb
+	   clauseAllows1Obj			 /     clauseAllows1Obj  /
+	                  \         /                    \  /
+				    clauseWith1Obj               clauseWith1Obj
       -->
   <transformation_rule
     syntax_tree_path="clauseWith1Obj.*.adverb"
     parse_tree_branch_to_move="adverb"
-    place_near_syntax_tree_path="clauseWith1Obj.obj"
+    place_near_syntax_tree_path="clauseWith1Obj"
+    name_of_grammar_part_to_insert="objAndAdverb"
     direction="right"
     >
   </transformation_rule>
+  <!--e.g. 
+       "the fire still burns." -> "Das Feuer brennt immer noch."
+				   |      |
+				 adverb MainVerb3rdPersSingPres0Obj
+					\   /
+		  Middle3rdPersSingPres0Obj
+		  -->
   <transformation_rule
     syntax_tree_path="Middle3rdPersSing0Obj.adverb"
     parse_tree_branch_to_move="adverb"
@@ -17,12 +35,19 @@
     >
   </transformation_rule>
  <!-- relative clause:  
-     if e.g. "the car you have seen works": 
+     if e.g. "the car you have     seen                       works":
+	                   |   haveInf  mainVerbPastParticiple1Obj
+	            \  /   \         \   /
+               subject  |   perfectPredicate1Obj
+						\  /
+						clauseAllow1Obj
+						
       exchange "have" and "seen" with each other in order to translate to
      "Das Auto, das du gesehen hast, funktioniert."
   -->
   <transformation_rule
     syntax_tree_path="3rdPersSingEnumEleWithRelClause.2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.mainVerbPastParticiple1Obj"
+    second_syntax_tree_path="3rdPersSingEnumEleWithRelClause.2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.haveInfinitive"
     parse_tree_branch_to_move="mainVerbPastParticiple1Obj"
     place_near_syntax_tree_path="3rdPersSingEnumEleWithRelClause.2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.haveInfinitive"
     direction="left"

@@ -18,6 +18,8 @@
 
 #include <string> //std::string
 
+#define SECOND_SYNTAX_TREE_LITERAL "second_syntax_tree_path"
+
 namespace Xerces
 {
 
@@ -36,6 +38,87 @@ namespace Xerces
   SAX2TransformationRuleHandler::~SAX2TransformationRuleHandler()
   {
     // TODO Auto-generated destructor stub
+  }
+
+  //A second STP when 2 branches should be exchanged by each other.
+  //(e.g. exchange "have" and "seen" at "The car you have seen"
+  //                                                   \  /
+  bool SAX2TransformationRuleHandler::PossiblyAdd2ndSyntaxTreePath(
+    const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes,
+    TransformationRule & r_transformationrule
+    )
+  {
+    bool b2ndSyntaxTreePathAdded = false;
+    std::string stdstr2ndSyntaxTreePathOfBranchToMove;
+    if( XercesAttributesHelper::GetAttributeValue(
+        cr_xercesc_attributes ,
+        SECOND_SYNTAX_TREE_LITERAL ,
+        stdstr2ndSyntaxTreePathOfBranchToMove
+        ) == XercesAttributesHelper::getting_attribute_value_succeeded
+      )
+    {
+      try
+      {
+        SyntaxTreePath stp(
+           stdstr2ndSyntaxTreePathOfBranchToMove ,
+           //& m_r_parsebyrise
+           & m_r_translationcontrollerbase.m_parsebyrise );
+        r_transformationrule.m_syntaxtreepath2nd = //(
+//          = SyntaxTreePath(
+//              stdstr2ndSyntaxTreePathOfBranchToMove ,
+//          //& m_r_parsebyrise
+//          & m_r_translationcontrollerbase.m_parsebyrise );
+          stp;
+        b2ndSyntaxTreePathAdded = true;
+      }
+      catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
+      {
+        m_r_translationcontrollerbase.Message(
+          "Error getting Syntax Tree Path for \"" +
+          stdstr2ndSyntaxTreePathOfBranchToMove + "\" : "
+          "unknown grammar part ID \"" +
+             c_r_getgrammarpartidexception.m_stdstr + " \""
+          );
+      }
+    }
+    return b2ndSyntaxTreePathAdded;
+  }
+
+  bool SAX2TransformationRuleHandler::PossiblyAddSyntaxTreePathWhereToInsert(
+    const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes,
+    TransformationRule & r_transformationrule
+    )
+  {
+    bool bSyntaxTreePathWhereToInsertAdded = false;
+    std::string stdstrPlaceNearSyntaxTreePath ;
+    if( XercesAttributesHelper::GetAttributeValue(
+        cr_xercesc_attributes ,
+        "place_near_syntax_tree_path" ,
+        stdstrPlaceNearSyntaxTreePath
+        ) == XercesAttributesHelper::getting_attribute_value_succeeded
+      )
+    {
+      r_transformationrule.m_stdstrParseTreePathWhereToInsert =
+          stdstrPlaceNearSyntaxTreePath ;
+      try
+      {
+        r_transformationrule.m_syntaxtreepathWhereToInsert =
+          SyntaxTreePath( stdstrPlaceNearSyntaxTreePath ,
+          //& m_r_parsebyrise
+          & m_r_translationcontrollerbase.m_parsebyrise );
+      }
+      catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
+      {
+        m_r_translationcontrollerbase.Message(
+          "Error getting Syntax Tree Path for \"" +
+          stdstrPlaceNearSyntaxTreePath + "\" : "
+          "unknown grammar part ID \"" +
+             c_r_getgrammarpartidexception.m_stdstr + " \""
+          );
+      }
+      bSyntaxTreePathWhereToInsertAdded = true;
+    }
+    return bSyntaxTreePathWhereToInsertAdded;
   }
 
   void SAX2TransformationRuleHandler::startElement
@@ -58,7 +141,7 @@ namespace Xerces
       {
         TransformationRule transformationrule ;
         std::string stdstrSyntaxTreePathOfBranchToMove ;
-        std::string stdstrPlaceNearSyntaxTreePath ;
+        std::string stdstrNameOfGrammarPartToInsert;
         std::string stdstrDirection ;
         if( XercesAttributesHelper::GetAttributeValue(
             cr_xercesc_attributes ,
@@ -68,22 +151,43 @@ namespace Xerces
            &&
              XercesAttributesHelper::GetAttributeValue(
              cr_xercesc_attributes ,
-             "place_near_syntax_tree_path" ,
-             stdstrPlaceNearSyntaxTreePath
-             ) == XercesAttributesHelper::getting_attribute_value_succeeded
-           &&
-             XercesAttributesHelper::GetAttributeValue(
-             cr_xercesc_attributes ,
-             "syntax_tree_path" ,
+             "direction" ,
              stdstrDirection
              ) == XercesAttributesHelper::getting_attribute_value_succeeded
           )
         {
+          bool b2ndSyntaxTreePathAdded =
+            PossiblyAdd2ndSyntaxTreePath(cr_xercesc_attributes,
+              transformationrule
+            );
+          bool bSyntaxTreePathWhereToInsert =
+            PossiblyAddSyntaxTreePathWhereToInsert(cr_xercesc_attributes,
+            transformationrule);
+
+          if( b2ndSyntaxTreePathAdded && bSyntaxTreePathWhereToInsert )
+            m_r_translationcontrollerbase.Message("warning: both attributes "
+                "\"" SECOND_SYNTAX_TREE_LITERAL "\" and "
+                "\"place_near_syntax_tree_path\" specified" );
+
+
+           if( XercesAttributesHelper::GetAttributeValue(
+               cr_xercesc_attributes ,
+               "name_of_grammar_part_to_insert" ,
+  //             stdstrNameOfGrammarPartToInsert
+               transformationrule.m_stdstrNameOfGrammarPartToInsert
+               ) == XercesAttributesHelper::getting_attribute_value_succeeded
+             )
+           {
+            WORD wGrammarPartID = 0;
+            if( ! m_r_translationcontrollerbase.m_parsebyrise.GetGrammarPartID(
+                transformationrule.m_stdstrNameOfGrammarPartToInsert,
+                wGrammarPartID)
+                )
+              wGrammarPartID = 1;
+           }
           transformationrule.m_bInsertLeftChild =
             ( stdstrDirection == "left" ) ?
             true : false ;
-          transformationrule.m_stdstrParseTreePathWhereToInsert =
-              stdstrPlaceNearSyntaxTreePath ;
           try
           {
             m_r_translationcontrollerbase.
