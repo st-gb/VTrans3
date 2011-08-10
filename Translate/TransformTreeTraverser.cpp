@@ -89,6 +89,51 @@ namespace ParseTreeTraverser
     PossiblyMoveParseTreeBranch();
   }
 
+  GrammarPart * * GetChildOfParentGrammarPartWhereToInsertOrToExchange(
+    ParseTreeTraverser::InsertIntoTreeTransverser & insertintotreetransverser
+    )
+  {
+    GrammarPart * * p_p_grammarpartChildOfParentGrammarPartWhereToInsert =
+      NULL;
+    switch( insertintotreetransverser.m_byDirection )
+    {
+    case ParseTreeTraverser::DirectingLeavesMultipleIterTraverser::
+      Left :
+        LOGN("TransformTreeTraverser::MoveParseTreeBranch()--insert "
+          "branch into left child node of the parent grammar part of the "
+          "grammar part to insert.")
+//          r_p_grammarpartParentOfGrammarPartToMove->mp_grammarpartLeftChild =
+//            insertintotreetransverser.
+//            m_p_grammarpartChildOfGrammarPartToInsert ;
+//          r_p_grammarpartParentOfGrammarPartToMove->mp_grammarpartRightChild
+//            = p_grammarpartParentOfGrammarPartToMove ;
+        //Store the address of the right child node pointer.
+        p_p_grammarpartChildOfParentGrammarPartWhereToInsert =
+          & //r_p_grammarpartParentOfGrammarPartToMove->
+          insertintotreetransverser.
+          m_p_grammarpartParentOfGrammarPartToInsert->
+          mp_grammarpartLeftChild ;
+        break ;
+    case ParseTreeTraverser::DirectingLeavesMultipleIterTraverser::
+      Right :
+        LOGN("TransformTreeTraverser::MoveParseTreeBranch()--insert "
+          "branch into right child node of the parent grammar part of the "
+          "grammar part to insert.")
+//                insertintotreetransverser.
+//                  m_p_grammarpartChildOfGrammarPartToInsert ;
+        //Store the address of the right child node pointer.
+        p_p_grammarpartChildOfParentGrammarPartWhereToInsert =
+          & //r_p_grammarpartParentOfGrammarPartToMove->
+          insertintotreetransverser.
+          m_p_grammarpartParentOfGrammarPartToInsert->
+          mp_grammarpartRightChild ;
+//          r_p_grammarpartParentOfGrammarPartToMove->
+//            = p_grammarpartParentOfGrammarPartToMove ;
+        break ;
+    }
+    return p_p_grammarpartChildOfParentGrammarPartWhereToInsert;
+  }
+
   void TransformTreeTraverser::MoveParseTreeBranch(
     ParseTreeTraverser::InsertIntoTreeTransverser & insertintotreetransverser,
 //    GrammarPart * p_grammarpartParentOfGrammarPartToMove ,
@@ -99,6 +144,9 @@ namespace ParseTreeTraverser
     if( insertintotreetransverser.
         m_p_grammarpartParentOfCurrentGrammarPart )
     {
+        std::string std_strParentOfCurrentGrammarPart =
+          m_r_parsebyrise.GetGrammarPartName( insertintotreetransverser.
+          m_p_grammarpartParentOfCurrentGrammarPart->m_wGrammarPartID );
       LOGN("Direction where to move child to:"
         << //c_iter_syntaxtreepath2transformationrule->second.
           //m_bInsertLeftChild
@@ -107,53 +155,22 @@ namespace ParseTreeTraverser
   //            if( ! bIsLeftChild )
 //       GrammarPart * & r_p_grammarpartParentOfGrammarPartToMove =
 //        insertintotreetransverser.m_p_grammarpartParentOfCurrentGrammarPart ;
+
       //Stores the address of a pointer.
       GrammarPart * * p_p_grammarpartChildOfParentGrammarPartWhereToInsert =
-        NULL ;
-      switch( insertintotreetransverser.m_byDirection )
-      {
-      case ParseTreeTraverser::DirectingLeavesMultipleIterTraverser::
-        Left :
-          LOGN("TransformTreeTraverser::MoveParseTreeBranch()--insert "
-            "branch into left child node of the parent grammar part of the "
-            "grammar part to insert.")
-//          r_p_grammarpartParentOfGrammarPartToMove->mp_grammarpartLeftChild =
-//            insertintotreetransverser.
-//            m_p_grammarpartChildOfGrammarPartToInsert ;
-//          r_p_grammarpartParentOfGrammarPartToMove->mp_grammarpartRightChild
-//            = p_grammarpartParentOfGrammarPartToMove ;
-          //Store the address of the right child node pointer.
-          p_p_grammarpartChildOfParentGrammarPartWhereToInsert =
-            & //r_p_grammarpartParentOfGrammarPartToMove->
-            insertintotreetransverser.
-            m_p_grammarpartParentOfGrammarPartToInsert->
-            mp_grammarpartLeftChild ;
-          break ;
-      case ParseTreeTraverser::DirectingLeavesMultipleIterTraverser::
-        Right :
-          LOGN("TransformTreeTraverser::MoveParseTreeBranch()--insert "
-            "branch into right child node of the parent grammar part of the "
-            "grammar part to insert.")
-//                insertintotreetransverser.
-//                  m_p_grammarpartChildOfGrammarPartToInsert ;
-          //Store the address of the right child node pointer.
-          p_p_grammarpartChildOfParentGrammarPartWhereToInsert =
-            & //r_p_grammarpartParentOfGrammarPartToMove->
-            insertintotreetransverser.
-            m_p_grammarpartParentOfGrammarPartToInsert->
-            mp_grammarpartRightChild ;
-//          r_p_grammarpartParentOfGrammarPartToMove->
-//            = p_grammarpartParentOfGrammarPartToMove ;
-          break ;
-      }
+        //NULL ;
+        GetChildOfParentGrammarPartWhereToInsertOrToExchange(insertintotreetransverser);
+
+      std::string std_strChildOfParentGrammarPartWhereToInsert =
+        m_r_parsebyrise.GetGrammarPartName(
+        ( * p_p_grammarpartChildOfParentGrammarPartWhereToInsert)->
+        m_wGrammarPartID );
       LOGN("TransformTreeTraverser::MoveParseTreeBranch(...)--"
         "p_p_grammarpartChildOfParentGrammarPartWhereToInsert: "
         << p_p_grammarpartChildOfParentGrammarPartWhereToInsert
         <<", * p_p_grammarpartChildOfParentGrammarPartWhereToInsert:"
         << * p_p_grammarpartChildOfParentGrammarPartWhereToInsert
-        << ", name:" << m_r_parsebyrise.GetGrammarPartName(
-          ( * p_p_grammarpartChildOfParentGrammarPartWhereToInsert)->
-          m_wGrammarPartID )
+        << ", name:" << std_strChildOfParentGrammarPartWhereToInsert
         )
       LOGN("TransformTreeTraverser::MoveParseTreeBranch(...)--"
         "Move child to left?:" << r_transformationrule.m_bInsertLeftChild )
@@ -197,6 +214,7 @@ namespace ParseTreeTraverser
       //right child.
       * p_p_grammarpartChildOfParentGrammarPartWhereToInsert =
         p_grammarpartToInsert ;
+
       LOGN("TransformTreeTraverser::MoveParseTreeBranch(...)--"
         "setting p_p_grammarpartChildOfParentGrammarPartWhereToInsert->"
         "mp_grammarpartLeftChild to: "
@@ -259,123 +277,247 @@ namespace ParseTreeTraverser
       "--m_bMoveParseTreeBranch:" << m_bMoveParseTreeBranch )
     if( m_bMoveParseTreeBranch )
     {
-      std::string std_strGrammarPartName;
       std::map<SyntaxTreePath,TransformationRule>::const_iterator
         c_iter_syntaxtreepath2transformationrule =
         m_stdmap_syntaxtreepath2transformationrule.begin() ;
+
       while( c_iter_syntaxtreepath2transformationrule !=
           m_stdmap_syntaxtreepath2transformationrule.end()
         )
       {
+        //Transformation's syntax tree path matches current parse tree path.
         if( c_iter_syntaxtreepath2transformationrule->first.Matches(
           //ar_wGrammarPartID,
             stdvec_wGrammarPartID )
           )
         {
-          LOGN("Transformation parse tree path found.")
-  //        bool bNodeToBeChildIsLeftChild ;
-          try
-          {
-            //May throw an exception
-            ParseTreeTraverser::InsertIntoTreeTransverser
-              insertintotreetransverser(
-    //          cr_transformationrule ,
-              c_iter_syntaxtreepath2transformationrule->second ,
-              m_p_grammarpartStartNode ,
-              m_r_parsebyrise
-              ) ;
-
-            GrammarPart * p_grammarpartChildOfGrammarPartToInsert =
-              FindParseTreePathWhereToInsert(
-    //          c_iter_syntaxtreepath2transformationrule->second
-    //          .m_stdstrParseTreePathWhereToInsert
-    //          , bNodeToBeChildIsLeftChild
-                insertintotreetransverser
-              ) ;
-            GrammarPart * p_grammarpartParentOfGrammarPartToMove =
-              //Get the parent grammar part of the current grammar part.
-              Get2ndLastGrammarPart() ;
-            if( p_grammarpartParentOfGrammarPartToMove &&
-                p_grammarpartChildOfGrammarPartToInsert
-              )
-            {
-              std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
-                  p_grammarpartChildOfGrammarPartToInsert->m_wGrammarPartID );
-              LOGN( //"TransformTreeTraverser::ParseTreePathAdded()-- "
-                  FULL_FUNC_NAME << "--"
-                "grammar part to be a child of the grammar part to insert: "
-                << std_strGrammarPartName
-                )
-              std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
-                insertintotreetransverser.
-                m_p_grammarpartParentOfCurrentGrammarPart->m_wGrammarPartID );
-              LOGN( //"TransformTreeTraverser::ParseTreePathAdded()-- "
-                  FULL_FUNC_NAME << "--"
-                "parent grammar part of the grammar part to move: "
-                << std_strGrammarPartName
-                )
-              GrammarPart * p_grammarpartBranchToMove = NULL ;
-  //            SetChildNodeAtGrammarPartToMoveToNULL(
-              GetGrammarPartToMove(
-                p_grammarpartParentOfGrammarPartToMove ,
-                p_grammarpartBranchToMove ) ;
-  //            p_grammarpartBranchToMove =
-  //              m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
-              LOGN("TransformTreeTraverser::ParseTreePathAdded()"
-                "--p_grammarpartBranchToMove:" << p_grammarpartBranchToMove
-                << " & p_grammarpartBranchToMove:"
-                << & p_grammarpartBranchToMove )
-              if( p_grammarpartBranchToMove )
-              {
-                std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
-                    p_grammarpartBranchToMove->m_wGrammarPartID );
-                LOGN("p_grammarpartBranchToMove:" << std_strGrammarPartName
-                   )
-                MoveParseTreeBranch(
-                  insertintotreetransverser,
-  //                p_grammarpartParentOfGrammarPartToMove ,
-                  p_grammarpartBranchToMove ,
-                  c_iter_syntaxtreepath2transformationrule->second
-                  ) ;
-                //Set to NULL _after_ moving because this may happen:
-                // adverb main_verb     main_verb adverb
-                //      \ /          ->         \ /
-                //    middle                 main_verb
-                //                              |
-                //                            middle
-                //
-                // : if set to NULL before moving: middle->right_child: moved to
-                //  middle->left_child, middle->right_child set to NULL ;
-                //   so middle->right_child which is _NULL_ might be used
-                SetChildNodeAtGrammarPartToMoveToNULL(
-                  p_grammarpartParentOfGrammarPartToMove //,
-                  //p_grammarpartBranchToMove
-                  ) ;
-              }
-              //The branch was moved and because this tree is further traversed
-              //the moved branch may match again if it is on the right hand side
-              //of the current tree path -> Do not move a second time.
-              m_bMoveParseTreeBranch = false ;
-              m_bTraverseTree = false ;
-              //End loop in super class
-              //DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree()
-              m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart = NULL ;
-            }
-          }
-          catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
-          {
-              mp_parsebyrise->m_p_userinterface->Message(
-                "Error moving parse tree branch \"" +
-                c_iter_syntaxtreepath2transformationrule->second.
-                m_stdstrParseTreePathWhereToInsert + "\" : "
-                "unknown grammar part ID \"" +
-                   c_r_getgrammarpartidexception.m_stdstr + " \""
-                );
-          }
+          const TransformationRule & c_r_transformationrule =
+              c_iter_syntaxtreepath2transformationrule->second;
+          MoveOrExchangeParseTreePath(c_r_transformationrule);
         }
         ++ c_iter_syntaxtreepath2transformationrule ;
       } //end while loop.
     } //if( m_bMoveParseTreeBranch )
+  }
+
+  void TransformTreeTraverser::ExchangeSyntaxTreePathes(
+    BYTE byDirectionOfGrammarPartToMoveOrToExchange,
+    GrammarPart * p_grammarpartParentOfGrammarPartToMoveOrToExchange,
+    GrammarPart * p_grammarpartBranchToMoveOrToExchange,
+    ParseTreeTraverser::InsertIntoTreeTransverser & r_insertintotreetransverser
+    )
+  {
+    GrammarPart * * p_p_grammarpartChildOfParentGrammarPartToExchange =
+      GetChildOfParentGrammarPartWhereToInsertOrToExchange(
+      r_insertintotreetransverser);
+
+    std::string std_str2ndChildGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
+        (* p_p_grammarpartChildOfParentGrammarPartToExchange)->
+        m_wGrammarPartID );
+    std::string std_str2ndParentGrammarPartName =
+        m_r_parsebyrise.GetGrammarPartName( r_insertintotreetransverser.
+              m_p_grammarpartParentOfGrammarPartToInsert->m_wGrammarPartID);
+
+    std::string std_str1stParentGrammarPartName =
+        m_r_parsebyrise.GetGrammarPartName(
+        p_grammarpartParentOfGrammarPartToMoveOrToExchange->m_wGrammarPartID);
+    std::string std_str1stChildGrammarPartName = m_r_parsebyrise.
+        GetGrammarPartName(
+        p_grammarpartBranchToMoveOrToExchange->
+        m_wGrammarPartID );
+    GrammarPart * * p_p_grammarpart1stChildToExchange = NULL;
+    GrammarPart * p_grammarpart1stChildToExchange = NULL;
+    switch(byDirectionOfGrammarPartToMoveOrToExchange)
+    {
+    case DirectingLeavesMultipleIterTraverser::Left:
+      p_p_grammarpart1stChildToExchange =
+        //Address of child pointer.
+        & p_grammarpartParentOfGrammarPartToMoveOrToExchange->
+        mp_grammarpartLeftChild;
+      break;
+    case DirectingLeavesMultipleIterTraverser::Right:
+      p_p_grammarpart1stChildToExchange =
+        //Address of child pointer.
+        & p_grammarpartParentOfGrammarPartToMoveOrToExchange->
+        mp_grammarpartRightChild;
+      break;
+    }
+    if( p_p_grammarpart1stChildToExchange )
+    {
+      //Save pointer to 1st child (is overwritten afterwards)
+      p_grammarpart1stChildToExchange = * p_p_grammarpart1stChildToExchange;
+      //Write address of 2nd child to address of 1st child pointer.
+      * p_p_grammarpart1stChildToExchange =
+//          r_insertintotreetransverser.
+//                 m_p_grammarpartParentOfGrammarPartToInsert
+        * p_p_grammarpartChildOfParentGrammarPartToExchange;
+      //Side of parent's branch where the 2nd child is located.
+      switch(r_insertintotreetransverser.m_byDirection)
+      {
+      case DirectingLeavesMultipleIterTraverser::Left:
+        r_insertintotreetransverser.
+          m_p_grammarpartParentOfGrammarPartToInsert->mp_grammarpartLeftChild
+          =
+          //Address of 1st child
+//          * p_p_grammarpart1stChildToExchange;
+          p_grammarpart1stChildToExchange;
+        break;
+      case DirectingLeavesMultipleIterTraverser::Right:
+        r_insertintotreetransverser.
+          m_p_grammarpartParentOfGrammarPartToInsert->mp_grammarpartRightChild
+          =
+          //Address of 1st child
+//          * p_p_grammarpart1stChildToExchange;
+          p_grammarpart1stChildToExchange;
+        break;
+      }
+    }
+  }
+
+  void TransformTreeTraverser::MoveOrExchangeParseTreePath(
+      const TransformationRule & c_r_transformationrule)
+  {
+
+    LOGN("Transformation parse tree path found.")
+  //        bool bNodeToBeChildIsLeftChild ;
+    try
+    {
+      const SyntaxTreePath * p_syntaxtreepath = NULL;
+      //-> Exchange the 2 syntax tree branches.
+      if( c_r_transformationrule.m_syntaxtreepath2nd.m_wNumberOfElements > 0 )
+        p_syntaxtreepath = & c_r_transformationrule.m_syntaxtreepath2nd;
+      else if (
+          //! c_r_transformationrule.m_stdstrParseTreePathWhereToInsert.
+          //empty()
+        c_r_transformationrule.m_syntaxtreepathWhereToInsert.
+        m_wNumberOfElements > 0
+        )
+        p_syntaxtreepath = & c_r_transformationrule.
+          m_syntaxtreepathWhereToInsert;
+
+      //May throw an exception because of "SyntaxTreePath"'s constructor.
+      ParseTreeTraverser::InsertIntoTreeTransverser
+        insertintotreetransverser(
+  //          cr_transformationrule ,
+        c_r_transformationrule ,
+        * p_syntaxtreepath,
+        m_p_grammarpartStartNode ,
+        m_r_parsebyrise
+        ) ;
+
+      GrammarPart * p_grammarpartChildOfGrammarPartWhereToInsertOrToExchange =
+        FindParseTreePathWhereToInsert(
+  //          c_iter_syntaxtreepath2transformationrule->second
+  //          .m_stdstrParseTreePathWhereToInsert
+  //          , bNodeToBeChildIsLeftChild
+          insertintotreetransverser
+        ) ;
+      GrammarPart * p_grammarpartParentOfGrammarPartToMoveOrToExchange =
+        //Get the parent grammar part of the current grammar part.
+        Get2ndLastGrammarPart() ;
+      if( p_grammarpartParentOfGrammarPartToMoveOrToExchange &&
+          p_grammarpartChildOfGrammarPartWhereToInsertOrToExchange
+        )
+      {
+        std::string std_strGrammarPartName;
+        std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
+            p_grammarpartChildOfGrammarPartWhereToInsertOrToExchange->
+            m_wGrammarPartID );
+
+        std::string std_strChildOfGrammarPartToInsert =
+            std_strGrammarPartName;
+        LOGN( //"TransformTreeTraverser::ParseTreePathAdded()-- "
+            FULL_FUNC_NAME << "--"
+          "grammar part to be a child of the grammar part to insert: "
+          << std_strGrammarPartName
+          )
+        std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
+          insertintotreetransverser.
+          m_p_grammarpartParentOfCurrentGrammarPart->m_wGrammarPartID );
+        LOGN( //"TransformTreeTraverser::ParseTreePathAdded()-- "
+            FULL_FUNC_NAME << "--"
+          "parent grammar part of the grammar part to move: "
+          << std_strGrammarPartName
+          )
+        std::string std_strParentOfGrammarPartToMove =
+            m_r_parsebyrise.GetGrammarPartName(
+            p_grammarpartParentOfGrammarPartToMoveOrToExchange->m_wGrammarPartID );
+        GrammarPart * p_grammarpartBranchToMoveOrToExchange = NULL ;
+
+  //            SetChildNodeAtGrammarPartToMoveToNULL(
+        BYTE byDirectionOfGrammarPartToMoveOrToExchange =
+          GetGrammarPartToMoveOrToExchange(
+          p_grammarpartParentOfGrammarPartToMoveOrToExchange ,
+          p_grammarpartBranchToMoveOrToExchange ) ;
+  //            p_grammarpartBranchToMove =
+  //              m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
+        LOGN("TransformTreeTraverser::ParseTreePathAdded()"
+          "--p_grammarpartBranchToMove:" <<
+          p_grammarpartBranchToMoveOrToExchange
+          << " & p_grammarpartBranchToMove:"
+          << & p_grammarpartBranchToMoveOrToExchange )
+        if( p_grammarpartBranchToMoveOrToExchange )
+        {
+          if( c_r_transformationrule.m_syntaxtreepath2nd.m_wNumberOfElements > 0 )
+            ExchangeSyntaxTreePathes(
+              byDirectionOfGrammarPartToMoveOrToExchange,
+              p_grammarpartParentOfGrammarPartToMoveOrToExchange,
+              p_grammarpartBranchToMoveOrToExchange,
+//              p_grammarpartParentOfGrammarPartToMoveOrToExchange
+              insertintotreetransverser
+              );
+          else
+          {
+//            MoveSyntaxTreePath();
+
+            std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
+                p_grammarpartBranchToMoveOrToExchange->m_wGrammarPartID );
+            LOGN("p_grammarpartBranchToMove:" << std_strGrammarPartName
+               )
+            MoveParseTreeBranch(
+              insertintotreetransverser,
+    //                p_grammarpartParentOfGrammarPartToMove ,
+              p_grammarpartBranchToMoveOrToExchange ,
+  //            c_iter_syntaxtreepath2transformationrule->second
+              c_r_transformationrule
+              ) ;
+            //Set to NULL _after_ moving because this may happen:
+            // adverb main_verb     main_verb adverb
+            //      \ /          ->         \ /
+            //    middle                 main_verb
+            //                              |
+            //                            middle
+            //
+            // : if set to NULL before moving: middle->right_child: moved to
+            //  middle->left_child, middle->right_child set to NULL ;
+            //   so middle->right_child which is _NULL_ might be used
+            SetChildNodeAtGrammarPartToMoveToNULL(
+              p_grammarpartParentOfGrammarPartToMoveOrToExchange //,
+              //p_grammarpartBranchToMove
+              ) ;
+          }
+        }
+        //The branch was moved and because this tree is further traversed
+        //the moved branch may match again if it is on the right hand side
+        //of the current tree path -> Do not move a second time.
+        m_bMoveParseTreeBranch = false ;
+        m_bTraverseTree = false ;
+        //End loop in super class
+        //DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree()
+        m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart = NULL ;
+      }
+    }
+    catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
+    {
+        mp_parsebyrise->m_p_userinterface->Message(
+          "Error moving parse tree branch \"" +
+//          c_iter_syntaxtreepath2transformationrule->second.
+          c_r_transformationrule.
+          m_stdstrParseTreePathWhereToInsert + "\" : "
+          "unknown grammar part ID \"" +
+             c_r_getgrammarpartidexception.m_stdstr + " \""
+          );
+    }
   }
 
   //Called after:
@@ -422,18 +564,22 @@ namespace ParseTreeTraverser
       )
   }
 
-  void TransformTreeTraverser::GetGrammarPartToMove(
+  BYTE TransformTreeTraverser::GetGrammarPartToMoveOrToExchange(
     GrammarPart * p_grammarpartParentOfGrammarPartToMove ,
     GrammarPart * & p_r_grammarpartBranchToMove
     )
   {
+    BYTE by = DirectingLeavesMultipleIterTraverser::RootNodeOrMiddle;
+
     if( p_grammarpartParentOfGrammarPartToMove->mp_grammarpartLeftChild
-        == m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart )
+        == m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
+        )
     {
       LOGN("TransformTreeTraverser::GetGrammarPartToMove"
         "(...)--grammar part to move is left child.")
       p_r_grammarpartBranchToMove =
         p_grammarpartParentOfGrammarPartToMove->mp_grammarpartLeftChild ;
+      by = DirectingLeavesMultipleIterTraverser::Left;
     }
     else
       if( p_grammarpartParentOfGrammarPartToMove->
@@ -444,7 +590,9 @@ namespace ParseTreeTraverser
           "(...)--grammar part to move is right child.")
         p_r_grammarpartBranchToMove = p_grammarpartParentOfGrammarPartToMove->
           mp_grammarpartRightChild ;
+        by = DirectingLeavesMultipleIterTraverser::Right;
       }
+    return by;
   }
 
   void TransformTreeTraverser::SetChildNodeAtGrammarPartToMoveToNULL(

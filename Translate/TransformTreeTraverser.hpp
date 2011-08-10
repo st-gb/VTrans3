@@ -39,6 +39,8 @@ namespace ParseTreeTraverser
       m_stdmap_syntaxtreepath2transformationrule ;
     ParseByRise & m_r_parsebyrise ;
     std::vector<GrammarPart *>  m_stdvector_p_grammarpartCurrentParseTreePath;
+
+
     void BeforeBeginAtRoot() ;
     void CurrentNodeIsLastAddedRightChild() ;
     GrammarPart * FindParseTreePathWhereToInsert(
@@ -48,8 +50,15 @@ namespace ParseTreeTraverser
       ParseTreeTraverser::InsertIntoTreeTransverser &
         cr_insertintotreetransverser
       ) ;
+    void ExchangeSyntaxTreePathes(
+      BYTE byDirectionOfGrammarPartToMoveOrToExchange,
+      GrammarPart * p_grammarpartParentOfGrammarPartToMoveOrToExchange,
+      GrammarPart * p_grammarpartBranchToMoveOrToExchange,
+//      GrammarPart * p_grammarpartParentOfGrammarPartToMoveOrToExchange
+      ParseTreeTraverser::InsertIntoTreeTransverser & r_insertintotreetransverser
+      );
     GrammarPart * Get2ndLastGrammarPart() ;
-    void GetGrammarPartToMove(
+    BYTE GetGrammarPartToMoveOrToExchange(
       GrammarPart * p_grammarpartParentOfGrammarPartToMove ,
       GrammarPart * & p_r_grammarpartBranchToMove
       ) ;
@@ -58,8 +67,10 @@ namespace ParseTreeTraverser
     void MoveParseTreeBranch(
       ParseTreeTraverser::InsertIntoTreeTransverser & insertintotreetransverser,
       GrammarPart * p_grammarpartParentOfGrammarPartToMove ,
-      const TransformationRule & r_transformationrule
+      const TransformationRule & c_r_transformationrule
       ) ;
+    void MoveOrExchangeParseTreePath(
+      const TransformationRule & c_r_transformationrule);
     void ParseTreePathAdded() ;
     void ParseTreePathPopped() ;
     void PossiblyMoveParseTreeBranch();

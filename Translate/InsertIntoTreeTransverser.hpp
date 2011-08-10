@@ -41,6 +41,13 @@ namespace ParseTreeTraverser
       const GrammarPart * p_grammarpartStartNode ,
       ParseByRise & r_parsebyrise
       );
+    InsertIntoTreeTransverser(
+      const TransformationRule & cr_transformationrule ,
+//      const std::string & c_r_stdstrParseTreePath,
+      const SyntaxTreePath & c_r_syntaxtreepath,
+      const GrammarPart * p_grammarpartStartNode ,
+      ParseByRise & r_parsebyrise
+      );
     virtual
     ~InsertIntoTreeTransverser();
     void ParseTreePathAdded() ;

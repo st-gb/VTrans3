@@ -28,6 +28,14 @@ namespace Xerces
       TranslationControllerBase & r_translationcontrollerbase );
     virtual
     ~SAX2TransformationRuleHandler();
+    bool PossiblyAdd2ndSyntaxTreePath(
+      const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes,
+      TransformationRule & r_transformationrule
+      );
+    bool PossiblyAddSyntaxTreePathWhereToInsert(
+     const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes,
+     TransformationRule & r_transformationrule
+     );
     void startElement(
       const XMLCh * const cpc_xmlchURI,
       const XMLCh * const cpc_xmlchLocalName,

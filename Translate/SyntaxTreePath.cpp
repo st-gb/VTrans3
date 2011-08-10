@@ -41,25 +41,10 @@ SyntaxTreePath::SyntaxTreePath(
 //to release it again->points to other data or code->program crash)
 //for this array in the destructor
 //we simply set a flag that we are referring this array.
-SyntaxTreePath::SyntaxTreePath( const SyntaxTreePath & stpToCopyFrom )
+SyntaxTreePath::SyntaxTreePath(
+    const SyntaxTreePath & c_r_syntaxtreepathToCopyFrom )
 {
-  //for checking for correct release of memory:
-//  DEBUG_COUT("SyntaxTreePath copy ctor\n")
-  //m_byOtherReferencesToGrammarPartIDArray ++ ;
-//  m_bReferringOthersGrammarPartIDArray = true ;
-//  stpToCopyFrom.m_bReferredOthersGrammarPartIDArray = true ;
-  m_wNumberOfElements = stpToCopyFrom.m_wNumberOfElements ;
-//  m_ar_wElements = stpToCopyFrom.m_ar_wElements ;
-  m_ar_wElements = new WORD[ m_wNumberOfElements ] ;
-  if( m_ar_wElements )
-  {
-    memcpy( m_ar_wElements , //void * destination,
-      stpToCopyFrom.m_ar_wElements , //const void * source
-      sizeof(WORD) * m_wNumberOfElements //Number of bytes to copy.
-      ) ;
-  }
-  mp_parsebyrise = stpToCopyFrom.mp_parsebyrise ;
-  //m_byOtherReferencesToGrammarPartIDArray = 0 ;
+  copy(c_r_syntaxtreepathToCopyFrom);
 }
 
 SyntaxTreePath::~SyntaxTreePath()
@@ -78,6 +63,27 @@ SyntaxTreePath::~SyntaxTreePath()
     //Release mem.
     delete [] m_ar_wElements ;
   }
+}
+
+void SyntaxTreePath::copy(const SyntaxTreePath & c_r_syntaxtreepathToCopyFrom)
+{
+  //for checking for correct release of memory:
+  //  DEBUG_COUT("SyntaxTreePath copy ctor\n")
+  //m_byOtherReferencesToGrammarPartIDArray ++ ;
+  //  m_bReferringOthersGrammarPartIDArray = true ;
+  //  stpToCopyFrom.m_bReferredOthersGrammarPartIDArray = true ;
+  m_wNumberOfElements = c_r_syntaxtreepathToCopyFrom.m_wNumberOfElements ;
+  //  m_ar_wElements = stpToCopyFrom.m_ar_wElements ;
+  m_ar_wElements = new WORD[ m_wNumberOfElements ] ;
+  if( m_ar_wElements )
+  {
+    memcpy( m_ar_wElements , //void * destination,
+      c_r_syntaxtreepathToCopyFrom.m_ar_wElements , //const void * source
+      sizeof(WORD) * m_wNumberOfElements //Number of bytes to copy.
+      ) ;
+  }
+  mp_parsebyrise = c_r_syntaxtreepathToCopyFrom.mp_parsebyrise ;
+  //m_byOtherReferencesToGrammarPartIDArray = 0 ;
 }
 
 //0: failure
@@ -193,6 +199,17 @@ bool SyntaxTreePath::operator < ( const SyntaxTreePath & r) const
   }
 }
 
+//see http://www.cs.caltech.edu/courses/cs11/material/cpp/donnie/cpp-ops.html:
+
+//_Must_ define an assignment operator, else the array is not being copied
+//but the array pointer is just referring the origin's array. ->
+//the array pointer refers to an invalid location if the original array was destroyed.
+SyntaxTreePath & SyntaxTreePath::operator = ( const SyntaxTreePath & c_r_stpToCopyFrom)
+{
+  copy(c_r_stpToCopyFrom);
+  return * this;
+}
+
 std::string SyntaxTreePath::GetAs_std_string( ) const
 {
   std::string stdstr ;
@@ -230,7 +247,12 @@ void SyntaxTreePath::GetAsGrammarPartIDvector(
   WORD wIndex = 0 ;
   while( c_iter != r_stdvector_p_grammarpartParseTreePath.end() )
   {
+#ifdef _DEBUG
+    WORD wGrammarPartID = (*c_iter)->m_wGrammarPartID;
+    r_stdvec_w_grammarpartPath.push_back( wGrammarPartID ) ;
+#else
     r_stdvec_w_grammarpartPath.push_back( (*c_iter)->m_wGrammarPartID ) ;
+#endif
     ++ wIndex ;
     ++ c_iter ;
   }
