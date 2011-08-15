@@ -9,12 +9,12 @@
 #define TRANSLATETREETRAVERSER_HPP_
 
 #include <Attributes/TranslationAndGrammarPart.hpp>
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <Parse/DirectingLeavesMultipleIterTraverser.hpp> //Base class
 #include <Parse/ParseByRise.hpp>
-#include <map>
-#include <vector>
+#include <map> //class std::map
+#include <vector> //class std::vector
 
-//pre-declaration (faster than to include)
+//Forward declaration (faster than to include)
 class ParseByRise ;
 class TranslateParseByRiseTree ;
 

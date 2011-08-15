@@ -1091,7 +1091,12 @@ void OneLinePerWordPair::InsertGermanNoun(
 //                , nIndexOf1stChar
 //                ) ;
       if( delemiterCount < NUMBER_OF_STRINGS_FOR_GERMAN_NOUN )
+      {
         //pvocabularyandtranslation->m_arstrGermanWord[
+        std::string std_strCurrentWord = strCurrentWordData.substr(
+          nIndexOf1stChar
+          , nIndexOfCurrentChar - nIndexOf1stChar
+          );
 
         //Add to the stucture that also contains the English strings.
         //So the German equivalent can be retrieved when the last
@@ -1100,16 +1105,14 @@ void OneLinePerWordPair::InsertGermanNoun(
 //        g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
         s_p_lettertree->s_pvocabularyandtranslation->m_arstrGermanWord[
           delemiterCount ] = //str.Mid(start,i-start);
-          strCurrentWordData.substr(
-            nIndexOf1stChar
-            , nIndexOfCurrentChar - nIndexOf1stChar
-            );
+          std_strCurrentWord;
 #ifdef _DEBUG
         std::cout << "German noun read:" <<
 //            g_lettertree.s_pvocabularyandtranslation->
           s_p_lettertree->s_pvocabularyandtranslation->
             m_arstrGermanWord[delemiterCount] << "\n" ;
-#endif
+#endif //#ifdef _DEBUG
+      }
 #endif //#ifdef _INSERT_INTO_HASH_TREE
       delemiterCount ++ ;
       nIndexOf1stChar = nIndexOfCurrentChar + 1 ;

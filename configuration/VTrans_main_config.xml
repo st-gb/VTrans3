@@ -29,4 +29,5 @@
  <translation_rule_file path="configuration/translation_rules/personal_pronouns_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/reflexive_pronouns_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/relative_clause_translation_rules.xml" />
 </VTrans_main_cfg>

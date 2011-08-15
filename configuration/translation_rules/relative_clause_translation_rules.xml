@@ -32,6 +32,25 @@
     syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
     attribute_name="GerMainVerb1Obj3rdPersSing"
 	>
+  </translation_rule>
+  <!--concatenate both translations (if selecting "you" in a context menu the translation for the 
+     finite verb of have should be also selected)-->
+  <concatenated_translation_rules>
+	  <translation_rule 
+		syntax_tree_path="2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.haveInfinitive"
+		attribute_name="GerMainVerb1Obj2ndPersSing"
+		>
+	  </translation_rule>
+	  <translation_rule 
+		syntax_tree_path="2ndPersSingPerfectClause1Obj.you"
+		translation="du"
+		>
+	  </translation_rule>
+  </concatenated_translation_rules>
+  <translation_rule 
+    syntax_tree_path="2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.mainVerbPastParticiple1Obj"
+    attribute_name="GermanMainVerb1ObjParticiplePerfect"
+	>
     <!--<condition syntax_tree_path="MainVerb3rdPersSingPres1Obj.3rdPersSingClauseAllows1Obj.3rdPersSingEnumEleWithRelClause"
     />-->
   </translation_rule>

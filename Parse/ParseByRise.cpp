@@ -173,14 +173,25 @@ void ParseByRise::ClearAllGrammarStuff()
 //Clears (empties) the previously generated parse tree.
 //This should be done for a next parse tree generation .
 void ParseByRise::ClearParseTree()
- {
+{
+
   m_stdset_grammarpartAllSuperordinate.clear() ;
   m_wBiggestNumberOfTokensForAppliedGrammarRule = 0 ;
 //   m_stdmultimap_dwRightmostIndex2grammarpart.clear() ;
 //   m_stdmultimap_dwLeftmostIndex2grammarpart.clear() ;
    m_stdmultimap_dwRightmostIndex2p_grammarpart.clear() ;
+
+   std::multimap<DWORD, GrammarPart *>::const_iterator c_iter =
+       m_stdmultimap_dwLeftmostIndex2p_grammarpart.begin();
+   while( c_iter != m_stdmultimap_dwLeftmostIndex2p_grammarpart.end() )
+   {
+     //Was allocated on the heap
+     delete c_iter->second;
+     ++ c_iter;
+   }
    m_stdmultimap_dwLeftmostIndex2p_grammarpart.clear() ;
-   m_stdset_p_grammarpartAllSuperordinate.clear() ;
+
+//   m_stdset_p_grammarpartAllSuperordinate.clear() ;
  }
 
 //Creates the leafs of possible parse trees ausgehend from the source text.
@@ -259,6 +270,35 @@ void ParseByRise::CreateInitialGrammarParts ( const std::string &
 #endif
     ++ iter ;
     ++ wTokenIndex ;
+  }
+}
+
+void ParseByRise::DeleteFromOutMostTokenIndexContainer(
+  GrammarPart * p_grammarpartRootNode,
+  std::multimap<DWORD, GrammarPart *> & r_std_multimap_dw2p_grammarpart,
+  DWORD dwTokenIndex
+  )
+{
+  std::multimap<DWORD, GrammarPart *>::
+    //iterator mustn't be "const" for multimap::erase(...)
+    iterator iter =
+      //m_stdmultimap_dwRightmostIndex2p_grammarpart.find(
+      r_std_multimap_dw2p_grammarpart.find(
+//        p_grammarpartRootNode->m_dwRightmostIndex
+      dwTokenIndex
+      );
+  while( iter != r_std_multimap_dw2p_grammarpart.end() && iter->first ==
+//        p_grammarpartRootNode->m_dwRightmostIndex
+      dwTokenIndex
+      )
+  {
+    if( iter->second == p_grammarpartRootNode)
+    {
+//          m_stdmultimap_dwRightmostIndex2p_grammarpart.de() ;
+      r_std_multimap_dw2p_grammarpart.erase(iter);
+      break;
+    }
+    ++ iter;
   }
 }
 
@@ -2033,8 +2073,11 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
   //If the word was found.
   if( p_letternode )
   {
-    DEBUG_COUT( "word found in dictionary: " << GetBetweenAsStdString( psv,
-        dwTokenIndex, dwTokenIndexRightMost) << "\n" )
+#ifdef _DEBUG
+    std::string std_str = GetBetweenAsStdString( psv, dwTokenIndex,
+      dwTokenIndexRightMost);
+    DEBUG_COUT( "word found in dictionary: " << std_str << "\n" )
+#endif
     std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
       NULL ;
     psetpvocabularyandtranslation = p_letternode->
@@ -2056,6 +2099,9 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
       //equals the current token.
       //There may be more than 1 vocabulary for the same word:
       //e.g. "love" may be either a noun ("the love") or a verb ("to love").
+#ifdef _DEBUG
+      int nNumbersOfWords = psetpvocabularyandtranslation->size();
+#endif
       for(std::set<VocabularyAndTranslation *>::iterator iter =
         psetpvocabularyandtranslation->begin() ; iter !=
         psetpvocabularyandtranslation->end() ; iter ++ )
@@ -2378,6 +2424,75 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
   }
   DEBUG_COUTN("InsertSuperordinateGrammarPart end")
   return bReplaced ;
+}
+
+void ParseByRise::RemoveParseTree(GrammarPart * p_grammarpartRootNode)
+{
+  m_stdset_grammarpartAllSuperordinate.erase( * p_grammarpartRootNode);
+//   m_stdmultimap_dwRightmostIndex2grammarpart.clear() ;
+//   m_stdmultimap_dwLeftmostIndex2grammarpart.clear() ;
+
+  DeleteFromOutMostTokenIndexContainer(
+    p_grammarpartRootNode, //GrammarPart * p_grammarpartRootNode,
+//    std::multimap<DWORD, GrammarPart *> & r_std_multimap_dw2p_grammarpart,
+    m_stdmultimap_dwRightmostIndex2p_grammarpart,
+    p_grammarpartRootNode->m_dwRightmostIndex //DWORD dwTokenIndex
+    );
+ DeleteFromOutMostTokenIndexContainer(
+   p_grammarpartRootNode, //GrammarPart * p_grammarpartRootNode,
+//    std::multimap<DWORD, GrammarPart *> & r_std_multimap_dw2p_grammarpart,
+   m_stdmultimap_dwLeftmostIndex2p_grammarpart,
+   p_grammarpartRootNode->m_dwLeftmostIndex //DWORD dwTokenIndex
+   );
+
+ //Do not delete because may be child of other GrammarPart
+// //Was allocated on the heap
+// delete p_grammarpartRootNode;
+}
+
+void ParseByRise::RemoveSuperordinateRulesFromRootNodes()
+{
+  GrammarPart * p_grammarpartChild = NULL;
+  GrammarPart * p_grammarpartCurrent = NULL;
+  std::vector<GrammarPart *> std_vec_p_grammarpart;
+  std::multimap<DWORD, GrammarPart *>::const_iterator c_iterParseTreeRoots =
+      m_stdmultimap_dwLeftmostIndex2p_grammarpart.begin();
+  while( c_iterParseTreeRoots !=
+      m_stdmultimap_dwLeftmostIndex2p_grammarpart.end()
+      )
+  {
+    p_grammarpartCurrent = c_iterParseTreeRoots->second;
+    p_grammarpartChild = p_grammarpartCurrent->mp_grammarpartLeftChild;
+
+    if( p_grammarpartChild )
+    {
+      std::map<WORD,WORD>::const_iterator c_iter_std_map_w2w =
+        m_stdmap_wGrammarPartID2SuperordinateID.find( p_grammarpartChild->
+                m_wGrammarPartID);
+      if( //grammar part ID found in map
+        c_iter_std_map_w2w != m_stdmap_wGrammarPartID2SuperordinateID.end()
+        && c_iter_std_map_w2w->second == p_grammarpartCurrent->m_wGrammarPartID
+        ) //-> current grammar part is superordinate grammar part
+      {
+        //Do not delete immediately: else the iterator gets invalid->SIGSEG.
+        std_vec_p_grammarpart.push_back(p_grammarpartCurrent);
+      }
+//      while( IsSuperordinateGrammarRule(p_grammarpart->m_wGrammarPartID ) )
+    //{
+    //  delete p_grammarpart;
+//      p_grammarpartCurrent = p_grammarpartChild;
+    }
+    //if( IsDuplicateOfAnotherParseTree[AtSameLeftmostIndex]( p_grammarpartnsert)
+    ++ c_iterParseTreeRoots;
+  } //"while" loop
+
+  std::vector<GrammarPart *>::iterator iter = std_vec_p_grammarpart.begin();
+  while( iter != std_vec_p_grammarpart.end() )
+  {
+    RemoveParseTree( //p_grammarpartCurrent
+      * iter );
+    ++ iter;
+  }
 }
 
 bool ParseByRise::ReplaceGrammarPartIDsBySuperordinate()

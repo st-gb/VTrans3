@@ -136,6 +136,9 @@ public:
   // 2nd and later parse levels: rule "def_article_noun" already contained for
   //  leftmost index 0, rightmost index 2?: yes -> do not add to the list of
   // ALL grammar parts (that contains word classes plus applied rules)
+
+  //-Elements _must_ be objects (->not pointers) for "GrammarPart::operator <"
+  //  in std::set::find( ...) ?!
   std::set<GrammarPart> m_stdset_grammarpartAllSuperordinate ;
 
   //serves as a break condition so that is known that no more
@@ -153,6 +156,11 @@ public:
 
   void CreateInitialGrammarParts ( const std::string & cr_stdstrText ) ;
 
+  void DeleteFromOutMostTokenIndexContainer(
+    GrammarPart * p_grammarpartRootNode,
+    std::multimap<DWORD, GrammarPart *> & r_std_multimap_dw2p_grammarpart,
+    DWORD dwTokenIndex
+    );
   GrammarPart * GetGrammarPartCoveringMostTokens(
     DWORD dwLeftMostTokenIndex ) ;
   void GetGrammarPartCoveringMostTokens(
@@ -281,6 +289,8 @@ public:
 //      r_stdmultimap_dwRightmostIndex2grammarpartSuperordinate
     ) ;
 
+  void RemoveParseTree(GrammarPart * p_grammarpartRootNode);
+  void RemoveSuperordinateRulesFromRootNodes();
   bool ReplaceGrammarPartIDsBySuperordinate() ;
   void ResolveGrammarRulesForAllParseLevels() ;
   void SetUserInterface( I_UserInterface * p_userinterface)

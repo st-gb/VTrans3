@@ -36,6 +36,7 @@
 #endif
 
 #include "wxTextInputDlg.hpp"
+#include "wxTextControlDialog.hpp" //class wxTextControlDialog
 #include <IO/IO.hpp> //class OneLinePerWordPair
 
 //see http://stackoverflow.com/questions/59670/how-to-get-rid-of-deprecated-conversion-from-string-constant-to-char-warning
@@ -69,6 +70,8 @@
 #include <Translate/TranslateTreeTraverser.hpp> //TranslationAndGrammarPart
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
+#include <Translate/TranslationRule.hpp> //class TranslationRule
+
 //GetStdString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <wxWidgets/user_interface_control_actions.h> //for enum
@@ -579,16 +582,18 @@ wxTextInputDlg::wxTextInputDlg(
     wxDefaultSize,
     wxHSCROLL|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB
     );
-  mp_textctrlGermanText = new wxTextCtrl(
-    //this
-//    mp_wxsplitterwindow
-    m_panelSplitterTop
-    , wxID_ANY,
-    wxEmptyString,
-    wxDefaultPosition,
-    wxDefaultSize,
-    wxHSCROLL|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB
-    );
+//  mp_textctrlGermanText = new wxTextCtrl(
+//    //this
+////    mp_wxsplitterwindow
+//    m_panelSplitterTop
+//    , wxID_ANY,
+//    wxEmptyString,
+//    wxDefaultPosition,
+//    wxDefaultSize,
+//    wxHSCROLL | wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_PROCESS_TAB
+//    );
+  m_p_wxgermantranslationpanel = new wxGermanTranslationPanel(
+      m_panelSplitterTop);
 
   //p_gridbagsizerSplitterTop->Add( m_textCtrl7, 1, wxEXPAND | wxALL, 5 );
 //  p_flexgridsizerSplitterTop->Add(
@@ -601,7 +606,8 @@ wxTextInputDlg::wxTextInputDlg(
     );
 //  p_flexgridsizerSplitterTop->Add(
   p_boxsizerSplitterTop->Add(
-    mp_textctrlGermanText,
+//    mp_textctrlGermanText,
+    m_p_wxgermantranslationpanel,
     1,
     wxEXPAND |
     wxALL
@@ -808,23 +814,43 @@ void wxTextInputDlg::OnDrawParseTreeButton(wxCommandEvent & wxcmd )
 
 void wxTextInputDlg::OnInfoButton( wxCommandEvent & wxcmd )
 {
-  ::wxMessageBox(
-    wxString::Format(
-      wxT("# voc pairs:%lu\n"
-          "# grammar rules:%u\n"
-          "# translation rules:%u\n"
-          "# transFORMation rules:%u\n"
-          "# vocabulary attribute definitions:%u"
-        ) ,
-      OneLinePerWordPair::s_dwNumberOfVocabularyPairs
-      , wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.size()
-      , wxGetApp().m_translateparsebyrisetree.
-        m_stdmap_p_translationrule2ConditionsAndTranslation.size()
-      , wxGetApp().m_stdmap_syntaxtreepath2transformationrule.size()
-      , wxGetApp().m_translateparsebyrisetree.
-        m_stdmap_AttrName2VocAndTranslAttrDef.size()
-      )
-    , wxT("info") ) ;
+  wxString wxstr = wxString::Format(
+    wxT("# voc pairs:%lu\n"
+        "# grammar rules:%u\n"
+        "# translation rules:%u\n"
+        "# transFORMation rules:%u\n"
+        "# vocabulary attribute definitions:%u"
+      ) ,
+    OneLinePerWordPair::s_dwNumberOfVocabularyPairs
+    , wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.size()
+    , wxGetApp().m_translateparsebyrisetree.
+      m_stdmap_p_translationrule2ConditionsAndTranslation.size()
+    , wxGetApp().m_stdmap_syntaxtreepath2transformationrule.size()
+    , wxGetApp().m_translateparsebyrisetree.
+      m_stdmap_AttrName2VocAndTranslAttrDef.size()
+    );
+//  ::wxMessageBox(
+//    wxstr
+//    , wxT("info") ) ;
+
+  std::map<TranslationRule *,ConditionsAndTranslation> &
+    r_stdmap_p_translationrule2ConditionsAndTranslation = wxGetApp().
+    m_translateparsebyrisetree.
+    m_stdmap_p_translationrule2ConditionsAndTranslation;
+  std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator c_iter =
+      r_stdmap_p_translationrule2ConditionsAndTranslation.begin();
+  while( c_iter != r_stdmap_p_translationrule2ConditionsAndTranslation.end() )
+  {
+      const TranslationRule * c_p_translationrule =
+        c_iter->first;
+//      r_translationrule.mp_parsebyrise->Get
+      wxstr += wxT("\n") +
+        getwxString( c_p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
+        GetAs_std_string() );
+      ++ c_iter;
+  }
+  wxTextControlDialog wxd(wxstr);
+  wxd.ShowModal();
 }
 
 void wxTextInputDlg::OnLoadDictionaryButton( wxCommandEvent & wxcmd )
@@ -934,7 +960,7 @@ void wxTextInputDlg::OnShowTokenIndex2GrammarPartButton( wxCommandEvent & wxcmd 
     stdstr += strstream.str() + "\n" ;
 //    m_parsebyrise.m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate
   }
-  mp_textctrlGermanText->SetValue( stdstr ) ;
+//  mp_textctrlGermanText->SetValue( stdstr ) ;
 }
 
 void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
@@ -946,31 +972,43 @@ void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )
 
 //  std::string stdstrWholeTransl ;
   std::vector<std::string> stdvec_stdstrWholeTransl ;
-  std::vector<std::vector<TranslationAndGrammarPart> >
-    stdvec_stdvecTranslationAndGrammarPart ;
+//  std::vector<std::vector<TranslationAndGrammarPart> >
+//    stdvec_stdvecTranslationAndGrammarPart ;
+  //A vector of sentences that begin at the same token index
+  // (sentences that begin at the same token index:
+  // vector of sentences that each contains a vector of words).
+  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > >
+    stdvec_stdvec_stdvecTranslationAndGrammarPart;
+
   std::vector<std::vector<TranslationAndConsecutiveID> >
     stdvec_stdvecTranslationAndConsecutiveID ;
 
   ::wxGetApp().Translate(
     stdstrWholeInputText ,
     stdvec_stdstrWholeTransl ,
-    stdvec_stdvecTranslationAndGrammarPart
+//    stdvec_stdvecTranslationAndGrammarPart
+    stdvec_stdvec_stdvecTranslationAndGrammarPart
     ) ;
 
-  std::string stdstrAllPossibilities = GetAllTranslationPossibilites(
-    stdvec_stdstrWholeTransl,
-    stdvec_stdvecTranslationAndGrammarPart ) ;
+//  std::string stdstrAllPossibilities = GetAllTranslationPossibilites(
+//    stdvec_stdstrWholeTransl,
+//    stdvec_stdvecTranslationAndGrammarPart ) ;
 
-  mp_textctrlGermanText->SetValue(stdstrAllPossibilities ) ;
+//  mp_textctrlGermanText->SetValue(stdstrAllPossibilities ) ;
+  m_p_wxgermantranslationpanel->Set(//stdvec_stdvecTranslationAndGrammarPart
+      stdvec_stdvec_stdvecTranslationAndGrammarPart);
+  m_p_wxgermantranslationpanel->Create();
+  //force redraw
+  m_p_wxgermantranslationpanel->Refresh();
 
-  wxHTMLfileOutput wxhtml_file_output(
-//    stdvec_stdvecTranslationAndConsecutiveID
-    stdvec_stdvecTranslationAndGrammarPart
-    ) ;
-  wxhtml_file_output.writeFile( //stdvec_stdstrWholeTransl ,
-//    stdvec_stdvecTranslationAndConsecutiveID ,
-    stdvec_stdvecTranslationAndGrammarPart ,
-    wxT("trans.html") ) ;
+//  wxHTMLfileOutput wxhtml_file_output(
+////    stdvec_stdvecTranslationAndConsecutiveID
+//    stdvec_stdvecTranslationAndGrammarPart
+//    ) ;
+//  wxhtml_file_output.writeFile( //stdvec_stdstrWholeTransl ,
+////    stdvec_stdvecTranslationAndConsecutiveID ,
+//    stdvec_stdvecTranslationAndGrammarPart ,
+//    wxT("trans.html") ) ;
 
 //  mp_textctrlGermanText->SetValue( stdstrWholeTransl ) ;
   mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;

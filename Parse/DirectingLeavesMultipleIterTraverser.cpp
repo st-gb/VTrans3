@@ -386,7 +386,11 @@ namespace ParseTreeTraverser
         LOGN("DirectingLeavesMultipleIterTraverser::"
           "ProcessLeavesOfParseTree()--LeaveFound" )
         LeaveFound() ;
-        ProcessLastAddedRightNode() ;
+        //The pointer may be set to NULL by TransformTreeTraverser: the tree is modified--
+        //do not continue to process, else SIGSEV in
+        //PopElementsTillNextRightChild(...) occured
+        if( m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart )
+          ProcessLastAddedRightNode() ;
       }
       DEBUG_COUT ( "DrawLeavesOfParseTree--"
           << " nodes to process size="

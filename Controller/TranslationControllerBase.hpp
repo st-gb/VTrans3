@@ -84,8 +84,13 @@ public:
   void Translate(
     const std::string & cr_stdstrWholeInputText ,
     std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
-    std::vector<std::vector<TranslationAndGrammarPart> > &
-      r_stdvec_stdvecTranslationAndGrammarPart
+//    std::vector<std::vector<TranslationAndGrammarPart> > &
+//      r_stdvec_stdvecTranslationAndGrammarPart
+    //A vector of sentences that begin at the same token index
+    // (sentences that begin at the same token index:
+    // vector of sentences that each contains a vector of words).
+    std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+      r_stdvec_stdvec_stdvecTranslationAndGrammarPart
     ) ;
   TranslationControllerBase();
   virtual

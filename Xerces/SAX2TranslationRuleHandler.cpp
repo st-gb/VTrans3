@@ -32,9 +32,11 @@ SAX2TranslationRuleHandler::SAX2TranslationRuleHandler(
   , I_UserInterface & r_userinterface
   )
   :
-  mr_i_userinterface( r_userinterface)
+  m_bConcatenatedTranslationRules(false)
+  , mr_i_userinterface( r_userinterface)
   , mr_parsebyrise ( r_parsebyrise )
   , mr_translateparsebyrise (r_translateparsebyrise)
+  , m_ui32ConcatenationID(0)
 {
 
 }
@@ -78,7 +80,34 @@ void SAX2TranslationRuleHandler::endElement(
         p_translationrule = new TranslationRule(
           m_stdstrTranslationRuleSyntaxTreePath
           , & mr_parsebyrise ) ;
+        if( m_bConcatenatedTranslationRules)
+        {
+          //To find transl rules concatenated to the current one at translation.
+          // e.g.   the              fan
+          //        definite_article singular_noun
+          //                       \ /
+          //           definite_article_singular
+          //
+          //<concatenated_translation_rules>
+          //  <translation_rule
+          //  syntax_tree_path="definite_article_singular.definite_article" />
+          //  <translation_rule
+          //   syntax_tree_path="definite_article_singular.singular_noun" />
+          //</concatenated_translation_rules>
 
+          //in program memory:
+          // TranslationRule tr1[..m_ui32ConcatenationID=0,
+          //  m_syntax_tree_path = "definite_article_singular.definite_article"
+          // TranslationRule tr2[..m_ui32ConcatenationID=0
+          //  m_syntax_tree_path = "definite_article_singular.singular_noun"
+
+          //inserting to leaf for "the" :
+            mr_translateparsebyrise.
+              m_std_multimapConcatenationID2p_translationrule.insert(
+              std::make_pair( m_ui32ConcatenationID, p_translationrule)
+            );
+          p_translationrule->m_ui32ConcatenationID = m_ui32ConcatenationID;
+        }
         if( ! m_std_strSyntaxTreePathForInsertionForTranslation.empty() )
         {
           std::string std_strUnknownGrammarPartID;
@@ -156,6 +185,21 @@ void SAX2TranslationRuleHandler::endElement(
     m_conditionsandtranslation.m_conditions.clear() ;
     m_conditionsandtranslation.m_stdstrAttributeName = "" ;
     m_conditionsandtranslation.m_stdstrGermanTranslation = "" ;
+  }
+  else if( //http://www.gnu.org/s/libc/manual/html_node/
+      //String_002fArray-Comparison.html:
+      //"If the two strings are equal, wcscmp returns 0."
+      //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
+//     ! wcscmp ( cpc_xmlchLocalName , L"condition" )
+     //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
+     ! Xerces::ansi_or_wchar_string_compare(
+         cpc_xmlchLocalName ,
+         ANSI_OR_WCHAR("concatenated_translation_rules")
+         )
+    )
+  {
+    m_bConcatenatedTranslationRules = false;
+    ++ m_ui32ConcatenationID;
   }
 }
 
@@ -450,18 +494,38 @@ void SAX2TranslationRuleHandler::startElement
   LOGN("SAX2TranslationRuleHandler::startElement begin")
   char * pchXMLelementName = XERCES_CPP_NAMESPACE::XMLString::transcode(
     cpc_xmlchLocalName);
-  if( pchXMLelementName )
+  if( pchXMLelementName)
   {
     LOGN("XML element:" << pchXMLelementName )
-    m_strElementName = std::string(pchXMLelementName) ;
-    if( m_strElementName == "translation_rule" )
-    {
-      HandleTranslationRuleElementName(cr_xercesc_attributes) ;
-    }
     //Release memory AFTER comparing.
     XERCES_CPP_NAMESPACE::XMLString::release( & pchXMLelementName);
   }
-  if( //http://www.gnu.org/s/libc/manual/html_node/
+  if( ! Xerces::ansi_or_wchar_string_compare(
+        cpc_xmlchLocalName ,
+        ANSI_OR_WCHAR("translation_rule")
+        )
+    )
+  {
+//    m_strElementName = std::string(pchXMLelementName) ;
+//    if( m_strElementName == "translation_rule" )
+//    {
+      HandleTranslationRuleElementName(cr_xercesc_attributes) ;
+//    }
+  }
+  else
+    if( //http://www.gnu.org/s/libc/manual/html_node/
+        //String_002fArray-Comparison.html:
+        //"If the two strings are equal, wcscmp returns 0."
+        //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
+  //     ! wcscmp ( cpc_xmlchLocalName , L"condition" )
+       //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
+       ! Xerces::ansi_or_wchar_string_compare(
+           cpc_xmlchLocalName ,
+           ANSI_OR_WCHAR("concatenated_translation_rules")
+           )
+      )
+      m_bConcatenatedTranslationRules = true;
+    else if( //http://www.gnu.org/s/libc/manual/html_node/
       //String_002fArray-Comparison.html:
       //"If the two strings are equal, wcscmp returns 0."
       //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).

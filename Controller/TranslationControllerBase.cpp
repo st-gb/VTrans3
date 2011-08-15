@@ -280,8 +280,14 @@ void TranslationControllerBase::Translate(
 //  ParseByRise & r_parsebyrise ,
   const std::string & cr_stdstrWholeInputText ,
   std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
-  std::vector<std::vector<TranslationAndGrammarPart> > &
-    r_stdvec_stdvecTranslationAndGrammarPart
+
+//  std::vector<std::vector<TranslationAndGrammarPart> > &
+//    r_stdvec_stdvecTranslationAndGrammarPart
+  //A vector of sentences that begin at the same token index
+  // (sentences that begin at the same token index:
+  // vector of sentences that each contains a vector of words).
+  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+    r_stdvec_stdvec_stdvecTranslationAndGrammarPart
 //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   )
@@ -289,8 +295,23 @@ void TranslationControllerBase::Translate(
   LOGN("TranslationControllerBase::Translate(...) begin")
   m_parsebyrise.ClearParseTree() ;
   m_parsebyrise.CreateInitialGrammarParts ( cr_stdstrWholeInputText ) ;
+
   DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
   m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
+  //TODO idea: before further processing: delete all parse tree that
+  //are identical after removing the superordinate grammar rules:
+
+  //the fan               the fan
+  //  \ /               =  \  /
+  // def_article_noun     def_article_noun
+  //                        |
+  //                      3rdPersSingEnumEle
+
+  //So the translation would be faster, no double translations.
+  //But on the other hand: if there are translation rules that include at least 1
+  //of these superordinate rules, they wouldn't apply.
+  m_parsebyrise.RemoveSuperordinateRulesFromRootNodes();
+//  RemoveDuplicateParseTrees();
 
   Transform() ;
 //  TranslateParseByRiseTree translateParseByRiseTree(
@@ -305,7 +326,8 @@ void TranslationControllerBase::Translate(
   translateParseByRiseTree.Translate(
     m_parsebyrise,
     r_stdvec_stdstrWholeTransl ,
-    r_stdvec_stdvecTranslationAndGrammarPart
+//    r_stdvec_stdvecTranslationAndGrammarPart
+    r_stdvec_stdvec_stdvecTranslationAndGrammarPart
 //    stdvec_stdvecTranslationAndConsecutiveID
     ) ;
   LOGN("TranslationControllerBase::Translate(...) end")

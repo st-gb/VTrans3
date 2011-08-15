@@ -16,6 +16,14 @@
     attribute_index="13"
     attribute_length="1" 
     />
+  <vocabulary_attribute_definiton 
+    attribute_name="GermanMainVerb1ObjParticiplePerfect"
+    word_class="mainVerbInf1Obj" 
+    language="German"
+    attribute_type="string"
+    attribute_index="13"
+    attribute_length="1" 
+    />
   <vocabulary_attribute_definiton
     word_class="mainVerbInf0Obj"
     attribute_name="grammatical_case"
