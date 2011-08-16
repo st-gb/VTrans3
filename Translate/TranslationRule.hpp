@@ -34,6 +34,9 @@ public:
   ParseByRise * mp_parsebyrise ;
 //  std::string m_std_strParentNodeGrammarPartName;
 //  unsigned m_uiParentNodeGrammarPartID;
+  //If multiple translation rules have the same concatenation ID then they are
+  //connected.
+  uint32_t m_ui32ConcatenationID;
   WORD m_uiParentNodeGrammarPartID;
 //  unsigned m_uiChildNodeGrammarPartID;
   WORD m_uiChildNodeGrammarPartID;

@@ -27,6 +27,7 @@ class SAX2TranslationRuleHandler
 {
 private:
   XERCES_CPP_NAMESPACE::Locator const * m_pc_locator ;
+  bool m_bConcatenatedTranslationRules;
   ConditionsAndTranslation m_conditionsandtranslation;
   I_UserInterface & mr_i_userinterface ;
   ParseByRise & mr_parsebyrise ;
@@ -44,6 +45,7 @@ private:
   std::string m_std_strSyntaxTreePathForInsertionForTranslation;
   unsigned m_uiTranslationInsertion;
   unsigned m_uiParentNodeInsertion;
+  uint32_t m_ui32ConcatenationID;
 public:
   SAX2TranslationRuleHandler(
     TranslateParseByRiseTree &

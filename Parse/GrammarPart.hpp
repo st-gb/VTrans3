@@ -64,6 +64,7 @@ class GrammarPart
 {
 public:
   BYTE m_byPersonIndex ;
+  static const uint32_t unconnected = 0;
   //The region indexes are important for applying grammar rules:
   // 0     1      2     3  4     <-indexes of tokens
   //The vacuum cleaner is big.
@@ -87,6 +88,7 @@ public:
   GrammarPart * mp_grammarpartParent ;
 #endif
   GrammarPart * mp_grammarpartRightChild ;
+  uint32_t m_ui32ConcatenationID;
 //  //Use strings to show grammar parts in the user interface as a feature.
 //  std::string m_stdstrGrammarPartName ;
   //Important for translating into the destination language.

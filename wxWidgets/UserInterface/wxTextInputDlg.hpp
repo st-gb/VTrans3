@@ -17,6 +17,7 @@
 //#include <wx/settings.h>
 #include <wx/string.h> //class wxString
 //#include <wx/textctrl.h>
+#include <wxWidgets/UserInterface/wxGermanTranslationPanel.hpp>
 
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 //#include <wxWidgets/wxParseTreePanel.hpp> //class wxParseTreePanel
@@ -64,7 +65,8 @@ class wxTextInputDlg
     ParseByRise & m_parsebyrise ;
     wxBoxSizer * p_boxsizerOuter ;
 		wxTextCtrl * mp_textctrlEnglishText;
-		wxTextCtrl * mp_textctrlGermanText ;
+//		wxTextCtrl * mp_textctrlGermanText ;
+		wxGermanTranslationPanel * m_p_wxgermantranslationpanel;
 		//wxPanel * mp_wxparsetreepanel;
 		wxParseTreePanel * mp_wxparsetreepanel;
 //    wxPanel * mp_wxpanelTop;

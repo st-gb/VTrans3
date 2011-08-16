@@ -107,6 +107,9 @@ namespace ParseTreeTraverser
         )
       )
     {
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+        m_stdstrTranslation = stdstrTranslation;
+
 //      DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
 //        stdstrTranslation ) ;
       LOGN( "TranslateTreeTraverser::LeaveFound(): "

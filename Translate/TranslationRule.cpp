@@ -112,6 +112,7 @@ bool TranslationRule::Initialize(
 //  const std::string & c_r_std_strSyntaxTreePathForInsertionForTranslation
   )
 {
+  m_ui32ConcatenationID = 65535;
   m_bySideWhereToInsertChildNode = uninited;
   m_bySideWhereToInsertParentNode = uninited;
   std::string std_strUnknownGrammarPartID;
@@ -335,6 +336,7 @@ TranslationRule::TranslationRule(
     const std::string & r_stdstrSyntaxTreePath
     , ParseByRise * p_parsebyrise )
   : mp_parsebyrise(p_parsebyrise)
+//  , m_ui32ConcatenationID(0)
 {
   if( ! Initialize(r_stdstrSyntaxTreePath)
 //      ;
@@ -347,6 +349,7 @@ TranslationRule::TranslationRule( //const std::string & r_stdstrSyntaxTreePath
     , ParseByRise * p_parsebyrise
     )
   : mp_parsebyrise(p_parsebyrise)
+//  , m_ui32ConcatenationID(0)
 {
   std::string stdstrSyntaxTreePath(p_ch_SyntaxTreePath) ;
   DEBUG_COUT("TranslationRule::TranslationRule begin\n")

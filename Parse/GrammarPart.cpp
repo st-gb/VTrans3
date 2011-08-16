@@ -62,7 +62,9 @@ void GrammarPart::Init()
   mp_grammarpartParent = NULL ;
 #endif
   m_wConsecutiveID = MAXWORD ;
-  m_byPersonIndex = 0 ;
+  m_byPersonIndex = 0;
+  m_ui32ConcatenationID = //0
+    unconnected;
   mp_grammarpartLeftChild = NULL ;
   mp_grammarpartRightChild = NULL ;
 }

@@ -39,7 +39,7 @@ END_EVENT_TABLE()
 //
 //}
 wxParseTreePanel::wxParseTreePanel(
-    wxWindow* parent
+  wxWindow * parent
   )
   :wxPanel(
     parent
