@@ -39,6 +39,8 @@ namespace Xerces
     SAX2TransformationRuleHandler m_sax2transformationrulehandler ;
     SAX2TranslationRuleHandler m_sax2translationrulehandler ;
     std::string m_strElementName ;
+    inline void HandleGrammartPartColourXMLelement(
+      const XERCES_CPP_NAMESPACE::Attributes & c_r_xercesc_attributes);
     inline void HandleReadGrammarRuleFileXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes ) ;
     inline void HandleReadTransformationRuleFileXMLelement(

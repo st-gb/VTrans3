@@ -47,6 +47,7 @@ class wxTextInputDlg
   void AddButtons() ;
   void AddAddGrammarRulesButton( wxSizer * p_sizer ) ;
   void AddDrawParseTreeButton(wxSizer * p_sizer ) ;
+  void AddLoadDictionaryButton( wxSizer * p_sizer);
   void AddRemoveGrammarRulesButton( wxSizer * p_sizer ) ;
   void AddRemoveVocAttrDefsButton( wxSizer * p_sizer ) ;
   void AddAddTranslationRulesButton( wxSizer * p_sizer ) ;

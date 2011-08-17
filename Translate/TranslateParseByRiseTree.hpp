@@ -81,6 +81,9 @@ public:
     //operator that is important for applying translation rules is used.
     TranslationRule,ConditionsAndTranslation>
     m_stdmap_translationrule2ConditionsAndTranslation ;
+
+  std::vector<std::vector<GrammarPart *> >
+    m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex;
 public:
   void AddVocAndTranslDefinition(
     //e.g. "noun.German.plural"

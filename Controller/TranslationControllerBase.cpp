@@ -30,7 +30,9 @@ TranslationControllerBase::TranslationControllerBase()
     m_parsebyrise
     , * this
     )
+  , m_nodetrie_ui32GrammarPartName2colour(256)
 {
+//  m_nodetrie_ui32GrammarPartName2colour.Create(256);
 }
 
 TranslationControllerBase::~TranslationControllerBase()
