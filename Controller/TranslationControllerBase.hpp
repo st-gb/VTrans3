@@ -9,6 +9,7 @@
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
 #include "TranslateControllerBaseReturnCodes.h" //enum Init_return_codes
+#include <data_structures/Trie/NodeTrie/NodeTrie.hpp> //class NodeTrie
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TransformationRule.hpp> //class TransformationRule
@@ -41,6 +42,7 @@ class TranslationControllerBase
 {
 public:
   static LetterTree s_lettertree ;
+  NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
   ParseByRise m_parsebyrise ;
   std::string m_stdstrVocabularyFilePath ;
 //  std::map<std::string,TransformationRule>

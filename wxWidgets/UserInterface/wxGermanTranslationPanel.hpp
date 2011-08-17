@@ -12,8 +12,10 @@
 #include <wx/bitmap.h> //class wxBitmap
 #include <wx/dcmemory.h> //class wxMemoryDC
 
-//class TranslationAndConcatenationID
-#include <Attributes/TranslationAndConcatenationID.hpp>
+//class GrammarPartPointerAndConcatenationID
+#include <Attributes/GrammarPartPointerAndConcatenationID.hpp>
+////class TranslationAndConcatenationID
+//#include <Attributes/TranslationAndConcatenationID.hpp>
 //class TranslationAndGrammarPart
 #include <Attributes/TranslationAndGrammarPart.hpp>
 
@@ -45,6 +47,10 @@ class wxGermanTranslationPanel
   // vector of sentences that each contains a vector of words).
   std::vector <std::vector <std::vector <TranslationAndGrammarPart> > >
     m_stdvec_stdvec_stdvecTranslationAndGrammarPart;
+
+  std::vector<std::vector<GrammarPart *> > *
+    m_p_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex;
+
   wxWindowID m_wxwindowidCurrent;
   wxBitmap m_wxbitmapForMemoryDC;
   wxMemoryDC m_wxmemorydc;
@@ -64,12 +70,15 @@ public:
      wxCoord & wxcoordX,
      wxCoord & wxcoordY
     );
+  void DrawParseTreesFromLeaves(wxDC & r_wxdc);
   void DrawTranslationAndCreateChoices(wxDC & r_wxdc);
   void DrawTranslationFromAllParseTrees(wxDC & r_wxdc);
   void PossiblyAddChoice(
 //    const wxArrayString & wxarraystring,
-    std::set<TranslationAndConcatenationID> &
-          std_set_translationandconcatenationid,
+//    std::set<TranslationAndConcatenationID> &
+//          std_set_translationandconcatenationid,
+    std::set<GrammarPartPointerAndConcatenationID> &
+      std_set_grammarpartandconcatenationid,
     wxDC & r_wxdc,
     wxCoord & wxcoordX,
     wxCoord & wxcoordY

@@ -18,6 +18,7 @@
 #include <Parse/GrammarPart.hpp> //class GrammarPart
 //getwxString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
+#include <wxWidgets/VTransApp.hpp> //wxGetApp(...)
 
 BEGIN_EVENT_TABLE(wxGermanTranslationPanel, wxPanel)
   EVT_PAINT(wxGermanTranslationPanel::OnPaint)
@@ -58,8 +59,10 @@ void wxGermanTranslationPanel::Create()
 void GetTokenIndex2TranslationAndConcatenationID(
   const std::vector<std::vector<TranslationAndGrammarPart> > &
     r_std_vector_stdvecTranslationAndGrammarPart,
-  std::multimap<unsigned, TranslationAndConcatenationID> &
-    std_map_uiTokenIndex2translationandconcatenationid
+//  std::multimap<unsigned, TranslationAndConcatenationID> &
+//    std_map_uiTokenIndex2translationandconcatenationid
+  std::multimap<unsigned, GrammarPartPointerAndConcatenationID> &
+    std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid
   )
 {
   unsigned uiTokenIndex = 0;
@@ -81,15 +84,24 @@ void GetTokenIndex2TranslationAndConcatenationID(
 //            c_iterInner->m_stdstrTranslation.c_str()
 //            )
 //          );
-      std_map_uiTokenIndex2translationandconcatenationid.insert(
-        std::make_pair(
-          uiTokenIndex,
-          TranslationAndConcatenationID(
-            c_iterInner->m_stdstrTranslation,
-            c_iterInner->mp_grammarpart->m_ui32ConcatenationID
+//      std_map_uiTokenIndex2translationandconcatenationid.insert(
+//        std::make_pair(
+//          uiTokenIndex,
+//          TranslationAndConcatenationID(
+//            c_iterInner->m_stdstrTranslation,
+//            c_iterInner->mp_grammarpart->m_ui32ConcatenationID
+//            )
+//          )
+//        );
+      std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid.insert(
+          std::make_pair(
+            uiTokenIndex,
+            GrammarPartPointerAndConcatenationID(
+              c_iterInner->mp_grammarpart,
+              c_iterInner->mp_grammarpart->m_ui32ConcatenationID
+              )
             )
-          )
-        );
+          );
       ++ uiTokenIndex;
       ++ c_iterInner;
     }
@@ -109,41 +121,60 @@ void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
   unsigned uiTokenIndex = 0;
 //  std::vector<std::vector<TranslationAndGrammarPart> >
 //     std_vector_stdvecTranslationAndGrammarPart;
-  std::multimap<unsigned, TranslationAndConcatenationID>
-    std_map_uiTokenIndex2translationandconcatenationid;
+
+//  std::multimap<unsigned, TranslationAndConcatenationID>
+//    std_map_uiTokenIndex2translationandconcatenationid;
+  std::multimap<unsigned, GrammarPartPointerAndConcatenationID>
+    std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid;
 
   GetTokenIndex2TranslationAndConcatenationID(
 //    * c_iterAllSentencesAtSameTokenIndex,
     std_vector_stdvecTranslationAndGrammarPart,
-    std_map_uiTokenIndex2translationandconcatenationid);
+//    std_map_uiTokenIndex2translationandconcatenationid
+    std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid
+    );
 
 //  std::multimap<unsigned, const char *>::const_iterator c_iterToken =
 //      std_map_ui2std_str.begin();
 
-  std::multimap<unsigned, TranslationAndConcatenationID>::const_iterator
-    c_iter_std_map_uiTokenIndex2translationandconcatenationid =
-    std_map_uiTokenIndex2translationandconcatenationid.begin();
+//  std::multimap<unsigned, TranslationAndConcatenationID>::const_iterator
+//    c_iter_std_map_uiTokenIndex2translationandconcatenationid =
+//    std_map_uiTokenIndex2translationandconcatenationid.begin();
+  std::multimap<unsigned, GrammarPartPointerAndConcatenationID>::const_iterator
+    c_iter_std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid =
+      std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid.begin();
 
   uiTokenIndex =
     //Init with value <> 0 for the 1st comparison ("... == uiTokenIndex" )
     //to be false.
     0;
   //  std::set<std::string> std_set_std_strToken;
-  std::set<TranslationAndConcatenationID>
-    std_set_translationandconcatenationid;
+//  std::set<TranslationAndConcatenationID>
+//    std_set_translationandconcatenationid;
+  std::set<GrammarPartPointerAndConcatenationID>
+    std_set_grammarpartpointerandconcatenationid;
+
   std::vector<wxString> std_vector_wxstr;
   const char * p_chTranslation = NULL;
   uint32_t ui32ConcatenationID = 0;
   wxArrayString wxarraystringTranslation;
-  const TranslationAndConcatenationID * p_translationandconcatenationid = NULL;
+
+//  const TranslationAndConcatenationID * p_translationandconcatenationid = NULL;
+  const GrammarPartPointerAndConcatenationID *
+    p_grammarpartpointerandconcatenationid = NULL;
+
   while( //c_iterToken != //std_map_ui2std_str.end()
-      c_iter_std_map_uiTokenIndex2translationandconcatenationid !=
-      std_map_uiTokenIndex2translationandconcatenationid.end()
+//      c_iter_std_map_uiTokenIndex2translationandconcatenationid !=
+//      std_map_uiTokenIndex2translationandconcatenationid.end()
+      c_iter_std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid !=
+      std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid.end()
       )
   {
     if( //c_iterToken->first == uiTokenIndex
-        c_iter_std_map_uiTokenIndex2translationandconcatenationid->first ==
-            uiTokenIndex
+//      c_iter_std_map_uiTokenIndex2translationandconcatenationid->first ==
+      c_iter_std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid->
+        first ==
+          uiTokenIndex
         )
     {
   //      std_vector_wxstr.push_back( wxString(c_iterInner->m_stdstrTranslation.
@@ -151,8 +182,13 @@ void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
   //      ui32ConcatenationID =
   //        c_iter_std_map_uiTokenIndex2translationandconcatenationid->second.
   //        m_ui32ConcatenationID;
-      p_translationandconcatenationid = &
-        c_iter_std_map_uiTokenIndex2translationandconcatenationid->second;
+
+//      p_translationandconcatenationid = &
+//        c_iter_std_map_uiTokenIndex2translationandconcatenationid->second;
+      p_grammarpartpointerandconcatenationid = &
+        c_iter_std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid->
+        second;
+
   //      if( ui32ConcatenationID == 0 )
         //if a translated word has no concatenation and another such translated
         //word exists, there should not be double translations:
@@ -160,8 +196,12 @@ void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
         // "der(concatenation ID=2) Anhänger(concatenation ID=2) arbeitet(concatenation ID=0)" <- translation for 1st parse tree.
         // "das Gebläse arbeitet(concatenation ID=0)" <- translation for 2nd parse tree.
         // -> in std::set only 1 "arbeitet" for token index 2
-        std_set_translationandconcatenationid.insert(
-          * p_translationandconcatenationid );
+//        std_set_translationandconcatenationid.insert(
+//          * p_translationandconcatenationid );
+
+        std_set_grammarpartpointerandconcatenationid.insert(
+          * p_grammarpartpointerandconcatenationid);
+
   //      if( wxarraystringTranslation.insert() )
   //      wxarraystringTranslation.Add( wxString(c_iterToken->second) );
   //      std_set_std_strToken.insert( std::string(c_iterToken->second) )
@@ -169,43 +209,44 @@ void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
     else
     {
       uiTokenIndex = //c_iterToken->first;
-        c_iter_std_map_uiTokenIndex2translationandconcatenationid->first;
+//        c_iter_std_map_uiTokenIndex2translationandconcatenationid->first;
+        c_iter_std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid->
+        first;
   //      if( wxarraystringTranslation.size() > 0
   //          //std_set_std_strToken.size() > 0
   //        )
       PossiblyAddChoice(//wxarraystringTranslation
-        std_set_translationandconcatenationid, r_wxdc, wxcoordX, wxcoordY);
+        //std_set_translationandconcatenationid
+        std_set_grammarpartpointerandconcatenationid,
+        r_wxdc, wxcoordX, wxcoordY);
   //      std_vector_wxstr.clear();
       wxarraystringTranslation.Clear();
-      std_set_translationandconcatenationid.clear();
+//      std_set_translationandconcatenationid.clear();
+      std_set_grammarpartpointerandconcatenationid.clear();
   //      wxarraystringTranslation.Add( wxString(c_iterToken->second) );
-      std_set_translationandconcatenationid.insert(
-        c_iter_std_map_uiTokenIndex2translationandconcatenationid->second );
+
+//      std_set_translationandconcatenationid.insert(
+//        c_iter_std_map_uiTokenIndex2translationandconcatenationid->second );
+      std_set_grammarpartpointerandconcatenationid.insert(
+        c_iter_std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid->
+        second);
   //      wxcoordX += 50;
     }
   //    ++ c_iterToken;
-    ++ c_iter_std_map_uiTokenIndex2translationandconcatenationid;
+//    ++ c_iter_std_map_uiTokenIndex2translationandconcatenationid;
+    ++ c_iter_std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid;
   }
   //  if( wxarraystringTranslation.size() > 0 )
   PossiblyAddChoice(//wxarraystringTranslation
-    std_set_translationandconcatenationid
+//    std_set_translationandconcatenationid
+    std_set_grammarpartpointerandconcatenationid
     , r_wxdc, wxcoordX, wxcoordY);
 }
 
-void wxGermanTranslationPanel::DrawTranslationAndCreateChoices(wxDC & r_wxdc)
+void wxGermanTranslationPanel::DrawParseTreesFromLeaves(wxDC & r_wxdc)
 {
-  //Delete existing choice windows
-  bool bOk = DestroyChildren();
-  m_wxwindowidCurrent = 0;
-
-  wxSize wxsizeText;
-  wxString wxstrTranslation;
-  int x = 0;
   wxCoord wxcoordX = 0;
   wxCoord wxcoordY = 0;
-
-  std::multimap<unsigned, const char *> std_map_ui2std_str;
-
   std::vector<std::vector<std::vector<TranslationAndGrammarPart> > >
     ::const_iterator c_iterAllSentencesAtSameTokenIndex =
     m_stdvec_stdvec_stdvecTranslationAndGrammarPart.begin();
@@ -218,8 +259,40 @@ void wxGermanTranslationPanel::DrawTranslationAndCreateChoices(wxDC & r_wxdc)
       , r_wxdc, wxcoordX, wxcoordY);
     ++ c_iterAllSentencesAtSameTokenIndex;
   }
+}
+
+void wxGermanTranslationPanel::DrawTranslationAndCreateChoices(wxDC & r_wxdc)
+{
+  //Delete existing choice windows
+  bool bOk = DestroyChildren();
+  m_wxwindowidCurrent = 0;
+
+  wxSize wxsizeText;
+  wxString wxstrTranslation;
+  int x = 0;
+
+//  std::multimap<unsigned, const char *> std_map_ui2std_str;
+
+  DrawParseTreesFromLeaves(r_wxdc);
+
+//  std::vector<std::vector<GrammarPart *> >::const_iterator
+//    c_iterParseTreesAtSameTokenIndex =
+//    m_p_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex->
+//    begin();
+//  while( c_iterParseTreesAtSameTokenIndex !=
+//      m_p_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.
+//      end()
+//      )
+//  {
+//    //Save token text extent size (width, height (choices are higher) of token
+//    //in tree leaves?!
+//    Get
+//    if( )
+//    ++ c_iterParseTreesAtSameTokenIndex;
+//  }
   //important when the choice controls are created after a resize?!
   Layout();
+  Fit();
 }
 
 void wxGermanTranslationPanel::DrawTranslationFromAllParseTrees(wxDC & r_wxdc)
@@ -266,47 +339,164 @@ void wxGermanTranslationPanel::DrawTranslationFromAllParseTrees(wxDC & r_wxdc)
 //  }
 }
 
+void GetColorAccordingToGrammarPart(
+  const std::set<GrammarPartPointerAndConcatenationID> &
+    std_set_grammarpartpointerandconcatenationid,
+//  std::set<wxColour> & r_std_set_wxcolour
+    std::set<uint32_t> & r_std_set_ui32Colour
+  )
+{
+//  unsigned char m_red;
+//   unsigned char m_blue;
+//   unsigned char m_green;
+  std::set<GrammarPartPointerAndConcatenationID>::const_iterator
+    c_iter_std_set_grammarpartpointerandconcatenationid =
+    std_set_grammarpartpointerandconcatenationid.begin();
+
+  WORD wGrammarPartID = 0;
+  while( c_iter_std_set_grammarpartpointerandconcatenationid !=
+     std_set_grammarpartpointerandconcatenationid.end()
+   )
+  {
+    wGrammarPartID = c_iter_std_set_grammarpartpointerandconcatenationid->
+      m_p_grammarpartToken->m_wGrammarPartID;
+//    switch(wGrammarPartID)
+//    {
+//    case EnglishWord::singular:
+////      r_std_set_wxcolour.insert( * wxGREEN);
+//      r_std_set_ui32Colour.insert( wxGREEN->GetPixel() );
+//      break;
+//    case EnglishWord::English_definite_article:
+////      r_std_set_wxcolour.insert( * wxBLUE);
+//      r_std_set_ui32Colour.insert( wxBLUE->GetPixel() );
+//      break;
+//    default:
+////      r_std_set_wxcolour.insert( * wxBLACK);
+//      r_std_set_ui32Colour.insert( wxBLACK->GetPixel() );
+//      break;
+//    }
+    std::string std_strGrammarPartName = wxGetApp().m_parsebyrise.
+      GetGrammarPartName(wGrammarPartID);
+    NodeTrieNode<uint32_t> * p_ntn = wxGetApp().
+      m_nodetrie_ui32GrammarPartName2colour.contains_inline(
+      (unsigned char *) std_strGrammarPartName.c_str(),
+      (NodeTrie<uint32_t>::size_type) std_strGrammarPartName.length(),
+      true //bool bFullMatch
+      );
+    if( p_ntn )
+      r_std_set_ui32Colour.insert( p_ntn->m_member);
+    else
+      r_std_set_ui32Colour.insert( wxBLACK->GetPixel() );
+    ++ c_iter_std_set_grammarpartpointerandconcatenationid;
+  }
+}
+
+void UnderlineGrammarParts(
+  std::set<GrammarPartPointerAndConcatenationID> &
+    std_set_grammarpartpointerandconcatenationid,
+  wxDC & r_wxdc,
+  wxCoord wxcoordXBeginOfToken,
+  wxCoord wxcoordXEndOfToken,
+//  wxCoord wxcoordY
+  wxCoord wxcoordYBottom
+  )
+{
+  wxPen r_wxpen = r_wxdc.GetPen();
+
+  //    std::set<wxColour> std_set_wxcolour;
+  std::set<uint32_t> std_set_ui32Colour;
+
+  GetColorAccordingToGrammarPart(
+      std_set_grammarpartpointerandconcatenationid, //std_set_wxcolour
+      std_set_ui32Colour);
+  //    std::set<wxColour>::const_iterator c_iter_std_set_wxcolour =
+  //        std_set_wxcolour.begin();
+  std::set<uint32_t>::const_iterator c_iter_std_set_ui32 =
+    std_set_ui32Colour.begin();
+  wxPen wxpenDraw(* wxGREEN//int width = 1, int style = wxSOLID
+    );
+  while( //c_iter_std_set_wxcolour != std_set_wxcolour.end()
+      c_iter_std_set_ui32 != std_set_ui32Colour.end()
+      )
+  {
+    wxpenDraw.SetColour( //* c_iter_std_set_wxcolour
+      wxColour( * c_iter_std_set_ui32) );
+    r_wxdc.SetPen(wxpenDraw);
+    r_wxdc.DrawLine(
+      wxcoordXBeginOfToken, //wxcoordYBeginOfToken
+      //wxcoordY + 20
+      wxcoordYBottom,
+      wxcoordXEndOfToken,
+      //wxcoordY + 20
+      wxcoordYBottom
+      );
+//    wxcoordY += 5;
+    wxcoordYBottom += 2;
+
+  //      ++ c_iter_std_set_wxcolour;
+    ++ c_iter_std_set_ui32;
+  }
+  r_wxdc.SetPen(r_wxpen);
+}
+
 void wxGermanTranslationPanel::PossiblyAddChoice(
 //    const wxArrayString & c_r_wxarraystringTranslation,
-    std::set<TranslationAndConcatenationID> &
-      std_set_translationandconcatenationid,
-    wxDC & r_wxdc,
-    wxCoord & wxcoordX,
-    wxCoord & wxcoordY
-    )
+//  std::set<TranslationAndConcatenationID> &
+//    std_set_translationandconcatenationid,
+  std::set<GrammarPartPointerAndConcatenationID> &
+    std_set_grammarpartpointerandconcatenationid,
+  wxDC & r_wxdc,
+  wxCoord & wxcoordX,
+  wxCoord & wxcoordY
+  )
 {
   bool bConnectedControl = false;
   const char * p_chTranslation = NULL;
   uint32_t ui32ConcatenationID = 0;
   wxArrayString wxarraystringTranslation;
   wxSize wxsizeText;
-  wxWindowID wxwindowid = wxID_ANY;
-  std::set<TranslationAndConcatenationID>::const_iterator
-    c_iter_std_set_translationandconcatenationid =
-    std_set_translationandconcatenationid.begin();
-  int nSize = std_set_translationandconcatenationid.size();
 
-  while( c_iter_std_set_translationandconcatenationid !=
-    std_set_translationandconcatenationid.end()
+  wxCoord wxcoordXBeginOfToken = wxcoordX;
+  wxCoord wxcoordYBeginOfToken = wxcoordY;
+
+  wxWindowID wxwindowid = wxID_ANY;
+//  std::set<TranslationAndConcatenationID>::const_iterator
+//    c_iter_std_set_translationandconcatenationid =
+//    std_set_translationandconcatenationid.begin();
+//  int nSize = std_set_translationandconcatenationid.size();
+  std::set<GrammarPartPointerAndConcatenationID>::const_iterator
+    c_iter_std_set_grammarpartpointerandconcatenationid =
+    std_set_grammarpartpointerandconcatenationid.begin();
+  int nSize = std_set_grammarpartpointerandconcatenationid.size();
+
+  while( //c_iter_std_set_translationandconcatenationid !=
+    //std_set_translationandconcatenationid.end()
+      c_iter_std_set_grammarpartpointerandconcatenationid !=
+          std_set_grammarpartpointerandconcatenationid.end()
     )
   {
-    ui32ConcatenationID = c_iter_std_set_translationandconcatenationid->
+    ui32ConcatenationID = //c_iter_std_set_translationandconcatenationid->
+      c_iter_std_set_grammarpartpointerandconcatenationid->
       m_ui32ConcatenationID;
     if( ui32ConcatenationID != 65535 )
     {
       wxwindowid = ++ m_wxwindowidCurrent;
       bConnectedControl = true;
     }
-    p_chTranslation = c_iter_std_set_translationandconcatenationid->
-      m_std_strTranslation.c_str();
+    p_chTranslation = //c_iter_std_set_translationandconcatenationid->
+//      m_std_strTranslation.c_str();
+      c_iter_std_set_grammarpartpointerandconcatenationid->
+      m_p_grammarpartToken->m_stdstrTranslation.c_str();
     wxarraystringTranslation.Add( wxString( p_chTranslation)
       );
-    ++ c_iter_std_set_translationandconcatenationid;
+//    ++ c_iter_std_set_translationandconcatenationid;
+    ++ c_iter_std_set_grammarpartpointerandconcatenationid;
   }
   if( wxarraystringTranslation.size() > 0
       //std_set_std_strToken.size() > 0
     )
   {
+    wxCoord wxcoordYBottom;
     if( //c_r_wxarraystringTranslation.size() > 1
       wxarraystringTranslation.size() > 1
       )
@@ -331,7 +521,9 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
         );
       p_wxchoice->Select(0);
 //      p_wxchoice->
-      wxcoordX += p_wxchoice->GetSize().GetWidth();
+      wxSize wxsizeChoiceControl = p_wxchoice->GetSize();
+      wxcoordX += wxsizeChoiceControl.GetWidth();
+      wxcoordYBottom = wxcoordY + wxsizeChoiceControl.GetHeight() + 2;
       if( bConnectedControl )
       {
         Connect( wxwindowid, wxEVT_COMMAND_CHOICE_SELECTED,
@@ -359,8 +551,15 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
         , //0
         wxcoordY
         );
-      wxcoordX += wxsizeText.x + r_wxdc.GetTextExtent( wxT(" ") ).x;
+//      wxcoordX += wxsizeText.x + r_wxdc.GetTextExtent( wxT(" ") ).x;
+      wxcoordX += wxsizeText.x;
+      wxcoordYBottom = wxcoordY + wxsizeText.y;
     }
+
+    UnderlineGrammarParts(std_set_grammarpartpointerandconcatenationid,
+        r_wxdc, wxcoordXBeginOfToken, wxcoordX, //wxcoordY
+        wxcoordYBottom);
+    wxcoordX += r_wxdc.GetTextExtent( wxT(" ") ).x;
   }
 }
 
@@ -440,6 +639,7 @@ void wxGermanTranslationPanel::SelectConnectedListEntries(
 //            m_std_set_p_wxchoiceDropSelectionHandling.insert(
 //                p_wxchoiceAlsoSelect);
             //this causes a new selection event?!
+            //TODO SIGSEV here
             p_wxchoiceAlsoSelect->Select(nSelectionIndex);
         }
         ++ c_iter_std_multimap_ui32ConcatenationID2p_wxchoice;
@@ -478,4 +678,7 @@ void wxGermanTranslationPanel::OnPaint(wxPaintEvent & event)
 void wxGermanTranslationPanel::OnSize(wxSizeEvent & event)
 {
   Create();
+  //wxWindowBase/ "wx/window.h":
+  // "repaint all invalid areas of the window immediately"
+  Update();
 }

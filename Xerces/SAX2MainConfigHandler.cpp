@@ -57,6 +57,36 @@ namespace Xerces
     TerminateXerces() ;
   }
 
+  void SAX2MainConfigHandler::HandleGrammartPartColourXMLelement(
+      const XERCES_CPP_NAMESPACE::Attributes & c_r_xercesc_attributes)
+  {
+    std::string std_strGrammarPartName ;
+    if( XercesAttributesHelper::GetAttributeValue(
+      c_r_xercesc_attributes,
+      "name",
+      std_strGrammarPartName)
+      == XercesAttributesHelper::getting_attribute_value_succeeded
+      )
+    {
+      DWORD dwValue;
+      XercesAttributesHelper xercesattributeshelper;
+      if( xercesattributeshelper.GetAttributeValue(
+          c_r_xercesc_attributes,
+          "colour", //const char * lpctstrAttrName,
+          dwValue //WORD & r_wValue
+          ) == XercesAttributesHelper::getting_attribute_value_succeeded
+        )
+      {
+          m_r_translationcontrollerbase.m_nodetrie_ui32GrammarPartName2colour.
+            insert_inline(
+            (BYTE *) std_strGrammarPartName.c_str(),
+            std_strGrammarPartName.length(),
+            dwValue
+            );
+      }
+    }
+  }
+
   void SAX2MainConfigHandler::HandleReadGrammarRuleFileXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes )
   {
@@ -202,7 +232,9 @@ namespace Xerces
       m_strElementName = std::string(pchXMLelementName) ;
       //LOG( "uri:" << uri << " localname:" << localname << " qname:" <<
       // qname << endl );
-      if( m_strElementName == "grammar_rule_file" )
+      if( m_strElementName == "grammar_part" )
+        HandleGrammartPartColourXMLelement(cr_xercesc_attributes);
+      else if( m_strElementName == "grammar_rule_file" )
       {
         HandleReadGrammarRuleFileXMLelement( cr_xercesc_attributes ) ;
       }

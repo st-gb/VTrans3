@@ -53,6 +53,8 @@
 //For array "add_transformation_rules_xpm" .
 #include <bitmaps/add_transformation_rules.xpm>
 
+//static char * grammar_part_colours_xpm
+#include <bitmaps/grammar_part_colours.xpm>
 #include <bitmaps/info.xpm>
 
 //For array "remove_grammar_rules_xpm" .
@@ -67,6 +69,7 @@
 #include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
 //see //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 #pragma GCC diagnostic pop
+
 #include <Translate/TranslateTreeTraverser.hpp> //TranslationAndGrammarPart
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
@@ -142,6 +145,7 @@ void wxTextInputDlg::AddButtons()
 
   AddResolve1ParseLevelButton( p_boxsizerButtons ) ;
   AddResolveSuperClassesButton( p_boxsizerButtons ) ;
+
   p_wxbutton = new wxButton(
     //mp_wxsplitterwindow
     //m_panelSplitterTop
@@ -174,24 +178,7 @@ void wxTextInputDlg::AddButtons()
     , //wxEXPAND |
       wxBOTTOM
     , 2 );
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    , //wxID_ANY
-    ID_LoadDictionary
-    , wxT("dict")
-    ) ;
-  p_wxbutton->SetToolTip(wxT("re-load dictionary...")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    //stretch factor. 0=do not stretch
-    , 0
-      //0
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
+  AddLoadDictionaryButton( p_boxsizerButtons);
   AddShowInformationButton( p_boxsizerButtons ) ;
   AddDrawParseTreeButton( p_boxsizerButtons);
   p_boxsizerOuter->Add( p_boxsizerButtons ) ;
@@ -346,6 +333,28 @@ void wxTextInputDlg::AddAddGrammarRulesButton( wxSizer * p_sizer )
   p_sizer->Add(
     mp_wxbutton
     , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+}
+
+void wxTextInputDlg::AddLoadDictionaryButton( wxSizer * p_sizer)
+{
+  mp_wxbutton = new wxButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_LoadDictionary
+    , wxT("dict")
+    ) ;
+  mp_wxbutton->SetToolTip( wxT("re-load dictionary...") );
+  p_sizer->Add(
+    mp_wxbutton
+    //stretch factor. 0=do not stretch
+    , 0
+      //0
     , //wxEXPAND |
       wxBOTTOM
     , 2 );

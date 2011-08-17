@@ -846,8 +846,9 @@ void TranslateParseByRiseTree::Translate(
 //  std::string stdstrWholeTransl ;
   std::string stdstrTranslation ;
   std::vector<GrammarPart *>
-    stdvec_p_grammarpartCoveringMostTokensATokentIndex ;
+    stdvec_p_grammarpartCoveringMostTokensAtTokenIndex ;
   DEBUG_COUT( "Translate(): \n" )
+  m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.clear();
   if( mp_parsebyrise )
   {
     DWORD dwLeftMostTokenIndex = 0 ;
@@ -875,10 +876,13 @@ void TranslateParseByRiseTree::Translate(
       //p_grammarpart =
         mp_parsebyrise->GetGrammarPartCoveringMostTokens(
           dwLeftMostTokenIndex ,
-          stdvec_p_grammarpartCoveringMostTokensATokentIndex
+          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
           ) ;
+
+      m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.
+        push_back(stdvec_p_grammarpartCoveringMostTokensAtTokenIndex);
 #ifdef _DEBUG
-      WORD wSize = stdvec_p_grammarpartCoveringMostTokensATokentIndex.size();
+      WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
 #endif //#ifdef _DEBUG
       WORD wConsecutiveID = 0 ;
 
@@ -889,9 +893,9 @@ void TranslateParseByRiseTree::Translate(
       //"dwLeftMostTokenIndex".
       for( std::vector<GrammarPart *>::const_iterator
           c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex =
-          stdvec_p_grammarpartCoveringMostTokensATokentIndex.begin() ;
+          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin() ;
           c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex <
-          stdvec_p_grammarpartCoveringMostTokensATokentIndex.end() ;
+          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.end() ;
           ++ c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
          )
       {
@@ -903,11 +907,11 @@ void TranslateParseByRiseTree::Translate(
       r_stdvec_stdvec_stdvecTranslationAndGrammarPart.push_back(
         stdvec_stdvecTranslationAndGrammarPart);
 
-      if( stdvec_p_grammarpartCoveringMostTokensATokentIndex.empty() )
+      if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
         dwLeftMostTokenIndex = 0;
       else
         dwLeftMostTokenIndex =
-          stdvec_p_grammarpartCoveringMostTokensATokentIndex.at(0)->
+          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
           m_dwRightmostIndex + 1;
       LOGN("TranslateParseByRiseTree::Translate(...)--dwLeftMostTokenIndex:"
         << dwLeftMostTokenIndex )
