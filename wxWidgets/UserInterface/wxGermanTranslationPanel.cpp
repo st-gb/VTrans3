@@ -20,9 +20,11 @@
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <wxWidgets/VTransApp.hpp> //wxGetApp(...)
 
+//http://docs.wxwidgets.org/stable/wx_eventhandlingoverview.html#eventhandlingoverview
 BEGIN_EVENT_TABLE(wxGermanTranslationPanel, wxPanel)
   EVT_PAINT(wxGermanTranslationPanel::OnPaint)
   EVT_SIZE( wxGermanTranslationPanel::OnSize)
+  EVT_ERASE_BACKGROUND(wxGermanTranslationPanel::OnEraseBackground)
 END_EVENT_TABLE()
 
 wxGermanTranslationPanel::wxGermanTranslationPanel()
@@ -264,12 +266,18 @@ void wxGermanTranslationPanel::DrawParseTreesFromLeaves(wxDC & r_wxdc)
 void wxGermanTranslationPanel::DrawTranslationAndCreateChoices(wxDC & r_wxdc)
 {
   //Delete existing choice windows
-  bool bOk = DestroyChildren();
+  bool bOk =
+    //"returns true if ok"
+    DestroyChildren();
+  SUPPRESS_UNUSED_VARIABLE_WARNING(bOk)
+  m_std_multimap_ui32ConcatenationID2p_wxchoice.clear();
+  m_std_multimap_p_wxchoice2ui32ConcatenationID.clear();
+
   m_wxwindowidCurrent = 0;
 
   wxSize wxsizeText;
   wxString wxstrTranslation;
-  int x = 0;
+//  int x = 0;
 
 //  std::multimap<unsigned, const char *> std_map_ui2std_str;
 
@@ -290,9 +298,10 @@ void wxGermanTranslationPanel::DrawTranslationAndCreateChoices(wxDC & r_wxdc)
 //    if( )
 //    ++ c_iterParseTreesAtSameTokenIndex;
 //  }
-  //important when the choice controls are created after a resize?!
-  Layout();
-  Fit();
+
+//  //important when the choice controls are created after a resize?!
+//  Layout();
+//  Fit();
 }
 
 void wxGermanTranslationPanel::DrawTranslationFromAllParseTrees(wxDC & r_wxdc)
@@ -520,6 +529,7 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
         //const wxString &name=wxChoiceNameStr
         );
       p_wxchoice->Select(0);
+//      p_wxchoice->SetMinClientSize (const wxSize &size);
 //      p_wxchoice->
       wxSize wxsizeChoiceControl = p_wxchoice->GetSize();
       wxcoordX += wxsizeChoiceControl.GetWidth();
@@ -546,6 +556,10 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
         wxcoordY += wxsizeText.y;
         wxcoordX = 0;
       }
+#ifdef _DEBUG
+      const wxChar * c_p_wxch = wxarraystringTranslation[0].c_str();
+      SUPPRESS_UNUSED_VARIABLE_WARNING(c_p_wxch)
+#endif
       r_wxdc.DrawText( //c_r_wxarraystringTranslation[0]
         wxarraystringTranslation[0], wxcoordX
         , //0
@@ -610,14 +624,22 @@ void wxGermanTranslationPanel::SelectConnectedListEntries(
 #ifdef _DEBUG
     int n_m_std_multimap_p_wxchoice2ui32ConcatenationID_size =
       m_std_multimap_p_wxchoice2ui32ConcatenationID.size();
+    SUPPRESS_UNUSED_VARIABLE_WARNING(
+      n_m_std_multimap_p_wxchoice2ui32ConcatenationID_size)
     int n_m_std_multimap_ui32ConcatenationID2p_wxchoice_size =
-        m_std_multimap_ui32ConcatenationID2p_wxchoice.size();
+      m_std_multimap_ui32ConcatenationID2p_wxchoice.size();
+    SUPPRESS_UNUSED_VARIABLE_WARNING(
+      n_m_std_multimap_ui32ConcatenationID2p_wxchoice_size)
 #endif //#ifdef _DEBUG
 
     while( c_iter_std_multimap_p_wxchoice2ui32ConcatenationID !=
         m_std_multimap_p_wxchoice2ui32ConcatenationID.end() &&
+        //Because this is a multimap multiple (concatenation ID) values/ entries
+        //may exist for the same (wxChoice pointer) key, so stop when the
+        //pointer value changes.
         c_iter_std_multimap_p_wxchoice2ui32ConcatenationID->first ==
-        p_wxobjectSelectionChanged
+//        p_wxobjectSelectionChanged
+        p_wxchoiceSelectionChanged
         )
     {
       ui32ConcatenationID = c_iter_std_multimap_p_wxchoice2ui32ConcatenationID->
@@ -655,30 +677,44 @@ void wxGermanTranslationPanel::SelectConnectedListEntries(
 //  m_bHandleNextSelection =
 }
 
+void wxGermanTranslationPanel::DrawMemoryDCbitmap(wxPaintDC & r_wxpaintdc)
+{
+  wxRect wxrectClient = GetClientRect();
+
+  //http://docs.wxwidgets.org/stable/wx_wxmemorydc.html:
+  r_wxpaintdc.Blit(
+    0, //wxCoord xdest,
+    0, //wxCoord ydest,
+    wxrectClient.width, //wxCoord width,
+    wxrectClient.height, //wxCoord height
+    & m_wxmemorydc, //wxDC *source,
+    0, //wxCoord xsrc,
+    0 //wxCoord ysrc
+    );
+}
+
+//http://docs.wxwidgets.org/stable/wx_wxeraseevent.html#wxeraseevent
+void wxGermanTranslationPanel::OnEraseBackground(wxEraseEvent & event)
+{
+  //Do nothing (else the choices are overdrawn by the default erase procedure?!)
+}
+
 void wxGermanTranslationPanel::OnPaint(wxPaintEvent & event)
 {
   wxPaintDC wxpaintdc(this);
+  //  DrawTranslationFromAllParseTrees(wxpaintdc);
+  //  wxpaintdc.DrawBitmap(m_wxmemorydc.GetAsBitmap(), wxrectClient.width,
+  //      wxrectClient.height);
+//  DrawTranslationAndCreateChoices(wxpaintdc);
 
-  wxRect wxrectClient = GetClientRect();
-//  DrawTranslationFromAllParseTrees(wxpaintdc);
-//  wxpaintdc.DrawBitmap(m_wxmemorydc.GetAsBitmap(), wxrectClient.width,
-//      wxrectClient.height);
-  //http://docs.wxwidgets.org/stable/wx_wxmemorydc.html:
-  wxpaintdc.Blit(
-      0, //wxCoord xdest,
-      0, //wxCoord ydest,
-      wxrectClient.width, //wxCoord width,
-      wxrectClient.height, //wxCoord height
-      & m_wxmemorydc, //wxDC *source,
-      0, //wxCoord xsrc,
-      0 //wxCoord ysrc
-      );
+  DrawMemoryDCbitmap(wxpaintdc);
 }
 
 void wxGermanTranslationPanel::OnSize(wxSizeEvent & event)
 {
   Create();
-  //wxWindowBase/ "wx/window.h":
-  // "repaint all invalid areas of the window immediately"
-  Update();
+  Refresh();
+//  //wxWindowBase/ "wx/window.h":
+//  // "repaint all invalid areas of the window immediately"
+//  Update();
 }

@@ -30,12 +30,37 @@ class LetterNode ;
       , "adjective"
     } ;
 
+
+    struct ArraySizes
+    {
+      unsigned m_uiArraySizeForEnglishWord;
+      unsigned m_uiArraySizeForGermanWord;
+      unsigned m_uiArraySizeForByteArray;
+    };
+    static const ArraySizes s_arraysizes [] = {
+      //noun
+      {2,2,2}
+    };
   //This class stands for a pair of English and German vocabulary.
   class VocabularyAndTranslation
   {
   public:
+//    struct ArraySizes
+//    {
+//      unsigned m_uiArraySizeForEnglishWord;
+//      unsigned m_uiArraySizeForGermanWord;
+//      unsigned m_uiArraySizeForByteArray;
+//    };
+//    static const ArraySizes s_arraysizes [] = {
+//      //noun
+//      {2,2,2}
+//    };
     BYTE m_byType ;
     BYTE * m_arbyAttribute ;
+//    enum array_sizes
+//    {
+//
+//    };
     enum word_class
     {
       noun = 0

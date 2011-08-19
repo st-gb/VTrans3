@@ -42,6 +42,7 @@
 //see http://stackoverflow.com/questions/59670/how-to-get-rid-of-deprecated-conversion-from-string-constant-to-char-warning
 //to ignore "warning: deprecated conversion from string constant to 'char*'"
 #pragma GCC diagnostic ignored "-Wno-write-strings"
+
 //For array "add_grammar_rules_xpm" .
 #include <bitmaps/add_grammar_rules.xpm>
 //For array "add_vocable_attribute_definitions_xpm" .

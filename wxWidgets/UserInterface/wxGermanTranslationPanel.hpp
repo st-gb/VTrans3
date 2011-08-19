@@ -26,6 +26,7 @@
 //forward decl.
 class wxChoice;
 
+//see http://wiki.wxwidgets.org/Painting_your_custom_control
 class wxGermanTranslationPanel
   : public wxPanel
 {
@@ -57,7 +58,14 @@ class wxGermanTranslationPanel
 public:
   wxGermanTranslationPanel();
   wxGermanTranslationPanel(wxWindow * p_wxwindowParent)
-    : wxPanel( p_wxwindowParent)
+    : wxPanel( p_wxwindowParent,
+        wxID_ANY, //wxWindowID winid = wxID_ANY,
+        wxDefaultPosition, //const wxPoint& pos = wxDefaultPosition,
+        wxDefaultSize, //const wxSize& size = wxDefaultSize,
+        //long style = wxTAB_TRAVERSAL | wxNO_BORDER
+        //see http://docs.wxwidgets.org/stable/wx_wxwindow.html#wxwindow:
+        wxTAB_TRAVERSAL | wxNO_BORDER | wxNO_FULL_REPAINT_ON_RESIZE
+        )
     , m_wxwindowidCurrent(0)
   {
   }
@@ -71,6 +79,7 @@ public:
      wxCoord & wxcoordY
     );
   void DrawParseTreesFromLeaves(wxDC & r_wxdc);
+  void DrawMemoryDCbitmap(wxPaintDC & );
   void DrawTranslationAndCreateChoices(wxDC & r_wxdc);
   void DrawTranslationFromAllParseTrees(wxDC & r_wxdc);
   void PossiblyAddChoice(
@@ -99,6 +108,7 @@ public:
     m_stdvec_stdvec_stdvecTranslationAndGrammarPart =
       r_stdvec_stdvec_stdvecTranslationAndGrammarPart;
   }
+  void OnEraseBackground(wxEraseEvent & event);
   void OnPaint(wxPaintEvent & event) ;
   void OnSize(wxSizeEvent & event) ;
   DECLARE_EVENT_TABLE()

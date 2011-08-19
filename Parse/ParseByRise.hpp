@@ -168,6 +168,7 @@ public:
     , std::vector<GrammarPart *> & r_stdvec_p_grammarpart
     ) ;
 
+  bool GrammarPartDoesNotAlreadyExist(GrammarPart * p_grammarpart);
   bool GetGrammarPartID( const std::string & r_str , WORD & wID ) ;
 
   std::string GetGrammarPartName(WORD wRuleID ) ;
@@ -176,6 +177,11 @@ public:
   std::string GetPathAs_std_string(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) ;
 
+  void GetRuleNames(
+    WORD wSuperordinateGrammarPartID,
+    GrammarPart * p_grammarpartLeft,
+    GrammarPart * p_grammarpartRight
+    );
   //return: bitfield: 1 bit for every single person Index (1st person singular...3rd
   //persion  plural)
   BYTE GetSubjectPersonIndex( GrammarPart * p_grammarpart) ;
@@ -225,6 +231,11 @@ public:
     WORD wSuperordinateGrammarRuleID ) ;
   void InsertGrammarRulesFor3rdPersonSingular() ;
   void InsertGrammarPartID2NameMappingForWordClasses() ;
+  inline void InsertIntoOutmostTokenIndexMaps(
+    GrammarPart * p_grammarpart,
+    DWORD dwLeftMostTokenIndexOfRule,
+    DWORD dwRightMostTokenIndexOfRule
+    );
   void InsertRule_ID2NameAndName2IDmapping( WORD wGrammarRuleID
       , const char * cp_ch ) ;
   WORD InsertSuperClassGrammarRule(
@@ -266,6 +277,11 @@ public:
     std::multimap<DWORD, GrammarPart *> & mm_idx2grammarpt
     , bool bMemorizeInsertion
     ) ;
+  inline void PossiblyCreateNewLeaves(
+    GrammarPart * p_grammarpart,
+    GrammarPart * p_grammarpartLeftChild,
+    GrammarPart * p_grammarpartRightChild
+    );
   void Message(const std::wstring & cr_stdwstr ) ;
   BYTE ResolveGrammarRules(
     //Maintaining 2 maps with both leftnost and rightmost indexes should be faster

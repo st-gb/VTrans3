@@ -28,8 +28,11 @@
  
  <translation_rule_file path="configuration/translation_rules/2ndPers_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersPlurClauseAllows1Obj_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/3rdPersPlur_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/3rdPersSing_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSingClauseAllows0Obj_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePresentClause.xml" />
+ <translation_rule_file path="configuration/translation_rules/object_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/personal_pronouns_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/reflexive_pronouns_translation_rules.xml" />

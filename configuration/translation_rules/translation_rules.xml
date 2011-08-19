@@ -1,8 +1,8 @@
 <translation_rules>
-  <translation_rule 
-    syntax_tree_path="plural_noun"
+  <!--<translation_rule 
+    syntax_tree_path="*.plural_noun"
     attribute_name="German_plural"
-  />
+  />-->
   <translation_rule 
     syntax_tree_path="adverb"
     attribute_name="German_adverb"

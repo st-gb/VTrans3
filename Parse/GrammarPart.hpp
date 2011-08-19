@@ -63,6 +63,7 @@ class VocabularyAndTranslation ;
 class GrammarPart
 {
 public:
+  bool m_bAssignedAsChild;
   BYTE m_byPersonIndex ;
   static const uint32_t unconnected = 0;
   //The region indexes are important for applying grammar rules:
@@ -101,9 +102,9 @@ public:
 //  VTrans::string_type m_vtrans_strTranslation ;
   std::string m_stdstrTranslation ;
 
-  void AddLeftChild(GrammarPart & r_grammarpart) ;
+  void SetLeftChild(GrammarPart & r_grammarpart) ;
 
-  void AddRightChild(GrammarPart & r_grammarpart) ;
+  void SetRightChild(GrammarPart & r_grammarpart) ;
 
   void BuildTokenVector(
     const std::string & stdstrText
@@ -122,6 +123,16 @@ public:
     DWORD dwTokenIndexLeftMost,
     DWORD dwTokenIndexRightMost ,
     WORD wGrammarPartID ) ;
+
+//  //Copy constructor.
+//  GrammarPart( const GrammarPart & c_r_grammarpart)
+//    :
+//    m_dwLeftmostIndex(c_r_grammarpart.m_dwLeftmostIndex)
+//    , m_dwRightmostIndex(c_r_grammarpart.m_dwRightmostIndex)
+//    , m_wGrammarPartID( c_r_grammarpart.m_wGrammarPartID)
+//  {
+//
+//  }
 
   //Code that should be executed by every constructor.
   void Init() ;

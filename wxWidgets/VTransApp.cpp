@@ -21,6 +21,8 @@
 //ShowMultipleFileSelectionDialog(...)
 #include <wxWidgets/UserInterface/UserInterface.hpp>
 #include <wxWidgets/UserInterface/wxTextInputDlg.hpp>//class wxTextInputDlg
+//class wxTextControlDialog
+#include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 
 #include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
@@ -108,17 +110,20 @@ void VTransApp::Message( const std::string & cr_stdstr )
   wxDialog wxd(NULL, wxID_ANY, wxT("Translator message") );
 
   wxString wxstrMessage = ::getwxString( cr_stdstr);
-  wxTextCtrl * p_wxtextctrl = new wxTextCtrl(
-      & wxd //wxWindow* parent
-      , wxID_ANY //wxWindowID id
-      , wxstrMessage //const wxString& value = ""
-      , wxDefaultPosition //const wxPoint& pos = wxDefaultPosition,
-      , wxDefaultSize //const wxSize& size = wxDefaultSize
-      , wxTE_READONLY | wxTE_MULTILINE //long style = 0
-      );
-//  wxd.AddChild( p_wxtextctrl);
-  wxd.Layout(); //stretch to the whole client window.
-  wxd.ShowModal();
+//  wxTextCtrl * p_wxtextctrl = new wxTextCtrl(
+//    & wxd //wxWindow* parent
+//    , wxID_ANY //wxWindowID id
+//    , wxstrMessage //const wxString& value = ""
+//    , wxDefaultPosition //const wxPoint& pos = wxDefaultPosition,
+//    , wxDefaultSize //const wxSize& size = wxDefaultSize
+//    , wxTE_READONLY | wxTE_MULTILINE //long style = 0
+//    );
+////  wxd.AddChild( p_wxtextctrl);
+//  wxd.Layout(); //stretch to the whole client window.
+//  wxd.ShowModal();
+  wxTextControlDialog wxtextcontroldialog(
+    wxstrMessage);
+  wxtextcontroldialog.ShowModal();
 }
 
 void VTransApp::Message( const std::wstring & cr_stdwstr )

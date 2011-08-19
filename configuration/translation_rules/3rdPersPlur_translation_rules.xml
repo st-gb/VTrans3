@@ -1,0 +1,15 @@
+<translation_rules>
+  <!--concatenate both translations (if selecting "der" in a choice control 
+    the translation for the finite verb of have should be also selected)-->
+  <concatenated_translation_rules>
+	  <!--definite article singular-->
+	  <translation_rule 
+		syntax_tree_path="definite_article_plural.definite_article"
+		translation="die">
+	  </translation_rule>
+	  <translation_rule 
+		syntax_tree_path="definite_article_plural.plural_noun"
+		attribute_name="German_plural"
+	  />
+  </concatenated_translation_rules>
+</translation_rules>

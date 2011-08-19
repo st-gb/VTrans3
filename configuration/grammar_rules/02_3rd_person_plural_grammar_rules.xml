@@ -9,7 +9,9 @@
   <grammar_rule left_child="plural_noun" superordinate="plural_noun_superclass"/>
   <grammar_rule left_child="definite_article_plural" superordinate="plural_noun_superclass"/>
   <grammar_rule left_child="plural_noun_superclass" superordinate="3rdPersPlurSubjOrObjEnumEle"/>
+  
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" superordinate="SubjOrObjEnumEle"/>
+  
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf0Obj" superordinate="3rdPersPlurClauseAllows0Obj"/>
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf1Obj" superordinate="3rdPersPlurClauseAllows1Obj"/>
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf2Obj" superordinate="3rdPersPlurClauseAllows2Obj"/>
