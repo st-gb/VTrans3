@@ -702,6 +702,9 @@ void TranslateParseByRiseTree::FreeMemoryForTranslationRule()
   }
   m_stdmap_translationrule2ConditionsAndTranslation.clear() ;
   m_stdmap_p_translationrule2ConditionsAndTranslation.clear() ;
+
+  m_std_multimapConcatenationID2p_translationrule.clear();
+
 }
 
 std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
@@ -1168,6 +1171,44 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
     //              ) ;
                   r_cnt.GetTranslationEquivalent(
                     r_stdvec_p_grammarpartPath.back() ) ;
+
+//             std::vector<GrammarPart * >::const_reverse_iterator
+//               c_rev_iter_p_grammarpart
+//               = r_stdvec_p_grammarpartPath.rbegin();
+//             if( c_rev_iter_p_grammarpart != r_stdvec_p_grammarpartPath.rend()
+//                 )
+
+//             if( r_stdvec_p_grammarpartPath.empty() )
+//             {
+//                 const GrammarPart * & r_p_grammarpart =
+//                   r_stdvec_p_grammarpartPath.back();
+//                 //Problem:
+//                 //if a grammar rule affects more than 1 grammar part, e.g.:
+//                 //"sheep" (singular_noun) and "sheep" (plural_noun):
+//                 //when translating "the sheep" and the translation rule then matches
+//                 //"definite_article_singular.singular_plural" and the article is
+//                 //translated to "die" it is overwritten by "das" from
+//                 //"definite_article_singular.singular_noun" because the grammar part
+//                 //is the same/ shared/ referenced by the two ones.
+//                 //possible solution:
+//                 //-store multiple translations per grammar part
+//                 //-clone grammar part (branches).
+//                 if( ! //c_rev_iter_p_grammarpart->m_stdstrTranslation.empty()
+//                     r_p_grammarpart->m_stdstrTranslation.empty()
+//                     )
+//                 {
+//                   //Must create on heap.
+//                   GrammarPart * p_grammarpartCopy = new GrammarPart(
+//                     //** c_rev_iter_p_grammarpart
+//                     * r_p_grammarpart
+//                     );
+////                     r_stdvec_p_grammarpartPath.erase(c_rev_iter_p_grammarpart);
+//                   //MinGW 4.5.2's "stl_vector.h" :
+//                   //"It shrinks the %vector by one"
+//                   r_stdvec_p_grammarpartPath.pop_back();
+//                   r_stdvec_p_grammarpartPath.push_back(p_grammarpartCopy);
+//                 }
+//             }
               LOGN( FULL_FUNC_NAME << "--adding translation \""
                   << r_stdstrTranslation << "\"" )
           }

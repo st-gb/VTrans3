@@ -1,0 +1,43 @@
+<translation_rules>
+  <translation_rule 
+    syntax_tree_path="*.obj.*.plural_noun"
+    attribute_name="German_plural"
+  />
+  <translation_rule 
+    syntax_tree_path="*.obj.*.singular_noun"
+    attribute_name="German_singular"
+  />
+  <!--e.g. "Die Kinder vertrauen >>dem<< Mann."-->
+  <!--translation_rule 
+    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    translation="dem">
+    grammatical_case=3 <=> dative verb->
+    condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"->
+    <condition syntax_tree_path="clauseWith1Obj.*.mainVerbInf1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+  </translation_rule>
+  e.g. "Die Kinder liebe >>den<< Mann.">
+  <translation_rule 
+    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    translation="den">
+    grammatical_case=1 <=> dative verb->
+    condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"->
+    <condition syntax_tree_path="clauseWith1Obj.*.mainVerbInf1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="4"
+    />
+  </translation_rule>
+  <Die Schafe vertrauen den Kindern>
+  <translation_rule 
+    syntax_tree_path="obj.*.definite_article_plural.definite_article"
+    translation="den">
+    <grammatical_case=3 <=> dative verb>
+    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"->
+    <condition syntax_tree_path="clauseWith1Obj.*.mainVerbInf1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="3"
+    />
+  </translation_rule>-->
+</translation_rules>

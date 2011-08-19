@@ -382,24 +382,41 @@ GrammarPart * SyntaxTreePath::GetLeaf(
           << " as string: "
           << std_strCurrentGrammarPartNameFromThisSyntaxTreePath
           )
-        p_grammarpartChild = p_grammarpart->mp_grammarpartLeftChild ;
-        if( p_grammarpartChild &&
-          p_grammarpartChild->m_wGrammarPartID ==
-           uiCurrentGrammarPartIDfromThisSyntaxTreePath )
+//        if( uiCurrentGrammarPartIDfromThisSyntaxTreePath ==
+//            KLEENE_STAR_OPERATOR)
+//        {
+//          bKleeneStarOperator = true;
+//          continue;
+//        }
+//        if( bKleeneStarOperator)
+//        {
+//          if( mp_parsebyrise->GetGrammarPart(
+//              p_grammarpart,
+//              uiCurrentGrammarPartIDfromThisSyntaxTreePath)
+//              )
+//
+//        }
+//        else
         {
-          p_grammarpart = p_grammarpartChild ;
-        }
-        else
-        {
-          p_grammarpartChild = p_grammarpart->mp_grammarpartRightChild ;
+          p_grammarpartChild = p_grammarpart->mp_grammarpartLeftChild ;
           if( p_grammarpartChild &&
             p_grammarpartChild->m_wGrammarPartID ==
              uiCurrentGrammarPartIDfromThisSyntaxTreePath )
           {
             p_grammarpart = p_grammarpartChild ;
           }
-          else //neither right nor left child match the syntax tree path.
-            return NULL ;
+          else
+          {
+            p_grammarpartChild = p_grammarpart->mp_grammarpartRightChild ;
+            if( p_grammarpartChild &&
+              p_grammarpartChild->m_wGrammarPartID ==
+               uiCurrentGrammarPartIDfromThisSyntaxTreePath )
+            {
+              p_grammarpart = p_grammarpartChild ;
+            }
+            else //neither right nor left child match the syntax tree path.
+              return NULL ;
+          }
         }
 //        if( ! p_grammarpartChild )
 //          break ;
@@ -450,7 +467,8 @@ bool SyntaxTreePath::Matches(
   return Matches(
     m_ar_wElements,
     m_wNumberOfElements ,
-    cr_stdvec_wGrammarPartPath
+    cr_stdvec_wGrammarPartPath//,
+//    mp_parsebyrise
     ) ;
 }
 
@@ -475,6 +493,7 @@ bool SyntaxTreePath::Matches(
     //Compare from end to begin.
     WORD wIndex ;
     WORD wGrammarPartIDforTranslationRule ;
+    WORD wCurrentGrammarPartIDforCurrentParseTreePath;
     //Avoid g++ warning "'wGrammarPartIDforTranslationRule' might be used
     // uninitialized in this function"
     SUPPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDforTranslationRule)
@@ -512,6 +531,7 @@ bool SyntaxTreePath::Matches(
 //        }
       if( bCurrentlyKleeneStarOperator )
       {
+        //Matches the grammar part ID following the Kleene star operator.
         if( wGrammarPartIDforTranslationRule == *c_rev_iter_wGrammarPartPath )
         {
           bCurrentlyKleeneStarOperator = false ;
@@ -528,19 +548,30 @@ bool SyntaxTreePath::Matches(
           if( wIndex - 1 >= 0 )
             -- wIndex ;
           else
-            return false ;
+            return //false ;
+              //<=> identical because "*" means: 0 or any amount of grammar
+              //parts may follow.
+              true;
           bCurrentlyKleeneStarOperator = true ;
           wGrammarPartIDforTranslationRule =
               ar_wElements [ wIndex ] ;
         }
         else
         {
+          wCurrentGrammarPartIDforCurrentParseTreePath =
+            * c_rev_iter_wGrammarPartPath;
           if( wGrammarPartIDforTranslationRule !=
               //r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
-              * c_rev_iter_wGrammarPartPath
+              wCurrentGrammarPartIDforCurrentParseTreePath
             )
           {
             bIdentical = false ;
+//            std::string std_strCurrentGrammarPartNameforCurrentParseTreePath =
+//              mp_parsebyrise->GetGrammarPartName(
+//                wCurrentGrammarPartIDforCurrentParseTreePath);
+//            std::string std_strCurrentGrammarPartNameforTranslationRule =
+//              mp_parsebyrise->GetGrammarPartName(
+//                wGrammarPartIDforTranslationRule);
 //            DEBUGN( FULL_FUNC_NAME << "--not identical\n")
             break ;
           }
@@ -552,6 +583,17 @@ bool SyntaxTreePath::Matches(
         }
       }
     }
+
+//    //If kleene star and at least 1 grammar part follows (= the Kleene start
+//    //is not the last grammar part).
+//    if( bCurrentlyKleeneStarOperator &&
+//        //grammar part iID following the kleene start oper is not a kleene star
+//        wGrammarPartIDforTranslationRule != KLEENE_STAR_OPERATOR )
+
+    //If 1 path is "definite_article_singular.definite_article" and the other
+    //is "obj.definite_article_singular.definite_article" it is not identical.
+    if( c_rev_iter_wGrammarPartPath != cr_stdvec_wGrammarPartPath.rend() )
+      bIdentical = false;
   }
   //If currently there is a Kleene star operand, the rule is NOT identical
   //because a next (indirect) vector's grammar part ID must match the
@@ -560,6 +602,7 @@ bool SyntaxTreePath::Matches(
   //"obj.*.def_article_plural.def_article"
   //the vector's grammar part path must contain an "obj" grammar part after
   // a def_article_plural gramar part.
-  return ! bCurrentlyKleeneStarOperator && bIdentical ;
+  return ! bCurrentlyKleeneStarOperator &&
+      bIdentical ;
 }
 

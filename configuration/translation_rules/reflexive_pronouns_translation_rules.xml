@@ -50,7 +50,8 @@
       byte_attribute_value="3"
     />
     <!--grammatical_case=3 <=> dative verb-->
-    <condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+    <!--condition syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"-->
+    <condition syntax_tree_path="clauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />

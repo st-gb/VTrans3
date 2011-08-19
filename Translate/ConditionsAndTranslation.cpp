@@ -8,6 +8,7 @@
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
+#include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 #include <map> //std::map
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
@@ -231,30 +232,45 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                 }
                   break ;
                 case AttributeTypeAndPosAndSize::German :
-                  {
+                {
 //                  DEBUG_COUTN
                   DEBUGN("language for choosing attribute value is "
                     "German, index:" << r_atapas.m_wIndex
                     << "m_pfn_TransformString:" << m_pfn_TransformString )
-                  std::string & r_stdstrAttrVal = p_grammarpartLeaf->
-                    m_pvocabularyandtranslation->m_arstrGermanWord[
-                    r_atapas.m_wIndex ] ;
-                  //If function that modifies as string (like for
-                  //"I trust the children." : for "Kinder" ->
-                  //"Kindern")
-                  if( m_pfn_TransformString )
+                  if(
+//                      r_atapas.m_wIndex <
+//                      VocabularyAndTranslation::s_arraysizes[
+//                        p_grammarpartLeaf->m_pvocabularyandtranslation->m_byType
+//                        ]
+                      p_grammarpartLeaf->m_pvocabularyandtranslation->
+                        m_arstrGermanWord
+                    )
                   {
-                    //Use a copy, else the VocAndTransl's string is modified
-                    //by the function
-                    std::string stdstrAttrVal = r_stdstrAttrVal ;
-                    m_pfn_TransformString(stdstrAttrVal) ;
-                    return stdstrAttrVal ;
+                    std::string & r_stdstrAttrVal = p_grammarpartLeaf->
+                      m_pvocabularyandtranslation->m_arstrGermanWord[
+                      r_atapas.m_wIndex ] ;
+                    //If function that modifies as string (like for
+                    //"I trust the children." : for "Kinder" ->
+                    //"Kindern")
+                    if( m_pfn_TransformString )
+                    {
+                      //Use a copy, else the VocAndTransl's string is modified
+                      //by the function
+                      std::string stdstrAttrVal = r_stdstrAttrVal ;
+                      m_pfn_TransformString(stdstrAttrVal) ;
+                      return stdstrAttrVal ;
+                    }
+                    else
+                      //std::string & r_stdstrTextTokens =
+                      return r_stdstrAttrVal ;
                   }
                   else
-                    //std::string & r_stdstrTextTokens =
-                    return r_stdstrAttrVal ;
+                  {
+                    sp_parsebyrise->m_p_userinterface->Message(
+                      "index for German string is out of bounds");
                   }
-                  break ;
+                }
+                break ;
               }
             }
             break ;

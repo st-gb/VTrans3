@@ -15,7 +15,8 @@
   
   <!-- clauses with object(s) -->
   <grammar_rule left_child="3rdPersPlurClauseAllows1Obj" right_child="3rdPersPlurObj" superordinate="3rdPersPlurClauseWith1Obj"/>
-  <grammar_rule left_child="3rdPersPlurClauseAllows1Obj" right_child="obj" superordinate="3rdPersPlurClauseWith1Obj"/>
+  <!--<grammar_rule left_child="3rdPersPlurClauseAllows1Obj" right_child="obj" superordinate="3rdPersPlurClauseWith1Obj"/>-->
+  <grammar_rule left_child="3rdPersPlurClauseAllows1Obj" right_child="obj" superordinate="clauseWith1Obj"/>
   <!-- clauses with object(s) -->
     
   <grammar_rule left_child="SubjOrObjEnumEle" superordinate="obj"/>

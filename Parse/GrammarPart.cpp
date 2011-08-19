@@ -8,7 +8,7 @@
 #include <Attributes/EnglishWord.hpp> //class EnglishWord's enum
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 
-  void GrammarPart::AddLeftChild(GrammarPart & r_grammarpart)
+  void GrammarPart::SetLeftChild(GrammarPart & r_grammarpart)
   {
     mp_grammarpartLeftChild = & r_grammarpart ;
 #ifdef COMPILE_WITH_POINTER_TO_PARENT
@@ -23,7 +23,7 @@
 #endif
   }
 
-  void GrammarPart::AddRightChild(GrammarPart & r_grammarpart)
+  void GrammarPart::SetRightChild(GrammarPart & r_grammarpart)
   {
     mp_grammarpartRightChild = & r_grammarpart ;
 #ifdef COMPILE_WITH_POINTER_TO_PARENT
@@ -61,6 +61,7 @@ void GrammarPart::Init()
 #ifdef COMPILE_WITH_POINTER_TO_PARENT
   mp_grammarpartParent = NULL ;
 #endif
+  m_bAssignedAsChild = false;
   m_wConsecutiveID = MAXWORD ;
   m_byPersonIndex = 0;
   m_ui32ConcatenationID = //0
