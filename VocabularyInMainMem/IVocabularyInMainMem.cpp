@@ -41,11 +41,23 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbBe()
 //  germanverbSein.m_bMove = 0 ;
 
   void * p_v = Insert("am", EnglishWord:://be1stPersonSingular
-      auxiliary_verb//, p_v
-      ) ;
+//      auxiliary_verb
+    am
+    //, p_v
+    ) ;
+  p_v = Insert("are", EnglishWord:://be1stPersonSingular
+//      auxiliary_verb
+    are
+    //, p_v
+    ) ;
+  p_v = Insert("is", EnglishWord:://be1stPersonSingular
+//      auxiliary_verb
+    is
+    //, p_v
+    ) ;
 
   //void * p_v =
-  Insert(englishauxiliaryverbBe,germanverbSein, p_v) ;
+//  Insert(englishauxiliaryverbBe,germanverbSein, p_v) ;
 }
 
 void IVocabularyInMainMem::InsertAuxiliaryVerbHave()
@@ -77,6 +89,7 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbHave()
 //the dictionary.
 void IVocabularyInMainMem::InsertFundamentalWords()
 {
+  Insert("unknownWord", EnglishWord::UnknownWord);
   //Inserts e.g. into a trie structure.
   Insert("the", EnglishWord::English_definite_article ) ;
   Insert("a", EnglishWord::English_indefinite_article ) ;

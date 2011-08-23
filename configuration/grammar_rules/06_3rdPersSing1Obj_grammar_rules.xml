@@ -1,0 +1,26 @@
+<grammar_rules>
+  <!--needs: "obj" --> 
+
+  <!-- http://en.wikipedia.org/wiki/Reflexive_pronoun:
+		"However, when the person being seen is the same as the person who is 
+      seeing, the reflexive pronoun is used: "I see myself" or "She sees herself"." 
+	  A reflexive pronoun is a special kind of pronoun that is usually used when the object of a sentence is the same as the subject. Each personal pronoun (such as I, you, and she) has its own reflexive form
+	  
+	  intensive pronoun (e.g., "They ate all the food themselves."
+	  -->
+  <!-- to limit a possible reflexive pronoun to "himself" -->
+  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres0Obj" superordinate="he_3rdPersSingClauseAllows0Obj"/>
+  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres0Obj" superordinate="she_3rdPersSingClauseAllows0Obj"/>
+  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres0Obj" superordinate="it_3rdPersSingClauseAllows0Obj"/>
+  
+  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres1Obj" superordinate="he_3rdPersSingClauseAllows1Obj"/>
+  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres1Obj" superordinate="she_3rdPersSingClauseAllows1Obj"/>
+  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres1Obj" superordinate="it_3rdPersSingClauseAllows1Obj"/>
+
+  <grammar_rule left_child="he_3rdPersSingClauseAllows1Obj" right_child="himself_ObjEnumEle" superordinate="clauseWith1Obj"/>
+  <grammar_rule left_child="he_3rdPersSingClauseAllows1Obj" right_child="obj" superordinate="clauseWith1Obj"/>
+  
+  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres2Obj" superordinate="he_3rdPersSingClauseAllows2Obj"/>
+  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres2Obj" superordinate="she_3rdPersSingClauseAllows2Obj"/>
+  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres2Obj" superordinate="it_3rdPersSingClauseAllows2Obj"/>
+</grammar_rules>

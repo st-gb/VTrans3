@@ -5,6 +5,12 @@
     syntax_tree_path="*.3rdPersPlurClauseAllows1Obj.*.definite_article_plural.plural_noun"
     attribute_name="German_plural"
   />
+  
+  <translation_rule 
+    syntax_tree_path="*.MainVerb3rdPersSingPres1Obj"
+    attribute_name="GerMainVerb0Obj3rdPersSing" 
+  />
+
   <!-- _subject_'s definite article -->
   <translation_rule 
 	translation="die"

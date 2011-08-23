@@ -21,6 +21,7 @@ namespace Xerces
   class SAX2TransformationRuleHandler
     : public XERCES_CPP_NAMESPACE::DefaultHandler
   {
+    XERCES_CPP_NAMESPACE::Locator const * m_pc_locator ;
 //    ParseByRise & m_r_parsebyrise ;
     TranslationControllerBase & m_r_translationcontrollerbase ;
   public:
@@ -36,6 +37,7 @@ namespace Xerces
      const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes,
      TransformationRule & r_transformationrule
      );
+    void setDocumentLocator(const XERCES_CPP_NAMESPACE::Locator * const );
     void startElement(
       const XMLCh * const cpc_xmlchURI,
       const XMLCh * const cpc_xmlchLocalName,

@@ -49,7 +49,8 @@ namespace wxWidgets
   int ShowMultipleFileSelectionDialog(
     const wxString & cr_wxstrTitle ,
     wxArrayString & wxarraystringPaths ,
-    wxWindow * p_wxwindow
+    wxWindow * p_wxwindow,
+    const wxString & c_r_wxInitialDirForFileSelecion
     )
   {
     LOGN("wxTextInputDlg::ShowMultipleFileSelectionDialog(" << cr_wxstrTitle
@@ -58,7 +59,8 @@ namespace wxWidgets
       //this ,
       p_wxwindow ,
       cr_wxstrTitle ,
-      wxT("") , //defaultDir
+//      wxT("") , //defaultDir
+      c_r_wxInitialDirForFileSelecion,
       wxT("") //const wxString&  defaultFile = ""
       //" A wildcard, such as "*.*" or
       // "BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif". "

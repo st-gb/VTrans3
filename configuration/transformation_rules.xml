@@ -13,7 +13,7 @@
 				    clauseWith1Obj               clauseWith1Obj
       -->
   <transformation_rule
-    syntax_tree_path="clauseWith1Obj.*.adverb"
+    syntax_tree_path="*.clauseWith1Obj.*.adverb"
     parse_tree_branch_to_move="adverb"
     place_near_syntax_tree_path="clauseWith1Obj"
     name_of_grammar_part_to_insert="objAndAdverb"
@@ -27,10 +27,11 @@
 					\   /
 		  Middle3rdPersSingPres0Obj
 		  -->
+  <!--    place_near_syntax_tree_path="*.Middle3rdPersSing0Obj.MainVerb3rdPersSingPres0Obj" -->
   <transformation_rule
-    syntax_tree_path="Middle3rdPersSing0Obj.adverb"
+    syntax_tree_path="*.Middle3rdPersSing0Obj.adverb"
+	second_syntax_tree_path="*.Middle3rdPersSing0Obj.MainVerb3rdPersSingPres0Obj"
     parse_tree_branch_to_move="adverb"
-    place_near_syntax_tree_path="Middle3rdPersSing0Obj.MainVerb3rdPersSingPres0Obj"
     direction="right"
     >
   </transformation_rule>

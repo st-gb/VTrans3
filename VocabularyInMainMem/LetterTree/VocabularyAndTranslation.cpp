@@ -5,7 +5,7 @@
 #include "../../StdAfx.h"
 #include <Attributes/Word.hpp> //class Word, EnglishWord, EnglishNoun
 #include <Attributes/EnglishWord.hpp> //for class EnglishWord's enum
-
+#include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 //header file for this VocabularyAndTranslation class
 #include "VocabularyAndTranslation.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
@@ -20,35 +20,25 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
 {
   m_byType = byVocabularyType ;
   BYTE byArraySizeForEng = 0 ;
+
   //BYTE byArraySizeForGer = 0 ;
   switch(byVocabularyType)
   {
-  case ENGLISH_NOUN:
+  case //ENGLISH_NOUN:
+    EnglishWord::noun:
+  case EnglishWord::adverb:
 //    m_pword = new EnglishNoun() ;
-    m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN] ;
-    m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
-    byArraySizeForEng = NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN ;
-    //byArraySizeForGer = NUMBER_OF_STRINGS_FOR_GERMAN_NOUN ;
-    m_arbyAttribute = new BYTE[2] ;
-    memset(m_arbyAttribute,0,2) ;
     break;
   case EnglishWord::auxiliary_verb:
     m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
     m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
     m_arbyAttribute = new BYTE[2] ;
     break;
-  case ENGLISH_MAIN_VERB:
   case EnglishWord::main_verb_allows_0object_infinitive:
   case EnglishWord::main_verb_allows_1object_infinitive:
   case EnglishWord::main_verb_allows_2objects_infinitive:
-    m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB] ;
-    m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
-    m_arbyAttribute = new BYTE[2] ;
+    byVocabularyType = EnglishWord::main_verb;
     break;
-  case EnglishWord::adverb:
-    m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB] ;
-    m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB] ;
-    break ;
   case WORD_TYPE_CONJUNCTION:
     m_arstrEnglishWord = new std::string[1] ;
     m_arstrGermanWord = new std::string[1] ;
@@ -70,16 +60,6 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     //  "indefinite article" + "plural" which is wrong would also be possible)
     // singular type is only needed for parsing. It shares the same attr as
     // the noun.
-//  case EnglishWord::singular :
-//    m_arstrEnglishWord = new std::string[1] ;
-//    m_arstrGermanWord = new std::string[1] ;
-//    m_arbyAttribute = new BYTE[1] ;
-//    break;
-
-  //case GERMAN_NOUN:
-  //  m_pword = new GermanNoun() ;
-  //  m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
-  //  break;
   default:
     //For vocabulary types that just refer another vocandtransl object's
     // attributes and for types that do not need (e.g. "definite article")
@@ -88,6 +68,19 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     m_arstrEnglishWord = NULL ;
     m_arstrGermanWord = NULL ;
     m_arbyAttribute = NULL ;
+  }
+
+  if( byVocabularyType <= EnglishWord:://auxiliary_verb
+      adverb)
+  {
+    const ArraySizes & c_r_arraysizes = s_arraysizes[byVocabularyType];
+    byArraySizeForEng = c_r_arraysizes.m_byArraySizeForEnglishWord ;
+    m_arstrEnglishWord = new std::string[byArraySizeForEng] ;
+    m_arstrGermanWord = new std::string[
+      c_r_arraysizes.m_byArraySizeForGermanWord] ;
+    //byArraySizeForGer = NUMBER_OF_STRINGS_FOR_GERMAN_NOUN ;
+    m_arbyAttribute = new BYTE[c_r_arraysizes.m_byArraySizeForByteArray] ;
+    memset(m_arbyAttribute,0,c_r_arraysizes.m_byArraySizeForByteArray) ;
   }
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   m_arpletternodeLastEngChar = new LetterNode * [byArraySizeForEng];
@@ -156,6 +149,92 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
   #endif //#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   //delete m_arpletternodeLastGerChar ;
   }
+}
+
+std::string VocabularyAndTranslation::GetEnglishString(BYTE byIndex)
+{
+  if( m_byType <= EnglishWord::adverb )
+  {
+    if( byIndex < s_arraysizes[m_byType].m_byArraySizeForEnglishWord
+  //    m_arstrEnglishWord
+      )
+    {
+      DEBUGN("language for choosing attribute value is "
+        "English, index:" << byIndex )
+      std::string & r_stdstrAttrVal = m_arstrEnglishWord[
+        byIndex ] ;
+      return r_stdstrAttrVal ;
+    }
+    else
+    {
+      s_p_userinterface->Message(
+        "index for English string array is out of bounds");
+    }
+  }
+  else
+  {
+    std::string & r_stdstrAttrVal = m_arstrEnglishWord[
+      byIndex ] ;
+    return r_stdstrAttrVal ;
+  }
+  //std::string & r_stdstrTextTokens =
+  return "";
+}
+
+void VocabularyAndTranslation::GetAttributeValue(BYTE byIndex)
+{
+  //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+  //                #pragma GCC diagnostic ignored  "-Wunused"
+  if( m_byType <= EnglishWord::adverb )
+  {
+    if( byIndex < s_arraysizes[m_byType].m_byArraySizeForByteArray
+  //    m_arbyAttribute
+      )
+    {
+      BYTE by = m_arbyAttribute[byIndex ] ;
+      SUPPRESS_UNUSED_VARIABLE_WARNING(by)
+    }
+    else
+    {
+      s_p_userinterface->Message(
+        "index for attributes byte array is out of bounds");
+    }
+  }
+  else
+  {
+    BYTE by = m_arbyAttribute[byIndex ] ;
+    SUPPRESS_UNUSED_VARIABLE_WARNING(by)
+  }
+}
+
+std::string VocabularyAndTranslation::GetGermanString(BYTE byIndex)
+{
+//                  DEBUG_COUTN
+  DEBUGN("language for choosing attribute value is "
+    "German, index:" << byIndex
+    //<< "m_pfn_TransformString:" << m_pfn_TransformString
+    )
+  if( m_byType <= EnglishWord::adverb)
+  {
+    if( byIndex < s_arraysizes[ m_byType].m_byArraySizeForGermanWord
+//      m_arstrGermanWord
+      )
+    {
+      std::string & r_stdstrAttrVal = m_arstrGermanWord[byIndex ] ;
+      return r_stdstrAttrVal ;
+    }
+    else
+    {
+      s_p_userinterface->Message(
+        "index for German string array is out of bounds");
+    }
+  }
+  else
+  {
+    std::string & r_stdstrAttrVal = m_arstrGermanWord[byIndex ] ;
+    return r_stdstrAttrVal ;
+  }
+  return "";
 }
 
 //Word 

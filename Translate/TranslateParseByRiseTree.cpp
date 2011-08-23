@@ -4,7 +4,7 @@
  *  Created on: 25.02.2010
  *      Author: Stefan
  */
-
+#include <Attributes/EnglishWord.hpp> //for EnglishWord::UnknownWord
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <UserInterface/I_UserInterface.hpp> //for I_UserInterface::Message(...)
 //class AttributeTypeAndPosAndSize
@@ -1044,11 +1044,24 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
     GrammarPart * & rp_grammarpartWithConsecutiveID
   )
 {
-  bool bIdentical = false ;
+  bool bTranslationRuleSTPmatchesCurrentSTP = false ;
   bool bAtLeast1TranslationRuleApplies = false;
   DEBUG_COUT("TranslationRuleApplies--beg\n")
   DEBUG_COUT("number of translation rules:" <<
       m_stdmap_translationrule2ConditionsAndTranslation.size() << "\n")
+#ifdef _DEBUG
+  std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
+    r_stdvec_wCurrentGrammarPartPath ) ;
+#endif
+  if( ! r_stdvec_p_grammarpartPath.empty() )
+  {
+    const GrammarPart & c_r_grammarpart = * r_stdvec_p_grammarpartPath.back();
+    if( c_r_grammarpart.m_wGrammarPartID == EnglishWord::UnknownWord )
+    {
+      r_stdstrTranslation = c_r_grammarpart.m_stdstrTranslation;
+      return true;
+    }
+  }
 //   ;
 //  m_stdvec_wCurrentGrammarPartPath ;
 //  for( std::map<TranslationRule * ,ConditionsAndTranslation>::const_iterator
@@ -1088,12 +1101,15 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
     //  m_stdmap_translationrule2ConditionsAndTranslation ) that may be
     // "subject.def_article_noun.noun.definite_article", i.e. a subtree of
     // m_stdvec_wGrammarPartPathw with just 4 elements.
-    if ( //m_stdvec_wCurrentGrammarPartPath.size()
-        r_stdvec_wCurrentGrammarPartPath.size() >= //iter->first->m_wNumberOfElements
-        //c_iter_p_translationrule2conditionsandtranslation->first->
-        c_rev_iter_translationrule2conditionsandtranslation->first.
-        m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
-        )
+
+      //e.g. compare "*.1stPersSingPresentProgressive.mainVerbInf0Obj" with
+      //"1stPersSingPresentProgressive.mainVerbInf0Obj"
+//    if ( //m_stdvec_wCurrentGrammarPartPath.size()
+//        r_stdvec_wCurrentGrammarPartPath.size() >= //iter->first->m_wNumberOfElements
+//        //c_iter_p_translationrule2conditionsandtranslation->first->
+//        c_rev_iter_translationrule2conditionsandtranslation->first.
+//        m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
+//        )
     {
       //Use a pointer, else the TranslationRule destructor is called.
 //      const TranslationRule * p_translationrule =
@@ -1109,8 +1125,6 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
           m_wNumberOfElements
           ) ;
 #ifdef _DEBUG
-      std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
-        r_stdvec_wCurrentGrammarPartPath ) ;
       if( stdstrCurrentParseTreePath == "clause.main_verb" ||
           std_strTranslationRuleSyntaxTreePath == "main_verb" )
         //Just for setting a breakpoint.
@@ -1123,10 +1137,10 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 //      std::vector<WORD>::const_iterator c_iter_wGrammarPartPath =
 //          r_stdvec_wGrammarPartPath ;
       //DEBUG_COUT
-      bIdentical = //p_translationrule->Matches(
+      bTranslationRuleSTPmatchesCurrentSTP = //p_translationrule->Matches(
           p_translationrule->m_syntaxtreepathCompareWithCurrentPath.Matches(
         r_stdvec_wCurrentGrammarPartPath ) ;
-      if( bIdentical )
+      if( bTranslationRuleSTPmatchesCurrentSTP )
       {
 //        DEBUG_COUT
         LOGN( FULL_FUNC_NAME <<

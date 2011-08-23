@@ -1,16 +1,8 @@
 ﻿<grammar_rules>
   <!-- needs: "clause1Obj" ( e.g. "3rdPersSingClause1Obj" -> "clause1Obj" ) -->
   
-
-  <!--objects-->
-  <grammar_rule left_child="SubjOrObjEnumEle" superordinate="ObjEnumEle"/>
-  <grammar_rule left_child="pers_pron_obj" superordinate="ObjEnumEle"/>
-  <grammar_rule left_child="ObjEnumEle"  right_child="and" superordinate="ObjEnumEle_and"/>
-  <!--  e.g. for "the car and the cars and" -->
-  <grammar_rule left_child="ObjEnumEle_and"  right_child="ObjEnumEle_and" superordinate="ObjEnumEle_and"/>
-  <grammar_rule left_child="ObjEnumEle_and"  right_child="ObjEnumEle" superordinate="ObjEnumEle"/>
-  <grammar_rule left_child="ObjEnumEle"  superordinate="obj"/>
   
+  <grammar_rule left_child="UnknownWord" right_child="UnknownWord" superordinate="UnknownWord"/>
   <!--objects end-->
   
   <!-- clauses with object(s) -->
@@ -24,6 +16,11 @@
   <grammar_rule left_child="clause1Obj" right_child="obj" superordinate="clauseWith1Obj"/>
   
   <grammar_rule left_child="clause" right_child="obj" superordinate="clause_with_obj"/>
+  
+  <!--see http://en.wikipedia.org/wiki/Preposition_and_postposition#Semantic_classification-->
+  <grammar_rule left_child="local_preposition" right_child="SubjOrObjEnumEle" superordinate="clause_with_obj"/>
+  
+  <grammar_rule left_child="3rdPersSingClause" right_child="place" superordinate="clauseWithPlace"/>
   
   <grammar_rule left_child="relative_pronoun" right_child="3rdPersSingClauseAllows1Obj" superordinate="relative_clause"/>
 </grammar_rules>

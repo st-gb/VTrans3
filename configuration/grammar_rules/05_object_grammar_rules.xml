@@ -1,0 +1,19 @@
+<grammar_rules>
+  <!--objects-->
+  <grammar_rule left_child="SubjOrObjEnumEle" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="pers_pron_obj" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle"  right_child="and" superordinate="ObjEnumEle_and"/>
+  <!--  e.g. for "the car and the cars and" -->
+  <grammar_rule left_child="ObjEnumEle_and"  right_child="ObjEnumEle_and" superordinate="ObjEnumEle_and"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="ObjEnumEle" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle"  superordinate="obj"/>
+  
+  <grammar_rule left_child="myself_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="myself_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="myself_ObjEnumEle" superordinate="myself_ObjEnumEle"/>
+
+  <grammar_rule left_child="himself_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="himself_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="himself_ObjEnumEle" superordinate="himself_ObjEnumEle"/>
+
+  <grammar_rule left_child="themselves_ObjEnumEle_and" right_child="ObjEnumEle" superordinate="themselves_ObjEnumEle"/>
+  <grammar_rule left_child="ObjEnumEle_and" right_child="themselves_ObjEnumEle" superordinate="themselves_ObjEnumEle"/>
+</grammar_rules>

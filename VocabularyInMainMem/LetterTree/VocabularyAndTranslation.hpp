@@ -20,7 +20,11 @@
   //imperative plural = 1 + 6 + 6 + 1 + 2 = 16
   #define NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB 16
 
+
+//forward decl.
 class LetterNode ;
+class I_UserInterface;
+
 //class Word ;
 #include <Attributes/Word.hpp>
 
@@ -31,20 +35,30 @@ class LetterNode ;
     } ;
 
 
-    struct ArraySizes
-    {
-      unsigned m_uiArraySizeForEnglishWord;
-      unsigned m_uiArraySizeForGermanWord;
-      unsigned m_uiArraySizeForByteArray;
-    };
-    static const ArraySizes s_arraysizes [] = {
-      //noun
-      {2,2,2}
-    };
+  struct ArraySizes
+  {
+    unsigned char m_byArraySizeForEnglishWord;
+    unsigned char m_byArraySizeForGermanWord;
+    unsigned char m_byArraySizeForByteArray;
+  };
+  static const ArraySizes s_arraysizes [] = {
+    //noun
+    {NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN,NUMBER_OF_STRINGS_FOR_GERMAN_NOUN,2},
+    //main verb
+    {NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB,
+    NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB, 2},
+    //adverb:
+    {NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB,
+    NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB, 0}
+  };
+
+//  BYTE g_arbyWordType2ArraySizeIndex [100];
+
   //This class stands for a pair of English and German vocabulary.
   class VocabularyAndTranslation
   {
   public:
+    static I_UserInterface * s_p_userinterface;
 //    struct ArraySizes
 //    {
 //      unsigned m_uiArraySizeForEnglishWord;
@@ -84,7 +98,8 @@ class LetterNode ;
     } ;
     enum German_main_verb_byte_array_index
     {
-      array_index_for_case = 0
+      array_index_for_case = 0 ,
+      array_index_for_reflexive
     };
     enum German_noun_gender
     {
@@ -130,10 +145,20 @@ class LetterNode ;
 
     ~VocabularyAndTranslation() ;
 
+    static void Init()
+    {
+//      g_arbyWordType2ArraySizeIndex[ (int) (ENGLISH_NOUN) ] = 0;
+    }
+
+    void GetAttributeValue(BYTE byIndex);
+
     BYTE GetGermanArticle()
     {
       return m_arbyAttribute[1] ;
     }
+
+    std::string GetEnglishString(BYTE byIndex);
+    std::string GetGermanString(BYTE byIndex);
 
     BYTE GetNumberOfNeededObjects()
     {

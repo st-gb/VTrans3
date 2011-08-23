@@ -759,10 +759,11 @@ void wxTextInputDlg::OnAddGrammarRules( wxCommandEvent & wxcmd )
   SAX2GrammarRuleHandler sax2grammarrulehandler(
     wxGetApp().m_parsebyrise
     ) ;
-  wxString wxstr("Choose at least 1 grammar rule file") ;
+  wxString wxstrTitle("Choose at least 1 grammar rule file") ;
   wxGetApp().ProcessSelectedXMLfiles(
     sax2grammarrulehandler ,
-    wxstr
+    wxstrTitle,
+    ::wxGetCwd()
     );
 }
 
@@ -774,7 +775,8 @@ void wxTextInputDlg::OnAddTransformationRules( wxCommandEvent & wxcmd )
     ) ;
   wxGetApp().ProcessSelectedXMLfiles(
     sax2transformationrulehandler,
-    wxString( wxT("Choose at least 1 transFORMation rule file") )
+    wxString( wxT("Choose at least 1 transFORMation rule file") ),
+    ::wxGetCwd()
     ) ;
 }
 
@@ -788,7 +790,8 @@ void wxTextInputDlg::OnAddTranslationRules( wxCommandEvent & wxcmd )
     ) ;
   wxGetApp().ProcessSelectedXMLfiles(
     sax2translationrulehandler ,
-    wxT("Choose at least 1 translation rule file")
+    wxT("Choose at least 1 translation rule file"),
+    ::wxGetCwd()
     ) ;
 }
 
@@ -801,7 +804,8 @@ void wxTextInputDlg::OnAddVocAttrDefs( wxCommandEvent & wxcmd )
     ) ;
   wxGetApp().ProcessSelectedXMLfiles(
     sax2vocattributedefintionhandler ,
-    wxT("Choose at least 1 vocabulary attribute definitions file")
+    wxT("Choose at least 1 vocabulary attribute definitions file"),
+    ::wxGetCwd()
     );
 }
 

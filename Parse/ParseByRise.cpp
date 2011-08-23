@@ -930,13 +930,14 @@ void ParseByRise::InsertGrammarRule(
   }
 }
 
-void ParseByRise::InsertGrammarRule(
+BYTE ParseByRise::InsertGrammarRule(
   const char * cp_chLeftGrammarRuleName
   , const char * cp_chRightGrammarRuleName
   , //std::string
   const char * cp_chSuperordinateGrammarRuleName
   )
 {
+  BYTE byReturnValue = AllGrammarPartsAreKnown;
   std::map<std::string,WORD>::const_iterator c_iterLeft =
     m_stdmap_RuleName2RuleID.find(
     cp_chLeftGrammarRuleName ) ;
@@ -946,13 +947,24 @@ void ParseByRise::InsertGrammarRule(
   std::map<std::string,WORD>::const_iterator
     c_iter_std_map_std_str2wRuleName2RuleIDend =
     m_stdmap_RuleName2RuleID.end();
-  if( c_iterLeft != //m_stdmap_RuleName2RuleID.end()
+  if( c_iterLeft == //m_stdmap_RuleName2RuleID.end()
       c_iter_std_map_std_str2wRuleName2RuleIDend
-      &&
-      //c_iterLeft
-      c_iterRight != //m_stdmap_RuleName2RuleID.end()
-      c_iter_std_map_std_str2wRuleName2RuleIDend
-      )
+    )
+  {
+//    m_p_userinterface->Message("Unknown grammar part ");
+    byReturnValue = unknownLeftGrammarPart;
+  }
+  if( //c_iterLeft
+    c_iterRight == //m_stdmap_RuleName2RuleID.end()
+    c_iter_std_map_std_str2wRuleName2RuleIDend
+    )
+  {
+    if( byReturnValue == unknownLeftGrammarPart )
+      byReturnValue = unknownLeftAndRightGrammarPart;
+    else
+      byReturnValue = unknownRightGrammarPart;
+  }
+  if( byReturnValue == AllGrammarPartsAreKnown )
   {
     WORD wGrammarRuleIDLeft = c_iterLeft->second ;
     WORD wGrammarRuleIDRight = c_iterRight->second ;
@@ -969,6 +981,7 @@ void ParseByRise::InsertGrammarRule(
     DEBUG_COUTN("After inserting rule \"" << cp_chSuperordinateGrammarRuleName
       << "\" " )
   }
+  return byReturnValue;
 }
 
 void ParseByRise::InsertGrammarRule(
@@ -1118,12 +1131,14 @@ WORD ParseByRise::InsertSuperClassGrammarRule(
   }
 }
 
-WORD ParseByRise::InsertSuperClassGrammarRule(
+//WORD
+BYTE ParseByRise::InsertSuperClassGrammarRule(
   const char * cp_chSubclassGrammarRuleName
   , //std::string
   const char * cp_chSuperclassGrammarRuleName
   )
 {
+  BYTE byReturnValue = AllGrammarPartsAreKnown;
   //This condition prevented inserting a super class rule for grammar part
   // whose name was already in the map.
   std::map<std::string,WORD>::const_iterator iter =
@@ -1152,8 +1167,10 @@ WORD ParseByRise::InsertSuperClassGrammarRule(
   else
   {
     DEBUG_COUTN("InsertSuperClassGrammarRule Rule already in map")
+    byReturnValue = unknownLeftGrammarPart;
   }
-  return m_wNumberOfSuperordinateRules - 1 ;
+//  return m_wNumberOfSuperordinateRules - 1 ;
+  return byReturnValue;
 }
 
 void ParseByRise::InsertGrammarRule(

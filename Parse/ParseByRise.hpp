@@ -16,6 +16,7 @@
 #include "GrammarPart.hpp" //class GrammarPart
 
 //Forward declarations (faster than #include)
+class LetterNode;
 class I_UserInterface ;
 class VocabularyAndTranslation ;
 
@@ -42,6 +43,13 @@ public:
 //  I_UserInterface & mr_userinterface ;
   I_UserInterface * m_p_userinterface ;
 public:
+  enum InsertGrammarRuleReturnCodes
+  {
+    AllGrammarPartsAreKnown = 0,
+    unknownLeftGrammarPart,
+    unknownRightGrammarPart,
+    unknownLeftAndRightGrammarPart
+  };
   //This map is for generalisation (grammar rule x IS A superclass grammar
   //rule y ) in order to minimize the grammar rules needed:
   //so we can define
@@ -195,6 +203,10 @@ public:
   void InitGrammar() ;
   void InitGrammarRules() ;
 
+  inline void InsertGrammarRuleNamesForAuxiliaryVerbToBe();
+  inline void InsertGrammarRuleNamesForPersonalPronouns();
+  inline void InsertGrammarRuleNamesForReflexivePronouns();
+
   void InsertFundamentalRuleIDs() ;
   
   void InsertGrammarRule(
@@ -217,7 +229,7 @@ public:
     ) ;
   void InsertGrammarRule(WORD wGrammarRuleID
     , const char * cp_ch ) ;
-  void InsertGrammarRule(
+  BYTE InsertGrammarRule(
     const char * cp_chLeftGrammarRuleName
     , const char * cp_chRightGrammarRuleName
     , //std::string
@@ -229,6 +241,10 @@ public:
     , //std::string
     //EXISTING rule / grammar part ID
     WORD wSuperordinateGrammarRuleID ) ;
+
+  void InsertGrammarPartForEverySameWord(
+    const LetterNode * p_letternode,
+    DWORD dwTokenIndex, DWORD dwTokenIndexRightMost);
   void InsertGrammarRulesFor3rdPersonSingular() ;
   void InsertGrammarPartID2NameMappingForWordClasses() ;
   inline void InsertIntoOutmostTokenIndexMaps(
@@ -243,7 +259,8 @@ public:
     , //std::string
     const char * cp_chSuperordinateGrammarRuleName
     ) ;
-  WORD InsertSuperClassGrammarRule(
+//  WORD
+  BYTE InsertSuperClassGrammarRule(
     const char * cp_chSubclassGrammarRuleName
     , //std::string
     const char * cp_chSuperclassGrammarRuleName

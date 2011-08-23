@@ -20,6 +20,7 @@
 
 //Static variables need also to be defined in 1 source file.
 I_UserInterface * SyntaxTreePath::sp_userinterface ;
+I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 //LetterTree VTransApp::s_lettertree ;
 LetterTree TranslationControllerBase::s_lettertree ;
 
@@ -57,6 +58,7 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 //      transformationrule
 //      )
 //    ) ;
+  VocabularyAndTranslation::s_p_userinterface = this;
   SyntaxTreePath::sp_userinterface = this ;
   s_lettertree.InsertFundamentalWords() ;
   ReadMainConfigFile(cr_stdstrFilePath) ;

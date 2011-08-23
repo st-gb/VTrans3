@@ -2,9 +2,16 @@
 
   <!--3rd person singular begin-->
   <grammar_rule left_child="article_singular" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+  
   <grammar_rule left_child="he" superordinate="3rdPersSingSubjOrObjEnumEle"/>
   <grammar_rule left_child="she" superordinate="3rdPersSingSubjOrObjEnumEle"/>
   <grammar_rule left_child="it" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+    
+  <grammar_rule left_child="UnknownWord" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+  
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="is" superordinate="3rdPersSingSubjOrObjEnumEle_is"/>
+  <!--grammar_rule left_child="I_am" right_child="MainVerbProgressive0Obj" superordinate="1stPersSingPresentProgressive"/-->
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle_is" right_child="MainVerbProgressive0Obj" superordinate="3rdPersSingClause"/>
   
   <!-- for enumeration -->
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="and" superordinate="3rdPersSingSubjOrObjEnumEle_AND"/>
@@ -15,12 +22,13 @@
   <grammar_rule left_child="adverb" right_child="MainVerb3rdPersSingPres1Obj" superordinate="Middle3rdPersSing1Obj"/>
   <grammar_rule left_child="adverb" right_child="MainVerb3rdPersSingPres0Obj" superordinate="Middle3rdPersSing0Obj"/>
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="Middle3rdPersSing1Obj" superordinate="3rdPersSingClause1Obj"/>
-  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="Middle3rdPersSing0Obj" superordinate="3rdPersSingClause0Obj"/>
+  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="Middle3rdPersSing0Obj" superordinate="3rdPersSingClauseAllows0Obj"/>
   
   <grammar_rule left_child="3rdPersSingClause1Obj" superordinate="clause1Obj"/>
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" superordinate="SubjOrObjEnumEle"/>
   
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres0Obj" superordinate="3rdPersSingClauseAllows0Obj"/>
+  
   <!--e.g. "still burns"  
      adverb_before_finite_verb: "still" 
 	 3rdPersSingSubjOrObjEnumEle: ??

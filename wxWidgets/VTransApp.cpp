@@ -126,9 +126,14 @@ void VTransApp::Message( const std::string & cr_stdstr )
   wxtextcontroldialog.ShowModal();
 }
 
-void VTransApp::Message( const std::wstring & cr_stdwstr )
+void VTransApp::Message( const std::wstring & cr_std_wstr )
 {
-  ::wxMessageBox( getwxString( cr_stdwstr) ) ;
+//  ::wxMessageBox( getwxString( cr_stdwstr) ) ;
+  wxString wxstrMessage = ::getwxString( cr_std_wstr);
+
+  wxTextControlDialog wxtextcontroldialog(
+    wxstrMessage);
+  wxtextcontroldialog.ShowModal();
 }
 
 //@return true: continue to run the (main loop of ) this program.
@@ -235,14 +240,16 @@ bool VTransApp::OnInit()
 
 void VTransApp::ProcessSelectedXMLfiles(
   XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
-  const wxString & r_wxstrTitle
+  const wxString & r_wxstrTitle,
+  const wxString & c_r_wxInitialDirForFileSelecion
   )
 {
   wxArrayString wxarraystringPaths ;
   if( wxWidgets::ShowMultipleFileSelectionDialog(
       r_wxstrTitle ,
       wxarraystringPaths ,
-      NULL
+      NULL,
+      ::wxGetCwd()
       ) == wxID_OK
     )
   {

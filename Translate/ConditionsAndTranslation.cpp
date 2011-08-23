@@ -5,9 +5,10 @@
  *      Author: Stefan
  */
 #include "ConditionsAndTranslation.hpp"
-#include <Translate/AttributeTypeAndPosAndSize.hpp>
+//#include <Attributes/EnglishWord.hpp> //class EnglishWord
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
+#include <Translate/AttributeTypeAndPosAndSize.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 #include <map> //std::map
@@ -222,53 +223,29 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
               {
                 case AttributeTypeAndPosAndSize::English :
                 {
-                  DEBUGN("language for choosing attribute value is "
-                    "English, index:" << r_atapas.m_wIndex )
-                  std::string & r_stdstrAttrVal = p_grammarpartLeaf->
-                    m_pvocabularyandtranslation->m_arstrEnglishWord[
-                    r_atapas.m_wIndex ] ;
-                  //std::string & r_stdstrTextTokens =
-                  return r_stdstrAttrVal ;
+                  return p_grammarpartLeaf->m_pvocabularyandtranslation->
+                    GetEnglishString( (BYTE) r_atapas.m_wIndex);
                 }
                   break ;
                 case AttributeTypeAndPosAndSize::German :
                 {
-//                  DEBUG_COUTN
-                  DEBUGN("language for choosing attribute value is "
-                    "German, index:" << r_atapas.m_wIndex
-                    << "m_pfn_TransformString:" << m_pfn_TransformString )
-                  if(
-//                      r_atapas.m_wIndex <
-//                      VocabularyAndTranslation::s_arraysizes[
-//                        p_grammarpartLeaf->m_pvocabularyandtranslation->m_byType
-//                        ]
-                      p_grammarpartLeaf->m_pvocabularyandtranslation->
-                        m_arstrGermanWord
-                    )
+                  std::string stdstrAttrVal = p_grammarpartLeaf->
+                    m_pvocabularyandtranslation->
+                    GetGermanString( (BYTE) r_atapas.m_wIndex);
+                  //If function that modifies as string (like for
+                  //"I trust the children." : for "Kinder" ->
+                  //"Kindern")
+                  if( m_pfn_TransformString )
                   {
-                    std::string & r_stdstrAttrVal = p_grammarpartLeaf->
-                      m_pvocabularyandtranslation->m_arstrGermanWord[
-                      r_atapas.m_wIndex ] ;
-                    //If function that modifies as string (like for
-                    //"I trust the children." : for "Kinder" ->
-                    //"Kindern")
-                    if( m_pfn_TransformString )
-                    {
-                      //Use a copy, else the VocAndTransl's string is modified
-                      //by the function
-                      std::string stdstrAttrVal = r_stdstrAttrVal ;
-                      m_pfn_TransformString(stdstrAttrVal) ;
-                      return stdstrAttrVal ;
-                    }
-                    else
-                      //std::string & r_stdstrTextTokens =
-                      return r_stdstrAttrVal ;
+                    //Use a copy, else the VocAndTransl's string is modified
+                    //by the function
+//                    std::string stdstrAttrVal = r_stdstrAttrVal ;
+                    m_pfn_TransformString(stdstrAttrVal) ;
+                    return stdstrAttrVal ;
                   }
                   else
-                  {
-                    sp_parsebyrise->m_p_userinterface->Message(
-                      "index for German string is out of bounds");
-                  }
+                    //std::string & r_stdstrTextTokens =
+                    return stdstrAttrVal ;
                 }
                 break ;
               }
@@ -278,13 +255,8 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
               if( r_atapas.m_byLanguage ==
                 AttributeTypeAndPosAndSize::German )
               {
-                //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
-//                #pragma GCC diagnostic ignored  "-Wunused"
-                BYTE by =
-                  p_grammarpartLeaf->
-                  m_pvocabularyandtranslation->m_arbyAttribute[
-                  r_atapas.m_wIndex ] ;
-                SUPPRESS_UNUSED_VARIABLE_WARNING(by)
+                p_grammarpartLeaf->m_pvocabularyandtranslation->
+                  GetAttributeValue( (BYTE) r_atapas.m_wIndex);
               }
           }//switch
         }

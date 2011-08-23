@@ -64,6 +64,32 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
 //    "have2ndPersonSingular");
   InsertGrammarRule( EnglishWord::haveInfinitive,"haveInfinitive");
 
+  InsertGrammarRuleNamesForPersonalPronouns();
+  InsertGrammarRuleNamesForAuxiliaryVerbToBe();
+
+  InsertGrammarRuleNamesForReflexivePronouns();
+
+  InsertGrammarRule( EnglishWord::relative_pronoun, "relative_pronoun");
+
+  InsertGrammarRule( EnglishWord::conjunction_and ,"and" ) ;
+  InsertGrammarRule( EnglishWord::conjunction, "conjunction" ) ;
+  InsertGrammarRule( EnglishWord::personal_pronoun, "pers_pronoun" ) ;
+  InsertGrammarRule( EnglishWord::personal_pronoun_objective_form ,
+    "pers_pron_obj" ) ;
+
+  InsertGrammarRule( EnglishWord::UnknownWord , "UnknownWord" ) ; // he/she/it is
+}
+
+void ParseByRise::InsertGrammarRuleNamesForAuxiliaryVerbToBe()
+{
+  InsertGrammarRule( EnglishWord::am , "am" ) ; //I am
+  // you (2nd person singular and plural) are, we are, they are
+  InsertGrammarRule( EnglishWord::are , "are" ) ;
+  InsertGrammarRule( EnglishWord::is , "is" ) ; // he/she/it is
+}
+
+void ParseByRise::InsertGrammarRuleNamesForPersonalPronouns()
+{
   InsertGrammarRule( EnglishWord::personal_pronoun_I , "I" ) ;
 //  InsertGrammarRule( EnglishWord::personal_pronoun_you_sing ,"you_sing" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun_you ,"you" ) ;
@@ -73,7 +99,10 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
   InsertGrammarRule( EnglishWord::personal_pronoun_we, "we" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun_you_plur, "you_plur" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun_they, "they" ) ;
+}
 
+void ParseByRise::InsertGrammarRuleNamesForReflexivePronouns()
+{
   InsertGrammarRule( EnglishWord::reflexive_pronoun_myself, "myself" ) ;
   InsertGrammarRule( EnglishWord::reflexive_pronoun_yourself, "yourself" ) ;
   InsertGrammarRule( EnglishWord::reflexive_pronoun_himself, "himself" ) ;
@@ -82,14 +111,6 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
   InsertGrammarRule( EnglishWord::reflexive_pronoun_ourselves, "ourselves" ) ;
   InsertGrammarRule( EnglishWord::reflexive_pronoun_yourselves, "yourselves" );
   InsertGrammarRule( EnglishWord::reflexive_pronoun_themselves, "themselves") ;
-
-  InsertGrammarRule( EnglishWord::relative_pronoun, "relative_pronoun");
-
-  InsertGrammarRule( EnglishWord::conjunction_and ,"and" ) ;
-  InsertGrammarRule( EnglishWord::conjunction, "conjunction" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun, "pers_pronoun" ) ;
-  InsertGrammarRule( EnglishWord::personal_pronoun_objective_form ,
-    "pers_pron_obj" ) ;
 }
 
 // void ParseByRise::InsertArticleGrammarRules()

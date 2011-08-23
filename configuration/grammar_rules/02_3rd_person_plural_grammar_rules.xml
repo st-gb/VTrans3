@@ -12,6 +12,11 @@
   
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" superordinate="SubjOrObjEnumEle"/>
   
+  <!--present progressive-->
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="are_PresentProgressive0Obj" superordinate="0ObjClause" />
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="are_PresentProgressive1Obj" superordinate="ClauseAllows1Obj" />
+  <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="are_PresentProgressive2Obj" superordinate="ClauseAllows2Obj" />  
+  
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf0Obj" superordinate="3rdPersPlurClauseAllows0Obj"/>
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf1Obj" superordinate="3rdPersPlurClauseAllows1Obj"/>
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle" right_child="mainVerbInf2Obj" superordinate="3rdPersPlurClauseAllows2Obj"/>
