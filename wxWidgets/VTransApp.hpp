@@ -41,7 +41,8 @@ public:
   void Message( const std::wstring & cr_stdwstr ) ;
   void ProcessSelectedXMLfiles(
     XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
-    const wxString & r_wxstrTitle
+    const wxString & r_wxstrTitle,
+    const wxString & c_r_wxInitialDirForFileSelecion
     );
   virtual ~VTransApp();
 private:

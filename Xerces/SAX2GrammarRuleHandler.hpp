@@ -30,6 +30,7 @@ class SAX2GrammarRuleHandler
   //ContentHandler
 {
 private:
+  XERCES_CPP_NAMESPACE::Locator const * m_pc_locator ;
   ParseByRise & mr_parsebyrise ;
   std::string m_strElementName ;
 
@@ -38,6 +39,10 @@ public:
     ParseByRise & r_parsebyrise
     );
 
+  void InsertGrammarRule(
+    const std::string & stdstrLeftChild,
+    const std::string & stdstrRightChild,
+    const std::string & stdstrSuperordinate);
   void startElement(
     const XMLCh * const cpc_xmlchURI,
     const XMLCh * const cpc_xmlchLocalName,
@@ -46,6 +51,8 @@ public:
 //        XercesAttributesHelper &
   );
   void fatalError(const XERCES_CPP_NAMESPACE::SAXParseException & );
+  void setDocumentLocator( const XERCES_CPP_NAMESPACE::Locator *
+    const cpc_locator ) ;
 };
 
 #endif //_SAX2_GRAMMAR_RULE_HANDLER_HPP

@@ -4,10 +4,19 @@
 
   //If not included: compiler error "C1010".
   #include "SAX2GrammarRuleHandler.hpp"
+  //for GetStdWstring(const std::string & )
+  #include <Controller/character_string/stdtstr.hpp>
+  //for convertToStdString(...)
+  #include <Controller/character_string/stdstring_format.hpp>
+  //for I_UserInterface::Message(const std::string &)
+  #include <UserInterface/I_UserInterface.hpp>
   #include <Xerces/XercesAttributesHelper.hpp>
+  //for Xerces::ConvertXercesStringToStdWstring(const XMLCh *)
+  #include <Xerces/XercesString.hpp>
   #include <Parse/ParseByRise.hpp>
 //  #include "XercesHelper.hpp" //for GetAttributeValue(...)
 
+  #include <xercesc/sax/Locator.hpp> //class XERCES_CPP_NAMESPACE::Locator
   #include <xercesc/sax2/Attributes.hpp>
   #include <xercesc/util/xmlstring.hpp> //for XMLString::transcode(...)
   #include <string>
@@ -43,6 +52,56 @@
 //	  m_p_model = & model ;
 //	  m_p_userinterface = p_userinterface ;
 	}
+
+  void SAX2GrammarRuleHandler::InsertGrammarRule(
+    const std::string & stdstrLeftChild,
+    const std::string & stdstrRightChild,
+    const std::string & stdstrSuperordinate
+    )
+  {
+    BYTE by = mr_parsebyrise.InsertGrammarRule(
+      stdstrLeftChild.c_str() //const char * cp_chLeftGrammarRuleName
+      , stdstrRightChild.c_str() //const char * cp_chRightGrammarRuleName
+      , //std::string
+      stdstrSuperordinate.c_str() //const char * cp_chSuperordinateGrammarRuleName
+      ) ;
+    std::wstring std_wstrMessage;
+    if( by != ParseByRise::AllGrammarPartsAreKnown )
+    {
+      std_wstrMessage = L"In document \n\"" +
+        Xerces::ConvertXercesStringToStdWstring(m_pc_locator->
+          getSystemId() ) +
+        L"\"\n"
+        L" line:"
+        + GetStdWstring( convertToStdString(m_pc_locator->
+            getLineNumber() ) )
+        + L" column:"
+        + GetStdWstring( convertToStdString(m_pc_locator->
+            getColumnNumber() ) ) +
+        L" : grammar rule \"" + GetStdWstring(stdstrSuperordinate)
+        + L"\" was not added because: ";
+    }
+    switch(by)
+    {
+    case ParseByRise::unknownLeftGrammarPart:
+      mr_parsebyrise.m_p_userinterface->Message( std_wstrMessage +
+        L"unknown left child grammar part \"" +
+        GetStdWstring(stdstrLeftChild) + L"\"" );
+      break;
+    case ParseByRise::unknownRightGrammarPart:
+      mr_parsebyrise.m_p_userinterface->Message( std_wstrMessage +
+        L"unknown right child grammar part \""
+        + GetStdWstring(stdstrRightChild) + L"\"" );
+      break;
+    case ParseByRise::unknownLeftAndRightGrammarPart:
+      mr_parsebyrise.m_p_userinterface->Message( std_wstrMessage +
+        L"unknown left \""
+        + GetStdWstring(stdstrLeftChild)
+        + L"\" and right \"" + GetStdWstring(stdstrRightChild)
+        + L"\" child grammar part");
+      break;
+    }
+  }
 
   void SAX2GrammarRuleHandler::startElement
     (
@@ -101,17 +160,36 @@
                 )
               && stdstrRightChild != ""
             )
-            mr_parsebyrise.InsertGrammarRule(
-              stdstrLeftChild.c_str() //const char * cp_chLeftGrammarRuleName
-              , stdstrRightChild.c_str() //const char * cp_chRightGrammarRuleName
-              , //std::string
-              stdstrSuperordinate.c_str() //const char * cp_chSuperordinateGrammarRuleName
-              ) ;
+          {
+            InsertGrammarRule(stdstrLeftChild, stdstrRightChild,
+              stdstrSuperordinate);
+          }
           else
-            mr_parsebyrise.InsertSuperClassGrammarRule(
+          {
+            BYTE by = mr_parsebyrise.InsertSuperClassGrammarRule(
               stdstrLeftChild.c_str() , //cp_chSubclassGrammarRuleName
               stdstrSuperordinate.c_str() //cp_chSuperclassGrammarRuleName
               ) ;
+            if( by != ParseByRise::AllGrammarPartsAreKnown )
+            {
+              std::wstring std_wstrMessage = L"In document \n\"" +
+                Xerces::ConvertXercesStringToStdWstring(m_pc_locator->
+                  getSystemId() ) +
+                L"\"\n"
+                L" line:"
+                + GetStdWstring( convertToStdString(m_pc_locator->
+                    getLineNumber() ) )
+                + L" column:"
+                + GetStdWstring( convertToStdString(m_pc_locator->
+                    getColumnNumber() ) ) +
+                L" : superclass grammar rule \"" +
+                  GetStdWstring(stdstrSuperordinate)
+              + L"\"was not added because: unknown grammar part \n"
+                + GetStdWstring(stdstrLeftChild) + L"\""
+                ;
+              mr_parsebyrise.m_p_userinterface->Message(std_wstrMessage);
+            }
+          }
         }
 //        if(
 ////            attrs.getValue<std::string>( stdstr ,"right child")
@@ -129,6 +207,12 @@
 	  }
 	}
 	
+  void SAX2GrammarRuleHandler::setDocumentLocator(
+    const XERCES_CPP_NAMESPACE::Locator * const cpc_locator )
+  {
+    m_pc_locator = cpc_locator ;
+  }
+
 	void SAX2GrammarRuleHandler::fatalError(
 	  const XERCES_CPP_NAMESPACE::SAXParseException & exception )
 	{

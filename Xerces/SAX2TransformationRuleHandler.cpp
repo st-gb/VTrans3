@@ -12,13 +12,19 @@
 #include <Translate/TransformationRule.hpp> //class TransformationRule
 //XercesAttributesHelper::GetAttributeValue(...)
 #include <Xerces/XercesAttributesHelper.hpp>
+//for Xerces::ConvertXercesStringToStdWstring(...)
+#include <Xerces/XercesString.hpp>
 #include <Xerces/SAX2TransformationRuleHandler.hpp>
+
+#include <xercesc/sax/Locator.hpp> //class XERCES_CPP_NAMESPACE::Locator
 //for XERCES_CPP_NAMESPACE::XMLString::transcode(...)
 #include <xercesc/util/xmlstring.hpp>
 
 #include <string> //std::string
 
 #define SECOND_SYNTAX_TREE_LITERAL "second_syntax_tree_path"
+
+#define L(x) L##x
 
 namespace Xerces
 {
@@ -121,6 +127,12 @@ namespace Xerces
     return bSyntaxTreePathWhereToInsertAdded;
   }
 
+  void SAX2TransformationRuleHandler::setDocumentLocator(
+    const XERCES_CPP_NAMESPACE::Locator * const cpc_locator )
+  {
+    m_pc_locator = cpc_locator ;
+  }
+
   void SAX2TransformationRuleHandler::startElement
     (
     const XMLCh * const cpc_xmlchURI,
@@ -165,11 +177,21 @@ namespace Xerces
             transformationrule);
 
           if( b2ndSyntaxTreePathAdded && bSyntaxTreePathWhereToInsert )
-            m_r_translationcontrollerbase.Message("warning: both attributes "
-                "\"" SECOND_SYNTAX_TREE_LITERAL "\" and "
-                "\"place_near_syntax_tree_path\" specified" );
-
-
+          {
+            std::wostringstream stdwos;
+            stdwos << L"for transformation rule:\n"
+                L"in document " << Xerces::ConvertXercesStringToStdWstring(
+                    m_pc_locator->getSystemId() )
+                << L"\nin line " << m_pc_locator->getLineNumber()
+                << L", column " << m_pc_locator->getColumnNumber()
+                << L"\nwarning: both attributes "
+                L"\"" << //L(SECOND_SYNTAX_TREE_LITERAL)
+                L"second_syntax_tree_path"
+                << L"\" and "
+                L"\"place_near_syntax_tree_path\" specified";
+            m_r_translationcontrollerbase.Message( stdwos.str()
+                );
+          }
            if( XercesAttributesHelper::GetAttributeValue(
                cr_xercesc_attributes ,
                "name_of_grammar_part_to_insert" ,

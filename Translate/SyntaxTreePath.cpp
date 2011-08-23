@@ -480,10 +480,12 @@ bool SyntaxTreePath::Matches(
 {
   bool bIdentical = false ;
   bool bCurrentlyKleeneStarOperator = false ;
-  if( cr_stdvec_wGrammarPartPath.size() >= wNumberOfElements
-      //Not 0 elements <=> At least 1 element.
-      && wNumberOfElements
-    )
+  //e.g. compare "*.1stPersSingPresentProgressive.mainVerbInf0Obj" with
+  //"1stPersSingPresentProgressive.mainVerbInf0Obj"
+//  if( cr_stdvec_wGrammarPartPath.size() >= wNumberOfElements
+//      //Not 0 elements <=> At least 1 element.
+//      && wNumberOfElements
+//    )
   {
     bIdentical = true ;
 //    WORD wLenghtDiff = r_stdvec_wCurrentGrammarPartPath.size() -
@@ -592,7 +594,14 @@ bool SyntaxTreePath::Matches(
 
     //If 1 path is "definite_article_singular.definite_article" and the other
     //is "obj.definite_article_singular.definite_article" it is not identical.
-    if( c_rev_iter_wGrammarPartPath != cr_stdvec_wGrammarPartPath.rend() )
+    if( c_rev_iter_wGrammarPartPath == cr_stdvec_wGrammarPartPath.rend() )
+    {
+      //if e.g. "*.1stPersSingPresentProgressive.MainVerbProgressive0Obj" and
+      // "MainVerbProgressive0Obj"
+      if( wIndex != MAXWORD && ar_wElements[ wIndex] != KLEENE_STAR_OPERATOR )
+        bIdentical = false;
+    }
+    else
       bIdentical = false;
   }
   //If currently there is a Kleene star operand, the rule is NOT identical

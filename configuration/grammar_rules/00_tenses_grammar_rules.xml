@@ -3,4 +3,10 @@
   <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple0Obj" superordinate="PerfectPredicate0Obj" />
   <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple1Obj" superordinate="PerfectPredicate1Obj" />
   <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple2Obj" superordinate="PerfectPredicate2Obj" />
+  
+  <!--present progressive-->
+  <grammar_rule left_child="are" right_child="MainVerbProgressive0Obj" superordinate="are_PresentProgressive0Obj" />
+  <grammar_rule left_child="are" right_child="MainVerbProgressive1Obj" superordinate="are_PresentProgressive1Obj" />
+  <grammar_rule left_child="are" right_child="MainVerbProgressive2Obj" superordinate="are_PresentProgressive2Obj" />
+  
 </grammar_rules>

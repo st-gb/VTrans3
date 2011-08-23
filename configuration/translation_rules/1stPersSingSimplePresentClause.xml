@@ -1,4 +1,12 @@
 <translation_rules>
+  <translation_rule 
+    syntax_tree_path="*.1stPersSingPresentProgressive.MainVerbProgressive0Obj"
+    attribute_name="GermanMainVerb1stPersonSingular" 
+  />
+  <!--translation_rule 
+    syntax_tree_path="*.clause.MainVerbProgressive0Obj"
+    attribute_name="GermanMainVerb1stPersonSingular" 
+  /-->
   <!-- translation of finite verb for "I" / 1st person sing.-->
   <translation_rule 
     syntax_tree_path="1stPersSingSimplePresentClause.mainVerbInf0Obj"

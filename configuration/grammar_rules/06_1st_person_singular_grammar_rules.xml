@@ -1,4 +1,9 @@
 <grammar_rules>
+  <grammar_rule left_child="I" right_child="am" superordinate="I_am"/>
+  <!-- the information about the person is needed for choosing the finitive verb form for translating-->
+  <grammar_rule left_child="I_am" right_child="MainVerbProgressive0Obj" superordinate="1stPersSingPresentProgressive"/>
+  <!--grammar_rule left_child="I_am" right_child="MainVerbProgressive0Obj" superordinate="clause"/-->
+  
   <!--1st person singular begin-->
   <grammar_rule left_child="I" right_child="and" superordinate="I_and"/>
   <!-- e.g. "the cars and" + "I" = 1st person plural index / "we" -->

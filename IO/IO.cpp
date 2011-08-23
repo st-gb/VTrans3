@@ -158,7 +158,8 @@ void OneLinePerWordPair::InsertEnglishNoun(
           //, LetterNode * pletternodeCurrent
           //, VocabularyAndTranslation * pvocabularyandtranslation
           , bInsertNewVocabularyAndTranslation
-          , byVocabularyType
+          , //byVocabularyType
+            EnglishWord::noun
           , strCurrentWordData
           , //nIndexOfCurrentChar - nIndexOf1stChar
             nLength
@@ -629,7 +630,8 @@ void OneLinePerWordPair::InsertEnglishAdverb(
           //, LetterNode * pletternodeCurrent
           //, VocabularyAndTranslation * pvocabularyandtranslation
           , bInsertNewVocabularyAndTranslation
-          , byVocabularyType
+          , //byVocabularyType
+            EnglishWord::adverb
           , strCurrentWordData
           , //nIndexOfCurrentChar - nIndexOf1stChar
             nLength
@@ -1026,6 +1028,10 @@ void OneLinePerWordPair::InsertGermanMainVerb(
 //          gv->m_bReflexive = FALSE ;
 //        if( chCurrentChar == '2' )
 //          gv->m_bReflexive = TRUE ;
+          s_p_lettertree->s_pvocabularyandtranslation->m_arbyAttribute[
+            VocabularyAndTranslation::array_index_for_reflexive ] =
+            chCurrentChar - //49
+            '1';
       }
       if( byDelemiterCount == 17 && otherCount==3)
       {

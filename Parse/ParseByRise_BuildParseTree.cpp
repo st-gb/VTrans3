@@ -1291,6 +1291,100 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
 #endif
 }
 
+void ParseByRise::InsertGrammarPartForEverySameWord(
+  const LetterNode * p_letternode,
+  DWORD dwTokenIndex, DWORD dwTokenIndexRightMost
+  )
+{
+  #ifdef _DEBUG
+//  std::string std_str = GetBetweenAsStdString( psv, dwTokenIndex,
+//    dwTokenIndexRightMost);
+//  DEBUG_COUT( "word found in dictionary: " << std_str << "\n" )
+  #endif
+  std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
+    NULL ;
+  psetpvocabularyandtranslation = p_letternode->
+    m_psetpvocabularyandtranslation ;
+  if( psetpvocabularyandtranslation )
+  {
+  //      stdmap_wIndex2p_set_p_vocabularyandtranslation.insert(
+  //        std::pair<WORD>, std::set<VocabularyAndTranslation *> *>
+  //        (wTokenIndex,psetpvocabularyandtranslation) ) ;
+
+    //GrammarPart grammarPart(
+  //      //Via the indices the tokens can be got later.
+  //      dwTokenIndex, dwTokenIndexRightMost) ;
+
+    //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
+    //  setpvocabularyandtranslation);
+
+    //Loop for all vocabularies having at least 1 word that
+    //equals the current token.
+    //There may be more than 1 vocabulary for the same word:
+    //e.g. "love" may be either a noun ("the love") or a verb ("to love").
+  #ifdef _DEBUG
+    int nNumbersOfWords = psetpvocabularyandtranslation->size();
+  #endif
+    for(std::set<VocabularyAndTranslation *>::iterator iter =
+      psetpvocabularyandtranslation->begin() ; iter !=
+      psetpvocabularyandtranslation->end() ; iter ++ )
+    {
+      //Create a grammar part object for _every_ single
+      //VocabularyAndTranslation object.
+      //Problem with this:
+      //if a grammar rule affects more than 1 grammar part, e.g.:
+      //"sheep" (singular_noun) and "sheep" (plural_noun):
+      //when translating "the sheep" and the translation rule then matches
+      //"definite_article_singular.singular_plural" and the article is
+      //translated to "die" it is overwritten by "das" from
+      //"definite_article_singular.singular_noun" because the grammar part
+      //is the same/ shared/ referenced by the two ones.
+      //possible solution:
+      //-store multiple translations per grammar part
+      //-clone grammar part (branches).
+
+      GrammarPart * p_grammarPart = new GrammarPart(
+        //Via the indices the tokens can be got later.
+        dwTokenIndex, dwTokenIndexRightMost) ;
+  //        //word type
+  //        (*iter)->m_byType ;
+  //        grammarPart.m_wGrammarPartID = (*iter)->m_byType ;
+  //        grammarPart.SetGrammarPartID( (*iter)->m_byType ) ;
+      p_grammarPart->SetGrammarPartID( (*iter)->m_byType ) ;
+      //For accessing the vocabulary attributes later for translating.
+  //        grammarPart.m_pvocabularyandtranslation =
+      p_grammarPart->m_pvocabularyandtranslation =
+        (*iter) ;
+      //r_stdmapwLeftmostIndex2grammarpart.insert(
+      //r_stdmultimap_wLeftmostIndex2grammarpart.insert(
+  //        p_stdmultimap_wLeftmostIndex2grammarpart->insert(
+  //          std::pair<WORD, GrammarPart>
+  //            ( dwTokenIndex, grammarPart )
+  //          ) ;
+      DEBUG_COUTN("inserting "
+        << GetGrammarPartName( (*iter)->m_byType )
+        << "(ID)=" << (WORD) (*iter)->m_byType
+        << " address: " << p_grammarPart
+        << " for token range " << dwTokenIndex << ":" << dwTokenIndexRightMost
+        )
+      m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
+        std::pair<WORD, GrammarPart *>
+          ( dwTokenIndex, p_grammarPart )
+        ) ;
+      //r_stdmapwRightmostIndex2grammarpart.insert(
+      //r_stdmultimap_wRightmostIndex2grammarpart.insert(
+  //        p_stdmultimap_wRightmostIndex2grammarpart->insert(
+  //          std::pair<WORD, GrammarPart>
+  //            ( dwTokenIndexRightMost , grammarPart )
+  //          ) ;
+      m_stdmultimap_dwRightmostIndex2p_grammarpart.insert(
+        std::pair<WORD, GrammarPart *>
+          ( dwTokenIndexRightMost , p_grammarPart )
+        ) ;
+    }
+  }
+}
+
 //Inserts for every word found in the dictionary its leftmost token index
 //into a list and its rightmost token index (because a word may have more
 //than 1 token, e.g. "vacuum cleaner") into another list.
@@ -1331,100 +1425,51 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
 //    = & m_stdmultimap_dwRightmostIndex2grammarpart ;
   std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
   DWORD dwTokenIndexRightMost = dwTokenIndex ;
-  LetterNode * p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
-    TranslationControllerBase::s_lettertree.searchAndReturnLetterNode( psv,
-    //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
-    dwTokenIndexRightMost );
-  //If the word was found.
-  if( p_letternode )
+  DWORD dwTokenIndexRightMostUnknownToken = 0;
+  const LetterNode * p_letternode;
+  bool b1UnknownGrammarPartPerToken = true;
+  bool bUnknownTokenFound = false;
+  do
   {
-#ifdef _DEBUG
-    std::string std_str = GetBetweenAsStdString( psv, dwTokenIndex,
-      dwTokenIndexRightMost);
-    DEBUG_COUT( "word found in dictionary: " << std_str << "\n" )
-#endif
-    std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
-      NULL ;
-    psetpvocabularyandtranslation = p_letternode->
-      m_psetpvocabularyandtranslation ;
-    if( psetpvocabularyandtranslation )
+    p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
+      TranslationControllerBase::s_lettertree.searchAndReturnLetterNode( psv,
+      //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
+      dwTokenIndexRightMost );
+    //If the word was found.
+    if( p_letternode )
     {
-//      stdmap_wIndex2p_set_p_vocabularyandtranslation.insert(
-//        std::pair<WORD>, std::set<VocabularyAndTranslation *> *>
-//        (wTokenIndex,psetpvocabularyandtranslation) ) ;
-
-      //GrammarPart grammarPart(
-//      //Via the indices the tokens can be got later.
-//      dwTokenIndex, dwTokenIndexRightMost) ;
-
-      //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
-      //  setpvocabularyandtranslation);
-
-      //Loop for all vocabularies having at least 1 word that
-      //equals the current token.
-      //There may be more than 1 vocabulary for the same word:
-      //e.g. "love" may be either a noun ("the love") or a verb ("to love").
-#ifdef _DEBUG
-      int nNumbersOfWords = psetpvocabularyandtranslation->size();
-#endif
-      for(std::set<VocabularyAndTranslation *>::iterator iter =
-        psetpvocabularyandtranslation->begin() ; iter !=
-        psetpvocabularyandtranslation->end() ; iter ++ )
-      {
-        //Create a grammar part object for _every_ single
-        //VocabularyAndTranslation object.
-        //Problem with this:
-        //if a grammar rule affects more than 1 grammar part, e.g.:
-        //"sheep" (singular_noun) and "sheep" (plural_noun):
-        //when translating "the sheep" and the translation rule then matches
-        //"definite_article_singular.singular_plural" and the article is
-        //translated to "die" it is overwritten by "das" from
-        //"definite_article_singular.singular_noun" because the grammar part
-        //is the same/ shared/ referenced by the two ones.
-        //possible solution:
-        //-store multiple translations per grammar part
-        //-clone grammar part (branches).
-
-        GrammarPart * p_grammarPart = new GrammarPart(
-          //Via the indices the tokens can be got later.
-          dwTokenIndex, dwTokenIndexRightMost) ;
-//        //word type
-//        (*iter)->m_byType ;
-//        grammarPart.m_wGrammarPartID = (*iter)->m_byType ;
-//        grammarPart.SetGrammarPartID( (*iter)->m_byType ) ;
-        p_grammarPart->SetGrammarPartID( (*iter)->m_byType ) ;
-        //For accessing the vocabulary attributes later for translating.
-//        grammarPart.m_pvocabularyandtranslation =
-        p_grammarPart->m_pvocabularyandtranslation =
-          (*iter) ;
-        //r_stdmapwLeftmostIndex2grammarpart.insert(
-        //r_stdmultimap_wLeftmostIndex2grammarpart.insert(
-//        p_stdmultimap_wLeftmostIndex2grammarpart->insert(
-//          std::pair<WORD, GrammarPart>
-//            ( dwTokenIndex, grammarPart )
-//          ) ;
-        DEBUG_COUTN("inserting "
-          << GetGrammarPartName( (*iter)->m_byType )
-          << "(ID)=" << (WORD) (*iter)->m_byType
-          << " address: " << p_grammarPart
-          << " for token range " << dwTokenIndex << ":" << dwTokenIndexRightMost
-          )
-        m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
-          std::pair<WORD, GrammarPart *>
-            ( dwTokenIndex, p_grammarPart )
-          ) ;
-        //r_stdmapwRightmostIndex2grammarpart.insert(
-        //r_stdmultimap_wRightmostIndex2grammarpart.insert(
-//        p_stdmultimap_wRightmostIndex2grammarpart->insert(
-//          std::pair<WORD, GrammarPart>
-//            ( dwTokenIndexRightMost , grammarPart )
-//          ) ;
-        m_stdmultimap_dwRightmostIndex2p_grammarpart.insert(
-          std::pair<WORD, GrammarPart *>
-            ( dwTokenIndexRightMost , p_grammarPart )
-          ) ;
-      }
+      InsertGrammarPartForEverySameWord(p_letternode,
+        dwTokenIndex, dwTokenIndexRightMost);
     }
+    else
+    {
+      dwTokenIndexRightMostUnknownToken = dwTokenIndexRightMost;
+      bUnknownTokenFound= true;
+      if( b1UnknownGrammarPartPerToken )
+        break;
+    }
+  }
+  while( ! p_letternode && dwTokenIndexRightMost < psv.size() - 1 );
+  if( //dwTokenIndexRightMostUnknownToken
+      bUnknownTokenFound)
+  {
+    GrammarPart * p_grammarPart = new GrammarPart(
+      //Via the indices the tokens can be got later.
+      dwTokenIndex, //dwTokenIndexRightMost
+      dwTokenIndexRightMostUnknownToken) ;
+    p_grammarPart->SetGrammarPartID( EnglishWord::UnknownWord ) ;
+    p_grammarPart->m_stdstrTranslation = GetBetweenAsStdString( psv, dwTokenIndex,
+        //dwTokenIndexRightMost
+        dwTokenIndexRightMostUnknownToken);
+    m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
+      std::pair<WORD, GrammarPart *>
+        ( dwTokenIndex, p_grammarPart )
+      ) ;
+    m_stdmultimap_dwRightmostIndex2p_grammarpart.insert(
+      std::pair<WORD, GrammarPart *>
+        ( //dwTokenIndexRightMost
+        dwTokenIndexRightMostUnknownToken, p_grammarPart )
+      ) ;
   }
 //  DWORD dwSize = //parsebyrise.
 //    m_stdmultimap_dwRightmostIndex2grammarpart.size() ;

@@ -31,13 +31,16 @@ public:
     // would be less efficient because a lot of (parts of) parse trees can
     //  be unnecessarily incorrect then--the building of the tree was for
     // nothing).
-    noun = //0
+    noun = 0
       //ENGLISH_NOUN
       //starting with the same indices as in the vocabulary file
-      49
+      //49
     , main_verb //Vollverb
-    , adjective
     , adverb
+    , adjective
+    , main_verb_allows_0object_infinitive
+    , main_verb_allows_1object_infinitive
+    , main_verb_allows_2objects_infinitive
     , preposition
     , pronoun
     , auxiliary_verb
@@ -104,10 +107,12 @@ public:
     , main_verb_allows_0object_progressive_form //e.g. "have been walking"
     , main_verb_allows_1object_progressive_form //e.g. "am hitting you"
     , main_verb_allows_2objects_progressive_form //e.g. "was giving you a car"
-    , main_verb_allows_0object_infinitive
-    , main_verb_allows_1object_infinitive
-    , main_verb_allows_2objects_infinitive
     , main_verb_past
+
+    , am
+    , are
+    , is
+    , UnknownWord
     , beyond_last_entry
   } ;
   //Needed for English words to determine the word class resp. for

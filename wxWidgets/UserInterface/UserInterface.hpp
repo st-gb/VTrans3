@@ -26,7 +26,8 @@ namespace wxWidgets
   int ShowMultipleFileSelectionDialog(
     const wxString & cr_wxstrTitle ,
     wxArrayString & wxarraystringPaths ,
-    wxWindow *
+    wxWindow *,
+    const wxString & c_r_wxInitialDirForFileSelecion
     ) ;
   void UnLoadAndLoadDictionary(wxWindow * p_wxwindow) ;
 }
