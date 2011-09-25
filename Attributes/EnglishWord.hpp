@@ -70,6 +70,15 @@ public:
     , personal_pronoun_you_plur
     , personal_pronoun_they
 
+    , personal_pronoun_me
+    , personal_pronoun_objective_you //-> "dich"/ "dir" / "uns" /"Ihnen" in German
+//    , personal_pronoun_you_sing
+    , personal_pronoun_him
+    , personal_pronoun_her
+    , personal_pronoun_objective_it //
+    , personal_pronoun_us
+    , personal_pronoun_them
+
     //see http://en.wikipedia.org/wiki/Reflexive_pronoun:
     , reflexive_pronoun_myself
     , reflexive_pronoun_yourself

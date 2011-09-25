@@ -15,12 +15,12 @@
   
   <grammar_rule left_child="clause1Obj" right_child="obj" superordinate="clauseWith1Obj"/>
   
-  <grammar_rule left_child="clause" right_child="obj" superordinate="clause_with_obj"/>
+  <!--<grammar_rule left_child="clause" right_child="obj" superordinate="clause_with_obj"/>-->
   
   <!--see http://en.wikipedia.org/wiki/Preposition_and_postposition#Semantic_classification-->
-  <grammar_rule left_child="local_preposition" right_child="SubjOrObjEnumEle" superordinate="clause_with_obj"/>
+  <!--<grammar_rule left_child="local_preposition" right_child="SubjOrObjEnumEle" superordinate="clause_with_obj"/>-->
   
-  <grammar_rule left_child="3rdPersSingClause" right_child="place" superordinate="clauseWithPlace"/>
+  <!--<grammar_rule left_child="3rdPersSingClause" right_child="place" superordinate="clauseWithPlace"/>-->
   
   <grammar_rule left_child="relative_pronoun" right_child="3rdPersSingClauseAllows1Obj" superordinate="relative_clause"/>
 </grammar_rules>

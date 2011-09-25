@@ -10,7 +10,9 @@
 	  -->
   <!-- to limit a possible reflexive pronoun to "himself" -->
   <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres0Obj" superordinate="he_3rdPersSingClauseAllows0Obj"/>
+  <grammar_rule left_child="UnknownWord" right_child="MainVerb3rdPersSingPres0Obj" superordinate="he_3rdPersSingClauseAllows0Obj"/>
   <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres0Obj" superordinate="she_3rdPersSingClauseAllows0Obj"/>
+  <grammar_rule left_child="UnknownWord" right_child="MainVerb3rdPersSingPres0Obj" superordinate="she_3rdPersSingClauseAllows0Obj"/>
   <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres0Obj" superordinate="it_3rdPersSingClauseAllows0Obj"/>
   
   <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres1Obj" superordinate="he_3rdPersSingClauseAllows1Obj"/>

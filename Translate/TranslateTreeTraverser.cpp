@@ -1,5 +1,5 @@
 /*
- * TranslateTreeTraverser.cpp
+ * DoTranslateTreeTraverser.cpp
  *
  *  Created on: May 17, 2010
  *      Author: Stefan
@@ -14,7 +14,7 @@
 namespace ParseTreeTraverser
 {
 
-  TranslateTreeTraverser::TranslateTreeTraverser(
+  DoTranslateTreeTraverser::DoTranslateTreeTraverser(
     const GrammarPart * p_grammarpartStartNode
     , ParseByRise & r_parsebyrise
     , TranslateParseByRiseTree & r_translateparsebyrisetree
@@ -43,19 +43,19 @@ namespace ParseTreeTraverser
       m_wPluralNounGrammarPartID = 65535 ;
   }
 
-  TranslateTreeTraverser::~TranslateTreeTraverser()
+  DoTranslateTreeTraverser::~DoTranslateTreeTraverser()
   {
     LOGN("~TranslateTreeTraverser()")
   }
 
-  void TranslateTreeTraverser::BeforeBeginAtRoot()
+  void DoTranslateTreeTraverser::BeforeBeginAtRoot()
   {
     //Important. else pathes with previous node(s) (->too long) are created.
     m_vec_wGrammarPartIDcurrentParsePath.clear() ;
     m_stdvector_p_grammarpartCurrentParseTreePath.clear() ;
   }
 
-  void TranslateTreeTraverser::HandlePossibleSubject()
+  void DoTranslateTreeTraverser::HandlePossibleSubject()
   {
     GrammarPart * p_grammarpart =
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
@@ -86,7 +86,7 @@ namespace ParseTreeTraverser
     }
   }
 
-  void TranslateTreeTraverser::LeaveFound()
+  void DoTranslateTreeTraverser::LeaveFound()
   {
     LOGN("TranslateTreeTraverser::LeaveFound()--current parse tree "
       "path: " << m_r_parsebyrise.GetPathAs_std_string(
@@ -147,7 +147,7 @@ namespace ParseTreeTraverser
   //     / \           "UnprocessedHighestLevelNodeFound"
   //   the car  <-both were processed yet.
   //
-  void TranslateTreeTraverser::UnprocessedHighestLevelNodeFound()
+  void DoTranslateTreeTraverser::UnprocessedHighestLevelNodeFound()
   {
     std::string stdstrTranslation ;
     BYTE byPersonIndex ;
@@ -197,7 +197,7 @@ namespace ParseTreeTraverser
     }
   }
 
-  void TranslateTreeTraverser::ParseTreePathAdded()
+  void DoTranslateTreeTraverser::ParseTreePathAdded()
   {
     m_vec_wGrammarPartIDcurrentParsePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent.
@@ -225,7 +225,7 @@ namespace ParseTreeTraverser
     HandlePossibleSubject() ;
   }
 
-  void TranslateTreeTraverser::ParseTreePathPopped()
+  void DoTranslateTreeTraverser::ParseTreePathPopped()
   {
     m_stdvector_p_grammarpartCurrentParseTreePath.pop_back() ;
     m_vec_wGrammarPartIDcurrentParsePath.pop_back() ;
@@ -235,7 +235,7 @@ namespace ParseTreeTraverser
       )
   }
 
-  void TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild(
+  void DoTranslateTreeTraverser::CurrentNodeIsLastAddedRightChild(
     //WORD wCurrentParseTreeLevel
     )
   {
@@ -282,7 +282,7 @@ namespace ParseTreeTraverser
   }
 
   //This is needed for _many_ dropdown lists to select the same indices.
-  void TranslateTreeTraverser::SetSameConsecutiveIDforLeaves(
+  void DoTranslateTreeTraverser::SetSameConsecutiveIDforLeaves(
     const GrammarPart * p_grammarpart)
   {
     ParseTreeTraverser::SetSameConsecutiveIDforLeaves trav(

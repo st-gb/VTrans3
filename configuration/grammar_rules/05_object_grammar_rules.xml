@@ -1,4 +1,13 @@
 <grammar_rules>
+
+  <grammar_rule left_child="me" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="objective_you" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="him" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="her" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="objective_it" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="us" superordinate="ObjEnumEle"/>
+  <grammar_rule left_child="them" superordinate="ObjEnumEle"/>
+
   <!--objects-->
   <grammar_rule left_child="SubjOrObjEnumEle" superordinate="ObjEnumEle"/>
   <grammar_rule left_child="pers_pron_obj" superordinate="ObjEnumEle"/>

@@ -6,6 +6,9 @@
  */
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <Controller/TranslationControllerBase.hpp>
+//GenerateXMLtreeFromParseTree(...)
+#include <IO/GenerateXMLtreeFromParseTree.hpp>
+#include <InputOutput/XML/OutputXMLindented.hpp> //OutputXMLindented(...)
 //class ParseTreeTraverser::TransformTreeTraverser
 #include <Translate/TransformTreeTraverser.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
@@ -27,11 +30,11 @@ LetterTree TranslationControllerBase::s_lettertree ;
 TranslationControllerBase::TranslationControllerBase()
   :
 //  m_parsebyrise( * this ) ,
+  m_nodetrie_ui32GrammarPartName2colour(256),
   m_translateparsebyrisetree(
     m_parsebyrise
     , * this
     )
-  , m_nodetrie_ui32GrammarPartName2colour(256)
 {
 //  m_nodetrie_ui32GrammarPartName2colour.Create(256);
 }
@@ -334,5 +337,13 @@ void TranslationControllerBase::Translate(
     r_stdvec_stdvec_stdvecTranslationAndGrammarPart
 //    stdvec_stdvecTranslationAndConsecutiveID
     ) ;
+
+  std::string std_strXML;
+  GenerateXMLtreeFromParseTree( & m_parsebyrise, std_strXML);
+  std::ostringstream std_ostringstream;
+  OutputXMLindented(std_strXML.c_str(), std_ostringstream);
+  LOGN("translation as indented XML:" << std_ostringstream.str())
+
+  LOGN( FULL_FUNC_NAME << "--generated XML data:" << std_strXML)
   LOGN("TranslationControllerBase::Translate(...) end")
 }

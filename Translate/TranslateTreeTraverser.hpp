@@ -1,5 +1,5 @@
 /*
- * TranslateTreeTraverser.hpp
+ * DoTranslateTreeTraverser.hpp
  *
  *  Created on: May 17, 2010
  *      Author: Stefan
@@ -35,7 +35,7 @@ public:
 
 namespace ParseTreeTraverser
 {
-  class TranslateTreeTraverser
+  class DoTranslateTreeTraverser
   : public DirectingLeavesMultipleIterTraverser
   {
     ParseByRise & m_r_parsebyrise ;
@@ -58,13 +58,13 @@ namespace ParseTreeTraverser
     std::vector<TranslationAndGrammarPart> m_stdvecTranslationAndGrammarPart ;
     std::vector<TranslationAndConsecutiveID>
       m_stdvec_translation_and_consecutive_id ;
-    TranslateTreeTraverser(
+    DoTranslateTreeTraverser(
       const GrammarPart * p_grammarpartStartNode
       , ParseByRise & r_parsebyrise
       , TranslateParseByRiseTree & r_translateparsebyrisetree
       );
     virtual
-      ~TranslateTreeTraverser();
+      ~DoTranslateTreeTraverser();
     void BeforeBeginAtRoot() ;
     //In order to keep track of the current parse tree path.
     void CurrentNodeIsLastAddedRightChild() ;

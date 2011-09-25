@@ -204,6 +204,7 @@ public:
   void InitGrammarRules() ;
 
   inline void InsertGrammarRuleNamesForAuxiliaryVerbToBe();
+  inline void InsertGrammarRuleNamesForObjectFormPersonalPronouns();
   inline void InsertGrammarRuleNamesForPersonalPronouns();
   inline void InsertGrammarRuleNamesForReflexivePronouns();
 

@@ -65,6 +65,7 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
   InsertGrammarRule( EnglishWord::haveInfinitive,"haveInfinitive");
 
   InsertGrammarRuleNamesForPersonalPronouns();
+  InsertGrammarRuleNamesForObjectFormPersonalPronouns();
   InsertGrammarRuleNamesForAuxiliaryVerbToBe();
 
   InsertGrammarRuleNamesForReflexivePronouns();
@@ -86,6 +87,18 @@ void ParseByRise::InsertGrammarRuleNamesForAuxiliaryVerbToBe()
   // you (2nd person singular and plural) are, we are, they are
   InsertGrammarRule( EnglishWord::are , "are" ) ;
   InsertGrammarRule( EnglishWord::is , "is" ) ; // he/she/it is
+}
+
+void ParseByRise::InsertGrammarRuleNamesForObjectFormPersonalPronouns()
+{
+  InsertGrammarRule( EnglishWord::personal_pronoun_me , "me" ) ;
+//  InsertGrammarRule( EnglishWord::personal_pronoun_you_sing ,"you_sing" ) ;
+  InsertGrammarRule( EnglishWord::personal_pronoun_objective_you ,"objective_you" ) ;
+  InsertGrammarRule( EnglishWord::personal_pronoun_him , "him") ;
+  InsertGrammarRule(EnglishWord::personal_pronoun_her , "her") ;
+  InsertGrammarRule(EnglishWord::personal_pronoun_it, "objective_it" ) ;
+  InsertGrammarRule( EnglishWord::personal_pronoun_us, "us" ) ;
+  InsertGrammarRule( EnglishWord::personal_pronoun_them, "them" ) ;
 }
 
 void ParseByRise::InsertGrammarRuleNamesForPersonalPronouns()
