@@ -5,7 +5,8 @@
  *      Author: Stefan
  */
 
-#include <Controller/character_string/stdstring_format.hpp> //to_stdstring(...)
+//convertFromAndToStdString(...)
+#include <Controller/character_string/convertFromAndToStdString.hpp>
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 //#include <Translate/ConditionsAndTranslation.hpp>
 #include <Translate/TranslationRule.hpp>//class TranslationRule

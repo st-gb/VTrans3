@@ -604,23 +604,38 @@ void LetterTree::InsertPersonalPronouns()
   s_pvocabularyandtranslation->m_arstrGermanWord[0] = "sie" ;
 }
 
+//Insert into main memory in order to resolve grammar rules.
 void LetterTree::InsertPersonalPronounsObjectiveForm()
 {
-  Insert("me", EnglishWord::personal_pronoun_objective_form ) ;
+  Insert("me", EnglishWord::personal_pronoun_objective_form
+    //personal_pronoun_me
+      ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _1_st_person_singular ;
-  Insert("you", EnglishWord::personal_pronoun_objective_form ) ;
+  Insert("you", EnglishWord::personal_pronoun_objective_form
+      //personal_pronoun_objective_you
+      ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_singular ;
-  Insert("him", EnglishWord::personal_pronoun_objective_form ) ;
+  Insert("him", EnglishWord::personal_pronoun_objective_form
+    //personal_pronoun_him
+    ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
-  Insert("her", EnglishWord::personal_pronoun_objective_form ) ;
+  Insert("her", EnglishWord::personal_pronoun_objective_form
+      //personal_pronoun_her
+      ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
-  Insert("it", EnglishWord::personal_pronoun_objective_form ) ;
+  Insert("it", EnglishWord::personal_pronoun_objective_form
+      //personal_pronoun_objective_it
+      ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_singular ;
-  Insert("us", EnglishWord::personal_pronoun_objective_form ) ;
+  Insert("us", EnglishWord::personal_pronoun_objective_form
+      //personal_pronoun_us
+      ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _1st_person_plural ;
-  Insert("you", EnglishWord::personal_pronoun_objective_form ) ;
-  s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_plural ;
-  Insert("them", EnglishWord::personal_pronoun_objective_form ) ;
+//  Insert("you", EnglishWord::personal_pronoun_objective_form ) ;
+//  s_pvocabularyandtranslation->m_arbyAttribute[0] = _2nd_person_plural ;
+  Insert("them", EnglishWord::personal_pronoun_objective_form
+    //personal_pronoun_them
+      ) ;
   s_pvocabularyandtranslation->m_arbyAttribute[0] = _3rd_person_plural ;
 }
 

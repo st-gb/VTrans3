@@ -24,8 +24,16 @@
     attribute_index="13"
     attribute_length="1" 
     />
-  <vocabulary_attribute_definiton
+  <!--<vocabulary_attribute_definiton
     word_class="mainVerbInf0Obj"
+    attribute_name="grammatical_case"
+    language="German"
+    attribute_type="bit"
+    attribute_index="0"
+    attribute_length="1"
+    />-->
+  <vocabulary_attribute_definiton
+    word_class="mainVerbInf1Obj"
     attribute_name="grammatical_case"
     language="German"
     attribute_type="bit"

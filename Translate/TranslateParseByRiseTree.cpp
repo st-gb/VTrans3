@@ -13,7 +13,7 @@
 //header file of this TranslateParseByRiseTree class
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <Translate/Translationrule.hpp>//class TranslationRule
-//class ParseTreeTraverser::TranslateTreeTraverser
+//class ParseTreeTraverser::DoTranslateTreeTraverser
 #include <Translate/TranslateTreeTraverser.hpp>
 //class ParseTreeTraverser::TranslatedTreeTraverser
 #include <Translate/TranslatedTreeTraverser.hpp>
@@ -845,14 +845,14 @@ void TranslateParseByRiseTree::Translate(
 {
   LOGN("TranslateParseByRiseTree::Translate(...) begin")
 //  BYTE byPersonIndex ;
-  ParseByRise * mp_parsebyrise = & r_parsebyrise ;
+  ParseByRise * p_parsebyrise = & r_parsebyrise ;
 //  std::string stdstrWholeTransl ;
   std::string stdstrTranslation ;
   std::vector<GrammarPart *>
     stdvec_p_grammarpartCoveringMostTokensAtTokenIndex ;
   DEBUG_COUT( "Translate(): \n" )
   m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.clear();
-  if( mp_parsebyrise )
+  if( p_parsebyrise )
   {
     DWORD dwLeftMostTokenIndex = 0 ;
 //    GrammarPart * p_grammarpart ;
@@ -864,7 +864,7 @@ void TranslateParseByRiseTree::Translate(
       stdmmap_token_index2grammarpart ;
     stdmmap_token_index2grammarpart::const_iterator citer ;
     stdmmap_token_index2grammarpart &
-      r_stdmultimap_dwLeftmostIndex2grammarpart = mp_parsebyrise->
+      r_stdmultimap_dwLeftmostIndex2grammarpart = p_parsebyrise->
       //m_stdmultimap_dwLeftmostIndex2grammarpart ;
       m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
     //Reset to initial before each translation.
@@ -877,7 +877,7 @@ void TranslateParseByRiseTree::Translate(
       DEBUG_COUT( "Translate(): mp_parsebyrise != NULL\n")
       citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
       //p_grammarpart =
-        mp_parsebyrise->GetGrammarPartCoveringMostTokens(
+        p_parsebyrise->GetGrammarPartCoveringMostTokens(
           dwLeftMostTokenIndex ,
           stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
           ) ;
@@ -920,7 +920,7 @@ void TranslateParseByRiseTree::Translate(
         << dwLeftMostTokenIndex )
     }
     while( dwLeftMostTokenIndex );
-  }//if( mp_parsebyrise )
+  }//if( p_parsebyrise )
 //  DEBUG_COUT("translation: " << stdstrWholeTransl << "\n") ;
   LOGN("TranslateParseByRiseTree::Translate(...) end")
 }
@@ -943,7 +943,7 @@ void TranslateParseByRiseTree::TranslateParseTree(
   //    {
   DEBUG_COUT( "Translate: GetGrammarPartCoveringMostTokens found \n" );
 
-  ParseTreeTraverser::TranslateTreeTraverser translatetreetraverser(
+  ParseTreeTraverser::DoTranslateTreeTraverser translatetreetraverser(
     //        p_grammarpart
     * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
     , * mp_parsebyrise

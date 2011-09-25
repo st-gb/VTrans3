@@ -4,7 +4,8 @@
  *  Created on: Dec 4, 2010
  *      Author: Stefan
  */
-#include <Controller/character_string/stdstring_format.hpp> //to_stdstring(...)
+//convertFromAndToStdString(...)
+#include <Controller/character_string/convertFromAndToStdString.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface

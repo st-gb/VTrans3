@@ -213,9 +213,9 @@ SyntaxTreePath & SyntaxTreePath::operator = ( const SyntaxTreePath & c_r_stpToCo
 std::string SyntaxTreePath::GetAs_std_string( ) const
 {
   std::string stdstr ;
-#ifdef _DEBUG
+//#ifdef _DEBUG
   WORD wGrammarPartID ;
-#endif
+//#endif
 //  for(WORD  w=0; w < m_ar_wElements ; ++ w )
 //    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
   if( m_wNumberOfElements )
@@ -598,8 +598,20 @@ bool SyntaxTreePath::Matches(
     {
       //if e.g. "*.1stPersSingPresentProgressive.MainVerbProgressive0Obj" and
       // "MainVerbProgressive0Obj"
-      if( wIndex != MAXWORD && ar_wElements[ wIndex] != KLEENE_STAR_OPERATOR )
-        bIdentical = false;
+//      if( wIndex != MAXWORD && ar_wElements[ wIndex] != KLEENE_STAR_OPERATOR )
+
+      //e.g. at end of "definite_article_singular.definite_article" and at
+      // "definite_article_singular" for path
+      // "*.obj.*.definite_article_singular.definite_article"
+      for( ; wIndex != MAXWORD; -- wIndex)
+      {
+        //e.g. at "obj" of "*.obj.*.definite_article_singular.definite_article"
+        if( ar_wElements[ wIndex] != KLEENE_STAR_OPERATOR )
+        {
+          bIdentical = false;
+          break;
+        }
+      }
     }
     else
       bIdentical = false;

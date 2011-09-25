@@ -1,42 +1,62 @@
 <translation_rules>
-
   <!-- -->
   
-  <!-- e.g. the sheep trusts the man." -> ...vertraut DEM Mann-->
+  <!-- e.g. he trusts the man." -> ...vertraut DEM Mann-->
   <translation_rule 
-    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    syntax_tree_path="clauseWith1Obj.obj.*.definite_article_singular.definite_article"
     translation="dem">
     <condition syntax_tree_path="definite_article_singular.singular_noun"
       attribute_name="German_noun_article"
       byte_attribute_value="0"
     />
     <!--grammatical_case=3 <=> dative verb-->
-    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+    <condition syntax_tree_path="clauseWith1Obj.he_3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />
   </translation_rule>
-  <!-- e.g. the sheep trusts the child." -> ...vertraut DEM Kind-->
+  
+  <!-- e.g. he trusts the child." -> ...vertraut DEM Kind-->
   <translation_rule 
-    syntax_tree_path="obj.*.definite_article_singular.definite_article"
+    syntax_tree_path="clauseWith1Obj.obj.*.definite_article_singular.definite_article"
     translation="dem">
     <condition syntax_tree_path="definite_article_singular.singular_noun"
       attribute_name="German_noun_article"
       byte_attribute_value="2"
     />
     <!--grammatical_case=3 <=> dative verb-->
-    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+    <condition syntax_tree_path="clauseWith1Obj.he_3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />
   </translation_rule>
  
-  <!--Das Kind vertraut >>den<< Kindern-->
+  <!--Er vertraut >>den<< Kindern-->
   <translation_rule 
     syntax_tree_path="clauseWith1Obj.obj.*.definite_article_plural.definite_article"
     translation="den">
     <!--grammatical_case=3 <=> dative verb-->
-    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+    <condition syntax_tree_path="clauseWith1Obj.3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="4"
+    />
+  </translation_rule>
+  <!--Er liebt >>die<< Kinder-->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.obj.*.definite_article_plural.definite_article"
+    translation="die">
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.he_3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="4"
+    />
+  </translation_rule>
+  <!--Er vertraut >>den<< Kindern-->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.obj.*.definite_article_plural.definite_article"
+    translation="den">
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.he_3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />

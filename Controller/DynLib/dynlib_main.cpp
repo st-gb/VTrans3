@@ -9,6 +9,7 @@
 #include <Controller/Logger/Logger.hpp> //class Logger
 #include <Controller/TranslationControllerBase.hpp>
 #include <preprocessor_macros/export_function_symbols.h>
+#include <IO/GenerateXMLtreeFromParseTree.hpp>
 
 //Logger g_logger;
 //TranslationControllerBase g_translationcontrollerbase;
@@ -37,7 +38,8 @@ EXPORT BYTE
   )
 {
 //  LOGN("Init--begin")
-  std::string stdstrLogFilePath = "VTrans_log.txt" ;
+  std::string stdstrLogFilePath = //"VTrans_log.txt" ;
+      "VTransDynlib_log.txt" ;
   g_logger.OpenFile2(stdstrLogFilePath) ;
   LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
   LOGN("Init--begin")
@@ -88,14 +90,15 @@ EXPORT char * Translate(const char * p_chEnglishText)
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
   std::vector<std::string> stdvec_stdstrWholeTransl;
-  std::vector<std::vector<TranslationAndGrammarPart> >
+  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
     stdvec_stdvecTranslationAndGrammarPart;
   g_p_translationcontrollerbase->Translate(
     stdstrWholeInputText,
     stdvec_stdstrWholeTransl,
     stdvec_stdvecTranslationAndGrammarPart
     );
-  for( std::vector<std::string>::const_iterator c_iter_stdvec_stdstr =
+  for( std::vector< std::string> ::const_iterator
+      c_iter_stdvec_stdstr =
       stdvec_stdstrWholeTransl.begin() ;
       c_iter_stdvec_stdstr != stdvec_stdstrWholeTransl.end()
       ; ++ c_iter_stdvec_stdstr
@@ -127,7 +130,7 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
   std::vector<std::string> stdvec_stdstrWholeTransl;
-  std::vector<std::vector<TranslationAndGrammarPart> >
+  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
     stdvec_stdvecTranslationAndGrammarPart;
   g_p_translationcontrollerbase->Translate(
     stdstrWholeInputText,
@@ -136,43 +139,60 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
     );
   stdstrAllPossibilities += "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
     "<sentences>";
-  //Loop for all sentenceS.
-  for( std::vector<std::vector<TranslationAndGrammarPart> >::const_iterator
-      c_iter_stdvec_stdvec_translationandgrammarpart =
+  //Loop for all sentenceS beginning at the same token index.
+  for( std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
+      ::const_iterator
+      c_iter_stdvec_stdvec_translationandgrammarpartSentenceAtSameTokenIndex =
       stdvec_stdvecTranslationAndGrammarPart.begin() ;
-      c_iter_stdvec_stdvec_translationandgrammarpart !=
+      c_iter_stdvec_stdvec_translationandgrammarpartSentenceAtSameTokenIndex !=
         stdvec_stdvecTranslationAndGrammarPart.end()
-      ; ++ c_iter_stdvec_stdvec_translationandgrammarpart
+      ; ++ c_iter_stdvec_stdvec_translationandgrammarpartSentenceAtSameTokenIndex
       )
   {
     stdstrAllPossibilities += "<sentence>";
-    //Loop for each sentence.
-    for( std::vector<TranslationAndGrammarPart>::const_iterator
-        c_iter_stdvec_translationandgrammarpart =
-        c_iter_stdvec_stdvec_translationandgrammarpart->begin() ;
-        c_iter_stdvec_translationandgrammarpart !=
-            c_iter_stdvec_stdvec_translationandgrammarpart->end()
-        ; ++ c_iter_stdvec_translationandgrammarpart
+    //Loop for each word vector of sentence beginn.
+    for( std::vector <std::vector <TranslationAndGrammarPart> >::
+        const_iterator
+        c_iter_stdvec_WordAtSameTokenIndex =
+        c_iter_stdvec_stdvec_translationandgrammarpartSentenceAtSameTokenIndex->begin() ;
+        c_iter_stdvec_WordAtSameTokenIndex !=
+            c_iter_stdvec_stdvec_translationandgrammarpartSentenceAtSameTokenIndex->end()
+        ; ++ c_iter_stdvec_WordAtSameTokenIndex
         )
     {
+      //Loop for each word beginning at the same .
+      for( std::vector <TranslationAndGrammarPart> ::
+          const_iterator
+          c_iter_stdvec_Word =
+            c_iter_stdvec_WordAtSameTokenIndex->begin() ;
+          c_iter_stdvec_Word !=
+            c_iter_stdvec_WordAtSameTokenIndex->end()
+          ; ++ c_iter_stdvec_Word
+          )
+      {
       LOGN("::TranslateAsXML(...) TranslationAndGrammarPart iterator--"
         "c_iter_stdvec_translationandgrammarpart->mp_grammarpart:" <<
-        c_iter_stdvec_translationandgrammarpart->mp_grammarpart )
+        c_iter_stdvec_Word->mp_grammarpart )
 //      stdstrAllPossibilities += "<word><translation>";
-      WORD wGrammarPartID = c_iter_stdvec_translationandgrammarpart->
+      WORD wGrammarPartID = c_iter_stdvec_Word->
         mp_grammarpart->m_wGrammarPartID;
       stdstrAllPossibilities += "<word><translation "
-        "grammar_part_ID=\"" + to_stdstring( wGrammarPartID ) + "\"" +
+        "grammar_part_ID=\"" + convertToStdString( wGrammarPartID ) + "\"" +
         " grammar_part_name=\"" + g_p_translationcontrollerbase->m_parsebyrise.
         GetGrammarPartName( wGrammarPartID) + "\""
         ">";
-      stdstrAllPossibilities += c_iter_stdvec_translationandgrammarpart->
+      stdstrAllPossibilities += c_iter_stdvec_Word->
         m_stdstrTranslation;
       stdstrAllPossibilities += "</translation></word>";
+      }
     }
     stdstrAllPossibilities += "</sentence>";
   }
   stdstrAllPossibilities += "</sentences>";
+
+  stdstrAllPossibilities = "";
+  GenerateXMLtreeFromParseTree( & g_p_translationcontrollerbase->m_parsebyrise,
+    stdstrAllPossibilities);
   ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
   if( ar_chTranslation )
   {

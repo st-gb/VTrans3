@@ -3,9 +3,9 @@
   <!--3rd person singular begin-->
   <grammar_rule left_child="article_singular" superordinate="3rdPersSingSubjOrObjEnumEle"/>
   
-  <grammar_rule left_child="he" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+  <!--grammar_rule left_child="he" superordinate="3rdPersSingSubjOrObjEnumEle"/>
   <grammar_rule left_child="she" superordinate="3rdPersSingSubjOrObjEnumEle"/>
-  <grammar_rule left_child="it" superordinate="3rdPersSingSubjOrObjEnumEle"/>
+  <grammar_rule left_child="it" superordinate="3rdPersSingSubjOrObjEnumEle"/-->
     
   <grammar_rule left_child="UnknownWord" superordinate="3rdPersSingSubjOrObjEnumEle"/>
   
@@ -33,9 +33,9 @@
      adverb_before_finite_verb: "still" 
 	 3rdPersSingSubjOrObjEnumEle: ??
     -->
-  <grammar_rule left_child="adverb_before_finite_verb" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="3rdPersSingPres0ObjMiddle" />
+  <!--<grammar_rule left_child="adverb_before_finite_verb" right_child="3rdPersSingSubjOrObjEnumEle" superordinate="3rdPersSingPres0ObjMiddle" />-->
   
-  <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="3rdPersSingPres0ObjMiddle" superordinate="3rdPersSingClauseAllows0Obj"/>
+  <!--<grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="3rdPersSingPres0ObjMiddle" superordinate="3rdPersSingClauseAllows0Obj"/>-->
   
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres1Obj" superordinate="3rdPersSingClauseAllows1Obj"/>
   <grammar_rule left_child="3rdPersSingSubjOrObjEnumEle" right_child="MainVerb3rdPersSingPres2Obj" superordinate="3rdPersSingClauseAllows2Obj"/>
