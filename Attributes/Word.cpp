@@ -7,7 +7,7 @@
 #include "GermanWord.hpp" //class GermanNoun etc.
 
 #include <typeinfo> //for typeid()
-#include "IO.h" //for "::LoadWords(...)"
+//#include "IO.h" //for "::LoadWords(...)"
 //#include "MainFrm.h"
 #ifdef _WINDOWS
 	#include <typeinfo.h>

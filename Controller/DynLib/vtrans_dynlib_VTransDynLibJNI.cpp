@@ -10,7 +10,8 @@
  *   linker option "-Wl,--kill-at"
  */
 
-#include <jni.h>
+#include <jni.h> //JNIEXPORT etc.
+
 /* Header for class vtrans_dynlib_VTransDynLibJNI */
 //#include <preprocessor_macros/export_function_symbols.h>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
@@ -23,6 +24,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 /*
  * Class:     vtrans_dynlib_VTransDynLibJNI
  * Method:    Init
@@ -35,7 +37,8 @@ jbyte JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Init
     jstring jstrMainCfgFile,
     jstring jstrCfgFilesRootPath)
 {
-//  LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_Init begin")
+  LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Init"
+    FULL_FUNC_NAME << "--begin")
   jboolean jb = false;
 //  const jbyte * str;
   const char * strMainConfigFile;
@@ -49,6 +52,9 @@ jbyte JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Init
   strConfigFilesRootPath = p_jni_env->GetStringUTFChars(//jni_env,
     jstrCfgFilesRootPath, //NULL
     & jb);
+  LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Translate"
+    FULL_FUNC_NAME << "\n--main config file: " << strMainConfigFile
+    << "strConfigFilesRootPath:" << strConfigFilesRootPath )
   if (strMainConfigFile == NULL || strConfigFilesRootPath == NULL)
   {
     return //NULL; /* OutOfMemoryError already thrown */
@@ -70,7 +76,8 @@ jbyte JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Init
   p_jni_env//)
     ->ReleaseStringUTFChars(//jni_env,
     jstrCfgFilesRootPath, strConfigFilesRootPath);
-  LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_Init end")
+  LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init"
+    FULL_FUNC_NAME << "--end")
   return jInitResult;
 }
 
@@ -83,7 +90,8 @@ JNIEXPORT jstring JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Translate
   (JNIEnv * p_jni_env, //jobject,
     jclass jc, jstring jstrEnglishText)
 {
-  LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_Translate--begin")
+  LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Translate"
+    FULL_FUNC_NAME << "--begin")
   jboolean jb = false;
 //  const jbyte * str;
   const char * str;
@@ -93,8 +101,10 @@ JNIEXPORT jstring JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Translate
     ->GetStringUTFChars(//jni_env,
       jstrEnglishText, //NULL
       & jb);
-  LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_Translate--English text from "
-    "Java string:" << str)
+  LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Translate"
+    FULL_FUNC_NAME <<
+    "--English text from "
+    "Java string:\"" << str << "\"")
   if (str == NULL)
   {
     return //NULL; /* OutOfMemoryError already thrown */

@@ -53,9 +53,12 @@ namespace ParseTreeTraverser
       //if the right node was at parse level 1 (2nd level), then 1 element
       //should remain.
       m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ) ;
-    m_std_strXML += "<" + mp_parsebyrise->GetGrammarPartName(
+    m_std_strXML += "<grammar_part name=\""
+      //Grammar part names can't be XML element names because they (may)
+      //contain numbers/ digits. So make it an attribute value."
+      + mp_parsebyrise->GetGrammarPartName(
       m_grammarpartpointer_and_parselevelCurrent.
-      m_p_grammarpart->m_wGrammarPartID) + ">";
+      m_p_grammarpart->m_wGrammarPartID) + "\">";
     m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent ) ;
   }
@@ -71,9 +74,12 @@ namespace ParseTreeTraverser
   }
   void ParseTree2XMLtreeTraverser::ParseTreePathAdded()
   {
-    m_std_strXML += "<" + mp_parsebyrise->GetGrammarPartName(
+    m_std_strXML += "<grammar_part name=\"" +
+      //Grammar part names can't be XML element names because they (may)
+      //contain numbers/ digits. So make it an attribute value.
+      mp_parsebyrise->GetGrammarPartName(
       m_grammarpartpointer_and_parselevelCurrent.
-      m_p_grammarpart->m_wGrammarPartID) + ">";
+      m_p_grammarpart->m_wGrammarPartID) + "\">";
     m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent);
   }
@@ -81,9 +87,10 @@ namespace ParseTreeTraverser
   {
     GrammarPartPointerAndParseLevel & r_grammarpartpointerandparselevel =
       m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.back();
-    m_std_strXML += "</" + mp_parsebyrise->GetGrammarPartName(
-      r_grammarpartpointerandparselevel.
-      m_p_grammarpart->m_wGrammarPartID) + ">";
+    m_std_strXML += //"</" + mp_parsebyrise->GetGrammarPartName(
+      //r_grammarpartpointerandparselevel.
+      //m_p_grammarpart->m_wGrammarPartID) + ">";
+      "</grammar_part>";
     m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.pop_back() ;
   }
 } /* namespace ParseTreeTraverser */

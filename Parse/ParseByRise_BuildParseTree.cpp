@@ -15,6 +15,10 @@
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 
+#ifndef MAXWORD
+  #define MAXWORD 65535
+#endif
+
 //class TranslationControllerBase;
 //LetterTree TranslationControllerBase::s_lettertree;
 

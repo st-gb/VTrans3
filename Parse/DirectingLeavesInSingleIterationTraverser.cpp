@@ -145,7 +145,8 @@ namespace ParseTreeTraverser
     while( -- wNumberOfElementsToPop ) ;
   }
 
-  inline void DirectingLeavesInSingleIterationTraverser::ProcessLastAddedRightNode()
+  inline void DirectingLeavesInSingleIterationTraverser::
+    ProcessLastAddedRightNode()
   {
     //Not every node has 2 child nodes: it may be just 1 child node:
     //definite_article singular_noun
@@ -207,7 +208,7 @@ namespace ParseTreeTraverser
         ParseTreePathPopped();
       }while( wCurrentParseTreeLevel
         //Use post decrement because if in parse level "1" then it is the
-        //2nd parse lavel (-> 2 parse level must be popped)
+        //2nd parse level (-> 2 parse level must be popped)
         --);
       //mcp_grammarpartCurrent = NULL ;
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart = NULL ;

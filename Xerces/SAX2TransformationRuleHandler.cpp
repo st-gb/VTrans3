@@ -18,7 +18,7 @@
 
 #include <xercesc/sax/Locator.hpp> //class XERCES_CPP_NAMESPACE::Locator
 //for XERCES_CPP_NAMESPACE::XMLString::transcode(...)
-#include <xercesc/util/xmlstring.hpp>
+#include <xercesc/util/XMLString.hpp>
 
 #include <string> //std::string
 

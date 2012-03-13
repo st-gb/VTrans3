@@ -11,6 +11,7 @@
 #include <windef.h> //for BYTE, DWORD etc.
 #include <Attributes/Token.h> //class PositionStringVector
 #include <Attributes/Word.hpp> //class EnglishWord
+#include <stdint.h> //for uint32_t
 
 //pre-declare (so no include of a file that declares this class->faster compilation)
 class VocabularyAndTranslation ;

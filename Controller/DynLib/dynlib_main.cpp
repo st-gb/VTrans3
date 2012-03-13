@@ -10,6 +10,9 @@
 #include <Controller/TranslationControllerBase.hpp>
 #include <preprocessor_macros/export_function_symbols.h>
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
+//SetCurrentDirectory(...)
+#include <Controller/FileSystem/SetCurrentWorkingDir.hpp>
+//#include <InputOutput/XML/OutputXMLindented.hpp>
 
 //Logger g_logger;
 //TranslationControllerBase g_translationcontrollerbase;
@@ -24,6 +27,24 @@ EXPORT void FreeMemory()
     g_p_translationcontrollerbase = NULL;
   }
   LOGN("FreeMemory--begin")
+}
+
+void SetCurrentDirToConfigFilesRootPath(const std::string &
+    c_r_stdstrConfigFilesRootPath)
+{
+  std::string stdstrConfigFilesRootFullDirectoryPath =
+    //stdstrMainConfigFilePath.substr( 0, wIndexOfLastSlashOrBackSlash);
+    c_r_stdstrConfigFilesRootPath;
+
+//  //TODO implement for Linux
+  LOGN("Before setting current directory to \"" //main config file's full path"
+    << stdstrConfigFilesRootFullDirectoryPath << "\"")
+  //::SetCurrentDirectory(stdstrMainConfigFileFullDirectoryPath.c_str()
+  SetCurrentDirectory( (const char *) stdstrConfigFilesRootFullDirectoryPath.
+      c_str()
+    );
+  LOGN("After setting current directory to \"" //main config file's full path"
+    << stdstrConfigFilesRootFullDirectoryPath << "\"")
 }
 
 /**
@@ -63,58 +84,14 @@ EXPORT BYTE
 //      stdstdstrsize_typeLastBackSlash > wIndexOfLastSlashOrBackSlash)
 //    wIndexOfLastSlashOrBackSlash = stdstdstrsize_typeLastBackSlash;
 
-  std::string stdstrMainConfigFileFullDirectoryPath =
-    //stdstrMainConfigFilePath.substr( 0, wIndexOfLastSlashOrBackSlash);
-    stdstrConfigFilesRootPath;
+  SetCurrentDirToConfigFilesRootPath(stdstrConfigFilesRootPath);
 
-  LOGN("Before setting current directory to \"" //main config file's full path"
-    << stdstrMainConfigFileFullDirectoryPath << "\"")
-  ::SetCurrentDirectory(stdstrMainConfigFileFullDirectoryPath.c_str() );
-  LOGN("After setting current directory to \"" //main config file's full path"
-    << stdstrMainConfigFileFullDirectoryPath << "\"")
   BYTE byReturn = //g_translationcontrollerbase.Init(//"VTrans_main_config.xml"
     g_p_translationcontrollerbase->Init(
     stdstrMainConfigFilePath);
 //  delete g_p_translationcontrollerbase;
   LOGN("Init--return " << (WORD) byReturn)
   return byReturn;
-}
-
-/**
- * @return: translated text as 0-terminated character array.
- */
-EXPORT char * Translate(const char * p_chEnglishText)
-{
-  LOGN("::Translate(...) begin")
-  char * ar_chTranslation;
-  std::string stdstrWholeInputText(p_chEnglishText);
-  std::string stdstrAllPossibilities ;
-  std::vector<std::string> stdvec_stdstrWholeTransl;
-  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
-    stdvec_stdvecTranslationAndGrammarPart;
-  g_p_translationcontrollerbase->Translate(
-    stdstrWholeInputText,
-    stdvec_stdstrWholeTransl,
-    stdvec_stdvecTranslationAndGrammarPart
-    );
-  for( std::vector< std::string> ::const_iterator
-      c_iter_stdvec_stdstr =
-      stdvec_stdstrWholeTransl.begin() ;
-      c_iter_stdvec_stdstr != stdvec_stdstrWholeTransl.end()
-      ; ++ c_iter_stdvec_stdstr
-      )
-  {
-    stdstrAllPossibilities += * c_iter_stdvec_stdstr + "\n" ;
-  }
-  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
-  if( ar_chTranslation )
-  {
-    memcpy(ar_chTranslation, stdstrAllPossibilities.c_str(),
-      stdstrAllPossibilities.length() );
-    ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
-  }
-  LOGN("::Translate(...) end")
-  return ar_chTranslation;
 }
 
 /**
@@ -200,6 +177,47 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
       stdstrAllPossibilities.length() );
     ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
   }
+  LOGN("XML as tree: ")
+//  OutputXMLindented( stdstrAllPossibilities.c_str(),
+//    * g_logger.mp_ofstream );
+  LOGN("")
   LOGN("::TranslateAsXML(...) end")
+  return ar_chTranslation;
+}
+
+/**
+ * @return: translated text as 0-terminated character array.
+ */
+EXPORT char * Translate(const char * p_chEnglishText)
+{
+  LOGN("::Translate(...) begin")
+  char * ar_chTranslation;
+  std::string stdstrWholeInputText(p_chEnglishText);
+  std::string stdstrAllPossibilities ;
+  std::vector<std::string> stdvec_stdstrWholeTransl;
+  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
+    stdvec_stdvecTranslationAndGrammarPart;
+  g_p_translationcontrollerbase->Translate(
+    stdstrWholeInputText,
+    stdvec_stdstrWholeTransl,
+    stdvec_stdvecTranslationAndGrammarPart
+    );
+  for( std::vector< std::string> ::const_iterator
+      c_iter_stdvec_stdstr =
+      stdvec_stdstrWholeTransl.begin() ;
+      c_iter_stdvec_stdstr != stdvec_stdstrWholeTransl.end()
+      ; ++ c_iter_stdvec_stdstr
+      )
+  {
+    stdstrAllPossibilities += * c_iter_stdvec_stdstr + "\n" ;
+  }
+  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
+  if( ar_chTranslation )
+  {
+    memcpy(ar_chTranslation, stdstrAllPossibilities.c_str(),
+      stdstrAllPossibilities.length() );
+    ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
+  }
+  LOGN("::Translate(...) end")
   return ar_chTranslation;
 }

@@ -21,7 +21,7 @@
 #include <xercesc/sax/Locator.hpp> //class XERCES_CPP_NAMESPACE::Locator
 #include <xercesc/sax2/Attributes.hpp>//class  XERCES_CPP_NAMESPACE::Attributes
 //for XERCES_CPP_NAMESPACE::XMLString::transcode(...)
-#include <xercesc/util/xmlstring.hpp>
+#include <xercesc/util/XMLString.hpp>
 #include <string.h> //for wcscmp (const wchar_t*, const wchar_t*);
 #include <string> //class std::string
 
@@ -216,7 +216,8 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
     if( XercesAttributesHelper::getValue(
         cr_xercesc_attributes ,
         m_stdstrConditionSyntaxTreePath ,
-        L"syntax_tree_path"
+        //L"syntax_tree_path"
+        "syntax_tree_path"
         )
       )
     {
@@ -228,7 +229,8 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
           m_stdstrConditionAttributeName,
           //Use attribute name "German_plural" from the
           // VocabularyAndTranslation data.
-          L"attribute_name"
+          //L"attribute_name"
+          "attribute_name"
           )
         )
       {
@@ -269,7 +271,8 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
                 cr_xercesc_attributes ,
                 //byAttributeValue ,
                 wAttributeValue ,
-                L"byte_attribute_value"
+                //L"byte_attribute_value"
+                "byte_attribute_value"
                 )
             ||
               XercesAttributesHelper::getValue(
@@ -277,7 +280,8 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
               m_stdstrConditionStringAttrValue ,
               //Use attribute name "German_plural" from the
               // VocabularyAndTranslation data.
-              L"string_attribute_value"
+//              L"string_attribute_value"
+              "string_attribute_value"
               )
             )
           )
@@ -397,7 +401,8 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
         m_stdstrTranslation
         //Using directly a word for translation rather than an attribute
         // value of a VocabularyAndTranslation object is an alternative.
-        , L"translation"
+//        , L"translation"
+        , "translation"
         )
       )
     {
@@ -411,7 +416,8 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
         m_std_strSyntaxTreePathForInsertionForTranslation
         //Using directly a word for translation rather than an attribute
         // value of a VocabularyAndTranslation object is an alternative.
-        , L"syntax_tree_path_where_to_insert_translation"
+//        , L"syntax_tree_path_where_to_insert_translation"
+        , "syntax_tree_path_where_to_insert_translation"
         )
       )
     {
@@ -437,7 +443,8 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
     if( XercesAttributesHelper::getValue(
         cr_xercesc_attributes ,
         std_strInsertionForTranslationDirection,
-        L"child_node_insertion_direction"
+//        L"child_node_insertion_direction"
+        "child_node_insertion_direction"
         )
       )
     {
@@ -450,7 +457,8 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
     if( XercesAttributesHelper::getValue(
         cr_xercesc_attributes ,
         std_strInsertionForParentNode,
-        L"parent_node_insertion_direction"
+//        L"parent_node_insertion_direction"
+        "parent_node_insertion_direction"
         )
       )
     {
@@ -462,14 +470,16 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
     if( ! XercesAttributesHelper::getValue(
         cr_xercesc_attributes ,
         m_std_strParentNodeGrammarPartName,
-        L"parent_node_grammar_part_name"
+//        L"parent_node_grammar_part_name"
+        "parent_node_grammar_part_name"
         )
       )
       m_std_strParentNodeGrammarPartName = "";
     if( ! XercesAttributesHelper::getValue(
         cr_xercesc_attributes ,
         m_std_strGrammarPartName,
-        L"grammar_part_name"
+//        L"grammar_part_name"
+        "grammar_part_name"
         )
       )
       m_std_strGrammarPartName = "";

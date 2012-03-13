@@ -55,6 +55,7 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
       r_stdmultimap_dwLeftmostIndex2grammarpart = p_parsebyrise->
       //m_stdmultimap_dwLeftmostIndex2grammarpart ;
       m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
+    std_strXML += "<translated_text>"; //Topmost XML element.
 //    //Reset to initial before each translation.
 //    m_ui32ConcatenationID = 1;
     do
@@ -63,7 +64,7 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
 //      m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
 //      m_wParseLevel = 0 ;
       DEBUG_COUT( "Translate(): p_parsebyrise != NULL\n")
-      std_strXML += "<translations token index=\"" +
+      std_strXML += "<translations token_index=\"" +
         ::convertToStdString(dwLeftMostTokenIndex) +
         "\">";
       citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
@@ -107,5 +108,6 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
         << dwLeftMostTokenIndex )
     }
     while( dwLeftMostTokenIndex );
+    std_strXML += "</translated_text>"; //Topmost XML element.
   }//if( p_parsebyrise )
 }

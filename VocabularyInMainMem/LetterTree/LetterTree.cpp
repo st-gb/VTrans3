@@ -6,6 +6,7 @@
 #include <Attributes/GermanWord.hpp> //class GermanWord
 #include "LetterTree.hpp" //header file of this LetterTree class
 #include <preprocessor_macros/logging_preprocessor_macros.h>
+#include <preprocessor_macros/string_typedefs.h> //for "LPCSTR"
 
 #ifdef _DEBUG
   #define _DEBUG_FREEING_MEM
