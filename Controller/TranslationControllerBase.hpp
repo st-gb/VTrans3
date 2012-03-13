@@ -20,6 +20,7 @@
 #include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 
 #include <map> //class std::map
+#include <stdint.h> //for uint32_t
 #include <string> //class std::string
 #include <vector> //class std::vector
 

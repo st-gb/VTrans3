@@ -12,6 +12,10 @@
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <preprocessor_macros/suppress_unused_variable.h>
 
+#ifndef MAXWORD
+  #define MAXWORD 65535
+#endif
+
 WORD TranslationRule::GetConsecutiveID(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const
 {

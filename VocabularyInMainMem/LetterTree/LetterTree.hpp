@@ -25,6 +25,7 @@
   
   //#include "../../IO.h" //for NUMBER_OF_WORD_TYPES
   #include <string>
+  #include <string.h> //strlen(...)
   //#include <map>
   #include <set> //class std::set
   //for GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated,
@@ -89,7 +90,9 @@
     //needed for HandleVocabularyAndTranslationPointerInsertion()
     static const bool s_bDoInsertNewVocabularyAndTranslation = true ;
     //Needed only for the creation of the char to array index mapping.
-    std::vector<CHAR> m_vecch ;
+    //TODO relevant member data?
+//    std::vector<CHAR> m_vecch ;
+
     BYTE m_byArrayIndexRespSize ;
     I_UserInterface * mp_userinterface ;
     std::set<VocabularyAndTranslation *>::const_iterator 
@@ -336,7 +339,7 @@
     //std::set<VocabularyAndTranslation> * search(const char * pchCurrentChar)
     std::set<VocabularyAndTranslation *> * search(const char * pchCurrentChar)
     {
-      return search(pchCurrentChar,0,strlen(pchCurrentChar) ) ;
+      return search(pchCurrentChar, 0, strlen(pchCurrentChar) ) ;
     }
 
     ////Searches for the vocabularies with most identical tokens 

@@ -2,6 +2,7 @@
 	    #define WORD_H_INCLUDED
 
 #include <Controller/string_type.hpp>//for typedef VTrans::string_type
+#include <tchar.h> //for TCHAR
 
 //#ifdef _WINDOWS
 #ifdef _MSC_VER //MS Compiler (internal MSVC preprocessor macro)

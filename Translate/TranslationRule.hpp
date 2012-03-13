@@ -11,6 +11,7 @@
 #include "SyntaxTreePath.hpp" //class SyntaxTreePath
 //#include <rest.h> //DEBUG_COUT
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+#include <stdint.h> //int32_t
 
 //A translationrule desribes the path within a syntax tree.
 //It is inserted into a <TranslationRule*,ConditionAndTranslation> map

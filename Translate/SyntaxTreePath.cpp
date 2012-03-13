@@ -15,6 +15,13 @@
 #include <string>//class std::string
 //#include <rest.h> //DEBUG_COUT
 #include <windef.h>//for WORD
+#define __STDC_LIMIT_MACROS
+#include <stdint.h> //__UINT16_MAX__
+#include <limits.h> //UINT16_MAX
+
+#ifndef MAXWORD
+  #define MAXWORD 65535
+#endif
 
 SyntaxTreePath::SyntaxTreePath(
   const std::string & cr_stdstrSyntaxTreePath
@@ -502,6 +509,7 @@ bool SyntaxTreePath::Matches(
     for( wIndex = //p_tr->m_wNumberOfElements - 1 ;
         wNumberOfElements - 1 ;
         wIndex != MAXWORD
+          //UINT16_MAX
         && c_rev_iter_wGrammarPartPath != cr_stdvec_wGrammarPartPath.rend()
             ; //-- wIndex
 //        ++ rev_iter

@@ -9,6 +9,7 @@
 #define TRANSLATEPARSEBYRISETREE_H_
 
 #include <map>//class std::map
+#include <stdint.h> //for uint32_t
 #include <vector>//class std::vector
 #include <windef.h> //DWORD
 //#include "SyntaxTreePath.hpp"

@@ -1,6 +1,8 @@
 #ifndef VTRANS_CHARSETCONV_H
 #define VTRANS_CHARSETCONV_H
 
+#define LPSTR char *
+
 namespace CharSetConv
 {
 //#ifdef _WINDOWS

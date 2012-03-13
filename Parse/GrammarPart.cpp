@@ -8,6 +8,10 @@
 #include <Attributes/EnglishWord.hpp> //class EnglishWord's enum
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 
+#ifndef MAXWORD
+  #define MAXWORD 65535
+#endif
+
   void GrammarPart::SetLeftChild(GrammarPart & r_grammarpart)
   {
     mp_grammarpartLeftChild = & r_grammarpart ;
@@ -79,6 +83,8 @@ GrammarPart * GrammarPart::InsertChild(
 {
   GrammarPart * p_gpToInsert = new GrammarPart(0,0, uiGrammarPartID);
   if( p_gpToInsert)
+  //Avoid g++ warning "suggest explicit braces to avoid ambiguous 'else'"
+  {
     if( r_p_grammarpartChild )
     {
       // ... ...
@@ -110,6 +116,7 @@ GrammarPart * GrammarPart::InsertChild(
     }
     else
       r_p_grammarpartChild = p_gpToInsert;
+  }
   return p_gpToInsert;
 }
 

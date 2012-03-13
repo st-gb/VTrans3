@@ -108,7 +108,9 @@ unsigned char ReadViaSAX2InitAndTermXerces(
   {
     r_stdwstrErrorMessage = L"Xerces error during initialization! :\n"
       "Exception message is: \n"
-       + std::wstring( toCatch.getMessage() ) + L"\n" ;
+      //+ std::wstring( toCatch.getMessage() ) + L"\n" ;
+      + GET_WCHAR_STRING_FROM_XERCES_STRING( toCatch.getMessage()
+        ) + L"\n" ;
       //DEBUG("XML error:%s\n",message);
 //      LOG( "XML error:" << message << "\n" );
 //    return 0 ;

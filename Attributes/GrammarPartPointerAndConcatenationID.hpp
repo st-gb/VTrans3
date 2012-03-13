@@ -9,6 +9,7 @@
 #define GRAMMARPARTPOINTERANDCONCATENATIONID_HPP_
 
 #include <Parse/GrammarPart.hpp> //class GrammarPart
+#include <stdint.h> //for uint32_t
 
 class GrammarPartPointerAndConcatenationID
 {

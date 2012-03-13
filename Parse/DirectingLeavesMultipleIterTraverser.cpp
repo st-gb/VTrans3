@@ -14,7 +14,10 @@
 namespace ParseTreeTraverser
 {
   char * DirectingLeavesMultipleIterTraverser::s_ar_chDirection [] =
-    { "middle", "left", "right"} ;
+    { //Avoid g++ error message
+      //"warning: deprecated conversion from string constant to 'char*'"
+      (char *) "middle", (char *) "left", (char *) "right"
+    };
   DirectingLeavesMultipleIterTraverser::DirectingLeavesMultipleIterTraverser(
     const GrammarPart * p_grammarpartStartNode
     , ParseByRise * p_parsebyrise
@@ -310,8 +313,9 @@ namespace ParseTreeTraverser
 
   void DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree()
   {
-    LOGN("DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree() "
-      "begin")
+    LOGN(//"DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree() "
+      FULL_FUNC_NAME <<
+      "--begin")
 //    m_stdvec_p_grammarpartRightNodeToProcess.clear();
     m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.clear() ;
 //    const GrammarPart * p_grammarpart = mp_grammarpartStartNode;
@@ -322,6 +326,18 @@ namespace ParseTreeTraverser
     ParseTreePathAdded() ;
     do
     {
+      LOGN( FULL_FUNC_NAME << "--"
+        "m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart:"
+        << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
+        << " m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->"
+          "mp_grammarpartRightChild:"
+        << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+          mp_grammarpartRightChild
+        << " m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->"
+          "mp_grammarpartLeftChild:"
+        << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+          mp_grammarpartLeftChild
+        )
       //TODO SIGSEV here
       if( //mcp_grammarpartCurrent->mp_grammarpartRightChild
           m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
