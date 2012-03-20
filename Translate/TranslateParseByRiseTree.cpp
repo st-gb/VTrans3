@@ -887,7 +887,7 @@ void TranslateParseByRiseTree::Translate(
 #ifdef _DEBUG
       WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
 #endif //#ifdef _DEBUG
-      WORD wConsecutiveID = 0 ;
+//      WORD wConsecutiveID = 0 ;
 
       //A vector of sentences that each contains a vector of words.
       std::vector<std::vector<TranslationAndGrammarPart> >

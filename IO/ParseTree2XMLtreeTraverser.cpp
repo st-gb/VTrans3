@@ -85,7 +85,7 @@ namespace ParseTreeTraverser
   }
   void ParseTree2XMLtreeTraverser::ParseTreePathPopped()
   {
-    GrammarPartPointerAndParseLevel & r_grammarpartpointerandparselevel =
+//    GrammarPartPointerAndParseLevel & r_grammarpartpointerandparselevel =
       m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.back();
     m_std_strXML += //"</" + mp_parsebyrise->GetGrammarPartName(
       //r_grammarpartpointerandparselevel.

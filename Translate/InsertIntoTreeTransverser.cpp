@@ -74,7 +74,7 @@ namespace ParseTreeTraverser
 
   InsertIntoTreeTransverser::~InsertIntoTreeTransverser()
   {
-    // TODO Auto-generated destructor stub
+    LOGN( FULL_FUNC_NAME)
   }
 
   void InsertIntoTreeTransverser::BeforeBeginAtRoot()
