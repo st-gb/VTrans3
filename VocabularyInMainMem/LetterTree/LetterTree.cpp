@@ -22,7 +22,7 @@ LetterNode * LetterTree::sp_letternodeLastForInsertedWord ;
   void LetterTree::createMapping()
   {
     //Initially set all array values to "255".
-    ::memset(m_arbyCharValueToArrayIndex,255,MAPPING_ARRAY_SIZE) ;
+    ::memset(m_arbyCharValueToArrayIndex, 255, MAPPING_ARRAY_SIZE) ;
     //m_arbyCharValueToArrayIndex = new BYTE[255 ] ;
     addToCharValueToArrayIndexMapping(' ') ;
     addToCharValueToArrayIndexMapping('.') ; //e.g. "Allrad..."
@@ -273,7 +273,7 @@ Word * LetterTree::GetPreviousOccurance(
  {
    bool bDoNotAddToLetterTree = false ;
    //const char * pch = strVocabularyEntry.c_str() ;
-   VocabularyAndTranslation * pvocabularyandtranslation = NULL ;
+//   VocabularyAndTranslation * pvocabularyandtranslation = NULL ;
    LetterNode * pletternodeCurrent = //NULL ;
      m_pletternodeRoot ;
    pch += start ;
@@ -385,7 +385,7 @@ Word * LetterTree::GetPreviousOccurance(
        EnglishWord & ew , GermanWord & gw, void * p_v
        )
    {
-     bool bInsertNewVocabularyAndTranslation = true ;
+//     bool bInsertNewVocabularyAndTranslation = true ;
      std::string stdstr ;
      std::set<LetterNode *> stdsetpletternodeLastStringChar ;
      ew.InitGetNextString() ;
@@ -1229,22 +1229,30 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
     //pchCurrentChar = psv.at(wTokenIndex).m_Str ;
     pchCurrentChar = psv.at(wTokenIndex).m_Str.c_str() ;
     wTokenLength = strlen(pchCurrentChar) ;
-    for(WORD wCurrentTokenCharIndex=0; wCurrentTokenCharIndex< wTokenLength ; 
-      ++wCurrentTokenCharIndex)
+    for(WORD wCurrentTokenCharIndex = 0; wCurrentTokenCharIndex < wTokenLength;
+      ++ wCurrentTokenCharIndex)
     {
       //#ifdef _DEBUG
       byNodePointerArrayIndex = MapInputCharacterToLetterNodePointerArrayIndex(
-          *pchCurrentChar) ;
+        * pchCurrentChar) ;
+      LOGN( FULL_FUNC_NAME << "--mapped index for character \""
+        << * pchCurrentChar << "\" is :" << (WORD) byNodePointerArrayIndex)
       //#endif
-      if(//If the current letter node has children / pointer is NOT NULL.
+      if( //If array index for a contained character (not contained == 255).
+        byNodePointerArrayIndex != 255 &&
+          //If the current letter node has children / pointer is NOT NULL.
         (pletternodeCurrent = pletternodeCurrent->m_arpletternode1LevelLower[
         byNodePointerArrayIndex ] )
         )
         //Forward/go to the string's next char.
         pchCurrentChar ++ ;
       else
+      {
+        pletternodeCurrent = NULL;
         break ;
+      }
     }
+    LOGN( FULL_FUNC_NAME << "--pletternodeCurrent: " << pletternodeCurrent)
     //= If the token(s) is at least 1 vocabulary
     if(pletternodeCurrent )
     {
@@ -1252,7 +1260,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
       //If no space in lettertree after token.
       if( ! (pletternodeCurrent = pletternodeCurrent->m_arpletternode1LevelLower[
         MapInputCharacterToLetterNodePointerArrayIndex(
-          //seperates 2 tokens within lettertree.
+          //Separates 2 tokens within lettertree.
           ' ') ] )
         )
         break ;
@@ -1284,7 +1292,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
 LetterNode * LetterTree::searchAndReturnLetterNode(
   //const PositionStringVector & psv, 
   //const 
-    std::istream & istreamEnglish, 
+  std::istream & istreamEnglish,
   DWORD & r_dwTokenIndex
   //,LetterNode * & pletternode,
   )
@@ -1303,7 +1311,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
   WORD //wTokenLength, 
     wArrayIndex ;
   //pchCurrentChar += start ;
-  while (!istreamEnglish.eof() )  
+  while ( ! istreamEnglish.eof() )
   {
     //"istreamEnglish >> chCurrentChar ;" did not work.
     //cin >> chCurrentChar ;
@@ -1317,7 +1325,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
     case '\n':
       if( 
         //If previous char was not a separator (-> last letter of previous token)
-        !bSeperatorOccured 
+        ! bSeperatorOccured
         && pletternodeCurrent && pletternodeCurrent->
         m_psetpvocabularyandtranslation )
       {
@@ -1341,7 +1349,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
     }
 
     if( //bSeperatorOccured && chCurrentChar == ' ' || ! bSeperatorOccured
-      !bSearchedForSpaceChar || ! bSeperatorOccured )
+      ! bSearchedForSpaceChar || ! bSeperatorOccured )
     {
       wArrayIndex = MapInputCharacterToLetterNodePointerArrayIndex(
         chCurrentChar) ;

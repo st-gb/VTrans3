@@ -62,7 +62,7 @@ EXPORT BYTE
   std::string stdstrLogFilePath = //"VTrans_log.txt" ;
       "VTransDynlib_log.txt" ;
   g_logger.OpenFile2(stdstrLogFilePath) ;
-  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
+//  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
   LOGN("Init--begin")
   //Create on heap because of g_logger access that causes a crash when the log
   //file has not been opened yet?!

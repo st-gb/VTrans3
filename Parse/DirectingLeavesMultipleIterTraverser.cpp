@@ -329,84 +329,87 @@ namespace ParseTreeTraverser
       LOGN( FULL_FUNC_NAME << "--"
         "m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart:"
         << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
-        << " m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->"
-          "mp_grammarpartRightChild:"
-        << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
-          mp_grammarpartRightChild
-        << " m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->"
-          "mp_grammarpartLeftChild:"
-        << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
-          mp_grammarpartLeftChild
         )
-      //TODO SIGSEV here
-      if( //mcp_grammarpartCurrent->mp_grammarpartRightChild
-          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
-          mp_grammarpartRightChild
-        )
+      if( m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart != NULL )
       {
-//#ifdef COMPILE_WITH_LOG
-        WORD wParseTreeLevelRightChild =
-          m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel + 1 ;
-        GrammarPart * p_grammarpartRightChild =
-          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
-          mp_grammarpartRightChild ;
-        LOGN("DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree()"
-          "--Adding " << p_grammarpartRightChild
-          << "(" << mp_parsebyrise->GetGrammarPartName(
-            p_grammarpartRightChild->m_wGrammarPartID) << ",level:"
-            << wParseTreeLevelRightChild << ")"
-          )
-        //Add to process possible children of the right nodes later.
-//        m_stdvec_p_grammarpartRightNodeToProcess.push_back(
-//            mcp_grammarpartCurrent->mp_grammarpartRightChild  ) ;
-        m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.push_back(
-          GrammarPartPointerAndParseLevel(
-            p_grammarpartRightChild ,
-//            m_wParseLevel + 1
-            wParseTreeLevelRightChild
+        LOGN( " m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->"
+            "mp_grammarpartRightChild:"
+          << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+            mp_grammarpartRightChild
+          << " m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->"
+            "mp_grammarpartLeftChild:"
+          << m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+            mp_grammarpartLeftChild )
+          //TODO_ SIGSEV here
+          if( //mcp_grammarpartCurrent->mp_grammarpartRightChild
+              m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+              mp_grammarpartRightChild
             )
-          ) ;
-//#endif
-      }
-      if( //mcp_grammarpartCurrent->mp_grammarpartLeftChild
-          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
-          mp_grammarpartLeftChild  )
-      {
-        ++ m_wParseLevel ;
-//        mcp_grammarpartCurrent =
-//            mcp_grammarpartCurrent->mp_grammarpartLeftChild ;
-        m_grammarpartpointer_and_parselevelCurrent.
-          SetGrammarPartPointerAndParseLevel(
-          m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
-          mp_grammarpartLeftChild ,
-          //m_wParseLevel
-          ++ m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel
-          ) ;
-        //Can be used as a callback method in subclasses of this class to keep
-        // track of the current parse tree path:
-        //    clause
-        //   /      \  _ (if "\"= last char:g++ warning:"multi-line comment")
-        // subject verb
-        // before node "clause", now at node "subject"-> parse tree path is
-        //  "clause"->"subject" now
-        ParseTreePathAdded() ;
-      }
-      else //(Left) leave of parse tree found.
-      {
-    //          setFinalNodesOfCurrentParseLevel.insert( ) ;
-        m_stdset_p_grammarpartProcessedYet.insert(
-//            mcp_grammarpartCurrent
-            m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
-          ) ;
-        //Can be used as a callback method in subclasses of this class.
-        LOGN("DirectingLeavesMultipleIterTraverser::"
-          "ProcessLeavesOfParseTree()--LeaveFound" )
-        LeaveFound() ;
-        //The pointer may be set to NULL by TransformTreeTraverser: the tree is modified--
-        //do not continue to process, else SIGSEV in
-        //PopElementsTillNextRightChild(...) occured
-        if( m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart )
-          ProcessLastAddedRightNode() ;
+          {
+    //#ifdef COMPILE_WITH_LOG
+            WORD wParseTreeLevelRightChild =
+              m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel + 1 ;
+            GrammarPart * p_grammarpartRightChild =
+              m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+              mp_grammarpartRightChild ;
+            LOGN("DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree()"
+              "--Adding " << p_grammarpartRightChild
+              << "(" << mp_parsebyrise->GetGrammarPartName(
+                p_grammarpartRightChild->m_wGrammarPartID) << ",level:"
+                << wParseTreeLevelRightChild << ")"
+              )
+            //Add to process possible children of the right nodes later.
+    //        m_stdvec_p_grammarpartRightNodeToProcess.push_back(
+    //            mcp_grammarpartCurrent->mp_grammarpartRightChild  ) ;
+            m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.push_back(
+              GrammarPartPointerAndParseLevel(
+                p_grammarpartRightChild ,
+    //            m_wParseLevel + 1
+                wParseTreeLevelRightChild
+                )
+              ) ;
+    //#endif
+          }
+          if( //mcp_grammarpartCurrent->mp_grammarpartLeftChild
+              m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+              mp_grammarpartLeftChild  )
+          {
+            ++ m_wParseLevel ;
+    //        mcp_grammarpartCurrent =
+    //            mcp_grammarpartCurrent->mp_grammarpartLeftChild ;
+            m_grammarpartpointer_and_parselevelCurrent.
+              SetGrammarPartPointerAndParseLevel(
+              m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
+              mp_grammarpartLeftChild ,
+              //m_wParseLevel
+              ++ m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel
+              ) ;
+            //Can be used as a callback method in subclasses of this class to keep
+            // track of the current parse tree path:
+            //    clause
+            //   /      \  _ (if "\"= last char:g++ warning:"multi-line comment")
+            // subject verb
+            // before node "clause", now at node "subject"-> parse tree path is
+            //  "clause"->"subject" now
+            ParseTreePathAdded() ;
+          }
+          else //(Left) leave of parse tree found.
+          {
+        //          setFinalNodesOfCurrentParseLevel.insert( ) ;
+            m_stdset_p_grammarpartProcessedYet.insert(
+    //            mcp_grammarpartCurrent
+                m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
+              ) ;
+            //Can be used as a callback method in subclasses of this class.
+            LOGN("DirectingLeavesMultipleIterTraverser::"
+              "ProcessLeavesOfParseTree()--LeaveFound" )
+            LeaveFound() ;
+            //The pointer may be set to NULL by TransformTreeTraverser: the tree is modified--
+            //do not continue to process, else SIGSEV in
+            //PopElementsTillNextRightChild(...) occured
+            if( m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart )
+              ProcessLastAddedRightNode() ;
+          }
       }
       DEBUG_COUT ( "DrawLeavesOfParseTree--"
           << " nodes to process size="

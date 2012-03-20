@@ -22,7 +22,16 @@
 namespace ParseTreeTraverser
 {
   char * DirectingLeavesInSingleIterationTraverser::s_ar_chDirection [] =
-    { "middle", "left", "right"} ;
+    { //By explicitely casting to "(char *)" : avoid Linux g++ warning:
+      // "deprecated conversion from string constant to ‘char*’"
+      (char *) "middle",
+      //By explicitely casting to "(char *)" : avoid Linux g++ warning:
+      // "deprecated conversion from string constant to ‘char*’"
+      (char *) "left",
+      //By explicitely casting to "(char *)" : avoid Linux g++ warning:
+      // "deprecated conversion from string constant to ‘char*’"
+      (char *) "right"
+    };
   DirectingLeavesInSingleIterationTraverser::DirectingLeavesInSingleIterationTraverser(
     const GrammarPart * p_grammarpartStartNode
     , ParseByRise * p_parsebyrise
@@ -59,7 +68,7 @@ namespace ParseTreeTraverser
   //    store that person index value in the GrammarPart
   void DirectingLeavesInSingleIterationTraverser::Traverse()
   {
-    const GrammarPart * p_grammarpart = mp_grammarpartStartNode ;
+//    const GrammarPart * p_grammarpart = mp_grammarpartStartNode ;
     BeforeBeginAtRoot() ;
     TraverseParseTree() ;
 //    m_grammarpartpointer_and_parselevelCurrent = GrammarPartPointerAndParseLevel(

@@ -1395,7 +1395,7 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
 //(words are grammar part at the leaves of the parse tree)
 void ParseByRise::StoreWordTypeAndGermanTranslation(
 //  PositionstdstringVector & psv
-  PositionStringVector & psv
+  PositionStringVector & c_r_positionStringVector
   , DWORD dwTokenIndex
 //  , std::map <WORD, std::set<VocabularyAndTranslation *> *> &
 //    stdmap_wIndex2p_set_p_vocabularyandtranslation
@@ -1435,8 +1435,11 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
   bool bUnknownTokenFound = false;
   do
   {
+    LOGN( FULL_FUNC_NAME << "--current token:\"" << c_r_positionStringVector.
+      at(dwTokenIndex).m_Str << "\"" )
     p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
-      TranslationControllerBase::s_lettertree.searchAndReturnLetterNode( psv,
+      TranslationControllerBase::s_lettertree.searchAndReturnLetterNode(
+        c_r_positionStringVector,
       //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
       dwTokenIndexRightMost );
     //If the word was found.
@@ -1453,7 +1456,8 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
         break;
     }
   }
-  while( ! p_letternode && dwTokenIndexRightMost < psv.size() - 1 );
+  while( ! p_letternode && dwTokenIndexRightMost < c_r_positionStringVector.
+    size() - 1 );
   if( //dwTokenIndexRightMostUnknownToken
       bUnknownTokenFound)
   {
@@ -1462,7 +1466,7 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
       dwTokenIndex, //dwTokenIndexRightMost
       dwTokenIndexRightMostUnknownToken) ;
     p_grammarPart->SetGrammarPartID( EnglishWord::UnknownWord ) ;
-    p_grammarPart->m_stdstrTranslation = GetBetweenAsStdString( psv, dwTokenIndex,
+    p_grammarPart->m_stdstrTranslation = GetBetweenAsStdString( c_r_positionStringVector, dwTokenIndex,
         //dwTokenIndexRightMost
         dwTokenIndexRightMostUnknownToken);
     m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(

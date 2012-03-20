@@ -329,7 +329,8 @@ void TranslationRule::SetConsecutiveIDSyntaxTreePath(
     )
   {
 //    r_stdstrSyntaxTreePath += "";
-    int i = 8;
+    //Statement is for ability to set breakpoints only.
+//    int i = 8;
   }
 }
 

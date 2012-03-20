@@ -77,7 +77,7 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
 #ifdef _DEBUG
       WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
 #endif //#ifdef _DEBUG
-      WORD wConsecutiveID = 0 ;
+//      WORD wConsecutiveID = 0 ;
 
       //Loop over all parse trees beginning at token index
       //"dwLeftMostTokenIndex".
