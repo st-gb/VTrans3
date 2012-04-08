@@ -51,6 +51,8 @@ public:
   std::map<SyntaxTreePath,TransformationRule>
     m_stdmap_syntaxtreepath2transformationrule ;
   TranslateParseByRiseTree m_translateparsebyrisetree ;
+  std::string m_std_strMainConfigFilePath;
+
   virtual void CreateAndShowMainWindow() {};
   BYTE Init(const std::string & cr_stdstrFilePath) ;
   virtual void LoadingVocabularyFileFailed(
@@ -62,6 +64,14 @@ public:
     LOGN(cr_stdstr)
   }
   virtual void Message(const std::wstring & cr_stdwstr ) //= 0;
+  {
+
+  }
+  virtual void ShowInvalidVocabularyFileFormatMessage(
+    const VTrans::string_type & strWordFile,
+    DWORD dwOffsetOfBeginOfEntry,
+    DWORD dwOffset
+    )// = 0;
   {
 
   }

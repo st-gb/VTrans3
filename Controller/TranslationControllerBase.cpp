@@ -8,6 +8,7 @@
 #include <Controller/TranslationControllerBase.hpp>
 //GenerateXMLtreeFromParseTree(...)
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
+#include <IO/IO.hpp> //class OneLinePerWordPair
 #include <InputOutput/XML/OutputXMLindented.hpp> //OutputXMLindented(...)
 //class ParseTreeTraverser::TransformTreeTraverser
 #include <Translate/TransformTreeTraverser.hpp>
@@ -27,6 +28,33 @@ I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 //LetterTree VTransApp::s_lettertree ;
 LetterTree TranslationControllerBase::s_lettertree ;
 
+//#if defined __cplusplus
+//extern "C" {
+//#endif
+
+void MakeFemale(std::string & r_stdstr )
+{
+  //e.g. "klein" E
+  r_stdstr += "e";
+}
+
+void MakeMale(std::string & r_stdstr )
+{
+  //e.g. "klein" "ER"
+  r_stdstr += "er";
+}
+
+//e.g. "klein" "ES"
+void MakeNeutral(std::string & r_stdstr )
+{
+  //e.g. "klein" "ES"
+  r_stdstr += "es";
+}
+
+//#if defined __cplusplus
+//}
+//#endif
+
 TranslationControllerBase::TranslationControllerBase()
   :
 //  m_parsebyrise( * this ) ,
@@ -37,6 +65,20 @@ TranslationControllerBase::TranslationControllerBase()
     )
 {
 //  m_nodetrie_ui32GrammarPartName2colour.Create(256);
+  OneLinePerWordPair::s_p_userinterface = this;
+
+  std::string std_str = "makeFemale";
+  ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
+    std::make_pair(std_str, //(pfnTransformString)
+    & MakeFemale) );
+  std_str = "makeMale";
+  ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
+    //"makeFemale"
+    std::make_pair(std_str, & MakeMale) );
+  std_str = "makeNeutral";
+  ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
+    //"makeFemale",
+    std::make_pair(std_str, & MakeNeutral) );
 }
 
 TranslationControllerBase::~TranslationControllerBase()
@@ -65,6 +107,7 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   SyntaxTreePath::sp_userinterface = this ;
   s_lettertree.InsertFundamentalWords() ;
   ReadMainConfigFile(cr_stdstrFilePath) ;
+  m_std_strMainConfigFilePath = cr_stdstrFilePath;
   if( m_stdstrVocabularyFilePath.empty() )
   {
     Message( "error: The vocabulary file path is empty") ;

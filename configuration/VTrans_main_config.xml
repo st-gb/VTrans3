@@ -35,6 +35,11 @@
  <translation_rule_file path="configuration/translation_rules/3rdPersSing_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSingClauseAllows0Obj_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePresentClause.xml" />
+ 
+ <translation_rule_file path="configuration/translation_rules/definiteArticleTranslationRules.xml" />
+ <translation_rule_file path="configuration/translation_rules/definiteArticleWithAdjectiveTranslationRules.xml" />
+ <translation_rule_file path="configuration/translation_rules/indefiniteArticleTranslationRules.xml" />
+ 
  <translation_rule_file path="configuration/translation_rules/object_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/personal_pronouns_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/translation_rules.xml" />

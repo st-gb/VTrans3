@@ -2,13 +2,18 @@
 
 #include <string>
 #include "../AutomDelWord.hpp"
-  //use a relative path, else "VC/include/IO.h" is used
-  #include <IO/IO.hpp> //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
+//  //use a relative path, else "VC/include/IO.h" is used
+//  #include <IO/IO.hpp>
+  //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
+  #include <IO/word_class_characters.h>
 
   #define BIT_POSITION_FOR_TRANSLATION_TYPE 2
 
   //#define WORD_TYPE_NOUN '1'
   //#define WORD_TYPE_MAIN_VERB '2' //Vollverb
+  //Positive, comparative, superlative : e.g. "good", "better", "best"
+  #define NUMBER_OF_STRINGS_FOR_ENGLISH_ADJECTIVE 3
+  #define NUMBER_OF_STRINGS_FOR_GERMAN_ADJECTIVE 3
   #define NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB 1
   #define NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB 1
   #define NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN 2 //2 strings: singular and plural
@@ -35,29 +40,20 @@ class I_UserInterface;
     } ;
 
 
-  struct ArraySizes
-  {
-    unsigned char m_byArraySizeForEnglishWord;
-    unsigned char m_byArraySizeForGermanWord;
-    unsigned char m_byArraySizeForByteArray;
-  };
-  static const ArraySizes s_arraysizes [] = {
-    //noun
-    {NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN,NUMBER_OF_STRINGS_FOR_GERMAN_NOUN,2},
-    //main verb
-    {NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB,
-    NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB, 2},
-    //adverb:
-    {NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB,
-    NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB, 0}
-  };
-
 //  BYTE g_arbyWordType2ArraySizeIndex [100];
 
   //This class stands for a pair of English and German vocabulary.
   class VocabularyAndTranslation
   {
   public:
+    struct ArraySizes
+    {
+      unsigned char m_byArraySizeForEnglishWord;
+      unsigned char m_byArraySizeForGermanWord;
+      unsigned char m_byArraySizeForByteArray;
+    };
+    static const ArraySizes s_arraysizes [];
+
     static I_UserInterface * s_p_userinterface;
 //    struct ArraySizes
 //    {
@@ -130,6 +126,7 @@ class I_UserInterface;
     //std::string * m_arstrGermanWord ;
     VTrans::string_type * m_arstrGermanWord ;
     //LetterNode * m_arpletternodeBeginOfWord ;
+
     VocabularyAndTranslation(
       BYTE byType,
       //const

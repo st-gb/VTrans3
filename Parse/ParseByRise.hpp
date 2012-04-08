@@ -206,6 +206,7 @@ public:
   inline void InsertGrammarRuleNamesForAuxiliaryVerbToBe();
   inline void InsertGrammarRuleNamesForObjectFormPersonalPronouns();
   inline void InsertGrammarRuleNamesForPersonalPronouns();
+  inline void InsertGrammarRuleNamesForPossessiveAdjectives();
   inline void InsertGrammarRuleNamesForReflexivePronouns();
 
   void InsertFundamentalRuleIDs() ;

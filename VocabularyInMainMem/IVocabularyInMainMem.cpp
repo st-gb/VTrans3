@@ -40,17 +40,21 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbBe()
 //  germanverbSein.m_bCase = GermanVerb::nominative ;
 //  germanverbSein.m_bMove = 0 ;
 
-  void * p_v = Insert("am", EnglishWord:://be1stPersonSingular
+  //void * p_v
+  VocabularyAndTranslation * p_vocabularyandtranslation = Insert("am",
+    EnglishWord:://be1stPersonSingular
 //      auxiliary_verb
     am
     //, p_v
     ) ;
-  p_v = Insert("are", EnglishWord:://be1stPersonSingular
+  //p_v
+  p_vocabularyandtranslation = Insert("are", EnglishWord:://be1stPersonSingular
 //      auxiliary_verb
     are
     //, p_v
     ) ;
-  p_v = Insert("is", EnglishWord:://be1stPersonSingular
+  //p_v
+  p_vocabularyandtranslation = Insert("is", EnglishWord:://be1stPersonSingular
 //      auxiliary_verb
     is
     //, p_v
@@ -74,15 +78,17 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbHave()
 //  germanverbHaben.m_bCase = GermanVerb::nominative ;
 //  germanverbHaben.m_bMove = 0 ;
 
-  void * p_v = Insert("have", EnglishWord:://have2ndPersonSingular
-      //haveInfinitive
+  //void * p_v
+  VocabularyAndTranslation * p_vocabularyandtranslation = Insert("have",
+      EnglishWord:://haveInfinitive
       auxiliary_verb
       );//, p_v) ;
-  VocabularyAndTranslation * p_vocabularyandtranslation =
-      (VocabularyAndTranslation *) p_v;
+//  VocabularyAndTranslation * p_vocabularyandtranslation =
+//      (VocabularyAndTranslation *) p_v;
   p_vocabularyandtranslation->m_byType = EnglishWord::haveInfinitive;
   //void * p_v =
-      Insert(englishauxiliaryverbHave,germanverbHaben, p_v) ;
+    Insert(englishauxiliaryverbHave,germanverbHaben, //p_v
+      p_vocabularyandtranslation) ;
 }
 
 //Insert the words that are fundamental and thus needn't/ shouldn't stand in

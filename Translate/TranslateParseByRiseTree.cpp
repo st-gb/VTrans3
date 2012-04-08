@@ -194,7 +194,7 @@ void TranslateParseByRiseTree::AddTranslationRule(
 }
 
 void TranslateParseByRiseTree::AddTranslationRule(
-  TranslationRule * p_tr,
+  TranslationRule * p_translationrule,
   const ConditionsAndTranslation & rc_cnt
   //const std::string & r_stdstrGermanTranslation
   //  subject.def_article_noun.noun.German_gender]"
@@ -209,13 +209,13 @@ void TranslateParseByRiseTree::AddTranslationRule(
       ( //tr
         //Create here, else ar_wElements is deleted in TranslationRule d'tor?!
         //TranslationRule(ar_wElements, vec_wElements.size() )
-        p_tr , rc_cnt
+        p_translationrule , rc_cnt
       )
       ) ;
     m_stdmap_translationrule2ConditionsAndTranslation.insert(
       std::pair<TranslationRule,ConditionsAndTranslation>
         (
-          *p_tr , rc_cnt
+          *p_translationrule , rc_cnt
         )
       ) ;
 
@@ -250,7 +250,8 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
   WORD wLenght
   )
 {
-  DEBUGN("TranslateParseByRiseTree::AddVocAndTranslDefinition("
+  DEBUGN( //"TranslateParseByRiseTree::AddVocAndTranslDefinition("
+    FULL_FUNC_NAME
     << r_stdstrWordClass << ","
     << r_stdstrWordClassAndAttributeName )
   WORD wGrammarPartID ;
@@ -258,7 +259,8 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
   if( mp_parsebyrise->GetGrammarPartID(r_stdstrWordClass,wGrammarPartID) )
   {
     DEBUGN("Found GetGrammarPartID for word class" << r_stdstrWordClass )
-    AttributeTypeAndPosAndSize attributetypeandposandsize( byType, wIndex,
+    AttributeTypeAndPosAndSize attributetypeandposandsize(
+      byType, wIndex,
       wLenght, wGrammarPartID, byLanguage) ;
     m_stdmap_AttrName2VocAndTranslAttrDef.insert(
       std::pair<std::string, AttributeTypeAndPosAndSize>
@@ -271,11 +273,12 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
 //#ifdef _DEBUG
   else
   {
-      mr_i_userinterface.Message(
-        "For inserting voc attr def.: word class \"" + r_stdstrWordClass
-        + "\" is not avaible");
-    DEBUGN("Couldn't find GetGrammarPartID for word class"
-      << r_stdstrWordClass )
+    mr_i_userinterface.Message(
+      "For inserting voc attr def.: word class \"" + r_stdstrWordClass
+      + "\" is not avaible");
+    DEBUGN( FULL_FUNC_NAME
+      << "--Couldn't find GetGrammarPartID for word class \""
+      << r_stdstrWordClass << "\"")
   }
 //#endif
 }
@@ -402,6 +405,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
   , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
   )
 {
+  LOGN( FULL_FUNC_NAME << "--begin" )
   bool bAllConditionsMatch = false ;
   std::string stdstr ;
 //  int i = 0 ;
@@ -556,7 +560,7 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   mp_parsebyrise = & r_parsebyrise ;
   ConditionsAndTranslation::sp_parsebyrise = & r_parsebyrise ;
   ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef =
-      & m_stdmap_AttrName2VocAndTranslAttrDef ;
+    & m_stdmap_AttrName2VocAndTranslAttrDef ;
 
 //  AddDefiniteArticleNounTranslationRules() ;
 //  AddPersonalPronounTranslationRules() ;
@@ -677,8 +681,9 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 //
 //}
 
-void TranslateParseByRiseTree::FreeMemoryForTranslationRule()
+void TranslateParseByRiseTree::FreeMemoryForTranslationRules()
 {
+  LOGN( FULL_FUNC_NAME << "--begin" )
 //  std::multimap<TranslationRule,ConditionsAndTranslation> &
 //    r_stdmmap_translationrule2conditionsandtranslation =
 //    //wxGetApp().m_translateparsebyrisetree.
@@ -704,7 +709,7 @@ void TranslateParseByRiseTree::FreeMemoryForTranslationRule()
   m_stdmap_p_translationrule2ConditionsAndTranslation.clear() ;
 
   m_std_multimapConcatenationID2p_translationrule.clear();
-
+  LOGN( FULL_FUNC_NAME << "--end" )
 }
 
 std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
@@ -1167,24 +1172,27 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
             r_stdvec_wCurrentGrammarPartPath ) ;
           LOGN("All conditions match for STP \"" << stdstrCurrentParseTreePath
             << "\"" )
+          WORD wNumberOfElements = p_translationrule->
+            m_syntaxtreepathInsertionForTranslation.m_wNumberOfElements;
+          LOGN( FULL_FUNC_NAME << "All conditions match for STP \"" << stdstrCurrentParseTreePath
+            << "\"" )
            //std::string str =
-          if(p_translationrule->m_syntaxtreepathInsertionForTranslation.
-              m_wNumberOfElements > 0)
+          if( wNumberOfElements > 0)
           {
-              p_translationrule->Insert(r_stdvec_p_grammarpartPath,
+            p_translationrule->Insert(r_stdvec_p_grammarpartPath,
 //                  r_stdstrTranslation
-                  r_cnt.m_stdstrGermanTranslation);
+              r_cnt.m_stdstrGermanTranslation);
           }
           else
           {
-              if( r_stdstrTranslation != "" )
-                r_stdstrTranslation += "|";
-               r_stdstrTranslation += //GetTranslationEquivalent(
-                  //r_cnt ,
-                  //r_stdvec_p_grammarpartPath
-    //              ) ;
-                  r_cnt.GetTranslationEquivalent(
-                    r_stdvec_p_grammarpartPath.back() ) ;
+            if( r_stdstrTranslation != "" )
+              r_stdstrTranslation += "|";
+             r_stdstrTranslation += //GetTranslationEquivalent(
+                //r_cnt ,
+                //r_stdvec_p_grammarpartPath
+  //              ) ;
+                r_cnt.GetTranslationEquivalent(
+                  r_stdvec_p_grammarpartPath.back() ) ;
 
 //             std::vector<GrammarPart * >::const_reverse_iterator
 //               c_rev_iter_p_grammarpart
@@ -1251,6 +1259,6 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 TranslateParseByRiseTree::~TranslateParseByRiseTree()
 {
   LOGN("begin of ~TranslateParseByRiseTree\n")
-  FreeMemoryForTranslationRule() ;
+  FreeMemoryForTranslationRules() ;
   LOGN("end of ~TranslateParseByRiseTree\n")
 }

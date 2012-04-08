@@ -27,6 +27,7 @@ enum
   ID_ResolveSuperclass ,
   ID_Resolve1ParseLevel ,
   ID_Translate ,
+  ID_TruncateLogFile,
   ID_Info
 };
 

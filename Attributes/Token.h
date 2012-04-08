@@ -1,29 +1,18 @@
 #if !defined (TOKEN_H_INCLUDED)
 	    #define TOKEN_H_INCLUDED
 
-  #include <vector>
+  #include <vector> //class std::vector
   #include <string>
-  #include "rest.h" //for VTrans_string_typeVector etc.
+//  #include "rest.h" //for VTrans_string_typeVector etc.
   #include <Controller/string_type.hpp> //typedef VTrans::string_type
   //#ifndef _WINDOWS
   //	#include <typedefs.h> //for DWORD etc.
   //	#include <StdString.h> //for class compatible to MFC's "CString"  
   //#endif//#ifndef _WINDOWS
 
-  class PositionString
-  {
-  public:
-	  BYTE m_color;
-	  DWORD m_dwLength;
-	  DWORD m_dwStart;
-	  VTrans::string_type m_Str;
-	  PositionString(VTrans::string_type str,DWORD dwStart,DWORD dwLength)
-	  {
-		  m_Str=str;
-		  m_dwStart=dwStart;
-		  m_dwLength=dwLength;
-	  };
-  };
+  #include <Attributes/PositionString.hpp>
+
+  typedef std::vector<VTrans::string_type> VTrans_string_typeVector;
 
   //Use std::string to be more (Linux) compiler compatible.
   class Positionstdstring
@@ -45,7 +34,6 @@
 	  };
   }; // end class class Positionstdstring
 
-  typedef	std::vector<PositionString> PositionStringVector;
   //Use std::string to be more (Linux) compiler compatible.
   typedef	std::vector<Positionstdstring> PositionstdstringVector;
 

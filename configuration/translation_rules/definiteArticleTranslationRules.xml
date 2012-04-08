@@ -1,0 +1,38 @@
+<translation_rules>
+
+  <!--concatenate both translations (if selecting "der" in a choice control 
+    the translation for the finite verb of have should be also selected)-->
+  <concatenated_translation_rules>
+	  <!--definite article singular-->
+	  <translation_rule 
+		syntax_tree_path="definite_article_singular.definite_article"
+		translation="der">
+		<condition syntax_tree_path="definite_article_singular.singular_noun"
+		  attribute_name="German_noun_article"
+		  byte_attribute_value="0"
+		/>
+	  </translation_rule>
+	  <translation_rule 
+		syntax_tree_path="definite_article_singular.singular_noun"
+		attribute_name="German_singular"
+	  />
+  </concatenated_translation_rules>
+
+  <translation_rule 
+    syntax_tree_path="definite_article_singular.definite_article"
+    translation="die">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="definite_article_singular.definite_article"
+    translation="das">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+  </translation_rule>
+  
+</translation_rules>

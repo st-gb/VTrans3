@@ -16,18 +16,38 @@
 
 #define SET_FREED_MEM_TO_NULL
 
+  const VocabularyAndTranslation::ArraySizes VocabularyAndTranslation::
+    s_arraysizes [] = {
+      //noun
+      { NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN, NUMBER_OF_STRINGS_FOR_GERMAN_NOUN, 2},
+      //main verb
+      { NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB,
+        NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB, 2},
+      //adverb:
+      { NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB,
+        NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB, 0} ,
+      //adjective:
+      { NUMBER_OF_STRINGS_FOR_ENGLISH_ADJECTIVE,
+        NUMBER_OF_STRINGS_FOR_GERMAN_ADJECTIVE, 0}
+    };
+
 VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
 {
   m_byType = byVocabularyType ;
   BYTE byArraySizeForEng = 0 ;
 
   //BYTE byArraySizeForGer = 0 ;
+
+  //Map grammar part IDs/ classes to word classes.
   switch(byVocabularyType)
   {
   case //ENGLISH_NOUN:
     EnglishWord::noun:
   case EnglishWord::adverb:
 //    m_pword = new EnglishNoun() ;
+    break;
+  case EnglishWord::adjective_positiveForm:
+    byVocabularyType = EnglishWord::adjective;
     break;
   case EnglishWord::auxiliary_verb:
     m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
@@ -70,8 +90,11 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     m_arbyAttribute = NULL ;
   }
 
+
   if( byVocabularyType <= EnglishWord:://auxiliary_verb
-      adverb)
+//      adverb
+      adjective
+      )
   {
     const ArraySizes & c_r_arraysizes = s_arraysizes[byVocabularyType];
     byArraySizeForEng = c_r_arraysizes.m_byArraySizeForEnglishWord ;
@@ -82,6 +105,7 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     m_arbyAttribute = new BYTE[c_r_arraysizes.m_byArraySizeForByteArray] ;
     memset(m_arbyAttribute,0,c_r_arraysizes.m_byArraySizeForByteArray) ;
   }
+
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   m_arpletternodeLastEngChar = new LetterNode * [byArraySizeForEng];
 #endif// #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
@@ -110,6 +134,7 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
   case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
   case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent :
   case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent :
+  case EnglishWord::adjective_positiveForm:
     break ;
   default:
     DEBUG_COUTN("freeing voc type" << (WORD) m_byType)

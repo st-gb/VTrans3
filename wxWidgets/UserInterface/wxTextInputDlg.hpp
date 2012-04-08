@@ -27,6 +27,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 //Forward declarations (faster than #include)
+class TranslationControllerBase;
 class TranslationAndGrammarPart ;
 //class wxHtmlWindow ;
 class wxBoxSizer ;
@@ -42,8 +43,10 @@ class wxTextCtrl ;
 class wxTextInputDlg
   : public wxDialog
 {
-	private:
+private:
   wxButton * mp_wxbutton ;
+  TranslationControllerBase & m_translationcontrollerbase;
+
   void AddButtons() ;
   void AddAddGrammarRulesButton( wxSizer * p_sizer ) ;
   void AddDrawParseTreeButton(wxSizer * p_sizer ) ;
@@ -59,56 +62,48 @@ class wxTextInputDlg
   void AddResolveSuperClassesButton( wxSizer * p_sizer ) ;
   void AddShowInformationButton( wxSizer * p_sizer ) ;
   void AddTranslateButton( wxSizer * p_sizer ) ;
-	protected:
-//  wxHtmlWindow * mp_wxhtmlwindow ;
-//  wxWebKitCtrl * mp_wxwebkitctrl;
-//    ParseByRise m_parsebyrise ;
-    ParseByRise & m_parsebyrise ;
-    wxBoxSizer * p_boxsizerOuter ;
-		wxTextCtrl * mp_textctrlEnglishText;
-//		wxTextCtrl * mp_textctrlGermanText ;
-		wxGermanTranslationPanel * m_p_wxgermantranslationpanel;
-		//wxPanel * mp_wxparsetreepanel;
-		wxParseTreePanel * mp_wxparsetreepanel;
-//    wxPanel * mp_wxpanelTop;
-    wxSplitterWindow * mp_wxsplitterwindow ;
-	
-	public:
-		wxTextInputDlg(
-		  wxWindow * p_wxwindowParent,
-		  wxWindowID wxwindow_id = wxID_ANY,
-		  const wxString & cr_wxstrTitle = wxEmptyString,
-		  const wxPoint & cr_wxpointWindowPosition = wxDefaultPosition,
-		  const wxSize & cr_wxsizeWindow = wxSize( 690,557 ),
-		  long lStyle = wxCLOSE_BOX | wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER
-		  );
-		~wxTextInputDlg();
-
-  std::string  GetAllTranslationPossibilites(
-    const std::vector<std::string> & stdvec_stdstrWholeTransl ,
-    const std::vector<std::vector<TranslationAndGrammarPart> > &
-      stdvec_stdvecTranslationAndGrammarPart
-    ) ;
-  //std::string
-		void GetEntireInputText(std::string & r_stdstrInputText) ;
-  void OnAddGrammarRules( wxCommandEvent & wxcmd ) ;
-  void OnAddTransformationRules( wxCommandEvent & wxcmd ) ;
-	void OnAddTranslationRules( wxCommandEvent & wxcmd ) ;
-	void OnAddVocAttrDefs( wxCommandEvent & wxcmd ) ;
-	void OnClose( wxCloseEvent & wxcmd ) ;
-  void OnDrawParseTreeButton( wxCommandEvent & wxcmd ) ;
-	void OnInfoButton( wxCommandEvent & wxcmd ) ;
-	void OnLoadDictionaryButton(wxCommandEvent & wxcmd ) ;
-	void OnReInitGrammarRulesButton( wxCommandEvent & wxcmd ) ;
-	void OnRemoveGrammarRules( wxCommandEvent & wxcmd ) ;
-  void OnRemoveTransformationRules( wxCommandEvent & wxcmd ) ;
-	void OnRemoveTranslationRules( wxCommandEvent & wxcmd ) ;
-	void OnRemoveVocAttrDefs( wxCommandEvent & wxcmd ) ;
-	void OnResolveSuperclassGrammarParts( wxCommandEvent & wxcmd ) ;
-	void OnResolve1ParseLevelButton( wxCommandEvent & wxcmd ) ;
-	void OnShowTokenIndex2GrammarPartButton( wxCommandEvent & wxcmd ) ;
-  void OnTranslateButton( wxCommandEvent & wxcmd ) ;
-  //Neccessary in order to get scroll events; to avoid compilation errors.
+  void AddTruncateLogFileButton( wxSizer * p_sizer ) ;
+  void AddReInitializeGrammarButton(wxSizer * p_wxsizer);
+protected:
+    ParseByRise & m_parsebyrise;
+    wxBoxSizer * p_boxsizerOuter;
+    wxTextCtrl * mp_textctrlEnglishText;
+    wxGermanTranslationPanel * m_p_wxgermantranslationpanel;
+    wxParseTreePanel * mp_wxparsetreepanel;
+    wxSplitterWindow * mp_wxsplitterwindow;
+public:
+    wxTextInputDlg(
+      wxWindow * p_wxwindowParent,
+      TranslationControllerBase & r_translationcontrollerbase,
+      wxWindowID wxwindow_id = wxID_ANY,
+      const wxString & cr_wxstrTitle = wxEmptyString,
+      const wxPoint & cr_wxpointWindowPosition = wxDefaultPosition,
+      const wxSize & cr_wxsizeWindow = wxSize(690, 557),
+      long  lStyle = wxCLOSE_BOX | wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    ~wxTextInputDlg();
+    std::string GetAllTranslationPossibilites(
+      const std::vector<std::string> & stdvec_stdstrWholeTransl,
+      const std::vector<std::vector<TranslationAndGrammarPart> > &
+        stdvec_stdvecTranslationAndGrammarPart);
+    void GetEntireInputText(std::string & r_stdstrInputText);
+    void OnAddGrammarRules(wxCommandEvent & wxcmd);
+    void OnAddTransformationRules(wxCommandEvent & wxcmd);
+    void OnAddTranslationRules(wxCommandEvent & wxcmd);
+    void OnAddVocAttrDefs(wxCommandEvent & wxcmd);
+    void OnClose(wxCloseEvent & wxcmd);
+    void OnDrawParseTreeButton(wxCommandEvent & wxcmd);
+    void OnInfoButton(wxCommandEvent & wxcmd);
+    void OnLoadDictionaryButton(wxCommandEvent & wxcmd);
+    void OnReInitGrammarRulesButton(wxCommandEvent & wxcmd);
+    void OnRemoveGrammarRules(wxCommandEvent & wxcmd);
+    void OnRemoveTransformationRules(wxCommandEvent & wxcmd);
+    void OnRemoveTranslationRules(wxCommandEvent & wxcmd);
+    void OnRemoveVocAttrDefs(wxCommandEvent & wxcmd);
+    void OnResolveSuperclassGrammarParts(wxCommandEvent & wxcmd);
+    void OnResolve1ParseLevelButton(wxCommandEvent & wxcmd);
+    void OnShowTokenIndex2GrammarPartButton(wxCommandEvent & wxcmd);
+    void OnTranslateButton(wxCommandEvent & wxcmd);
+    void OnTruncateLogFileButton( wxCommandEvent & wxcmd );
   DECLARE_EVENT_TABLE()
 };
 

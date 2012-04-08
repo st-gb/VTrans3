@@ -1,8 +1,16 @@
 <translation_rules>
+
+  <!-- _subject_ enumeration element -->
+  <translation_rule 
+    syntax_tree_path="singular_noun"
+    attribute_name="German_singular"
+  />
+  
   <translation_rule 
     syntax_tree_path="*.and"
     translation="und">
   </translation_rule>
+  
   <!--<translation_rule 
     syntax_tree_path="*.plural_noun"
     attribute_name="German_plural"

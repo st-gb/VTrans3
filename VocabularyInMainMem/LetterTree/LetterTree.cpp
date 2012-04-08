@@ -352,7 +352,9 @@ Word * LetterTree::GetPreviousOccurance(
  }
 
    //void
-   void * LetterTree::Insert(const std::string & stdstr, BYTE byWordClass )
+//   void *
+   VocabularyAndTranslation * LetterTree::Insert(const std::string & stdstr,
+       BYTE byWordClass )
    {
      bool bInsertNewVocabularyAndTranslation = true ;
 //     LetterNode * pletternode ;
@@ -375,23 +377,25 @@ Word * LetterTree::GetPreviousOccurance(
        , stdstr.length() // int nLength
        , 0 //int nIndexOf1stChar
        ) ;
-     return (void *) s_pvocabularyandtranslation;
+     return //(void *)
+       s_pvocabularyandtranslation;
    }
 
    void
 //   VocabularyAndTranslation *
    //void *
    LetterTree::Insert(
-       EnglishWord & ew , GermanWord & gw, void * p_v
+       EnglishWord & ew , GermanWord & gw, //void * p_v
+       VocabularyAndTranslation * p_vocabularyandtranslation
        )
    {
 //     bool bInsertNewVocabularyAndTranslation = true ;
      std::string stdstr ;
      std::set<LetterNode *> stdsetpletternodeLastStringChar ;
      ew.InitGetNextString() ;
-     VocabularyAndTranslation * p_vocabularyandtranslation = //new
-//         VocabularyAndTranslation(ew.GetWordClass() );
-       (VocabularyAndTranslation *) p_v;
+//     VocabularyAndTranslation * p_vocabularyandtranslation = //new
+////         VocabularyAndTranslation(ew.GetWordClass() );
+//       (VocabularyAndTranslation *) p_v;
      unsigned uiIndex = 0;
      while( ew.GetNextString(stdstr) )
      {
@@ -410,6 +414,9 @@ Word * LetterTree::GetPreviousOccurance(
      uiIndex = 0;
      while( gw.GetNextString(stdstr) )
      {
+#ifdef _DEBUG
+         const char * p_ch = stdstr.c_str();
+#endif
          p_vocabularyandtranslation->m_arstrGermanWord[uiIndex] = stdstr;
          ++ uiIndex;
      }
@@ -418,12 +425,14 @@ Word * LetterTree::GetPreviousOccurance(
    }
 
    void LetterTree::Insert(const char * c_p_ch, unsigned uiGrammarPartID,
-       void * p_v)
+     //void * p_v
+     VocabularyAndTranslation * p_vocabularyandtranslationPointTo
+     )
    {
-     if( p_v)
+//     if( p_v)
      {
-       VocabularyAndTranslation * p_vocabularyandtranslationPointTo =
-           (VocabularyAndTranslation *) p_v;
+//       VocabularyAndTranslation * p_vocabularyandtranslationPointTo =
+//           (VocabularyAndTranslation *) p_v;
        LetterNode * p_letternode = insert(
          //std::string(
            c_p_ch //)
@@ -457,7 +466,7 @@ Word * LetterTree::GetPreviousOccurance(
      }
    }
 
-   void LetterTree::Insert3rdPersonSingularPresentReferringNounAttributes(
+   void LetterTree::Insert3rdPersonSingularPresentReferringVerbAttributes(
      //This set is to ensure that if strings for the SAME vocabulary
      // not 2 or more VocAndTransl object should be inserted.
      std::set<LetterNode *> & stdsetpletternodeLastStringChar
@@ -504,8 +513,6 @@ Word * LetterTree::GetPreviousOccurance(
        //g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
        InsertIntoTrieAndHandleVocabularyAndTranslation(
          stdsetpletternodeLastStringChar
-         //, LetterNode * pletternodeCurrent
-         //, VocabularyAndTranslation * pvocabularyandtranslation
          , bDoInsertNewVocabularyAndTranslation
 //         , s_bDoInsertNewVocabularyAndTranslation
          , byVocType
@@ -546,6 +553,11 @@ void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
   , int nIndexOf1stChar
   )
 {
+#ifdef _DEBUG
+  std::string std_strWord = str.substr(nIndexOf1stChar, nLength);
+  LOGN( FULL_FUNC_NAME << "--token to insert into trie/ letter tree: " <<
+    std_strWord)
+#endif //#ifdef _DEBUG
 //  LetterNode * p_letternodeLastForInsertedWord ;
   //If the singular and the plural are identical: add only once to
   //the "trie" structure/ add only 1 VocabularyAndTranslation to the
@@ -901,120 +913,6 @@ void LetterTree::InsertSingularNounReferringNounAttributes(
   //last LetterNode.
 //  bInsertNewVocabularyAndTranslation = false ;
 }
-
-  //Called by a GLR (created by bison parser generator; similar to yacc)
-  //lexer.
-  //std::set<VocabularyAndTranslation *> *
-  bool LetterTree::IsPlural(
-    const PositionStringVector & psv ,
-//    const PositionstdstringVector & psv ,
-    DWORD & r_dwTokenIndex,
-    std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
-    )
-  {
-    bool bIsPlural = false ;
-    r_setpvocabularyandtranslation.empty() ;
-    std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
-      NULL ;
-    //std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
-    //psetpvocabularyandtranslation = search( psv, i2 );
-    //return ContainsWordClass(WORD_TYPE_NOUN,psetpvocabularyandtranslation)
-      //TODO at this point I merke: It would be intelligent to save schon
-      //within a VocabularyAndTranslation for which string of it the
-      //letternode has a reference to this VocabularyAndTranslation.
-      //Else I would have to compare the string with the part of the psv
-      //(I highly accumulated this would be a waste of computing time).
-      //This would mean to store the address of the last letter node
-      //in a member of a VocabularyAndTranslation element?
-      //&& issingular(psetpvocabularyandtranslation);
-
-    LetterNode * p_letternode = searchAndReturnLetterNode( psv,
-      r_dwTokenIndex );
-    psetpvocabularyandtranslation = p_letternode->
-      m_psetpvocabularyandtranslation ;
-
-    //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
-    //  setpvocabularyandtranslation);
-    //Loop for all vocabularies having at least 1 word that
-    //equals the current token.
-    for(std::set<VocabularyAndTranslation *>::iterator iter =
-      psetpvocabularyandtranslation->begin() ; iter !=
-      psetpvocabularyandtranslation->end() ; iter ++ )
-    {
-      //TODO there may be more possibilities (e.g. if spelling for a noun
-      //and verb are identical, e.g. the >>heating<<, I am >>heating<<.
-      if((*iter)->m_byType == WORD_TYPE_NOUN &&
-        //(*iter)->m_arstrEnglishWord[0] ==
-        (*iter)->m_arpletternodeLastEngChar[ ARRAY_INDEX_FOR_PLURAL ]
-        == p_letternode
-        )
-      {
-        r_setpvocabularyandtranslation.insert(*iter);
-        bIsPlural = true ;
-      }
-    }
-    return bIsPlural ;
-  }//IsPlural(...)
-
-  //Called by a GLR (created by bison parser generator; similar to yacc)
-  //lexer.
-  //std::set<VocabularyAndTranslation *> *
-  bool LetterTree::IsSingular(
-    const PositionStringVector & psv ,
-//    const PositionstdstringVector & psv ,
-    DWORD & r_dwTokenIndex,
-    std::set<VocabularyAndTranslation *> & r_setpvocabularyandtranslation
-    )
-  {
-    bool bIsSingular = false ;
-    r_setpvocabularyandtranslation.empty() ;
-    std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
-      NULL ;
-    //std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
-    //psetpvocabularyandtranslation = search( psv, i2 );
-    //return ContainsWordClass(WORD_TYPE_NOUN,psetpvocabularyandtranslation)
-      //TODO at this point I merke: It would be intelligent to save schon
-      //within a VocabularyAndTranslation for which string of it the
-      //letternode has a reference to this VocabularyAndTranslation.
-      //Else I would have to compare the string with the part of the psv
-      //(I highly accumulated this would be a waste of computing time).
-      //This would mean to store the address of the last letter node
-      //in a member of a VocabularyAndTranslation element?
-      //&& issingular(psetpvocabularyandtranslation);
-
-    LetterNode * p_letternode = searchAndReturnLetterNode( psv,
-      r_dwTokenIndex );
-    //If the word was found.
-    if( p_letternode )
-    {
-      psetpvocabularyandtranslation = p_letternode->
-        m_psetpvocabularyandtranslation ;
-      if( psetpvocabularyandtranslation )
-      {
-        //GetVocabulariesContainingWordClass(psetpvocabularyandtranslation,
-        //  setpvocabularyandtranslation);
-        //Loop for all vocabularies having at least 1 word that
-        //equals the current token.
-        for(std::set<VocabularyAndTranslation *>::iterator iter =
-          psetpvocabularyandtranslation->begin() ; iter !=
-          psetpvocabularyandtranslation->end() ; iter ++ )
-        {
-          //TODO there may be more possibilities (e.g. if spelling for a noun
-          //and verb are identical, e.g. the >>heating<<, I am >>heating<<.
-          if((*iter)->m_byType == WORD_TYPE_NOUN &&
-            //(*iter)->m_arstrEnglishWord[0] ==
-            (*iter)->m_arpletternodeLastEngChar[ ARRAY_INDEX_FOR_SINGULAR ]
-            == p_letternode
-            )
-          {
-            r_setpvocabularyandtranslation.insert(*iter);
-            bIsSingular = true ;
-          }
-        }
-      }
-    }
-    return bIsSingular ;
-  }//IsSingular(...)
 
 //!How it works:
 //! use an "auxiliary dynamic data structure specifically for iterative 

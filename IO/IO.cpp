@@ -31,6 +31,8 @@
 //LetterTree g_lettertree ;
 //Static variables need also to be declared in the source file.
 LetterTree * OneLinePerWordPair::s_p_lettertree ;
+I_UserInterface * OneLinePerWordPair::s_p_userinterface;
+
 //extern LetterTree & g_lettertree ;
 
 DWORD OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
@@ -91,11 +93,12 @@ DWORD OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
 ////  bInsertNewVocabularyAndTranslation = false ;
 //  }
 
-void OneLinePerWordPair::InsertEnglishNoun(
+BYTE OneLinePerWordPair::InsertEnglishNoun(
   const std::string & strCurrentWordData
   , BYTE byVocabularyType
   )
 {
+  BYTE byRet = 1;
   bool bInsertNewVocabularyAndTranslation = true ;
   //This set is to ensure that if strings for the SAME vocabulary
   // not 2 or more VocAndTransl object should be inserted.
@@ -290,6 +293,7 @@ void OneLinePerWordPair::InsertEnglishNoun(
                     ASCII_CODE_FOR_DIGIT_1 ) ;
 #endif //#ifdef _INSERT_INTO_HASH_TREE
               bCorrect = true ;
+              byRet = 0;
               break;
           }
           //if(str[i]>48)
@@ -320,6 +324,7 @@ void OneLinePerWordPair::InsertEnglishNoun(
     //}//char != '9'
   }
   //ASSERT(g_lettertree.m_pletternodeRoot->m_psetpvocabularyandtranslation==NULL) ;
+  return byRet;
 }
 
 void OneLinePerWordPair::InsertEnglishMainVerb(
@@ -371,53 +376,32 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
           #endif
           stdstrInfinitive = strCurrentWordData.substr(
             nIndexOf1stWordChar , nIndexOfCurrentChar - nIndexOf1stWordChar ) ;
+
+          BYTE byGrammarPartID = 0;
           switch( byNumberOfObjectsAllowed )
           {
           case 0 :
-//          g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
+            byGrammarPartID = EnglishVerb::main_verb_allows_0object_infinitive;
+          case 1:
+            byGrammarPartID = EnglishWord::main_verb_allows_1object_infinitive;
+          case 2:
+            byGrammarPartID = EnglishWord::main_verb_allows_2objects_infinitive;
+          }
+
           s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
             stdsetpletternodeLastStringChar
-            //, LetterNode * pletternodeCurrent
-            //, VocabularyAndTranslation * pvocabularyandtranslation
             , bInsertNewVocabularyAndTranslation
-//            , byVocabularyType
-            , EnglishVerb::main_verb_allows_0object_infinitive
+            , byGrammarPartID
             , strCurrentWordData
             , nIndexOfCurrentChar - nIndexOf1stWordChar
             , nIndexOf1stWordChar
             ) ;
-          case 1:
-//            g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
-            s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
-              stdsetpletternodeLastStringChar
-              //, LetterNode * pletternodeCurrent
-              //, VocabularyAndTranslation * pvocabularyandtranslation
-              , bInsertNewVocabularyAndTranslation
-              , EnglishWord::main_verb_allows_1object_infinitive
-              , strCurrentWordData
-              , nIndexOfCurrentChar - nIndexOf1stWordChar
-              , nIndexOf1stWordChar
-              ) ;
-          case 2:
-//            g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
-            s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
-              stdsetpletternodeLastStringChar
-              //, LetterNode * pletternodeCurrent
-              //, VocabularyAndTranslation * pvocabularyandtranslation
-              , bInsertNewVocabularyAndTranslation
-              , EnglishWord::main_verb_allows_2objects_infinitive
-              , strCurrentWordData
-              , nIndexOfCurrentChar - nIndexOf1stWordChar
-              , nIndexOf1stWordChar
-              ) ;
-          }
-  //        ev->m_strInfinitive = //str.Mid(start,i-start);
+  //        ev->m_strInfinitive =
   //          strCurrentWordData.substr(
   //            nIndexOf1stChar
   //            , nIndexOfCurrentChar - nIndexOf1stChar );
   #ifdef _INSERT_INTO_HASH_TREE
           if( byAllowsProgressiveForm )
-//            g_lettertree.InsertPresentParticipleReferringVerbAttributes(
             s_p_lettertree->InsertPresentParticipleReferringVerbAttributes(
               //This set is to ensure that if strings for the SAME vocabulary
               // not 2 or more VocAndTransl object should be inserted.
@@ -425,15 +409,13 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
               , stdstrInfinitive
               , byNumberOfObjectsAllowed
               ) ;
-//          g_lettertree.Insert3rdPersonSingularPresentReferringNounAttributes(
-          s_p_lettertree->Insert3rdPersonSingularPresentReferringNounAttributes(
+          s_p_lettertree->Insert3rdPersonSingularPresentReferringVerbAttributes(
              //This set is to ensure that if strings for the SAME vocabulary
              // not 2 or more VocAndTransl object should be inserted.
              stdsetpletternodeLastStringChar
              , stdstrInfinitive
              , byNumberOfObjectsAllowed
              ) ;
-
   #endif //#ifdef _INSERT_INTO_HASH_TREE
         }
         break ;
@@ -447,16 +429,6 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
 //        p_englishverb->m_strPastTense = strCurrentWordData.substr(
 //          nIndexOf1stWordChar, nIndexOfCurrentChar - nIndexOf1stWordChar );
 
-//          s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
-//            stdsetpletternodeLastStringChar
-//            //, LetterNode * pletternodeCurrent
-//            //, VocabularyAndTranslation * pvocabularyandtranslation
-//            , bInsertNewVocabularyAndTranslation
-//            , EnglishWord::main_verb_past
-//            , strCurrentWordData
-//            , nIndexOfCurrentChar - nIndexOf1stWordChar
-//            , nIndexOf1stWordChar
-//            ) ;
           s_p_lettertree->InsertPastTenseReferringVerbAttributes(
               stdsetpletternodeLastStringChar
               , stdstrInfinitive
@@ -538,6 +510,14 @@ void OneLinePerWordPair::InsertEnglishAdjective(
   )
 {
   LOGN("OneLinePerWordPair::InsertEnglishAdjective(...)");
+
+  //This set is to ensure that if strings for the SAME vocabulary
+  // not 2 or more VocAndTransl object should be inserted.
+  std::set<LetterNode *> stdsetpletternodeLastStringChar ;
+
+  //Set to "true" for the first string/ word belonging to this vocabulary.
+  bool bInsertNewVocabularyAndTranslation = true ;
+
 //  EnglishAdjective * p_englishadjective = new EnglishAdjective;
 //  if( p_englishadjective )
   {
@@ -561,38 +541,61 @@ void OneLinePerWordPair::InsertEnglishAdjective(
 //          ASCII_CODE_FOR_DIGIT_1;
       }
     }
-    for( WORD wCurrentCharIndex = 3 ;  wCurrentCharIndex <
-      strCurrentWordData.length(); wCurrentCharIndex ++ )
+    int nCharIndexOf1stWordChar = 1;
+    for( int nIndexOfCurrentChar = 3 ; nIndexOfCurrentChar <
+      strCurrentWordData.length(); nIndexOfCurrentChar ++ )
     {
-      if( strCurrentWordData[wCurrentCharIndex] == STRING_DELIMITER )
+      if( strCurrentWordData[nIndexOfCurrentChar] == STRING_DELIMITER )
       {
         if( delemiterCount == 0 )
         {
 //          p_englishadjective->m_strPositiv = //str.Mid(start,i-start);
-//            strCurrentWordData.substr(wIndexOf1stChar,wCurrentCharIndex -
+//            strCurrentWordData.substr(wIndexOf1stChar,nIndexOfCurrentChar -
 //              wIndexOf1stChar);
+
+          s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
+            stdsetpletternodeLastStringChar
+            , //true
+              bInsertNewVocabularyAndTranslation
+            , //byVocabularyType
+            EnglishWord::adjective_positiveForm
+            , strCurrentWordData
+            , nIndexOfCurrentChar - 1 //nIndexOf1stChar
+            , //1
+            nCharIndexOf1stWordChar
+            ) ;
         }
+        else if( delemiterCount < NUMBER_OF_STRINGS_FOR_ENGLISH_ADJECTIVE )
+  //        if( g_lettertree.s_pvocabularyandtranslation )
+          if( s_p_lettertree->s_pvocabularyandtranslation )
+  //          g_lettertree.s_pvocabularyandtranslation->m_arstrEnglishWord[
+            s_p_lettertree->s_pvocabularyandtranslation->m_arstrEnglishWord[
+              delemiterCount
+              ] =
+              strCurrentWordData.substr( 1 //nIndexOf1stChar
+                , nIndexOfCurrentChar - 1 //nIndexOf1stChar
+                ) ;
         if( delemiterCount == 1 )
         {
 //          if(p_englishadjective->m_bMoreMost == 1 )
 //          {
 //            p_englishadjective->m_strAdverb = strCurrentWordData.substr(
-//              wIndexOf1stChar,wCurrentCharIndex - wIndexOf1stChar);
+//              wIndexOf1stChar,nIndexOfCurrentChar - wIndexOf1stChar);
 //            return ;
 //          }
 //          p_englishadjective->m_strComperativ = strCurrentWordData.substr(
-//            wIndexOf1stChar,wCurrentCharIndex - wIndexOf1stChar);
+//            wIndexOf1stChar,nIndexOfCurrentChar - wIndexOf1stChar);
         }
 //        if( delemiterCount == 2 )
 //          p_englishadjective->m_strSuperlativ = strCurrentWordData.substr(
-//            wIndexOf1stChar,wCurrentCharIndex - wIndexOf1stChar);
+//            wIndexOf1stChar,nIndexOfCurrentChar - wIndexOf1stChar);
         if( delemiterCount == 3 )
         {
 //          p_englishadjective->m_strAdverb = strCurrentWordData.substr(
-//            wIndexOf1stChar,wCurrentCharIndex - wIndexOf1stChar);
+//            wIndexOf1stChar,nIndexOfCurrentChar - wIndexOf1stChar);
         }
         delemiterCount ++;
-        wIndexOf1stChar = wCurrentCharIndex + 1 ;
+        wIndexOf1stChar = nIndexOfCurrentChar + 1 ;
       }
     }
     if(delemiterCount == 4 )
@@ -780,38 +783,64 @@ void OneLinePerWordPair::InsertGermanAdjective(
   , BYTE byVocabularyType
   )
 {
-  LOGN("OneLinePerWordPair::InsertGermanAdjective(...)");
+  LOGN( //"OneLinePerWordPair::InsertGermanAdjective(...)"
+    FULL_FUNC_NAME << "--begin" )
 //  GermanAdjective * p_germanadjective = new GermanAdjective;
   BYTE delemiterCount = 0 ;
-  int wIndexOf1stCharacter = 1 ;
-  for( WORD wCurrentCharIndex = 1; wCurrentCharIndex <
-    strCurrentWordData.length(); ++ wCurrentCharIndex )
+  int nIndexOf1stChar = 1 ;
+  for( WORD nCurrentCharIndexWithinWholeVocabularyString = 1;
+    nCurrentCharIndexWithinWholeVocabularyString <
+    strCurrentWordData.length(); ++ nCurrentCharIndexWithinWholeVocabularyString )
   {
-    if( strCurrentWordData[wCurrentCharIndex] == STRING_DELIMITER )
+    if( strCurrentWordData[nCurrentCharIndexWithinWholeVocabularyString] ==
+        STRING_DELIMITER )
     {
-      switch( delemiterCount )
+//      VTrans::string_type * p_strCurrentWord;
+//      switch( delemiterCount )
+//      {
+//      case 0 :
+////        p_strCurrentWord = & p_germanadjective->m_strPositiv;
+//        break ;
+//      case 1 :
+////        p_strCurrentWord = & p_germanadjective->m_strComperativ;
+//        break ;
+//      case 2 :
+////        p_strCurrentWord = & p_germanadjective->m_strSuperlativ;
+//        break ;
+//      case 3 :
+////        p_strCurrentWord = & p_germanadjective->m_strWortstamm;
+//        break ;
+//      case 4 :
+//          return ;
+//      }
+//      * p_strCurrentWord = strCurrentWordData.substr(
+//        nIndexOf1stChar,nCurrentCharIndexWithinWholeVocabularyString -
+//        nIndexOf1stChar);
+      if( delemiterCount < NUMBER_OF_STRINGS_FOR_GERMAN_ADJECTIVE )
       {
-      case 0 :
-//        p_germanadjective->m_strPositiv = strCurrentWordData.substr(
-//          wIndexOf1stCharacter,wCurrentCharIndex - wIndexOf1stCharacter);
-        break ;
-      case 1 :
-//        p_germanadjective->m_strComperativ = strCurrentWordData.substr(
-//          wIndexOf1stCharacter,wCurrentCharIndex - wIndexOf1stCharacter);
-        break ;
-      case 2 :
-//        p_germanadjective->m_strSuperlativ = strCurrentWordData.substr(
-//          wIndexOf1stCharacter,wCurrentCharIndex - wIndexOf1stCharacter);
-        break ;
-      case 3 :
-//        p_germanadjective->m_strWortstamm = strCurrentWordData.substr(
-//          wIndexOf1stCharacter,wCurrentCharIndex - wIndexOf1stCharacter);
-        break ;
-      case 4 :
-          return ;
+        const VocabularyAndTranslation * const
+          p_vocabularyandtranslation =
+          s_p_lettertree->s_pvocabularyandtranslation;
+        LOGN( FULL_FUNC_NAME << "--\"voc and translation pointer\" is: \""
+          << p_vocabularyandtranslation << "\"")
+
+        std::string * p_std_str = & p_vocabularyandtranslation->
+          m_arstrGermanWord[delemiterCount ];
+        //Add to the structure that also contains the English strings.
+        //So the German equivalent can be retrieved when the last
+        //character (LetterNode) of the English string inside the Trie
+        //is got.
+//        g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
+        * p_std_str = //std_strCurrentWord;
+          strCurrentWordData.substr(
+            nIndexOf1stChar
+            , nCurrentCharIndexWithinWholeVocabularyString - nIndexOf1stChar
+            ) ;
+        LOGN( FULL_FUNC_NAME << "--inserted string \"" << * p_std_str
+          << "\" at array index \"" << delemiterCount << "\"")
       }
       delemiterCount ++;
-      wIndexOf1stCharacter = wCurrentCharIndex + 1 ;
+      nIndexOf1stChar = nCurrentCharIndexWithinWholeVocabularyString + 1 ;
     }
   }
 }
@@ -916,18 +945,7 @@ void OneLinePerWordPair::InsertGermanConjunction(
 //        strCurrentWordData.substr(1,nIndexOfCurrentChar-1);
       bDelemiterOccured = TRUE ;
 //      g_lettertree.InsertIntoTrieAndHandleVocabularyAndTranslation(
-      s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
-        stdsetpletternodeLastStringChar
-        //, LetterNode * pletternodeCurrent
-        //, VocabularyAndTranslation * pvocabularyandtranslation
-        , //true
-          bInsertNewVocabularyAndTranslation
-        , byVocabularyType
-        , strCurrentWordData
-        , nIndexOfCurrentChar - 1 //nIndexOf1stChar
-        , 1
-        //nIndexOf1stChar
-        ) ;
+
 //        if( g_lettertree.s_pvocabularyandtranslation )
         if( s_p_lettertree->s_pvocabularyandtranslation )
 //          g_lettertree.s_pvocabularyandtranslation->m_arstrGermanWord[
@@ -1072,30 +1090,9 @@ void OneLinePerWordPair::InsertGermanNoun(
 //            nIndexOfCurrentChar - nIndexOf1stChar
 //            );
 #ifdef _INSERT_INTO_HASH_TREE
-      //pvocabularyandtranslationReturn =
-//              g_lettertree.insert(
-//                //std::string(
-//                (LPCSTR)strCurrentWordData.c_str() //)
-//                ,start,i-start,
-//                ////If not assigned yet within THIS function.
-//                //!pvocabularyandtranslation,
-//                false, //"insert new vocabularyandtranslation?" == false.
-//                pletternode,
-//                byVocabularyType //+ NUMBER_OF_WORD_TYPES
-//                ) ;
 //              //g_pvocabularyandtranslation->m_byType = GERMAN_NOUN ;
 //              if(pletternode)//If the pointer is assigned yet.
 //                pletternode->insert(g_pvocabularyandtranslation) ;
-//              InsertIntoTrieAndHandleVocabularyAndTranslation(
-//                stdsetpletternodeLastStringChar
-//                //, LetterNode * pletternodeCurrent
-//                //, VocabularyAndTranslation * pvocabularyandtranslation
-//                , bInsertNewVocabularyAndTranslation
-//                , byVocabularyType
-//                , strCurrentWordData
-//                , nIndexOfCurrentChar - nIndexOf1stChar
-//                , nIndexOf1stChar
-//                ) ;
       if( delemiterCount < NUMBER_OF_STRINGS_FOR_GERMAN_NOUN )
       {
         //pvocabularyandtranslation->m_arstrGermanWord[
@@ -1104,7 +1101,7 @@ void OneLinePerWordPair::InsertGermanNoun(
           , nIndexOfCurrentChar - nIndexOf1stChar
           );
 
-        //Add to the stucture that also contains the English strings.
+        //Add to the structure that also contains the English strings.
         //So the German equivalent can be retrieved when the last
         //character (LetterNode) of the English string inside the Trie
         //is got.
@@ -1199,6 +1196,104 @@ void OneLinePerWordPair::InsertGermanPronoun(
 //str: a string containing the specific words file format entry.
 //Inserts into LetterTree.
 //Word *
+BYTE OneLinePerWordPair::InsertEnglishVocable(
+  //bool bInsertNewVocabularyAndTranslation,
+  const VTrans::string_type & strCurrentWordData,
+  std::set<LetterNode*> & stdsetpletternodeLastStringChar
+  )
+{
+//    bInsertNewVocabularyAndTranslation = true;
+  BYTE byVocabularyType = strCurrentWordData[ WORD_TYPE_CHAR_INDEX ] ;
+  LOGN("vocabulary type: " << (WORD) byVocabularyType )
+  stdsetpletternodeLastStringChar.clear();
+  switch( byVocabularyType )
+  {
+  case WORD_TYPE_NOUN : // Substantiv
+    LOGN("inserting English noun")
+    return InsertEnglishNoun(strCurrentWordData, byVocabularyType) ;
+  case WORD_TYPE_MAIN_VERB : // englisches Vollverb
+    LOGN("inserting English main verb")
+    InsertEnglishMainVerb(strCurrentWordData,byVocabularyType,
+        stdsetpletternodeLastStringChar) ;
+//        return ;
+    break;
+  case WORD_TYPE_ADJECTIVE : // englisches Adjektiv
+    LOGN("inserting English adjective")
+    InsertEnglishAdjective(strCurrentWordData,byVocabularyType) ;
+//        return ;
+    break ;
+  case WORD_TYPE_ADVERB : // Adverb
+    LOGN("inserting English adverb")
+    InsertEnglishAdverb(strCurrentWordData,byVocabularyType) ;
+//        return ;
+    break ;
+  case WORD_TYPE_PREPOSITION : // Präposition
+    LOGN("inserting English preposition")
+    InsertEnglishPreposition(strCurrentWordData,byVocabularyType) ;
+//        return ;
+    break ;
+  case WORD_TYPE_PRONOUN : // Pronomen
+    LOGN("inserting English pronoun")
+    InsertEnglishPronoun(strCurrentWordData,byVocabularyType) ;
+//        return ;
+    break ;
+  case WORD_TYPE_AUX_VERB : // Hilfsverb
+    LOGN("inserting English auxiliary verb")
+    InsertEnglishAuxiliaryVerb(strCurrentWordData,byVocabularyType) ;
+//        return ;
+    break ;
+  case WORD_TYPE_CONJUNCTION : // englische Konjunktion
+    LOGN("inserting English conjunction")
+    InsertEnglishConjunction(strCurrentWordData,byVocabularyType) ;
+//        return ;
+    break ;
+  }
+  return 0;
+}
+
+BYTE OneLinePerWordPair::InsertGermanVocable(
+  const VTrans::string_type & strCurrentWordData)
+{
+  LOGN("inserting German word")
+  BYTE byVocabularyType = strCurrentWordData[ WORD_TYPE_CHAR_INDEX ] ;
+  switch ( byVocabularyType )
+  {
+    case WORD_TYPE_NOUN : // deutsches Substantiv
+      InsertGermanNoun( strCurrentWordData, byVocabularyType) ;
+//          return ;
+      break ;
+    case WORD_TYPE_MAIN_VERB : // deutsches Verb
+      InsertGermanMainVerb( strCurrentWordData, byVocabularyType) ;
+//          return ;
+      break ;
+    case WORD_TYPE_ADJECTIVE : // deutsches Adjektiv
+      InsertGermanAdjective( strCurrentWordData, byVocabularyType) ;
+//          return ;
+      break ;
+    case WORD_TYPE_ADVERB : // deutsches Adverb
+      InsertGermanAdverb( strCurrentWordData, byVocabularyType) ;
+//          return ;
+      break ;
+    case WORD_TYPE_PREPOSITION : // deutsche Präposition
+      InsertGermanPreposition( strCurrentWordData, byVocabularyType) ;
+//          return ;
+      break ;
+    case WORD_TYPE_PRONOUN : // deutsches Pronomen
+      InsertGermanPronoun( strCurrentWordData, byVocabularyType) ;
+//          return ;
+      break ;
+    case WORD_TYPE_AUX_VERB : // deutsches Hilfsverb
+      InsertGermanAuxiliaryVerb( strCurrentWordData, byVocabularyType) ;
+//          return ;
+      break ;
+    case WORD_TYPE_CONJUNCTION : // deutsche Konjunktion
+      InsertGermanConjunction( strCurrentWordData, byVocabularyType) ;
+//          return ;
+      break ;
+  }
+  return 0;
+}
+
 void OneLinePerWordPair::extract(
   const VTrans::string_type & strCurrentWordData
   , BYTE bEnglishWord
@@ -1210,112 +1305,19 @@ void OneLinePerWordPair::extract(
   std::set<LetterNode *> stdsetpletternodeLastStringChar ;
   if( strCurrentWordData.length() > 0 )
   {
-    bool bInsertNewVocabularyAndTranslation = true ;
+//    bool bInsertNewVocabularyAndTranslation = true ;
 #ifdef _DEBUG
 	//printf("Vocable * extract(CString s,BOOL english,int & ret) ANFANG\n");
 #endif
 	  //TRACE("Vocable * extract(CString s,BOOL english,int & ret) ANFANG\n");
 	  if(bEnglishWord)
 	  {
-      //The VocabularyAndTranslation object contains all grammatical data like
-      //plural, article and so on for English and German. It should only be
-      //created ONCE for a English/German word pair.
-      //The other last LetterNodes should point to its address.
-      bInsertNewVocabularyAndTranslation = true ;
-      BYTE byVocabularyType = strCurrentWordData[ WORD_TYPE_CHAR_INDEX ] ;
-      LOGN("vocabulary type: " << (WORD) byVocabularyType )
-//      byVocabularyType = WordFileWordClassValueToZeroBasedIndex(
-//        byVocabularyType) ;
-
-      //Make empty, else VocabularyAndTranslation can not be appended to the
-      //last LetterNode if e.g. noun "love" followed by verb "love".
-      stdsetpletternodeLastStringChar.clear() ;
-      //switch ( str[ WORD_TYPE_CHAR_INDEX ] )
-      switch( byVocabularyType )
-      {
-      case WORD_TYPE_NOUN : // Substantiv
-        LOGN("inserting English noun")
-        InsertEnglishNoun(strCurrentWordData,byVocabularyType) ;
-        return ;
-        break;
-      case WORD_TYPE_MAIN_VERB : // englisches Vollverb
-        LOGN("inserting English main verb")
-        InsertEnglishMainVerb(strCurrentWordData,byVocabularyType,
-            stdsetpletternodeLastStringChar) ;
-        return ;
-        break;
-      case WORD_TYPE_ADJECTIVE : // englisches Adjektiv
-        LOGN("inserting English adjective")
-        InsertEnglishAdjective(strCurrentWordData,byVocabularyType) ;
-        return ;
-        break ;
-      case WORD_TYPE_ADVERB : // Adverb
-        LOGN("inserting English adverb")
-        InsertEnglishAdverb(strCurrentWordData,byVocabularyType) ;
-        return ;
-        break ;
-      case WORD_TYPE_PREPOSITION : // Präposition
-        LOGN("inserting English preposition")
-        InsertEnglishPreposition(strCurrentWordData,byVocabularyType) ;
-        return ;
-        break ;
-      case WORD_TYPE_PRONOUN : // Pronomen
-        LOGN("inserting English pronoun")
-        InsertEnglishPronoun(strCurrentWordData,byVocabularyType) ;
-        return ;
-        break ;
-      case WORD_TYPE_AUX_VERB : // Hilfsverb
-        LOGN("inserting English auxiliary verb")
-        InsertEnglishAuxiliaryVerb(strCurrentWordData,byVocabularyType) ;
-        return ;
-        break ;
-      case WORD_TYPE_CONJUNCTION : // englische Konjunktion
-        LOGN("inserting English conjunction")
-        InsertEnglishConjunction(strCurrentWordData,byVocabularyType) ;
-        return ;
-        break ;
-      }//switch ( str[ WORD_TYPE_CHAR_INDEX ] )
+      ret = InsertEnglishVocable( //bInsertNewVocabularyAndTranslation,
+        strCurrentWordData, stdsetpletternodeLastStringChar);
 	  }
 	  else // deutsch
 	  {
-      LOGN("inserting German word")
-      BYTE byVocabularyType = strCurrentWordData[ WORD_TYPE_CHAR_INDEX ] ;
-      //switch ( str[ WORD_TYPE_CHAR_INDEX ] )
-      switch ( byVocabularyType )
-      {
-        case WORD_TYPE_NOUN : // deutsches Substantiv
-          InsertGermanNoun( strCurrentWordData, byVocabularyType) ;
-          return ;
-          break ;
-        case WORD_TYPE_MAIN_VERB : // deutsches Verb
-          InsertGermanMainVerb( strCurrentWordData, byVocabularyType) ;
-          return ;
-          break ;
-        case WORD_TYPE_ADJECTIVE : // deutsches Adjektiv
-          InsertGermanAdjective( strCurrentWordData, byVocabularyType) ;
-          return ;
-          break ;
-        case WORD_TYPE_ADVERB : // deutsches Adverb
-          InsertGermanAdverb( strCurrentWordData, byVocabularyType) ;
-          return ;
-          break ;
-        case WORD_TYPE_PREPOSITION : // deutsche Pr�position
-          InsertGermanPreposition( strCurrentWordData, byVocabularyType) ;
-          return ;
-          break ;
-        case WORD_TYPE_PRONOUN : // deutsches Pronomen
-          InsertGermanPronoun( strCurrentWordData, byVocabularyType) ;
-          return ;
-          break ;
-        case WORD_TYPE_AUX_VERB : // deutsches Hilfsverb
-          InsertGermanAuxiliaryVerb( strCurrentWordData, byVocabularyType) ;
-          return ;
-          break ;
-        case WORD_TYPE_CONJUNCTION : // deutsche Konjunktion
-          InsertGermanConjunction( strCurrentWordData, byVocabularyType) ;
-          return ;
-          break ;
-      }//switch
+      ret = InsertGermanVocable(strCurrentWordData);
 	  }
   } //if( str.GetLength()>0 )
 //	return NULL;
@@ -1336,7 +1338,7 @@ BYTE OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
     ;
 //  WordNode * pWordNodePrevious=NULL;
 
-	//zuerst die integralen Vokabeln der verketteten Liste hinzuf�gen, Ende
+	//zuerst die integralen Vokabeln der verketteten Liste hinzufügen, Ende
   LOGN("05.06.2008 22.22.17");
 	if( ( p_fileWords = fopen( //strWordFile.c_str()
     r_strWordsFilePath.c_str() ,"rb") ) != NULL )
@@ -1348,6 +1350,7 @@ BYTE OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
 		VTrans::string_type str;
 		DWORD dwOffset = 0;
 		DWORD dwOffsetOfBeginOfEntry = 0;//Offset (Position) des Anfanges eines
+		BYTE byLanguage = English;
 		//Vokabel-Eintrages
 		while( ( i = getc(p_fileWords) ) != -1 )
 		{
@@ -1362,81 +1365,68 @@ BYTE OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
         case '0':
 //				if(bEnglishWord)
 				{
-					int ret=0;
-//					pWordNodePrevious=pWordNodeCurrent;
-//					pWordNodeCurrent->m_pWordNodeNext=new WordNode();
-//					pWordNodeCurrent->m_pWordNodeNext->m_pWord=extract(str,TRUE,ret);
-          OneLinePerWordPair::extract(str,TRUE,ret);
-          ++ OneLinePerWordPair::s_dwNumberOfVocabularyPairs ;
-          #ifdef _DEBUG
-          const char * pch = str.c_str() ;
-          pch = 0 ;
-          #endif
-					//TODO also provide an error message for non-Windows binaries. 
-#ifdef _WINDOWS
-					if(!pWordNodeCurrent->m_pWordNodeNext->m_pWord)
-					{
-						char * pbCurrentDirectory=new char[10001];
-						CString strMessage;
-						GetCurrentDirectory(10001,pbCurrentDirectory);
-						strcat(pbCurrentDirectory,"\\");
-						strcat(pbCurrentDirectory,strWordFile.GetBuffer(strWordFile.
-							GetLength()));
-						strMessage.Format(_T("Die Datei %s \nenth�lt kein g�ltiges \
-Format oder sonstiger Fehler zwischen\nOffset (=Position in Byte ab \
-Dateibeginn) %u (dezimal)\nund Offset (=Position in Byte ab Dateibeginn) \
-%u (dezimal) .\nDas Laden der Vokabeln wird beendet. Versuchen Sie, den \
-Fehler in der Dateistruktur zu beheben."),
-						pbCurrentDirectory,dwOffsetOfBeginOfEntry,dwOffset);
-						AfxMessageBox(strMessage,MB_OK,0);
-						delete pbCurrentDirectory;//Speicher an das Betriebssystem freigeben
-						break;
-					}
-#endif //#ifdef _WINDOWS
-//					pWordNodeCurrent=pWordNodeCurrent->m_pWordNodeNext;
-//					pWordNodeCurrent->m_pWordNodePrevious=pWordNodePrevious;
-//					if(ret==-1)
-//					{
-//						break;
-//					}
+					int ret = 0;
+          if( byLanguage == English )
+          {
+            byLanguage = ! byLanguage;
+
+            OneLinePerWordPair::extract(str,TRUE,ret);
+            ++ OneLinePerWordPair::s_dwNumberOfVocabularyPairs ;
+
+            #ifdef _DEBUG
+            const char * pch = str.c_str() ;
+            pch = 0 ;
+            #endif
+
+          }
+          else
+            ret = 1;
+
+          if( ret != 0 )
+          {
+            s_p_userinterface->ShowInvalidVocabularyFileFormatMessage(
+//              strWordFile,
+              r_strWordsFilePath,
+              dwOffsetOfBeginOfEntry,
+              dwOffset
+              );
+            return ret;
+          }
   				str = "" ;
+          dwOffsetOfBeginOfEntry = dwOffset + 1 ;
           break ;
 				}
 //				else // deutsch
           case '\n' :
 				{
-					int ret=0;
-//					pWordNodePrevious=pWordNodeCurrent;
-//					pWordNodeCurrent->m_pWordNodeNext = new WordNode();
-//					pWordNodeCurrent->m_pWordNodeNext->m_pWord=extract(str,FALSE,ret);
-          OneLinePerWordPair::extract(str,FALSE,ret);
-					//TODO also provide an error message for non-Windows binaries. 
-#ifdef _WINDOWS
-					if(!pWordNodeCurrent->m_pWordNodeNext->m_pWord)
-					{
-						char * pbCurrentDirectory=new char[10001];
-						CString strMessage;
-						GetCurrentDirectory(10001,pbCurrentDirectory);
-						strMessage.Format(_T("Die Datei %s \nenth�lt kein g�ltiges \
-Format oder sonstiger Fehler zwischen Offset %u und Offset %u.\n Das Laden \
-der Vokabeln wird beendet. Versuchen Sie den Fehler in der Dateistruktur zu beheben"),
-						pbCurrentDirectory,dwOffsetOfBeginOfEntry,dwOffset);
-						AfxMessageBox(strMessage,MB_OK,0);
-						delete pbCurrentDirectory;//Speicher an das Betriebssystem freigeben
-						break;
-					}
-#endif //#ifdef _WINDOWS
-//					pWordNodeCurrent=pWordNodeCurrent->m_pWordNodeNext;
-//					pWordNodeCurrent->m_pWordNodePrevious=pWordNodePrevious;
-//					if(ret!=0)
-//						//MessageBox("Datei %s enth�lt kein g�ltiges Format oder sonstiger Fehler","Fehler beim Lesen der Datei vocs.txt",MB_OK);
-//						break;
+					int ret = 0;
+          if( byLanguage == German )
+          {
+            byLanguage = ! byLanguage;
+
+            OneLinePerWordPair::extract(str,FALSE,ret);
+          }
+          else
+            ret = 1;
+
+					if( ret != 0)
+          {
+            //MessageBox("Datei %s enthält kein gültiges Format oder sonstiger
+					  // Fehler","Fehler beim Lesen der Datei vocs.txt",MB_OK);
+            s_p_userinterface->ShowInvalidVocabularyFileFormatMessage(
+//              strWordFile,
+              r_strWordsFilePath,
+              dwOffsetOfBeginOfEntry,
+              dwOffset
+              );
+            return ret;
+          }
   				str = "" ;
+          dwOffsetOfBeginOfEntry = dwOffset + 1 ;
           break ;
 				}
 				//bEnglishWord=!bEnglishWord;
 //				str = "" ;
-				dwOffsetOfBeginOfEntry = dwOffset + 1 ;
 //			}
 //			else
 //			{
@@ -1444,7 +1434,7 @@ der Vokabeln wird beendet. Versuchen Sie den Fehler in der Dateistruktur zu behe
           str += (char) i ;
       }
 //			}
-			++dwOffset;
+			++ dwOffset;
 		} //while
 		fclose(p_fileWords);
 //		if(pWordNodeCurrent!=NULL)
@@ -1479,223 +1469,6 @@ gibt es anf�nglich keine Vokabeln.\nM�gliche Ursachen:\
 //void ::TranslateAndWriteOutputFile()
 //{
 //}
-#ifdef COMPILE_WITH_XML_OUTPUT
-#ifndef __MINGW32__ //MinGW has no iconv
-void writeToOutputStream(std::ostream & rofstreamTranslToGerman,
-  //std::vector<Range> & vecRange,std::vector<CStringVector> & vecstrvec
-  std::vector<SentenceAndValidityAndProperName> & vecsentenceandvalidityandpropername,
-  xmlwriter & MyXml
-  )
-{
-  if(rofstreamTranslToGerman)
-  {
-    VTrans_string_typeVector strvec;
-    SentenceAndValidityAndProperName sentenceandvalidityandpropername;
-    for(WORD wSentenceIndex=0;wSentenceIndex<
-      vecsentenceandvalidityandpropername.size();++wSentenceIndex)
-    {
-      IntPair intpairConntectedWords;
-      Range range;
-      sentenceandvalidityandpropername=vecsentenceandvalidityandpropername.
-        at(wSentenceIndex);
-      rofstreamTranslToGerman<<sentenceandvalidityandpropername.
-        byReturnOfSentenceParsing;
-      //Only if the sentence is grammatically correct a translation exists
-      //and thus it makes sense to write it and the proper names.
-      if(sentenceandvalidityandpropername.byReturnOfSentenceParsing==1)
-      {
-        MyXml.Createtag("sentence");
-        for(WORD wWordIndex=0;wWordIndex<//vecstrvec
-          sentenceandvalidityandpropername.vecvecstrSentenceTokens.size();++wWordIndex)
-        {
-          LOGN("31.05.2008 22.30.20");
-          strvec=sentenceandvalidityandpropername.vecvecstrSentenceTokens.
-            at(wWordIndex);
-          LOGN("31.05.2008 22.30.44");
-          //rofstreamTranslToGerman<<//vecstrvec
-          //  sentenceandvalidityandpropername.vecvecstrSentenceTokens.at(wWordIndex).
-          //  at(0).GetBuffer()<<" ";
-          LOGN("31.05.2008 22.30.55");
-          //MyXml.CreateChild("word",sentenceandvalidityandpropername.
-          //  vecvecstrSentenceTokens.at(wWordIndex).at(0).GetBuffer());
-          MyXml.Createtag("word");
-          //LPWSTR wstrTranslation;
-          //int nReturnOfWideCharToMultiByte;
-          LPSTR lpTranslationInUTF8=NULL;
-          for(WORD wTranslationForEnglishWordIndex=0;
-            wTranslationForEnglishWordIndex<strvec.size();
-            ++wTranslationForEnglishWordIndex)
-          {
-#ifdef _WINDOWS
-//            //Without this errors while building:
-//             USES_CONVERSION;
-////#endif
-//            wstrTranslation=A2W(strvec.at(wTranslationForEnglishWordIndex).
-//              GetBuffer()
-//              //"�������"
-//              );
-//            nReturnOfWideCharToMultiByte = ::WideCharToMultiByte(CP_UTF8, 0, //lpwStr
-//              wstrTranslation,
-//              //Specifies the number of wide characters in the string pointed to by the lpWideCharStr parameter. If this value is -1, the string is assumed to be null-terminated and the length is calculated automatically. The length will include the null-terminator. 
-//              -1,
-//              lpTranslationInUTF8,//Points to the buffer to receive the translated string.
-//                //If the function succeeds, and cbMultiByte is zero, the return value is the required size, in bytes, for a buffer that can receive the translated string. 
-//                0,//cbMultiByte
-//                NULL,//If this parameter is NULL, a system default value is used. 
-//                NULL//This parameter may be NULL. The function is faster when both lpDefaultChar and lpUsedDefaultChar are NULL. 
-//              );
-//            ////If a German umlaut, at least 1 more byte is needed.
-//            //nReturnOfWideCharToMultiByte*=200;
-//            LOG("23.05.2008 11.23.17 "<<nReturnOfWideCharToMultiByte<<"\n");
-//#ifdef _LOG
-//            BYTE byWideCharByte;
-//            for(DWORD i=0;i<wcslen(wstrTranslation);++i)
-//            {
-//              byWideCharByte=*(wstrTranslation+i);
-//              LOG(byWideCharByte<<"("<<(int)byWideCharByte<<")");
-//              byWideCharByte=*((BYTE *)(wstrTranslation+i)+1);
-//              LOG(byWideCharByte<<"("<<(int)byWideCharByte<<")");
-//            }
-//#endif
-//            if(nReturnOfWideCharToMultiByte)
-//            {
-////#ifdef _WINDOWS
-//              //If the function succeeds, and cbMultiByte is zero, the return value is the required size, in bytes, for a buffer that can receive the translated string
-//              lpTranslationInUTF8=new CHAR[nReturnOfWideCharToMultiByte];
-//              if(WideCharToMultiByte(
-//                //When this is set, dwFlags must be zero and both lpDefaultChar and lpUsedDefaultChar must be NULL.
-//                CP_UTF8,//CodePage 
-//                0,//dwFlags  
-//                //lpwStr
-//                wstrTranslation,//Points to the wide-character string to be converted.
-//                -1,//cchWideChar: Specifies the number of wide characters in the string pointed to by the lpWideCharStr parameter. If this value is -1, the string is assumed to be null-terminated and the length is calculated automatically. The length will include the null-terminator.
-//                lpTranslationInUTF8,//Points to the buffer to receive the translated string. 
-//                  //If the function succeeds, and cbMultiByte is zero, the return value is the required size, in bytes, for a buffer that can receive the translated string. 
-//                  nReturnOfWideCharToMultiByte,//cbMultiByte
-//                  NULL,//LPCSTR lpDefaultChar, If this parameter is NULL, a system default value is used. 
-//                  NULL//LPBOOL lpUsedDefaultChar:This parameter may be NULL. The function is faster when both lpDefaultChar and lpUsedDefaultChar are NULL. 
-//                  )
-//                )
-//              {
-//#else
-//              	CString strUTF8 = EncodeToUTF8(strvec.at(
-//              		wTranslationForEnglishWordIndex)) ;
-//              	lpTranslationInUTF8 = strUTF8.Buffer() ;  
-//
-//              if(lpTranslationInUTF8 = 
-//                  ( CharSetConv::EncodeASCIIToUTF8(strvec.at(
-//                wTranslationForEnglishWordIndex).GetBuffer() ) 
-//                  )
-//                )
-//              {
-#endif //#ifdef _WINDOWS
-              if(lpTranslationInUTF8 = 
-                ( CharSetConv::EncodeASCIIToUTF8( (char *) strvec.at(
-                  //wTranslationForEnglishWordIndex).GetBuffer()
-                  wTranslationForEnglishWordIndex).c_str()
-                  )
-                  )
-                )
-              {
-                LOG("23.05.2008 11.24.05 "<<lpTranslationInUTF8<<"\n");
-                MyXml.CreateChild("translation",//EncodeToUTF8(
-                  lpTranslationInUTF8);
-                delete[] lpTranslationInUTF8 ;
-                LOGN("31.05.2008 22.27.11");
-//#ifdef _WINDOWS
-              }
-#ifdef _WINDOWS
-              else
-                LOG("23.05.2008 11.24.24 "<<::GetLastError()<<ERROR_INSUFFICIENT_BUFFER<<" "<<ERROR_INVALID_FLAGS<<" "<<ERROR_INVALID_PARAMETER<<"\n");
-            //}//if(nReturnOfWideCharToMultiByte)
-#endif //#ifdef _WINDOWS
-          }//loop through possible German translations for an English word.
-          MyXml.CloseLasttag();//"word" tag
-        }//Loop through tokens.
-        rofstreamTranslToGerman<<
-          //carriage Return +Newline is used to indicate the end of the sentence
-          "\r\nproper name Size:"<<
-          //HTONL: Convert Host(Intel) TO Network(Big Endian) byte order Long value.
-          //htonl(
-          (unsigned long)//vecRange
-          sentenceandvalidityandpropername.vecrangeProperName.size()//)
-          <<" ";
-
-        if( sentenceandvalidityandpropername.vecrangeProperName.size() > 0 )
-          MyXml.AddComment("The character indices of the proper name "
-            "ranges refer to the beginning of WHOLE source text");
-        //The character indices of the proper name ranges refer to the 
-        //beginning of WHOLE source text (and not) to the beginning of 
-        //a sentence -> put them at the end after all sentences.
-	      for(DWORD dwRangeIndex=0;dwRangeIndex<//vecRange
-          sentenceandvalidityandpropername.vecrangeProperName.size();dwRangeIndex++)
-	      {
-		      range=//vecRange
-            sentenceandvalidityandpropername.vecrangeProperName.at(dwRangeIndex);
-		      //for(DWORD dwCharacterIndexWithinEnglishText=range.m_dwStart;
-        //    dwCharacterIndexWithinEnglishText<range.m_dwEnd;
-            //dwCharacterIndexWithinEnglishText++)
-
-          std::ostringstream ostrstream;
-          //The start index ist wrongly stored into the field "m_dwEnd".
-          //ostrstream<<vecsentenceandvalidityandpropername.at(0).vecrangeProperName.at(wIndex).m_dwEnd;
-          //ostrstream<<range.at(wIndex).m_dwEnd;
-          ostrstream<<range.m_dwStart;
-          MyXml.AddAtributes("start",ostrstream.str());
-          std::ostringstream ostrstream2;
-          //The end index ist wrongly stored into the field "m_dwStart".
-          //ostrstream2<<vecsentenceandvalidityandpropername.at(0).vecrangeProperName.at(wIndex).m_dwStart;
-          //ostrstream2<<range.at(wIndex).m_dwStart;
-          ostrstream2<<range.m_dwEnd;
-          MyXml.AddAtributes("end",ostrstream2.str());
-          MyXml.AddComment("The character indices of a range of a proper name correspond to the SOURCE text, Huey! Believe me.");
-          //Man kann diese Indizes nicht einfach auch f�r jede deutsche �bersetzung nehmen:
-          //I do not like Uwe. : Uwe ist 5tes Wort. Im deutschen: Ich mag Uwe nicht. 
-          //Das 5te "Wort" ist hier ein PUNKT ! Soll der etwa zum Eigennamen gemacht werden?
-          MyXml.Createtag("range-of-proper-name");
-          //Do NOT write this closing tag, else Absturz with "I like Uwe.I like Uwe."
-          //MyXml.CloseLasttag();//"range-of-proper-name" tag
-		      rofstreamTranslToGerman<<
-            //HTONL: Convert Host(Intel) TO Network(Big Endian) byte order Long value.
-            //htonl(
-            (unsigned long)range.m_dwStart//)
-            <<//htonl(
-            (unsigned long)range.m_dwEnd//)
-            ;
-	      }//Proper name range loop
-        if( sentenceandvalidityandpropername.m_vecintpairConntectedWords.size() > 0 )
-          MyXml.Createtag("connected-words");
-        {
-          for(DWORD dwRangeIndex=0;dwRangeIndex<//vecRange
-            sentenceandvalidityandpropername.m_vecintpairConntectedWords.size();dwRangeIndex++)
-	        {
-		        intpairConntectedWords=
-              sentenceandvalidityandpropername.m_vecintpairConntectedWords.at(dwRangeIndex);
-            std::ostringstream ostrstream;
-            ostrstream<<intpairConntectedWords.m_n1-(ID_USER+100);
-            //MyXml.AddAtributes("number1",ostrstream.str());
-            std::ostringstream ostrstream2;
-            ostrstream2<<intpairConntectedWords.m_n2-(ID_USER+100);
-            //MyXml.AddAtributes("number2",ostrstream2.str());
-            MyXml.Createtag("connection");
-            //MyXml.Createtag("link");
-            MyXml.CreateChild("link",ostrstream.str() );
-            MyXml.CreateChild("link",ostrstream2.str() );
-            MyXml.CloseLasttag();//"connection" tag
-          }
-          MyXml.CloseLasttag();//"connected-words" tag
-        }//if connected words for this sentence exist.
-        MyXml.CloseLasttag();//"sentence" tag
-        
-      }//if(sentenceandvalidityandpropername.byReturnOfSentenceParsing==1)
-      //MyXml.CloseAlltags();
-      //MyXml.CloseLasttag();//"sentence" tag
-    }//sentences loop
-    //rofstreamTranslToGerman.close();
-  }//if(rofstreamTranslToGerman)
-}
-#endif //#ifndef __MINGW32__ //MinGW has no iconv
-#endif//#ifdef COMPILE_WITH_XML_OUTPUT
 
 //const char * 
 BYTE readInputText(const std::string & strFilePath, std::string & str)
@@ -1706,17 +1479,17 @@ BYTE readInputText(const std::string & strFilePath, std::string & str)
 	  //Output filename.
 	  //"english.txt"
 	  strFilePath.c_str(), std::ios_base::in);
-	//wenn erfolgreich ge�ffnet.
+	//wenn erfolgreich geöffnet.
 	if(ifstreamGermanText)
 	{
 	  char ch;
 	  //LPWSTR pwstrTranslation=NULL;
 	  while(true)
 	  {
-	    ch=ifstreamGermanText.get();
-	    if(ifstreamGermanText.eof())
+	    ch = ifstreamGermanText.get();
+	    if( ifstreamGermanText.eof() )
 	      break;
-	    str+=ch;
+	    str += ch;
 	  }
 	  LOGN("28.05.2008 20.59.56");
 	  //LPWSTR wstrTranslation((LPWSTR)str.c_str());
@@ -1724,9 +1497,9 @@ BYTE readInputText(const std::string & strFilePath, std::string & str)
 	
 	  //pch=pszA;
 	  pch = //::UTF8toASCII(
-		str.c_str() //)
-		;
-	  LOGN("12.06.2008 22.24.35 "<<(unsigned long)pch<<pch);
+      str.c_str() //)
+      ;
+	  LOGN("12.06.2008 22.24.35 " << (unsigned long) pch << pch);
 	}
 	//return pch ;
 	//return str ;

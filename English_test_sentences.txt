@@ -14,3 +14,5 @@ the car the car he loves loves works (das Auto, dass das Auto, dass er liebt, li
 
 the car you have loved (transformation rule: "have" <-> "loved" test)
 the car he loves works
+
+the fire still burns

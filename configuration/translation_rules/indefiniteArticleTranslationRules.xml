@@ -1,0 +1,63 @@
+<translation_rules>
+
+  <!--INdefine article singular-->
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="ein">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="eine">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="indefinite_article_singular.indefinite_article"
+    translation="ein">
+    <condition syntax_tree_path="indefinite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+  </translation_rule>
+  
+ <translation_rule 
+    syntax_tree_path="indefiniteArticle_Positive_SingNoun.indefiniteArticle_Positive.positive"
+    string_transformation_function_name="makeMale" 
+    attribute_name="German_positive"
+	>
+	<!-- e.g. "ein kleinER Mann". -->
+    <condition syntax_tree_path="indefiniteArticle_Positive_SingNoun.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="0"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="indefiniteArticle_Positive_SingNoun.indefiniteArticle_Positive.positive"
+    string_transformation_function_name="makeFemale" 
+    attribute_name="German_positive"
+	>
+	<!-- e.g. "eine kleinE Frau". -->
+    <condition syntax_tree_path="indefiniteArticle_Positive_SingNoun.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="1"
+    />
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="indefiniteArticle_Positive_SingNoun.indefiniteArticle_Positive.positive"
+    string_transformation_function_name="makeNeutral" 
+    attribute_name="German_positive"
+	>
+	<!-- e.g. "ein kleinES Tier". -->
+    <condition syntax_tree_path="indefiniteArticle_Positive_SingNoun.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+  </translation_rule>
+  
+</translation_rules>

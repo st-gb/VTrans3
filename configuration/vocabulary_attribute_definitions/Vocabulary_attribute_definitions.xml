@@ -1,5 +1,13 @@
 <vocabulary_attribute_definitons>
   <vocabulary_attribute_definiton
+    word_class="adjective"
+    attribute_name="German_positive"
+    language="German"
+    attribute_type="string"
+    attribute_index="0"
+    attribute_length="1"
+    />
+  <vocabulary_attribute_definiton
     word_class="adverb"
     attribute_name="German_adverb"
     language="German"

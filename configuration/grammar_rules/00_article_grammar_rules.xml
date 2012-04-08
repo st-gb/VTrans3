@@ -1,7 +1,21 @@
 <grammar_rules>
+
+  <!-- E. g. "the man" -->
   <grammar_rule left_child="definite_article" right_child="singular_noun" superordinate="definite_article_singular"/>
+  <!-- E. g. "the good" -->
+  <grammar_rule left_child="definite_article" right_child="positive" superordinate="definiteArticle_Positive"/>
+  <!-- E. g. "the good man" -->
+  <grammar_rule left_child="definiteArticle_Positive" right_child="singular_noun" superordinate="definiteArticle_Positive_SingNoun"/>
+  
   <grammar_rule left_child="definite_article" right_child="plural_noun" superordinate="definite_article_plural"/>
+  
   <grammar_rule left_child="indefinite_article" right_child="singular_noun" superordinate="indefinite_article_singular"/>
   <grammar_rule left_child="indefinite_article_singular" superordinate="article_singular"/>
+  
+  <!-- E. g. "a good" -->
+  <grammar_rule left_child="indefinite_article" right_child="positive" superordinate="indefiniteArticle_Positive"/>
+  <!-- E. g. "a good man" -->
+  <grammar_rule left_child="indefiniteArticle_Positive" right_child="singular_noun" superordinate="indefiniteArticle_Positive_SingNoun"/>
+  
   <grammar_rule left_child="definite_article_singular" superordinate="article_singular"/>
 </grammar_rules>
