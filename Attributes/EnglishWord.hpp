@@ -38,6 +38,7 @@ public:
     , main_verb //Vollverb
     , adverb
     , adjective
+    , adjective_positiveForm
     , main_verb_allows_0object_infinitive
     , main_verb_allows_1object_infinitive
     , main_verb_allows_2objects_infinitive

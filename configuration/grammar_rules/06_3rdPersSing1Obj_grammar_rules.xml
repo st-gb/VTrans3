@@ -8,21 +8,26 @@
 	  
 	  intensive pronoun (e.g., "They ate all the food themselves."
 	  -->
-  <!-- to limit a possible reflexive pronoun to "himself" -->
-  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres0Obj" superordinate="he_3rdPersSingClauseAllows0Obj"/>
-  <grammar_rule left_child="UnknownWord" right_child="MainVerb3rdPersSingPres0Obj" superordinate="he_3rdPersSingClauseAllows0Obj"/>
-  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres0Obj" superordinate="she_3rdPersSingClauseAllows0Obj"/>
-  <grammar_rule left_child="UnknownWord" right_child="MainVerb3rdPersSingPres0Obj" superordinate="she_3rdPersSingClauseAllows0Obj"/>
-  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres0Obj" superordinate="it_3rdPersSingClauseAllows0Obj"/>
+	  
+  <!-- To be able to limit a possible reflexive pronoun for a clause to "himself" in (an)other grammar rule(s). -->
+  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres0Obj" superordinate="he_PresentClauseAllows0Obj"/>
+  <grammar_rule left_child="UnknownWord" right_child="MainVerb3rdPersSingPres0Obj" superordinate="he_PresentClauseAllows0Obj"/>
   
-  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres1Obj" superordinate="he_3rdPersSingClauseAllows1Obj"/>
-  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres1Obj" superordinate="she_3rdPersSingClauseAllows1Obj"/>
-  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres1Obj" superordinate="it_3rdPersSingClauseAllows1Obj"/>
+  <!-- To be able to limit a possible reflexive pronoun for a clause to "herself" in (an)other grammar rule(s). -->
+  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres0Obj" superordinate="she_PresentClauseAllows0Obj"/>
+  <grammar_rule left_child="UnknownWord" right_child="MainVerb3rdPersSingPres0Obj" superordinate="she_PresentClauseAllows0Obj"/>
+  
+  <!-- To be able to limit a possible reflexive pronoun for a clause to "itself" in (an)other grammar rule(s). -->
+  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres0Obj" superordinate="it_PresentClauseAllows0Obj"/>
+  
+  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres1Obj" superordinate="he_PresentClauseAllows1Obj"/>
+  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres1Obj" superordinate="she_PresentClauseAllows1Obj"/>
+  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres1Obj" superordinate="it_PresentClauseAllows1Obj"/>
 
-  <grammar_rule left_child="he_3rdPersSingClauseAllows1Obj" right_child="himself_ObjEnumEle" superordinate="clauseWith1Obj"/>
-  <grammar_rule left_child="he_3rdPersSingClauseAllows1Obj" right_child="obj" superordinate="clauseWith1Obj"/>
+  <grammar_rule left_child="he_PresentClauseAllows1Obj" right_child="himself_ObjEnumEle" superordinate="clauseWith1Obj"/>
+  <grammar_rule left_child="he_PresentClauseAllows1Obj" right_child="obj" superordinate="clauseWith1Obj"/>
   
-  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres2Obj" superordinate="he_3rdPersSingClauseAllows2Obj"/>
-  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres2Obj" superordinate="she_3rdPersSingClauseAllows2Obj"/>
-  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres2Obj" superordinate="it_3rdPersSingClauseAllows2Obj"/>
+  <grammar_rule left_child="he" right_child="MainVerb3rdPersSingPres2Obj" superordinate="he_PresentClauseAllows2Obj"/>
+  <grammar_rule left_child="she" right_child="MainVerb3rdPersSingPres2Obj" superordinate="she_PresentClauseAllows2Obj"/>
+  <grammar_rule left_child="it" right_child="MainVerb3rdPersSingPres2Obj" superordinate="it_PresentClauseAllows2Obj"/>
 </grammar_rules>

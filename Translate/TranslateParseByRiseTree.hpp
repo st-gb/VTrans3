@@ -121,7 +121,7 @@ public:
   {
     m_stdmap_AttrName2VocAndTranslAttrDef.clear() ;
   }
-  void FreeMemoryForTranslationRule() ;
+  void FreeMemoryForTranslationRules() ;
   std::string GetSyntaxTreePathAsName( //ParseByRise & r_parsebyrise
    const std::vector<WORD> & ) ;
   std::string GetSyntaxTreePathAsName(WORD * ar_wGrammarPartPath,

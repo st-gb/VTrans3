@@ -6,7 +6,7 @@
  */
 //class TranslationControllerBase
 #include <Controller/TranslationControllerBase.hpp>
-#include <IO/IO.hpp> //OneLinePerWordPair::LoadWords()
+//#include <IO/IO.hpp> //OneLinePerWordPair::LoadWords()
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <Xerces/SAX2MainConfigHandler.hpp>

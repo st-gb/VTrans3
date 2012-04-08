@@ -8,6 +8,20 @@
 #include "ParseByRise.hpp" //class ParseByRise
 #include <Attributes/EnglishWord.hpp> //for class EnglishWord's English_word_class enum
 
+//see http://en.wikipedia.org/wiki/Possessive_adjective#Nomenclature:
+// they stand _before_ a noun.
+void ParseByRise::InsertGrammarRuleNamesForPossessiveAdjectives()
+{
+//  InsertGrammarRule( EnglishWord::PossessiveAdjective , "my" );
+////  InsertGrammarRule( EnglishWord::personal_pronoun_you_sing ,"you_sing" ) ;
+//  InsertGrammarRule( EnglishWord::PossessiveAdjective ,"your" ) ;
+//  InsertGrammarRule( EnglishWord::PossessiveAdjective , "his") ;
+//  InsertGrammarRule(EnglishWord::PossessiveAdjective , "her") ;
+//  InsertGrammarRule(EnglishWord::PossessiveAdjective, "its" ) ;
+//  InsertGrammarRule( EnglishWord::PossessiveAdjective, "our" ) ;
+//  InsertGrammarRule( EnglishWord::PossessiveAdjective, "their" ) ;
+}
+
 // \brief Insert a grammar part <-> grammar part name mapping for word classes.
 void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
 {
@@ -51,6 +65,9 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
   InsertGrammarRule( EnglishWord::main_verb_allows_2objects_progressive_form,
     "MainVerbProgressive2Obj" ) ;
 
+  InsertGrammarRule( EnglishWord::adjective_positiveForm, "positive");
+  InsertGrammarRule( EnglishWord::adjective, "adjective");
+
   InsertGrammarRule( EnglishWord::adverb, "adverb" ) ;
 
   InsertGrammarRule( EnglishWord::English_definite_article,
@@ -65,6 +82,7 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
   InsertGrammarRule( EnglishWord::haveInfinitive,"haveInfinitive");
 
   InsertGrammarRuleNamesForPersonalPronouns();
+  InsertGrammarRuleNamesForPossessiveAdjectives();
   InsertGrammarRuleNamesForObjectFormPersonalPronouns();
   InsertGrammarRuleNamesForAuxiliaryVerbToBe();
 
@@ -91,6 +109,9 @@ void ParseByRise::InsertGrammarRuleNamesForAuxiliaryVerbToBe()
 
 void ParseByRise::InsertGrammarRuleNamesForObjectFormPersonalPronouns()
 {
+  //TODO: Is a separate ID for every personal pronoun in object form needed?
+  // Probably yes because: for the translation different grammar part IDs are
+  // needed: ID for "me" -> "mich" ; ID for "him" -> "ihn"
   InsertGrammarRule( EnglishWord::personal_pronoun_me , "me" ) ;
 //  InsertGrammarRule( EnglishWord::personal_pronoun_you_sing ,"you_sing" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun_objective_you ,"objective_you" ) ;
@@ -103,6 +124,10 @@ void ParseByRise::InsertGrammarRuleNamesForObjectFormPersonalPronouns()
 
 void ParseByRise::InsertGrammarRuleNamesForPersonalPronouns()
 {
+  //For syntax checking (e.g. only allow 3 person singular subject for 3rd
+  //person singular finite verb form) and for the correct finite verb form when
+  //translating the exact person is needed.
+  //So insert a separate ID for every personal pronoun.
   InsertGrammarRule( EnglishWord::personal_pronoun_I , "I" ) ;
 //  InsertGrammarRule( EnglishWord::personal_pronoun_you_sing ,"you_sing" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun_you ,"you" ) ;
@@ -116,6 +141,9 @@ void ParseByRise::InsertGrammarRuleNamesForPersonalPronouns()
 
 void ParseByRise::InsertGrammarRuleNamesForReflexivePronouns()
 {
+  //The person of the reflexive pronoun must exactly match the subject's person.
+  //(only allow "I like myself." and not "He likes myself."
+  //So insert a separate ID for every reflexive pronoun.
   InsertGrammarRule( EnglishWord::reflexive_pronoun_myself, "myself" ) ;
   InsertGrammarRule( EnglishWord::reflexive_pronoun_yourself, "yourself" ) ;
   InsertGrammarRule( EnglishWord::reflexive_pronoun_himself, "himself" ) ;

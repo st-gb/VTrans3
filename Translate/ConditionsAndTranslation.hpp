@@ -34,6 +34,8 @@ typedef void ( * pfnTransformString) (std::string & r_stdstr ) ;
 class ConditionsAndTranslation
 {
 public:
+  static std::map<std::string, pfnTransformString>
+    s_std_mapFunctionName2Function;
   enum compare_type { equals } ;
   BYTE m_byCompareType ;
   //The person index that belongs to the conditions. e.g. person index
@@ -90,6 +92,7 @@ public:
   {
 
   }
+
   #ifdef _DEBUG
   ~ConditionsAndTranslation()
   {
@@ -98,6 +101,13 @@ public:
   }
   #endif //#ifdef _DEBUG
 
+  void clear()
+  {
+    m_conditions.clear() ;
+    m_stdstrAttributeName = "" ;
+    m_stdstrGermanTranslation = "" ;
+    m_pfn_TransformString = NULL;
+  }
   std::string GetTranslationEquivalent(
     //A leaf contain the needed pointer to a VocabularyAndTranslation object.
     const GrammarPart * const p_grammarpartLeaf

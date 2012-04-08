@@ -44,6 +44,8 @@
 
 //I_UserInterface * SyntaxTreePath::sp_userinterface ;
 
+using namespace wxWidgets;
+
 IMPLEMENT_APP(VTransApp)
 
 VTransApp::VTransApp()
@@ -82,10 +84,12 @@ VTransApp::~VTransApp()
 void VTransApp::CreateAndShowMainWindow()
 {
   wxTextInputDlg * p_wx_text_input_dialog = new wxTextInputDlg(
-   NULL
-   //, wxID_ANY, wxString("gg"), wxPoint(50,50), wxSize(400,400),
-   //wxDEFAULT_DIALOG_STYLE | wxCLOSE_BOX
-   );
+    NULL,
+    * ( //(TranslationControllerBase *)
+      this)
+    //, wxID_ANY, wxString("gg"), wxPoint(50,50), wxSize(400,400),
+    //wxDEFAULT_DIALOG_STYLE | wxCLOSE_BOX
+    );
   m_p_wx_text_input_dialog = p_wx_text_input_dialog ;
   //      wxWidgets::MainFrame * p_mainframe = new wxWidgets::MainFrame(
   //        wxT("dfd"), wxPoint(0,0) , wxSize(400,400)
@@ -268,4 +272,28 @@ void VTransApp::ProcessSelectedXMLfiles(
         stdstrFilePath ) ;
     }
   }
+}
+
+void VTransApp::ShowInvalidVocabularyFileFormatMessage(
+  const VTrans::string_type & strWordFile,
+  DWORD dwOffsetOfBeginOfEntry,
+  DWORD dwOffset
+  )
+{
+  wxString wxstrCwd = wxGetCwd();
+
+  wxstrCwd += wxT("\\");
+  wxstrCwd += strWordFile;
+
+  wxString wxstrMessage = wxString::Format(
+    wxT("Die Datei \n\"%s\"\n\nenthält kein gültiges "
+    "Format oder sonstiger Fehler zwischen\nOffset (=Position in Byte ab "
+    "Dateibeginn) %u (dezimal)\nund Offset (=Position in Byte ab Dateibeginn) "
+    "%u (dezimal).\n\nDas Laden der Vokabeln wird beendet.\nVersuchen Sie, den "
+    "Fehler in der Dateistruktur zu beheben."),
+    wxstrCwd,
+    //strWordFile,
+    dwOffsetOfBeginOfEntry, dwOffset);
+
+  ::wxMessageBox( wxstrMessage );
 }

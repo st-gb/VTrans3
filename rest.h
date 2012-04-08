@@ -37,9 +37,9 @@
 	  #include <afxstr.h> //for class CString
   #endif
 
-  //Says that an additional array of pointers with same size as number 
-  //of strings should be allocated.
-  #define COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
+//  //Says that an additional array of pointers with same size as number
+//  //of strings should be allocated.
+//  #define COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
 
   //Flags/Schalter/Optionen für Ausgangstext(werden in Parse...(...) übergeben)
   //, Anfang

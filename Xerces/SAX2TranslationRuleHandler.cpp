@@ -25,7 +25,10 @@
 #include <string.h> //for wcscmp (const wchar_t*, const wchar_t*);
 #include <string> //class std::string
 
+
 #define TRANSLATION_RULE_XML_ELEMENT_ANSI "translation_rule"
+#define ATTRIBUTE_NAME_ANSI_STRING "attribute_name"
+#define TRANSLATION_ANSI_STRING "translation"
 
 SAX2TranslationRuleHandler::SAX2TranslationRuleHandler(
   TranslateParseByRiseTree & r_translateparsebyrise ,
@@ -56,18 +59,15 @@ void SAX2TranslationRuleHandler::endElement(
   )
 {
   if(
-//      //http://www.gnu.org/s/libc/manual/html_node/
-//      // String_002fArray-Comparison.html:
-//      //"If the two strings are equal, wcscmp returns 0."
        //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
 //     ! wcscmp ( cpc_xmlchLocalName , L"translation_rule" )
 
-      //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
-      ! Xerces::ansi_or_wchar_string_compare(
-          cpc_xmlchLocalName,
-          ANSI_OR_WCHAR( //TRANSLATION_RULE_XML_ELEMENT_ANSI
-          "translation_rule" )
-        )
+    //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
+    ! Xerces::ansi_or_wchar_string_compare(
+        cpc_xmlchLocalName,
+        ANSI_OR_WCHAR( //TRANSLATION_RULE_XML_ELEMENT_ANSI
+        "translation_rule" )
+      )
     )
   {
     LOGN( //TRANSLATION_RULE_XML_ELEMENT_ANSI
@@ -120,16 +120,10 @@ void SAX2TranslationRuleHandler::endElement(
               ) ==
                 SyntaxTreePath::unknown_grammar_part_name
             )
-            mr_i_userinterface.Message( "unknown grammar part name \"" +
+            ShowMessageToUser( "unknown grammar part name \"" +
                 std_strUnknownGrammarPartID + "\" in STP \"" +
                 m_std_strSyntaxTreePathForInsertionForTranslation +
-                "\" in document\n"
-              + Xerces::ToStdString( m_pc_locator->//getPublicId()
-                getSystemId() )
-              + "\nin line:"
-              + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
-              + ", column:"
-              + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+                "\"\n"
               ) ;
           m_std_strSyntaxTreePathForInsertionForTranslation = "";
         }
@@ -160,12 +154,12 @@ void SAX2TranslationRuleHandler::endElement(
       }
       catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
       {
-          mr_i_userinterface.Message(
-            "Error adding translation rule for STP \"" +
-            m_stdstrTranslationRuleSyntaxTreePath + "\" : "
-            "unknown grammar part ID \"" +
-               c_r_getgrammarpartidexception.m_stdstr + " \""
-            );
+        mr_i_userinterface.Message(
+          "Error adding translation rule for STP \"" +
+          m_stdstrTranslationRuleSyntaxTreePath + "\" : "
+          "unknown grammar part ID \"" +
+             c_r_getgrammarpartidexception.m_stdstr + " \""
+          );
       }
       catch( //std::string e
 //          GetGrammarPartIDexception & e
@@ -183,13 +177,9 @@ void SAX2TranslationRuleHandler::endElement(
           << "\" failed." )
       }
     }
-    m_conditionsandtranslation.m_conditions.clear() ;
-    m_conditionsandtranslation.m_stdstrAttributeName = "" ;
-    m_conditionsandtranslation.m_stdstrGermanTranslation = "" ;
+    m_conditionsandtranslation.clear();
   }
-  else if( //http://www.gnu.org/s/libc/manual/html_node/
-      //String_002fArray-Comparison.html:
-      //"If the two strings are equal, wcscmp returns 0."
+  else if(
       //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
 //     ! wcscmp ( cpc_xmlchLocalName , L"condition" )
      //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
@@ -223,6 +213,7 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
     {
       LOGN("Got attribute value for \"condition\" element's syntax_tree_path:"
         "\"" << m_stdstrConditionSyntaxTreePath << "\"" )
+
       if( m_stdstrConditionSyntaxTreePath != ""
           && XercesAttributesHelper::getValue(
           cr_xercesc_attributes ,
@@ -245,16 +236,9 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
           mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.end()
           )
         {
-          mr_i_userinterface.Message( "The translation attribute definition "
+          ShowMessageToUser( "The translation attribute definition "
             "for the name \"" + m_stdstrConditionAttributeName
             + "\" is not available."
-            "It is referenced in in document\n"
-            + Xerces::ToStdString( m_pc_locator->//getPublicId()
-              getSystemId() )
-            + "\nin line:"
-            + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
-            + ", column:"
-            + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
             ) ;
         }
         if( m_stdstrConditionAttributeName != ""
@@ -287,7 +271,8 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
           )
         {
           LOGN("\"byte_attribute_value\" or "
-            "\"string_attribute_value\" attribute")
+            "\"string_attribute_value\" attribute for STP " <<
+            m_stdstrConditionSyntaxTreePath)
           Condition cond ;
           std::string std_strUnknownGrammarPartID;
           if( cond.SetSyntaxTreePath(
@@ -299,15 +284,9 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
           {
             //TODO error message
       //          cr_xercesc_attributes.
-            mr_i_userinterface.Message( "unknown grammar part name \n\"" +
+            ShowMessageToUser( "unknown grammar part name \n\"" +
               std_strUnknownGrammarPartID + "\"\n for STP \n\"" +
-              m_stdstrConditionSyntaxTreePath + "\"\n in document\n"
-              + Xerces::ToStdString( m_pc_locator->//getPublicId()
-                getSystemId() )
-              + "\nin line:"
-              + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
-              + ", column:"
-              + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
+              m_stdstrConditionSyntaxTreePath + "\"\n"
               ) ;
           }
           cond.m_stdstrAttributeName = m_stdstrConditionAttributeName ;
@@ -321,16 +300,9 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
         {
           LOGN("Neither a \"byte_attribute_value\" nor a "
             "\"string_attribute_value\" attribute")
-          mr_i_userinterface.Message( "Neither a \"byte_attribute_value\" nor a "
+          ShowMessageToUser( "Neither a \"byte_attribute_value\" nor a "
               "\"string_attribute_value\" attribute\n"
               "-> NOT adding condition to the rule."
-            "It is referenced in in document\n"
-            + Xerces::ToStdString( m_pc_locator->//getPublicId()
-              getSystemId() )
-            + "\nin line:"
-            + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
-            + ", column:"
-            + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
             ) ;
         }
       }
@@ -341,11 +313,161 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
         "\"translation\" attribute value")
 }
 
+void SAX2TranslationRuleHandler::GetAttributeNameOrTranslationString(
+  const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes)
+{
+  if( XercesAttributesHelper::getValue(
+      cr_xercesc_attributes ,
+      m_stdstrTranslationRuleAttributeName,
+      //This is the name for the attribute value to choose for
+      //translation if the syntax tree path and the conditions match:
+      // e.g. attribute_name is "German_plural", current syntax tree
+      // path is "definite_plural.plural", translation rule's syntax
+      // tree path is "plural" then:
+      // use attribute name "German_plural" from the
+      // VocabularyAndTranslation data.
+      ATTRIBUTE_NAME_ANSI_STRING
+      )
+    )
+  {
+    LOGN( FULL_FUNC_NAME << "Successfully got attribute_name for "
+      "translation_rule: \"" << m_stdstrTranslationRuleAttributeName << "\"")
+    //The translation definition may refer a definition of an vocabulary
+    //attribute definition (e.g. "German_noun_plural: string attribute
+    //type, string at string array index 2).
+    if( mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.
+      find( m_stdstrTranslationRuleAttributeName) ==
+      mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.end()
+      )
+    {
+      ShowMessageToUser(
+        "The translation attribute definition "
+        "for the name \"" + m_stdstrTranslationRuleAttributeName
+        + "\" is not available."
+        ) ;
+    }
+    m_conditionsandtranslation.m_stdstrAttributeName =
+      m_stdstrTranslationRuleAttributeName ;
+  } //_either_ "attribute_name" (from main memory vocabulary attributes)
+    //or "translation" (direct translation/ uses a string as translation)
+  else if ( XercesAttributesHelper::getValue(
+      cr_xercesc_attributes ,
+      m_stdstrTranslation
+      //Using directly a word for translation rather than an attribute
+      // value of a VocabularyAndTranslation object is an alternative.
+//        , L"translation"
+      , TRANSLATION_ANSI_STRING
+      )
+    )
+  {
+    LOGN( FULL_FUNC_NAME << "--Successfully got attribute value for "
+      "\"translation\":" << m_stdstrTranslation )
+    m_conditionsandtranslation.m_stdstrGermanTranslation =
+        m_stdstrTranslation ;
+  }
+  else
+  {
+    ShowMessageToUser("neither \"" ATTRIBUTE_NAME_ANSI_STRING "\" nor \""
+      TRANSLATION_ANSI_STRING "\" specified for STP \"" +
+      m_stdstrTranslationRuleSyntaxTreePath + "\""
+      );
+  }
+}
+
+void SAX2TranslationRuleHandler::GetStringTransformationFunctionName(
+  const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes)
+{
+  std::string std_strStringTransformationFunctionName;
+  if(
+      XercesAttributesHelper::getValue(
+      cr_xercesc_attributes ,
+      std_strStringTransformationFunctionName ,
+      //Use attribute name "German_plural" from the
+      // VocabularyAndTranslation data.
+//              L"string_attribute_value"
+      "string_transformation_function_name"
+      )
+    )
+  {
+    std::map<std::string, pfnTransformString>::const_iterator c_iter
+      = ConditionsAndTranslation::s_std_mapFunctionName2Function.find(
+      std_strStringTransformationFunctionName);
+    if( c_iter != ConditionsAndTranslation::
+      s_std_mapFunctionName2Function.end() )
+    {
+      LOGN( FULL_FUNC_NAME << "--assigning function \"" <<
+        std_strStringTransformationFunctionName << "\" for current "
+        "conditionsandtranslation object" )
+      m_conditionsandtranslation.m_pfn_TransformString =
+        c_iter->second;
+    }
+  }
+}
+
+void SAX2TranslationRuleHandler::GetParentNodeInsertionDirection(
+  const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes)
+{
+  std::string std_strInsertionForParentNode;
+  if( XercesAttributesHelper::getValue(
+      cr_xercesc_attributes,
+      std_strInsertionForParentNode,
+      "parent_node_insertion_direction")
+    )
+  {
+    if(std_strInsertionForParentNode == "left")
+      m_uiParentNodeInsertion = TranslationRule::left;
+    else
+      if(std_strInsertionForParentNode == "right")
+        m_uiParentNodeInsertion = TranslationRule::right;
+  }
+}
+
+void SAX2TranslationRuleHandler::GetChildNodeInsertionDirection(
+  const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes)
+{
+  std::string std_strInsertionForTranslationDirection;
+  if(XercesAttributesHelper::getValue(
+      cr_xercesc_attributes,
+      std_strInsertionForTranslationDirection,
+      "child_node_insertion_direction")
+    )
+  {
+    if(std_strInsertionForTranslationDirection == "left")
+      m_uiTranslationInsertion = TranslationRule::left;
+    else
+      if(std_strInsertionForTranslationDirection == "right")
+        m_uiTranslationInsertion = TranslationRule::right;
+  }
+}
+
+void SAX2TranslationRuleHandler::GetSyntaxTreePathWhereToInsertTranslation(
+  const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes)
+{
+  if ( XercesAttributesHelper::getValue(
+      cr_xercesc_attributes ,
+      m_std_strSyntaxTreePathForInsertionForTranslation
+      //Using directly a word for translation rather than an attribute
+      // value of a VocabularyAndTranslation object is an alternative.
+//        , L"syntax_tree_path_where_to_insert_translation"
+      , "syntax_tree_path_where_to_insert_translation"
+      )
+    )
+  {
+    LOGN("Successfully got attribute value for "
+      "\"syntax_tree_path_where_to_insert_translation\":"
+      << m_std_strSyntaxTreePathForInsertionForTranslation )
+//      m_conditionsandtranslation.m_stdstrGermanTranslation =
+//          m_stdstrTranslation ;
+  }
+  else
+    m_std_strSyntaxTreePathForInsertionForTranslation = "";
+}
+
 void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
   const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes)
 {
   //If this path corresponds to the path of the _current_ syntax
-  //tree path then it is checked whether conditons (if exist) are true and
+  //tree path then it is checked whether conditions (if exist) are true and
   //if yes: applies the translation.
   if( XercesAttributesHelper::getValue(
       cr_xercesc_attributes ,
@@ -354,131 +476,30 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
       )
     )
   {
-    LOGN("Successfully got syntax tree path:"
-      << m_stdstrTranslationRuleSyntaxTreePath )
-    if( XercesAttributesHelper::getValue(
-        cr_xercesc_attributes ,
-        m_stdstrTranslationRuleAttributeName,
-        //This is the name for the attribute value to choose for
-        //translation if the syntax tree path and the conditions match:
-        // e.g. attribute_name is "German_plural", current syntax tree
-        // path is "definite_plural.plural", translation rule's syntax
-        // tree path is "plural" then:
-        // use attribute name "German_plural" from the
-        // VocabularyAndTranslation data.
-        "attribute_name"
-        )
-      )
-    {
-      LOGN("Successfully got attribute_name for translation_rule:"
-        << m_stdstrTranslationRuleAttributeName )
-      //The translation definition may refer a definition of an vocabulary
-      //attribute definition (e.g. "German_noun_plural: string attribute
-      //type, string at string array index 2).
-      if( mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.
-        find( m_stdstrTranslationRuleAttributeName) ==
-        mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.end()
-        )
-      {
-        mr_i_userinterface.Message( "The translation attribute definition "
-          "for the name \"" + m_stdstrTranslationRuleAttributeName
-          + "\" is not available."
-          "It is referenced in in document\n"
-          + Xerces::ToStdString( m_pc_locator->//getPublicId()
-            getSystemId() )
-          + "\nin line:"
-          + convertToStdString<XMLFileLoc>( m_pc_locator->getLineNumber() )
-          + ", column:"
-          + convertToStdString<XMLFileLoc>( m_pc_locator->getColumnNumber() )
-          ) ;
-      }
-      m_conditionsandtranslation.m_stdstrAttributeName =
-          m_stdstrTranslationRuleAttributeName ;
-    } //_either_ "attribute_name" (from main memory vocabulary attributes)
-      //or "translation" (direct translation/ uses a string as translation)
-    else if ( XercesAttributesHelper::getValue(
-        cr_xercesc_attributes ,
-        m_stdstrTranslation
-        //Using directly a word for translation rather than an attribute
-        // value of a VocabularyAndTranslation object is an alternative.
-//        , L"translation"
-        , "translation"
-        )
-      )
-    {
-      LOGN("Successfully got attribute value for \"translation\":"
-        << m_stdstrTranslation )
-      m_conditionsandtranslation.m_stdstrGermanTranslation =
-          m_stdstrTranslation ;
-    }
-    if ( XercesAttributesHelper::getValue(
-        cr_xercesc_attributes ,
-        m_std_strSyntaxTreePathForInsertionForTranslation
-        //Using directly a word for translation rather than an attribute
-        // value of a VocabularyAndTranslation object is an alternative.
-//        , L"syntax_tree_path_where_to_insert_translation"
-        , "syntax_tree_path_where_to_insert_translation"
-        )
-      )
-    {
-      LOGN("Successfully got attribute value for "
-        "\"syntax_tree_path_where_to_insert_translation\":"
-        << m_std_strSyntaxTreePathForInsertionForTranslation )
-//      m_conditionsandtranslation.m_stdstrGermanTranslation =
-//          m_stdstrTranslation ;
-    }
-    else
-      m_std_strSyntaxTreePathForInsertionForTranslation = "";
-//    if( ! ConvertXercesAttributesValue<//BYTE
-//  //      WORD
-//        unsigned >(
-//        cr_xercesc_attributes ,
-//        //byAttributeValue ,
-//        m_uiTranslationInsertion ,
-//        L"insertion_direction"
-//        )
-//      )
-//      m_uiTranslationInsertion = 0;
-    std::string std_strInsertionForTranslationDirection;
-    if( XercesAttributesHelper::getValue(
-        cr_xercesc_attributes ,
-        std_strInsertionForTranslationDirection,
-//        L"child_node_insertion_direction"
-        "child_node_insertion_direction"
-        )
-      )
-    {
-        if( std_strInsertionForTranslationDirection == "left")
-          m_uiTranslationInsertion = TranslationRule::left;
-        else if( std_strInsertionForTranslationDirection == "right")
-          m_uiTranslationInsertion = TranslationRule::right;
-    }
-    std::string std_strInsertionForParentNode;
-    if( XercesAttributesHelper::getValue(
-        cr_xercesc_attributes ,
-        std_strInsertionForParentNode,
-//        L"parent_node_insertion_direction"
-        "parent_node_insertion_direction"
-        )
-      )
-    {
-        if( std_strInsertionForParentNode == "left")
-          m_uiParentNodeInsertion = TranslationRule::left;
-        else if( std_strInsertionForParentNode == "right")
-          m_uiParentNodeInsertion = TranslationRule::right;
-    }
+    LOGN(FULL_FUNC_NAME << "--" << GetFilePathAndFileLocation()
+      << " Successfully got syntax tree path:\""
+      << m_stdstrTranslationRuleSyntaxTreePath << "\"")
+
+    GetStringTransformationFunctionName(cr_xercesc_attributes);
+
+    GetAttributeNameOrTranslationString(cr_xercesc_attributes);
+
+    GetSyntaxTreePathWhereToInsertTranslation(cr_xercesc_attributes);
+
+    GetChildNodeInsertionDirection(cr_xercesc_attributes);
+
+    GetParentNodeInsertionDirection(cr_xercesc_attributes);
+
     if( ! XercesAttributesHelper::getValue(
-        cr_xercesc_attributes ,
+        cr_xercesc_attributes,
         m_std_strParentNodeGrammarPartName,
-//        L"parent_node_grammar_part_name"
-        "parent_node_grammar_part_name"
-        )
+        "parent_node_grammar_part_name")
       )
       m_std_strParentNodeGrammarPartName = "";
+
     if( ! XercesAttributesHelper::getValue(
-        cr_xercesc_attributes ,
+        cr_xercesc_attributes,
         m_std_strGrammarPartName,
-//        L"grammar_part_name"
         "grammar_part_name"
         )
       )
@@ -524,9 +545,7 @@ void SAX2TranslationRuleHandler::startElement
 //    }
   }
   else
-    if( //http://www.gnu.org/s/libc/manual/html_node/
-        //String_002fArray-Comparison.html:
-        //"If the two strings are equal, wcscmp returns 0."
+    if(
         //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
   //     ! wcscmp ( cpc_xmlchLocalName , L"condition" )
        //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
@@ -536,9 +555,7 @@ void SAX2TranslationRuleHandler::startElement
            )
       )
       m_bConcatenatedTranslationRules = true;
-    else if( //http://www.gnu.org/s/libc/manual/html_node/
-      //String_002fArray-Comparison.html:
-      //"If the two strings are equal, wcscmp returns 0."
+    else if(
       //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
 //     ! wcscmp ( cpc_xmlchLocalName , L"condition" )
      //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
@@ -550,4 +567,45 @@ void SAX2TranslationRuleHandler::startElement
   {
     HandleConditionXMLelement(cr_xercesc_attributes);
   }
+}
+
+void SAX2TranslationRuleHandler::ShowMessageToUser(
+  const std::string & c_r_std_strMessage)
+{
+  ShowMessageToUser( c_r_std_strMessage.c_str() );
+}
+
+void SAX2TranslationRuleHandler::ShowMessageToUser(
+  const char * const cpc_chMessage)
+{
+  mr_i_userinterface.Message(
+    //Needed for string concatenation: 2 char pointers can't be concatenated
+    //via "+".
+    std::string( cpc_chMessage) +
+    "\nIt is referenced in in document\n"
+    + Xerces::ToStdString( m_pc_locator->getSystemId() )
+    + "\nin line:" + GetLineNumber()
+    + ", column:" + GetColumnNumber()
+    );
+}
+
+std::string SAX2TranslationRuleHandler::GetFilePathAndFileLocation()
+{
+  return "{" + Xerces::ToStdString( m_pc_locator->//getPublicId()
+    getSystemId() ) + GetLineNumber() + ";" + GetColumnNumber() + "}";
+}
+
+std::string SAX2TranslationRuleHandler::GetColumnNumber()
+{
+    return convertToStdString<XMLFileLoc>(m_pc_locator->getColumnNumber());
+}
+
+std::string SAX2TranslationRuleHandler::GetLineNumber()
+{
+    return convertToStdString<XMLFileLoc>(m_pc_locator->getLineNumber());
+}
+
+void SAX2TranslationRuleHandler::GetLineNumber(std::string & std_strLine )
+{
+  std_strLine = convertToStdString<XMLFileLoc>(m_pc_locator->getLineNumber() );
 }

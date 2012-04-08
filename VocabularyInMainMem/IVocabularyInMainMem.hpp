@@ -70,14 +70,17 @@ class GermanWord;
     void InsertFundamentalWords() ;
     //For inserting fundamental words etc.
     virtual //void
-      void * Insert(const std::string & stdstr, BYTE byWordClass )
+//      void *
+      VocabularyAndTranslation *
+      Insert(const std::string & stdstr, BYTE byWordClass )
       //If not "= 0 ":
       //"undefined reference to `vtable for IVocabularyInMainMem'" when linking
       //with g++ .
       = 0 ;
     virtual void
       //void *
-      Insert(EnglishWord & ew , GermanWord & gw, void * p_v
+      Insert(EnglishWord & ew , GermanWord & gw, //void * p_v
+        VocabularyAndTranslation * p_vocabularyandtranslation
         ) = 0 ;
     virtual void Insert(const char *, unsigned ui, void * p_v) { };
   };

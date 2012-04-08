@@ -58,6 +58,11 @@
 #include <bitmaps/grammar_part_colours.xpm>
 #include <bitmaps/info.xpm>
 
+//For array "re_initialize_grammar_xpm" .
+#include <bitmaps/re-initialize_grammar.xpm>
+//For array "re_load_dictionary_xpm" .
+#include <bitmaps/re-load_dictionary.xpm>
+
 //For array "remove_grammar_rules_xpm" .
 #include <bitmaps/remove_grammar_rules.xpm>
 //For array "remove_translation_rules_xpm" .
@@ -67,6 +72,7 @@
 #include <bitmaps/resolve_superclasses.xpm> //for array resolve_superclasses_xpm
 #include <bitmaps/resolve_1parse_level.xpm> //for array resolve_1parse_level_xpm
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
+#include <bitmaps/truncate_log_file.xpm> //for array truncate_log_file_xpm
 #include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
 //see //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 #pragma GCC diagnostic pop
@@ -106,6 +112,7 @@ BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
   EVT_BUTTON( ID_AddTranslationRules , wxTextInputDlg::OnAddTranslationRules )
   EVT_BUTTON( ID_AddVocAttrDefs, wxTextInputDlg::OnAddVocAttrDefs )
   EVT_BUTTON( ID_Translate , wxTextInputDlg::OnTranslateButton)
+  EVT_BUTTON( ID_TruncateLogFile, wxTextInputDlg::OnTruncateLogFileButton)
   EVT_BUTTON( ID_LoadDictionary , wxTextInputDlg::OnLoadDictionaryButton)
   EVT_BUTTON( ID_ShowTokenIndex2GrammarPart, wxTextInputDlg::
     OnShowTokenIndex2GrammarPartButton)
@@ -129,6 +136,17 @@ BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
   EVT_CLOSE( wxTextInputDlg::OnClose)
 END_EVENT_TABLE()
 
+void wxTextInputDlg::AddReInitializeGrammarButton(wxSizer * p_wxsizer)
+{
+  mp_wxbutton = new wxBitmapButton(
+    this,
+    ID_ReInitGrammarRules,
+    wxBitmap(re_initialize_grammar_xpm)
+    );
+  mp_wxbutton->SetToolTip( wxT("re-init grammar") ) ;
+  p_wxsizer->Add(mp_wxbutton, 0, wxBOTTOM, 2);
+}
+
 void wxTextInputDlg::AddButtons()
 {
   wxButton * p_wxbutton ;
@@ -147,22 +165,8 @@ void wxTextInputDlg::AddButtons()
   AddResolve1ParseLevelButton( p_boxsizerButtons ) ;
   AddResolveSuperClassesButton( p_boxsizerButtons ) ;
 
-  p_wxbutton = new wxButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
-    this
-    , //wxID_ANY
-    ID_ReInitGrammarRules
-    , wxT("re G")
-    ) ;
-  p_wxbutton->SetToolTip( wxT("re-init grammar")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    , 0 //stretch factor. 0=do not stretch
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
+  AddReInitializeGrammarButton(p_boxsizerButtons);
+
   p_wxbutton = new wxButton(
     //mp_wxsplitterwindow
     //m_panelSplitterTop
@@ -173,15 +177,14 @@ void wxTextInputDlg::AddButtons()
     , wxT("i2g")
     ) ;
   p_wxbutton->SetToolTip( wxT("show token index 2 grammar part map content")) ;
-  p_boxsizerButtons->Add(
-    p_wxbutton
-    , 0 //strech factor. 0=do not stretch
-    , //wxEXPAND |
-      wxBOTTOM
-    , 2 );
+  p_boxsizerButtons->Add(p_wxbutton, 0,
+    wxBOTTOM
+  , 2 );
+
   AddLoadDictionaryButton( p_boxsizerButtons);
   AddShowInformationButton( p_boxsizerButtons ) ;
   AddDrawParseTreeButton( p_boxsizerButtons);
+  AddTruncateLogFileButton( p_boxsizerButtons);
   p_boxsizerOuter->Add( p_boxsizerButtons ) ;
 }
 
@@ -341,14 +344,16 @@ void wxTextInputDlg::AddAddGrammarRulesButton( wxSizer * p_sizer )
 
 void wxTextInputDlg::AddLoadDictionaryButton( wxSizer * p_sizer)
 {
-  mp_wxbutton = new wxButton(
+  mp_wxbutton = new //wxButton(
+    wxBitmapButton(
     //mp_wxsplitterwindow
     //m_panelSplitterTop
     //p_boxsizerOuter
     this
     , //wxID_ANY
     ID_LoadDictionary
-    , wxT("dict")
+    //, wxT("dict")
+    , wxBitmap( re_load_dictionary_xpm)
     ) ;
   mp_wxbutton->SetToolTip( wxT("re-load dictionary...") );
   p_sizer->Add(
@@ -495,8 +500,31 @@ void wxTextInputDlg::AddTranslateButton( wxSizer * p_sizer )
     , 2 );
 }
 
+void wxTextInputDlg::AddTruncateLogFileButton( wxSizer * p_sizer )
+{
+  mp_wxbutton = new //wxButton(
+    wxBitmapButton(
+    //mp_wxsplitterwindow
+    //m_panelSplitterTop
+    //p_boxsizerOuter
+    this
+    , //wxID_ANY
+    ID_TruncateLogFile
+  //    , wxT("t")
+    , wxBitmap( truncate_log_file_xpm)
+    ) ;
+  mp_wxbutton->SetToolTip( wxT("translate")) ;
+  p_sizer->Add(
+    mp_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+}
+
 wxTextInputDlg::wxTextInputDlg(
   wxWindow * p_wxwindowParent,
+  TranslationControllerBase & r_translationcontrollerbase,
   wxWindowID wxwindow_id,
   const wxString & cr_wxstrTitle,
   const wxPoint & cr_wxpointWindowPosition,
@@ -504,9 +532,10 @@ wxTextInputDlg::wxTextInputDlg(
   long style
   )
   : wxDialog( p_wxwindowParent, wxwindow_id, cr_wxstrTitle,
-    cr_wxpointWindowPosition, cr_wxsizeWindow, style )
+      cr_wxpointWindowPosition, cr_wxsizeWindow, style )
 //  , mp_wxhtmlwindow( NULL)
 //  , m_parsebyrise( ::wxGetApp() )
+  , m_translationcontrollerbase(r_translationcontrollerbase)
   , m_parsebyrise ( ::wxGetApp().m_parsebyrise )
 {
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -874,8 +903,15 @@ void wxTextInputDlg::OnLoadDictionaryButton( wxCommandEvent & wxcmd )
 
 void wxTextInputDlg::OnReInitGrammarRulesButton( wxCommandEvent & wxcmd )
 {
+
   m_parsebyrise.ClearAllGrammarStuff() ;
+  wxGetApp().m_translateparsebyrisetree.FreeMemoryForTranslationRules();
+  wxGetApp().m_stdmap_syntaxtreepath2transformationrule.clear();
+  wxGetApp().m_translateparsebyrisetree.FreeMemoryForVocAttrDefs() ;
+
   m_parsebyrise.InitGrammarRules() ;
+  m_translationcontrollerbase.ReadMainConfigFile(
+    m_translationcontrollerbase.m_std_strMainConfigFilePath);
 }
 
 void wxTextInputDlg::OnRemoveGrammarRules(wxCommandEvent & wxcmd )
@@ -902,7 +938,7 @@ void wxTextInputDlg::OnRemoveTransformationRules(wxCommandEvent & wxcmd )
 void wxTextInputDlg::OnRemoveTranslationRules(wxCommandEvent & wxcmd )
 {
   LOGN("wxTextInputDlg::OnRemoveTranslationRules begin")
-  wxGetApp().m_translateparsebyrisetree.FreeMemoryForTranslationRule() ;
+  wxGetApp().m_translateparsebyrisetree.FreeMemoryForTranslationRules() ;
 //  wxGetApp().m_translateparsebyrisetree.
 //    m_stdmap_translationrule2ConditionsAndTranslation.clear() ;
 //  wxGetApp().m_translateparsebyrisetree.
@@ -975,6 +1011,11 @@ void wxTextInputDlg::OnShowTokenIndex2GrammarPartButton( wxCommandEvent & wxcmd 
 //    m_parsebyrise.m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate
   }
 //  mp_textctrlGermanText->SetValue( stdstr ) ;
+}
+
+void wxTextInputDlg::OnTruncateLogFileButton( wxCommandEvent & wxcmd )
+{
+  g_logger.TruncateFileSizeToZero();
 }
 
 void wxTextInputDlg::OnTranslateButton( wxCommandEvent & wxcmd )

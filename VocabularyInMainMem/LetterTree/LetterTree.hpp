@@ -31,7 +31,10 @@
   //for GetPointerToGermanNounFromWordNodeWhereAnEnglishNounIsEncapsulated,
   // PointerToWordNodeWhereAnEnglishNounIsEncapsulated
   //#include "../../GetAndTestWord.h"
-  #include <Attributes/Token.h> //for PositionStringVector
+
+//  #include <Attributes/Token.h> //for PositionStringVector
+//  typedef std::vector<PositionString> PositionStringVector;
+  #include <Attributes/PositionString.hpp> //for PositionStringVector
   #include <UserInterface/I_UserInterface.hpp>
   //#include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
   #include "VocabularyAndTranslation.hpp"
@@ -261,14 +264,18 @@
       ) ;
 
     //void
-    void * Insert(const std::string & r_stdstr, BYTE byWordClass ) ;
+    //void *
+    VocabularyAndTranslation * Insert(const std::string & r_stdstr,
+      BYTE byWordClass ) ;
     void Insert(const char * c_p_ch, unsigned uiGrammarPartID,
-           void * p_v);
+      //void * p_v
+      VocabularyAndTranslation * p_vocabularyandtranslation);
     void
 //    VocabularyAndTranslation *
     //void *
       Insert(EnglishWord & ew , GermanWord & gw
-      , void * p_v
+      , //void * p_v
+      VocabularyAndTranslation * p_vocabularyandtranslation
       ) ;
 
     //std::set<VocabularyAndTranslation> * search(
@@ -311,7 +318,7 @@
     , bool  bInsertNewVocabularyAndTranslation
     , BYTE byVocabularyType
     ) ;
-    void Insert3rdPersonSingularPresentReferringNounAttributes(
+    void Insert3rdPersonSingularPresentReferringVerbAttributes(
        //This set is to ensure that if strings for the SAME vocabulary
        // not 2 or more VocAndTransl object should be inserted.
        std::set<LetterNode *> & stdsetpletternodeLastStringChar

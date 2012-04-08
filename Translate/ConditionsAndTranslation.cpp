@@ -15,6 +15,10 @@
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <preprocessor_macros/suppress_unused_variable.h>
 
+//A static variable also needs to be defined.
+std::map<std::string, pfnTransformString> ConditionsAndTranslation::
+  s_std_mapFunctionName2Function;
+
 bool ConditionsAndTranslation::AllConditionsMatch(
   // So it can be used with data from outside this class.
   //, const std::vector<WORD> & r_stdvec_wGrammarPartPath
@@ -38,13 +42,13 @@ bool ConditionsAndTranslation::AllConditionsMatch(
 //    const Condition & cr_condition =
 //      r_conditions_and_translation.m_conditions.front() ;
     std::vector<Condition> r_vec_condition = m_conditions ;
-    for( std::vector<Condition>::const_iterator c_iter =
+    for( std::vector<Condition>::const_iterator c_ConditionIterator =
         r_vec_condition.begin() ;
-        c_iter != r_vec_condition.end() ;
-        ++ c_iter
+        c_ConditionIterator != r_vec_condition.end() ;
+        ++ c_ConditionIterator
         )
     {
-      const Condition & cr_condition = *c_iter ;
+      const Condition & cr_condition = *c_ConditionIterator ;
       std::string std_stringSyntaxTreePathOfCondition = cr_condition.
         m_syntaxtreepath.GetAs_std_string();
       LOGN("current condition's syntax tree path:" <<
@@ -87,6 +91,7 @@ bool ConditionsAndTranslation::AllConditionsMatch(
             {
               case AttributeTypeAndPosAndSize::string :
               {
+                LOGN( FULL_FUNC_NAME << "--attribute type is string" )
                 if( r_atapas.m_byLanguage ==
                   AttributeTypeAndPosAndSize::English )
                 {
@@ -104,29 +109,49 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                     r_stdstrAttrVal )
                   {
                     //bIdentical = true ;
+                    LOGN( FULL_FUNC_NAME << "--attribute value \"" <<
+                      stdstrTextTokens << "\" matches leaf's value" )
                   }
                   else
                   {
+                    LOGN( FULL_FUNC_NAME << "--attribute value \"" <<
+                      stdstrTextTokens << "\" MISmatches leaf's value" )
                     bAllConditionsMatch = false ;
                     //break ;
-                    return false ;
+                    //return false ;
                   }
                 }
               }
               break ;
               case AttributeTypeAndPosAndSize::bit :
+                LOGN( FULL_FUNC_NAME << "--attribute type is bit" )
                 if( r_atapas.m_byLanguage ==
                   AttributeTypeAndPosAndSize::German )
                 {
+                  LOGN( FULL_FUNC_NAME << "--attribute refers to the German "
+                    "language" )
                   BYTE by = p_grammarpartLeaf->
                     m_pvocabularyandtranslation->m_arbyAttribute[
                     r_atapas.m_wIndex ] ;
+                  LOGN( FULL_FUNC_NAME << "--attribute value is "
+                    << (WORD) cr_condition.m_byAttributeValue
+                    << ", leaf's value is: " << (WORD) by )
                   if( cr_condition.m_byAttributeValue != by )
-                    //bAllConditionsMatch = false ;
-                    return false ;
+                  {
+                    LOGN( FULL_FUNC_NAME << "--attribute value mismatches "
+                      "leaf's value" )
+                    bAllConditionsMatch = false ;
+                  }
+//                    return false ;
                 }
-
+                break;
             }//switch
+            if( ! bAllConditionsMatch )
+            {
+              LOGN( FULL_FUNC_NAME << "--breaking conditions loop becaus of "
+                "value MISmatch." )
+              break; //"for"-loop
+            }
           }
           //if( r_cond.m_byCompareType == Condition::equals )
         }
@@ -142,13 +167,14 @@ bool ConditionsAndTranslation::AllConditionsMatch(
       {
         LOGN("NO grammar part leaf found.")
         bAllConditionsMatch = false;
-        return false ;
+//        return false ;
       }
     } //loop over all conditions
   }
   else
     //0 conditions, e.g. for "3rd person singular finite verb" grammar part
     bAllConditionsMatch = true ;
+  LOGN( FULL_FUNC_NAME << "--returning " << bAllConditionsMatch )
   return bAllConditionsMatch ;
 }
 
@@ -159,8 +185,9 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
 {
   bool bAllConditionsMatch = false ;
   std::string stdstr ;
-  DEBUGN("ConditionsAndTranslation::GetTranslationEquivalent(...)"
-    << "german translation " << m_stdstrGermanTranslation )
+  LOGN( //"ConditionsAndTranslation::GetTranslationEquivalent(...)"
+    FULL_FUNC_NAME
+    << "--german translation: \"" << m_stdstrGermanTranslation << "\"")
 //  int i = 0 ;
   //TODO implement this
 //        if( r_cnt.conditions.m_byCompareType == ConditionsAndTranslation::equals
@@ -172,11 +199,11 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
   //If no simple replacement (like use "die" for "the" + "English_plural"
   if( m_stdstrGermanTranslation ==  "" )
   {
-    DEBUGN("German translation string is empty -> use attribute value"
-      << "p_grammarpartLeaf:" << p_grammarpartLeaf )
+    LOGN( FULL_FUNC_NAME << "--German translation string is empty -> use "
+      "attribute value " << "p_grammarpartLeaf:" << p_grammarpartLeaf )
 #ifdef COMPILE_WITH_LOG
     if( p_grammarpartLeaf )
-      DEBUGN("p_grammarpartLeaf->m_pvocabularyandtranslation:"
+      LOGN("p_grammarpartLeaf->m_pvocabularyandtranslation:"
         << p_grammarpartLeaf->m_pvocabularyandtranslation )
 #endif //#ifdef COMPILE_WITH_LOG
     bAllConditionsMatch = true ;
@@ -190,9 +217,11 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
       //if( p_grammarpartLeaf )
       {
 //        DEBUG_COUTN
-        DEBUGN("GetTranslationEquivalent()--grammar part leaf found:" <<
+        LOGN( //"GetTranslationEquivalent()"
+          FULL_FUNC_NAME <<
+            "--grammar part leaf found: \"" <<
           sp_parsebyrise->GetGrammarPartName(
-          p_grammarpartLeaf->m_wGrammarPartID) )
+          p_grammarpartLeaf->m_wGrammarPartID) << "\"")
       }
       std::map<std::string,AttributeTypeAndPosAndSize>::const_iterator
         c_iter_stdstrSttrName2atapas =
@@ -202,12 +231,14 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
           sp_stdmap_AttrName2VocAndTranslAttrDef->end()
         )
 //        DEBUG_COUTN
-        DEBUGN("GetTranslationEquivalent()--no AttributeTypeAndPosAndSize "
-          "for attribute name" << m_stdstrAttributeName << " found" )
+        LOGN(//"GetTranslationEquivalent()"
+            FULL_FUNC_NAME <<
+            "--no AttributeTypeAndPosAndSize "
+          "for attribute name \"" << m_stdstrAttributeName << "\" found" )
       else
       {
-        DEBUGN("AttributeTypeAndPosAndSize for attribute name "
-          << m_stdstrAttributeName << " found ")
+        LOGN("AttributeTypeAndPosAndSize for attribute name \""
+          << m_stdstrAttributeName << "\" found ")
         //p_grammarpartLeaf->m_psetpvocabularyandtranslation  ;
         //if( p_grammarpartLeaf->m_psetpvocabularyandtranslation )
         {
@@ -218,7 +249,8 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
             case AttributeTypeAndPosAndSize::string :
             {
 //              DEBUG_COUTN
-              DEBUGN("data type for choosing attribute value is string")
+              LOGN( FULL_FUNC_NAME
+                << "--data type for choosing attribute value is string")
               switch( r_atapas.m_byLanguage )
               {
                 case AttributeTypeAndPosAndSize::English :
@@ -229,9 +261,24 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                   break ;
                 case AttributeTypeAndPosAndSize::German :
                 {
+                  LOGN( FULL_FUNC_NAME << "--language is German")
+                  const VocabularyAndTranslation * const
+                    p_vocabularyandtranslation =
+                    p_grammarpartLeaf->m_pvocabularyandtranslation;
+
+                  LOGN( FULL_FUNC_NAME << "--\"voc and translation pointer\" is:" <<
+                    p_vocabularyandtranslation )
+
                   std::string stdstrAttrVal = p_grammarpartLeaf->
                     m_pvocabularyandtranslation->
                     GetGermanString( (BYTE) r_atapas.m_wIndex);
+
+                  LOGN( FULL_FUNC_NAME << "--leaf's attribute value is \""
+                    << stdstrAttrVal << "\"")
+
+                  LOGN( FULL_FUNC_NAME << "--m_pfn_TransformString for STP "
+                    << m_syntaxtreepath.GetAs_std_string() << " is \"" <<
+                    (void *) m_pfn_TransformString << "\"")
                   //If function that modifies as string (like for
                   //"I trust the children." : for "Kinder" ->
                   //"Kindern")
@@ -241,6 +288,9 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                     //by the function
 //                    std::string stdstrAttrVal = r_stdstrAttrVal ;
                     m_pfn_TransformString(stdstrAttrVal) ;
+                    LOGN( FULL_FUNC_NAME
+                      << "--attribute value after transforming: \""
+                      << stdstrAttrVal << "\"")
                     return stdstrAttrVal ;
                   }
                   else
