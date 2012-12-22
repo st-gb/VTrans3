@@ -6,7 +6,6 @@
 #include <xercesc/sax2/Attributes.hpp>
 //class "XERCES_CPP_NAMESPACE::DefaultHandler
 #include <xercesc/sax2/DefaultHandler.hpp>
-//#include "../global.h" //for DEBUG(...) etc.
 #include <string> //for std::string
 //#include <string> //std::string
 
@@ -17,8 +16,6 @@
 //preprocessor macro defined in order to turn off the DLL
 //import/export mechanism.
 //#define XERCES_STATIC_LIBRARY
-
-//#define MB_CUR_MAX 1
 
 //Forward declaration (because _this_ header file may be included very often /
 //more than once) is faster than to #include the while declaration file.

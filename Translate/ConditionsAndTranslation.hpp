@@ -11,7 +11,7 @@
 #include "Condition.hpp" //class Condition
 #include <map>//class std::map
 #include <vector> //class std::vector
-#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+//#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 //class AttributeTypeAndPosAndSize
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
 //#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
@@ -97,7 +97,7 @@ public:
   ~ConditionsAndTranslation()
   {
 //    int i = 0 ;
-    DEBUG_COUT("~ConditionsAndTranslation\n")
+//    DEBUG_COUT("~ConditionsAndTranslation\n")
   }
   #endif //#ifdef _DEBUG
 

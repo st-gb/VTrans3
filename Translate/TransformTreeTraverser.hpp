@@ -24,7 +24,11 @@ class ParseByRise ;
 
 namespace ParseTreeTraverser
 {
-
+  /** A parse tree traverser implementation that is able to move subtrees of a
+   * parse tree. This is necessary when the word order between English and
+   * German differs, e.g. at "When I see you." (Subject Predicate Object) ->
+   * "Wenn ich dich sehe" ( Subject Object Predicate).
+   */
   class TransformTreeTraverser
     : public DirectingLeavesMultipleIterTraverser
   {

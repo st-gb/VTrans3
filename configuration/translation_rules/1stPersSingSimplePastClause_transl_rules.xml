@@ -1,0 +1,15 @@
+<translation_rules>
+  <!-- simple past -->
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePastClause0Obj.MainVerbPast0Obj"
+    attribute_name="GerMainVerb0Obj1stPersSingPast" 
+	/>
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePastClause1Obj.MainVerbPast0Obj"
+    attribute_name="GerMainVerb1Obj1stPersSingPast" 
+	/>
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimplePastClause2Obj.MainVerbPast0Obj"
+    attribute_name="GerMainVerb2Obj1stPersSingPast" 
+	/>
+</translation_rules>

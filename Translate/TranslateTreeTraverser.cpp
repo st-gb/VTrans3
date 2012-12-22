@@ -5,6 +5,7 @@
  *      Author: Stefan
  */
 
+#include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN()
 #include <Translate/TranslateTreeTraverser.hpp>
 #include <Translate/SummarizePersonIndex.hpp>
 #include <Translate/SetSameConsecutiveIDforLeaves.hpp>
@@ -28,7 +29,7 @@ namespace ParseTreeTraverser
     , mr_translateparsebyrisetree( r_translateparsebyrisetree )
     , m_wConsecutiveID(0)
   {
-    LOGN("TranslateTreeTraverser()")
+    LOGN_DEBUG(/*"TranslateTreeTraverser()"*/ "")
 //    m_wSubjectGrammarPartID ;
     if( ! mp_parsebyrise->GetGrammarPartID("subject", m_wSubjectGrammarPartID)
       )
@@ -45,7 +46,7 @@ namespace ParseTreeTraverser
 
   DoTranslateTreeTraverser::~DoTranslateTreeTraverser()
   {
-    LOGN("~TranslateTreeTraverser()")
+    LOGN_DEBUG(/*"~TranslateTreeTraverser()"*/ "")
   }
 
   void DoTranslateTreeTraverser::BeforeBeginAtRoot()
@@ -55,8 +56,11 @@ namespace ParseTreeTraverser
     m_stdvector_p_grammarpartCurrentParseTreePath.clear() ;
   }
 
+  //TODO obsolete since the grammar rules determine the person index?
+  // (3rd pers sing must match 3rd pers sing fintie verb form e.g."he workS")
   void DoTranslateTreeTraverser::HandlePossibleSubject()
   {
+    LOGN_DEBUG("begin")
     GrammarPart * p_grammarpart =
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
     if( //mp_grammarpartStartNode
@@ -67,6 +71,7 @@ namespace ParseTreeTraverser
         )
       //Get the person index bitfield, i.e.
     {
+      LOGN_DEBUG("m_wGrammarPartID == m_wSubjectGrammarPartID")
       //  "I" has person index "0",
       //  "you" has person indices "1" (singular, German: "du" ),
       //     "4" (plural, German: "ihr"), "6" (German: "man")
@@ -77,9 +82,10 @@ namespace ParseTreeTraverser
         mr_translateparsebyrisetree
         ) ;
       spi.Traverse() ;
-      DEBUG_COUT( "result of getting persindex:"
+//      DEBUG_COUT(
+      LOGN_DEBUG(
+        "result of getting person index:"
         << (WORD) p_grammarpart->m_byPersonIndex )
-
   //      //The nodes directing leaves have been processed by SummarizePersonIndex
   //      // yet, so do not do this again.
   //      m_stdset_p_grammarpartProcessedYet.insert( p_grammarpart ) ;
@@ -88,7 +94,7 @@ namespace ParseTreeTraverser
 
   void DoTranslateTreeTraverser::LeaveFound()
   {
-    LOGN("TranslateTreeTraverser::LeaveFound()--current parse tree "
+    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "current parse tree "
       "path: " << m_r_parsebyrise.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
@@ -112,8 +118,8 @@ namespace ParseTreeTraverser
 
 //      DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
 //        stdstrTranslation ) ;
-      LOGN( "TranslateTreeTraverser::LeaveFound(): "
-        << m_r_parsebyrise.GetPathAs_std_string(
+      LOGN_DEBUG( //"TranslateTreeTraverser::LeaveFound(): " <<
+        m_r_parsebyrise.GetPathAs_std_string(
           m_vec_wGrammarPartIDcurrentParsePath)
         << "--translation rule applies. "
         "translation:" << stdstrTranslation ) ;
@@ -140,13 +146,13 @@ namespace ParseTreeTraverser
         m_byPersonIndex = byPersonIndex ;
     }
   }
-  //The traverser traverses the tree until 1 or 2 processed node(s) was/ were
-  //found: e.g.
-  //
-  //    def_noun    <-when arrived here: "the" and "car" were processed-> call
-  //     / \           "UnprocessedHighestLevelNodeFound"
-  //   the car  <-both were processed yet.
-  //
+
+  /** The traverser traverses the tree until 1 or 2 processed node(s) was/ were
+  * found: e.g.
+  *
+  *    def_noun    <-when arrived here: "the" and "car" were processed-> call
+  *     / \           "UnprocessedHighestLevelNodeFound"
+  *   the car  <-both were processed yet. */
   void DoTranslateTreeTraverser::UnprocessedHighestLevelNodeFound()
   {
     std::string stdstrTranslation ;
@@ -184,7 +190,9 @@ namespace ParseTreeTraverser
         )
       )
     {
-      DEBUG_COUT( "UnprocessedHighestLevelNodeFound--translation rule applies\n" ) ;
+      //DEBUG_COUT( "UnprocessedHighestLevelNodeFound--"
+      LOGN_DEBUG(
+        "translation rule applies\n" ) ;
       m_stdstrWholeTranslation += stdstrTranslation + " " ;
       //TODO combine the person indices _until_ the parent is "subject"
       // because:
@@ -229,7 +237,8 @@ namespace ParseTreeTraverser
   {
     m_stdvector_p_grammarpartCurrentParseTreePath.pop_back() ;
     m_vec_wGrammarPartIDcurrentParsePath.pop_back() ;
-    LOGN("TranslateTreeTraverser::ParseTreePathPopped()--current parse tree "
+    LOGN_DEBUG(//"TranslateTreeTraverser::ParseTreePathPopped()--"
+      "current parse tree "
       "path: " << m_r_parsebyrise.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
@@ -243,7 +252,8 @@ namespace ParseTreeTraverser
 //      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
 //    m_vec_wGrammarPartIDcurrentParsePath.push_back(
 //      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
-    LOGN("TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild() begin"
+    LOGN_DEBUG(//"TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild() "
+      "begin"
       "--current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
@@ -273,7 +283,8 @@ namespace ParseTreeTraverser
 #ifdef _DEBUG
     stdstr = m_r_parsebyrise.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
-    LOGN("TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild() end"
+    LOGN_DEBUG(//"TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild() "
+      "end"
       "--current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
@@ -281,7 +292,7 @@ namespace ParseTreeTraverser
     HandlePossibleSubject() ;
   }
 
-  //This is needed for _many_ dropdown lists to select the same indices.
+  /** This is needed for _many_ dropdown lists to select the same indices. */
   void DoTranslateTreeTraverser::SetSameConsecutiveIDforLeaves(
     const GrammarPart * p_grammarpart)
   {

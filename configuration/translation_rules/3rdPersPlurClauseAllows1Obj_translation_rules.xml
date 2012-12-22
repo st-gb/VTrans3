@@ -21,11 +21,11 @@
   <!--translation of predicate/ (finite) verb-->
   <translation_rule 
     syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
-    attribute_name="GerMainVerb3rdPersPlur" 
+    attribute_name="GerMainVerb0Obj3rdPersPlurPres" 
   />
   <translation_rule 
     syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.mainVerbInf1Obj"
-    attribute_name="GerMainVerb1Obj3rdPersPlur" 
+    attribute_name="GerMainVerb1Obj3rdPersPlurPres" 
   />
   
   <!--index 6 is finite verb form for 3rd person plural -->
@@ -36,7 +36,7 @@
   /-->
   <translation_rule 
     syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
-    attribute_name="Ger1ObjMainVerb3rdPersPlur" 
+    attribute_name="GerMainVerb1Obj3rdPersPlurPres" 
     byte_attribute_value="6"
   />
   <!--translation_rule 

@@ -384,3 +384,15 @@ bool TranslationRule::operator < ( const TranslationRule & r) const
   return m_syntaxtreepathCompareWithCurrentPath <
       r.m_syntaxtreepathCompareWithCurrentPath ;
 }
+
+//std::ostream & operator << (
+//  std::ostream & std_ostream
+//  , const TranslationRule & translationrule
+//  ) //const
+//{
+////    std::ostream std_ostream;
+//  std_ostream << translationrule.m_syntaxtreepathCompareWithCurrentPath.
+//    GetAs_std_string();
+//  if( translationrule.)
+//  return std_ostream;
+//}

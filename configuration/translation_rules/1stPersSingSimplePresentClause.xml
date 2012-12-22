@@ -1,7 +1,7 @@
 <translation_rules>
   <translation_rule 
     syntax_tree_path="*.1stPersSingPresentProgressive.MainVerbProgressive0Obj"
-    attribute_name="GermanMainVerb1stPersonSingular" 
+    attribute_name="GerMainVerb0Obj1stPersSingPres" 
   />
   <!--translation_rule 
     syntax_tree_path="*.clause.MainVerbProgressive0Obj"
@@ -10,15 +10,16 @@
   <!-- translation of finite verb for "I" / 1st person sing.-->
   <translation_rule 
     syntax_tree_path="1stPersSingSimplePresentClause.mainVerbInf0Obj"
-    attribute_name="GermanMainVerb1stPersonSingular" 
+    attribute_name="GerMainVerb0Obj1stPersSingPres" 
   />
   <translation_rule 
-    syntax_tree_path="1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj"
-    attribute_name="GermanMainVerb1stPersonSingular" 
+    syntax_tree_path="*.1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj"
+    attribute_name="GerMainVerb1Obj1stPersSingPres" 
   />
   <translation_rule 
     syntax_tree_path="1stPersSingSimplePresentClauseAllow2Obj.mainVerbInf2Obj"
-    attribute_name="GermanMainVerb1stPersonSingular" 
+    attribute_name="GerMainVerb2Obj1stPersSingPres" 
   />
-
+  <grammar_rule left_child="I" right_child="MainVerbPast1Obj" superordinate="1stPersSingSimplePastClauseAllow1Obj"/>  
+  <grammar_rule left_child="I" right_child="MainVerbPast2Obj" superordinate="1stPersSingSimplePastClauseAllow2Obj"/>
 </translation_rules>

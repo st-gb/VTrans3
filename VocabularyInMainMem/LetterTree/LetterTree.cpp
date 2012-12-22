@@ -17,8 +17,8 @@
 VocabularyAndTranslation * LetterTree::s_pvocabularyandtranslation ;
 LetterNode * LetterTree::sp_letternodeLastForInsertedWord ;
 
-  //The sense of mapping is to allow the array of the direct child of a
-  //node to be have less than 255 elements.
+  /** The sense of mapping is to allow the array of the direct child of a
+  * node to be have less than 255 elements. */
   void LetterTree::createMapping()
   {
     //Initially set all array values to "255".
@@ -536,9 +536,9 @@ Word * LetterTree::GetPreviousOccurance(
      }
    }
 
- //Inserting into the Trie and handling the insertion of a pointer to
-//VocabularyAndTranslation often needs to be done in conjunction. So implement
-//this conjunction here.
+/** Inserting into the Trie and handling the insertion of a pointer to
+* VocabularyAndTranslation often needs to be done in conjunction. So implement
+* this conjunction here. */
 void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
   //This set is to ensure that for identical strings for the SAME vocabulary
   //not 2 or more VocAndTransl object should be inserted into the same
@@ -555,8 +555,8 @@ void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
 {
 #ifdef _DEBUG
   std::string std_strWord = str.substr(nIndexOf1stChar, nLength);
-  LOGN( FULL_FUNC_NAME << "--token to insert into trie/ letter tree: " <<
-    std_strWord)
+  LOGN_TYPE( /*FULL_FUNC_NAME <<*/ "token to insert into trie/ letter tree: " <<
+    std_strWord, LogLevel::debug)
 #endif //#ifdef _DEBUG
 //  LetterNode * p_letternodeLastForInsertedWord ;
   //If the singular and the plural are identical: add only once to
@@ -617,7 +617,7 @@ void LetterTree::InsertPersonalPronouns()
   s_pvocabularyandtranslation->m_arstrGermanWord[0] = "sie" ;
 }
 
-//Insert into main memory in order to resolve grammar rules.
+/** Insert into main memory in order to resolve grammar rules. */
 void LetterTree::InsertPersonalPronounsObjectiveForm()
 {
   Insert("me", EnglishWord::personal_pronoun_objective_form
@@ -962,7 +962,7 @@ void LetterTree::DeleteCompleteList()
 	  //The root node is always allocated due to simplification
 	  //of operations like inserting a node.
 	  m_pletternodeRoot;
-  DEBUGN( "DeleteCompleteList() begin" )
+  LOGN_DEBUG( "DeleteCompleteList() begin" )
   //At the beginning of this vector the entries of the lowest 
   //levels are stored.
   //A vector is not the best data structure: it operates best
@@ -1133,7 +1133,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
       //#ifdef _DEBUG
       byNodePointerArrayIndex = MapInputCharacterToLetterNodePointerArrayIndex(
         * pchCurrentChar) ;
-      LOGN( FULL_FUNC_NAME << "--mapped index for character \""
+      LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "mapped index for character \""
         << * pchCurrentChar << "\" is :" << (WORD) byNodePointerArrayIndex)
       //#endif
       if( //If array index for a contained character (not contained == 255).
@@ -1150,7 +1150,7 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
         break ;
       }
     }
-    LOGN( FULL_FUNC_NAME << "--pletternodeCurrent: " << pletternodeCurrent)
+    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "pletternodeCurrent: " << pletternodeCurrent)
     //= If the token(s) is at least 1 vocabulary
     if(pletternodeCurrent )
     {
@@ -1279,14 +1279,14 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
   return pletternodeCurrentWithMostTokens ;
 }
 
-//Searches for the vocabularies with most identical tokens 
-//in psv beginning at index.
-//Advantage: if at first token "vacuum" and second "cleaner",
-//vocabulary entry for "vacuum cleaner" is returned and index
-//is set to the last token of the vocabulary within psv.
-//Returns a pointer to all vocabulary with the word, 
-//otherwise NULL if the name doesn't exist.
-//@pchCurrentChar points to the first string char at the begin.
+/** Searches for the vocabularies with most identical tokens
+* in psv beginning at index.
+* Advantage: if at first token "vacuum" and second "cleaner", vocabulary entry
+* for "vacuum cleaner" is returned and index is set to the last token of the
+* vocabulary within psv.
+* @return a pointer to all vocabulary with the word,
+* otherwise NULL if the name doesn't exist.
+* @param pchCurrentChar points to the first string char at the begin. */
 //std::set<VocabularyAndTranslation> * LetterTree::search(
 std::set<VocabularyAndTranslation *> * LetterTree::search(
   const PositionStringVector & psv,
@@ -1295,58 +1295,6 @@ std::set<VocabularyAndTranslation *> * LetterTree::search(
   //,LetterNode * & pletternode,
   )
 {
-  //const char * pchCurrentChar ;
-  ////const char * pch = strVocabularyEntry.c_str() ;
-  ////std::set<VocabularyAndTranslation> * psetvocabularyandtranslation = NULL ;
-  //std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation = NULL ;
-  //LetterNode * pletternodeCurrent = //NULL ;
-  //  m_pletternodeRoot;
-  //LetterNode * pletternodeCurrentWithMostTokens = NULL ;
-  //WORD wTokenLength ;
-  ////pchCurrentChar += start ;
-  //for(WORD wTokenIndex = r_dwTokenIndex; wTokenIndex < psv.size(); 
-  //  ++ wTokenIndex )
-  //{
-  //  pchCurrentChar = psv.at(wTokenIndex).m_Str ;
-  //  wTokenLength = strlen(pchCurrentChar) ;
-  //  for(WORD wCurrentTokenCharIndex=0; wCurrentTokenCharIndex< wTokenLength ; 
-  //    ++wCurrentTokenCharIndex)
-  //  {
-  //    if(//If the current letter node has children / pointer is NOT NULL.
-  //      (pletternodeCurrent = pletternodeCurrent->m_arpletternode1LevelLower[
-  //      MapInputCharacterToLetterNodePointerArrayIndex(
-  //        *pchCurrentChar) ] )
-  //      )
-  //      //Forward/go to the string's next char.
-  //      pchCurrentChar ++ ;
-  //    else
-  //      break ;
-  //  }
-  //  //= If the token(s) is at least 1 vocabulary
-  //  if(pletternodeCurrent )
-  //  {
-  //    pletternodeCurrentWithMostTokens = pletternodeCurrent ;
-  //    //If no space in lettertree after token.
-  //    if( ! (pletternodeCurrent = pletternodeCurrent->m_arpletternode1LevelLower[
-  //      MapInputCharacterToLetterNodePointerArrayIndex(
-  //        //seperates 2 tokens within lettertree.
-  //        ' ') ] )
-  //      )
-  //      break ;
-  //  }
-  //  else
-  //    break ;
-  //}
-  ////=If the name exists.
-  //if(pletternodeCurrentWithMostTokens )
-  //{
-  //  //psetvocabularyandtranslation = pletternodeCurrent->m_psetvocabularyandtranslation ;
-  //  psetpvocabularyandtranslation = pletternodeCurrentWithMostTokens->
-  //    m_psetpvocabularyandtranslation ;
-  //  r_dwTokenIndex = wTokenIndex ;
-  //}
-  ////return psetvocabularyandtranslation ;
-  //return psetpvocabularyandtranslation ;
   return searchAndReturnLetterNode( psv, r_dwTokenIndex )->
     m_psetpvocabularyandtranslation ;
 }

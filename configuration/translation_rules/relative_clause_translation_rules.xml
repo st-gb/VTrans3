@@ -31,7 +31,7 @@
 	-->
   <translation_rule 
     syntax_tree_path="3rdPersSingEnumEleWithRelClause.3rdPersSingClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
-    attribute_name="GerMainVerb1Obj3rdPersSing"
+    attribute_name="GerMainVerb1Obj3rdPersSingPres"
 	>
   </translation_rule>
   <!--concatenate both translations (if selecting "you" in a context menu the translation for the 
@@ -39,7 +39,7 @@
   <concatenated_translation_rules>
 	  <translation_rule 
 		syntax_tree_path="2ndPersSingPerfectClause1Obj.PerfectPredicate1Obj.haveInfinitive"
-		attribute_name="GerMainVerb1Obj2ndPersSing"
+		attribute_name="GerMainVerb1Obj2ndPersSingPres"
 		>
 	  </translation_rule>
 	  <translation_rule 

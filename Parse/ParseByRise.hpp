@@ -158,11 +158,12 @@ public:
   // (grammar ID<-->grammar name mapping, grammar rules, ...
   //must be deleted first.
   void ClearAllGrammarStuff() ;
-  //Clears (empties) the previously generated parse tree.
-  //This should be done for a next parse tree generation .
+  /** Clears (empties) the previously generated parse tree.
+  * This should be done for a next parse tree generation. */
   void ClearParseTree() ;
 
   void CreateInitialGrammarParts ( const std::string & cr_stdstrText ) ;
+  void CreateParseTree(const std::string & cr_stdstrWholeInputText);
 
   void DeleteFromOutMostTokenIndexContainer(
     GrammarPart * p_grammarpartRootNode,

@@ -45,6 +45,7 @@ class TranslateParseByRiseTree
     m_stdmap_stdstrTranslationArrayName2vec_stdstrArrayElements ;
   std::vector<GrammarPart *> m_stdvecNodesToProcess ;
 public:
+  bool m_bTranslationRuleApplies;
   I_UserInterface & mr_i_userinterface ;
   ParseByRise * mp_parsebyrise ;
 private:
@@ -137,6 +138,33 @@ public:
   TranslateParseByRiseTree(ParseByRise & r_parsebyrise ,
     I_UserInterface & r_i_userinterface );
   ~TranslateParseByRiseTree();
+
+  //Syntax (">>class name<<::*>>identifier<<") from
+  //http://stackoverflow.com/questions/4832275/c-typedef-member-function-signature-syntax
+  typedef void (TranslateParseByRiseTree::*ProcessParseTree_type )(
+//    TranslateParseByRiseTree *,
+  //  std::vector<GrammarPart *>::const_iterator
+  //    c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+    GrammarPart *
+    , std::vector<std::vector<TranslationAndGrammarPart> > &
+      r_stdvec_stdvecTranslationAndGrammarPart
+    ) ;
+
+  void ProcessParseTree(
+    std::vector<std::string> & r_stdvec_stdstrWholeTransl
+  //  //A vector of sentences that each contains a vector of words.
+  //  , std::vector<std::vector<TranslationAndGrammarPart> > &
+  //    r_stdvec_stdvecTranslationAndGrammarPart
+    //A vector of sentences that begin at the same token index
+    // (sentences that begin at the same token index:
+    // vector of sentences that each contains a vector of words).
+    , std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+      r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+  //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
+  //    r_stdvec_stdvecTranslationAndConsecutiveID
+    , ProcessParseTree_type pfnProcessParseTree
+    );
+
   void Translate( ParseByRise & r_parsebyrise
 //    , std::string & stdstrWholeTransl
     , std::vector<std::string> & r_stdvec_stdstrWholeTransl
@@ -151,13 +179,22 @@ public:
 //    , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //      r_stdvec_stdvecTranslationAndConsecutiveID
     ) ;
+  void TestIfTranslationRuleApplies(
+    //    std::vector<GrammarPart *>::const_iterator
+    //      c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+    GrammarPart * p_grammarpart
+    //A vector of sentences that each contains a vector of words.
+    , std::vector<std::vector<TranslationAndGrammarPart> > &
+      r_stdvec_stdvecTranslationAndGrammarPart
+    );
   void TranslateParseTree(
-    std::vector<GrammarPart *>::const_iterator
-      c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-      //A vector of sentences that each contains a vector of words.
-      , std::vector<std::vector<TranslationAndGrammarPart> > &
-        r_stdvec_stdvecTranslationAndGrammarPart
-      );
+//    std::vector<GrammarPart *>::const_iterator
+//      c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+    GrammarPart * p_grammarpart
+    //A vector of sentences that each contains a vector of words.
+    , std::vector<std::vector<TranslationAndGrammarPart> > &
+      r_stdvec_stdvecTranslationAndGrammarPart
+    );
   bool TranslationRuleApplies(
     std::string & r_stdstrTranslation
     , BYTE & r_byPersonIndex
@@ -167,6 +204,19 @@ public:
 //    , WORD & r_wConsecutiveID
     , //const
     GrammarPart * & p_grammarpart
+    ) ;
+  bool TranslationRuleApplies(
+    std::string & r_stdstrTranslation
+    , BYTE & r_byPersonIndex
+    // So it can be used with data from outside this class.
+    , const std::vector<WORD> & r_stdvec_wGrammarPartPath
+    , const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
+//    , WORD & r_wConsecutiveID
+    , //const
+    GrammarPart * & p_grammarpart
+    , TranslationRule * p_translationrule
+    , const ConditionsAndTranslation & r_cnt
+    , const std::string & std_strTranslationRuleSyntaxTreePath
     ) ;
 };
 

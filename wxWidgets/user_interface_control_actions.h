@@ -15,6 +15,7 @@ enum
   ID_AddGrammarRules ,
   ID_AddTransformationRules ,
   ID_AddTranslationRules ,
+  ID_ShowTranslationRules,
   ID_AddVocAttrDefs ,
   ID_DrawParseTree,
   ID_LoadDictionary ,

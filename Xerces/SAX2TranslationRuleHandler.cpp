@@ -7,11 +7,13 @@
 
 //convertFromAndToStdString(...)
 #include <Controller/character_string/convertFromAndToStdString.hpp>
+#include <IO/UnknownGrammarPartNameException.hpp>
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 //#include <Translate/ConditionsAndTranslation.hpp>
 #include <Translate/TranslationRule.hpp>//class TranslationRule
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
+#include <wxWidgets/VTransApp.hpp> //wxGetApp()
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
 //header file for this SAX2TranslationRuleHandler class
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
@@ -61,7 +63,6 @@ void SAX2TranslationRuleHandler::endElement(
   if(
        //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
 //     ! wcscmp ( cpc_xmlchLocalName , L"translation_rule" )
-
     //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
     ! Xerces::ansi_or_wchar_string_compare(
         cpc_xmlchLocalName,
@@ -70,9 +71,9 @@ void SAX2TranslationRuleHandler::endElement(
       )
     )
   {
-    LOGN( //TRANSLATION_RULE_XML_ELEMENT_ANSI
-      "SAX2TranslationRuleHandler::endElement(...)--translation_rule"
-      << " element" )
+    LOGN_DEBUG( //TRANSLATION_RULE_XML_ELEMENT_ANSI
+      //"SAX2TranslationRuleHandler::endElement(...)--"
+      "\"translation_rule\" element" )
     if( ! m_stdstrTranslationRuleSyntaxTreePath.empty() )
     {
       TranslationRule * p_translationrule ;
@@ -146,11 +147,15 @@ void SAX2TranslationRuleHandler::endElement(
           )
           p_translationrule->m_uiChildNodeGrammarPartID = 65534;
 
-        LOGN("SAX2TranslationRuleHandler::endElement(...)--adding translation "
+        LOGN_DEBUG(//"SAX2TranslationRuleHandler::endElement(...)--"
+          "adding translation "
           "rule\"" << m_stdstrTranslationRuleSyntaxTreePath << "\"" )
         mr_translateparsebyrise.AddTranslationRule(
           p_translationrule
           , m_conditionsandtranslation ) ;
+        wxGetApp().m_std_map_p_translationrule2filepath.insert(
+          std::make_pair(p_translationrule, Xerces::ToStdString( m_pc_locator->
+            getSystemId() )) );
       }
       catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
       {
@@ -159,6 +164,17 @@ void SAX2TranslationRuleHandler::endElement(
           m_stdstrTranslationRuleSyntaxTreePath + "\" : "
           "unknown grammar part ID \"" +
              c_r_getgrammarpartidexception.m_stdstr + " \""
+          );
+      }
+      catch(VTrans::UnknownGrammarPartNameException & exc)
+      {
+//        mr_i_userinterface.Message(
+//          );
+        ShowMessageToUser(
+          "Error adding translation rule for Syntax Tree Path \"" +
+          m_stdstrTranslationRuleSyntaxTreePath + "\" : "
+          "unknown grammar part name \"" +
+          exc.GetGrammarPartPath() + " \""
           );
       }
       catch( //std::string e
@@ -172,9 +188,14 @@ void SAX2TranslationRuleHandler::endElement(
 //        delete p_translationrule ;
 //        mr_i_userinterface.Message( "\"" + e.m_stdstr + "\" is an unknown"
 //          "grammar part name") ;
-        LOGN("SAX2TranslationRuleHandler::endElement(...)--creating translation "
+        LOGN_TYPE(//"SAX2TranslationRuleHandler::endElement(...)--"
+          "creating translation "
           "rule for \"" << m_stdstrTranslationRuleSyntaxTreePath
-          << "\" failed." )
+          << "\" failed.", LogLevel::error)
+        ShowMessageToUser(
+          "SAX2TranslationRuleHandler::endElement(...)--creating translation "
+          "rule for \"" + m_stdstrTranslationRuleSyntaxTreePath
+          + "\" failed.");
       }
     }
     m_conditionsandtranslation.clear();
@@ -211,7 +232,7 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
         )
       )
     {
-      LOGN("Got attribute value for \"condition\" element's syntax_tree_path:"
+      LOGN_DEBUG("Got attribute value for \"condition\" element's syntax_tree_path:"
         "\"" << m_stdstrConditionSyntaxTreePath << "\"" )
 
       if( m_stdstrConditionSyntaxTreePath != ""
@@ -225,7 +246,7 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
           )
         )
       {
-        LOGN("Got attribute value for \"condition\" element's "
+        LOGN_DEBUG("Got attribute value for \"condition\" element's "
           "\"attribute_name\":"
           "\"" << m_stdstrConditionAttributeName << "\"" )
         //The translation definition may refer a definition of an vocabulary
@@ -270,7 +291,7 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
             )
           )
         {
-          LOGN("\"byte_attribute_value\" or "
+          LOGN_DEBUG("\"byte_attribute_value\" or "
             "\"string_attribute_value\" attribute for STP " <<
             m_stdstrConditionSyntaxTreePath)
           Condition cond ;
@@ -293,13 +314,15 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
       //        if( m_stdstrConditionByteAttrValue != "" )
           cond.m_byAttributeValue = //byAttributeValue ;
               wAttributeValue ;
-          LOGN("SAX2TranslationRuleHandler::startElement(...)--adding condition")
+          LOGN_TYPE(//"SAX2TranslationRuleHandler::startElement(...)--"
+            "adding condition", LogLevel::debug)
           m_conditionsandtranslation.AddCondition( cond ) ;
         }
         else
         {
-          LOGN("Neither a \"byte_attribute_value\" nor a "
-            "\"string_attribute_value\" attribute")
+          LOGN_TYPE("Neither a \"byte_attribute_value\" nor a "
+            "\"string_attribute_value\" attribute"
+            "-> NOT adding condition to the rule.", LogLevel::error)
           ShowMessageToUser( "Neither a \"byte_attribute_value\" nor a "
               "\"string_attribute_value\" attribute\n"
               "-> NOT adding condition to the rule."
@@ -309,8 +332,8 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
     }
   }
   else
-    LOGN("condition element--neither \"attribute_name\" attribute value nor "
-        "\"translation\" attribute value")
+    LOGN_TYPE("condition element--neither \"attribute_name\" attribute value nor "
+      "\"translation\" attribute value", LogLevel::error)
 }
 
 void SAX2TranslationRuleHandler::GetAttributeNameOrTranslationString(
@@ -330,7 +353,7 @@ void SAX2TranslationRuleHandler::GetAttributeNameOrTranslationString(
       )
     )
   {
-    LOGN( FULL_FUNC_NAME << "Successfully got attribute_name for "
+    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "Successfully got attribute_name for "
       "translation_rule: \"" << m_stdstrTranslationRuleAttributeName << "\"")
     //The translation definition may refer a definition of an vocabulary
     //attribute definition (e.g. "German_noun_plural: string attribute
@@ -360,7 +383,7 @@ void SAX2TranslationRuleHandler::GetAttributeNameOrTranslationString(
       )
     )
   {
-    LOGN( FULL_FUNC_NAME << "--Successfully got attribute value for "
+    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "Successfully got attribute value for "
       "\"translation\":" << m_stdstrTranslation )
     m_conditionsandtranslation.m_stdstrGermanTranslation =
         m_stdstrTranslation ;
@@ -395,7 +418,7 @@ void SAX2TranslationRuleHandler::GetStringTransformationFunctionName(
     if( c_iter != ConditionsAndTranslation::
       s_std_mapFunctionName2Function.end() )
     {
-      LOGN( FULL_FUNC_NAME << "--assigning function \"" <<
+      LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "assigning function \"" <<
         std_strStringTransformationFunctionName << "\" for current "
         "conditionsandtranslation object" )
       m_conditionsandtranslation.m_pfn_TransformString =
@@ -453,7 +476,7 @@ void SAX2TranslationRuleHandler::GetSyntaxTreePathWhereToInsertTranslation(
       )
     )
   {
-    LOGN("Successfully got attribute value for "
+    LOGN_DEBUG("Successfully got attribute value for "
       "\"syntax_tree_path_where_to_insert_translation\":"
       << m_std_strSyntaxTreePathForInsertionForTranslation )
 //      m_conditionsandtranslation.m_stdstrGermanTranslation =
@@ -476,7 +499,7 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
       )
     )
   {
-    LOGN(FULL_FUNC_NAME << "--" << GetFilePathAndFileLocation()
+    LOGN_DEBUG( /*FULL_FUNC_NAME << "--" <<*/ GetFilePathAndFileLocation()
       << " Successfully got syntax tree path:\""
       << m_stdstrTranslationRuleSyntaxTreePath << "\"")
 
@@ -523,12 +546,13 @@ void SAX2TranslationRuleHandler::startElement
     XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes
   )
 {
-  LOGN("SAX2TranslationRuleHandler::startElement begin")
+  LOGN_DEBUG(//"SAX2TranslationRuleHandler::startElement "
+    "begin")
   char * pchXMLelementName = XERCES_CPP_NAMESPACE::XMLString::transcode(
     cpc_xmlchLocalName);
   if( pchXMLelementName)
   {
-    LOGN("XML element:" << pchXMLelementName )
+    LOGN_DEBUG("XML element:" << pchXMLelementName )
     //Release memory AFTER comparing.
     XERCES_CPP_NAMESPACE::XMLString::release( & pchXMLelementName);
   }
@@ -597,12 +621,12 @@ std::string SAX2TranslationRuleHandler::GetFilePathAndFileLocation()
 
 std::string SAX2TranslationRuleHandler::GetColumnNumber()
 {
-    return convertToStdString<XMLFileLoc>(m_pc_locator->getColumnNumber());
+  return convertToStdString<XMLFileLoc>(m_pc_locator->getColumnNumber());
 }
 
 std::string SAX2TranslationRuleHandler::GetLineNumber()
 {
-    return convertToStdString<XMLFileLoc>(m_pc_locator->getLineNumber());
+  return convertToStdString<XMLFileLoc>(m_pc_locator->getLineNumber());
 }
 
 void SAX2TranslationRuleHandler::GetLineNumber(std::string & std_strLine )

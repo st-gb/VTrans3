@@ -35,9 +35,11 @@ ParseByRise::ParseByRise()
   m_p_userinterface(NULL)
   , m_wParseLevel(0)
 {
-  DEBUGN("ParseByRise begin")
+//  DEBUGN("ParseByRise "
+  LOGN_DEBUG("begin")
   InitGrammarRules() ;
-  DEBUGN("ParseByRise end")
+//  DEBUGN("ParseByRise "
+  LOGN_DEBUG("end")
 }
 
 ParseByRise::ParseByRise(
@@ -51,7 +53,8 @@ ParseByRise::ParseByRise(
   , m_wParseLevel(0)
 {
   InitGrammarRules() ;
-  DEBUG_COUTN("ParseByRise(I_UserInterface &) end")
+//  DEBUG_COUTN("ParseByRise(I_UserInterface &) "
+  LOGN_DEBUG("end")
 }
 
 //ParseByRise::ParseByRise(const ParseByRise& orig) {
@@ -59,26 +62,31 @@ ParseByRise::ParseByRise(
 
 ParseByRise::~ParseByRise()
 {
-  LOGN("~ParseByRise() begin")
+  LOGN_DEBUG(//"~ParseByRise() "
+    "begin")
   std::multimap<DWORD,GrammarPart *>::const_iterator c_iter =
       m_stdmultimap_dwLeftmostIndex2p_grammarpart.begin() ;
   for( ; c_iter != m_stdmultimap_dwLeftmostIndex2p_grammarpart.end() ;
     ++ c_iter )
   {
 
-    DEBUG_COUTN("deleting grammar part " << GetGrammarPartName(
+//    DEBUG_COUTN(
+    LOGN_DEBUG(
+      "deleting grammar part " << GetGrammarPartName(
       c_iter->second->m_wGrammarPartID ) )
     //Release mem only for the GrammarPart for the leftmost index mmap and not twice:
     //leftmost index mmap has the address of the _same_ GrammarPart stored.
     //FIXME SIGSEV here
     delete c_iter->second ;
   }
-  LOGN("~ParseByRise() end")
+  LOGN_DEBUG(//"~ParseByRise() "
+    "end")
 }
 
 void ParseByRise::ClearAllGrammarStuff()
 {
-  LOGN("ParseByRise::ClearAllGrammarStuff() begin")
+  LOGN_DEBUG(//"ParseByRise::ClearAllGrammarStuff() "
+    "begin")
   m_stdmap_wRuleID2RuleName.clear() ;
   m_stdmap_RuleName2RuleID.clear() ;
   m_stdmultimap_wGrammarPartID2SuperordinateID.clear() ;
@@ -89,11 +97,12 @@ void ParseByRise::ClearAllGrammarStuff()
   m_stdmultimap_wGrammarPartID2wGrammarPartID.clear() ;
 //  m_stdmap_RuleName2RuleID.clear() ;
   m_stdmap_wGrammarPartID2SuperordinateID.clear() ;
-  LOGN("ParseByRise::ClearAllGrammarStuff() end")
+  LOGN_DEBUG(//"ParseByRise::ClearAllGrammarStuff() "
+    "end")
 }
 
-//Clears (empties) the previously generated parse tree.
-//This should be done for a next parse tree generation .
+/** Clears (empties) the previously generated parse tree.
+* This should be done for a next parse tree generation . */
 void ParseByRise::ClearParseTree()
 {
 
@@ -322,7 +331,8 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
 bool ParseByRise::GetGrammarPartID(
   const std::string & cr_stdstrGrammarPartName , WORD & r_wGrammarPartID )
 {
-  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
+//  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
+  LOGN_DEBUG(
     cr_stdstrGrammarPartName << ",...) begin")
   bool bSuccess = false ;
   std::map<std::string,WORD>::const_iterator iter =
@@ -332,7 +342,8 @@ bool ParseByRise::GetGrammarPartID(
     r_wGrammarPartID = iter->second ;
     bSuccess = true ;
   }
-  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
+//  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
+  LOGN_DEBUG(
     cr_stdstrGrammarPartName << ",...) return " << bSuccess )
   return bSuccess ;
 }
@@ -395,7 +406,7 @@ std::string ParseByRise::GetPathAs_std_string(
 }
 
 //return: bitfield: 1 bit for every single person Index (1st person singular...3rd
-//persion  plural)
+//person  plural)
 //TODO: combine child node's person indices to the value of the
 //parent node when going upwards (->root node) at parsing should be faster:
 //
@@ -577,10 +588,11 @@ bool ParseByRise::GrammarPartIDIsWordClass( WORD wGrammarPartID )
 
 void ParseByRise::InitGrammarRules()
 {
-  DEBUGN("ParseByRise::InitGrammarRules() begin")
+  LOGN_DEBUG(/*"ParseByRise::InitGrammarRules()"*/ "begin")
   m_wNumberOfSuperordinateRules = EnglishWord::beyond_last_entry ;
   InsertFundamentalRuleIDs() ;
-  DEBUG_COUTN("ParseByRise::InitGrammarRules() end")
+//  DEBUG_COUTN("ParseByRise::InitGrammarRules() "
+  LOGN_DEBUG("end")
 }
 
 void ParseByRise::InsertGrammarRulesFor3rdPersonSingular()
@@ -612,7 +624,8 @@ void ParseByRise::InsertGrammarRulesFor3rdPersonSingular()
 
 void ParseByRise::InsertFundamentalRuleIDs()
 {
-  LOGN("InsertFundamentalRuleIDs begin")
+  LOGN_DEBUG(//"InsertFundamentalRuleIDs "
+    "begin")
 //  for( BYTE by = 0 ; by < NUMBER_OF_ENGLISH_WORD_CLASSES ; ++ by )
 //  {
 //
@@ -675,7 +688,8 @@ void ParseByRise::InsertFundamentalRuleIDs()
 //    , "subj_or_obj_ele_comma_and_subj_or_obj_ele"
 //    ) ;
 
-  LOGN("InsertFundamentalRuleIDs end")
+  LOGN_DEBUG(//"InsertFundamentalRuleIDs "
+    "end")
 }
 
 //return: new rule ID
@@ -692,8 +706,8 @@ WORD ParseByRise::InsertGrammarRule(
   if( iter != m_stdmap_RuleName2RuleID.end() )
   {
     WORD wGrammarRuleIDLeft = iter->second ;
-    DEBUG_COUT("inserting grammar rule \"" << cp_chSuperordinateGrammarRuleName << "\" "
-      << "(ID=" << m_wNumberOfSuperordinateRules << ")"
+    LOGN_DEBUG("inserting grammar rule \"" << cp_chSuperordinateGrammarRuleName
+      << "\" " << "(ID=" << m_wNumberOfSuperordinateRules << ")"
       << " for " << cp_chLeftGrammarRuleName << wGrammarRuleIDLeft
       << ","
       << wGrammarRuleIDRight
@@ -764,8 +778,8 @@ BYTE ParseByRise::InsertGrammarRule(
   {
     WORD wGrammarRuleIDLeft = c_iterLeft->second ;
     WORD wGrammarRuleIDRight = c_iterRight->second ;
-    DEBUG_COUT("inserting rule \"" << cp_chSuperordinateGrammarRuleName << "\" "
-      << "(ID=" << m_wNumberOfSuperordinateRules << ")"
+    LOGN_DEBUG("inserting rule \"" << cp_chSuperordinateGrammarRuleName
+      << "\" " << "(ID=" << m_wNumberOfSuperordinateRules << ")"
       << " for " << cp_chLeftGrammarRuleName << wGrammarRuleIDLeft
       << ","
       << cp_chRightGrammarRuleName << wGrammarRuleIDRight
@@ -774,7 +788,7 @@ BYTE ParseByRise::InsertGrammarRule(
       wGrammarRuleIDLeft
       , wGrammarRuleIDRight
       , cp_chSuperordinateGrammarRuleName ) ;
-    DEBUG_COUTN("After inserting rule \"" << cp_chSuperordinateGrammarRuleName
+    LOGN_DEBUG("After inserting rule \"" << cp_chSuperordinateGrammarRuleName
       << "\" " )
   }
   return byReturnValue;
@@ -915,7 +929,7 @@ WORD ParseByRise::InsertSuperClassGrammarRule(
   }
   else
   {
-    DEBUG_COUTN("warning: existing rule is being replaced")
+    LOGN_WARNING("existing rule is being replaced")
     m_stdmap_wGrammarPartID2SuperordinateID.insert(
       std::pair<WORD,WORD> (
         wSubclassGrammarRuleID,
@@ -944,12 +958,13 @@ BYTE ParseByRise::InsertSuperClassGrammarRule(
       iter != m_stdmap_RuleName2RuleID.end() )
   {
     WORD wSubclassGrammarRuleID = iter->second ;
-    DEBUG_COUT("inserting rule \"" << cp_chSuperclassGrammarRuleName << "\" "
+    LOGN("inserting rule \"" << cp_chSuperclassGrammarRuleName << "\" "
       << "(ID=" << m_wNumberOfSuperordinateRules << ")"
       << " for " << cp_chSubclassGrammarRuleName << wSubclassGrammarRuleID
 //      << ","
 //      << wGrammarRuleIDRight
-      << "\n")
+      //<< "\n"
+      )
 //    InsertGrammarRule(
 //      wGrammarRuleIDLeft
 //      , 65535
@@ -962,7 +977,7 @@ BYTE ParseByRise::InsertSuperClassGrammarRule(
   }
   else
   {
-    DEBUG_COUTN("InsertSuperClassGrammarRule Rule already in map")
+    LOGN("InsertSuperClassGrammarRule rule already in map")
     byReturnValue = unknownLeftGrammarPart;
   }
 //  return m_wNumberOfSuperordinateRules - 1 ;

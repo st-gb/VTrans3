@@ -17,28 +17,28 @@
  <!-- 0 object verbs -->
   <translation_rule
     syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf0Obj"
-    attribute_name="GerMainVerb0Obj2ndPersSing" 
+    attribute_name="GerMainVerb0Obj2ndPersSingPres" 
 	concatenation_ID="du"
   />
 	  <!-- only "ihr" possible -->
 	  <translation_rule
 		syntax_tree_path="YouPluralSimplePresent0Obj.mainVerbInf0Obj"
-		attribute_name="GerMainVerb0Obj2ndPersPlur" 
+		attribute_name="GerMainVerb0Obj2ndPersPlurPres" 
 	  />
   <translation_rule
     syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf0Obj"
-    attribute_name="GerMainVerb0Obj2ndPersPlur" 
+    attribute_name="GerMainVerb0Obj2ndPersPlurPres" 
 	concatenation_ID="ihr"
   />
   <!-- e.g. "Sie (Einzahl, förmlich) arbeiten" -->
   <translation_rule
     syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf0Obj"
-    attribute_name="GerMainVerb0Obj3rdPersPlur"
+    attribute_name="GerMainVerb0Obj3rdPersPlurPres"
 	concatenation_ID="Sie"
   />
   <translation_rule
     syntax_tree_path="2ndPersSingSimplePresentClause.MainVerbPast0Obj"
-    attribute_name="GerMainVerb0Obj2ndPersSing" 
+    attribute_name="GerMainVerb0Obj2ndPersSingPres" 
 	concatenation_ID="du"
   />
   <translation_rule
@@ -58,22 +58,22 @@
  <!-- 1 object verbs -->
 	  <translation_rule
 		syntax_tree_path="YouSimplePresent1Obj.mainVerbInf1Obj"
-		attribute_name="GerMainVerb1Obj2ndPersSing"
+		attribute_name="GerMainVerb1Obj2ndPersSingPres"
 	  />
   <translation_rule
     syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf1Obj"
-    attribute_name="GerMainVerb1Obj2ndPersSing" 
+    attribute_name="GerMainVerb1Obj2ndPersSingPres" 
 	concatenation_ID="du"
   />
   <translation_rule
     syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf1Obj"
-    attribute_name="GerMainVerb0Obj2ndPersPlur" 
+    attribute_name="GerMainVerb0Obj2ndPersPlurPres" 
 	concatenation_ID="ihr"
   />
   <!-- e.g. "Sie (Einzahl, förmlich) arbeiten" -->
   <translation_rule
     syntax_tree_path="2ndPersSingSimplePresentClause.mainVerbInf1Obj"
-    attribute_name="GerMainVerb0Obj3rdPersPlur"
+    attribute_name="GerMainVerb0Obj3rdPersPlurPres"
 	concatenation_ID="Sie"
   />
 </translation_rules>

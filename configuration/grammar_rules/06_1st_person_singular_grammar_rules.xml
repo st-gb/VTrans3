@@ -8,10 +8,29 @@
   <grammar_rule left_child="I" right_child="and" superordinate="I_and"/>
   <!-- e.g. "the cars and" + "I" = 1st person plural index / "we" -->
   <grammar_rule left_child="3rdPersPlurSubjOrObjEnumEle_AND" right_child="I" superordinate="1stPersPlurSubjOrObjEnumEle"/>
+  
   <!--this rule is to avoid determining the person ("person index") -> faster -->
   <grammar_rule left_child="I" right_child="mainVerbInf0Obj" superordinate="1stPersSingSimplePresentClause"/>
   <grammar_rule left_child="I" right_child="mainVerbInf1Obj" superordinate="1stPersSingSimplePresentClauseAllow1Obj"/>  
   <grammar_rule left_child="I" right_child="mainVerbInf2Obj" superordinate="1stPersSingSimplePresentClauseAllow2Obj"/>
+  
+  <!-- must differentiate in order to only allow clauses with 1 or 2 objects when the verb allows 1 or 2 objects -->
+  <grammar_rule left_child="I" right_child="MainVerbPast0Obj" superordinate="1stPersSingSimplePastClause0Obj"/>
+  <grammar_rule left_child="I" right_child="MainVerbPast1Obj" superordinate="1stPersSingSimplePastClause1Obj"/>  
+  <grammar_rule left_child="I" right_child="MainVerbPast2Obj" superordinate="1stPersSingSimplePastClause2Obj"/>
+  
+  <!-- must differentiate in order to only allow clauses with 1 or 2 objects when the verb allows 1 or 2 objects -->
+  <grammar_rule left_child="I" right_child="MainVerbSimpleFuture0Obj" superordinate="1stPersSingSimpleFutureClause0Obj"/>
+  <grammar_rule left_child="I" right_child="MainVerbSimpleFuture1Obj" superordinate="1stPersSingSimpleFutureClause1Obj"/>  
+  <grammar_rule left_child="I" right_child="MainVerbSimpleFuture2Obj" superordinate="1stPersSingSimpleFutureClause2Obj"/>
+  
+  <!-- must differentiate in order to only allow clauses with 1 or 2 objects when the verb allows 1 or 2 objects -->
+  <grammar_rule left_child="I" right_child="PerfectPredicate0Obj" superordinate="1stPersSingPerfectClause0Obj"/>
+  <grammar_rule left_child="I" right_child="PerfectPredicate1Obj" superordinate="1stPersSingPerfectClause1Obj"/>  
+  <grammar_rule left_child="I" right_child="PerfectPredicate2Obj" superordinate="1stPersSingPerfectClause2Obj"/>
+  
+  <!--grammar_rule left_child="MainVerbPast0Obj" superordinate="MainVerbPastAndObject"/-->
+  <!--grammar_rule left_child="I" right_child="MainVerbPastAndObject" superordinate="1stPersSingSimplePastClause"/-->
   
   <grammar_rule left_child="1stPersSingSimplePresentClauseAllow1Obj" right_child="obj"
     superordinate="1stPersSingSimplePresentClause1Obj"/>
