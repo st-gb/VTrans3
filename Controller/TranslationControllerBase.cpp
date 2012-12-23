@@ -166,7 +166,7 @@ void TranslationControllerBase::ReadGrammarRuleFile(
     LOGN("Reading xml file " << cr_stdstrFilePath << "succeeded.")
   else
   {
-    LOGN("Reading xml file " << cr_stdstrFilePath << "failed:"
+    LOGN_ERROR("Reading xml file " << cr_stdstrFilePath << "failed:"
       << GetStdString_Inline(stdwstrErrorMessage) << "." )
   //    LOGWN_WSPRINTF( "%ls", stdwstrErrorMessage.c_str() )
     //::wxGetApp().Message( stdwstrErrorMessage ) ;
@@ -209,8 +209,8 @@ void TranslationControllerBase::ReadTranslationRuleFile(
   const std::string & cr_stdstrFilePath
   )
 {
-  LOGN("TranslationControllerBase::ReadTranslationRuleFile( \"" <<
-    cr_stdstrFilePath << "\")" )
+  LOGN(//"TranslationControllerBase::ReadTranslationRuleFile( "
+    "\"" << cr_stdstrFilePath << "\")" )
   std::wstring stdwstrErrorMessage ;
   // <> 0 = error
   if( //ReadViaSAX2InitAndTermXerces(
@@ -229,8 +229,8 @@ void TranslationControllerBase::ReadTranslationRuleFile(
   }
   else
   {
-    LOGN("Failed to read translation rule file \"" << cr_stdstrFilePath
-      << "\"" )
+    LOGN_TYPE("Failed to read translation rule file \"" << cr_stdstrFilePath
+      << "\"", LogLevel::error )
     m_translateparsebyrisetree.mr_i_userinterface.Message(
       stdwstrErrorMessage ) ;
   }
@@ -242,8 +242,7 @@ void TranslationControllerBase::ReadVocAttributeDefinitionFile(
   const std::string & cr_stdstrFilePath
   )
 {
-  LOGN("TranslationControllerBase::ReadTranslationRuleFile( \"" <<
-    cr_stdstrFilePath << "\")" )
+  LOGN( "\"" << cr_stdstrFilePath << "\")" )
   std::wstring stdwstrErrorMessage ;
   // <> 0 = error
   if( //ReadViaSAX2InitAndTermXerces(
@@ -256,13 +255,13 @@ void TranslationControllerBase::ReadVocAttributeDefinitionFile(
       )
     )
   {
-    LOGN("Successfully read translation rule file \"" << cr_stdstrFilePath
-      << "\"" )
+    LOGN("Successfully read VocAttributeDefinition XML file \""
+      << cr_stdstrFilePath << "\"" )
   //          mr_i_userinterface.Message( wstr ) ;
   }
   else
   {
-    LOGN("Failed to read translation rule file \"" << cr_stdstrFilePath
+    LOGN_ERROR("Failed to read translation rule file \"" << cr_stdstrFilePath
       << "\"" )
     m_translateparsebyrisetree.mr_i_userinterface.Message(
       stdwstrErrorMessage ) ;
@@ -274,8 +273,7 @@ void TranslationControllerBase::ReadXMLfile(
   const std::string & cr_stdstrFilePath
   )
 {
-  LOGN("TranslationControllerBase::ReadTranslationRuleFile( \"" <<
-    cr_stdstrFilePath << "\")" )
+  LOGN("\"" << cr_stdstrFilePath << "\")" )
   std::wstring stdwstrErrorMessage ;
   // <> 0 = error
   if( //ReadViaSAX2InitAndTermXerces(
@@ -288,14 +286,13 @@ void TranslationControllerBase::ReadXMLfile(
       )
     )
   {
-    LOGN("Successfully read translation rule file \"" << cr_stdstrFilePath
+    LOGN("Successfully read XML file \"" << cr_stdstrFilePath
       << "\"" )
   //          mr_i_userinterface.Message( wstr ) ;
   }
   else
   {
-    LOGN("Failed to read translation rule file \"" << cr_stdstrFilePath
-      << "\"" )
+    LOGN_ERROR("Failed to read XML file \"" << cr_stdstrFilePath << "\"" )
     m_translateparsebyrisetree.mr_i_userinterface.Message(
       stdwstrErrorMessage ) ;
   }
@@ -303,7 +300,8 @@ void TranslationControllerBase::ReadXMLfile(
 
 void TranslationControllerBase::Transform()
 {
-  LOGN("TranslationControllerBase::Transform() begin")
+  LOGN(//"TranslationControllerBase::Transform() "
+      "begin")
   DWORD dwLeftMostTokenIndex = 0 ;
   std::vector<GrammarPart *> stdvec_p_grammarpartRootNode ;
   m_parsebyrise.GetGrammarPartCoveringMostTokens(
@@ -323,7 +321,8 @@ void TranslationControllerBase::Transform()
       ) ;
     transformtreetransverser.Traverse() ;
   }
-  LOGN("TranslationControllerBase::Transform() end")
+  LOGN(//"TranslationControllerBase::Transform() "
+    "end")
 }
 
 void TranslationControllerBase::Translate(
@@ -342,25 +341,9 @@ void TranslationControllerBase::Translate(
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   )
 {
-  LOGN("TranslationControllerBase::Translate(...) begin")
-  m_parsebyrise.ClearParseTree() ;
-  m_parsebyrise.CreateInitialGrammarParts ( cr_stdstrWholeInputText ) ;
-
-  DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
-  m_parsebyrise.ResolveGrammarRulesForAllParseLevels() ;
-  //TODO idea: before further processing: delete all parse tree that
-  //are identical after removing the superordinate grammar rules:
-
-  //the fan               the fan
-  //  \ /               =  \  /
-  // def_article_noun     def_article_noun
-  //                        |
-  //                      3rdPersSingEnumEle
-
-  //So the translation would be faster, no double translations.
-  //But on the other hand: if there are translation rules that include at least 1
-  //of these superordinate rules, they wouldn't apply.
-  m_parsebyrise.RemoveSuperordinateRulesFromRootNodes();
+  LOGN(//"TranslationControllerBase::Translate(...) "
+      "begin")
+  m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
 //  RemoveDuplicateParseTrees();
 
   Transform() ;
@@ -387,6 +370,7 @@ void TranslationControllerBase::Translate(
   OutputXMLindented(std_strXML.c_str(), std_ostringstream);
   LOGN("translation as indented XML:" << std_ostringstream.str())
 
-  LOGN( FULL_FUNC_NAME << "--generated XML data:" << std_strXML)
-  LOGN("TranslationControllerBase::Translate(...) end")
+  LOGN( /*FULL_FUNC_NAME <<*/ "generated XML data:" << std_strXML)
+  LOGN(//"TranslationControllerBase::Translate(...) "
+      "end")
 }

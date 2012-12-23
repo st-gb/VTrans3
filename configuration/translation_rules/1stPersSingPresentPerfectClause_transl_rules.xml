@@ -1,0 +1,27 @@
+<translation_rules>
+  <!-- past perfect -->
+  <translation_rule 
+    syntax_tree_path="1stPersSingPerfectClause0Obj.PerfectPredicate0Obj.mainVerbPastParticiple0Obj"
+    attribute_name="GermanMainVerb0ObjParticiplePerfect" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingPerfectClause0Obj.PerfectPredicate0Obj.haveInfinitive"
+    attribute_name="GerMainVerb0Obj1stPersSingPres" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingPerfectClause1Obj.PerfectPredicate1Obj.mainVerbPastParticiple1Obj"
+    attribute_name="GermanMainVerb0ObjParticiplePerfect" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingPerfectClause1Obj.PerfectPredicate1Obj.haveInfinitive"
+    attribute_name="GerMainVerb0Obj1stPersSingPres" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingPerfectClause2Obj.PerfectPredicate2Obj.mainVerbPastParticiple2Obj"
+    attribute_name="GermanMainVerb2ObjParticiplePerfect" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingPerfectClause0Obj.PerfectPredicate0Obj.haveInfinitive"
+    attribute_name="GerMainVerb0Obj1stPersSingPres" 
+  />
+</translation_rules>

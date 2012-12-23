@@ -38,7 +38,8 @@ namespace Xerces
     //m_r_parsebyrise ( //r_parsebyrise
 //      r_translationcontrollerbase.m_parsebyrise )
   {
-    LOGN("SAX2TransformationRuleHandler()")
+    LOGN_DEBUG(""//SAX2TransformationRuleHandler()"
+      )
   }
 
   SAX2TransformationRuleHandler::~SAX2TransformationRuleHandler()
@@ -143,7 +144,8 @@ namespace Xerces
       XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes
     )
   {
-    LOGN("SAX2TransformationRuleHandler::startElement begin")
+    LOGN_DEBUG(//"SAX2TransformationRuleHandler::startElement "
+      "begin")
     char * pchXMLelementName = XERCES_CPP_NAMESPACE::XMLString::transcode(
       cpc_xmlchLocalName);
     if( pchXMLelementName )
@@ -191,6 +193,7 @@ namespace Xerces
                 L"\"place_near_syntax_tree_path\" specified";
             m_r_translationcontrollerbase.Message( stdwos.str()
                 );
+            LOGN_TYPE( ::GetStdString(stdwos.str()), LogLevel::warning)
           }
            if( XercesAttributesHelper::GetAttributeValue(
                cr_xercesc_attributes ,

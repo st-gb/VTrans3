@@ -49,6 +49,7 @@ public:
     , be1stPersonSingular
 //    , have2ndPersonSingular
     , haveInfinitive
+    , will
 
     , conjunction
     //after the same indices as in the vocabulary file

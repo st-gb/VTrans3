@@ -29,17 +29,17 @@ END_EVENT_TABLE()
 
 wxGermanTranslationPanel::wxGermanTranslationPanel()
 {
-  wxChoice * p_wxchoice = new wxChoice(
-    this, //wxWindow *    parent,
-    wxID_ANY, // wxWindowID    id,
-    wxDefaultPosition, //const wxPoint &   pos = wxDefaultPosition,
-    wxDefaultSize //const wxSize & size = wxDefaultSize,
-//    int   n = 0,
-//    const wxString    choices[] = NULL,
-//    long    style = 0,
-//    const wxValidator &   validator = wxDefaultValidator,
-//    const wxString &    name = wxChoiceNameStr
-    );
+//  wxChoice * p_wxchoice = new wxChoice(
+//    this, //wxWindow *    parent,
+//    wxID_ANY, // wxWindowID    id,
+//    wxDefaultPosition, //const wxPoint &   pos = wxDefaultPosition,
+//    wxDefaultSize //const wxSize & size = wxDefaultSize,
+////    int   n = 0,
+////    const wxString    choices[] = NULL,
+////    long    style = 0,
+////    const wxValidator &   validator = wxDefaultValidator,
+////    const wxString &    name = wxChoiceNameStr
+//    );
 //  p_wxchoice->Get
 //  Add()
 }
@@ -157,8 +157,8 @@ void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
     std_set_grammarpartpointerandconcatenationid;
 
   std::vector<wxString> std_vector_wxstr;
-  const char * p_chTranslation = NULL;
-  uint32_t ui32ConcatenationID = 0;
+//  const char * p_chTranslation = NULL;
+//  uint32_t ui32ConcatenationID = 0;
   wxArrayString wxarraystringTranslation;
 
 //  const TranslationAndConcatenationID * p_translationandconcatenationid = NULL;
@@ -308,8 +308,8 @@ void wxGermanTranslationPanel::DrawTranslationFromAllParseTrees(wxDC & r_wxdc)
 {
   wxSize wxsizeText;
   wxString wxstrTranslation;
-  int x = 0;
-  wxCoord wxcoordY = 0;
+//  int x = 0;
+//  wxCoord wxcoordY = 0;
 
 //  std::vector<std::vector<TranslationAndGrammarPart> >::const_iterator c_iter =
 //    m_std_vector_stdvecTranslationAndGrammarPart.begin();
@@ -466,7 +466,7 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
   wxSize wxsizeText;
 
   wxCoord wxcoordXBeginOfToken = wxcoordX;
-  wxCoord wxcoordYBeginOfToken = wxcoordY;
+//  wxCoord wxcoordYBeginOfToken = wxcoordY;
 
   wxWindowID wxwindowid = wxID_ANY;
 //  std::set<TranslationAndConcatenationID>::const_iterator
@@ -476,7 +476,7 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
   std::set<GrammarPartPointerAndConcatenationID>::const_iterator
     c_iter_std_set_grammarpartpointerandconcatenationid =
     std_set_grammarpartpointerandconcatenationid.begin();
-  int nSize = std_set_grammarpartpointerandconcatenationid.size();
+//  int nSize = std_set_grammarpartpointerandconcatenationid.size();
 
   while( //c_iter_std_set_translationandconcatenationid !=
     //std_set_translationandconcatenationid.end()

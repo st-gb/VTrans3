@@ -41,6 +41,8 @@ namespace Xerces
     std::string m_strElementName ;
     inline void HandleGrammartPartColourXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & c_r_xercesc_attributes);
+    inline void HandleGUI_XMLelement(
+      const XERCES_CPP_NAMESPACE::Attributes & c_r_xercesc_attributes);
     inline void HandleReadGrammarRuleFileXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes ) ;
     inline void HandleReadTransformationRuleFileXMLelement(

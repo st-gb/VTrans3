@@ -17,6 +17,14 @@
     />
 	
   <vocabulary_attribute_definiton 
+    attribute_name="GermanMainVerb0ObjInfinitive"
+    word_class="mainVerbInf0Obj" 
+    language="German"
+    attribute_type="string"
+    attribute_index="0"
+    attribute_length="1" 
+    />
+  <vocabulary_attribute_definiton 
     attribute_name="GermanMainVerb0ObjParticiplePerfect"
     word_class="mainVerbInf0Obj" 
     language="German"
@@ -27,6 +35,14 @@
   <vocabulary_attribute_definiton 
     attribute_name="GermanMainVerb1ObjParticiplePerfect"
     word_class="mainVerbInf1Obj" 
+    language="German"
+    attribute_type="string"
+    attribute_index="13"
+    attribute_length="1" 
+    />
+  <vocabulary_attribute_definiton 
+    attribute_name="GermanMainVerb2ObjParticiplePerfect"
+    word_class="mainVerbInf2Obj" 
     language="German"
     attribute_type="string"
     attribute_index="13"

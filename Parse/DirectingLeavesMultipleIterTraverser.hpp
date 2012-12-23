@@ -22,6 +22,7 @@ typedef unsigned short WORD ;
 //A parse tree is a tree of the allowed syntax.
 namespace ParseTreeTraverser
 {
+  /** Traverses a parse tree from root to the leaves in multiple iterations.*/
   class DirectingLeavesMultipleIterTraverser
   {
   public:
@@ -60,6 +61,7 @@ namespace ParseTreeTraverser
     //Called after reaching a left leaf.
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void CurrentNodeIsLastAddedRightChild() {} ;
+
     DirectingLeavesMultipleIterTraverser(
         const GrammarPart * p_grammarpart ,
         ParseByRise * p_parsebyrise );

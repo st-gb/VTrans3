@@ -87,6 +87,21 @@ namespace Xerces
     }
   }
 
+  void SAX2MainConfigHandler::HandleGUI_XMLelement(
+    const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes )
+  {
+    std::string stdstrPath ;
+    if( XercesAttributesHelper::GetAttributeValue(
+      cr_xercesc_attributes,
+      "draw_pointer_addresses",
+      m_r_translationcontrollerbase.m_GUIattributes.m_bShowGrammarPartAddress)
+      == XercesAttributesHelper::getting_attribute_value_succeeded
+      )
+    {
+
+    }
+  }
+
   void SAX2MainConfigHandler::HandleReadGrammarRuleFileXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes )
   {
@@ -97,12 +112,12 @@ namespace Xerces
       stdstrPath)
       )
     {
-      LOGN("got path: " << stdstrPath )
+      LOGN_DEBUG("got path: " << stdstrPath )
       m_r_translationcontrollerbase.ReadGrammarRuleFile(
         m_sax2grammarrulehandler , stdstrPath ) ;
     }
     else
-      LOGN("Failed to get path.")
+      LOGN_ERROR("Failed to get path.")
   }
 
   void SAX2MainConfigHandler::HandleReadTransformationRuleFileXMLelement(
@@ -115,11 +130,11 @@ namespace Xerces
       stdstrPath)
       )
     {
-      LOGN("got path: " << stdstrPath )
+      LOGN_DEBUG("got path: " << stdstrPath )
       ReadXMLfile( m_sax2transformationrulehandler , stdstrPath ) ;
     }
     else
-      LOGN("Failed to get path.")
+      LOGN_ERROR("Failed to get path.")
   }
 
   void SAX2MainConfigHandler::HandleReadTranslationRuleFileXMLelement(
@@ -132,12 +147,12 @@ namespace Xerces
       stdstrPath)
       )
     {
-      LOGN("got path: " << stdstrPath )
+      LOGN_DEBUG("got path: " << stdstrPath )
       m_r_translationcontrollerbase.ReadTranslationRuleFile(
         m_sax2translationrulehandler , stdstrPath ) ;
     }
     else
-      LOGN("Failed to get path.")
+      LOGN_TYPE("Failed to get path.", LogLevel::error)
   }
 
   void SAX2MainConfigHandler::
@@ -155,7 +170,7 @@ namespace Xerces
       SAX2VocAttributeDefinitionHandler sax2vocattributedefinitionhandler(
         * mp_translateparsebyrisetree ,
         mp_translateparsebyrisetree->mr_i_userinterface ) ;
-      LOGN("got path: " << stdstrPath )
+      LOGN_DEBUG("got path: " << stdstrPath )
 //      // <> 0 = error
 //      if( //ReadViaSAX2InitAndTermXerces(
 //          ! ReadXMLfile_Inline(
@@ -182,7 +197,7 @@ namespace Xerces
         sax2vocattributedefinitionhandler , stdstrPath ) ;
     }
     else
-      LOGN("Failed to get path.")
+      LOGN_ERROR("Failed to get path.")
   }
 
   void SAX2MainConfigHandler::ReadXMLfile(
@@ -190,8 +205,8 @@ namespace Xerces
     const std::string & cr_stdstrFilePath
     )
   {
-    LOGN("TranslationControllerBase::ReadTranslationRuleFile( \"" <<
-      cr_stdstrFilePath << "\")" )
+    LOGN_DEBUG(//"TranslationControllerBase::ReadTranslationRuleFile( "
+      "\"" << cr_stdstrFilePath << "\"" /*")"*/ )
     std::wstring stdwstrErrorMessage ;
     // <> 0 = error
     if( //ReadViaSAX2InitAndTermXerces(
@@ -204,13 +219,13 @@ namespace Xerces
         )
       )
     {
-      LOGN("Successfully read XML file \"" << cr_stdstrFilePath
+      LOGN_DEBUG("Successfully read XML file \"" << cr_stdstrFilePath
         << "\"" )
     //          mr_i_userinterface.Message( wstr ) ;
     }
     else
     {
-      LOGN("Failed to read XML file \"" << cr_stdstrFilePath
+      LOGN_ERROR("Failed to read XML file \"" << cr_stdstrFilePath
         << "\"" )
       m_r_translationcontrollerbase.Message(
         stdwstrErrorMessage ) ;
@@ -228,12 +243,14 @@ namespace Xerces
       cpc_xmlchLocalName);
     if( pchXMLelementName )
     {
-      LOGN( "XML element: " << pchXMLelementName );
+      LOGN_DEBUG( "XML element: " << pchXMLelementName );
       m_strElementName = std::string(pchXMLelementName) ;
       //LOG( "uri:" << uri << " localname:" << localname << " qname:" <<
       // qname << endl );
       if( m_strElementName == "grammar_part" )
         HandleGrammartPartColourXMLelement(cr_xercesc_attributes);
+      else if( m_strElementName == "drawing" )
+        HandleGUI_XMLelement(cr_xercesc_attributes);
       else if( m_strElementName == "grammar_rule_file" )
       {
         HandleReadGrammarRuleFileXMLelement( cr_xercesc_attributes ) ;
@@ -261,7 +278,7 @@ namespace Xerces
           m_stdstrVocabularyFilePath)
           )
         {
-          LOGN("got vocabulary_file path: " << //stdstrFilePath
+          LOGN_DEBUG("got vocabulary_file path: " << //stdstrFilePath
             m_stdstrVocabularyFilePath )
 //        if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
 //             stdstrFilePath )

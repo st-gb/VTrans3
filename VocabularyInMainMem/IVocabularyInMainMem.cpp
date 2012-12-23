@@ -67,7 +67,7 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbBe()
 void IVocabularyInMainMem::InsertAuxiliaryVerbHave()
 {
   GermanAuxiliaryVerb germanverbHaben ("haben\nhabe\nhast\nhat\nhaben\nhabt\nhaben\n"
-    "hatte\nhattest\nhatte\nhatten\nhattet\nhatten\ngehabt\n4"//,
+    "hatte\nhattest\nhatte\nhatten\nhattet\nhatten\ngehabt\n"//,
     //GermanVerb::nominative
       );
   EnglishAuxiliaryVerb englishauxiliaryverbHave(
@@ -88,6 +88,33 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbHave()
   p_vocabularyandtranslation->m_byType = EnglishWord::haveInfinitive;
   //void * p_v =
     Insert(englishauxiliaryverbHave,germanverbHaben, //p_v
+      p_vocabularyandtranslation) ;
+}
+
+void IVocabularyInMainMem::InsertAuxiliaryVerbWill()
+{
+  GermanAuxiliaryVerb germanverbWerden ("werden\nwerde\nwirst\nwird\nwerden\nwerdet\nwerden\n"
+    "wurde\nwurdest\nwurde\nwurden\nwurdet\nwurden\ngeworden\n"//,
+    //GermanVerb::nominative
+      );
+  EnglishAuxiliaryVerb englishauxiliaryverbWill(
+    "will\nwill\nwill\nwill\nwill\nwill\nwould\nwould\nwould\nwould\nwould\nwould\nwould\n"
+    "would\n" , false );
+
+
+//  germanverbHaben.m_bCase = GermanVerb::nominative ;
+//  germanverbHaben.m_bMove = 0 ;
+
+  //void * p_v
+  VocabularyAndTranslation * p_vocabularyandtranslation = Insert("will",
+      EnglishWord:://haveInfinitive
+      auxiliary_verb
+      );//, p_v) ;
+//  VocabularyAndTranslation * p_vocabularyandtranslation =
+//      (VocabularyAndTranslation *) p_v;
+  p_vocabularyandtranslation->m_byType = EnglishWord::will;
+  //void * p_v =
+    Insert(englishauxiliaryverbWill,germanverbWerden, //p_v
       p_vocabularyandtranslation) ;
 }
 
@@ -128,6 +155,7 @@ void IVocabularyInMainMem::InsertFundamentalWords()
   InsertAuxiliaryVerbBe();
 
   InsertAuxiliaryVerbHave();
+  InsertAuxiliaryVerbWill();
 
 	InsertPersonalPronouns() ;
 	//"her","him","me",...

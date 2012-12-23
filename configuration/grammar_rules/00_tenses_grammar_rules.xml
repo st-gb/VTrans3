@@ -4,6 +4,11 @@
   <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple1Obj" superordinate="PerfectPredicate1Obj" />
   <grammar_rule left_child="haveInfinitive" right_child="mainVerbPastParticiple2Obj" superordinate="PerfectPredicate2Obj" />
   
+  <!-- will-future -->  
+  <grammar_rule left_child="will" right_child="mainVerbInf0Obj" superordinate="MainVerbSimpleFuture0Obj" />
+  <grammar_rule left_child="will" right_child="mainVerbInf1Obj" superordinate="MainVerbSimpleFuture1Obj" />
+  <grammar_rule left_child="will" right_child="mainVerbInf2Obj" superordinate="MainVerbSimpleFuture2Obj" />
+  
   <!--present progressive-->
   <grammar_rule left_child="are" right_child="MainVerbProgressive0Obj" superordinate="are_PresentProgressive0Obj" />
   <grammar_rule left_child="are" right_child="MainVerbProgressive1Obj" superordinate="are_PresentProgressive1Obj" />

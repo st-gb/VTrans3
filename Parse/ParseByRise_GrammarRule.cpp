@@ -80,6 +80,7 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
 //  InsertGrammarRule( EnglishWord::have2ndPersonSingular,
 //    "have2ndPersonSingular");
   InsertGrammarRule( EnglishWord::haveInfinitive,"haveInfinitive");
+  InsertGrammarRule( EnglishWord::will,"will");
 
   InsertGrammarRuleNamesForPersonalPronouns();
   InsertGrammarRuleNamesForPossessiveAdjectives();

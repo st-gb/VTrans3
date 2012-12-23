@@ -17,6 +17,7 @@
 //#include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
+#include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 //avoid g++ error like "'class wxDC' has no member named 'DrawTextW'"
 #include <wx/msw/winundef.h>
 
@@ -29,7 +30,6 @@ DrawParseTreeTraverser::DrawParseTreeTraverser(
     p_grammarpart ,
     p_parsebyrise
     )
-  , m_bShowGrammarPartAddress( true )
   , mp_parsebyrise (p_parsebyrise)
   , m_wCurrentParseTreeLeftEndInPixels(0)
   , m_wParseLevelCountedFromRoot(0)
@@ -149,7 +149,7 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   wxString wxstrGrammarPartID = wxString::Format( wxT("%u_") ,
     p_grammarpart->m_wGrammarPartID ) ;
   wxstrGrammarPartName = wxstrGrammarPartID + wxString( r_stdstrGrammarPartName ) ;
-  if( m_bShowGrammarPartAddress )
+  if( ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress )
   {
     //hex. addresses are easier to compare with values in debugger mode.
     if( bShowHexAddress )

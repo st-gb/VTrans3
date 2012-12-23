@@ -37,22 +37,27 @@
 
 #include "wxTextInputDlg.hpp"
 #include "wxTextControlDialog.hpp" //class wxTextControlDialog
+#include "ShowTranslationRulesDialog.hpp" //class ShowTranslationRulesDialog
 #include <IO/IO.hpp> //class OneLinePerWordPair
 
-//see http://stackoverflow.com/questions/59670/how-to-get-rid-of-deprecated-conversion-from-string-constant-to-char-warning
-//to ignore "warning: deprecated conversion from string constant to 'char*'"
-#pragma GCC diagnostic ignored "-Wno-write-strings"
+////see http://stackoverflow.com/questions/59670/how-to-get-rid-of-deprecated-conversion-from-string-constant-to-char-warning
+////to ignore "warning: deprecated conversion from string constant to 'char*'"
+//#pragma GCC diagnostic ignored "-Wno-write-strings"
+//DISable warning, from
+//http://stackoverflow.com/questions/59670/how-to-get-rid-of-deprecated-conversion-from-string-constant-to-char-warning
+// : "I believe passing -Wno-write-strings to gcc will suppress this warning."
+#pragma GCC diagnostic ignored "-Wwrite-strings"
 
 //For array "add_grammar_rules_xpm" .
-#include <bitmaps/add_grammar_rules.xpm>
+#include <bitmaps/add_grammar_rules24x24.xpm>
 //For array "add_vocable_attribute_definitions_xpm" .
-#include <bitmaps/add_vocable_attribute_definitions.xpm>
+#include <bitmaps/add_vocable_attribute_definitions24x24.xpm>
 //For array "remove_vocable_attribute_definitions_xpm" .
-#include <bitmaps/remove_vocable_attribute_definitions.xpm>
+#include <bitmaps/remove_vocable_attribute_definitions24x24.xpm>
 //For array "add_translation_rules_xpm" .
-#include <bitmaps/add_translation_rules.xpm>
+#include <bitmaps/add_translation_rules24x24.xpm>
 //For array "add_transformation_rules_xpm" .
-#include <bitmaps/add_transformation_rules.xpm>
+#include <bitmaps/add_transformation_rules24x24.xpm>
 
 //static char * grammar_part_colours_xpm
 #include <bitmaps/grammar_part_colours.xpm>
@@ -64,19 +69,23 @@
 #include <bitmaps/re-load_dictionary.xpm>
 
 //For array "remove_grammar_rules_xpm" .
-#include <bitmaps/remove_grammar_rules.xpm>
+#include <bitmaps/remove_grammar_rules24x24.xpm>
 //For array "remove_translation_rules_xpm" .
-#include <bitmaps/remove_translation_rules.xpm>
+#include <bitmaps/remove_translation_rules24x24.xpm>
 //For array "remove_transformation_rules_xpm" .
-#include <bitmaps/remove_transformation_rules.xpm>
-#include <bitmaps/resolve_superclasses.xpm> //for array resolve_superclasses_xpm
-#include <bitmaps/resolve_1parse_level.xpm> //for array resolve_1parse_level_xpm
+#include <bitmaps/remove_transformation_rules24x24.xpm>
+#include <bitmaps/resolve_superclasses24x24.xpm> //for array resolve_superclasses_xpm
+#include <bitmaps/resolve_1parse_level24x24.xpm> //for array resolve_1parse_level_xpm
+#include <bitmaps/show_translation_rules24x24.xpm>
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
 #include <bitmaps/truncate_log_file.xpm> //for array truncate_log_file_xpm
 #include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
-//see //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
-#pragma GCC diagnostic pop
+////see //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+//#pragma GCC diagnostic pop
+//ENable warning
+#pragma GCC diagnostic warning "-Wwrite-strings"
 
+#include <Controller/character_string/convertFromAndToStdString.hpp>
 #include <Translate/TranslateTreeTraverser.hpp> //TranslationAndGrammarPart
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
@@ -116,6 +125,8 @@ BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
   EVT_BUTTON( ID_LoadDictionary , wxTextInputDlg::OnLoadDictionaryButton)
   EVT_BUTTON( ID_ShowTokenIndex2GrammarPart, wxTextInputDlg::
     OnShowTokenIndex2GrammarPartButton)
+  EVT_BUTTON( ID_ShowTranslationRules,
+    wxTextInputDlg::OnShowTranslationRulesButton )
   EVT_BUTTON( ID_ReInitGrammarRules ,
     wxTextInputDlg::OnReInitGrammarRulesButton)
   EVT_BUTTON( ID_RemoveGrammarRules ,
@@ -155,6 +166,7 @@ void wxTextInputDlg::AddButtons()
 
   AddAddTranslationRulesButton( p_boxsizerButtons ) ;
   AddRemoveTranslationRulesButton( p_boxsizerButtons ) ;
+  AddShowTranslationRulesButton( p_boxsizerButtons ) ;
   AddAddTransformationRulesButton( p_boxsizerButtons ) ;
   AddRemoveTransformationRulesButton( p_boxsizerButtons ) ;
   AddAddGrammarRulesButton( p_boxsizerButtons ) ;
@@ -190,18 +202,28 @@ void wxTextInputDlg::AddButtons()
 
 void wxTextInputDlg::AddAddTranslationRulesButton( wxSizer * p_sizer )
 {
-  mp_wxbutton = new //wxButton(
-    wxBitmapButton(
-    //mp_wxsplitterwindow
-    //m_panelSplitterTop
-    //p_boxsizerOuter
+  mp_wxbutton = new wxBitmapButton(
     this
-    , //wxID_ANY
-    ID_AddTranslationRules
-  //    , wxT("1 L")
-    , wxBitmap( add_translation_rules_xpm )
+    , ID_AddTranslationRules
+    , wxBitmap( add_translation_rules24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("add translation rules")) ;
+  p_sizer->Add(
+    mp_wxbutton
+    , 0 //strech factor. 0=do not stretch
+    , //wxEXPAND |
+      wxBOTTOM
+    , 2 );
+}
+
+void wxTextInputDlg::AddShowTranslationRulesButton( wxSizer * p_sizer )
+{
+  mp_wxbutton = new wxBitmapButton(
+    this
+    , ID_ShowTranslationRules
+    , wxBitmap( show_translation_rules24x24_xpm )
+    ) ;
+  mp_wxbutton->SetToolTip( wxT("show translation rules")) ;
   p_sizer->Add(
     mp_wxbutton
     , 0 //strech factor. 0=do not stretch
@@ -221,7 +243,7 @@ void wxTextInputDlg::AddAddTransformationRulesButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_AddTransformationRules
   //    , wxT("1 L")
-    , wxBitmap( add_transformation_rules_xpm )
+    , wxBitmap( add_transformation_rules24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("add transformation rules")) ;
   p_sizer->Add(
@@ -243,7 +265,7 @@ void wxTextInputDlg::AddAddVocAttrDefsButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_AddVocAttrDefs
   //    , wxT("1 L")
-    , wxBitmap( add_vocable_attribute_definitions_xpm )
+    , wxBitmap( add_vocable_attribute_definitions24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("add vocable attribute definitions")) ;
   p_sizer->Add(
@@ -287,7 +309,7 @@ void wxTextInputDlg::AddRemoveTranslationRulesButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_RemoveTranslationRules
   //    , wxT("1 L")
-    , wxBitmap( remove_translation_rules_xpm )
+    , wxBitmap( remove_translation_rules24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("remove translations rules")) ;
   p_sizer->Add(
@@ -309,7 +331,7 @@ void wxTextInputDlg::AddRemoveTransformationRulesButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_RemoveTransformationRules
   //    , wxT("1 L")
-    , wxBitmap( remove_transformation_rules_xpm )
+    , wxBitmap( remove_transformation_rules24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("remove transformation rules")) ;
   p_sizer->Add(
@@ -331,7 +353,7 @@ void wxTextInputDlg::AddAddGrammarRulesButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_AddGrammarRules
   //    , wxT("1 L")
-    , wxBitmap( add_grammar_rules_xpm )
+    , wxBitmap( add_grammar_rules24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("add grammar rules")) ;
   p_sizer->Add(
@@ -377,7 +399,7 @@ void wxTextInputDlg::AddRemoveGrammarRulesButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_RemoveGrammarRules
   //    , wxT("1 L")
-    , wxBitmap( remove_grammar_rules_xpm )
+    , wxBitmap( remove_grammar_rules24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("remove grammar rules")) ;
   p_sizer->Add(
@@ -399,7 +421,7 @@ void wxTextInputDlg::AddRemoveVocAttrDefsButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_RemoveVocAttrDefs
   //    , wxT("1 L")
-    , wxBitmap( remove_vocable_attribute_definitions_xpm )
+    , wxBitmap( remove_vocable_attribute_definitions24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("remove vocable attribute definitions")) ;
   p_sizer->Add(
@@ -421,7 +443,7 @@ void wxTextInputDlg::AddResolve1ParseLevelButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_Resolve1ParseLevel
   //    , wxT("1 L")
-    , wxBitmap( resolve_1parse_level_xpm )
+    , wxBitmap( resolve_1parse_level24x24_xpm )
     ) ;
   mp_wxbutton->SetToolTip( wxT("resolve 1 parse level")) ;
   p_sizer->Add(
@@ -443,7 +465,7 @@ void wxTextInputDlg::AddResolveSuperClassesButton( wxSizer * p_sizer )
     , //wxID_ANY
     ID_ResolveSuperclass
   //    , wxT("res SC")
-    , wxBitmap( resolve_superclasses_xpm)
+    , wxBitmap( resolve_superclasses24x24_xpm)
     ) ;
   mp_wxbutton->SetToolTip( wxT("resolve superclasses")) ;
   p_sizer->Add(
@@ -876,22 +898,6 @@ void wxTextInputDlg::OnInfoButton( wxCommandEvent & wxcmd )
 //    wxstr
 //    , wxT("info") ) ;
 
-  std::map<TranslationRule *,ConditionsAndTranslation> &
-    r_stdmap_p_translationrule2ConditionsAndTranslation = wxGetApp().
-    m_translateparsebyrisetree.
-    m_stdmap_p_translationrule2ConditionsAndTranslation;
-  std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator c_iter =
-      r_stdmap_p_translationrule2ConditionsAndTranslation.begin();
-  while( c_iter != r_stdmap_p_translationrule2ConditionsAndTranslation.end() )
-  {
-      const TranslationRule * c_p_translationrule =
-        c_iter->first;
-//      r_translationrule.mp_parsebyrise->Get
-      wxstr += wxT("\n") +
-        getwxString( c_p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
-        GetAs_std_string() );
-      ++ c_iter;
-  }
   wxTextControlDialog wxd(wxstr);
   wxd.ShowModal();
 }
@@ -1011,6 +1017,47 @@ void wxTextInputDlg::OnShowTokenIndex2GrammarPartButton( wxCommandEvent & wxcmd 
 //    m_parsebyrise.m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate
   }
 //  mp_textctrlGermanText->SetValue( stdstr ) ;
+}
+
+void wxTextInputDlg::OnShowTranslationRulesButton( wxCommandEvent & wxcmd )
+{
+  wxString wxstr, wxstrSyntaxTreePath;
+  std::map<TranslationRule *,ConditionsAndTranslation> &
+    r_stdmap_p_translationrule2ConditionsAndTranslation = wxGetApp().
+    m_translateparsebyrisetree.
+    m_stdmap_p_translationrule2ConditionsAndTranslation;
+  int arraySize = r_stdmap_p_translationrule2ConditionsAndTranslation.size();
+  wxString choices[arraySize];
+  std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator c_iter
+    = r_stdmap_p_translationrule2ConditionsAndTranslation.begin();
+  unsigned arrayIndex = 0;
+  while( c_iter != r_stdmap_p_translationrule2ConditionsAndTranslation.end() )
+  {
+    const TranslationRule * c_p_translationrule =
+      c_iter->first;
+//      r_translationrule.mp_parsebyrise->Get
+    wxstrSyntaxTreePath = getwxString( c_p_translationrule->
+      m_syntaxtreepathCompareWithCurrentPath.GetAs_std_string() );
+    wxstr += wxT("\n") + wxstrSyntaxTreePath;
+    choices[ arrayIndex] = wxstrSyntaxTreePath;
+    const ConditionsAndTranslation conditionsandtranslation = c_iter->second;
+    std::vector<Condition>::const_iterator conditions_iter =
+      conditionsandtranslation.m_conditions.begin();
+    while( conditions_iter != conditionsandtranslation.m_conditions.end() )
+    {
+      wxstr += conditions_iter->m_syntaxtreepath.GetAs_std_string() + " WHERE "
+        + conditions_iter->m_stdstrAttributeName + "=" +
+        convertToStdString<WORD>(conditions_iter->m_byAttributeValue);
+      ++ conditions_iter;
+    }
+    ++ c_iter;
+    ++ arrayIndex;
+  }
+//  wxTextControlDialog wxd(wxstr);
+//  wxd.ShowModal();
+  VTrans::ShowTranslationRulesDialog showtranslationrulesdialog(this, choices,
+    arraySize);
+  showtranslationrulesdialog.ShowModal();
 }
 
 void wxTextInputDlg::OnTruncateLogFileButton( wxCommandEvent & wxcmd )

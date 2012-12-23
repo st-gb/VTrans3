@@ -1,6 +1,29 @@
 <translation_rules>
   <!-- -->
   
+  <translation_rule 
+    syntax_tree_path="*.he_PresentClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
+    attribute_name="GerMainVerb1Obj3rdPersSingPres" 
+  />
+  <!-- e.g. "he is running." "running" -> "rennt" --> 
+  <translation_rule 
+    syntax_tree_path="*.3rdPersSingClause.MainVerbProgressive1Obj"
+    attribute_name="GerMainVerb1Obj3rdPersSingPres" 
+  />
+  <!-- e.g. "he loves the car." -> ...liebt DAS Auto  sächliches Nomen -->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.obj.*.definite_article_singular.definite_article"
+    translation="das">
+    <condition syntax_tree_path="definite_article_singular.singular_noun"
+      attribute_name="German_noun_article"
+      byte_attribute_value="2"
+    />
+    <!--grammatical_case=4 <=> accusative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.he_PresentClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
+      attribute_name="grammatical_case"
+      byte_attribute_value="4"
+    />
+  </translation_rule>
   <!-- e.g. he trusts the man." -> ...vertraut DEM Mann-->
   <translation_rule 
     syntax_tree_path="clauseWith1Obj.obj.*.definite_article_singular.definite_article"

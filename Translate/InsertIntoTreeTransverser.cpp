@@ -12,7 +12,7 @@
 
 namespace ParseTreeTraverser
 {
-
+  /** Used in TransformTreeTraverser */
   InsertIntoTreeTransverser::InsertIntoTreeTransverser(
     const TransformationRule & cr_transformationrule ,
     const GrammarPart * p_grammarpartStartNode ,
@@ -31,7 +31,7 @@ namespace ParseTreeTraverser
       cr_transformationrule.m_stdstrParseTreePathWhereToInsert,
       & r_parsebyrise)
   {
-    LOGN("InsertIntoTreeTransverser(...)--"
+    LOGN_DEBUG(//"InsertIntoTreeTransverser(...)--"
       << cr_transformationrule.m_stdstrParseTreePathWhereToInsert )
 //    SyntaxTreePath syntaxtreepath ;
 //    syntaxtreepath.CreateGrammarPartIDArray(
@@ -61,8 +61,9 @@ namespace ParseTreeTraverser
       c_r_syntaxtreepath
       )
   {
-    LOGN( //"InsertIntoTreeTransverser(...)--"
-        FULL_FUNC_NAME
+    LOGN_DEBUG( //"InsertIntoTreeTransverser(...)--"
+      ""
+        //FULL_FUNC_NAME
 //      << cr_transformationrule.m_stdstrParseTreePathWhereToInsert
         )
 //    SyntaxTreePath syntaxtreepath ;
@@ -74,7 +75,9 @@ namespace ParseTreeTraverser
 
   InsertIntoTreeTransverser::~InsertIntoTreeTransverser()
   {
-    LOGN( FULL_FUNC_NAME)
+    LOGN_DEBUG( //FULL_FUNC_NAME
+      ""
+      )
   }
 
   void InsertIntoTreeTransverser::BeforeBeginAtRoot()
@@ -93,14 +96,14 @@ namespace ParseTreeTraverser
           stdvec_wGrammarPartID )
       )
     {
-      LOGN(//"InsertIntoTreeTransverser::ParseTreePathAdded()"
-        FULL_FUNC_NAME <<
-        "--m_syntaxtreepath.Matches(...)" )
+      LOGN_DEBUG(//"InsertIntoTreeTransverser::ParseTreePathAdded()"
+        //FULL_FUNC_NAME << "--"
+        "m_syntaxtreepath.Matches(...)" )
       m_p_grammarpartChildOfGrammarPartToInsert =
        m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
-      LOGN(//"InsertIntoTreeTransverser::CheckIfGrammarPartPathMatches(...)"
-        FULL_FUNC_NAME <<
-        "--m_p_grammarpartChildOfGrammarPartToInsert:"
+      LOGN_DEBUG(//"InsertIntoTreeTransverser::CheckIfGrammarPartPathMatches(...)"
+        //FULL_FUNC_NAME << "--"
+        "m_p_grammarpartChildOfGrammarPartToInsert:"
         << m_r_parsebyrise.GetGrammarPartName(
           m_p_grammarpartChildOfGrammarPartToInsert->m_wGrammarPartID )
         )
@@ -111,15 +114,15 @@ namespace ParseTreeTraverser
         //2nd last element.
         m_stdvector_p_grammarpartCurrentParseTreePath.at (
           m_stdvector_p_grammarpartCurrentParseTreePath.size() - 2 ) ;
-      LOGN(//"InsertIntoTreeTransverser::CheckIfGrammarPartPathMatches(...)"
-        FULL_FUNC_NAME <<
-        "--m_p_grammarpartParentOfGrammarPartToInsert:"
+      LOGN_DEBUG(//"InsertIntoTreeTransverser::CheckIfGrammarPartPathMatches(...)"
+        //FULL_FUNC_NAME << "--"
+        "m_p_grammarpartParentOfGrammarPartToInsert:"
         << m_p_grammarpartParentOfGrammarPartToInsert
         )
       if( m_p_grammarpartParentOfGrammarPartToInsert )
-        LOGN(//"InsertIntoTreeTransverser::CheckIfGrammarPartPathMatches(...)"
-          FULL_FUNC_NAME <<
-          "--m_p_grammarpartParentOfGrammarPartToInsert:"
+        LOGN_DEBUG(//"InsertIntoTreeTransverser::CheckIfGrammarPartPathMatches(...)"
+          //FULL_FUNC_NAME << "--"
+          "m_p_grammarpartParentOfGrammarPartToInsert:"
           << m_r_parsebyrise.GetGrammarPartName(
             m_p_grammarpartParentOfGrammarPartToInsert->m_wGrammarPartID )
           )
@@ -130,15 +133,17 @@ namespace ParseTreeTraverser
       //DirectingLeavesMultipleIterTraverser::ProcessLeavesOfParseTree()
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart = NULL ;
     }
-    LOGN( FULL_FUNC_NAME << "--end" )
+    LOGN_DEBUG( //FULL_FUNC_NAME << "--"
+        "end" )
   }
 
   void InsertIntoTreeTransverser::CurrentNodeIsLastAddedRightChild()
   {
     m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
-    LOGN("InsertIntoTreeTransverser::CurrentNodeIsLastAddedRightChild()"
-      "--current parse tree path: "
+    LOGN_DEBUG(//"InsertIntoTreeTransverser::CurrentNodeIsLastAddedRight"
+      //"Child()--"
+      "current parse tree path: "
       << m_r_parsebyrise.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
@@ -165,18 +170,19 @@ namespace ParseTreeTraverser
 
     std::string stdstrCurrentParseTreePath = m_r_parsebyrise.
       GetPathAs_std_string( m_stdvector_p_grammarpartCurrentParseTreePath) ;
-    LOGN("InsertIntoTreeTransverser::ParseTreePathAdded()--current parse tree "
-      "path: " << stdstrCurrentParseTreePath ) ;
+    LOGN_DEBUG(//"InsertIntoTreeTransverser::ParseTreePathAdded()--"
+      "current parse tree path: " << stdstrCurrentParseTreePath ) ;
 
     CheckIfGrammarPartPathMatches(byDirection) ;
-    LOGN( FULL_FUNC_NAME << "--end" )
+    LOGN_DEBUG( //FULL_FUNC_NAME << "--"
+      "end" )
   }
 
   void InsertIntoTreeTransverser::ParseTreePathPopped()
   {
     m_stdvector_p_grammarpartCurrentParseTreePath.pop_back() ;
-    LOGN("InsertIntoTreeTransverser::ParseTreePathPopped()"
-      "--current parse tree path: "
+    LOGN_DEBUG(//"InsertIntoTreeTransverser::ParseTreePathPopped()--"
+      "current parse tree path: "
       << m_r_parsebyrise.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )

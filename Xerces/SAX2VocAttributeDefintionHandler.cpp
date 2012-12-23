@@ -69,8 +69,8 @@ namespace Xerces
     if( pchXMLelementName )
     {
       std::string stdstrElementName = std::string(pchXMLelementName) ;
-      LOGN("SAX2VocAttributeDefinitionHandler::startElement:"
-        << stdstrElementName )
+      LOGN_DEBUG(//"SAX2VocAttributeDefinitionHandler::startElement:" <<
+        stdstrElementName )
       if( stdstrElementName == "vocabulary_attribute_definiton" )
       {
 //        bool bSuccess = true ;

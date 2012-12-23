@@ -67,6 +67,7 @@ class GermanWord;
 //    virtual void NextNoun() = 0 ;
     void InsertAuxiliaryVerbBe();
     void InsertAuxiliaryVerbHave();
+    void InsertAuxiliaryVerbWill();
     void InsertFundamentalWords() ;
     //For inserting fundamental words etc.
     virtual //void

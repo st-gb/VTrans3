@@ -110,7 +110,7 @@ BYTE OneLinePerWordPair::InsertEnglishNoun(
   int nIndexOfCurrentChar ;
   //TRACE("englisches Substantiv: %s\n", str);
 #ifdef _INSERT_INTO_HASH_TREE
-  LetterNode * pletternode = NULL ;
+//  LetterNode * pletternode = NULL ;
 //        VocabularyAndTranslation * pvocabularyandtranslation = NULL ;
 //        VocabularyAndTranslation * pvocabularyandtranslationReturn = NULL ;
 #endif //#ifdef _INSERT_INTO_HASH_TREE
@@ -382,10 +382,13 @@ void OneLinePerWordPair::InsertEnglishMainVerb(
           {
           case 0 :
             byGrammarPartID = EnglishVerb::main_verb_allows_0object_infinitive;
+            break;
           case 1:
             byGrammarPartID = EnglishWord::main_verb_allows_1object_infinitive;
+            break;
           case 2:
             byGrammarPartID = EnglishWord::main_verb_allows_2objects_infinitive;
+            break;
           }
 
           s_p_lettertree->InsertIntoTrieAndHandleVocabularyAndTranslation(
@@ -784,7 +787,7 @@ void OneLinePerWordPair::InsertGermanAdjective(
   )
 {
   LOGN( //"OneLinePerWordPair::InsertGermanAdjective(...)"
-    FULL_FUNC_NAME << "--begin" )
+    /*FULL_FUNC_NAME <<*/ "begin" )
 //  GermanAdjective * p_germanadjective = new GermanAdjective;
   BYTE delemiterCount = 0 ;
   int nIndexOf1stChar = 1 ;
@@ -821,7 +824,7 @@ void OneLinePerWordPair::InsertGermanAdjective(
         const VocabularyAndTranslation * const
           p_vocabularyandtranslation =
           s_p_lettertree->s_pvocabularyandtranslation;
-        LOGN( FULL_FUNC_NAME << "--\"voc and translation pointer\" is: \""
+        LOGN( /*FULL_FUNC_NAME <<*/ "\"voc and translation pointer\" is: \""
           << p_vocabularyandtranslation << "\"")
 
         std::string * p_std_str = & p_vocabularyandtranslation->
@@ -836,7 +839,7 @@ void OneLinePerWordPair::InsertGermanAdjective(
             nIndexOf1stChar
             , nCurrentCharIndexWithinWholeVocabularyString - nIndexOf1stChar
             ) ;
-        LOGN( FULL_FUNC_NAME << "--inserted string \"" << * p_std_str
+        LOGN( /*FULL_FUNC_NAME <<*/ "inserted string \"" << * p_std_str
           << "\" at array index \"" << delemiterCount << "\"")
       }
       delemiterCount ++;
@@ -931,7 +934,7 @@ void OneLinePerWordPair::InsertGermanConjunction(
   , BYTE byVocabularyType
   )
 {
-  bool bInsertNewVocabularyAndTranslation = true ;
+//  bool bInsertNewVocabularyAndTranslation = true ;
 //  GermanConjunction * gc = new GermanConjunction;
   BYTE bDelemiterOccured=FALSE;
 //  BYTE otherCount=0;
@@ -1300,7 +1303,8 @@ void OneLinePerWordPair::extract(
   , int & ret
   )
 {
-	LOGN("OneLinePerWordPair::extract--word data: " << strCurrentWordData
+	LOGN(//"OneLinePerWordPair::extract--"
+    "word data: " << strCurrentWordData
 	  << "English word:" << (bEnglishWord ? "yes" : "no" ) )
   std::set<LetterNode *> stdsetpletternodeLastStringChar ;
   if( strCurrentWordData.length() > 0 )

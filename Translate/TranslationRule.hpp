@@ -79,6 +79,8 @@ public:
 //    delete [] m_ar_wElements ;
   }
   bool operator < ( const TranslationRule & r) const ;
+//  std::ostream & operator << ( std::ostream & std_ostream
+//    , const TranslationRule & translationrule) ;
 };
 
 #endif /* TRANSLATIONRULE_HPP_ */

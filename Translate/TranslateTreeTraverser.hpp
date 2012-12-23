@@ -9,7 +9,8 @@
 #define TRANSLATETREETRAVERSER_HPP_
 
 #include <Attributes/TranslationAndGrammarPart.hpp>
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp> //Base class
+//Base class DirectingLeavesMultipleIterTraverser
+#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <map> //class std::map
 #include <vector> //class std::vector
@@ -36,7 +37,7 @@ public:
 namespace ParseTreeTraverser
 {
   class DoTranslateTreeTraverser
-  : public DirectingLeavesMultipleIterTraverser
+    : public DirectingLeavesMultipleIterTraverser
   {
     ParseByRise & m_r_parsebyrise ;
     TranslateParseByRiseTree & mr_translateparsebyrisetree ;
@@ -58,6 +59,8 @@ namespace ParseTreeTraverser
     std::vector<TranslationAndGrammarPart> m_stdvecTranslationAndGrammarPart ;
     std::vector<TranslationAndConsecutiveID>
       m_stdvec_translation_and_consecutive_id ;
+
+    //methods
     DoTranslateTreeTraverser(
       const GrammarPart * p_grammarpartStartNode
       , ParseByRise & r_parsebyrise

@@ -24,7 +24,6 @@ class DrawParseTreeTraverser
   : public ParseTreeTraverser::DirectingLeavesMultipleIterTraverser
 {
 public:
-  bool m_bShowGrammarPartAddress ;
   ParseByRise * mp_parsebyrise ;
   WORD m_wCurrentParseTreeLeftEndInPixels ;
   WORD m_wParseLevelCountedFromRoot ;

@@ -6,6 +6,8 @@
  */
 
 #include "SyntaxTreePath.hpp"
+//class VTrans::UnknownGrammarPartNameException
+#include <IO/UnknownGrammarPartNameException.hpp>
 #include <Parse/ParseByRise.hpp>//class ParseByRise
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <preprocessor_macros/suppress_unused_variable.h>
@@ -28,8 +30,8 @@ SyntaxTreePath::SyntaxTreePath(
   , ParseByRise * p_parsebyrise
   )
 {
-  LOGN("SyntaxTreePath(" << cr_stdstrSyntaxTreePath << "," << p_parsebyrise
-    << ")" )
+  LOGN_DEBUG(//"SyntaxTreePath(" <<
+    cr_stdstrSyntaxTreePath << "," << p_parsebyrise << ")" )
   mp_parsebyrise = p_parsebyrise ;
   std::string std_strUnknownGrammarPartID;
 
@@ -100,7 +102,7 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
     , std::string & r_std_strUnknownGrammarPartID
     )
 {
-  LOGN("SyntaxTreePath::CreateGrammarPartIDArray(" <<
+  LOGN_DEBUG(//"SyntaxTreePath::CreateGrammarPartIDArray(" <<
     r_stdstrSyntaxTreePath << "," << p_parsebyrise << ") begin")
   bool bNewEle = false ;
   std::string stdstrCurrentElement ;
@@ -151,11 +153,12 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
 //          throw //stdstrCurrentElement ;
 //           GetGrammarPartIDexception(stdstrCurrentElement ) ;
         {
-          sp_userinterface->Message( "unknown grammar part name:" +
-            stdstrCurrentElement ) ;
+//          sp_userinterface->Message( "unknown grammar part name:" +
+//            stdstrCurrentElement ) ;
           r_std_strUnknownGrammarPartID = stdstrCurrentElement;
-          LOGN("SyntaxTreePath::CreateGrammarPartIDArray(...)--"
+          LOGN_DEBUG(//"SyntaxTreePath::CreateGrammarPartIDArray(...)--"
             "unknown grammar part name:" << r_stdstrSyntaxTreePath )
+          throw VTrans::UnknownGrammarPartNameException(stdstrCurrentElement);
           return unknown_grammar_part_name ;
         }
       bNewEle = false ;
@@ -177,7 +180,9 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
     m_wNumberOfElements = vec_wElements.size() ;
 #ifdef _DEBUG
     std::string str = GetAs_std_string() ;
-    DEBUG_COUTN("SyntaxTreePath(" << this << ")::CreateGrammarPartIDArray()"
+    //DEBUG_COUTN("SyntaxTreePath(" <<
+    LOGN_DEBUG(
+      this << ")::CreateGrammarPartIDArray()"
       "--array as string:"
       << str )
 #endif
@@ -303,7 +308,9 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       mp_parsebyrise->GetPathAs_std_string(
     r_stdvec_p_grammarpartPath ) ;
   std::string strWORDarray = GetAs_std_string( ) ;
-  DEBUG_COUTN("SyntaxTreePath(" << this << ")::GetLeaf()"
+//  DEBUG_COUTN("SyntaxTreePath(" <<
+  LOGN_DEBUG(
+    this << ")::GetLeaf()"
     "--array as string:"
     << strWORDarray << "  "
     << strPathFromGrammarPartPointerVector )
@@ -330,7 +337,8 @@ GrammarPart * SyntaxTreePath::GetLeaf(
     {
       //for( WORD wArrayIndex = m_wNumberOfElements )
 //      DEBUG_COUTN("* r_iter: " << *c_reverse_iter_stdvec_p_grammarpart )
-      DEBUG_COUTN("SyntaxTreePath--current grammar part: "
+//      DEBUG_COUTN("SyntaxTreePath--"
+      LOGN_DEBUG("current grammar part: "
         << *c_reverse_iter_stdvec_p_grammarpart
         << " ID:" << (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID
         << " as string:" << mp_parsebyrise->GetGrammarPartName(
@@ -384,7 +392,7 @@ GrammarPart * SyntaxTreePath::GetLeaf(
         std_strGrammarPartNameGrammarPartPath =
           mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID);
 #endif //#ifdef _DEBUG
-        DEBUG_COUTN("the next child should have grammar part ID: "
+        LOGN_DEBUG("the next child should have grammar part ID: "
           << m_ar_wElements[ wIndex ]
           << " as string: "
           << std_strCurrentGrammarPartNameFromThisSyntaxTreePath
@@ -634,4 +642,3 @@ bool SyntaxTreePath::Matches(
   return ! bCurrentlyKleeneStarOperator &&
       bIdentical ;
 }
-

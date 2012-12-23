@@ -13,6 +13,7 @@
 
 //#include <IO/IO.hpp> //OneLinePerWordPair::LoadWords()
 #include <Controller/Logger/Logger.hpp> //class Logger
+#include <Controller/Logger/Log4jFormatter.hpp> //class Log4jFormatter
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN()
 #include <Translate/SyntaxTreePath.hpp>// SyntaxTreePath::sp_userinterface
 //getwxString(...)
@@ -65,7 +66,8 @@ VTransApp::VTransApp()
 
 VTransApp::~VTransApp()
 {
-  LOGN("VTransApp::~VTransApp()")
+  LOGN_DEBUG(//"VTransApp::~VTransApp()"
+    "")
   //TODO solve program crash:
 //      Thread [1] (Suspended: Signal 'SIGSEGV' received. Description: Segmentation fault.)
 //      8 <symbol is not available> 0x77b08c19
@@ -104,7 +106,10 @@ void VTransApp::CreateAndShowMainWindow()
   //       p_mainframe->Show() ;
   }
   else
+  {
     std::cerr << "error: couldn't create window\n" ;
+    LOGN_ERROR("couldn't create main window")
+  }
 }
 
 void VTransApp::Message( const std::string & cr_stdstr )
@@ -140,19 +145,24 @@ void VTransApp::Message( const std::wstring & cr_std_wstr )
   wxtextcontroldialog.ShowModal();
 }
 
+void VTransApp::GetSourceText(std::string & std_string)
+{
+  m_p_wx_text_input_dialog->GetEntireInputText(std_string);
+}
+
 //@return true: continue to run the (main loop of ) this program.
 bool VTransApp::HandleCommandLineArgs()
 {
   WRITE_TO_LOG_FILE_AND_STDOUT_NEWLINE("usage: <this_program> "
     "<path to main config_file> <path to root directory for all config files>")
 //  bool bRet = false ;
-  if( argc > 1 )
+  if( argc > MainConfigFilePathProgArgIndex )
   {
     //Needed for SyntaxTreePath::CreateGrammarPartIDArray(...).
     SyntaxTreePath::sp_userinterface = this ;
     std::string stdstrFilePath(
       //"germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
-      argv[1] ) ;
+      argv[MainConfigFilePathProgArgIndex] ) ;
 //    g_lettertree.InsertFundamentalWords() ;
 
 //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
@@ -176,12 +186,14 @@ bool VTransApp::HandleCommandLineArgs()
 //    }
 //    m_translateparsebyrisetree.AddVocAndTranslDefinitions() ;
 
-    if( argc > 2 )
+    if( argc > CurrWorkDirProgArgIndex )
     {
-      LOGN("Before setting current directory to \"" //main config file's full path"
+      LOGN_DEBUG("Before setting current directory to \""
+        //main config file's full path"
         << argv[2] << "\"")
-      ::wxSetWorkingDirectory(argv[2] );
-      LOGN("After setting current directory to \"" //main config file's full path"
+      ::wxSetWorkingDirectory(argv[CurrWorkDirProgArgIndex] );
+      LOGN("After setting current directory to \""
+        //main config file's full path"
         << argv[2] << "\"")
     }
     Init(stdstrFilePath) ;
@@ -219,23 +231,29 @@ void VTransApp::LoadingVocabularyFileFailed(const std::string & stdstrFilePath)
 //In particular, do not destroy them from application class' destructor!"
 int VTransApp::OnExit()
 {
-  LOGN("wxApp-derived::OnExit() begin")
+  LOGN_DEBUG(//"wxApp-derived::OnExit() "
+    "begin")
 //  if( m_p_wx_text_input_dialog )
 //  {
 //    m_p_wx_text_input_dialog->Destroy() ;
 //  }
-  LOGN("wxApp-derived::OnExit() return 0")
+  LOGN_DEBUG(//"wxApp-derived::OnExit() "
+    "return 0")
   return 0 ;
 }
 
 bool VTransApp::OnInit()
 {
   std::string stdstrLogFilePath = "VTrans_log.txt" ;
-  g_logger.OpenFile2(stdstrLogFilePath) ;
+//  g_logger.SetLogLevel(/*LogLevel::debug*/ "debug");
+  g_logger.m_logLevel = LogLevel::debug;
+  g_logger.OpenFileA(stdstrLogFilePath) ;
+  g_logger.SetFormatter( new CSS::LogFormatter::Log4jFormatter(
+    & g_logger) );
 //  //Add a string as filter, else _nothing_ will be logged (cause is unknown).
 //  std::string stdstr = "sdsdsd" ;
 //  g_logger.AddExcludeFromLogging( stdstr ) ;
-  LOGN("VTransApp::OnInit()")
+  LOGN_DEBUG(/*"VTransApp::OnInit()"*/ "")
   //ParseByRise parsebyrise ;
 
   return HandleCommandLineArgs() ;

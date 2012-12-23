@@ -37,10 +37,21 @@ namespace XERCES_CPP_NAMESPACE
   class DefaultHandler ;
 }
 
+class GUIattributes
+{
+public:
+  bool m_bShowGrammarPartAddress ;
+  GUIattributes() : m_bShowGrammarPartAddress( //true
+    false) {}
+};
+
 //Base class for e.g. wxApp and CWinApp-derived classes.
 class TranslationControllerBase
   : public I_UserInterface
 {
+protected:
+  enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
+    CurrWorkDirProgArgIndex};
 public:
   static LetterTree s_lettertree ;
   NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
@@ -52,8 +63,11 @@ public:
     m_stdmap_syntaxtreepath2transformationrule ;
   TranslateParseByRiseTree m_translateparsebyrisetree ;
   std::string m_std_strMainConfigFilePath;
+  GUIattributes m_GUIattributes;
 
   virtual void CreateAndShowMainWindow() {};
+  /** Get (German) input text. Must be "virtual" for polymorphism. */
+  virtual void GetSourceText(std::string & ) {};
   BYTE Init(const std::string & cr_stdstrFilePath) ;
   virtual void LoadingVocabularyFileFailed(
     const std::string & cr_stdstrFilePath) {} // = 0;

@@ -1,0 +1,32 @@
+<translation_rules>
+  <!-- will-future -->
+  <!-- Verb that does not allow any object. -->
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimpleFutureClause0Obj.MainVerbSimpleFuture0Obj.will"
+    attribute_name="GerMainVerb0Obj1stPersSingPres" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimpleFutureClause0Obj.MainVerbSimpleFuture0Obj.mainVerbInf0Obj"
+    attribute_name="GerMainVerb0ObjInfinitive" 
+  />
+  <!-- Verb that allows 1 object. -->
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimpleFutureClause1Obj.MainVerbSimpleFuture0Obj.will"
+    attribute_name="GerMainVerb1Obj1stPersSingPres" 
+  />
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimpleFutureClause1Obj.MainVerbSimpleFuture1Obj.mainVerbInf1Obj"
+    attribute_name="GerMainVerb1ObjInfinitive" 
+  />
+  <!-- Verb that allows 2 objects. -->
+  <!-- Finite form of German verb "werden" , e.g. "Ich >>werde<< arbeiten." -->
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimpleFutureClause2Obj.MainVerbSimpleFuture2Obj.will"
+    attribute_name="GerMainVerb2Obj1stPersSingPres" 
+  />
+  <!-- Infinite form of German verb, e.g. "Ich werde >>arbeiten<<." -->
+  <translation_rule 
+    syntax_tree_path="1stPersSingSimpleFutureClause2Obj.MainVerbSimpleFuture2Obj.mainVerbInf2Obj"
+    attribute_name="GerMainVerb2ObjInfinitive" 
+  />
+</translation_rules>

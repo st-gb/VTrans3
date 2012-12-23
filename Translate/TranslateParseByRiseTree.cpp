@@ -9,6 +9,8 @@
 #include <UserInterface/I_UserInterface.hpp> //for I_UserInterface::Message(...)
 //class AttributeTypeAndPosAndSize
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
+//class ParseTreeTraverser::TestIfTranslationRuleApplies
+#include <Translate/TestIfTranslationRuleApplies.hpp>
 //#include <Translate/SummarizePersonIndex.hpp>//class SummarizePersonIndex
 //header file of this TranslateParseByRiseTree class
 #include <Translate/TranslateParseByRiseTree.hpp>
@@ -93,49 +95,6 @@ void TranslateParseByRiseTree::AddTranslationRule(
   //  subject.def_article_noun.noun.German_gender]"
   )
 {
-//  bool bNewEle = false ;
-//  std::string stdstrCurrentElement ;
-//  std::vector<WORD> vec_wElements ;
-//  WORD wStringStart = 0 ;
-//  WORD wGrammarPartID ;
-//  WORD wNumberOfElements = 1 ;
-//  for( WORD i = 0 ; i < r_stdstrSyntaxTreePath.length() ; ++ i )
-//  {
-//    if( i == r_stdstrSyntaxTreePath.length() - 1 )
-//    {
-//      stdstrCurrentElement = r_stdstrSyntaxTreePath.substr(
-//          wStringStart, ( i + 1 ) - wStringStart ) ;
-//      bNewEle = true ;
-//    }
-//    if( r_stdstrSyntaxTreePath[i] == '.' )
-//    {
-//      stdstrCurrentElement = r_stdstrSyntaxTreePath.substr(
-//          wStringStart, i - wStringStart ) ;
-//      bNewEle = true ;
-//    }
-//    if( bNewEle )
-//    {
-//      ++ wNumberOfElements ;
-//      wStringStart = i + 1 ;
-//      if( mp_parsebyrise->GetGrammarPartID( stdstrCurrentElement ,
-//          wGrammarPartID )
-//        )
-//      {
-//        vec_wElements.push_back(wGrammarPartID) ;
-//      }
-//      bNewEle = false ;
-//    }
-//  }
-//  WORD * ar_wElements = new WORD [ vec_wElements.size() ] ;
-//  if( ar_wElements )
-//  {
-//    WORD wIndex = 0 ;
-//    for( std::vector<WORD>::const_iterator iter = vec_wElements.begin() ;
-//        iter != vec_wElements.end() ; ++ iter )
-//    {
-//      //DEBUG("curr") ;
-//      ar_wElements[ wIndex ++ ] = *iter ;
-//    }
 ////    TranslationRule tr(ar_wElements, vec_wElements.size() ) ;
 
 //    //Must create on heap, else its d'tor is called.
@@ -167,13 +126,13 @@ void TranslateParseByRiseTree::AddTranslationRule(
     if( _pair.second )
     {
       const TranslationRule & r_tr = *_pair.first->first ;
-      DEBUG_COUT( "added translation rule for syntax tree path \"" <<
-          GetSyntaxTreePathAsName(
+      LOGN_DEBUG( "added translation rule for syntax tree path \"" <<
+        GetSyntaxTreePathAsName(
           //r_tr.m_ar_wElements, r_tr.m_wNumberOfElements
           r_tr.m_syntaxtreepathCompareWithCurrentPath.m_ar_wElements,
           r_tr.m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
-              ) <<
-          "\"\n" )
+        ) << "\"" /*"\n"*/
+         )
     }
 #endif
     }
@@ -188,7 +147,7 @@ void TranslateParseByRiseTree::AddTranslationRule(
     }
     catch( std::exception & e )
     {
-      DEBUG_COUT("std::exception")
+      LOGN_ERROR("std::exception")
     }
 //  }
 }
@@ -223,13 +182,13 @@ void TranslateParseByRiseTree::AddTranslationRule(
     if( _pair.second )
     {
       const TranslationRule & r_tr = *_pair.first->first ;
-      DEBUG_COUT( "added translation rule for syntax tree path \"" <<
-          GetSyntaxTreePathAsName(
+      LOGN_DEBUG( "added translation rule for syntax tree path \"" <<
+        GetSyntaxTreePathAsName(
           //r_tr.m_ar_wElements, r_tr.m_wNumberOfElements
           r_tr.m_syntaxtreepathCompareWithCurrentPath.m_ar_wElements,
           r_tr.m_syntaxtreepathCompareWithCurrentPath.m_wNumberOfElements
-              ) <<
-          "\"\n" )
+          ) << "\"" /*"\n"*/
+         )
     }
 #endif
 }
@@ -250,15 +209,15 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
   WORD wLenght
   )
 {
-  DEBUGN( //"TranslateParseByRiseTree::AddVocAndTranslDefinition("
-    FULL_FUNC_NAME
-    << r_stdstrWordClass << ","
+  LOGN_DEBUG( //"TranslateParseByRiseTree::AddVocAndTranslDefinition("
+    /*FULL_FUNC_NAME << */
+    r_stdstrWordClass << ","
     << r_stdstrWordClassAndAttributeName )
   WORD wGrammarPartID ;
   //e.g. get corresponding ID for word class "noun".
   if( mp_parsebyrise->GetGrammarPartID(r_stdstrWordClass,wGrammarPartID) )
   {
-    DEBUGN("Found GetGrammarPartID for word class" << r_stdstrWordClass )
+    LOGN_DEBUG("Found GetGrammarPartID for word class" << r_stdstrWordClass )
     AttributeTypeAndPosAndSize attributetypeandposandsize(
       byType, wIndex,
       wLenght, wGrammarPartID, byLanguage) ;
@@ -276,8 +235,8 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
     mr_i_userinterface.Message(
       "For inserting voc attr def.: word class \"" + r_stdstrWordClass
       + "\" is not avaible");
-    DEBUGN( FULL_FUNC_NAME
-      << "--Couldn't find GetGrammarPartID for word class \""
+    LOGN_DEBUG( /*FULL_FUNC_NAME << */
+      "Couldn't find GetGrammarPartID for word class \""
       << r_stdstrWordClass << "\"")
   }
 //#endif
@@ -323,7 +282,7 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
       {
         //if( p_grammarpartLeaf )
         {
-          DEBUG_COUT("grammar part leaf found:" <<
+          LOGN_DEBUG("grammar part leaf found:" <<
             mp_parsebyrise->GetGrammarPartName(
             p_grammarpartLeaf->m_wGrammarPartID) << "\n")
         }
@@ -405,7 +364,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
   , const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
   )
 {
-  LOGN( FULL_FUNC_NAME << "--begin" )
+  LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "begin" )
   bool bAllConditionsMatch = false ;
   std::string stdstr ;
 //  int i = 0 ;
@@ -429,7 +388,9 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
     {
       //if( p_grammarpartLeaf )
       {
-        DEBUG_COUT("GetTranslationEquivalent()--grammar part leaf found:" <<
+        //DEBUG_COUT("GetTranslationEquivalent()--"
+        LOGN_DEBUG(
+          "grammar part leaf found:" <<
           mp_parsebyrise->GetGrammarPartName(
           p_grammarpartLeaf->m_wGrammarPartID) << "\n")
       }
@@ -448,7 +409,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
           {
             case AttributeTypeAndPosAndSize::string :
             {
-              DEBUG_COUTN("data type for choosing attribute value is string")
+              LOGN_DEBUG("data type for choosing attribute value is string")
               switch( r_atapas.m_byLanguage )
               {
                 case AttributeTypeAndPosAndSize::English :
@@ -462,7 +423,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
                   break ;
                 case AttributeTypeAndPosAndSize::German :
                   {
-                  DEBUG_COUTN("language for choosing attribute value is "
+                  LOGN_DEBUG("language for choosing attribute value is "
                     "German, index:" << r_atapas.m_wIndex )
                   std::string & r_stdstrAttrVal = p_grammarpartLeaf->
                     m_pvocabularyandtranslation->m_arstrGermanWord[
@@ -489,7 +450,8 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
         //if( r_cond.m_byCompareType == Condition::equals )
       }
       else
-        DEBUG_COUTN("GetTranslationEquivalent()--attribute name" <<
+//        DEBUG_COUTN("GetTranslationEquivalent()--"
+        LOGN_DEBUG("attribute name" <<
           r_condition_and_translation.m_stdstrAttributeName <<
           "not found" )
     }
@@ -548,7 +510,8 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   , m_ui32ConcatenationID(//0
       1)
 {
-  DEBUG_COUTN("TranslateParseByRiseTree(ParseByRise &,I_UserInterface &) "
+  //DEBUG_COUTN("TranslateParseByRiseTree(ParseByRise &,I_UserInterface &) "
+  LOGN_DEBUG(
     "begin")
   // TODO Auto-generated constructor stub
   // e.g. "If I see you" ( adverb, clause)
@@ -603,26 +566,6 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 //  Add3rdPersonSingularTranslationRules() ;
 //  AddObjectTranslationRules() ;
 
-//  //Must create on heap, else the callback functions like "startElement"
-//  //aren't called?!
-////  SAX2TranslationRuleHandler * p_sax2translationrulehandler = new
-////    SAX2TranslationRuleHandler( * this, * mp_parsebyrise ,
-////    mr_i_userinterface ) ;
-//  SAX2TranslationRuleHandler sax2translationrulehandler ( * this,
-//    * mp_parsebyrise , mr_i_userinterface ) ;
-//  std::wstring wstr ;
-//  // <> 0 = error
-//  if( ReadViaSAX2InitAndTermXerces(
-//      "translation_rules.xml",
-//  //    p_sax2translationrulehandler ,
-//      & sax2translationrulehandler ,
-//      wstr
-//      )
-//    )
-//  {
-//    mr_i_userinterface.Message( wstr ) ;
-//  }
-
 //  AddVocAndTranslDefinitions() ;
 
   //AddRule( "adverb_at_clause_begin" , "clause" )
@@ -671,7 +614,8 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   //AddTranslationRule("subject.def_article_noun.adjective",
   //  "subject.def_article_noun.adjective+German_nominativ_suffix[
   //  subject.def_article_noun.noun.German_gender]")
-  DEBUG_COUTN("TranslateParseByRiseTree(ParseByRise &,I_UserInterface &) "
+  //DEBUG_COUTN("TranslateParseByRiseTree(ParseByRise &,I_UserInterface &) "
+  LOGN_DEBUG(
     "end")
 }
 
@@ -683,7 +627,7 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
 
 void TranslateParseByRiseTree::FreeMemoryForTranslationRules()
 {
-  LOGN( FULL_FUNC_NAME << "--begin" )
+  LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "begin" )
 //  std::multimap<TranslationRule,ConditionsAndTranslation> &
 //    r_stdmmap_translationrule2conditionsandtranslation =
 //    //wxGetApp().m_translateparsebyrisetree.
@@ -701,7 +645,7 @@ void TranslateParseByRiseTree::FreeMemoryForTranslationRules()
       it = m_stdmap_p_translationrule2ConditionsAndTranslation.begin() ; it !=
       m_stdmap_p_translationrule2ConditionsAndTranslation.end() ; ++ it )
   {
-    LOGN("freeing memory for translation rule " << it->first )
+    LOGN_DEBUG("freeing memory for translation rule " << it->first )
     //Release memory occupied by creation on heap.
     delete it->first ;
   }
@@ -709,7 +653,7 @@ void TranslateParseByRiseTree::FreeMemoryForTranslationRules()
   m_stdmap_p_translationrule2ConditionsAndTranslation.clear() ;
 
   m_std_multimapConcatenationID2p_translationrule.clear();
-  LOGN( FULL_FUNC_NAME << "--end" )
+  LOGN( /*FULL_FUNC_NAME <<*/ "end" )
 }
 
 std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
@@ -744,10 +688,12 @@ std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
   std::string str ;
   if( mp_parsebyrise )
   {
-    DEBUG_COUT( "GetSyntaxTreePathAsName--length: " << wLength << "\n" )
+//    DEBUG_COUT( "GetSyntaxTreePathAsName--"
+    LOGN_DEBUG("length: " << wLength << "\n" )
     for( WORD wIndex = 0 ; wIndex < wLength ; ++ wIndex )
     {
-      DEBUG_COUT( "GetSyntaxTreePathAsName--element: " <<
+//      DEBUG_COUT( "GetSyntaxTreePathAsName--"
+      LOGN_DEBUG("element: " <<
           ar_wGrammarPartPath[ wIndex ] <<
           mp_parsebyrise->GetGrammarPartName(ar_wGrammarPartPath[ wIndex ])
           << "\n" )
@@ -828,6 +774,105 @@ void TranslateParseByRiseTree::SetSameConsecutiveIDforConnectedTranslationRules(
   }
 }
 
+void TranslateParseByRiseTree::ProcessParseTree(
+//  ParseByRise & r_parsebyrise
+//  , std::string & stdstrWholeTransl
+  //,
+  std::vector<std::string> & r_stdvec_stdstrWholeTransl
+//  //A vector of sentences that each contains a vector of words.
+//  , std::vector<std::vector<TranslationAndGrammarPart> > &
+//    r_stdvec_stdvecTranslationAndGrammarPart
+  //A vector of sentences that begin at the same token index
+  // (sentences that begin at the same token index:
+  // vector of sentences that each contains a vector of words).
+  , std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+    r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+//  , std::vector<std::vector<TranslationAndConsecutiveID> > &
+//    r_stdvec_stdvecTranslationAndConsecutiveID
+  , ProcessParseTree_type pfnProcessParseTree
+  )
+{
+  ParseByRise * p_parsebyrise = //& r_parsebyrise ;
+    mp_parsebyrise;
+  //  std::string stdstrWholeTransl ;
+  std::string stdstrTranslation ;
+  std::vector<GrammarPart *>
+    stdvec_p_grammarpartCoveringMostTokensAtTokenIndex ;
+  LOGN_DEBUG( "begin" )
+  m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.clear();
+  if( p_parsebyrise )
+  {
+    DWORD dwLeftMostTokenIndex = 0 ;
+  //    GrammarPart * p_grammarpart ;
+  //    GrammarPart * p_grammarpartChild ;
+    //int y = 10 ;
+    //  typedef std::multimap<DWORD, GrammarPart >
+    //  stdmmap_token_index2grammarpart ;
+    typedef std::multimap<DWORD, GrammarPart *>
+      stdmmap_token_index2grammarpart ;
+    stdmmap_token_index2grammarpart::const_iterator citer ;
+    stdmmap_token_index2grammarpart &
+      r_stdmultimap_dwLeftmostIndex2grammarpart = p_parsebyrise->
+      //m_stdmultimap_dwLeftmostIndex2grammarpart ;
+      m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
+    //Reset to initial before each translation.
+    m_ui32ConcatenationID = 1;
+    do
+    {
+      //Before each draw in order to begin at x position "0".
+      m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
+      m_wParseLevel = 0 ;
+      LOGN_DEBUG( "mp_parsebyrise != NULL\n")
+      citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
+      //p_grammarpart =
+        p_parsebyrise->GetGrammarPartCoveringMostTokens(
+          dwLeftMostTokenIndex ,
+          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
+          ) ;
+
+      m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.
+        push_back(stdvec_p_grammarpartCoveringMostTokensAtTokenIndex);
+  #ifdef _DEBUG
+      WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
+  #endif //#ifdef _DEBUG
+  //      WORD wConsecutiveID = 0 ;
+
+      //A vector of sentences that each contains a vector of words.
+      std::vector<std::vector<TranslationAndGrammarPart> >
+        stdvec_stdvecTranslationAndGrammarPart;
+      //Loop over all parse trees beginning at token index
+      //"dwLeftMostTokenIndex".
+      for( std::vector<GrammarPart *>::const_iterator
+          c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex =
+          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin() ;
+          c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex <
+          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.end() ;
+          ++ c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+         )
+      {
+        //( * this->pfnProcessParseTree)
+        (this->* pfnProcessParseTree)(
+          * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+          stdvec_stdvecTranslationAndGrammarPart);
+      } //loop for all parse trees beginning at same token index
+
+      r_stdvec_stdvec_stdvecTranslationAndGrammarPart.push_back(
+        stdvec_stdvecTranslationAndGrammarPart);
+
+      if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
+        dwLeftMostTokenIndex = 0;
+      else
+        dwLeftMostTokenIndex =
+          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
+          m_dwRightmostIndex + 1;
+      LOGN_DEBUG( //"TranslateParseByRiseTree::Translate(...)"
+        /*FULL_FUNC_NAME <<*/ "dwLeftMostTokenIndex:"
+        << dwLeftMostTokenIndex )
+    }
+    while( dwLeftMostTokenIndex );
+  }//if( p_parsebyrise )
+}
+
 //Getting the "person index":
 // e.g. "I, you and the car suck."
 //  "I"
@@ -848,109 +893,65 @@ void TranslateParseByRiseTree::Translate(
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   )
 {
-  LOGN("TranslateParseByRiseTree::Translate(...) begin")
+  LOGN_DEBUG(//"TranslateParseByRiseTree::Translate(...) "
+    "begin")
 //  BYTE byPersonIndex ;
-  ParseByRise * p_parsebyrise = & r_parsebyrise ;
-//  std::string stdstrWholeTransl ;
-  std::string stdstrTranslation ;
-  std::vector<GrammarPart *>
-    stdvec_p_grammarpartCoveringMostTokensAtTokenIndex ;
-  DEBUG_COUT( "Translate(): \n" )
-  m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.clear();
-  if( p_parsebyrise )
-  {
-    DWORD dwLeftMostTokenIndex = 0 ;
-//    GrammarPart * p_grammarpart ;
-//    GrammarPart * p_grammarpartChild ;
-    //int y = 10 ;
-    //  typedef std::multimap<DWORD, GrammarPart >
-    //  stdmmap_token_index2grammarpart ;
-    typedef std::multimap<DWORD, GrammarPart *>
-      stdmmap_token_index2grammarpart ;
-    stdmmap_token_index2grammarpart::const_iterator citer ;
-    stdmmap_token_index2grammarpart &
-      r_stdmultimap_dwLeftmostIndex2grammarpart = p_parsebyrise->
-      //m_stdmultimap_dwLeftmostIndex2grammarpart ;
-      m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
-    //Reset to initial before each translation.
-    m_ui32ConcatenationID = 1;
-    do
-    {
-      //Before each draw in order to begin at x position "0".
-      m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
-      m_wParseLevel = 0 ;
-      DEBUG_COUT( "Translate(): mp_parsebyrise != NULL\n")
-      citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
-      //p_grammarpart =
-        p_parsebyrise->GetGrammarPartCoveringMostTokens(
-          dwLeftMostTokenIndex ,
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
-          ) ;
-
-      m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.
-        push_back(stdvec_p_grammarpartCoveringMostTokensAtTokenIndex);
-#ifdef _DEBUG
-      WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
-#endif //#ifdef _DEBUG
-//      WORD wConsecutiveID = 0 ;
-
-      //A vector of sentences that each contains a vector of words.
-      std::vector<std::vector<TranslationAndGrammarPart> >
-        stdvec_stdvecTranslationAndGrammarPart;
-      //Loop over all parse trees beginning at token index
-      //"dwLeftMostTokenIndex".
-      for( std::vector<GrammarPart *>::const_iterator
-          c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex =
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin() ;
-          c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex <
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.end() ;
-          ++ c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-         )
-      {
-        TranslateParseTree(
-          c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
-          stdvec_stdvecTranslationAndGrammarPart);
-      } //loop for all parse trees beginning at same token index
-
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart.push_back(
-        stdvec_stdvecTranslationAndGrammarPart);
-
-      if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
-        dwLeftMostTokenIndex = 0;
-      else
-        dwLeftMostTokenIndex =
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
-          m_dwRightmostIndex + 1;
-      LOGN("TranslateParseByRiseTree::Translate(...)--dwLeftMostTokenIndex:"
-        << dwLeftMostTokenIndex )
-    }
-    while( dwLeftMostTokenIndex );
-  }//if( p_parsebyrise )
+  ProcessParseTree(
+//    r_parsebyrise,
+    r_stdvec_stdstrWholeTransl,
+    r_stdvec_stdvec_stdvecTranslationAndGrammarPart,
+    //(TranslateParseTree)()//r_stdvec_stdvec_stdvecTranslationAndGrammarPart)
+    //syntax ( "& >>class name<<::>>method name<<" from
+    //see http://stackoverflow.com/questions/4832275/c-typedef-member-function-signature-syntax
+    & TranslateParseByRiseTree::TranslateParseTree
+    );
 //  DEBUG_COUT("translation: " << stdstrWholeTransl << "\n") ;
-  LOGN("TranslateParseByRiseTree::Translate(...) end")
+  LOGN_DEBUG(//"TranslateParseByRiseTree::Translate(...) "
+    "end")
 }
 
+void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
+  GrammarPart * p_grammarpart
+  //A vector of sentences that each contains a vector of words.
+  , std::vector<std::vector<TranslationAndGrammarPart> > &
+    r_stdvec_stdvecTranslationAndGrammarPart
+  )
+{
+  ParseTreeTraverser::TestIfTranslationRuleApplies
+    testiftranslationruleapplies(p_grammarpart,
+      * mp_parsebyrise, * this);
+  //The transformation of the tree may lead to a crash/
+  // only the leaves need to be processed-> set to "false".
+  testiftranslationruleapplies.m_bTraverseTree = false ;
+
+  testiftranslationruleapplies.Traverse() ;
+  if( testiftranslationruleapplies.m_bTranslationRuleApplies )
+    m_bTranslationRuleApplies = true;
+}
 
 void TranslateParseByRiseTree::TranslateParseTree(
-  std::vector<GrammarPart *>::const_iterator
-    c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-    //A vector of sentences that each contains a vector of words.
-    , std::vector<std::vector<TranslationAndGrammarPart> > &
-      r_stdvec_stdvecTranslationAndGrammarPart
-    )
+//  std::vector<GrammarPart *>::const_iterator
+//    c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+  GrammarPart * p_grammarpart
+  //A vector of sentences that each contains a vector of words.
+  , std::vector<std::vector<TranslationAndGrammarPart> > &
+    r_stdvec_stdvecTranslationAndGrammarPart
+  )
 {
 #ifdef _DEBUG
   DWORD dw =
-    (* c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex)->
+//    (* c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex)->
+    p_grammarpart->
     m_dwRightmostIndex;
 #endif //#ifdef _DEBUG
   //    if( p_grammarpart )
   //    {
-  DEBUG_COUT( "Translate: GetGrammarPartCoveringMostTokens found \n" );
+  LOGN_DEBUG( "GetGrammarPartCoveringMostTokens found \n" );
 
   ParseTreeTraverser::DoTranslateTreeTraverser translatetreetraverser(
     //        p_grammarpart
-    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+//    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+    p_grammarpart
     , * mp_parsebyrise
     , * this
     );
@@ -965,7 +966,8 @@ void TranslateParseByRiseTree::TranslateParseTree(
   //The tree may have been modified (tree branches moved or inserted)
   //So get all leaves from left to right for the whole tree.
   ParseTreeTraverser::TranslatedTreeTraverser translated_treetraverser(
-    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+//    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+    p_grammarpart,
     mp_parsebyrise
     );
   translated_treetraverser.Traverse();
@@ -1047,13 +1049,149 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   //reference to pointer address to >>const<<ant content
   , //const GrammarPart * & rp_grammarpartWithConsecutiveID
     GrammarPart * & rp_grammarpartWithConsecutiveID
+  , TranslationRule * p_translationrule
+  , const ConditionsAndTranslation & r_cnt
+  , const std::string & std_strTranslationRuleSyntaxTreePath
   )
 {
-  bool bTranslationRuleSTPmatchesCurrentSTP = false ;
   bool bAtLeast1TranslationRuleApplies = false;
-  DEBUG_COUT("TranslationRuleApplies--beg\n")
-  DEBUG_COUT("number of translation rules:" <<
-      m_stdmap_translationrule2ConditionsAndTranslation.size() << "\n")
+  bool bTranslationRuleSTPmatchesCurrentSTP = false ;
+  bTranslationRuleSTPmatchesCurrentSTP = //p_translationrule->Matches(
+    p_translationrule->m_syntaxtreepathCompareWithCurrentPath.Matches(
+    r_stdvec_wCurrentGrammarPartPath ) ;
+  if( bTranslationRuleSTPmatchesCurrentSTP )
+  {
+//        DEBUG_COUT
+    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/
+      "the current syntax tree path matches the rule's syntax tree path"
+      << " \"" << std_strTranslationRuleSyntaxTreePath << "\"")
+//        GrammarPart * p_grammarpartClosestToTreeRoot =
+//            r_stdvec_p_grammarpartPath.at(wIndex + wLenghtDiff ) ;
+#ifdef _DEBUG
+    std::string stdstr = GetSyntaxTreePathAsName(
+      r_stdvec_wCurrentGrammarPartPath ) ;
+    if( stdstr == "clause.main_verb" )
+      stdstr += "" ;
+#endif
+    if( //AllConditionsMatch(
+//            r_cnt ,
+//            r_stdvec_p_grammarpartPath )
+        r_cnt.AllConditionsMatch( r_stdvec_p_grammarpartPath )
+      )
+    {
+      std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
+        r_stdvec_wCurrentGrammarPartPath ) ;
+      LOGN_DEBUG("All conditions match for STP \"" << stdstrCurrentParseTreePath
+        << "\"" )
+      WORD wNumberOfElements = p_translationrule->
+        m_syntaxtreepathInsertionForTranslation.m_wNumberOfElements;
+      LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "All conditions match for STP \""
+        << stdstrCurrentParseTreePath
+        << "\"" )
+       //std::string str =
+      if( wNumberOfElements > 0)
+      {
+        p_translationrule->Insert(r_stdvec_p_grammarpartPath,
+//                  r_stdstrTranslation
+          r_cnt.m_stdstrGermanTranslation);
+      }
+      else
+      {
+        if( r_stdstrTranslation != "" )
+          r_stdstrTranslation += "|";
+         r_stdstrTranslation += //GetTranslationEquivalent(
+            //r_cnt ,
+            //r_stdvec_p_grammarpartPath
+//              ) ;
+            r_cnt.GetTranslationEquivalent(
+              r_stdvec_p_grammarpartPath.back() ) ;
+
+//             std::vector<GrammarPart * >::const_reverse_iterator
+//               c_rev_iter_p_grammarpart
+//               = r_stdvec_p_grammarpartPath.rbegin();
+//             if( c_rev_iter_p_grammarpart != r_stdvec_p_grammarpartPath.rend()
+//                 )
+
+//             if( r_stdvec_p_grammarpartPath.empty() )
+//             {
+//                 const GrammarPart * & r_p_grammarpart =
+//                   r_stdvec_p_grammarpartPath.back();
+//                 //Problem:
+//                 //if a grammar rule affects more than 1 grammar part, e.g.:
+//                 //"sheep" (singular_noun) and "sheep" (plural_noun):
+//                 //when translating "the sheep" and the translation rule then matches
+//                 //"definite_article_singular.singular_plural" and the article is
+//                 //translated to "die" it is overwritten by "das" from
+//                 //"definite_article_singular.singular_noun" because the grammar part
+//                 //is the same/ shared/ referenced by the two ones.
+//                 //possible solution:
+//                 //-store multiple translations per grammar part
+//                 //-clone grammar part (branches).
+//                 if( ! //c_rev_iter_p_grammarpart->m_stdstrTranslation.empty()
+//                     r_p_grammarpart->m_stdstrTranslation.empty()
+//                     )
+//                 {
+//                   //Must create on heap.
+//                   GrammarPart * p_grammarpartCopy = new GrammarPart(
+//                     //** c_rev_iter_p_grammarpart
+//                     * r_p_grammarpart
+//                     );
+////                     r_stdvec_p_grammarpartPath.erase(c_rev_iter_p_grammarpart);
+//                   //MinGW 4.5.2's "stl_vector.h" :
+//                   //"It shrinks the %vector by one"
+//                   r_stdvec_p_grammarpartPath.pop_back();
+//                   r_stdvec_p_grammarpartPath.push_back(p_grammarpartCopy);
+//                 }
+//             }
+         LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "adding translation \""
+          << r_stdstrTranslation << "\"" )
+      }
+//           r_wConsecutiveID = p_translationrule->ConsecutiveID(
+       rp_grammarpartWithConsecutiveID = p_translationrule->
+           GetGrammarPartWithConsecutiveID(
+         r_stdvec_p_grammarpartPath ) ;
+
+       SetSameConsecutiveIDforConnectedTranslationRules(p_translationrule,
+           r_stdvec_p_grammarpartPath);
+
+       r_byPersonIndex = r_cnt.m_byPersonIndex ;
+
+//           return true ;
+       bAtLeast1TranslationRuleApplies = true;
+    }
+  }
+  return bAtLeast1TranslationRuleApplies;
+}
+
+bool TranslateParseByRiseTree::TranslationRuleApplies(
+  std::string & r_stdstrTranslation ,
+  BYTE & r_byPersonIndex
+  // So it can be used with data from outside this class.
+  //within the parse tree there is at a time only 1 current path in 1 direction:
+  //from root node to the current node.
+  // e.g.     "clause"
+  //          /     \ (if "\"= last char:g++ warning:"multi-line comment")
+  //    "subject"    \  _
+  //     /            \ (if "\"= last char:g++ warning:"multi-line comment")
+  //personal_pronoun  verb
+  //->the current parse tree path may be (always beginning from root node "clause")
+  // -"clause"
+  // -"clause->subject"
+  // -"clause->subject->personal_pronoun"
+  // -"clause->verb"
+  //but NOT:
+  , const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath
+  , const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
+//  , WORD & r_wConsecutiveID
+  //reference to pointer address to >>const<<ant content
+  , //const GrammarPart * & rp_grammarpartWithConsecutiveID
+    GrammarPart * & rp_grammarpartWithConsecutiveID
+  )
+{
+  bool bAtLeast1TranslationRuleApplies = false;
+  LOGN_DEBUG("begin")
+  LOGN_DEBUG("number of translation rules:" <<
+    m_stdmap_translationrule2ConditionsAndTranslation.size() << "\n")
 #ifdef _DEBUG
   std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
     r_stdvec_wCurrentGrammarPartPath ) ;
@@ -1122,143 +1260,55 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
         //c_iter_p_translationrule2conditionsandtranslation->first ;
         & c_rev_iter_translationrule2conditionsandtranslation->first ;
       std::string std_strTranslationRuleSyntaxTreePath =
-          GetSyntaxTreePathAsName(
-          //p_tr->m_ar_wElements, p_tr->m_wNumberOfElements
-          p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
-          m_ar_wElements,
-          p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
-          m_wNumberOfElements
-          ) ;
+//          GetSyntaxTreePathAsName(
+//          //p_tr->m_ar_wElements, p_tr->m_wNumberOfElements
+//          p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
+//          m_ar_wElements,
+//          p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
+//          m_wNumberOfElements
+//          ) ;
+        p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
+          GetAs_std_string();
 #ifdef _DEBUG
       if( stdstrCurrentParseTreePath == "clause.main_verb" ||
           std_strTranslationRuleSyntaxTreePath == "main_verb" )
         //Just for setting a breakpoint.
         stdstrCurrentParseTreePath += "" ;
-      LOGN( FULL_FUNC_NAME << "Comparing " << stdstrCurrentParseTreePath
-          << " and " <<
-          std_strTranslationRuleSyntaxTreePath //<< "\n" ;
-          )
+      LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "Comparing " << stdstrCurrentParseTreePath
+        << " and " <<
+        std_strTranslationRuleSyntaxTreePath //<< "\n" ;
+        )
 #endif
 //      std::vector<WORD>::const_iterator c_iter_wGrammarPartPath =
 //          r_stdvec_wGrammarPartPath ;
+      const ConditionsAndTranslation & r_cnt =
+        //c_iter_p_translationrule2conditionsandtranslation->second ;
+        c_rev_iter_translationrule2conditionsandtranslation->second ;
+        if( TranslationRuleApplies(
+          r_stdstrTranslation
+          , r_byPersonIndex
+          , r_stdvec_wCurrentGrammarPartPath
+          , r_stdvec_p_grammarpartPath
+          , rp_grammarpartWithConsecutiveID
+          , p_translationrule
+          , r_cnt
+          , std_strTranslationRuleSyntaxTreePath
+          ) )
+         bAtLeast1TranslationRuleApplies = true;
       //DEBUG_COUT
-      bTranslationRuleSTPmatchesCurrentSTP = //p_translationrule->Matches(
-          p_translationrule->m_syntaxtreepathCompareWithCurrentPath.Matches(
-        r_stdvec_wCurrentGrammarPartPath ) ;
-      if( bTranslationRuleSTPmatchesCurrentSTP )
-      {
-//        DEBUG_COUT
-        LOGN( FULL_FUNC_NAME <<
-          "the current syntax tree path matches the rule's syntax tree path"
-            << " \"" << std_strTranslationRuleSyntaxTreePath << "\"")
-//        GrammarPart * p_grammarpartClosestToTreeRoot =
-//            r_stdvec_p_grammarpartPath.at(wIndex + wLenghtDiff ) ;
-#ifdef _DEBUG
-        std::string stdstr = GetSyntaxTreePathAsName(
-          r_stdvec_wCurrentGrammarPartPath ) ;
-        if( stdstr == "clause.main_verb" )
-          stdstr += "" ;
-#endif
-        const ConditionsAndTranslation & r_cnt =
-          //c_iter_p_translationrule2conditionsandtranslation->second ;
-          c_rev_iter_translationrule2conditionsandtranslation->second ;
-        if( //AllConditionsMatch(
-//            r_cnt ,
-//            r_stdvec_p_grammarpartPath )
-            r_cnt.AllConditionsMatch( r_stdvec_p_grammarpartPath )
-          )
-        {
-          std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
-            r_stdvec_wCurrentGrammarPartPath ) ;
-          LOGN("All conditions match for STP \"" << stdstrCurrentParseTreePath
-            << "\"" )
-          WORD wNumberOfElements = p_translationrule->
-            m_syntaxtreepathInsertionForTranslation.m_wNumberOfElements;
-          LOGN( FULL_FUNC_NAME << "All conditions match for STP \"" << stdstrCurrentParseTreePath
-            << "\"" )
-           //std::string str =
-          if( wNumberOfElements > 0)
-          {
-            p_translationrule->Insert(r_stdvec_p_grammarpartPath,
-//                  r_stdstrTranslation
-              r_cnt.m_stdstrGermanTranslation);
-          }
-          else
-          {
-            if( r_stdstrTranslation != "" )
-              r_stdstrTranslation += "|";
-             r_stdstrTranslation += //GetTranslationEquivalent(
-                //r_cnt ,
-                //r_stdvec_p_grammarpartPath
-  //              ) ;
-                r_cnt.GetTranslationEquivalent(
-                  r_stdvec_p_grammarpartPath.back() ) ;
-
-//             std::vector<GrammarPart * >::const_reverse_iterator
-//               c_rev_iter_p_grammarpart
-//               = r_stdvec_p_grammarpartPath.rbegin();
-//             if( c_rev_iter_p_grammarpart != r_stdvec_p_grammarpartPath.rend()
-//                 )
-
-//             if( r_stdvec_p_grammarpartPath.empty() )
-//             {
-//                 const GrammarPart * & r_p_grammarpart =
-//                   r_stdvec_p_grammarpartPath.back();
-//                 //Problem:
-//                 //if a grammar rule affects more than 1 grammar part, e.g.:
-//                 //"sheep" (singular_noun) and "sheep" (plural_noun):
-//                 //when translating "the sheep" and the translation rule then matches
-//                 //"definite_article_singular.singular_plural" and the article is
-//                 //translated to "die" it is overwritten by "das" from
-//                 //"definite_article_singular.singular_noun" because the grammar part
-//                 //is the same/ shared/ referenced by the two ones.
-//                 //possible solution:
-//                 //-store multiple translations per grammar part
-//                 //-clone grammar part (branches).
-//                 if( ! //c_rev_iter_p_grammarpart->m_stdstrTranslation.empty()
-//                     r_p_grammarpart->m_stdstrTranslation.empty()
-//                     )
-//                 {
-//                   //Must create on heap.
-//                   GrammarPart * p_grammarpartCopy = new GrammarPart(
-//                     //** c_rev_iter_p_grammarpart
-//                     * r_p_grammarpart
-//                     );
-////                     r_stdvec_p_grammarpartPath.erase(c_rev_iter_p_grammarpart);
-//                   //MinGW 4.5.2's "stl_vector.h" :
-//                   //"It shrinks the %vector by one"
-//                   r_stdvec_p_grammarpartPath.pop_back();
-//                   r_stdvec_p_grammarpartPath.push_back(p_grammarpartCopy);
-//                 }
-//             }
-              LOGN( FULL_FUNC_NAME << "--adding translation \""
-                  << r_stdstrTranslation << "\"" )
-          }
-//           r_wConsecutiveID = p_translationrule->ConsecutiveID(
-           rp_grammarpartWithConsecutiveID = p_translationrule->
-               GetGrammarPartWithConsecutiveID(
-             r_stdvec_p_grammarpartPath ) ;
-
-           SetSameConsecutiveIDforConnectedTranslationRules(p_translationrule,
-               r_stdvec_p_grammarpartPath);
-
-           r_byPersonIndex = r_cnt.m_byPersonIndex ;
-
-//           return true ;
-           bAtLeast1TranslationRuleApplies = true;
-        }
-      }
-      DEBUG_COUT("TranslationRuleApplies--after loop\n")
+      LOGN_DEBUG("after loop")
     }
   }
-  DEBUG_COUT("TranslationRuleApplies--end\n")
+  LOGN_DEBUG("end")
   return //bIdentical ;
-      bAtLeast1TranslationRuleApplies;
+    bAtLeast1TranslationRuleApplies;
 }
 
 TranslateParseByRiseTree::~TranslateParseByRiseTree()
 {
-  LOGN("begin of ~TranslateParseByRiseTree\n")
+  LOGN_DEBUG(//" of ~TranslateParseByRiseTree\n"
+    "begin")
   FreeMemoryForTranslationRules() ;
-  LOGN("end of ~TranslateParseByRiseTree\n")
+  LOGN_DEBUG(//" of ~TranslateParseByRiseTree\n"
+    "end")
 }

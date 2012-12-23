@@ -179,6 +179,28 @@ void ParseByRise::CreateInitialGrammarParts ( const std::string &
   }
 }
 
+void ParseByRise::CreateParseTree(const std::string & cr_stdstrWholeInputText)
+{
+  ClearParseTree() ;
+  CreateInitialGrammarParts ( cr_stdstrWholeInputText ) ;
+
+  DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
+  ResolveGrammarRulesForAllParseLevels() ;
+  //TODO idea: before further processing: delete all parse tree that
+  //are identical after removing the superordinate grammar rules:
+
+  //the fan               the fan
+  //  \ /               =  \  /
+  // def_article_noun     def_article_noun
+  //                        |
+  //                      3rdPersSingEnumEle
+
+  //So the translation would be faster, no double translations.
+  //But on the other hand: if there are translation rules that include at least 1
+  //of these superordinate rules, they wouldn't apply.
+  RemoveSuperordinateRulesFromRootNodes();
+}
+
 bool ParseByRise::GrammarPartDoesNotAlreadyExist(GrammarPart *p_grammarpart)
 {
   bool bGrammarPartDoesNotAlreadyExist =
@@ -819,9 +841,9 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
           ci_stdmap_wLeftGrammarPartID2stdstrRuleName =
               m_stdmap_wRuleID2RuleName.find(
                 wGrammarPartID ) ;
-          GrammarPart & r_grammarpartLeft =
-//              iter_mm_idx2grammarpt->second ;
-            * iter_mm_token_idx2p_grammarpt->second ;
+//          GrammarPart & r_grammarpartLeft =
+////              iter_mm_idx2grammarpt->second ;
+//            * iter_mm_token_idx2p_grammarpt->second ;
           if( ci_stdmap_wRuleID2stdstrRuleName !=
               m_stdmap_wRuleID2RuleName.end()
             )
@@ -1389,10 +1411,10 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
   }
 }
 
-//Inserts for every word found in the dictionary its leftmost token index
-//into a list and its rightmost token index (because a word may have more
-//than 1 token, e.g. "vacuum cleaner") into another list.
-//(words are grammar part at the leaves of the parse tree)
+/** Inserts for every word found in the dictionary its leftmost token index
+* into a list and its rightmost token index (because a word may have more
+* than 1 token, e.g. "vacuum cleaner") into another list.
+* (words are grammar part at the leaves of the parse tree) */
 void ParseByRise::StoreWordTypeAndGermanTranslation(
 //  PositionstdstringVector & psv
   PositionStringVector & c_r_positionStringVector
@@ -1435,8 +1457,8 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
   bool bUnknownTokenFound = false;
   do
   {
-    LOGN( FULL_FUNC_NAME << "--current token:\"" << c_r_positionStringVector.
-      at(dwTokenIndex).m_Str << "\"" )
+    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "current token:\""
+      << c_r_positionStringVector.at(dwTokenIndex).m_Str << "\"" )
     p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
       TranslationControllerBase::s_lettertree.searchAndReturnLetterNode(
         c_r_positionStringVector,

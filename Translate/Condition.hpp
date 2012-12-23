@@ -10,7 +10,7 @@
 
 #include <windef.h> //for BYTE
 #include <string> //std::string
-#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+//#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <Translate/SyntaxTreePath.hpp>//class SyntaxTreePath
 
 //Condition for translation. E.g. that could mean:
@@ -52,7 +52,7 @@ public:
   ~Condition()
   {
 //    int i = 0 ;
-    DEBUG_COUT("~Condition\n")
+//    DEBUG_COUT("~Condition\n")
   }
   #endif //#ifdef _DEBUG
 };

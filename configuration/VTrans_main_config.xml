@@ -7,6 +7,9 @@
  <vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" />
  
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/Vocabulary_attribute_definitions.xml" />
+ <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/0objVerbFiniteVerbforms_attribute_definitions.xml" />
+ <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/1objVerbFiniteVerbforms_attribute_definitions.xml" />
+ <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/2objVerbFiniteVerbforms_attribute_definitions.xml" />
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/finite_verbforms_attribute_definitions.xml" />
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/noun_attribute_definitions.xml" />
  
@@ -29,12 +32,15 @@
  
  <transformation_rule_file path="configuration/transformation_rules.xml" />
  
+ <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePresentClause.xml" />
+ <translation_rule_file path="configuration/translation_rules/1stPersSingPresentPerfectClause_transl_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePastClause_transl_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/1stPersSingWill-FutureClause_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/2ndPers_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersPlurClauseAllows1Obj_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersPlur_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSing_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSingClauseAllows0Obj_translation_rules.xml" />
- <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePresentClause.xml" />
  
  <translation_rule_file path="configuration/translation_rules/definiteArticleTranslationRules.xml" />
  <translation_rule_file path="configuration/translation_rules/definiteArticleWithAdjectiveTranslationRules.xml" />

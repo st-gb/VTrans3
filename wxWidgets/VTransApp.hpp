@@ -13,6 +13,7 @@
 #include <UserInterface/I_UserInterface.hpp>//base class I_UserInterface
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 #include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
+#include <string> //class std::string
 
 //Fwd decl.
 class wxTextInputDlg ;
@@ -20,6 +21,11 @@ namespace XERCES_CPP_NAMESPACE
 {
   class DefaultHandler ;
 }
+namespace VTrans
+{
+  class ShowTranslationRulesDialog;
+}
+class TranslationRule;
 
 namespace wxWidgets
 {
@@ -29,10 +35,15 @@ namespace wxWidgets
     , public TranslationControllerBase
   {
   public:
+    VTrans::ShowTranslationRulesDialog * m_p_showtranslationrulesdialog;
   //  static LetterTree s_lettertree ;
     wxTextInputDlg * m_p_wx_text_input_dialog ;
+    std::map<TranslationRule *, std::string>
+      m_std_map_p_translationrule2filepath;
   //  std::string m_stdstrVocabularyFilePath ;
+
     void CreateAndShowMainWindow() ;
+    void GetSourceText(std::string & std_string);
     bool HandleCommandLineArgs() ;
     virtual int OnExit();
     virtual bool OnInit();
