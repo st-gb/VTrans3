@@ -21,6 +21,7 @@
 //If not included: ~"undefined reference to wxWindow::[...] in DEBUG version"
 #include "wx/msw/winundef.h"
 #include <wx/panel.h> //base class wxPanel
+#include <wx/dcmemory.h> //class wxMemoryDC
 //#include <wx/dcclient.h> //for class wxPaintDC
 #include <map> //class std::map
 #include <vector> //class std::vector
@@ -32,6 +33,7 @@
 class DrawGrammarPartAttributes ;
 class GrammarPart ;
 class ParseByRise ;
+class wxBitmap;
 class wxDC ;
 
 class wxParseTreePanel
@@ -39,6 +41,8 @@ class wxParseTreePanel
 {
     WORD m_wParseLevel ;
     ParseByRise * mp_parsebyrise ;
+    wxBitmap * m_p_wxbitmapBuffer;
+    wxMemoryDC m_wxmemorydc;
     std::map<WORD,DWORD>
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
     std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2wCenter ;
@@ -149,6 +153,7 @@ public:
     wxString & wxstr
     ) ;
 	void OnPaint(wxPaintEvent & event) ;
+	void OnSize(wxSizeEvent & evt);
 	DECLARE_EVENT_TABLE()
 };
 

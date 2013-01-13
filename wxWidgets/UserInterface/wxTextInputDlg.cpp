@@ -29,6 +29,7 @@
 #include <wx/sizer.h> //class wxBoxSizer
 #include <wx/splitter.h> //class wxSplitterWindow
 #include <wx/textctrl.h> //class wxTextCtrl
+#include <wx/timer.h> //for EVT_TIMER (,...?)
 
 //#define COMPILE_WITH_TEXT_TO_SPEECH
 #ifdef COMPILE_WITH_TEXT_TO_SPEECH
@@ -38,7 +39,7 @@
 #include "wxTextInputDlg.hpp"
 #include "wxTextControlDialog.hpp" //class wxTextControlDialog
 #include "ShowTranslationRulesDialog.hpp" //class ShowTranslationRulesDialog
-#include <IO/IO.hpp> //class OneLinePerWordPair
+#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
 
 ////see http://stackoverflow.com/questions/59670/how-to-get-rid-of-deprecated-conversion-from-string-constant-to-char-warning
 ////to ignore "warning: deprecated conversion from string constant to 'char*'"
@@ -93,7 +94,6 @@
 
 //GetStdString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
-#include <wxWidgets/user_interface_control_actions.h> //for enum
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 //UnLoadAndLoadDictionary(wxWindow *);
 #include <wxWidgets/UserInterface/UserInterface.hpp>
@@ -115,6 +115,7 @@ using namespace wxWidgets ;
 ///////////////////////////////////////////////////////////////////////////
 
 BEGIN_EVENT_TABLE(wxTextInputDlg, wxDialog)
+  EVT_TIMER( Timer, wxTextInputDlg::OnTimerEvent)
   EVT_BUTTON( ID_AddGrammarRules , wxTextInputDlg::OnAddGrammarRules )
   EVT_BUTTON( ID_AddTransformationRules ,
     wxTextInputDlg::OnAddTransformationRules )
@@ -886,7 +887,8 @@ void wxTextInputDlg::OnInfoButton( wxCommandEvent & wxcmd )
         "# transFORMation rules:%u\n"
         "# vocabulary attribute definitions:%u"
       ) ,
-    OneLinePerWordPair::s_dwNumberOfVocabularyPairs
+//    OneLinePerWordPair::s_dwNumberOfVocabularyPairs
+    ::wxGetApp().s_numberOfVocabularyPairs
     , wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.size()
     , wxGetApp().m_translateparsebyrisetree.
       m_stdmap_p_translationrule2ConditionsAndTranslation.size()
@@ -1058,6 +1060,11 @@ void wxTextInputDlg::OnShowTranslationRulesButton( wxCommandEvent & wxcmd )
   VTrans::ShowTranslationRulesDialog showtranslationrulesdialog(this, choices,
     arraySize);
   showtranslationrulesdialog.ShowModal();
+}
+
+void wxTextInputDlg::OnTimerEvent(wxTimerEvent &event)
+{
+  SetTitle( wxString::Format(wxT("%u"), wxGetApp().m_dictionaryFileLineNumber) );
 }
 
 void wxTextInputDlg::OnTruncateLogFileButton( wxCommandEvent & wxcmd )

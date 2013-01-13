@@ -37,6 +37,7 @@ class wxSplitterWindow ;
 class wxTextCtrl ;
 //class wxWebKitCtrl ;
 
+#include <wxWidgets/user_interface_control_actions.h> //for enum
 ///////////////////////////////////////////////////////////////////////////////
 /// Class wxTextInputDlg
 ///////////////////////////////////////////////////////////////////////////////
@@ -73,6 +74,7 @@ protected:
     wxParseTreePanel * mp_wxparsetreepanel;
     wxSplitterWindow * mp_wxsplitterwindow;
 public:
+    wxTimer m_wxtimer;
     wxTextInputDlg(
       wxWindow * p_wxwindowParent,
       TranslationControllerBase & r_translationcontrollerbase,
@@ -104,8 +106,23 @@ public:
     void OnResolve1ParseLevelButton(wxCommandEvent & wxcmd);
     void OnShowTokenIndex2GrammarPartButton(wxCommandEvent & wxcmd);
     void OnShowTranslationRulesButton(wxCommandEvent & wxcmd);
+    void OnTimerEvent(wxTimerEvent &event);
     void OnTranslateButton(wxCommandEvent & wxcmd);
     void OnTruncateLogFileButton( wxCommandEvent & wxcmd );
+    void EndTimer()
+    {
+      m_wxtimer.Stop();
+      SetTitle( wxT("VTrans") );
+    }
+    void StartTimer()
+    {
+      m_wxtimer.Start(1000);
+      //http://docs.wxwidgets.org/stable/wx_wxtimer.html#wxtimersetowner:
+      //"Associates the timer with the given owner object. When the timer is
+      //running, the owner will receive timer events with id equal to id
+      //specified here."
+      m_wxtimer.SetOwner(this, Timer) ;
+    }
   DECLARE_EVENT_TABLE()
 };
 

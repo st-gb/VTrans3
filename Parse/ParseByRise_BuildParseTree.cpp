@@ -1351,9 +1351,9 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
   #ifdef _DEBUG
     int nNumbersOfWords = psetpvocabularyandtranslation->size();
   #endif
-    for(std::set<VocabularyAndTranslation *>::iterator iter =
-      psetpvocabularyandtranslation->begin() ; iter !=
-      psetpvocabularyandtranslation->end() ; iter ++ )
+    for(std::set<VocabularyAndTranslation *>::iterator vocAndTranslIter =
+      psetpvocabularyandtranslation->begin() ; vocAndTranslIter !=
+      psetpvocabularyandtranslation->end() ; vocAndTranslIter ++ )
     {
       //Create a grammar part object for _every_ single
       //VocabularyAndTranslation object.
@@ -1373,26 +1373,32 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
         //Via the indices the tokens can be got later.
         dwTokenIndex, dwTokenIndexRightMost) ;
   //        //word type
-  //        (*iter)->m_byType ;
-  //        grammarPart.m_wGrammarPartID = (*iter)->m_byType ;
-  //        grammarPart.SetGrammarPartID( (*iter)->m_byType ) ;
-      p_grammarPart->SetGrammarPartID( (*iter)->m_byType ) ;
+  //        (*vocAndTranslIter)->m_byType ;
+  //        grammarPart.m_wGrammarPartID = (*vocAndTranslIter)->m_byType ;
+  //        grammarPart.SetGrammarPartID( (*vocAndTranslIter)->m_byType ) ;
+      VocabularyAndTranslation & r_vocabularyandtranslation =
+        * ( * vocAndTranslIter);
+      p_grammarPart->SetGrammarPartID( r_vocabularyandtranslation.m_byType ) ;
       //For accessing the vocabulary attributes later for translating.
   //        grammarPart.m_pvocabularyandtranslation =
-      p_grammarPart->m_pvocabularyandtranslation =
-        (*iter) ;
+      p_grammarPart->m_pvocabularyandtranslation = & r_vocabularyandtranslation ;
       //r_stdmapwLeftmostIndex2grammarpart.insert(
       //r_stdmultimap_wLeftmostIndex2grammarpart.insert(
   //        p_stdmultimap_wLeftmostIndex2grammarpart->insert(
   //          std::pair<WORD, GrammarPart>
   //            ( dwTokenIndex, grammarPart )
   //          ) ;
-      DEBUG_COUTN("inserting "
-        << GetGrammarPartName( (*iter)->m_byType )
-        << "(ID)=" << (WORD) (*iter)->m_byType
+#ifdef _DEBUG
+      unsigned vocAndTranslType = r_vocabularyandtranslation.m_byType;
+      const std::string & std_strGrammarPartName = GetGrammarPartName(
+        vocAndTranslType );
+      LOGN_DEBUG("inserting "
+        << std_strGrammarPartName
+        << "(ID)=" << vocAndTranslType
         << " address: " << p_grammarPart
         << " for token range " << dwTokenIndex << ":" << dwTokenIndexRightMost
         )
+#endif
       m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
         std::pair<WORD, GrammarPart *>
           ( dwTokenIndex, p_grammarPart )

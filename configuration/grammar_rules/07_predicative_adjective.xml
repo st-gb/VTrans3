@@ -1,0 +1,7 @@
+<grammar_rules>
+ <!-- see http://en.wikipedia.org/wiki/Predicate_adjective#Predicative_adjective -->
+ <grammar_rule left_child="positive" superordinate="predicativeAdjective"/>
+ <!-- e.g. "not tall" , "very small" -->
+ <grammar_rule left_child="adverb" right_child="positive" superordinate="predicativeAdjective"/>
+ <grammar_rule left_child="3rdPersPlusFiniteBe" right_child="predicativeAdjective" superordinate="predicativeAdjectiveClause"/>
+</grammar_rules>

@@ -20,11 +20,14 @@
 
 //class TranslationControllerBase
 #include <Controller/TranslationControllerBase.hpp>
-#include <IO/IO.hpp> //class OneLinePerWordPair
+#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
+//class TUchemnitzDictionaryReader
+#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
 #include <VocabularyInMainMem/LetterTree/LetterTree.hpp> //class LetterTree
 //GetStdString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <wxWidgets/UserInterface/UserInterface.hpp>
+#include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 #include <string> //class std::string
 
 //extern LetterTree g_lettertree ;
@@ -116,14 +119,20 @@ namespace wxWidgets
       //MUST be inserted, else some grammar rules can't be applied.
 //      g_lettertree.InsertFundamentalWords() ;
       TranslationControllerBase::s_lettertree.InsertFundamentalWords() ;
-      OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
+//      OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
+      ::wxGetApp().s_numberOfVocabularyPairs = 0;
 //      wxMessageDialog * p_dlg = new wxMessageDialog( //NULL,
 //        p_wxwindow ,
 //        wxT("inserting vocabulary into memory")) ;
       p_wxwindow->SetLabel( wxT("inserting vocabulary into memory") ) ;
       {
 //        p_dlg->Show( true ) ;
-        OneLinePerWordPair::LoadWords( stdstr ) ;
+//        OneLinePerWordPair::LoadWords( stdstr ) ;
+        ::wxGetApp().StartTimer();
+        TUchemnitzDictionaryReader tcdr(::wxGetApp() );
+//        vtrans_thread_type
+        TUchemnitzDictionaryReader::extractVocables(stdstr.c_str() );
+        ::wxGetApp().EndTimer();
 //        p_dlg->Destroy();
       }
       p_wxwindow->SetLabel( wxstrLabel ) ;

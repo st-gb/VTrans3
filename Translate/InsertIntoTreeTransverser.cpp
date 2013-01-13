@@ -31,8 +31,8 @@ namespace ParseTreeTraverser
       cr_transformationrule.m_stdstrParseTreePathWhereToInsert,
       & r_parsebyrise)
   {
-    LOGN_DEBUG(//"InsertIntoTreeTransverser(...)--"
-      << cr_transformationrule.m_stdstrParseTreePathWhereToInsert )
+    LOGN_DEBUG(//"InsertIntoTreeTransverser(...)--" <<
+      cr_transformationrule.m_stdstrParseTreePathWhereToInsert )
 //    SyntaxTreePath syntaxtreepath ;
 //    syntaxtreepath.CreateGrammarPartIDArray(
 //      cr_transformationrule.m_stdstrParseTreePathWhereToInsert,

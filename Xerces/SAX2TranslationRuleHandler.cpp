@@ -13,7 +13,9 @@
 #include <Translate/TranslationRule.hpp>//class TranslationRule
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
-#include <wxWidgets/VTransApp.hpp> //wxGetApp()
+#ifdef COMPILE_AS_EXECUTABLE
+  #include <wxWidgets/VTransApp.hpp> //wxGetApp()
+#endif //#ifdef COMPILE_AS_EXECUTABLE
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
 //header file for this SAX2TranslationRuleHandler class
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
@@ -153,9 +155,11 @@ void SAX2TranslationRuleHandler::endElement(
         mr_translateparsebyrise.AddTranslationRule(
           p_translationrule
           , m_conditionsandtranslation ) ;
+#ifdef COMPILE_AS_EXECUTABLE
         wxGetApp().m_std_map_p_translationrule2filepath.insert(
           std::make_pair(p_translationrule, Xerces::ToStdString( m_pc_locator->
             getSystemId() )) );
+#endif //#ifdef COMPILE_AS_EXECUTABLE
       }
       catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
       {

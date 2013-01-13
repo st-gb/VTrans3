@@ -27,7 +27,7 @@
 #include <Xerces/ReadViaSAX2.hpp>//ReadViaSAX2InitAndTermXerces(...)
 #include <Xerces/SAX2GrammarRuleHandler.hpp>//class SAX2GrammarRuleHandler
 
-extern LetterTree g_lettertree ;
+//extern LetterTree g_lettertree ;
 
 ParseByRise::ParseByRise()
   :
