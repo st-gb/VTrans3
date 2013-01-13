@@ -1,0 +1,17 @@
+<translation_rules>
+  <translation_rule 
+    syntax_tree_path="*.3rdPersSingSubjOrObjEnumEle_is.is"
+	translation="ist"
+  />
+  <!-- a single (unconnected) adjective in positive form -->
+  <translation_rule 
+    syntax_tree_path="positive"
+    attribute_name="German_positive"
+	>
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="*.predicativeAdjective.positive"
+    attribute_name="German_positive"
+	>
+  </translation_rule>
+</translation_rules>

@@ -7,6 +7,8 @@
 #include <Attributes/TranslationAndGrammarPart.hpp>
 #include <Controller/character_string/stdstring_format.hpp>//to_stdstring(...)
 #include <Controller/Logger/Logger.hpp> //class Logger
+//class CSS::LogFormatter::Log4jFormatter
+#include <Controller/Logger/Log4jFormatter.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 #include <preprocessor_macros/export_function_symbols.h>
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
@@ -61,7 +63,8 @@ EXPORT BYTE
 //  LOGN("Init--begin")
   std::string stdstrLogFilePath = //"VTrans_log.txt" ;
       "VTransDynlib_log.txt" ;
-  g_logger.OpenFile2(stdstrLogFilePath) ;
+  g_logger.OpenFileA(stdstrLogFilePath) ;
+  g_logger.SetFormatter(new CSS::LogFormatter::Log4jFormatter(& g_logger) );
 //  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
   LOGN("Init--begin")
   //Create on heap because of g_logger access that causes a crash when the log

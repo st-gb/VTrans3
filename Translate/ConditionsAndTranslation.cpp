@@ -323,6 +323,7 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                 p_grammarpartLeaf->m_pvocabularyandtranslation->
                   GetAttributeValue( (BYTE) r_atapas.m_wIndex);
               }
+              break ;
           }//switch
         }
         //if( r_cond.m_byCompareType == Condition::equals )

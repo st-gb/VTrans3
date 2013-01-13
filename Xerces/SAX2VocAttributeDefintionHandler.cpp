@@ -82,7 +82,7 @@ namespace Xerces
         WORD wAttributeIndex ;
         WORD wAttributeLength ;
         WORD wAttributeType ;
-        WORD wLanguage ;
+        WORD wLanguage = AttributeTypeAndPosAndSize::beyondLastElement;
 
         std::string stdstrXMLattributeName = "word_class" ;
         if( XercesAttributesHelper::GetAttributeValue(

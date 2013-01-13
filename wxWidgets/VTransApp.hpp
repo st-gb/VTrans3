@@ -42,12 +42,14 @@ namespace wxWidgets
       m_std_map_p_translationrule2filepath;
   //  std::string m_stdstrVocabularyFilePath ;
 
+    VTransApp();
+    virtual ~VTransApp();
+
     void CreateAndShowMainWindow() ;
     void GetSourceText(std::string & std_string);
     bool HandleCommandLineArgs() ;
     virtual int OnExit();
     virtual bool OnInit();
-    VTransApp();
   //  VTransApp(const VTransApp& orig);
     void LoadingVocabularyFileFailed(const std::string & cr_stdstrFilePath);
     void Message( const std::string & cr_stdstr ) ;
@@ -62,7 +64,8 @@ namespace wxWidgets
       DWORD dwOffsetOfBeginOfEntry,
       DWORD dwOffset
       );
-    virtual ~VTransApp();
+    void EndTimer();
+    void StartTimer();
   private:
 
   };

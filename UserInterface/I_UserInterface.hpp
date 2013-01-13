@@ -9,6 +9,14 @@
 class I_UserInterface
 {
 public:
+  I_UserInterface()
+    : s_numberOfVocabularyPairs(0),
+      m_dictionaryFileLineNumber(0)
+  {
+
+  }
+  unsigned s_numberOfVocabularyPairs;
+  volatile unsigned m_dictionaryFileLineNumber;
   virtual void Message(const std::string & cr_stdstr ) = 0;
   virtual void Message(const std::wstring & cr_stdwstr ) = 0;
   virtual void ShowInvalidVocabularyFileFormatMessage(
@@ -16,5 +24,8 @@ public:
     DWORD dwOffsetOfBeginOfEntry,
     DWORD dwOffset
     ) = 0;
+//  virtual void DictionaryFileLine(unsigned );
+  virtual void EndTimer() = 0;
+  virtual void StartTimer() = 0;
 } ;
 //Keep a newline at the end of the file to avoid a g++ warning.

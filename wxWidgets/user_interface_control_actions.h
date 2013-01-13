@@ -29,7 +29,8 @@ enum
   ID_Resolve1ParseLevel ,
   ID_Translate ,
   ID_TruncateLogFile,
-  ID_Info
+  ID_Info,
+  Timer
 };
 
 

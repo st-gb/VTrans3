@@ -5,7 +5,7 @@
 //  //use a relative path, else "VC/include/IO.h" is used
 //  #include <IO/IO.hpp>
   //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
-  #include <IO/word_class_characters.h>
+  #include <IO/dictionary/word_class_characters.h>
 
   #define BIT_POSITION_FOR_TRANSLATION_TYPE 2
 

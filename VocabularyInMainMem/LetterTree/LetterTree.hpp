@@ -85,6 +85,23 @@
 
   #define MAPPING_ARRAY_SIZE 255
 
+  namespace ASCIIcodepage850
+  {
+    //values from de.wikipedia.org/wiki/Codepage_850
+    enum ASCIIcodepage850_chars
+    {
+      //"è" as in "Apr_è_s Ski";
+      egrave = 0x8A,
+      auml = 228, //"ae" (falls wieder anderer Zeichensatz)
+      ouml = 246, //"oe" (falls wieder anderer Zeichensatz)
+      uuml = 252, //"ue" (falls wieder anderer Zeichensatz)
+      Auml = 196, //"Ae" (falls wieder anderer Zeichensatz)
+      Ouml = 214, //"Oe" (falls wieder anderer Zeichensatz)
+      Uuml = 220, //"Ue" (falls wieder anderer Zeichensatz)
+      szlig = 223 //"sz" (falls wieder anderer Zeichensatz)
+    };
+  }
+
   class LetterTree
     : public I_WordSearch
     , public IVocabularyInMainMem
@@ -97,10 +114,10 @@
 //    std::vector<CHAR> m_vecch ;
 
     BYTE m_byArrayIndexRespSize ;
-    I_UserInterface * mp_userinterface ;
     std::set<VocabularyAndTranslation *>::const_iterator 
       p_stdsetp_vocabularyandtranslation_const_iter ;
   public:
+    I_UserInterface * mp_userinterface ;
     //For access to the last inserted VocabularyAndTranslation pointer for
     //OneLinePerWordPair::extract(...)
     static VocabularyAndTranslation * s_pvocabularyandtranslation ;
@@ -237,14 +254,14 @@
       m_pletternodeRoot = new LetterNode(m_byArrayIndexRespSize, this) ;
     }
 
+    ~LetterTree() ;
+
     void SetUserInterface( I_UserInterface * p_userinterface )
     {
       mp_userinterface = p_userinterface ;
     }
 
     void DeleteCompleteList() ;
-
-    ~LetterTree() ;
 
     //Make faster by inline
     inline LetterNode * CreateNodeIfNonExistant(
@@ -337,6 +354,18 @@
     , bool & bInsertNewVocabularyAndTranslation
     , BYTE byVocabularyType
     , const std::string & str
+    , int nLength
+    , int nIndexOf1stChar
+    ) ;
+    LetterNode * InsertIntoTrieAndHandleVocabularyAndTranslation(
+      //this set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+    //, LetterNode * pletternodeCurrent
+    //, VocabularyAndTranslation * pvocabularyandtranslation
+    , bool & bInsertNewVocabularyAndTranslation
+    , BYTE byVocabularyType
+    , const char *
     , int nLength
     , int nIndexOf1stChar
     ) ;

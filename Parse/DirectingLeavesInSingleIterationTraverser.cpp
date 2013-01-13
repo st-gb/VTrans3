@@ -97,8 +97,8 @@ namespace ParseTreeTraverser
       //child is leave it als has level 1; 1-1 = 0, but 1 element should be
       //poppped, so add a value of "1".
       + 1 ;
-    LOGN("DirectingLeavesInSingleIterationTraverser::PopElementsTillNextRightChild()"
-      "--should pop " << wNumberOfElementsToPop << " elements from "
+    LOGN_DEBUG(//"DirectingLeavesInSingleIterationTraverser::PopElementsTillNextRightChild()--"
+      "should pop " << wNumberOfElementsToPop << " elements from "
       << mp_parsebyrise->GetGrammarPartName(
         p_grammmarpartCurrent->m_wGrammarPartID )
       << " (" << p_grammmarpartCurrent << ",level:" << wCurrentParseTreeLevel
@@ -226,8 +226,7 @@ namespace ParseTreeTraverser
 
   void DirectingLeavesInSingleIterationTraverser::TraverseParseTree()
   {
-    LOGN("DirectingLeavesInSingleIterationTraverser::ProcessLeavesOfParseTree() "
-      "begin")
+    LOGN_DEBUG("begin")
 //    m_stdvec_p_grammarpartRightNodeToProcess.clear();
     m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.clear() ;
 //    const GrammarPart * p_grammarpart = mp_grammarpartStartNode;
@@ -250,11 +249,10 @@ namespace ParseTreeTraverser
         GrammarPart * p_grammarpartRightChild =
           m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
           mp_grammarpartRightChild ;
-        LOGN("DirectingLeavesInSingleIterationTraverser::ProcessLeavesOfParseTree()"
-          "--Adding " << p_grammarpartRightChild
+        LOGN_DEBUG("Adding " << p_grammarpartRightChild
           << "(" << mp_parsebyrise->GetGrammarPartName(
-            p_grammarpartRightChild->m_wGrammarPartID) << ",level:"
-            << wParseTreeLevelRightChild << ")"
+          p_grammarpartRightChild->m_wGrammarPartID) << ",level:"
+          << wParseTreeLevelRightChild << ")"
           )
         //Add to process possible children of the right nodes later.
 //        m_stdvec_p_grammarpartRightNodeToProcess.push_back(
@@ -295,8 +293,7 @@ namespace ParseTreeTraverser
       {
     //          setFinalNodesOfCurrentParseLevel.insert( ) ;
         //Can be used as a callback method in subclasses of this class.
-        LOGN("DirectingLeavesInSingleIterationTraverser::"
-          "ProcessLeavesOfParseTree()--LeaveFound" )
+        LOGN_DEBUG("LeaveFound" )
         LeaveFound() ;
         //The pointer may be set to NULL by TransformTreeTraverser: the tree is modified--
         //do not continue to process, else SIGSEV in
@@ -304,11 +301,11 @@ namespace ParseTreeTraverser
         if( m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart )
           ProcessLastAddedRightNode() ;
       }
-      DEBUG_COUT ( "DrawLeavesOfParseTree--"
-          << " nodes to process size="
+      LOGN_DEBUG( "" << " nodes to process size="
 //          << m_stdvec_p_grammarpartRightNodeToProcess.size()
-          << m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.size()
-          << "\n" )
+        << m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.size()
+        //<< "\n"
+        )
     //        usleep(1000000) ;
     }
     while( //! m_stdvec_p_grammarpartRightNodeToProcess.empty()

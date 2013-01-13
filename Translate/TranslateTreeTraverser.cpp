@@ -100,7 +100,8 @@ namespace ParseTreeTraverser
       )
     BYTE byPersonIndex ;
     std::string stdstrTranslation ;
-    WORD wConsecutiveID ;
+    //TODO value is not set for this variable
+    WORD wConsecutiveID = 0;
     //const GrammarPart * p_grammarpart ;
     GrammarPart * p_grammarpartWithConsecutiveID ;
     if( mr_translateparsebyrisetree.TranslationRuleApplies(

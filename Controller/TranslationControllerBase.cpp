@@ -8,7 +8,9 @@
 #include <Controller/TranslationControllerBase.hpp>
 //GenerateXMLtreeFromParseTree(...)
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
-#include <IO/IO.hpp> //class OneLinePerWordPair
+#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
+//class TUchemnitzDictionaryReader
+#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
 #include <InputOutput/XML/OutputXMLindented.hpp> //OutputXMLindented(...)
 //class ParseTreeTraverser::TransformTreeTraverser
 #include <Translate/TransformTreeTraverser.hpp>
@@ -58,7 +60,7 @@ void MakeNeutral(std::string & r_stdstr )
 TranslationControllerBase::TranslationControllerBase()
   :
 //  m_parsebyrise( * this ) ,
-  m_nodetrie_ui32GrammarPartName2colour(256),
+  m_nodetrie_ui32GrammarPartName2colour(256, 0),
   m_translateparsebyrisetree(
     m_parsebyrise
     , * this
@@ -105,6 +107,7 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 //    ) ;
   VocabularyAndTranslation::s_p_userinterface = this;
   SyntaxTreePath::sp_userinterface = this ;
+  s_lettertree.mp_userinterface = this;
   s_lettertree.InsertFundamentalWords() ;
   ReadMainConfigFile(cr_stdstrFilePath) ;
   m_std_strMainConfigFilePath = cr_stdstrFilePath;
@@ -117,6 +120,7 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   else
   {
     OneLinePerWordPair::s_p_lettertree = & s_lettertree ;
+    TUchemnitzDictionaryReader::s_p_lettertree = & s_lettertree ;
     if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
          //stdstrFilePath
           m_stdstrVocabularyFilePath

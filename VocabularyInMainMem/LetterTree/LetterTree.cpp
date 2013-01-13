@@ -24,19 +24,25 @@ LetterNode * LetterTree::sp_letternodeLastForInsertedWord ;
     //Initially set all array values to "255".
     ::memset(m_arbyCharValueToArrayIndex, 255, MAPPING_ARRAY_SIZE) ;
     //m_arbyCharValueToArrayIndex = new BYTE[255 ] ;
-    addToCharValueToArrayIndexMapping(' ') ;
+    addToCharValueToArrayIndexMapping(' ') ; //" " in "vacumm cleaner"
     addToCharValueToArrayIndexMapping('.') ; //e.g. "Allrad..."
+    addToCharValueToArrayIndexMapping(',') ; //e.g.
     addToCharValueToArrayIndexMapping(':') ; //e.g. "Edition: Unpublished"
     //e.g. investor's confidence (Anlegervertrauen)
     addToCharValueToArrayIndexMapping('\'') ; // '
     addToCharValueToArrayIndexMapping('/') ; // / "water/steam"
     addToCharValueToArrayIndexMapping('\"') ; // "
+    //"-" as in "A-bewertet" {adj} :: A-weighted
+    addToCharValueToArrayIndexMapping('-') ; // "
+    addToCharValueToArrayIndexMapping('+') ; // "as a matter of fact + do"
+    addToCharValueToArrayIndexMapping('~') ; // "Carthaginian ~ Carthage"
     //addToCharValueToArrayIndexMapping('(') ; 
     //addToCharValueToArrayIndexMapping(')') ; 
     addToCharValueToArrayIndexMapping('0','9') ; // (e.g. "4x4 drive")
     addToCharValueToArrayIndexMapping('A','Z') ;
     addToCharValueToArrayIndexMapping('a','z') ;
-    addToCharValueToArrayIndexMapping('è') ; //Après Ski
+    //"è" as in "Apr_è_s Ski"; value from de.wikipedia.org/wiki/Codepage_850
+    addToCharValueToArrayIndexMapping(0x8A) ;
     addToCharValueToArrayIndexMapping(228) ; //"ae" (falls wieder anderer Zeichensatz)
     addToCharValueToArrayIndexMapping(246) ; //"oe" (falls wieder anderer Zeichensatz)
     addToCharValueToArrayIndexMapping(252) ; //"ue" (falls wieder anderer Zeichensatz)
@@ -164,6 +170,11 @@ Word * LetterTree::GetPreviousOccurance(
   //"inline makes it faster (->no function call)
   //The word whose last char sp_letternodeLastForInsertedWord points to
   //must have been inserted into the tree previously.
+
+  /** Insert either:
+   * -a new VocabularyAndTranslation to the last char of a word or
+   * -add a pointer to a VocabularyAndTranslation obj for a word of an
+   *  existing */
  inline //void
    VocabularyAndTranslation *
    LetterTree::HandleVocabularyAndTranslationPointerInsertion(
@@ -261,8 +272,7 @@ Word * LetterTree::GetPreviousOccurance(
  //VocabularyAndTranslation object where the grammatical attributes like article,
  //3rd person plural present for a German verb etc. are stored.
  //"inline makes it faster (->no function call)
- inline
- LetterNode * LetterTree::insert(
+ inline LetterNode * /*unsigned*/ LetterTree::insert(
    const char * pch,
    int start,
    int length //,
@@ -288,21 +298,26 @@ Word * LetterTree::GetPreviousOccurance(
    //(the maximum index entspricht the amount of added characters to the map)
    //Else we would address an unallocated  LetterNode (=NULL) and so the program
    //crashes.
-   for(WORD wIndex=0; wIndex < length; ++wIndex)
+   for(unsigned wIndex=0; wIndex < length; ++wIndex)
    {
      if( MapInputCharacterToLetterNodePointerArrayIndex(
        //byCurrentCharOfName
-       *pch) //> m_byArrayIndexRespSize
+       * pch) //> m_byArrayIndexRespSize
        == 255 )
      {
        //bDoNotAddToLetterTree = true ;
-       std::string strMsg = std::string("ungueltiges Zeichen im Wort: \"")
-         + std::string(pchFirstLetter) + std::string("\"");
-       //mp_userinterface->Message(//"anderer Buchstabe als Sonderzeichen im Wort"
-       //  strMsg ) ;
+       std::ostringstream oss;
+       oss << "ungueltiges Zeichen \"" << * pch << "\" im Wort: \""
+         << std::string(pchFirstLetter, length) << "\"";
+//       std::string strMsg = oss.str();
+       mp_userinterface->Message(//"anderer Buchstabe als Sonderzeichen im Wort"
+         //  strMsg
+         oss.str() ) ;
+       LOGN_ERROR( oss.str() )
        sp_letternodeLastForInsertedWord = NULL ;
-       return NULL ;
-       break ;
+       return NULL;
+         //wIndex;
+//       break ;
      }
      pch ++ ;
    }
@@ -587,6 +602,50 @@ void LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
   //vocabulary pair.
   if( bInsertNewVocabularyAndTranslation )
     bInsertNewVocabularyAndTranslation = false ;
+}
+
+/** Inserting into the Trie and handling the insertion of a pointer to
+* VocabularyAndTranslation often needs to be done in conjunction. So implement
+* this conjunction here. */
+LetterNode * LetterTree::InsertIntoTrieAndHandleVocabularyAndTranslation(
+  //This set is to ensure that for identical strings for the SAME vocabulary
+  //not 2 or more VocAndTransl object should be inserted into the same
+  //LetterNode of the last character.
+  std::set<LetterNode *> & stdsetpletternodeLastStringChar
+  //, LetterNode * pletternodeCurrent
+  //, VocabularyAndTranslation * pvocabularyandtranslation
+  , bool & bInsertNewVocabularyAndTranslation
+  , BYTE byVocabularyType
+  , const char * ar_ch
+  , int nLength
+  , int nIndexOf1stChar
+  )
+{
+  LetterNode * p_ln = insert(
+    //std::string(
+    ar_ch //)
+    , nIndexOf1stChar
+    , nLength
+  //    , bInsertNewVocabularyAndTranslation
+    ////If not assigned yet within THIS function.
+    //! pvocabularyandtranslation
+  //    , p_letternodeLastForInsertedWord
+  //    , byVocabularyType
+    ) ;
+    //Set to NULL if "insert()" failed.
+  if( sp_letternodeLastForInsertedWord )
+    HandleVocabularyAndTranslationPointerInsertion(
+      stdsetpletternodeLastStringChar
+  //    , p_letternodeLastForInsertedWord
+      //, pvocabularyandtranslation
+      , bInsertNewVocabularyAndTranslation
+      , byVocabularyType
+      ) ;
+  //Insert an allocated VocabularyAndTranslation object only ONCE for a
+  //vocabulary pair.
+  if( bInsertNewVocabularyAndTranslation )
+    bInsertNewVocabularyAndTranslation = false ;
+  return p_ln;
 }
 
 void LetterTree::InsertPersonalPronouns()
@@ -1151,10 +1210,15 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
       }
     }
     LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "pletternodeCurrent: " << pletternodeCurrent)
-    //= If the token(s) is at least 1 vocabulary
-    if(pletternodeCurrent )
+    //= If the token(s) are inside the dictionary.
+    if(pletternodeCurrent
+      //else: returns last letter of "liable" from voc. "not liable for tax"
+      //for input text "Tril is not liable".
+      && pletternodeCurrent->m_psetpvocabularyandtranslation )
     {
       pletternodeCurrentWithMostTokens = pletternodeCurrent ;
+      //All chars of the prev token match -> update rightmost token index.
+      r_dwTokenIndex = wTokenIndex ;
       //If no space in lettertree after token.
       if( ! (pletternodeCurrent = pletternodeCurrent->m_arpletternode1LevelLower[
         MapInputCharacterToLetterNodePointerArrayIndex(
@@ -1166,14 +1230,13 @@ LetterNode * LetterTree::searchAndReturnLetterNode(
     else
       break ;
   }
-  //=If the name exists.
-  if(pletternodeCurrentWithMostTokens )
-  {
-    //psetvocabularyandtranslation = pletternodeCurrent->m_psetvocabularyandtranslation ;
-//    psetpvocabularyandtranslation = pletternodeCurrentWithMostTokens->
-//      m_psetpvocabularyandtranslation ;
-    r_dwTokenIndex = wTokenIndex ;
-    }
+//  //=If the name exists.
+//  if(pletternodeCurrentWithMostTokens )
+//  {
+//    //psetvocabularyandtranslation = pletternodeCurrent->m_psetvocabularyandtranslation ;
+////    psetpvocabularyandtranslation = pletternodeCurrentWithMostTokens->
+////      m_psetpvocabularyandtranslation ;
+//  }
   //return psetvocabularyandtranslation ;
   return pletternodeCurrentWithMostTokens ;
 }

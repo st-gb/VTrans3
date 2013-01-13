@@ -343,7 +343,7 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
                     //bAllConditionsMatch = false ;
                     return false ;
                 }
-
+                break;
             }//switch
           }
           //if( r_cond.m_byCompareType == Condition::equals )
@@ -445,6 +445,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
                   r_atapas.m_wIndex ] ;
                 SUPPRESS_UNUSED_VARIABLE_WARNING(by)
               }
+              break ;
           }//switch
         }
         //if( r_cond.m_byCompareType == Condition::equals )
@@ -506,9 +507,10 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   ParseByRise & r_parsebyrise
   , I_UserInterface & r_i_userinterface
   )
-  : mr_i_userinterface (r_i_userinterface)
-  , m_ui32ConcatenationID(//0
+  :
+  m_ui32ConcatenationID(//0
       1)
+  , mr_i_userinterface (r_i_userinterface)
 {
   //DEBUG_COUTN("TranslateParseByRiseTree(ParseByRise &,I_UserInterface &) "
   LOGN_DEBUG(
@@ -910,6 +912,7 @@ void TranslateParseByRiseTree::Translate(
     "end")
 }
 
+#ifdef COMPILE_AS_EXECUTABLE //only needed in GUI
 void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
   GrammarPart * p_grammarpart
   //A vector of sentences that each contains a vector of words.
@@ -928,6 +931,7 @@ void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
   if( testiftranslationruleapplies.m_bTranslationRuleApplies )
     m_bTranslationRuleApplies = true;
 }
+#endif //#ifdef COMPILE_AS_EXECUTABLE
 
 void TranslateParseByRiseTree::TranslateParseTree(
 //  std::vector<GrammarPart *>::const_iterator

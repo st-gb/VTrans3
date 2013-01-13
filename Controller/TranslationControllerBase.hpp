@@ -65,6 +65,10 @@ public:
   std::string m_std_strMainConfigFilePath;
   GUIattributes m_GUIattributes;
 
+  TranslationControllerBase();
+  virtual
+  ~TranslationControllerBase();
+
   virtual void CreateAndShowMainWindow() {};
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
@@ -119,9 +123,7 @@ public:
     std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
       r_stdvec_stdvec_stdvecTranslationAndGrammarPart
     ) ;
-  TranslationControllerBase();
-  virtual
-  ~TranslationControllerBase();
+//  virtual void StartTimer();
 };
 
 #endif /* TRANSLATIONCONTROLLERBASE_HPP_ */

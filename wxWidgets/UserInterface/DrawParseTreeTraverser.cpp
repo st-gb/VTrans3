@@ -69,9 +69,9 @@ void DrawParseTreeTraverser::LeaveFound()
 
   GrammarPart * p_grammarpart = m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart ;
-  LOGN("DrawParseTreeTraverser::LeaveFound()--"
-    << mp_parsebyrise->GetGrammarPartName(p_grammarpart->m_wGrammarPartID)
-    )
+  const std::string & std_strGrammarPartName = mp_parsebyrise->
+    GetGrammarPartName(p_grammarpart->m_wGrammarPartID);
+  LOGN("DrawParseTreeTraverser::LeaveFound()--" << std_strGrammarPartName )
   wxString wxstrTokens ;
 //      wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
   wxsizeString = GetGrammarPartNameExtent( * mp_wxdc, p_grammarpart,
@@ -93,15 +93,26 @@ void DrawParseTreeTraverser::LeaveFound()
 //              , wHorizTextCenter ) ;
 //          DrawGrammarPartName( p_grammarpart, wxpaintdc
 //              , wHorizTextCenter ) ;
+
+  int yCoord = //So the it is drawn below the previous alternative parse tree.
+    wxsizeString.GetHeight() *
+    //Was increased before by "BeforeBeginAtRoot".
+    (m_wParseLevelCountedFromRoot - 1);
+  wxPen wxpenDraw(* wxBLUE//int width = 1, int style = wxSOLID
+    );
+  mp_wxdc->SetPen( wxpenDraw);
+  mp_wxdc->DrawRectangle(m_wCurrentParseTreeLeftEndInPixels, yCoord,
+    wTextWidthInPixels, wxsizeString.GetHeight() );
+  mp_wxdc->SetPen( * wxBLACK_PEN);
+//  mp_wxdc->Set
   mp_wxdc->DrawText( wxstrTokens , //wXcoord
     m_wCurrentParseTreeLeftEndInPixels ,
     //0
-    //So the it is drawn below the previous alternative parse tree.
-    wxsizeString.GetHeight() *
-    //Was increased before by "BeforeBeginAtRoot".
-    (m_wParseLevelCountedFromRoot - 1)
+    yCoord
     ) ;
-
+  int yCoordBelow = yCoord + wxsizeString.GetHeight();
+//  mp_wxdc->DrawLine(m_wCurrentParseTreeLeftEndInPixels, yCoordBelow,
+//    m_wCurrentParseTreeLeftEndInPixels + wTextWidthInPixels, yCoordBelow );
 //  wxstrGrammarPartName += wxString::Format( "%u",
 //    p_grammarpart->m_byPersonIndex ) ;
 
@@ -141,7 +152,7 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   wxString & wxstrGrammarPartName
   )
 {
-  bool bShowHexAddress = true ;
+  bool bShowGrammarPartAddressInHex = true ;
   const std::string & r_stdstrGrammarPartName = //citer->second.
     //m_stdstrGrammarPartName ;
     mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID ) ;
@@ -152,7 +163,7 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   if( ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress )
   {
     //hex. addresses are easier to compare with values in debugger mode.
-    if( bShowHexAddress )
+    if( bShowGrammarPartAddressInHex )
       wxstrGrammarPartName += wxString::Format( wxT("%lx_") ,
         (DWORD) p_grammarpart ) ;
     else

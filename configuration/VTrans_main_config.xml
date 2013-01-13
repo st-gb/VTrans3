@@ -29,6 +29,7 @@
  <grammar_rule_file path="configuration/grammar_rules/06_2nd_person_grammar_rules.xml" />
  <grammar_rule_file path="configuration/grammar_rules/06_3rdPersSing1Obj_grammar_rules.xml" />
  <grammar_rule_file path="configuration/grammar_rules/06_grammar_rules.xml" />
+ <grammar_rule_file path="configuration/grammar_rules/07_predicative_adjective.xml" />
  
  <transformation_rule_file path="configuration/transformation_rules.xml" />
  
@@ -51,4 +52,5 @@
  <translation_rule_file path="configuration/translation_rules/translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/reflexive_pronouns_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/relative_clause_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/predicativeAdjective_TranslationRules.xml" />
 </VTrans_main_cfg>

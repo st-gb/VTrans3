@@ -14,6 +14,7 @@
 //SUPPRESS_UNUSED_VARIABLE_WARNING
 #include <preprocessor_macros/suppress_unused_variable.h>
 #include <wx/dc.h> //class wxDC
+#include <wx/dcmemory.h> //class wxMemoryDC
 #include <wx/dcclient.h> //for class wxPaintDC
 #include <Parse/ParseByRise.hpp> //for class GrammarPart
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
@@ -32,6 +33,7 @@
 
 BEGIN_EVENT_TABLE(wxParseTreePanel, wxPanel)
   EVT_PAINT  (wxParseTreePanel::OnPaint)
+  EVT_SIZE  (wxParseTreePanel::OnSize)
 END_EVENT_TABLE()
 
 //wxParseTreePanel::wxParseTreePanel() {
@@ -56,13 +58,14 @@ wxParseTreePanel::wxParseTreePanel(
      , long style //= wxTAB_TRAVERSAL,
      , const wxString& name //= "panel"
   )
-  :wxPanel(
+  : wxPanel(
       parent,
       id,
       pos,
       size,
       style ,
       name )
+  , m_p_wxbitmapBuffer(NULL)
 {
 //  Connect(wxEVT_PAINT, wxPaintEventHandler(wxParseTreePanel::OnPaint));
   mp_parsebyrise = NULL ;
@@ -274,6 +277,12 @@ void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise )
 //  m_wParseLevel = 0 ;
 //  m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
   mp_parsebyrise = & r_parsebyrise ;
+  //Clears the device context using the current background brush.
+  //(else black background?)
+  m_wxmemorydc.Clear();
+  DrawParseTreeBeginningFromLeaves(//wxpaintdc
+    m_wxmemorydc) ;
+  //Force a repaint.
   Refresh() ;
 }
 
@@ -836,10 +845,13 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     {
       VTrans::string_type & r_vtrans_str =
         mp_parsebyrise->m_psv.at(dwLeftMostTokenIndex).m_Str ;
+      int tokenWidth = r_wxdc.GetTextExtent( r_vtrans_str ).GetWidth();
       r_wxdc.DrawText( r_vtrans_str ,
-        wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens , 0 ) ;
-      wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens +=
-        10 + r_wxdc.GetTextExtent( r_vtrans_str ).GetWidth() ;
+//        wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens
+        wCurrentParseTreeLeftEndInPixels, 0 ) ;
+//      wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens +=
+//        10 + tokenWidth ;
+      wCurrentParseTreeLeftEndInPixels += 10 + tokenWidth;
       ++ dwLeftMostTokenIndex ;
     }
     //A text (especially the longer the more probable) may contain more than 1
@@ -1072,8 +1084,14 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
 //  PrepareDC(wxpaintdc);
   if( mp_parsebyrise )
   {
+    wxSize sz = GetClientSize();
 //    DrawParseTreeBeginningFromRoots(wxpaintdc) ;
-    DrawParseTreeBeginningFromLeaves(wxpaintdc) ;
+//    DrawParseTreeBeginningFromLeaves(//wxpaintdc
+//      wxmemorydc) ;
+//    wxpaintdc.DrawBitmap( * m_p_wxbitmapBuffer, sz.x, sz.y );
+    wxpaintdc.Blit(0, 0, sz.x , sz.y,
+      //mp_wxbufferedpaintdcStatic
+      & m_wxmemorydc , 0, 0 );
 
 //    while( citer != r_stdmultimap_dwLeftmostIndex2grammarpart.end() )
 //    {
@@ -1094,5 +1112,18 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
   {
     wxpaintdc.DrawLine(wxPoint(10,10),wxPoint(199,100)) ;
     wxpaintdc.SetBackground(*wxBLUE_BRUSH);
+  }
+}
+
+void wxParseTreePanel::OnSize(wxSizeEvent & evt)
+{
+  if( m_p_wxbitmapBuffer != NULL )
+    delete m_p_wxbitmapBuffer;
+  m_p_wxbitmapBuffer = new wxBitmap(evt.m_size.x, evt.m_size.y);
+//  wxMemoryDC wxmemorydc( * m_p_wxbitmapBuffer);
+  m_wxmemorydc.SelectObject( * m_p_wxbitmapBuffer);
+  if( mp_parsebyrise )
+  {
+    DrawParseTree( * mp_parsebyrise);
   }
 }

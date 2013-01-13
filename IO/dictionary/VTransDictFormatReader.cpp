@@ -3,7 +3,7 @@
 //Ohne das folgende include: fatal error C1010: Unerwartetes Dateiende 
 //waehrend der Suche nach dem vorkompilierten Header.
 #include "StdAfx.h"
-#include "IO.hpp"
+#include "VTransDictFormatReader.hpp"
 //#include "rest.h"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Attributes/EnglishWord.hpp> //class EnglishAuxiliaryVerb etc.
@@ -1375,8 +1375,8 @@ BYTE OneLinePerWordPair::LoadWords(//WordNode * pWordNodeCurrent
             byLanguage = ! byLanguage;
 
             OneLinePerWordPair::extract(str,TRUE,ret);
-            ++ OneLinePerWordPair::s_dwNumberOfVocabularyPairs ;
-
+//            ++ OneLinePerWordPair::s_dwNumberOfVocabularyPairs ;
+            ++ s_p_userinterface->s_numberOfVocabularyPairs;
             #ifdef _DEBUG
             const char * pch = str.c_str() ;
             pch = 0 ;

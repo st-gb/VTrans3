@@ -145,6 +145,11 @@ void VTransApp::Message( const std::wstring & cr_std_wstr )
   wxtextcontroldialog.ShowModal();
 }
 
+//void VTransApp::DictionaryFileLine(unsigned ui)
+//{
+////  SetTitle
+//}
+
 void VTransApp::GetSourceText(std::string & std_string)
 {
   m_p_wx_text_input_dialog->GetEntireInputText(std_string);
@@ -314,4 +319,14 @@ void VTransApp::ShowInvalidVocabularyFileFormatMessage(
     dwOffsetOfBeginOfEntry, dwOffset);
 
   ::wxMessageBox( wxstrMessage );
+}
+
+void VTransApp::EndTimer()
+{
+  m_p_wx_text_input_dialog->EndTimer();
+}
+
+void VTransApp::StartTimer()
+{
+  m_p_wx_text_input_dialog->StartTimer();
 }

@@ -54,7 +54,7 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
     if( m_syntaxtreepathConsecutiveID.m_wNumberOfElements > 0 )
     {
 //      const GrammarPart * p_grammarpartContainingConsecutiveID ;
-      GrammarPart * p_grammarpartContainingConsecutiveID ;
+      GrammarPart * p_grammarpartContainingConsecutiveID = NULL;
       //Avoid g++ warning "'p_grammarpartContainingConsecutiveID' might be
       // used uninitialized in this function"
       SUPPRESS_UNUSED_VARIABLE_WARNING(p_grammarpartContainingConsecutiveID)
