@@ -12,11 +12,14 @@
 #include <wx/stattext.h> //class wxStaticText
 #include "TranslationRulesListCtrl.hpp" //class TranslationRulesListCtrl
 #include <vector> //class std::vector
+//GetStdString(wxString &);
+#include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 
 class Condition;
 class ConditionsAndTranslation;
 class TranslationRule;
 class TranslationRulesListCtrl;
+class wxBoxSizer;
 class wxTextCtrl;
 namespace VTrans
 {
@@ -43,6 +46,10 @@ namespace VTrans
     ~ShowTranslationRulesDialog();
 
     void AddTranslation( const ConditionsAndTranslation & cnt);
+    void Create(
+      wxString choices[],
+      int arraySize
+      );
     void OnSize(wxSizeEvent & evt)
     {
       Layout();
@@ -53,6 +60,9 @@ namespace VTrans
       const wxString & wxstrText = m_p_wxtextctrl->//GetLineText (0
         ///*long lineNo*/);
         GetValue();
+#ifdef _DEBUG
+      const std::string & std_strText = GetStdString(wxstrText);
+#endif
       m_p_translationruleslistctrl->SetFilter(wxstrText);
     }
     void SelectSyntaxTreePath(wxListEvent & evt)

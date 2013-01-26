@@ -8,6 +8,7 @@
 #ifndef TRANSLATIONCONTROLLERBASE_HPP_
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
+#include <Controller/dictionary_type.hpp> //typedef dictionary_type
 #include "TranslateControllerBaseReturnCodes.h" //enum Init_return_codes
 #include <data_structures/Trie/NodeTrie/NodeTrie.hpp> //class NodeTrie
 #include <Parse/ParseByRise.hpp> //class ParseByRise
@@ -16,7 +17,7 @@
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
-#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
+//#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 #include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 
 #include <map> //class std::map
@@ -53,7 +54,7 @@ protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
-  static LetterTree s_lettertree ;
+  static dictionary_type s_dictionary ;
   NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
   ParseByRise m_parsebyrise ;
   std::string m_stdstrVocabularyFilePath ;

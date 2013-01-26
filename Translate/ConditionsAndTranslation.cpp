@@ -11,7 +11,7 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN()
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
-#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
+#include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 #include <map> //std::map
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <preprocessor_macros/suppress_unused_variable.h>

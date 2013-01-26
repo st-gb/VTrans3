@@ -165,9 +165,9 @@ bool VTransApp::HandleCommandLineArgs()
   {
     //Needed for SyntaxTreePath::CreateGrammarPartIDArray(...).
     SyntaxTreePath::sp_userinterface = this ;
-    std::string stdstrFilePath(
+    std::string stdstrFilePath =//(
       //"germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
-      argv[MainConfigFilePathProgArgIndex] ) ;
+      GetStdString( wxString(argv[MainConfigFilePathProgArgIndex]) ) ;
 //    g_lettertree.InsertFundamentalWords() ;
 
 //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
@@ -218,8 +218,8 @@ void VTransApp::LoadingVocabularyFileFailed(const std::string & stdstrFilePath)
 {
   wxString wxstrCwd = wxGetCwd() ;
   ::wxMessageBox(
-      wxString::Format( "Error loading vocabulary file \"%s\""
-      "\%s\" "
+      wxString::Format( wxT("Error loading vocabulary file \"%s\""
+      "\%s\" ")
       //"->exiting"
       ,
       wxstrCwd.c_str(),
@@ -306,7 +306,7 @@ void VTransApp::ShowInvalidVocabularyFileFormatMessage(
   wxString wxstrCwd = wxGetCwd();
 
   wxstrCwd += wxT("\\");
-  wxstrCwd += strWordFile;
+  wxstrCwd += GetwxString_Inline(strWordFile);
 
   wxString wxstrMessage = wxString::Format(
     wxT("Die Datei \n\"%s\"\n\nenthält kein gültiges "

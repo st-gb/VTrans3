@@ -58,67 +58,7 @@ namespace VTrans
 //       const wxString& name = wxDialogNameStr
       )
   {
-    m_p_translationruleslistctrl = new VTrans::TranslationRulesListCtrl(this,
-      translRuleList);
-    m_p_translationruleslistctrl->SetData(choices, arraySize);
-
-    m_p_wxsizer = new wxBoxSizer(wxVERTICAL);
-//    wxComboBox * p_wxcombobox = new wxComboBox(this, wxID_ANY, "",
-//      wxDefaultPosition, wxDefaultSize, arraySize, choices);
-//    wxListBox * p_wxlistbox = new wxListBox(this, wxID_ANY,
-//      wxDefaultPosition, wxDefaultSize, arraySize, choices,
-//      wxLB_HSCROLL | wxLB_NEEDED_SB);
-//    wxListCtrl * p_wxlistctrl = new wxListCtrl();
-    m_p_wxtextctrl = new wxTextCtrl(this, translRuleTextCtrl);
-    wxButton * p_wxbuttonTest = new wxButton( this, TestTranslRule,
-      wxT("test"));
-    p_wxbuttonTest->SetToolTip( wxT("test if rule applies to current parse "
-      "tree") );
-    wxBoxSizer * p_wxsizer = new wxBoxSizer(wxHORIZONTAL);
-//    m_p_wxsizer->Add(
-    p_wxsizer->Add(
-//      p_wxcombobox
-      m_p_wxtextctrl
-      //new wxText
-//      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
-//      //[...]can change its size in the main orientation of the wxBoxSizer -
-//      //where 0 stands for not changeable[...]
-      , 1
-      , //wxEXPAND |
-        //wxALL
-      //wxFIXED_MINSIZE //| wxLEFT | wxRIGHT
-      wxALIGN_CENTER_VERTICAL
-      , 0
-      );
-    p_wxsizer->Add(p_wxbuttonTest);
-    p_wxsizer->Layout();
-//    m_p_wxsizer->Add(p_wxbuttonTest);
-    m_p_wxsizer->Add(p_wxsizer);
-//    m_p_wxsizer->Add( p_wxlistbox
-//      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
-//      //[...]can change its size in the main orientation of the wxBoxSizer -
-//      //where 0 stands for not changeable[...]
-//      , 1
-//      , wxEXPAND |
-//      //wxFIXED_MINSIZE |
-//      wxALL
-//      , 0
-//      );
-    m_p_wxsizer->Add(
-      //p_wxlistctrl
-      m_p_translationruleslistctrl
-      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
-      //[...]can change its size in the main orientation of the wxBoxSizer -
-      //where 0 stands for not changeable[...]
-      , 1
-      , wxEXPAND |
-      //wxFIXED_MINSIZE |
-      wxALL
-      , 0
-      );
-    SetSizer(m_p_wxsizer);
-    Layout();
-    SetAutoLayout(true /*bool autoLayout*/);
+    Create(choices, arraySize);
   }
 
   ShowTranslationRulesDialog::~ShowTranslationRulesDialog()
@@ -159,6 +99,76 @@ namespace VTrans
       wxstr + getwxString( * p_std_str ) );
     m_p_wxsizer->Add(p_wxstatictext);
     m_std_vec_window.push_back(p_wxstatictext);
+  }
+
+  void ShowTranslationRulesDialog::Create(
+    wxString choices[],
+    int arraySize
+    )
+  {
+    m_p_translationruleslistctrl = new VTrans::TranslationRulesListCtrl(this,
+      translRuleList);
+    m_p_translationruleslistctrl->SetData(choices, arraySize);
+
+    m_p_wxsizer = new wxBoxSizer(wxVERTICAL);
+  //    wxComboBox * p_wxcombobox = new wxComboBox(this, wxID_ANY, "",
+  //      wxDefaultPosition, wxDefaultSize, arraySize, choices);
+  //    wxListBox * p_wxlistbox = new wxListBox(this, wxID_ANY,
+  //      wxDefaultPosition, wxDefaultSize, arraySize, choices,
+  //      wxLB_HSCROLL | wxLB_NEEDED_SB);
+  //    wxListCtrl * p_wxlistctrl = new wxListCtrl();
+    m_p_wxtextctrl = new wxTextCtrl(this, translRuleTextCtrl);
+    wxButton * p_wxbuttonTest = new wxButton( this, TestTranslRule,
+      wxT("test"));
+    p_wxbuttonTest->SetToolTip( wxT("test if rule applies to current parse "
+      "tree") );
+    wxBoxSizer * p_wxsizer = new wxBoxSizer(wxHORIZONTAL);
+  //    m_p_wxsizer->Add(
+    p_wxsizer->Add(
+  //      p_wxcombobox
+      m_p_wxtextctrl
+      //new wxText
+  ////      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
+  ////      //[...]can change its size in the main orientation of the wxBoxSizer -
+  ////      //where 0 stands for not changeable[...]
+  //      , 1
+  //      , wxEXPAND |
+  //        //wxALL
+  //      //wxFIXED_MINSIZE //| wxLEFT | wxRIGHT
+  //      wxALIGN_CENTER_VERTICAL
+  //      , 0
+      //from http://docs.wxwidgets.org/2.8/wx_sizeroverview.html#boxsizerprogramming
+      , wxSizerFlags(1)//.Expand()
+      );
+    p_wxsizer->Add(p_wxbuttonTest, 1);
+    p_wxsizer->Layout();
+  //    m_p_wxsizer->Add(p_wxbuttonTest);
+    m_p_wxsizer->Add(p_wxsizer);
+  //    m_p_wxsizer->Add( p_wxlistbox
+  //      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
+  //      //[...]can change its size in the main orientation of the wxBoxSizer -
+  //      //where 0 stands for not changeable[...]
+  //      , 1
+  //      , wxEXPAND |
+  //      //wxFIXED_MINSIZE |
+  //      wxALL
+  //      , 0
+  //      );
+    m_p_wxsizer->Add(
+      //p_wxlistctrl
+      m_p_translationruleslistctrl
+      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
+      //[...]can change its size in the main orientation of the wxBoxSizer -
+      //where 0 stands for not changeable[...]
+      , 1
+      , wxEXPAND |
+      //wxFIXED_MINSIZE |
+      wxALL
+      , 0
+      );
+    SetSizer(m_p_wxsizer);
+    Layout();
+    SetAutoLayout(true /*bool autoLayout*/);
   }
 
   void ShowTranslationRulesDialog::OnTestTranslRule(wxCommandEvent & evt)

@@ -18,8 +18,12 @@
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
-//avoid g++ error like "'class wxDC' has no member named 'DrawTextW'"
-#include <wx/msw/winundef.h>
+//GetwxString_inline(...)
+#include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
+#ifdef _WIN32
+  //avoid g++ error like "'class wxDC' has no member named 'DrawTextW'"
+  #include <wx/msw/winundef.h>
+#endif
 
 DrawParseTreeTraverser::DrawParseTreeTraverser(
   wxDC * p_wxdc ,
@@ -71,7 +75,8 @@ void DrawParseTreeTraverser::LeaveFound()
       m_p_grammarpart ;
   const std::string & std_strGrammarPartName = mp_parsebyrise->
     GetGrammarPartName(p_grammarpart->m_wGrammarPartID);
-  LOGN("DrawParseTreeTraverser::LeaveFound()--" << std_strGrammarPartName )
+  LOGN_DEBUG(//"DrawParseTreeTraverser::LeaveFound()--" <<
+    std_strGrammarPartName )
   wxString wxstrTokens ;
 //      wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
   wxsizeString = GetGrammarPartNameExtent( * mp_wxdc, p_grammarpart,
@@ -110,7 +115,7 @@ void DrawParseTreeTraverser::LeaveFound()
     //0
     yCoord
     ) ;
-  int yCoordBelow = yCoord + wxsizeString.GetHeight();
+//  int yCoordBelow = yCoord + wxsizeString.GetHeight();
 //  mp_wxdc->DrawLine(m_wCurrentParseTreeLeftEndInPixels, yCoordBelow,
 //    m_wCurrentParseTreeLeftEndInPixels + wTextWidthInPixels, yCoordBelow );
 //  wxstrGrammarPartName += wxString::Format( "%u",
@@ -159,7 +164,8 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   //if( m_bShowGrammarPartID )
   wxString wxstrGrammarPartID = wxString::Format( wxT("%u_") ,
     p_grammarpart->m_wGrammarPartID ) ;
-  wxstrGrammarPartName = wxstrGrammarPartID + wxString( r_stdstrGrammarPartName ) ;
+  wxstrGrammarPartName = wxstrGrammarPartID + //wxString( r_stdstrGrammarPartName ) ;
+    GetwxString_Inline(r_stdstrGrammarPartName);
   if( ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress )
   {
     //hex. addresses are easier to compare with values in debugger mode.
@@ -170,7 +176,7 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
       wxstrGrammarPartName += wxString::Format( wxT("%lu_") ,
         (DWORD) p_grammarpart ) ;
   }
-  wxstrGrammarPartName += wxString::Format( "%u",
+  wxstrGrammarPartName += wxString::Format( wxT("%u"),
     p_grammarpart->m_byPersonIndex ) ;
 
   wxSize wxsizeText = r_wxdc.GetTextExtent( wxstrGrammarPartName ) ;
@@ -188,7 +194,8 @@ wxSize DrawParseTreeTraverser::GetTokenExtent(
      GetBetweenAsStdString(
      mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
      p_pg->m_dwRightmostIndex ) ;
-  wxstr = wxString(r_stdstrTokens) ;
+  wxstr = //wxString(r_stdstrTokens) ;
+    GetwxString_Inline(r_stdstrTokens);
   wxSize wxsizeText = r_wxdc.GetTextExtent( wxstr ) ;
   return wxsizeText ;
 }

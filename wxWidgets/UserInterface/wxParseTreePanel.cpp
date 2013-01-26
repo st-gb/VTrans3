@@ -18,18 +18,22 @@
 #include <wx/dcclient.h> //for class wxPaintDC
 #include <Parse/ParseByRise.hpp> //for class GrammarPart
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
+//getwxString(...)
+#include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 
-//http://www.wxwidgets.org/docs/faqmsw.htm#asuffix:
-//"If you get errors like no matching function for call to
-//'wxDC::DrawTextA(const char[5], int, int)' or similar ones for the other
-//functions, i.e. the compiler error messages mention the function with the
-//'A' suffix while you didn't use it in your code, the explanation is that you
-//had included <windows.h> header which redefines many symbols to have such
-//suffix (or 'W' in the Unicode builds).
-//
-//The fix is to either not include <windows.h> at all or include
-//"wx/msw/winundef.h" immediately after it. "
-#include "wx/msw/winundef.h"
+#ifdef _WIN32 //32 and 64 bit Windows
+  //http://www.wxwidgets.org/docs/faqmsw.htm#asuffix:
+  //"If you get errors like no matching function for call to
+  //'wxDC::DrawTextA(const char[5], int, int)' or similar ones for the other
+  //functions, i.e. the compiler error messages mention the function with the
+  //'A' suffix while you didn't use it in your code, the explanation is that you
+  //had included <windows.h> header which redefines many symbols to have such
+  //suffix (or 'W' in the Unicode builds).
+  //
+  //The fix is to either not include <windows.h> at all or include
+  //"wx/msw/winundef.h" immediately after it. "
+  #include "wx/msw/winundef.h"
+#endif //#ifdef _WIN32 //32 and 64 bit Windows
 
 BEGIN_EVENT_TABLE(wxParseTreePanel, wxPanel)
   EVT_PAINT  (wxParseTreePanel::OnPaint)
@@ -90,7 +94,7 @@ void wxParseTreePanel::DrawGrammarPartName(
   if( p_pg )
   {
     DWORD dwXcoordinate ;
-    const std::string & r_stdstrGrammarPartName = //citer->second.
+    const std::string & r_std_strGrammarPartName = //citer->second.
       //m_stdstrGrammarPartName ;
       mp_parsebyrise->GetGrammarPartName( p_pg->m_wGrammarPartID ) ;
     std::map<WORD,DWORD>::const_iterator c_iter =
@@ -105,11 +109,13 @@ void wxParseTreePanel::DrawGrammarPartName(
     }
     else
       dwXcoordinate = 0 ;
+    const wxString & c_wxstrGrammarPartName = GetwxString_Inline(
+      r_std_strGrammarPartName);
     r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
-      r_stdstrGrammarPartName
-       , wxPoint( dwXcoordinate ,m_wParseLevel * 20) ) ;
+      c_wxstrGrammarPartName
+      , wxPoint( dwXcoordinate ,m_wParseLevel * 20) ) ;
 
-    wxSize wxsizeText = r_wxdc.GetTextExtent( wxString(r_stdstrGrammarPartName) ) ;
+    wxSize wxsizeText = r_wxdc.GetTextExtent( c_wxstrGrammarPartName ) ;
     dwXcoordinate += wxsizeText.x ;
     std::pair<std::map<WORD,DWORD>::iterator,bool> pair_iter_bool =
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.insert(
@@ -153,22 +159,24 @@ void wxParseTreePanel::DrawGrammarPartNameAndPossiblyToken(
     }
     else
       dwXcoordinate = 0 ;
-    wxString wxstrToDraw = wxString::Format(wxT("%u"),
-      p_pg->m_wGrammarPartID ) + r_stdstrGrammarPartName ;
+    const wxString & wxstrGrammarPartName = GetwxString_Inline(
+      r_stdstrGrammarPartName);
+    const wxString wxstrToDraw = wxString::Format(wxT("%u"),
+      p_pg->m_wGrammarPartID ) + wxstrGrammarPartName;
     r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
 //      r_stdstrGrammarPartName
       wxstrToDraw
        , wxPoint( dwXcoordinate ,m_wParseLevel * 20) ) ;
     if( mp_parsebyrise->GrammarPartIDIsWordClass(p_pg->m_wGrammarPartID) )
     {
-      std::string stdstrTokens = GetBetweenAsStdString(
+      const std::string & stdstrTokens = GetBetweenAsStdString(
           mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
           p_pg->m_dwRightmostIndex ) ;
       r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
-          stdstrTokens
-         , wxPoint( dwXcoordinate ,m_wParseLevel * 20 + 10 ) ) ;
+        GetwxString_Inline(stdstrTokens)
+       , wxPoint( dwXcoordinate ,m_wParseLevel * 20 + 10 ) ) ;
     }
-    wxSize wxsizeText = r_wxdc.GetTextExtent( wxString(r_stdstrGrammarPartName) ) ;
+    wxSize wxsizeText = r_wxdc.GetTextExtent( wxstrGrammarPartName ) ;
     dwXcoordinate += wxsizeText.x ;
     std::pair<std::map<WORD,DWORD>::iterator,bool> pair_iter_bool =
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.insert(
@@ -504,7 +512,7 @@ void wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
       wLeftTextEndInPixels = wMiddleBetweenLeftAndRightChild -
           ( wxsizeString.GetWidth() / 2 ) ;
 
-      wxstrGrammarPartName += wxString::Format( "%u",
+      wxstrGrammarPartName += wxString::Format( wxT("%u"),
         p_grammarpart->m_byPersonIndex ) ;
 
       r_wxdc.DrawText( wxstrGrammarPartName ,
@@ -740,7 +748,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
 //  wxSize wxsizeStringRightChild ;
 //  WORD wStringWidthLeftChild ;
 //  WORD wStringWidthRightChild ;
-  WORD wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens = 0 ;
+//  WORD wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens = 0 ;
 //  bool bRightChild = false ;
   m_stdmap_p_grammarpart2HorizCenter.clear() ;
 
@@ -777,7 +785,8 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
         const std::string & r_stdstrGrammarPartName = //citer->second.
           //m_stdstrGrammarPartName ;
           mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID ) ;
-        wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
+        wxString wxstrGrammarPartName( GetwxString_Inline(
+          r_stdstrGrammarPartName) ) ;
         wxsizeString = GetGrammarPartNameExtent( r_wxdc, p_grammarpart,
             wxstrGrammarPartName ) ;
         setStringWidthsOfCurrentParseTreePath.insert( wxsizeString.GetWidth()) ;
@@ -845,8 +854,9 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     {
       VTrans::string_type & r_vtrans_str =
         mp_parsebyrise->m_psv.at(dwLeftMostTokenIndex).m_Str ;
-      int tokenWidth = r_wxdc.GetTextExtent( r_vtrans_str ).GetWidth();
-      r_wxdc.DrawText( r_vtrans_str ,
+      const wxString & wxstrToken = GetwxString_Inline(r_vtrans_str);
+      int tokenWidth = r_wxdc.GetTextExtent( wxstrToken ).GetWidth();
+      r_wxdc.DrawText( wxstrToken ,
 //        wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens
         wCurrentParseTreeLeftEndInPixels, 0 ) ;
 //      wBeginOfCurrentLeftEndOfLeftmostTokenOfTreeCoveringMostTokens +=
@@ -1012,15 +1022,15 @@ void wxParseTreePanel::DrawGrammarPartToken(
     if( mp_parsebyrise->GrammarPartIDIsWordClass(p_pg->m_wGrammarPartID) )
     {
       const std::string & r_stdstrTokens = //citer->second.
-          GetBetweenAsStdString(
-          mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
-          p_pg->m_dwRightmostIndex
-          ) ;
+        GetBetweenAsStdString(
+        mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
+        p_pg->m_dwRightmostIndex
+        ) ;
+      const wxString & c_wxstrTokens = GetwxString_Inline( r_stdstrTokens);
       r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
-          r_stdstrTokens
+          c_wxstrTokens
          , wxPoint( dwXcoordinate ,m_wParseLevel * 20 ) ) ;
-      wxSize wxsizeText = r_wxdc.GetTextExtent( wxString(
-          r_stdstrTokens) ) ;
+      wxSize wxsizeText = r_wxdc.GetTextExtent( c_wxstrTokens ) ;
       dwXcoordinate += wxsizeText.x ;
       std::pair<std::map<WORD,DWORD>::iterator,bool> pair_iter_bool =
         m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.insert(
@@ -1053,7 +1063,8 @@ wxSize wxParseTreePanel::GetGrammarPartNameExtent(
   const std::string & r_stdstrGrammarPartName = //citer->second.
     //m_stdstrGrammarPartName ;
     mp_parsebyrise->GetGrammarPartName( p_pg->m_wGrammarPartID ) ;
-  wxstr = wxString( r_stdstrGrammarPartName ) ;
+  wxstr = //wxString( r_stdstrGrammarPartName ) ;
+    GetwxString_Inline(r_stdstrGrammarPartName);
   wxSize wxsizeText = r_wxdc.GetTextExtent( wxstr ) ;
   return wxsizeText ;
 }
@@ -1070,7 +1081,7 @@ wxSize wxParseTreePanel::GetTokenExtent(
      GetBetweenAsStdString(
      mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
      p_pg->m_dwRightmostIndex ) ;
-  wxstr = wxString(r_stdstrTokens) ;
+  wxstr = GetwxString_Inline(r_stdstrTokens) ;
   wxSize wxsizeText = r_wxdc.GetTextExtent( wxstr ) ;
   return wxsizeText ;
 }

@@ -2,11 +2,13 @@
 
 #include <string>
 #include <windef.h> //for BYTE etc.
+#include <set> //class std::set
 #include <Attributes/EnglishWord.hpp> //class EnglishAuxiliaryVerb etc.
 #include <Attributes/GermanWord.hpp> //class GermanAuxiliaryVerb etc.
+#include <Attributes/PositionString.hpp> //class PositionString
 #include <Attributes/Word.hpp>
 
-#include "LetterTree/VocabularyAndTranslation.hpp" //class EnglishWord
+#include "VocabularyAndTranslation.hpp" //class VocabularyAndTranslation
 
 #define NUMBER_OF_PERSONAL_PRONOUNS 7
 
@@ -16,7 +18,9 @@ class GermanWord;
 
   class IVocabularyInMainMem
   {
+    I_UserInterface * mp_userinterface;
   public:
+    typedef std::set<VocabularyAndTranslation *> voc_container_type;
     static std::string s_arstdstrPersonalPronoun [] ; //= {"hh", "j"} ;
     //Use the English_word_class enum in class EnglishWord instead
 //  //Because this is a translation for English->German the dictionary resp.
@@ -49,39 +53,97 @@ class GermanWord;
     , _3rd_person_plural
   } ;
 
+  IVocabularyInMainMem() ;
+  //Define virtual constructor to avoid g++ warning in subclasses like
+  //"`class EngNounsLetterTree' has virtual functions but non-virtual
+  //destructor"
+  virtual ~IVocabularyInMainMem() {}
+
+  virtual void AddVocabularyAttributes(
+    enum EnglishWord::English_word_class word_class,
+    void * p_v) = 0;
+  /** Delete all dictionary entries. */
+  virtual void clear() = 0;
+//  void createMapping();
     //Make methods pure virtual ("virtual [...] = 0" ) to avoid
     //linker error "LNK 2001" in MSVC++.
 //    virtual BYTE GetGermanArticle() = 0 ;
+  virtual /*void * */ std::set<VocabularyAndTranslation *> * find(
+    const PositionStringVector & psv,
+//      const PositionstdstringVector & psv,
+    DWORD & r_dwTokenIndex
+    ) = 0;
+
 //    virtual std::string GetGermanPlural() = 0 ;
 //    virtual WORD GetNumberOfNouns() = 0 ;
 //    virtual BYTE IsSingular() = 0 ;
 //    virtual BYTE GetTranslationType() = 0 ;
 //    virtual std::string GetGermanSingular() = 0 ;
     virtual void InsertPersonalPronouns() {} ;
-    //Define virtual constructor to avoid g++ warning in subclasses like
-    //"`class EngNounsLetterTree' has virtual functions but non-virtual
-    //destructor"
-    virtual ~IVocabularyInMainMem() {}
     virtual void InsertPersonalPronounsObjectiveForm() {}
-    IVocabularyInMainMem() ;
 //    virtual void NextNoun() = 0 ;
     void InsertAuxiliaryVerbBe();
     void InsertAuxiliaryVerbHave();
     void InsertAuxiliaryVerbWill();
     void InsertFundamentalWords() ;
-    //For inserting fundamental words etc.
+    virtual /*void*/ VocabularyAndTranslation * Insert(
+      const char * wordBegin, int numChars, //void * p_v
+      enum EnglishWord::English_word_class, void *) = 0;// { };
+    /** For inserting fundamental words etc. */
     virtual //void
-//      void *
-      VocabularyAndTranslation *
-      Insert(const std::string & stdstr, BYTE byWordClass )
+      void /* * */ /*VocabularyAndTranslation * */
+      Insert(const std::string & stdstrWord,
+        enum EnglishWord::English_word_class word_class, void * p_v)
+    {
       //If not "= 0 ":
       //"undefined reference to `vtable for IVocabularyInMainMem'" when linking
       //with g++ .
-      = 0 ;
+      Insert(stdstrWord.c_str(), stdstrWord.length(), word_class, p_v );
+    }
+    /**For inserting objects of subclasses of "EnglishWord" and "GermanWord".*/
     virtual void
       //void *
       Insert(EnglishWord & ew , GermanWord & gw, //void * p_v
         VocabularyAndTranslation * p_vocabularyandtranslation
         ) = 0 ;
-    virtual void Insert(const char *, unsigned ui, void * p_v) { };
+    /** Inserts the string as a key value to the container and adds the string
+     *  as an attribute value.*/
+    virtual void InsertAsKeyAndHandleVocabularyAttributes(
+      const char * ar_chWordBegin,
+      unsigned stringLen,
+      enum EnglishWord::English_word_class word_class
+      ) {};
+    /** Inserts the string as a key value to the container and adds the string
+     *  as an attribute value.*/
+    virtual /*void*/ VocabularyAndTranslation *
+    InsertAsKeyAndAddVocabularyAttributes(
+      const char * ar_chWordBegin,
+      unsigned stringLen,
+      enum EnglishWord::English_word_class word_class
+      )
+    {
+      /*void * p_v =*/ return Insert(ar_chWordBegin, stringLen, word_class, NULL);
+//      AddVocabularyAttributes( word_class, p_v);
+    }
+    /** Save memory be referring to existing voc attributes. */
+    virtual /*void*/ VocabularyAndTranslation * InsertAsKeyAndReferToExistingVocData(
+      enum EnglishWord::English_word_class word_class,
+      const char * ar_chWordBegin,
+      unsigned stringLen,
+      const VocabularyAndTranslation * const p_vocandtranslAllocated
+      )
+    {
+      VocabularyAndTranslation * p_vocandtransl =
+        Insert(ar_chWordBegin, stringLen, word_class, NULL);
+      if( p_vocandtransl )
+      {
+        p_vocandtransl->PointToAttributeData(p_vocandtranslAllocated);
+        p_vocandtransl->m_byType = word_class;
+      }
+      return p_vocandtransl;
+    };
+    void SetUserInterface( I_UserInterface * p_userinterface )
+    {
+      mp_userinterface = p_userinterface ;
+    }
   };

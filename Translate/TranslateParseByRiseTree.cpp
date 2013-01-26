@@ -20,7 +20,7 @@
 //class ParseTreeTraverser::TranslatedTreeTraverser
 #include <Translate/TranslatedTreeTraverser.hpp>
 //class VocabularyAndTranslation
-#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
+#include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 #include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
 //class SAX2TranslationRuleHandler
 #include <Xerces/SAX2TranslationRuleHandler.hpp>

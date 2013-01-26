@@ -49,7 +49,7 @@ bool EnglishAuxiliaryVerb::GetNextString( std::string & r_stdstr )
   return bSucc ;
 }
 
-BYTE EnglishAuxiliaryVerb::GetWordClass()
+/*BYTE*/ EnglishWord::English_word_class EnglishAuxiliaryVerb::GetWordClass()
 {
   return auxiliary_verb ;
 }

@@ -246,7 +246,8 @@ public:
     WORD wSuperordinateGrammarRuleID ) ;
 
   void InsertGrammarPartForEverySameWord(
-    const LetterNode * p_letternode,
+//    const LetterNode * p_letternode,
+    std::set<VocabularyAndTranslation *> * std_set_p_vocabularyandtranslation,
     DWORD dwTokenIndex, DWORD dwTokenIndexRightMost);
   void InsertGrammarRulesFor3rdPersonSingular() ;
   void InsertGrammarPartID2NameMappingForWordClasses() ;

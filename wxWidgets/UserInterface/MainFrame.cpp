@@ -18,7 +18,15 @@
 #endif
 
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
+
+//DISable warning, from
+//http://stackoverflow.com/questions/59670/how-to-get-rid-of-deprecated-conversion-from-string-constant-to-char-warning
+// : "I believe passing -Wno-write-strings to gcc will suppress this warning."
+#pragma GCC diagnostic ignored "-Wwrite-strings"
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
+//ENable warning
+#pragma GCC diagnostic warning "-Wwrite-strings"
+
 #include <wxWidgets/UserInterface/MainFrame.hpp> //class MainFrame
 #include <wxWidgets/UserInterface/wxParseTreePanel.hpp> //class wxParseTreePanel
 #include <wxWidgets/user_interface_control_actions.h> //for enum

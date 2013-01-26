@@ -42,32 +42,38 @@ LetterNode::~LetterNode()
   free(m_arpletternode1LevelLower) ;
   if( m_psetpvocabularyandtranslation )
   {
+    VocabularyAndTranslation * p_c_vocabularyandtranslation;
     for(std::set<VocabularyAndTranslation *>::iterator 
-      isetpvocabularyandtranslation = 
+      iter_p_vocabularyandtranslation =
       m_psetpvocabularyandtranslation->begin() ; 
-      isetpvocabularyandtranslation !=
+      iter_p_vocabularyandtranslation !=
       m_psetpvocabularyandtranslation->end() ; 
-      ++ isetpvocabularyandtranslation )
+      ++ iter_p_vocabularyandtranslation )
   #ifdef _DEBUG_FREEING_MEM
     {
   #endif
+      p_c_vocabularyandtranslation = * iter_p_vocabularyandtranslation;
       //1 and the same vocandtrans must not be deleted twice!
       //(more than 1 letter node may contain the same
       //vocandtrans in its set.)
-      if(NotDeletedYet(*isetpvocabularyandtranslation) )
+      if( NotDeletedYet( p_c_vocabularyandtranslation) )
       {
-        //Memorize the immedialtely deleted address of vocandtrans 
+        //Memorize the immediately deleted address of vocandtrans
         //because more than 1 letter node may contain the same
         //vocandtrans in its set.
         m_psetpvocabularyandtranslationDeletedYet->insert(
-          *isetpvocabularyandtranslation ) ;
+          p_c_vocabularyandtranslation ) ;
         TRACE("will free vocabularyandtranslation mem at \"%x\" immediately\n",
-          *isetpvocabularyandtranslation) ;
-        delete *isetpvocabularyandtranslation ;
+          p_c_vocabularyandtranslation) ;
+        //TODO the VocAndTransl object must not be created on the heap, else:
+        //letter node 1 deletes the Voc and transl obj while letternode 2 still
+        //refers to it an afterwards will try to delete the already deleted
+        //VocAndTrans. obj.
+        delete p_c_vocabularyandtranslation ;
       }
       else
         TRACE("~LetterNode()--alreaded deleted vocabularyandtranslation at "
-          "\"%x\"\n", * isetpvocabularyandtranslation) ;
+          "\"%x\"\n", p_c_vocabularyandtranslation) ;
   #ifdef _DEBUG_FREEING_MEM
     }
   #endif

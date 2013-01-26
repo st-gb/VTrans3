@@ -87,6 +87,7 @@
 #pragma GCC diagnostic warning "-Wwrite-strings"
 
 #include <Controller/character_string/convertFromAndToStdString.hpp>
+
 #include <Translate/TranslateTreeTraverser.hpp> //TranslationAndGrammarPart
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
@@ -536,7 +537,7 @@ void wxTextInputDlg::AddTruncateLogFileButton( wxSizer * p_sizer )
   //    , wxT("t")
     , wxBitmap( truncate_log_file_xpm)
     ) ;
-  mp_wxbutton->SetToolTip( wxT("translate")) ;
+  mp_wxbutton->SetToolTip( wxT("truncate log file to size 0")) ;
   p_sizer->Add(
     mp_wxbutton
     , 0 //strech factor. 0=do not stretch
@@ -801,7 +802,8 @@ void wxTextInputDlg::GetEntireInputText(std::string & r_stdstrInputText)
 //  wxstringWholeInputText = mp_textctrlEnglishText->GetRange(0 ,
 //    wxtextposNumberOfCharacters) ;
   wxstringWholeInputText = mp_textctrlEnglishText->GetValue() ;
-  r_stdstrInputText = std::string( wxstringWholeInputText.c_str() ) ;
+  r_stdstrInputText = //std::string( wxstringWholeInputText.c_str() ) ;
+    GetStdString(wxstringWholeInputText);
 //  return stdstrInputText ;
 }
 
@@ -811,7 +813,7 @@ void wxTextInputDlg::OnAddGrammarRules( wxCommandEvent & wxcmd )
   SAX2GrammarRuleHandler sax2grammarrulehandler(
     wxGetApp().m_parsebyrise
     ) ;
-  wxString wxstrTitle("Choose at least 1 grammar rule file") ;
+  wxString wxstrTitle( wxT("Choose at least 1 grammar rule file") ) ;
   wxGetApp().ProcessSelectedXMLfiles(
     sax2grammarrulehandler ,
     wxstrTitle,
@@ -1040,18 +1042,18 @@ void wxTextInputDlg::OnShowTranslationRulesButton( wxCommandEvent & wxcmd )
 //      r_translationrule.mp_parsebyrise->Get
     wxstrSyntaxTreePath = getwxString( c_p_translationrule->
       m_syntaxtreepathCompareWithCurrentPath.GetAs_std_string() );
-    wxstr += wxT("\n") + wxstrSyntaxTreePath;
+//    wxstr += wxT("\n") + wxstrSyntaxTreePath;
     choices[ arrayIndex] = wxstrSyntaxTreePath;
     const ConditionsAndTranslation conditionsandtranslation = c_iter->second;
     std::vector<Condition>::const_iterator conditions_iter =
       conditionsandtranslation.m_conditions.begin();
-    while( conditions_iter != conditionsandtranslation.m_conditions.end() )
-    {
-      wxstr += conditions_iter->m_syntaxtreepath.GetAs_std_string() + " WHERE "
-        + conditions_iter->m_stdstrAttributeName + "=" +
-        convertToStdString<WORD>(conditions_iter->m_byAttributeValue);
-      ++ conditions_iter;
-    }
+//    while( conditions_iter != conditionsandtranslation.m_conditions.end() )
+//    {
+//      wxstr += conditions_iter->m_syntaxtreepath.GetAs_std_string() + wxT(" WHERE ")
+//        + conditions_iter->m_stdstrAttributeName + "=" +
+//        convertToStdString<WORD>(conditions_iter->m_byAttributeValue);
+//      ++ conditions_iter;
+//    }
     ++ c_iter;
     ++ arrayIndex;
   }

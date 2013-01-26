@@ -11,6 +11,7 @@
 #include <set>//class std::set
 #include <vector>//class std::vector
 #include <string>//class std::string
+#include <windef.h> //WORD
 
 class TranslationAndConsecutiveID ;
 class TranslationAndGrammarPart ;

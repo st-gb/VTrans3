@@ -27,8 +27,8 @@
 //Static variables need also to be defined in 1 source file.
 I_UserInterface * SyntaxTreePath::sp_userinterface ;
 I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
-//LetterTree VTransApp::s_lettertree ;
-LetterTree TranslationControllerBase::s_lettertree ;
+//LetterTree VTransApp::s_dictionary ;
+/*LetterTree*/dictionary_type TranslationControllerBase::s_dictionary ;
 
 //#if defined __cplusplus
 //extern "C" {
@@ -67,7 +67,7 @@ TranslationControllerBase::TranslationControllerBase()
     )
 {
 //  m_nodetrie_ui32GrammarPartName2colour.Create(256);
-  OneLinePerWordPair::s_p_userinterface = this;
+//  OneLinePerWordPair::s_p_userinterface = this;
 
   std::string std_str = "makeFemale";
   ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
@@ -86,7 +86,7 @@ TranslationControllerBase::TranslationControllerBase()
 TranslationControllerBase::~TranslationControllerBase()
 {
   // TODO Auto-generated destructor stub
-  s_lettertree.DeleteCompleteList();
+  s_dictionary.clear(); //DeleteCompleteList();
 }
 
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
@@ -107,8 +107,8 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 //    ) ;
   VocabularyAndTranslation::s_p_userinterface = this;
   SyntaxTreePath::sp_userinterface = this ;
-  s_lettertree.mp_userinterface = this;
-  s_lettertree.InsertFundamentalWords() ;
+  s_dictionary.SetUserInterface(this);
+  s_dictionary.InsertFundamentalWords() ;
   ReadMainConfigFile(cr_stdstrFilePath) ;
   m_std_strMainConfigFilePath = cr_stdstrFilePath;
   if( m_stdstrVocabularyFilePath.empty() )
@@ -119,25 +119,40 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   }
   else
   {
-    OneLinePerWordPair::s_p_lettertree = & s_lettertree ;
-    TUchemnitzDictionaryReader::s_p_lettertree = & s_lettertree ;
-    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
-         //stdstrFilePath
-          m_stdstrVocabularyFilePath
-        )
-      )
-    {
-//        CreateAndShowMainWindow() ;
-      //Return true to continue to run the (main loop of ) this program.
-//        return true ;
-    }
-    else
-    {
-      LoadingVocabularyFileFailed(m_stdstrVocabularyFilePath);
-      return TranslationControllerBaseClass::InitFunction::
-        loadingVocabularyFileFailed;
-    }
+//    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
+    TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
+//    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
+//         //stdstrFilePath
+//          m_stdstrVocabularyFilePath
+//        )
+//      )
+//    {
+////        CreateAndShowMainWindow() ;
+//      //Return true to continue to run the (main loop of ) this program.
+////        return true ;
+//    }
+    TUchemnitzDictionaryReader tcdr(* this  );
+
+//    if( b)
+//    {
+//
+//    }
+//    else
+//    {
+//      LoadingVocabularyFileFailed(m_stdstrVocabularyFilePath);
+//      return TranslationControllerBaseClass::InitFunction::
+//        loadingVocabularyFileFailed;
+//    }
     CreateAndShowMainWindow() ;
+#ifndef COMPILE_AS_EXECUTABLE
+//    StartTimer();
+    bool b = TUchemnitzDictionaryReader::extractVocables(
+      m_stdstrVocabularyFilePath.c_str() );
+    LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
+    if( ! b )
+      return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
+#endif //#ifndef COMPILE_AS_EXECUTABLE
+////    StartTimer();
   }
   return TranslationControllerBaseClass::InitFunction::success;
 }

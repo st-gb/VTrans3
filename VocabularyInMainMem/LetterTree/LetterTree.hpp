@@ -39,7 +39,8 @@
   //#include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
   #include "VocabularyAndTranslation.hpp"
   #include "LetterNode.hpp"
-  #include "../IVocabularyInMainMem.hpp"
+//  #include "../IVocabularyInMainMem.hpp"
+  #include "../CharMappedDictionary.hpp" //base class CharMappedDictionary
   #include "../I_WordSearch.hpp" //LetterTree's base class
 #ifndef _MSC_VER
   //#include <TRACE.h>
@@ -83,28 +84,9 @@
 //    NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN ,
 //    NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB } ;
 
-  #define MAPPING_ARRAY_SIZE 255
-
-  namespace ASCIIcodepage850
-  {
-    //values from de.wikipedia.org/wiki/Codepage_850
-    enum ASCIIcodepage850_chars
-    {
-      //"è" as in "Apr_è_s Ski";
-      egrave = 0x8A,
-      auml = 228, //"ae" (falls wieder anderer Zeichensatz)
-      ouml = 246, //"oe" (falls wieder anderer Zeichensatz)
-      uuml = 252, //"ue" (falls wieder anderer Zeichensatz)
-      Auml = 196, //"Ae" (falls wieder anderer Zeichensatz)
-      Ouml = 214, //"Oe" (falls wieder anderer Zeichensatz)
-      Uuml = 220, //"Ue" (falls wieder anderer Zeichensatz)
-      szlig = 223 //"sz" (falls wieder anderer Zeichensatz)
-    };
-  }
-
   class LetterTree
     : public I_WordSearch
-    , public IVocabularyInMainMem
+    , public /*IVocabularyInMainMem*/ VTrans::CharMappedDictionary
   {
   private:
     //needed for HandleVocabularyAndTranslationPointerInsertion()
@@ -113,11 +95,9 @@
     //TODO relevant member data?
 //    std::vector<CHAR> m_vecch ;
 
-    BYTE m_byArrayIndexRespSize ;
     std::set<VocabularyAndTranslation *>::const_iterator 
       p_stdsetp_vocabularyandtranslation_const_iter ;
   public:
-    I_UserInterface * mp_userinterface ;
     //For access to the last inserted VocabularyAndTranslation pointer for
     //OneLinePerWordPair::extract(...)
     static VocabularyAndTranslation * s_pvocabularyandtranslation ;
@@ -129,11 +109,9 @@
     BYTE m_pbyMappingTableFromCharacterToLetterNodePointerArrayIndex[
       VALUES_RANGE_FOR_SINGLE_CHARACTER_OF_NAME ] ;
 
-    //BYTE * m_arbyCharValueToArrayIndex ;
-    BYTE m_arbyCharValueToArrayIndex[MAPPING_ARRAY_SIZE] ;
-
     std::set<VocabularyAndTranslation *>
       m_setpvocabularyandtranslationDeletedYet ;
+    std::set<LetterNode *> m_std_set_p_letternodeLastStringChar;
     //void mappingToArray()
     //{
     //  m_arbyCharValueToArrayIndex = new BYTE[m_vecch.size() ] ;
@@ -142,15 +120,6 @@
     //    for(BYTE byIndex = 0 ; byIndex < nSize ; ++ byIndex ) ;
     //      m_arbyCharValueToArrayIndex[ byIndex ] = m_vecch[ byIndex ] ;
     //}
-
-    void addToCharValueToArrayIndexMapping(//CHAR
-      BYTE ch)
-    {
-      //m_vecch.push_back(ch);
-      //Sanity check.
-      if(ch < 255 )
-        m_arbyCharValueToArrayIndex[ch] = m_byArrayIndexRespSize ++ ;
-    }
 
   //void 
     //0=failure (no vocable with the string found)
@@ -177,22 +146,23 @@
       , Word ** p_wordGerman
       ) ;
 
-    void addToCharValueToArrayIndexMapping(//CHAR
-      BYTE chFrom, //CHAR
-      BYTE chTo )
+    void InsertIntoTrieAndReferToExistingVocData(
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar,
+      BYTE byVocType,
+      const char * const c_strInsertVocAndTranslObjAt,
+      int & nLengthOr1stError
+      );
+    void InsertAndReferToExistingVocData(
+      BYTE byVocType,
+      const char * const c_strInsertVocAndTranslObjAt,
+      int & nLengthOr1stError
+      )
     {
-      for(//CHAR
-        BYTE chIndex = chFrom ; chIndex <= chTo ; ++ chIndex )
-        //m_vecch.push_back(ch);
-        //Sanity check.
-        if(chIndex < 255 )
-          m_arbyCharValueToArrayIndex[chIndex] = m_byArrayIndexRespSize ++ ;
+      InsertIntoTrieAndReferToExistingVocData(
+        m_std_set_p_letternodeLastStringChar,
+        byVocType,
+        c_strInsertVocAndTranslObjAt, nLengthOr1stError);
     }
-
-    //The sense of mapping is to allow the array of the direct child of a
-    //node to be have less than 255 elements.
-    void createMapping() ;
-
     void InsertIntoTrieAndReferToExistingVocData(
       std::set<LetterNode *> & stdsetpletternodeLastStringChar,
       BYTE byVocType, const std::string & c_r_std_strInsertVocAndTranslObjAt);
@@ -244,22 +214,16 @@
 
     LetterTree(//I_UserInterface * p_userinterface
       )
-      //Initializations .
-      : m_byArrayIndexRespSize(0)
     {
-      //createMapping() must be called first because it sets / determines the
-      //the mapping array size.
-      createMapping() ;
       //mp_userinterface = p_userinterface ;
       m_pletternodeRoot = new LetterNode(m_byArrayIndexRespSize, this) ;
     }
 
     ~LetterTree() ;
 
-    void SetUserInterface( I_UserInterface * p_userinterface )
-    {
-      mp_userinterface = p_userinterface ;
-    }
+    void AddVocabularyAttributes(
+      enum EnglishWord::English_word_class word_class,
+      void * p_v);
 
     void DeleteCompleteList() ;
 
@@ -278,6 +242,10 @@
 //      bool bInsertNewVocabularyAndTranslation,
 //      LetterNode * & rp_letternodeLastForInsertedWord
 //      ,BYTE byVocabularyType
+      ) ;
+    LetterNode * insert(
+      const char * pchWordBegin,
+      int & length //,
       ) ;
 
     //void
@@ -336,6 +304,16 @@
     , BYTE byVocabularyType
     ) ;
     void Insert3rdPersonSingularPresentReferringVerbAttributes(
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+      //"const" because: The infinitive should not be modified because it may
+      //be needed afterwards.
+      , const char * const
+      , int strLen
+      , BYTE byNumberOfObjectsAllowed
+      );
+    void Insert3rdPersonSingularPresentReferringVerbAttributes(
        //This set is to ensure that if strings for the SAME vocabulary
        // not 2 or more VocAndTransl object should be inserted.
        std::set<LetterNode *> & stdsetpletternodeLastStringChar
@@ -344,6 +322,28 @@
        , const std::string & r_stdstrInfinitive
        , BYTE byNumberOfObjectsAllowed
        ) ;
+    void InsertAsKeyAndHandleVocabularyAttributes(
+      const char * ar_chWordBegin,
+      unsigned stringLen,
+      enum EnglishWord::English_word_class word_class
+      )
+    {
+      std::set<LetterNode *> std_setpletternodeLastStringChar;
+      bool bInsertNewVocabularyAndTranslation = true;
+      //This set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+    //  int stringLen = nIndexOfCurrentChar - nCharIndexOf1stWordChar;
+      LetterNode * p_ln = InsertIntoTrieAndHandleVocabularyAndTranslation(
+        std_setpletternodeLastStringChar
+        , bInsertNewVocabularyAndTranslation//
+        , //byVocabularyType
+        word_class //EnglishWord::adjective_positiveForm
+        , //strCurrentWordData
+          ar_chWordBegin
+        , (int &) stringLen
+    //      , nCharIndexOf1stWordChar
+        );
+    }
   //static //inline
     void InsertIntoTrieAndHandleVocabularyAndTranslation(
       //this set is to ensure that if strings for the SAME vocabulary
@@ -356,6 +356,18 @@
     , const std::string & str
     , int nLength
     , int nIndexOf1stChar
+    ) ;
+    /*LetterNode * */ VocabularyAndTranslation *
+    InsertIntoTrieAndHandleVocabularyAndTranslation(
+      //this set is to ensure that if strings for the SAME vocabulary
+      // not 2 or more VocAndTransl object should be inserted.
+      std::set<LetterNode *> & stdsetpletternodeLastStringChar
+    //, LetterNode * pletternodeCurrent
+    //, VocabularyAndTranslation * pvocabularyandtranslation
+    , bool & bInsertNewVocabularyAndTranslation
+    , BYTE byVocabularyType
+    , const char *
+    , int & nLengthOr1stError
     ) ;
     LetterNode * InsertIntoTrieAndHandleVocabularyAndTranslation(
       //this set is to ensure that if strings for the SAME vocabulary

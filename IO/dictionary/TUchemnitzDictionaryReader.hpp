@@ -10,11 +10,15 @@
 
 #include <data_structures/Trie/NodeTrie/NodeTrie.hpp>
 #include <Attributes/EnglishWord.hpp> //class EnglishWord
+#include <set> //class std::set
 
 //fwd decl.
-class LetterTree;
+//class LetterNode;
+//class LetterTree;
 class I_UserInterface;
 class EnglishWord;
+class IVocabularyInMainMem;
+class VocabularyAndTranslation;
 //class EnglishWord
 //{
 //  enum English_word_class;
@@ -40,10 +44,11 @@ public:
   : m_charIndexOfBegin(isNotSet)
     , m_charIndexOfEnd(isNotSet)
   {}
-  bool BeginIsNotSet() { return m_charIndexOfBegin == isNotSet; }
-  bool EndIsNotSet() { return m_charIndexOfEnd == isNotSet; }
-  bool BeginIsSet() { return ! BeginIsNotSet(); }
-  bool EndIsSet() { return ! EndIsNotSet(); }
+  bool BeginIsNotSet() const { return m_charIndexOfBegin == isNotSet; }
+  bool EndIsNotSet() const { return m_charIndexOfEnd == isNotSet; }
+  bool BeginIsSet() const { return ! BeginIsNotSet(); }
+  bool EndIsSet() const { return ! EndIsNotSet(); }
+  int GetStringLength() const { return m_charIndexOfEnd - m_charIndexOfBegin; }
   void Reset()
   {
     m_charIndexOfBegin = isNotSet;
@@ -53,53 +58,129 @@ public:
 
 class TUchemnitzDictionaryReader
 {
+  //German entry:
+  //"arbeiten {vi} (an) | arbeitend | gearbeitet | arbeitet | arbeitete ::"
+  enum GermanVerbArrayIndices { Infinitive = 0,
+    Progressive, PastParticiple,
+    ThirdPersSingPres, ThirdPersSingPast };
+  enum NounArrayIndices { Singular = 0, Plural };
   unsigned m_dictionaryFileLineNumber;
   typedef void (* extractVocable )(//char *
 //    const std::string &
     const char * array, unsigned numChars, unsigned charIndex,
     const unsigned pipeCount );
+public:
   typedef void (* insertVocable )(//char *
 //    const std::string &
     const char * array,
     const WordData englishWords[10], const WordData germanWords[10]);
-public:
   TUchemnitzDictionaryReader(I_UserInterface &);
 
   /** static-> no need to (implicitly) pass an object pointer */
   static void read();
   static NodeTrie<insertVocable> s_nodetrieWordKind;
-  static LetterTree * s_p_lettertree;
+//  static LetterTree * s_p_lettertree;
+  static IVocabularyInMainMem * s_p_vocinmainmem;
   static I_UserInterface * s_p_i_userinterface;
 
   static void extractSingleEntry(const char * array, unsigned numChars
     //const std::string &
     );
-  static void extractVocables(const char * filePath);
+  static bool extractVocables(const char * filePath);
 
-  static void Insert1stEnglishWord(
+  static /*LetterNode * */ VocabularyAndTranslation * Insert1stEnglishWord(
+//    std::set<LetterNode *> & std_setpletternodeLastStringChar,
 //    const std::string & strCurrentWordData,
     const char * array,
-    unsigned firstWordChar,
-    unsigned nIndexOfCurrentChar,
+//    unsigned firstWordChar,
+//    unsigned nIndexOfCurrentChar,
+    unsigned stringLen,
     enum EnglishWord::English_word_class word_class);
 
-  static void Insert1stGermanWord(
+  static void InsertEnglishWord(
+    const char * const arrayWordBegin,
+    unsigned arrayIndex,
+    unsigned stringLen,
+    const VocabularyAndTranslation * const
+      p_vocabularyandtranslation
+    );
+  static void InsertGermanWord(
 //    const std::string & strCurrentWordData,
-    const char * array,
-    unsigned nCharIndexOf1stWordChar,
-    unsigned nIndexOfCurrentChar);
-
+    const char * const arrayWordBegin,
+    unsigned arrayIndex,
+//    unsigned nCharIndexOf1stWordChar,
+    unsigned stringLen
+//    unsigned nIndexOfCurrentChar
+    , VocabularyAndTranslation * p_vocandtransl
+    );
+  static void InsertEnglishWord(
+    const char * ar_ch,
+    const WordData & germanWord,
+    unsigned vocAndTranslArrayIndex,
+    const VocabularyAndTranslation * const
+      p_vocabularyandtranslation
+    );
+  static void InsertGermanWord(
+    const char * ar_ch,
+    const WordData & germanWord,
+    unsigned vocAndTranslArrayIndex,
+    VocabularyAndTranslation * p_vocandtransl
+    );
   static void InsertAdverb(
     const char * array,
     const WordData englishWords[10], const WordData germanWords[10]);
   static void InsertAdverb(//const char * array
     const char * ar_ch, unsigned numChars,
     unsigned charIndex, const unsigned germanPipeCount);
-
   static void InsertAdjective(
 //    const std::string & strCurrentWordData,
     const char * array,
     const WordData englishWords[10], const WordData germanWords[10]);
+  static void InsertFeminineNoun(
+    const char * ar_ch,
+    const WordData englishWords[10], const WordData germanWords[10]);
+  static void InsertMasculineNoun(
+    const char * ar_ch,
+    const WordData englishWords[10], const WordData germanWords[10]);
+  static void InsertNeutralNoun(
+    const char * ar_ch,
+    const WordData englishWords[10], const WordData germanWords[10]);
+  static /*void*/ VocabularyAndTranslation * InsertNoun(
+    const char * ar_ch,
+    const WordData englishWords[10], const WordData germanWords[10]);
+  static void InsertFiniteGermanVerbForms(
+    const char * ar_ch, const WordData germanWords[],
+    VocabularyAndTranslation * p_vocandtransl);
+  static void InsertIntransitiveVerb(
+    const char * ar_ch,
+    const WordData englishWords[10], const WordData germanWords[10]);
+  inline static void InsertGermanVerbWords(
+    const char * const ar_ch, const WordData germanWords[10],
+    VocabularyAndTranslation * p_vocandtransl);
+  inline static void InsertEnglishVerbWords(
+//    std::set<LetterNode *> & std_setpletternodeLastStringChar,
+//    std::set<std::string> & std_setVocableWords,
+    const char * ar_ch,
+    const WordData englishWords[10],
+    enum EnglishWord::English_word_class english_word_class
+    , const VocabularyAndTranslation * const p_vocandtranslAllocated);
+  static void InsertVerb(
+    const char * ar_ch,
+    const WordData englishWords[10], const WordData germanWords[10],
+    enum EnglishWord::English_word_class english_word_class);
+  static void InsertTransitiveVerb(
+    const char * ar_ch,
+    const WordData englishWords[10], const WordData germanWords[10]);
+  static void InsertAndReferToExistingVocData(
+//    std::set<LetterNode *> & std_setpletternodeLastStringChar,
+//    std::set<std::string> & std_setVocableWords,
+    const char * ar_ch,
+    enum EnglishWord::English_word_class word_class,
+//    unsigned vocAndTranslArrayIndex,
+    const WordData & englishWord,
+    const VocabularyAndTranslation * const p_vocandtranslAllocated
+    );
+
   static void ExtractVocables(const char * array, unsigned numChars,
 //    const std::string &
     unsigned charIndex, const unsigned pipeCount,
