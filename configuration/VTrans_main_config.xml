@@ -4,7 +4,8 @@
  <grammar_part name="singular_noun" colour="0xFF0000"/>
  <grammar_part name="plural_noun" colour="0x0000FF"/>
 
- <vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" />
+ <!--vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" /-->
+ <vocabulary_file path="de-en.txt" />
  
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/Vocabulary_attribute_definitions.xml" />
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/0objVerbFiniteVerbforms_attribute_definitions.xml" />

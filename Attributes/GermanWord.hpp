@@ -79,9 +79,11 @@ public:
 #define DIE '2'
 #define DAS '3'
 #define PLURAL 4
-class GermanNoun:public Word
+
+class GermanNoun: public Word
 {
 public:
+  enum german_article { der = 0, die, das};
   VTrans::string_type m_strSingular;
   VTrans::string_type m_strPlural;
   BYTE m_bArticle;
@@ -122,6 +124,27 @@ class GermanVerb
 //  public GermanWord
 {
 public:
+  static const char * const presentPersonEndings [];
+  static const char * const pastPersonEndings [];
+
+  enum person_indices { firstPersonSing = 0, secondPersonSing, thirdPersonSing,
+    firstPersonPlur = 0, secondPersonPlur, thirdPersonPlur, beyondLastPerson };
+  enum german_verb_array_indices{
+    arrayIndexForInfinitive = 0,
+    arrayIndexFor1stPersSingPres,
+    arrayIndexFor2ndPersSingPres,
+    arrayIndexFor3rdPersSingPres,
+    arrayIndexFor1stPersPlurPres,
+    arrayIndexFor2ndPersPlurPres,
+    arrayIndexFor3rdPersPlurPres,
+    arrayIndexFor1stPersSingPast,
+    arrayIndexFor2ndPersSingPast,
+    arrayIndexFor3rdPersSingPast,
+    arrayIndexFor1stPersPlurPast,
+    arrayIndexFor2ndPersPlurPast,
+    arrayIndexFor3rdPersPlurPast,
+    arrayIndexForPastParticiple
+    };
   enum e_case {
     nominative = 1
     , genitive
@@ -153,6 +176,35 @@ public:
     m_bAuxiliaryVerb = FALSE;
     m_bReflexive = FALSE;
     m_bIntegral = FALSE;
+  }
+  static void GetWortstamm(
+    const char * wordBegin,
+    //const WordData & germanWord
+    int len
+    , std::string & std_strWortstamm)
+  {
+    unsigned minus;
+    if( len > 2 && *(wordBegin + len - 3) == 't' ) //arbeiTen -> arbeite ST
+      minus = 1;
+    else
+      minus = 2;
+    std_strWortstamm = std::string(wordBegin //+ germanWord.m_charIndexOfBegin,
+      , //germanWord.GetStringLength()
+      len - minus);
+  }
+  static std::string GetPresentFiniteForm(const std::string & wortStamm,
+    enum person_indices person_index)
+  {
+//    if( wortStamm.substr(wortStamm.length() - 1, 1) == "h" )
+
+    return wortStamm + presentPersonEndings[person_index];
+  }
+  static std::string GetPastFiniteForm(//const std::string & wortStamm,
+    const char * const prefix, int len,
+    enum person_indices person_index)
+  {
+    const std::string wortStamm(prefix, len);
+    return wortStamm + pastPersonEndings[person_index];
   }
 };
 

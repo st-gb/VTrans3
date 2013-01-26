@@ -6,21 +6,21 @@
  */
 
 #include "ParseByRise.hpp"
-//TranslationControllerBase::s_lettertree
+//TranslationControllerBase::s_dictionary
 #include <Controller/TranslationControllerBase.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <preprocessor_macros/suppress_unused_variable.h>
-#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
+//#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
 //class VocabularyAndTranslation
-#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
+#include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 
 #ifndef MAXWORD
   #define MAXWORD 65535
 #endif
 
 //class TranslationControllerBase;
-//LetterTree TranslationControllerBase::s_lettertree;
+//LetterTree TranslationControllerBase::s_dictionary;
 
 inline bool isStringTokenDelimiter(char ch)
 {
@@ -1318,7 +1318,8 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
 }
 
 void ParseByRise::InsertGrammarPartForEverySameWord(
-  const LetterNode * p_letternode,
+//  const LetterNode * p_letternode,
+  std::set<VocabularyAndTranslation *> * std_set_p_vocabularyandtranslation,
   DWORD dwTokenIndex, DWORD dwTokenIndexRightMost
   )
 {
@@ -1327,11 +1328,11 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
 //    dwTokenIndexRightMost);
 //  DEBUG_COUT( "word found in dictionary: " << std_str << "\n" )
   #endif
-  std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
-    NULL ;
-  psetpvocabularyandtranslation = p_letternode->
-    m_psetpvocabularyandtranslation ;
-  if( psetpvocabularyandtranslation )
+//  std::set<VocabularyAndTranslation *> * psetpvocabularyandtranslation =
+//    NULL ;
+//  psetpvocabularyandtranslation = p_letternode->
+//    m_psetpvocabularyandtranslation ;
+  if( std_set_p_vocabularyandtranslation )
   {
   //      stdmap_wIndex2p_set_p_vocabularyandtranslation.insert(
   //        std::pair<WORD>, std::set<VocabularyAndTranslation *> *>
@@ -1349,11 +1350,11 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
     //There may be more than 1 vocabulary for the same word:
     //e.g. "love" may be either a noun ("the love") or a verb ("to love").
   #ifdef _DEBUG
-    int nNumbersOfWords = psetpvocabularyandtranslation->size();
+    int nNumbersOfWords = std_set_p_vocabularyandtranslation->size();
   #endif
     for(std::set<VocabularyAndTranslation *>::iterator vocAndTranslIter =
-      psetpvocabularyandtranslation->begin() ; vocAndTranslIter !=
-      psetpvocabularyandtranslation->end() ; vocAndTranslIter ++ )
+      std_set_p_vocabularyandtranslation->begin() ; vocAndTranslIter !=
+      std_set_p_vocabularyandtranslation->end() ; vocAndTranslIter ++ )
     {
       //Create a grammar part object for _every_ single
       //VocabularyAndTranslation object.
@@ -1376,6 +1377,8 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
   //        (*vocAndTranslIter)->m_byType ;
   //        grammarPart.m_wGrammarPartID = (*vocAndTranslIter)->m_byType ;
   //        grammarPart.SetGrammarPartID( (*vocAndTranslIter)->m_byType ) ;
+//      VocabularyAndTranslation * p_vocabularyandtranslation =
+//        * vocAndTranslIter;
       VocabularyAndTranslation & r_vocabularyandtranslation =
         * ( * vocAndTranslIter);
       p_grammarPart->SetGrammarPartID( r_vocabularyandtranslation.m_byType ) ;
@@ -1455,25 +1458,29 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
 //    = & m_stdmultimap_dwLeftmostIndex2grammarpart ;
 //  std::multimap<DWORD, GrammarPart> * p_stdmultimap_wRightmostIndex2grammarpart
 //    = & m_stdmultimap_dwRightmostIndex2grammarpart ;
-  std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
+//  std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
+  IVocabularyInMainMem::voc_container_type * p_std_set_p_vocabularyandtranslation ;
   DWORD dwTokenIndexRightMost = dwTokenIndex ;
   DWORD dwTokenIndexRightMostUnknownToken = 0;
-  const LetterNode * p_letternode;
+//  const LetterNode * p_letternode;
   bool b1UnknownGrammarPartPerToken = true;
   bool bUnknownTokenFound = false;
   do
   {
     LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "current token:\""
       << c_r_positionStringVector.at(dwTokenIndex).m_Str << "\"" )
-    p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
-      TranslationControllerBase::s_lettertree.searchAndReturnLetterNode(
+    //p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
+    p_std_set_p_vocabularyandtranslation =
+      TranslationControllerBase::s_dictionary.//searchAndReturnLetterNode(
+      find(
         c_r_positionStringVector,
       //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
       dwTokenIndexRightMost );
     //If the word was found.
-    if( p_letternode )
+    if( /*p_letternode*/ p_std_set_p_vocabularyandtranslation )
     {
-      InsertGrammarPartForEverySameWord(p_letternode,
+      InsertGrammarPartForEverySameWord(//p_letternode,
+        p_std_set_p_vocabularyandtranslation,
         dwTokenIndex, dwTokenIndexRightMost);
     }
     else
@@ -1484,8 +1491,8 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
         break;
     }
   }
-  while( ! p_letternode && dwTokenIndexRightMost < c_r_positionStringVector.
-    size() - 1 );
+  while( ! /*p_letternode*/ p_std_set_p_vocabularyandtranslation
+    && dwTokenIndexRightMost < c_r_positionStringVector.size() - 1 );
   if( //dwTokenIndexRightMostUnknownToken
       bUnknownTokenFound)
   {
@@ -1494,7 +1501,8 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
       dwTokenIndex, //dwTokenIndexRightMost
       dwTokenIndexRightMostUnknownToken) ;
     p_grammarPart->SetGrammarPartID( EnglishWord::UnknownWord ) ;
-    p_grammarPart->m_stdstrTranslation = GetBetweenAsStdString( c_r_positionStringVector, dwTokenIndex,
+    p_grammarPart->m_stdstrTranslation = GetBetweenAsStdString(
+      c_r_positionStringVector, dwTokenIndex,
         //dwTokenIndexRightMost
         dwTokenIndexRightMostUnknownToken);
     m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(

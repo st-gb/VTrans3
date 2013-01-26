@@ -6,6 +6,24 @@
  */
 #include "GermanWord.hpp"
 
+//static var definitions.
+const char * const GermanVerb::presentPersonEndings [] = {
+  "e" //gehE
+  , "st" //gehST, arbeitEST
+  , "t" //gehT
+  , "en" //gehEN
+  , "t" //gehT
+  , "en"  //gehEN
+  };
+const char * const GermanVerb::pastPersonEndings [] = {
+  "" //ging
+  , "st" //gingST
+  , "" //ging
+  , "en" //gingEN
+  , "t" //gingT
+  , "en"  //gingEN
+  };
+
 GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 {
   WORD i=0;

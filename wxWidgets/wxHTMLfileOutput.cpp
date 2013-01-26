@@ -21,6 +21,8 @@
 
 #include "wxHTMLfileOutput.hpp"
 #include <Translate/TranslateTreeTraverser.hpp>//class TranslationAndGrammarPart
+//GetwxString_inline(...)
+#include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <set>//class std::set
 
 wxHTMLfileOutput::wxHTMLfileOutput(
@@ -94,44 +96,44 @@ void wxHTMLfileOutput::writeFile(
   {
     bool bStringContained = false ;
     wxString wxstrHTML = wxT("<html><body>\n") ;
-    wxstrHTML += "<head>\n" ;
-    wxstrHTML += "<script type=\"text/javascript\">\n" ;
+    wxstrHTML += wxT("<head>\n") ;
+    wxstrHTML += wxT("<script type=\"text/javascript\">\n") ;
     //http://de.selfhtml.org/javascript/intro.htm:
     //"Wenn Sie dies verhindern möchten, sollten Sie den JavaScript-Code
     //zwischen <script type="text/javascript"> und </script>  in einen Seite
     //HTML-Kommentar  einschließen."
-    wxstrHTML += "<!--\n"
-        "function selected_options_to_textarea() {\n "
-        //"document.transl.transl_text.value = \"lllsd\" ;\n "
-        " strAllToken = \"\";\n"
-        "for( var i=0; i<document.formTranslationsSelects.elements.length ; "
-        "i ++ )\n"
-        "{\n"
-          "strAllToken += "
+    wxstrHTML += wxT("<!--\n"
+      "function selected_options_to_textarea() {\n "
+      //"document.transl.transl_text.value = \"lllsd\" ;\n "
+      " strAllToken = \"\";\n"
+      "for( var i=0; i<document.formTranslationsSelects.elements.length ; "
+      "i ++ )\n"
+      "{\n"
+        "strAllToken += "
 //          "document.transl.select0.options["
 //          "document.transl.select0.selectedIndex].value ;\n "
-          "document.formTranslationsSelects.elements[i].value + \" \" ;\n"
-        "}\n"
-        "document.formTextArea.textareaTranslatedText.value = strAllToken;\n"
+        "document.formTranslationsSelects.elements[i].value + \" \" ;\n"
+      "}\n"
+      "document.formTextArea.textareaTranslatedText.value = strAllToken;\n"
         //"alert(\"Das Quadrat von \" ); \n"
 //        "alert(\"Das Quadrat von \" ); \n"
-    "}\n"
-    "//-->\n"
-    "</script>\n" ;
-    wxstrHTML += "</head>\n" ;
+      "}\n"
+      "//-->\n"
+      "</script>\n") ;
+    wxstrHTML += wxT("</head>\n") ;
     WORD wIndex = 0 ;
     std::set<std::string>
       stdset_stdstrTranslationPossibilitiesForCurrentWordIndex ;
 //    WORD wStringLength ;
 //    std::string::size_type stdstr_sizeFindPos ;
     std::string stdstrToken ;
-    wxstrHTML += "<select name=\"t\" size=\"2\">\n" ;
-    wxstrHTML += "<option>" ;
-    wxstrHTML += "test" ;
-    wxstrHTML += "</option>\n" ;
-    wxstrHTML += "</select>\n" ;
+    wxstrHTML += wxT("<select name=\"t\" size=\"2\">\n") ;
+    wxstrHTML += wxT("<option>") ;
+    wxstrHTML += wxT("test") ;
+    wxstrHTML += wxT("</option>\n") ;
+    wxstrHTML += wxT("</select>\n") ;
 
-    wxstrHTML += "<form name=\"formTranslationsSelects\" action=\"\">\n" ;
+    wxstrHTML += wxT("<form name=\"formTranslationsSelects\" action=\"\">\n") ;
     //Important break cond.
     bStringContained = false ;
     wIndex = 0 ;
@@ -188,7 +190,8 @@ void wxHTMLfileOutput::writeFile(
           if( p_grammarpart )
           {
             wConsecutiveID = p_grammarpart->m_wConsecutiveID ;
-            if( wConsecutiveID != MAXWORD )
+            if( wConsecutiveID != //MAXWORD
+                USHRT_MAX )
             {
               GetTokenIndicesForConsecutiveID(wConsecutiveID, wTokenIndex ,
                 stdset_wTokenIndex ) ;
@@ -219,29 +222,31 @@ void wxHTMLfileOutput::writeFile(
           //http://de.selfhtml.org/html/formulare/auswahl.htm:
           //"Jede Auswahlliste sollte einen internen Bezeichnernamen erhalten,
           //und zwar mit dem Attribut name."
-          wxstrHTML += "<select " ;
-          wxstrHTML += wxString::Format("name=\"select%u\" ", wTokenIndex ) ;
+          wxstrHTML += wxT("<select ") ;
+          wxstrHTML += wxString::Format( wxT("name=\"select%u\" "),
+              wTokenIndex ) ;
           //Get all token indices that where the selection should be
           //connected to this token index.
           if( stdset_wTokenIndex.size() > 0 )
           {
-            wxstrHTML += "onchange=\"" ;
-            for( std::set<WORD>::const_iterator c_iter =
+            wxstrHTML += wxT("onchange=\"") ;
+            for( std::set<WORD>::const_iterator c_iterTokenIndex =
                 stdset_wTokenIndex.begin() ;
-                c_iter != stdset_wTokenIndex.end() ; ++ c_iter )
+                c_iterTokenIndex != stdset_wTokenIndex.end() ;
+                ++ c_iterTokenIndex )
             {
-              wxstrHTML += "document.formTranslationsSelects.select" +
-                  wxString::Format("%u", *c_iter) +
-                  ".selectedIndex = this.selectedIndex"
+              wxstrHTML += wxT("document.formTranslationsSelects.select") +
+                  wxString::Format( wxT("%u"), * c_iterTokenIndex) +
+                  wxT(".selectedIndex = this.selectedIndex"
                   " ; selected_options_to_textarea()"
-                  "\""
+                  "\"")
                   ;
             }
 //            wxstrHTML += "alert(\"hhh\")\"" ;
 //            wxstrHTML += "alert(this.selectedIndex)\"" ;
 //            wxstrHTML += "this.selectedIndex=1\"" ;
           }
-          wxstrHTML += " size=1>\n" ;
+          wxstrHTML += wxT(" size=1>\n") ;
           for( std::set<std::string>::const_iterator c_iterToken =
             stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin() ;
             c_iterToken !=
@@ -249,58 +254,59 @@ void wxHTMLfileOutput::writeFile(
             ++ c_iterToken
              )
           {
-            wxstrHTML += "<option>" ;
-            wxstrHTML += *c_iterToken ;
-            wxstrHTML += "</option>\n" ;
+            wxstrHTML += wxT("<option>") ;
+            wxstrHTML += GetwxString_Inline( * c_iterToken) ;
+            wxstrHTML += wxT("</option>\n") ;
           }
-          wxstrHTML += "</select>\n" ;
+          wxstrHTML += wxT("</select>\n") ;
         }
         else //if( stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.
           // size() > 1 )
         {
-          wxstrHTML +=
-            * stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin() ;
-          wxstrHTML += "<select " ;
-          wxstrHTML += wxString::Format("name=\"select%u\" ", wTokenIndex ) ;
-          wxstrHTML += " style=\"visibility:hidden;\" >\n" ;
-          wxstrHTML += "<option>" ;
-          wxstrHTML +=
-            * stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin() ;
-          wxstrHTML += "</option>\n" ;
-          wxstrHTML += "</select>" ;
+          wxstrHTML += GetwxString_Inline( *
+            stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin() );
+          wxstrHTML += wxT("<select ") ;
+          wxstrHTML += wxString::Format( wxT("name=\"select%u\" "),
+            wTokenIndex ) ;
+          wxstrHTML += wxT(" style=\"visibility:hidden;\" >\n") ;
+          wxstrHTML += wxT("<option>") ;
+          wxstrHTML += GetwxString_Inline( *
+            stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.begin() );
+          wxstrHTML += wxT("</option>\n") ;
+          wxstrHTML += wxT("</select>") ;
         }
       }
       ++ wTokenIndex ;
     }while( ! stdset_stdstrTranslationPossibilitiesForCurrentWordIndex.empty()
         ) ;
-    wxstrHTML += "</form>\n" ;
+    wxstrHTML += wxT("</form>\n") ;
 
     wxstrHTML +=
-      "<p>\n"
-      "<form name=\"formTextArea\" action=\"\">\n" ;
+      wxT("<p>\n"
+      "<form name=\"formTextArea\" action=\"\">\n") ;
     if( bMultipleOptions )
     {
       wxstrHTML +=
-        "<input type=\"button\" name=\"option_to_textfield\" "
+        wxT("<input type=\"button\" name=\"option_to_textfield\" "
           "value=\"to textfield\"onclick="
           "\""
   //        "this.form.transl_text.value='sas'"
             "selected_options_to_textarea()"
           "\""
         ">\n" //end of <input>
-        "<br>\n"
+        "<br>\n")
         ;
     }
     wxstrHTML +=
-      "<textarea cols=\"20\" rows=\"4\" name=\"textareaTranslatedText\">\n" ;
+      wxT("<textarea cols=\"20\" rows=\"4\" name=\"textareaTranslatedText\">\n") ;
 //    if( ! bMultipleOptions )
 //    {
-      wxstrHTML += stdstrWholeTranslation ;
+      wxstrHTML += GetwxString_Inline(stdstrWholeTranslation) ;
 //    }
     wxstrHTML +=
-      "</textarea>\n"
+      wxT("</textarea>\n"
       "</form>"
-      "</p>"
+      "</p>")
       ;
     wxstrHTML += wxT(
       "</body>\n"
@@ -328,11 +334,11 @@ void wxHTMLfileOutput::writeFile(
     WORD wStringLength ;
     std::string::size_type stdstr_sizeFindPos ;
     std::string stdstrToken ;
-    wxstrHTML += "<select name=\"t\" size=\"2\">\n" ;
-    wxstrHTML += "<option>" ;
-    wxstrHTML += "test" ;
-    wxstrHTML += "</option>\n" ;
-    wxstrHTML += "</select>\n" ;
+    wxstrHTML += wxT("<select name=\"t\" size=\"2\">\n") ;
+    wxstrHTML += wxT("<option>") ;
+    wxstrHTML += wxT("test") ;
+    wxstrHTML += wxT("</option>\n") ;
+    wxstrHTML += wxT("</select>\n") ;
 
     do
     {
@@ -377,25 +383,25 @@ void wxHTMLfileOutput::writeFile(
           //http://de.selfhtml.org/html/formulare/auswahl.htm:
           //"Jede Auswahlliste sollte einen internen Bezeichnernamen erhalten,
           //und zwar mit dem Attribut name."
-          wxstrHTML += "<select " ;
+          wxstrHTML += wxT("<select ") ;
           //Get all token indices that where the selection should be
           //connected to this token index.
           //
-          wxstrHTML += "size=1>\n" ;
+          wxstrHTML += wxT("size=1>\n") ;
           for( std::set<std::string>::const_iterator c_iterToken =
               stdset_stdstr.begin() ;
               c_iterToken != stdset_stdstr.end() ;
               ++ c_iterToken
               )
           {
-            wxstrHTML += "<option>" ;
-            wxstrHTML += *c_iterToken ;
-            wxstrHTML += "</option>\n" ;
+            wxstrHTML += wxT("<option>") ;
+            wxstrHTML += GetwxString_Inline(*c_iterToken);
+            wxstrHTML += wxT("</option>\n") ;
           }
-          wxstrHTML += "</select>\n" ;
+          wxstrHTML += wxT("</select>\n") ;
         }
         else
-          wxstrHTML += *stdset_stdstr.begin() ;
+          wxstrHTML += GetwxString_Inline(* stdset_stdstr.begin() );
       }
       stdset_stdstr.clear() ;
     }while(bStringContained) ;

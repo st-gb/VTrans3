@@ -496,7 +496,7 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
 //      m_std_strTranslation.c_str();
       c_iter_std_set_grammarpartpointerandconcatenationid->
       m_p_grammarpartToken->m_stdstrTranslation.c_str();
-    wxarraystringTranslation.Add( wxString( p_chTranslation)
+    wxarraystringTranslation.Add( GetwxString_Inline( p_chTranslation)
       );
 //    ++ c_iter_std_set_translationandconcatenationid;
     ++ c_iter_std_set_grammarpartpointerandconcatenationid;

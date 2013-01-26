@@ -13,7 +13,7 @@
 #include <Translate/SummarizePersonIndex.hpp>
 #include <Translate/TranslateParseByRiseTree.hpp>
 //for "personindex" enum "German_main_verb"
-#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
+#include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 
 namespace ParseTreeTraverser
 {

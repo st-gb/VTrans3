@@ -40,24 +40,24 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbBe()
 //  germanverbSein.m_bCase = GermanVerb::nominative ;
 //  germanverbSein.m_bMove = 0 ;
 
-  //void * p_v
-  VocabularyAndTranslation * p_vocabularyandtranslation = Insert("am",
+  void * p_v = NULL;
+  /*VocabularyAndTranslation * p_vocabularyandtranslation = */Insert("am",
     EnglishWord:://be1stPersonSingular
 //      auxiliary_verb
     am
-    //, p_v
+    , p_v
     ) ;
   //p_v
-  p_vocabularyandtranslation = Insert("are", EnglishWord:://be1stPersonSingular
+  /*p_vocabularyandtranslation = */Insert("are", EnglishWord:://be1stPersonSingular
 //      auxiliary_verb
     are
-    //, p_v
+    , p_v
     ) ;
   //p_v
-  p_vocabularyandtranslation = Insert("is", EnglishWord:://be1stPersonSingular
+  /*p_vocabularyandtranslation = */Insert("is", EnglishWord:://be1stPersonSingular
 //      auxiliary_verb
     is
-    //, p_v
+    , p_v
     ) ;
 
   //void * p_v =
@@ -79,16 +79,17 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbHave()
 //  germanverbHaben.m_bMove = 0 ;
 
   //void * p_v
-  VocabularyAndTranslation * p_vocabularyandtranslation = Insert("have",
+  /*VocabularyAndTranslation * p_vocabularyandtranslation = */Insert("have",
       EnglishWord:://haveInfinitive
-      auxiliary_verb
+      auxiliary_verb, NULL
       );//, p_v) ;
 //  VocabularyAndTranslation * p_vocabularyandtranslation =
 //      (VocabularyAndTranslation *) p_v;
-  p_vocabularyandtranslation->m_byType = EnglishWord::haveInfinitive;
-  //void * p_v =
-    Insert(englishauxiliaryverbHave,germanverbHaben, //p_v
-      p_vocabularyandtranslation) ;
+//  p_vocabularyandtranslation->m_byType = EnglishWord::haveInfinitive;
+//  //void * p_v =
+//  //TODO
+//    Insert(englishauxiliaryverbHave, germanverbHaben, //p_v
+//      p_vocabularyandtranslation) ;
 }
 
 void IVocabularyInMainMem::InsertAuxiliaryVerbWill()
@@ -106,51 +107,53 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbWill()
 //  germanverbHaben.m_bMove = 0 ;
 
   //void * p_v
-  VocabularyAndTranslation * p_vocabularyandtranslation = Insert("will",
-      EnglishWord:://haveInfinitive
-      auxiliary_verb
-      );//, p_v) ;
+  /*VocabularyAndTranslation * p_vocabularyandtranslation = */Insert("will",
+    EnglishWord:://haveInfinitive
+    auxiliary_verb, NULL
+    );//, p_v) ;
 //  VocabularyAndTranslation * p_vocabularyandtranslation =
 //      (VocabularyAndTranslation *) p_v;
-  p_vocabularyandtranslation->m_byType = EnglishWord::will;
+  //p_vocabularyandtranslation->m_byType = EnglishWord::will;
+
   //void * p_v =
-    Insert(englishauxiliaryverbWill,germanverbWerden, //p_v
-      p_vocabularyandtranslation) ;
+  //TODO
+//    Insert(englishauxiliaryverbWill, germanverbWerden, //p_v
+//      p_vocabularyandtranslation) ;
 }
 
 //Insert the words that are fundamental and thus needn't/ shouldn't stand in
 //the dictionary.
 void IVocabularyInMainMem::InsertFundamentalWords()
 {
-  Insert("unknownWord", EnglishWord::UnknownWord);
+  Insert("unknownWord", EnglishWord::UnknownWord, NULL);
   //Inserts e.g. into a trie structure.
-  Insert("the", EnglishWord::English_definite_article ) ;
-  Insert("a", EnglishWord::English_indefinite_article ) ;
+  Insert("the", EnglishWord::English_definite_article, NULL) ;
+  Insert("a", EnglishWord::English_indefinite_article, NULL) ;
 
-  Insert( "I" , EnglishWord::personal_pronoun_I ) ;
+  Insert( "I" , EnglishWord::personal_pronoun_I, NULL) ;
 //  Insert( "you" , EnglishWord::personal_pronoun_you_sing ) ;
-  Insert( "you" , EnglishWord::personal_pronoun_you ) ;
-  Insert("he", EnglishWord::personal_pronoun_he ) ;
-  Insert("she", EnglishWord::personal_pronoun_she) ;
-  Insert("it", EnglishWord::personal_pronoun_it) ;
-  Insert( "we" , EnglishWord::personal_pronoun_we ) ;
-  Insert( "you" , EnglishWord::personal_pronoun_you_plur ) ;
-  Insert( "they" , EnglishWord::personal_pronoun_they ) ;
+  Insert( "you" , EnglishWord::personal_pronoun_you, NULL) ;
+  Insert("he", EnglishWord::personal_pronoun_he, NULL) ;
+  Insert("she", EnglishWord::personal_pronoun_she, NULL) ;
+  Insert("it", EnglishWord::personal_pronoun_it, NULL) ;
+  Insert( "we" , EnglishWord::personal_pronoun_we, NULL) ;
+  Insert( "you" , EnglishWord::personal_pronoun_you_plur, NULL) ;
+  Insert( "they" , EnglishWord::personal_pronoun_they, NULL) ;
 
-  Insert( "myself" , EnglishWord::reflexive_pronoun_myself ) ;
-  Insert( "yourself" , EnglishWord::reflexive_pronoun_yourself ) ;
-  Insert("himself", EnglishWord::reflexive_pronoun_himself ) ;
-  Insert("herself", EnglishWord::reflexive_pronoun_herself) ;
-  Insert("itself", EnglishWord::reflexive_pronoun_itself) ;
-  Insert( "ourselves" , EnglishWord::reflexive_pronoun_ourselves ) ;
-  Insert( "yourselves" , EnglishWord::reflexive_pronoun_yourselves ) ;
-  Insert( "themselves" , EnglishWord::reflexive_pronoun_themselves ) ;
+  Insert( "myself" , EnglishWord::reflexive_pronoun_myself, NULL) ;
+  Insert( "yourself" , EnglishWord::reflexive_pronoun_yourself, NULL) ;
+  Insert("himself", EnglishWord::reflexive_pronoun_himself, NULL) ;
+  Insert("herself", EnglishWord::reflexive_pronoun_herself, NULL) ;
+  Insert("itself", EnglishWord::reflexive_pronoun_itself, NULL) ;
+  Insert( "ourselves" , EnglishWord::reflexive_pronoun_ourselves, NULL) ;
+  Insert( "yourselves" , EnglishWord::reflexive_pronoun_yourselves, NULL) ;
+  Insert( "themselves" , EnglishWord::reflexive_pronoun_themselves, NULL) ;
 
 //  Insert( "have" , EnglishWord::have ) ;
 
   //Because "and" is a special conjunction that changes the "person index" of
   // a subject/ object
-  Insert("and", EnglishWord::conjunction_and ) ;
+  Insert("and", EnglishWord::conjunction_and, NULL) ;
 
   InsertAuxiliaryVerbBe();
 

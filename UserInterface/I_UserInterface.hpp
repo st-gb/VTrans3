@@ -25,7 +25,7 @@ public:
     DWORD dwOffset
     ) = 0;
 //  virtual void DictionaryFileLine(unsigned );
-  virtual void EndTimer() = 0;
-  virtual void StartTimer() = 0;
+  virtual void EndTimer() { };
+  virtual void StartTimer() { };
 } ;
 //Keep a newline at the end of the file to avoid a g++ warning.

@@ -11,7 +11,7 @@
 #include <wx/app.h>//base class wxApp
 #include <Controller/TranslationControllerBase.hpp>
 #include <UserInterface/I_UserInterface.hpp>//base class I_UserInterface
-#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
+//#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 #include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include <string> //class std::string
 

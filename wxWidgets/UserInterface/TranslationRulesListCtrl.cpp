@@ -68,8 +68,8 @@ namespace VTrans
       {
         const TranslationRule * c_p_translationrule =
           c_iterTranslationRule->first;
-        wxstrSyntaxTreePath = c_p_translationrule->
-          m_syntaxtreepathCompareWithCurrentPath.GetAs_std_string();
+        wxstrSyntaxTreePath = GetwxString_Inline( c_p_translationrule->
+          m_syntaxtreepathCompareWithCurrentPath.GetAs_std_string() );
         switch(column)
         {
           case SyntaxTreePath:
@@ -82,7 +82,8 @@ namespace VTrans
             if( c_iterTranslRule2filePath !=
               wxGetApp().m_std_map_p_translationrule2filepath.end() )
             {
-              wxString filePath(c_iterTranslRule2filePath->second.c_str() );
+              wxString filePath = //(c_iterTranslRule2filePath->second.c_str() );
+                GetwxString_Inline(c_iterTranslRule2filePath->second);
               return filePath.Right(filePath.length() - currWorkDirLen);
             }
             else
@@ -137,7 +138,8 @@ namespace VTrans
                 if( c_iterTranslRule2filePath !=
                   wxGetApp().m_std_map_p_translationrule2filepath.end() )
                 {
-                  wxString filePath(c_iterTranslRule2filePath->second.c_str() );
+                  wxString filePath//(c_iterTranslRule2filePath->second.c_str() );
+                    = GetwxString_Inline(c_iterTranslRule2filePath->second.c_str() );
                   return filePath.Right(filePath.length() - currWorkDirLen);
                 }
                 else

@@ -38,7 +38,7 @@ public:
   //!pdirdate is used(allocated) if this node is a leaf of the tree structure
   //!OR if this node ends at a name that is a substring that
   //!begins at the first character of the last name of another name
-  //!(example:"Gebauer Stefan" is a substing of "Gebauer Stefanie"),
+  //!(example:"Gebauer Stefan" is a substring of "Gebauer Stefanie"),
   //!so pdirdate would be allocated at the node that stands for the
   //!'n' of "Stefan" and at the node that stands for the last "e" of
   //!"Stefanie".
@@ -49,7 +49,7 @@ public:
   //std::map<Word> * m_pmapWordTranslation;
   ////TODO Or:
   ////Saves the index within a designated container(or:
-  ////for a pointer value in conjuction with a heap manager that ensures this
+  ////for a pointer value in conjunction with a heap manager that ensures this
   ////little value range of 2^(3*8)= ~16 million bytes ) for
   ////this vocabulary as 3 byte integer (because there may be a lot of this class'
   ////nodes and this is less than for a 4 byte pointer).

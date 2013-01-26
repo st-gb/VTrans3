@@ -17,13 +17,15 @@
     #include "wx/wx.h"
 #endif
 #include <wx/filedlg.h> //wxFD_OPEN / wxOPEN
+#include <wx/msgdlg.h>
 
 //class TranslationControllerBase
 #include <Controller/TranslationControllerBase.hpp>
 #include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
 //class TUchemnitzDictionaryReader
 #include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
-#include <VocabularyInMainMem/LetterTree/LetterTree.hpp> //class LetterTree
+//#include <VocabularyInMainMem/LetterTree/LetterTree.hpp> //class LetterTree
+#include <Controller/thread_type.hpp> //typedef VTrans::thread_type
 //GetStdString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <wxWidgets/UserInterface/UserInterface.hpp>
@@ -33,7 +35,7 @@
 //extern LetterTree g_lettertree ;
 
 ////Static variables need also to be defined in the source file.
-//LetterTree TranslationControllerBase::s_lettertree ;
+//LetterTree TranslationControllerBase::s_dictionary ;
 
 namespace wxWidgets
 {
@@ -56,8 +58,10 @@ namespace wxWidgets
     const wxString & c_r_wxInitialDirForFileSelecion
     )
   {
-    LOGN("wxTextInputDlg::ShowMultipleFileSelectionDialog(" << cr_wxstrTitle
-      << ")" )
+    LOGN(//"wxTextInputDlg::ShowMultipleFileSelectionDialog(" <<
+      cr_wxstrTitle
+      //<< ")"
+      )
     wxFileDialog wxfiledialog(
       //this ,
       p_wxwindow ,
@@ -91,11 +95,22 @@ namespace wxWidgets
     return n ;
   }
 
+  DWORD THREAD_FUNCTION_CALLING_CONVENTION LoadDictionary(void * p_v )
+  {
+    const char * const dictFilePath = (const char * const) p_v;
+    if( dictFilePath )
+    {
+      TUchemnitzDictionaryReader::extractVocables( dictFilePath);
+      return 0;
+    }
+    return 1;
+  }
+
   void UnLoadAndLoadDictionary(wxWindow * p_wxwindow)
   {
     wxFileDialog wxfiledialog(
       p_wxwindow ,
-      "Choose a dictionary file" ,
+      wxT("Choose a dictionary file") ,
       wxT("") , //defaultDir
       wxT("") //const wxString&  defaultFile = ""
       , wxT("*.txt") //const wxString&  wildcard = "*.*"
@@ -110,15 +125,15 @@ namespace wxWidgets
         // #wxfiledialoggetpath:
         // "Returns the full path (directory and filename) of the selected file."
         GetPath() ;
-      std::string stdstr = GetStdString( wxstrFullPath ) ;
+      std::string std_strFilePath = GetStdString( wxstrFullPath ) ;
       wxString wxstrLabel = p_wxwindow->GetLabel() ;
 //      ::wxMessageBox( wxT("freeing memory for existing vocabulary") ) ;
       p_wxwindow->SetLabel( wxT("freeing memory for existing vocabulary") ) ;
 //      g_lettertree.DeleteCompleteList() ;
-      TranslationControllerBase::s_lettertree.DeleteCompleteList() ;
+      TranslationControllerBase::s_dictionary./*DeleteCompleteList()*/clear();
       //MUST be inserted, else some grammar rules can't be applied.
 //      g_lettertree.InsertFundamentalWords() ;
-      TranslationControllerBase::s_lettertree.InsertFundamentalWords() ;
+      TranslationControllerBase::s_dictionary.InsertFundamentalWords() ;
 //      OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
       ::wxGetApp().s_numberOfVocabularyPairs = 0;
 //      wxMessageDialog * p_dlg = new wxMessageDialog( //NULL,
@@ -127,11 +142,15 @@ namespace wxWidgets
       p_wxwindow->SetLabel( wxT("inserting vocabulary into memory") ) ;
       {
 //        p_dlg->Show( true ) ;
-//        OneLinePerWordPair::LoadWords( stdstr ) ;
-        ::wxGetApp().StartTimer();
+//        OneLinePerWordPair::LoadWords( std_strFilePath ) ;
         TUchemnitzDictionaryReader tcdr(::wxGetApp() );
-//        vtrans_thread_type
-        TUchemnitzDictionaryReader::extractVocables(stdstr.c_str() );
+        ::wxGetApp().StartTimer();
+//        VTrans::thread_type thread;
+//        thread.start(LoadDictionary, std_strFilePath.c_str() );
+        TUchemnitzDictionaryReader::extractVocables( std_strFilePath.c_str());
+//        if( ::wxMessageBox( wxT("loading vocs"), wxT(""), wxOK | wxCANCEL) ==
+//            wxID_CANCEL )
+//          tcdr.CancelLoading();
         ::wxGetApp().EndTimer();
 //        p_dlg->Destroy();
       }

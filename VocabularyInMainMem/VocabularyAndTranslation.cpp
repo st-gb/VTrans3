@@ -2,7 +2,9 @@
 //unter C/C++->vorkompilierte Header->"PHC durch..." falsch ist: 
 //"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem
 // vorkompilierten Header.[...]"
-#include "../../StdAfx.h"
+#ifdef _MSC_VER //MSVC compiler
+  #include "../../StdAfx.h"
+#endif
 #include <Attributes/Word.hpp> //class Word, EnglishWord, EnglishNoun
 #include <Attributes/EnglishWord.hpp> //for class EnglishWord's enum
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
@@ -31,12 +33,19 @@
         NUMBER_OF_STRINGS_FOR_GERMAN_ADJECTIVE, 0}
     };
 
+//enum EnglishWord::English_word_class GetWordClass(BYTE byVocabularyType)
+//{
+//
+//}
+
 VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
 {
   m_byType = byVocabularyType ;
   BYTE byArraySizeForEng = 0 ;
 
   //BYTE byArraySizeForGer = 0 ;
+
+//  GetWordClass(byVocabularyType);
 
   //Map grammar part IDs/ classes to word classes.
   switch(byVocabularyType)
@@ -45,6 +54,9 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     EnglishWord::noun:
   case EnglishWord::adverb:
 //    m_pword = new EnglishNoun() ;
+    break;
+  case EnglishWord::singular:
+    byVocabularyType = EnglishWord::noun;
     break;
   case EnglishWord::adjective_positiveForm:
     byVocabularyType = EnglishWord::adjective;
@@ -126,17 +138,26 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
 
   switch( m_byType )
   {
-  // singular type is only needed for parsing. It shares the same attr as
-  // the noun. Because for the noun the storage is freed it should NOT be done again
-  // for the singular.
+//  // singular type is only needed for parsing. It shares the same attr as
+//  // the noun. Because for the noun the storage is freed it should NOT be done again
+//  // for the singular.
+//  case EnglishWord::singular :
+//  case EnglishWord::plural_noun :
+//  case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
+//  case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent :
+//  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent :
+//  case EnglishWord::adjective_positiveForm:
+//    break ;
+//  default:
   case EnglishWord::singular :
-  case EnglishWord::plural_noun :
-  case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
-  case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent :
-  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent :
+  case EnglishWord::main_verb_allows_0object_infinitive:
+  case EnglishWord::main_verb_allows_1object_infinitive:
+  case EnglishWord::main_verb_allows_2objects_infinitive:
   case EnglishWord::adjective_positiveForm:
-    break ;
-  default:
+  case EnglishWord::adverb:
+  case EnglishWord::personal_pronoun:
+  case EnglishWord::auxiliary_verb:
+  case EnglishWord::personal_pronoun_objective_form:
     DEBUG_COUTN("freeing voc type" << (WORD) m_byType)
 //    assert(m_arstrEnglishWord) ;
     if(m_arstrEnglishWord)
@@ -173,6 +194,7 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
     delete [] m_arpletternodeLastEngChar ;
   #endif //#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   //delete m_arpletternodeLastGerChar ;
+    break;
   }
 }
 
@@ -262,43 +284,43 @@ std::string VocabularyAndTranslation::GetGermanString(BYTE byIndex)
   return "";
 }
 
-//Word 
-void VocabularyAndTranslation::GetWord(//Word & word
-  AutomDelWord & r_automdelword )
-{
-  //Word 
-  switch( m_byType )
-  {
-  case ENGLISH_NOUN:
-    //m_pword = new EnglishNoun() ;
-    EnglishNoun en ;
-    Word word ;
-    //The object needs to be dynamically created (=on the heap), else a 
-    //downcast (cast to a superclass) with correct typeid is not possible.
-    EnglishNoun * p_en = new EnglishNoun();
-    en.m_strSingular = m_arstrEnglishWord[0].c_str() ;
-    //m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
-    //byArraySizeForEng = NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN ;
-    ////byArraySizeForGer = NUMBER_OF_STRINGS_FOR_GERMAN_NOUN ;
-    //m_arbyAttribute = new BYTE[2] ;
-    //word = dynamic_cast<Word &>(en) ;
-    //word = en ;
-    p_en->m_bType = ENGLISH_NOUN ;
-    r_automdelword.SetWord(p_en) ;
-#ifdef _DEBUG
-    if( typeid(//*pWordNode->m_pWord
-      //word 
-      //* r_automdelword.GetWord() 
-      * p_en 
-      ) == typeid(EnglishNoun)
-      )
-    {
-      //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
-//      #pragma GCC diagnostic ignored  "-Wunused"
-      int i = 0 ;
-      SUPPRESS_UNUSED_VARIABLE_WARNING(i)
-    }
-#endif //#ifdef _DEBUG
-  }
-  //return 
-}
+////Word
+//void VocabularyAndTranslation::GetWord(//Word & word
+//  AutomDelWord & r_automdelword )
+//{
+//  //Word
+//  switch( m_byType )
+//  {
+//  case ENGLISH_NOUN:
+//    //m_pword = new EnglishNoun() ;
+//    EnglishNoun en ;
+//    Word word ;
+//    //The object needs to be dynamically created (=on the heap), else a
+//    //downcast (cast to a superclass) with correct typeid is not possible.
+//    EnglishNoun * p_en = new EnglishNoun();
+//    en.m_strSingular = m_arstrEnglishWord[0].c_str() ;
+//    //m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_NOUN] ;
+//    //byArraySizeForEng = NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN ;
+//    ////byArraySizeForGer = NUMBER_OF_STRINGS_FOR_GERMAN_NOUN ;
+//    //m_arbyAttribute = new BYTE[2] ;
+//    //word = dynamic_cast<Word &>(en) ;
+//    //word = en ;
+//    p_en->m_bType = ENGLISH_NOUN ;
+//    r_automdelword.SetWord(p_en) ;
+//#ifdef _DEBUG
+//    if( typeid(//*pWordNode->m_pWord
+//      //word
+//      //* r_automdelword.GetWord()
+//      * p_en
+//      ) == typeid(EnglishNoun)
+//      )
+//    {
+//      //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
+////      #pragma GCC diagnostic ignored  "-Wunused"
+//      int i = 0 ;
+//      SUPPRESS_UNUSED_VARIABLE_WARNING(i)
+//    }
+//#endif //#ifdef _DEBUG
+//  }
+//  //return
+//}

@@ -8,6 +8,7 @@
 #ifndef WXPARSETREEPANEL_H_
 #define WXPARSETREEPANEL_H_
 
+#ifdef _WIN32
 //http://www.wxwidgets.org/docs/faqmsw.htm#asuffix:
 //"If you get errors like no matching function for call to
 //'wxDC::DrawTextA(const char[5], int, int)' or similar ones for the other
@@ -19,7 +20,8 @@
 //The fix is to either not include <windows.h> at all or include
 //"wx/msw/winundef.h" immediately after it. "
 //If not included: ~"undefined reference to wxWindow::[...] in DEBUG version"
-#include "wx/msw/winundef.h"
+  #include "wx/msw/winundef.h"
+#endif //#ifdef _WIN32
 #include <wx/panel.h> //base class wxPanel
 #include <wx/dcmemory.h> //class wxMemoryDC
 //#include <wx/dcclient.h> //for class wxPaintDC
@@ -61,7 +63,7 @@ public:
 	  const wxPoint& pos = wxDefaultPosition,
 	  const wxSize& size = wxDefaultSize,
 	  long style = wxTAB_TRAVERSAL,
-	  const wxString& name = "panel"
+	  const wxString & name = wxT("panel")
     ) ;
 //	wxParseTreePanel(wxWindow* parent ) ;
 	virtual ~wxParseTreePanel();

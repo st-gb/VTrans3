@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../AutomDelWord.hpp"
+//#include "AutomDelWord.hpp"
 //  //use a relative path, else "VC/include/IO.h" is used
 //  #include <IO/IO.hpp>
   //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
@@ -20,7 +20,8 @@
   #define NUMBER_OF_STRINGS_FOR_GERMAN_NOUN 2 //2 strings: singular and plural
   #define ENGLISH_NOUN WORD_TYPE_NOUN
   #define ENGLISH_MAIN_VERB WORD_TYPE_MAIN_VERB
-  #define NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB 3//inf., simple past, past part.
+  //infinitive, simple past, past participle, 3rd person present
+  #define NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB 4
   //infinitive + 6*present + 6*past + past participle + imperative singualar & 
   //imperative plural = 1 + 6 + 6 + 1 + 2 = 16
   #define NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB 16
@@ -46,6 +47,8 @@ class I_UserInterface;
   class VocabularyAndTranslation
   {
   public:
+    //For both English and German.
+    enum nounArrayIndices{ SingularArrayIndex = 0, PluralArrayIndex };
     struct ArraySizes
     {
       unsigned char m_byArraySizeForEnglishWord;
@@ -65,6 +68,8 @@ class I_UserInterface;
 //      //noun
 //      {2,2,2}
 //    };
+//    //Count how often this object is referred to from other LetterNodes.
+//    unsigned m_referenceCount;
     BYTE m_byType ;
     BYTE * m_arbyAttribute ;
 //    enum array_sizes
@@ -82,7 +87,7 @@ class I_UserInterface;
       , auxiliary_verb
       , conjunction
     } ;
-    enum German_main_verb
+    enum German_main_verb_indices
     {
       infinitive = 0
       , first_person_singular
@@ -162,8 +167,8 @@ class I_UserInterface;
       return m_arbyAttribute[0] ;
     }
 
-    void GetWord(//Word & word
-      AutomDelWord & r_automdelword ) ;
+//    void GetWord(//Word & word
+//      AutomDelWord & r_automdelword ) ;
 
     std::string GetWordTypeAsStdStr()
     {
@@ -171,7 +176,7 @@ class I_UserInterface;
     }
 
     void PointToAttributeData(
-        VocabularyAndTranslation * p_vocabularyandtranslationPointTo)
+      const VocabularyAndTranslation * const p_vocabularyandtranslationPointTo)
     {
       m_arstrEnglishWord =
           p_vocabularyandtranslationPointTo->m_arstrEnglishWord ;

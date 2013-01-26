@@ -16,7 +16,8 @@ namespace TranslationControllerBaseClass
     {
       success = 0,
       vocabularyFilePathIsEmpty,
-      loadingVocabularyFileFailed
+      loadingVocabularyFileFailed,
+      creatingLogFileFailed
     };
   }
 }

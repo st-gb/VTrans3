@@ -20,10 +20,10 @@
 #include <Attributes/Token.h> //class PositionStringVector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
-#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
-#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
+//#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
+//#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 //class VocabularyAndTranslation
-#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
+#include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 #include <Xerces/ReadViaSAX2.hpp>//ReadViaSAX2InitAndTermXerces(...)
 #include <Xerces/SAX2GrammarRuleHandler.hpp>//class SAX2GrammarRuleHandler
 

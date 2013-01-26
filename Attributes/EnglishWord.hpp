@@ -126,9 +126,9 @@ public:
     , UnknownWord
     , beyond_last_entry
   } ;
-  //Needed for English words to determine the word class resp. for
-  //Insertion into trie from a derived class of this class.
-  virtual BYTE GetWordClass() = 0 ;
+  /** Needed for English words to determine the word class resp. for
+  * insertion into trie from a derived class of this class. */
+  virtual /*BYTE*/ English_word_class GetWordClass() = 0 ;
 };
 
 class EnglishAdjective
@@ -194,7 +194,7 @@ class EnglishAuxiliaryVerb
 {
 public:
   bool GetNextString( std::string & r_stdstr ) ;
-  inline BYTE GetWordClass() ;
+  inline /*BYTE*/ English_word_class GetWordClass() ;
   // Bsp.: I am, you are, he is; I was, you were; been
   //15 strings: 6 person indexes * 2 tenses (present, past) + past participle
   // + 2 * imperative = 12 + 1 + 2
@@ -259,6 +259,8 @@ class EnglishVerb
   public EnglishWord
 {
 public:
+  enum EnglishVerbArrayIndices { infinitive = 0, simple_past, past_participle,
+    third_person_present, arraySize};
   enum object_type {
     no_object
     , _1_object
@@ -288,7 +290,26 @@ public:
   bool GetNextString( std::string & r_stdstr ) { return false ; } ;
   //Needed for English words to determine the word class resp. for
   //Insertion into trie from a derived class of this class.
-  BYTE GetWordClass() { return main_verb ; } ;
+  /*BYTE*/ English_word_class GetWordClass() { return main_verb ; } ;
+
+  static enum English_word_class Get3rdPersonVerbWordClass(
+    BYTE byNumberOfObjectsAllowed)
+  {
+    enum English_word_class english_word_class;
+    switch(byNumberOfObjectsAllowed)
+    {
+    case 0 :
+      english_word_class = EnglishWord::mainVerbAllows0object3rdPersonSingularPresent ;
+      break ;
+    case 1 :
+      english_word_class = EnglishWord::mainVerbAllows1object3rdPersonSingularPresent ;
+      break ;
+    case 2 :
+      english_word_class = EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent ;
+      break ;
+    }
+    return english_word_class;
+  }
 };
 
 #endif /* ENGLISHWORD_HPP_ */

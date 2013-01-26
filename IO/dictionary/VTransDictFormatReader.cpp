@@ -11,7 +11,7 @@
 #include <fstream> //for std::ofstream
 #include <ios>//fo ios_base
 #include "Controller/charsetconv.h"
-#include "VocabularyInMainMem/LetterTree/LetterTree.hpp"
+//#include "VocabularyInMainMem/LetterTree/LetterTree.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordList.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp" //for "class WordNode" etc.
 
