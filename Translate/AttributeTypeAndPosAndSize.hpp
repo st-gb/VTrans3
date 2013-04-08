@@ -20,6 +20,7 @@ class AttributeTypeAndPosAndSize
 public:
   enum attribute_type { string, bit } ;
   enum language { German, English, beyondLastElement } ;
+  static const char * const s_ar_chLanguage[];
   //attribute is a string or some bits (=whether the index refers to the
   // string or byte array)
   BYTE m_byAttrDataType ;
@@ -43,6 +44,7 @@ public:
     BYTE byWordClass ,
     BYTE byLanguage // Language that is referred by the other parameters.
     ) ;
+  const char * GetLanguageAsString() const { return s_ar_chLanguage[m_byLanguage]; }
 //  {
 //    m_byLanguage = byLanguage ;
 //    m_byWordClass = byWordClass ;

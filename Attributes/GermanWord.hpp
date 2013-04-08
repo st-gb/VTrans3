@@ -125,10 +125,11 @@ class GermanVerb
 {
 public:
   static const char * const presentPersonEndings [];
+  static const char * const presentPersonEndings2 [];
   static const char * const pastPersonEndings [];
 
   enum person_indices { firstPersonSing = 0, secondPersonSing, thirdPersonSing,
-    firstPersonPlur = 0, secondPersonPlur, thirdPersonPlur, beyondLastPerson };
+    firstPersonPlur, secondPersonPlur, thirdPersonPlur, beyondLastPerson };
   enum german_verb_array_indices{
     arrayIndexForInfinitive = 0,
     arrayIndexFor1stPersSingPres,
@@ -177,7 +178,7 @@ public:
     m_bReflexive = FALSE;
     m_bIntegral = FALSE;
   }
-  static void GetWortstamm(
+  static void GetWordStem(
     const char * wordBegin,
     //const WordData & germanWord
     int len
@@ -196,15 +197,20 @@ public:
     enum person_indices person_index)
   {
 //    if( wortStamm.substr(wortStamm.length() - 1, 1) == "h" )
-
-    return wortStamm + presentPersonEndings[person_index];
+    if( *(wortStamm.c_str() + wortStamm.length() - 1) == 'h' ) //gehen, sehen, stehen
+      return wortStamm + presentPersonEndings[person_index];
+    else
+      return wortStamm + presentPersonEndings2[person_index];
   }
   static std::string GetPastFiniteForm(//const std::string & wortStamm,
     const char * const prefix, int len,
     enum person_indices person_index)
   {
     const std::string wortStamm(prefix, len);
-    return wortStamm + pastPersonEndings[person_index];
+//    if( prefix + len - 1 == 'h' ) //gehen, sehen, stehen
+      return wortStamm + pastPersonEndings[person_index];
+//    else
+//      return wortStamm + pastPersonEndings[person_index];
   }
 };
 

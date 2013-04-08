@@ -2,7 +2,7 @@
 
   <!-- _subject_ enumeration element -->
   <translation_rule 
-    syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.*.definite_article_plural.plural_noun"
+    syntax_tree_path="*.3rdPersPlurClauseAllows1Obj.*.definite_article_plural.plural_noun"
     attribute_name="German_plural"
   />
   
@@ -15,16 +15,16 @@
      Differentiate "the sheep eat" -> "die Schafe essen." from "the sheep eats" -> "das Schaf isst." -->
   <translation_rule 
 	translation="die"
-    syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.*.definite_article_plural.definite_article"
+    syntax_tree_path="*.3rdPersPlurClauseAllows1Obj.*.definite_article_plural.definite_article"
   />
 
   <!--translation of predicate/ (finite) verb-->
   <translation_rule 
-    syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
+    syntax_tree_path="3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
     attribute_name="GerMainVerb0Obj3rdPersPlurPres" 
   />
   <translation_rule 
-    syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.mainVerbInf1Obj"
+    syntax_tree_path="*.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
     attribute_name="GerMainVerb1Obj3rdPersPlurPres" 
   />
   
@@ -35,7 +35,7 @@
     byte_attribute_value="6"
   /-->
   <translation_rule 
-    syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
+    syntax_tree_path="3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
     attribute_name="GerMainVerb1Obj3rdPersPlurPres" 
     byte_attribute_value="6"
   />

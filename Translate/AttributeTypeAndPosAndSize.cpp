@@ -8,6 +8,9 @@
 #include "AttributeTypeAndPosAndSize.hpp"
 #include <windef.h> //BYTE
 
+const char * const AttributeTypeAndPosAndSize::s_ar_chLanguage[] = {
+  "German", "English" };
+
 AttributeTypeAndPosAndSize::AttributeTypeAndPosAndSize(
   BYTE byType,
   WORD wIndex,

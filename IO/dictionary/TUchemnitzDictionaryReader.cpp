@@ -460,10 +460,11 @@ void TUchemnitzDictionaryReader::InsertFiniteGermanVerbForms(
   VocabularyAndTranslation * p_vocandtransl)
 {
   std::string std_strWortstamm;
-//    GermanVerb::GetWortstamm(ar_ch, germanWords[Infinitive], std_strWortstamm);
+  const WordData & germanInfinitive = germanWords[Infinitive];
+//    GermanVerb::GetWordStem(ar_ch, germanWords[Infinitive], std_strWortstamm);
 //    GermanVerb::Get1stPersSing(ar_ch, germanWords[Infinitive] );
-  GermanVerb::GetWortstamm( ar_ch + germanWords[Infinitive].m_charIndexOfBegin,
-    germanWords[Infinitive].GetStringLength(), std_strWortstamm );
+  GermanVerb::GetWordStem( ar_ch + germanInfinitive.m_charIndexOfBegin,
+    germanInfinitive.GetStringLength(), std_strWortstamm );
 
   std::string std_strFiniteForm;
   for( unsigned index = GermanVerb::firstPersonSing;

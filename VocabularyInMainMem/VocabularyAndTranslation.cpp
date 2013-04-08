@@ -198,7 +198,7 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
   }
 }
 
-std::string VocabularyAndTranslation::GetEnglishString(BYTE byIndex)
+std::string VocabularyAndTranslation::GetEnglishString(BYTE byIndex) const
 {
   if( m_byType <= EnglishWord::adverb )
   {
@@ -254,7 +254,7 @@ void VocabularyAndTranslation::GetAttributeValue(BYTE byIndex)
   }
 }
 
-std::string VocabularyAndTranslation::GetGermanString(BYTE byIndex)
+std::string VocabularyAndTranslation::GetGermanString(BYTE byIndex) const
 {
 //                  DEBUG_COUTN
   DEBUGN("language for choosing attribute value is "

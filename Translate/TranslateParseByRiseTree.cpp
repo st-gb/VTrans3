@@ -1299,9 +1299,9 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
           , std_strTranslationRuleSyntaxTreePath
           ) )
          bAtLeast1TranslationRuleApplies = true;
-      //DEBUG_COUT
-      LOGN_DEBUG("after loop")
     }
+    //DEBUG_COUT
+    LOGN_DEBUG("after loop")
   }
   LOGN_DEBUG("end")
   return //bIdentical ;

@@ -46,11 +46,44 @@ void MakeMale(std::string & r_stdstr )
   r_stdstr += "er";
 }
 
-//e.g. "klein" "ES"
+/** Make German genus? from positive e.g. "klein" "ES"
+ * @param r_stdstr: word stem/ positive form of an adverb */
 void MakeNeutral(std::string & r_stdstr )
 {
   //e.g. "klein" "ES"
   r_stdstr += "es";
+}
+
+/** Make 1st person singular */
+void Make1stPersonSing(std::string & //r_std_strWordStem
+  r_std_strInfinitive)
+{
+  std::string std_strWordStem;
+  GermanVerb::GetWordStem( r_std_strInfinitive.c_str(),
+    r_std_strInfinitive.length(), std_strWordStem );
+  //e.g. "arbeit" "E"
+  r_std_strInfinitive = GermanVerb::GetPresentFiniteForm(std_strWordStem,
+    (enum GermanVerb::person_indices) (GermanVerb::firstPersonSing ) );
+}
+
+/** Make German past participle from infinitive.
+ *   sehen->GEsehen  ansehen->anGEsehen
+ *   speichern->GEspeicherT schiCKen->GEschickT tauSCHen -> GEtauschT
+ *   klauen->GEklauT
+ *   reiten –> geritten
+ *   */
+void MakePastParticiple(std::string & //r_std_strWordStem
+  r_std_strInfinitive)
+{
+  //ending consonant + "en" -> "ge" + infinitive
+  //if begin = preposition ("an", "zu" etc.): preposition + "ge" + inf.
+  std::string std_strWordStem;
+  GermanVerb::GetWordStem( r_std_strInfinitive.c_str(),
+    r_std_strInfinitive.length(), std_strWordStem );
+  //e.g. "arbeit" "E"
+  r_std_strInfinitive = GermanVerb::GetPastFiniteForm(
+    std_strWordStem.c_str(), std_strWordStem.length(),
+    (enum GermanVerb::person_indices) (GermanVerb::firstPersonSing ) );
 }
 
 //#if defined __cplusplus
@@ -81,6 +114,12 @@ TranslationControllerBase::TranslationControllerBase()
   ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
     //"makeFemale",
     std::make_pair(std_str, & MakeNeutral) );
+  std_str = "make1stPersonSing";
+  ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
+    std::make_pair(std_str, & Make1stPersonSing) );
+  std_str = "makePastParticiple";
+  ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
+    std::make_pair(std_str, & Make1stPersonSing) );
 }
 
 TranslationControllerBase::~TranslationControllerBase()
