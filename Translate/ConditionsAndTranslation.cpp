@@ -272,8 +272,8 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                   break ;
                 case AttributeTypeAndPosAndSize::German :
                 {
-                  LOGN_DEBUG( //FULL_FUNC_NAME << "--"
-                    "language is German")
+//                  LOGN_DEBUG( //FULL_FUNC_NAME << "--"
+//                    "language is German")
                   const VocabularyAndTranslation * const
                     p_vocabularyandtranslation =
                     p_grammarpartLeaf->m_pvocabularyandtranslation;
@@ -282,13 +282,16 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                     "\"voc and translation pointer\" is:" <<
                     p_vocabularyandtranslation )
 
-                  std::string stdstrAttrVal = p_grammarpartLeaf->
-                    m_pvocabularyandtranslation->
+                  std::string stdstrAttrVal = p_vocabularyandtranslation->
                     GetGermanString( (BYTE) r_atapas.m_wIndex);
 
-                  LOGN_DEBUG( //FULL_FUNC_NAME << "--"
-                    "leaf's attribute value is \""
-                    << stdstrAttrVal << "\"")
+                  LOGN_INFO( //FULL_FUNC_NAME << "--"
+                    "attribute value at voc&transl's"
+                    << r_atapas.GetLanguageAsString() << " string index "
+                    << r_atapas.m_wIndex << " is \""
+                    << stdstrAttrVal << "\""
+                    << " for current leaf"
+                    )
 
                   LOGN_DEBUG( //FULL_FUNC_NAME << "--"
                     "m_pfn_TransformString for STP "
@@ -297,6 +300,8 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                   //If function that modifies as string (like for
                   //"I trust the children." : for "Kinder" ->
                   //"Kindern")
+                  //TODO possibly use this for getting verb attributes like
+                  //past participle/ finite verb forms from an infinitive.
                   if( m_pfn_TransformString )
                   {
                     //Use a copy, else the VocAndTransl's string is modified

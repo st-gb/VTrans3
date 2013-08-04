@@ -11,6 +11,7 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 //convertToStdString(...)
 #include <Controller/character_string/stdstring_format.hpp>
+#include <fastest_data_type.h> //typedef fastestUnsignedDataType
 
 void GenerateXMLtreeFromParseTree(
   std::vector<GrammarPart *>::const_iterator
@@ -42,7 +43,7 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
 //  std::string std_strXML;
   if( p_parsebyrise )
   {
-    DWORD dwLeftMostTokenIndex = 0 ;
+    fastestUnsignedDataType leftMostTokenIndex = 0 ;
 //    GrammarPart * p_grammarpart ;
 //    GrammarPart * p_grammarpartChild ;
     //int y = 10 ;
@@ -63,14 +64,14 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
 //      //Before each draw in order to begin at x position "0".
 //      m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
 //      m_wParseLevel = 0 ;
-      DEBUG_COUT( "Translate(): p_parsebyrise != NULL\n")
+//      DEBUG_COUT( "Translate(): p_parsebyrise != NULL\n")
       std_strXML += "<translations token_index=\"" +
-        ::convertToStdString(dwLeftMostTokenIndex) +
+        ::convertToStdString(leftMostTokenIndex) +
         "\">";
       citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
       //p_grammarpart =
         p_parsebyrise->GetGrammarPartCoveringMostTokens(
-          dwLeftMostTokenIndex ,
+          leftMostTokenIndex ,
           stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
           ) ;
 
@@ -80,7 +81,7 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
 //      WORD wConsecutiveID = 0 ;
 
       //Loop over all parse trees beginning at token index
-      //"dwLeftMostTokenIndex".
+      //"leftMostTokenIndex".
       for( std::vector<GrammarPart *>::const_iterator
           c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex =
           stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin() ;
@@ -99,15 +100,14 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
       std_strXML += "</translations>";
 
       if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
-        dwLeftMostTokenIndex = 0;
+        leftMostTokenIndex = 0;
       else
-        dwLeftMostTokenIndex =
+        leftMostTokenIndex =
           stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
           m_dwRightmostIndex + 1;
-      LOGN("TranslateParseByRiseTree::Translate(...)--dwLeftMostTokenIndex:"
-        << dwLeftMostTokenIndex )
+      LOGN("leftMostTokenIndex:" << leftMostTokenIndex )
     }
-    while( dwLeftMostTokenIndex );
+    while( leftMostTokenIndex );
     std_strXML += "</translated_text>"; //Topmost XML element.
   }//if( p_parsebyrise )
 }

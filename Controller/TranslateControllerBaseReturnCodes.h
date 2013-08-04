@@ -17,7 +17,8 @@ namespace TranslationControllerBaseClass
       success = 0,
       vocabularyFilePathIsEmpty,
       loadingVocabularyFileFailed,
-      creatingLogFileFailed
+      creatingLogFileFailed,
+      loadingMainConfigFileFailed
     };
   }
 }

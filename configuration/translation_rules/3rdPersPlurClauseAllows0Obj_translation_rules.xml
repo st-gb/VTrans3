@@ -2,19 +2,19 @@
 
   <!-- _subject_ enumeration element -->
   <translation_rule 
-    syntax_tree_path="*.3rdPersPlurClauseAllows1Obj.*.definite_article_plural.plural_noun"
+    syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.*.definite_article_plural.plural_noun"
     attribute_name="German_plural"
   />
   
   <translation_rule 
-    syntax_tree_path="*.MainVerb3rdPersSingPres1Obj"
+    syntax_tree_path="*.MainVerb3rdPersSingPres0Obj"
     attribute_name="GerMainVerb0Obj3rdPersSing" 
   />
 
   <!-- _subject_'s definite article -->
   <translation_rule 
 	translation="die"
-    syntax_tree_path="*.3rdPersPlurClauseAllows1Obj.*.definite_article_plural.definite_article"
+    syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.*.definite_article_plural.definite_article"
   />
 
   <!--translation of predicate/ (finite) verb-->
@@ -23,7 +23,7 @@
     attribute_name="GerMainVerb3rdPersPlur" 
   />
   <translation_rule 
-    syntax_tree_path="*.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+    syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
     attribute_name="GerMainVerb1Obj3rdPersPlur" 
   />
   
@@ -34,7 +34,7 @@
     byte_attribute_value="6"
   /-->
   <translation_rule 
-    syntax_tree_path="3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+    syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
     attribute_name="Ger1ObjMainVerb3rdPersPlur" 
     byte_attribute_value="6"
   />
@@ -56,7 +56,7 @@
 		syntax_tree_path="*.obj.*.definite_article_singular.definite_article"
 		translation="dem">
 		<!--grammatical_case=3 <=> dative verb-->
-		<condition syntax_tree_path="clauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+		<condition syntax_tree_path="clauseWith1Obj.3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
 		  attribute_name="grammatical_case"
 		  byte_attribute_value="3"
 		/>
@@ -66,7 +66,7 @@
 		syntax_tree_path="*.obj.*.definite_article_singular.definite_article"
 		translation="das">
 		<!--grammatical_case=1 <=> dative verb-->
-		<condition syntax_tree_path="clauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+		<condition syntax_tree_path="clauseWith1Obj.3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
 		  attribute_name="grammatical_case"
 		  byte_attribute_value="4"
 		/>
@@ -81,7 +81,7 @@
 		syntax_tree_path="*.obj.*.definite_article_plural.definite_article"
 		translation="den">
 		<!--grammatical_case=3 <=> dative verb-->
-		<condition syntax_tree_path="clauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+		<condition syntax_tree_path="clauseWith1Obj.3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
 		  attribute_name="grammatical_case"
 		  byte_attribute_value="3"
 		/>
@@ -91,13 +91,13 @@
   <!--translation_rule 
     syntax_tree_path="3rdPersPlurClauseWith1Obj.themselves_ObjEnumEle.*.definite_article_plural.definite_article"-->
   <translation_rule 
-    syntax_tree_path="clauseWith1Obj.themselves_ObjEnumEle.*.definite_article_plural.definite_article"
+    syntax_tree_path="clauseWith0Obj.themselves_ObjEnumEle.*.definite_article_plural.definite_article"
     translation="den">
     <!--grammatical_case=3 <=> dative verb-->
     <!--condition 
       syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"-->
     <condition 
-      syntax_tree_path="clauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"
+      syntax_tree_path="clauseWith0Obj.3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />
@@ -105,10 +105,10 @@
 
   <!--for _subject_-->
   <translation_rule 
-    syntax_tree_path="3rdPersPlurClauseAllows1Obj.*.definite_article_plural.definite_article"
+    syntax_tree_path="3rdPersPlurClauseAllows0Obj.*.definite_article_plural.definite_article"
     translation="die">
     <!--grammatical_case=3 <=> dative verb-->
-    <condition syntax_tree_path="clauseWith1Obj.clause1Obj.3rdPersSingClause1Obj.MainVerb3rdPersSingPres1Obj"
+    <condition syntax_tree_path="clauseWith0Obj.clause0Obj.3rdPersSingClause0Obj.MainVerb3rdPersSingPres0Obj"
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />

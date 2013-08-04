@@ -46,7 +46,7 @@ public:
     false) {}
 };
 
-//Base class for e.g. wxApp and CWinApp-derived classes.
+/** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
 class TranslationControllerBase
   : public I_UserInterface
 {
@@ -98,7 +98,7 @@ public:
     SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
     const std::string & cr_stdstrFilePath
     ) ;
-  void ReadMainConfigFile(const std::string & cr_stdstrFilePath ) ;
+  bool ReadMainConfigFile(const std::string & cr_stdstrFilePath ) ;
   void ReadTranslationRuleFile(
     SAX2TranslationRuleHandler & r_sax2translationrulehandler ,
     const std::string & cr_stdstrFilePath

@@ -6,7 +6,7 @@
  */
 
 //Class TranslationRulesListCtrl
-#include "wxWidgets/UserInterface/TranslationRulesListCtrl.hpp"
+#include "TranslationRulesListCtrl.hpp"
 #include <map> //std::map
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 //class ConditionsAndTranslation
@@ -149,13 +149,14 @@ namespace VTrans
         }
         ++ c_iter;
       }
-      return wxT("/");
     }
+    return wxT("/");
   }
 
   void TranslationRulesListCtrl::SetFilter(const wxString & filter)
   {
     m_wxstrFilter = filter;
+    int previousItemCount = GetItemCount();
     if( filter.empty() )
     {
       SetItemCount( wxGetApp().m_translateparsebyrisetree.
@@ -191,5 +192,8 @@ namespace VTrans
       //This should reflect your data
       SetItemCount(arrayIndex);
     }
+    //The contents are not visually updated after a filter change
+    // (but if the is redrawn).
+    RefreshItems(0, previousItemCount);
   }
 } /* namespace VTrans */

@@ -46,11 +46,44 @@ void MakeMale(std::string & r_stdstr )
   r_stdstr += "er";
 }
 
-//e.g. "klein" "ES"
+/** Make German genus? from positive e.g. "klein" "ES"
+ * @param r_stdstr: word stem/ positive form of an adverb */
 void MakeNeutral(std::string & r_stdstr )
 {
   //e.g. "klein" "ES"
   r_stdstr += "es";
+}
+
+/** Make 1st person singular */
+void Make1stPersonSing(std::string & //r_std_strWordStem
+  r_std_strInfinitive)
+{
+  std::string std_strWordStem;
+  GermanVerb::GetWordStem( r_std_strInfinitive.c_str(),
+    r_std_strInfinitive.length(), std_strWordStem );
+  //e.g. "arbeit" "E"
+  r_std_strInfinitive = GermanVerb::GetPresentFiniteForm(std_strWordStem,
+    (enum GermanVerb::person_indices) (GermanVerb::firstPersonSing ) );
+}
+
+/** Make German past participle from infinitive.
+ *   sehen->GEsehen  ansehen->anGEsehen
+ *   speichern->GEspeicherT schiCKen->GEschickT tauSCHen -> GEtauschT
+ *   klauen->GEklauT
+ *   reiten –> geritten
+ *   */
+void MakePastParticiple(std::string & //r_std_strWordStem
+  r_std_strInfinitive)
+{
+  //ending consonant + "en" -> "ge" + infinitive
+  //if begin = preposition ("an", "zu" etc.): preposition + "ge" + inf.
+  std::string std_strWordStem;
+  GermanVerb::GetWordStem( r_std_strInfinitive.c_str(),
+    r_std_strInfinitive.length(), std_strWordStem );
+  //e.g. "arbeit" "E"
+  r_std_strInfinitive = GermanVerb::GetPastFiniteForm(
+    std_strWordStem.c_str(), std_strWordStem.length(),
+    (enum GermanVerb::person_indices) (GermanVerb::firstPersonSing ) );
 }
 
 //#if defined __cplusplus
@@ -81,6 +114,12 @@ TranslationControllerBase::TranslationControllerBase()
   ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
     //"makeFemale",
     std::make_pair(std_str, & MakeNeutral) );
+  std_str = "make1stPersonSing";
+  ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
+    std::make_pair(std_str, & Make1stPersonSing) );
+  std_str = "makePastParticiple";
+  ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
+    std::make_pair(std_str, & Make1stPersonSing) );
 }
 
 TranslationControllerBase::~TranslationControllerBase()
@@ -109,51 +148,55 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   SyntaxTreePath::sp_userinterface = this ;
   s_dictionary.SetUserInterface(this);
   s_dictionary.InsertFundamentalWords() ;
-  ReadMainConfigFile(cr_stdstrFilePath) ;
-  m_std_strMainConfigFilePath = cr_stdstrFilePath;
-  if( m_stdstrVocabularyFilePath.empty() )
+  if( ReadMainConfigFile(cr_stdstrFilePath) )
   {
-    Message( "error: The vocabulary file path is empty") ;
-    return TranslationControllerBaseClass::InitFunction::
-      vocabularyFilePathIsEmpty;
+    m_std_strMainConfigFilePath = cr_stdstrFilePath;
+    if( m_stdstrVocabularyFilePath.empty() )
+    {
+      Message( "error: The vocabulary file path is empty") ;
+      return TranslationControllerBaseClass::InitFunction::
+        vocabularyFilePathIsEmpty;
+    }
+    else
+    {
+  //    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
+      TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
+  //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
+  //         //stdstrFilePath
+  //          m_stdstrVocabularyFilePath
+  //        )
+  //      )
+  //    {
+  ////        CreateAndShowMainWindow() ;
+  //      //Return true to continue to run the (main loop of ) this program.
+  ////        return true ;
+  //    }
+      TUchemnitzDictionaryReader tcdr(* this  );
+
+  //    if( b)
+  //    {
+  //
+  //    }
+  //    else
+  //    {
+  //      LoadingVocabularyFileFailed(m_stdstrVocabularyFilePath);
+  //      return TranslationControllerBaseClass::InitFunction::
+  //        loadingVocabularyFileFailed;
+  //    }
+      CreateAndShowMainWindow() ;
+  #ifndef COMPILE_AS_EXECUTABLE
+  //    StartTimer();
+      bool b = TUchemnitzDictionaryReader::extractVocables(
+        m_stdstrVocabularyFilePath.c_str() );
+      LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
+      if( ! b )
+        return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
+  #endif //#ifndef COMPILE_AS_EXECUTABLE
+  ////    StartTimer();
+    }
   }
   else
-  {
-//    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
-    TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
-//    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
-//         //stdstrFilePath
-//          m_stdstrVocabularyFilePath
-//        )
-//      )
-//    {
-////        CreateAndShowMainWindow() ;
-//      //Return true to continue to run the (main loop of ) this program.
-////        return true ;
-//    }
-    TUchemnitzDictionaryReader tcdr(* this  );
-
-//    if( b)
-//    {
-//
-//    }
-//    else
-//    {
-//      LoadingVocabularyFileFailed(m_stdstrVocabularyFilePath);
-//      return TranslationControllerBaseClass::InitFunction::
-//        loadingVocabularyFileFailed;
-//    }
-    CreateAndShowMainWindow() ;
-#ifndef COMPILE_AS_EXECUTABLE
-//    StartTimer();
-    bool b = TUchemnitzDictionaryReader::extractVocables(
-      m_stdstrVocabularyFilePath.c_str() );
-    LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
-    if( ! b )
-      return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
-#endif //#ifndef COMPILE_AS_EXECUTABLE
-////    StartTimer();
-  }
+    return TranslationControllerBaseClass::InitFunction::loadingMainConfigFileFailed;
   return TranslationControllerBaseClass::InitFunction::success;
 }
 
@@ -197,7 +240,7 @@ void TranslationControllerBase::ReadGrammarRuleFile(
   }
 }
 
-void TranslationControllerBase::ReadMainConfigFile(
+bool TranslationControllerBase::ReadMainConfigFile(
   const std::string & cr_stdstrFilePath )
 {
   std::wstring stdwstrErrorMessage ;
@@ -214,6 +257,7 @@ void TranslationControllerBase::ReadMainConfigFile(
     )
   {
     Message("Failed to read main config file" + cr_stdstrFilePath ) ;
+    return false;
   }
   else
   {
@@ -221,6 +265,7 @@ void TranslationControllerBase::ReadMainConfigFile(
     m_stdstrVocabularyFilePath = sax2mainconfighandler.
       m_stdstrVocabularyFilePath ;
   }
+  return true;
 }
 
 void TranslationControllerBase::ReadTranslationRuleFile(

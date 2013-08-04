@@ -6,6 +6,7 @@
  */
 
 #include "VocabularyInMainMem/CharStringStdMap/CharStringStdMap.hpp"
+#include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 
@@ -56,6 +57,7 @@ void CharStringStdMap::AddVocabularyAttributes(
 
 void CharStringStdMap::clear()
 {
+//  LOGN_DEBUG("begin")
   //  VocabularyAndTranslation * p_c_vocabularyandtranslation;
   for( map_type::const_iterator c_iter_map = m_charStringMap.begin() ;
       c_iter_map != m_charStringMap.end() ;
@@ -72,6 +74,7 @@ void CharStringStdMap::clear()
     }
   }
   m_charStringMap.clear();
+//  LOGN_DEBUG("end")
 }
 
 /*void * */ VocablesForWord::voc_container_type * CharStringStdMap::find(

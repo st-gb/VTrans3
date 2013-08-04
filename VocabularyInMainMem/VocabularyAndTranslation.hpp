@@ -159,8 +159,8 @@ class I_UserInterface;
       return m_arbyAttribute[1] ;
     }
 
-    std::string GetEnglishString(BYTE byIndex);
-    std::string GetGermanString(BYTE byIndex);
+    std::string GetEnglishString(BYTE byIndex) const;
+    std::string GetGermanString(BYTE byIndex) const;
 
     BYTE GetNumberOfNeededObjects()
     {

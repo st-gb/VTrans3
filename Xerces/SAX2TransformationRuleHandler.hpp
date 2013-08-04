@@ -13,6 +13,7 @@
 #include <xercesc/sax2/DefaultHandler.hpp>
 
 class ParseByRise ;
+class TransformationRule;
 class TranslationControllerBase ;
 
 namespace Xerces

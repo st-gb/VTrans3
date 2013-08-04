@@ -11,17 +11,18 @@
 #include <wx/dialog.h> //class wxDialog
 #include <wx/textctrl.h> //class wxTextCtrl
 
+#include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
 //#include <IO/IO.hpp> //OneLinePerWordPair::LoadWords()
 #include <Controller/Logger/Logger.hpp> //class Logger
-#include <Controller/Logger/Log4jFormatter.hpp> //class Log4jFormatter
+#include <Controller/Logger/Formatter/Log4jFormatter.hpp> //class Log4jFormatter
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN()
 #include <Translate/SyntaxTreePath.hpp>// SyntaxTreePath::sp_userinterface
 //getwxString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
-#include <wxWidgets/UserInterface/MainFrame.hpp>//class wxWidgets::MainFrame
+#include <wxWidgets/UserInterface/MainWindow/MainFrame.hpp>//class wxWidgets::MainFrame
 //ShowMultipleFileSelectionDialog(...)
 #include <wxWidgets/UserInterface/UserInterface.hpp>
-#include <wxWidgets/UserInterface/wxTextInputDlg.hpp>//class wxTextInputDlg
+//#include <wxWidgets/UserInterface/MainWindow/wxTextInputDlg.hpp>//class wxTextInputDlg
 //class wxTextControlDialog
 #include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
@@ -56,7 +57,8 @@ VTransApp::VTransApp()
 //    m_parsebyrise
 //    , * this
 //    )
-  m_p_wx_text_input_dialog(NULL)
+  m_p_mainWindow(NULL)//,
+  //,m_wxiconVTrans( VT_icon_xpm )
 {
   m_parsebyrise.SetUserInterface( this ) ;
 }
@@ -85,24 +87,25 @@ VTransApp::~VTransApp()
 
 void VTransApp::CreateAndShowMainWindow()
 {
-  wxTextInputDlg * p_wx_text_input_dialog = new wxTextInputDlg(
-    NULL,
-    * ( //(TranslationControllerBase *)
-      this)
-    //, wxID_ANY, wxString("gg"), wxPoint(50,50), wxSize(400,400),
-    //wxDEFAULT_DIALOG_STYLE | wxCLOSE_BOX
-    );
-  m_p_wx_text_input_dialog = p_wx_text_input_dialog ;
+  
+//  wxTextInputDlg * p_wx_text_input_dialog = new wxTextInputDlg(
+//    NULL,
+//    * ( //(TranslationControllerBase *)
+//      this)
+//    //, wxID_ANY, wxString("gg"), wxPoint(50,50), wxSize(400,400),
+//    //wxDEFAULT_DIALOG_STYLE | wxCLOSE_BOX
+//    );
+  /*m_p_wx_text_input_dialog*/ //m_p_mainWindow = p_wx_text_input_dialog ;
+  m_p_mainWindow = new MainFrame();
   //      wxWidgets::MainFrame * p_mainframe = new wxWidgets::MainFrame(
   //        wxT("dfd"), wxPoint(0,0) , wxSize(400,400)
   //        ) ;
-  if( p_wx_text_input_dialog
+  if( /*p_wx_text_input_dialog*/ m_p_mainWindow
   //         && p_mainframe
     )
   {
-    p_wx_text_input_dialog->Show(true);
-    //If this dialog is closed the app should exit.
-    SetTopWindow( p_wx_text_input_dialog) ;
+    ((wxFrame *) m_p_mainWindow)->Show(true);
+    m_p_mainWindow->SetEventHandler( (wxWidgets::MainWindowBase*) m_p_mainWindow);
   //       p_mainframe->Show() ;
   }
   else
@@ -152,7 +155,7 @@ void VTransApp::Message( const std::wstring & cr_std_wstr )
 
 void VTransApp::GetSourceText(std::string & std_string)
 {
-  m_p_wx_text_input_dialog->GetEntireInputText(std_string);
+  m_p_mainWindow->GetEntireInputText(std_string);
 }
 
 //@return true: continue to run the (main loop of ) this program.
@@ -249,12 +252,21 @@ int VTransApp::OnExit()
 
 bool VTransApp::OnInit()
 {
+  m_wxiconVTrans = wxIcon( VT_icon_xpm );
   std::string stdstrLogFilePath = "VTrans_log.txt" ;
 //  g_logger.SetLogLevel(/*LogLevel::debug*/ "debug");
   g_logger.m_logLevel = LogLevel::debug;
   g_logger.OpenFileA(stdstrLogFilePath) ;
-  g_logger.SetFormatter( new CSS::LogFormatter::Log4jFormatter(
-    & g_logger) );
+  const std::vector<FormattedLogEntryProcessor *> & formattedLogEntryProcessors = 
+    g_logger.GetFormattedLogEntryProcessors();
+  if( formattedLogEntryProcessors.size() > 0 )
+  {
+    FormattedLogEntryProcessor * formattedLogEntryProcessor =
+      formattedLogEntryProcessors.front();
+    formattedLogEntryProcessor->SetFormatter( 
+      new CSS::LogFormatter::Log4jFormatter( formattedLogEntryProcessor
+    ) );
+  }
 //  //Add a string as filter, else _nothing_ will be logged (cause is unknown).
 //  std::string stdstr = "sdsdsd" ;
 //  g_logger.AddExcludeFromLogging( stdstr ) ;
@@ -314,7 +326,7 @@ void VTransApp::ShowInvalidVocabularyFileFormatMessage(
     "Dateibeginn) %u (dezimal)\nund Offset (=Position in Byte ab Dateibeginn) "
     "%u (dezimal).\n\nDas Laden der Vokabeln wird beendet.\nVersuchen Sie, den "
     "Fehler in der Dateistruktur zu beheben."),
-    wxstrCwd,
+    wxstrCwd.c_str(),
     //strWordFile,
     dwOffsetOfBeginOfEntry, dwOffset);
 
@@ -323,10 +335,10 @@ void VTransApp::ShowInvalidVocabularyFileFormatMessage(
 
 void VTransApp::EndTimer()
 {
-  m_p_wx_text_input_dialog->EndTimer();
+  m_p_mainWindow->EndTimer();
 }
 
 void VTransApp::StartTimer()
 {
-  m_p_wx_text_input_dialog->StartTimer();
+  m_p_mainWindow->StartTimer();
 }

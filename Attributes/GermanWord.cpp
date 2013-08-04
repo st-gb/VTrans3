@@ -9,19 +9,27 @@
 //static var definitions.
 const char * const GermanVerb::presentPersonEndings [] = {
   "e" //gehE
-  , "st" //gehST, arbeitEST
-  , "t" //gehT
-  , "en" //gehEN
-  , "t" //gehT
-  , "en"  //gehEN
+  , "st" //gehST
+  , "t" //er gehT
+  , "en" //wir gehEN
+  , "t" //ihr gehT
+  , "en"//sie gehEN
+  };
+const char * const GermanVerb::presentPersonEndings2 [] = {
+  "" //ich arbeite
+  , "st" //du arbeiteST
+  , "t" //er arbeiteT
+  , "n" //wir arbeiteN
+  , "t" //ihr arbeiteT
+  , "en" //wir arbeiteN
   };
 const char * const GermanVerb::pastPersonEndings [] = {
-  "" //ging
-  , "st" //gingST
-  , "" //ging
-  , "en" //gingEN
-  , "t" //gingT
-  , "en"  //gingEN
+  "" //ging, arbeitete
+  , "st" //gingST, arbeiteteST
+  , "" //er ging, arbeitete
+  , "en" //gingEN, arbeitetEN
+  , "t" //ihr gingT, arbeiteteT
+  , "en" //sie gingEN, arbeitetEN
   };
 
 GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)

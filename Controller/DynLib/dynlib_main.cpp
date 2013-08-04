@@ -9,13 +9,19 @@
 #include <Controller/Logger/Logger.hpp> //class Logger
 #include <Controller/GetErrorMessageFromLastErrorCode.hpp>
 //class CSS::LogFormatter::Log4jFormatter
-#include <Controller/Logger/Log4jFormatter.hpp>
+#include <Controller/Logger/Formatter/Log4jFormatter.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 #include <preprocessor_macros/export_function_symbols.h>
+//LOGN(...), g_logger
+#include <preprocessor_macros/logging_preprocessor_macros.h>
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
 //SetCurrentDirectory(...)
 #include <Controller/FileSystem/SetCurrentWorkingDir.hpp>
 //#include <InputOutput/XML/OutputXMLindented.hpp>
+//platformstl::filesystem_traits<char>::set_current_directory(...)
+#include <platformstl/filesystem/current_directory.hpp>
+//#include <unixstl/filesystem/filesystem_traits.hpp>
+#include <platformstl/filesystem/filesystem_traits.hpp>
 
 //Logger g_logger;
 //TranslationControllerBase g_translationcontrollerbase;
@@ -43,9 +49,14 @@ void SetCurrentDirToConfigFilesRootPath(const std::string &
   LOGN("Before setting current directory to \"" //main config file's full path"
     << stdstrConfigFilesRootFullDirectoryPath << "\"")
   //::SetCurrentDirectory(stdstrMainConfigFileFullDirectoryPath.c_str()
-  SetCurrentDirectory( (const char *) stdstrConfigFilesRootFullDirectoryPath.
-      c_str()
-    );
+//  SetCurrentDirectory( (const char *) stdstrConfigFilesRootFullDirectoryPath.
+//      c_str()
+//    );
+//  platformstl::current_directory cwd; (//char_type const *dir
+//    stdstrConfigFilesRootFullDirectoryPath.c_str() );
+  platformstl::filesystem_traits<char>::set_current_directory(
+    stdstrConfigFilesRootFullDirectoryPath.c_str());
+//  cwd.
   LOGN("After setting current directory to \"" //main config file's full path"
     << stdstrConfigFilesRootFullDirectoryPath << "\"")
 }
@@ -65,13 +76,14 @@ EXPORT BYTE
   std::string stdstrLogFilePath = //"VTrans_log.txt" ;
       "VTransDynlib_log.txt" ;
   bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath) ;
+  //g_logger.
   if( ! bFileIsOpen )
   {
     std::cerr << "Failed to open the log file:"
     << GetErrorMessageFromLastErrorCodeA() << std::endl;
     return TranslationControllerBaseClass::InitFunction::creatingLogFileFailed;
   }
-  g_logger.SetFormatter(new CSS::LogFormatter::Log4jFormatter(& g_logger) );
+  //g_logger.SetFormatter(new CSS::LogFormatter::Log4jFormatter(& g_logger) );
 //  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
   LOGN("Init--begin")
   //Create on heap because of g_logger access that causes a crash when the log

@@ -5,7 +5,7 @@
  *      Author: Stefan
  */
 
-#include "wxWidgets/UserInterface/ShowTranslationRulesDialog.hpp"
+#include "ShowTranslationRulesDialog.hpp"
 #include <wx/sizer.h> //class wxSizer
 #include <wx/button.h> //class wxButton
 #include <wx/combobox.h> //class wxCombobox
@@ -131,19 +131,19 @@ namespace VTrans
   ////      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
   ////      //[...]can change its size in the main orientation of the wxBoxSizer -
   ////      //where 0 stands for not changeable[...]
-  //      , 1
-  //      , wxEXPAND |
-  //        //wxALL
+        , 1
+        , //wxEXPAND |
+          wxALL
   //      //wxFIXED_MINSIZE //| wxLEFT | wxRIGHT
   //      wxALIGN_CENTER_VERTICAL
-  //      , 0
-      //from http://docs.wxwidgets.org/2.8/wx_sizeroverview.html#boxsizerprogramming
-      , wxSizerFlags(1)//.Expand()
+        , 0
+//      //from http://docs.wxwidgets.org/2.8/wx_sizeroverview.html#boxsizerprogramming
+//      , wxSizerFlags(1)//.Expand()
       );
-    p_wxsizer->Add(p_wxbuttonTest, 1);
+    p_wxsizer->Add(p_wxbuttonTest, 0);
     p_wxsizer->Layout();
   //    m_p_wxsizer->Add(p_wxbuttonTest);
-    m_p_wxsizer->Add(p_wxsizer);
+    m_p_wxsizer->Add(p_wxsizer, 0, wxEXPAND);
   //    m_p_wxsizer->Add( p_wxlistbox
   //      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
   //      //[...]can change its size in the main orientation of the wxBoxSizer -
@@ -216,7 +216,9 @@ namespace VTrans
       );
 //    testiftranslationruleapplies.Traverse();
     if( wxGetApp().m_translateparsebyrisetree.m_bTranslationRuleApplies )
-      wxGetApp().Message( "applies to parse tree " );
+      wxGetApp().Message( "selected transl. rule applies to parse tree" );
+    else
+      wxGetApp().Message( "selected transl. rule does not apply to parse tree" );
   }
 
   void ShowTranslationRulesDialog::ShowConditionsAndTranslation(

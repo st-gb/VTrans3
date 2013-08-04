@@ -9,7 +9,7 @@
 #define USER_INTERFACE_CONTROL_ACTIONS_H_
 
 //An enum guarantees a unique number for each element.
-enum
+enum user_interface_control_actions
 {
   ID_Close = 1 ,
   ID_AddGrammarRules ,
@@ -30,7 +30,7 @@ enum
   ID_Translate ,
   ID_TruncateLogFile,
   ID_Info,
-  Timer
+  ID_Timer
 };
 
 

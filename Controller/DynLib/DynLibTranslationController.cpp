@@ -5,7 +5,7 @@
  *      Author: Stefan
  */
 
-#include <Controller/DynLibTranslationController.hpp>
+#include "DynLibTranslationController.hpp"
 
 DynLibTranslationController::DynLibTranslationController()
 {

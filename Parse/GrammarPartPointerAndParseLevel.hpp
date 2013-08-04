@@ -7,6 +7,7 @@
 
 #ifndef GRAMMARPARTPOINTERANDPARSELEVEL_HPP_
 #define GRAMMARPARTPOINTERANDPARSELEVEL_HPP_
+#include <stddef.h> //NULL
 
 class GrammarPart ;
 class ParseByRise ;

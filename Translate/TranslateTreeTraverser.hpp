@@ -9,6 +9,8 @@
 #define TRANSLATETREETRAVERSER_HPP_
 
 #include <Attributes/TranslationAndGrammarPart.hpp>
+//class TranslationAndConsecutiveID
+#include <Attributes/TranslationAndConsecutiveID.hpp>
 //Base class DirectingLeavesMultipleIterTraverser
 #include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/ParseByRise.hpp>
@@ -18,21 +20,6 @@
 //Forward declaration (faster than to include)
 class ParseByRise ;
 class TranslateParseByRiseTree ;
-
-class TranslationAndConsecutiveID
-{
-public:
-  TranslationAndConsecutiveID(
-    std::string & r_stdstrTranslation ,
-    WORD wConsecutiveID
-    )
-  {
-    m_stdstrTranslation = r_stdstrTranslation ;
-    m_wConsecutiveID = wConsecutiveID ;
-  }
-  std::string m_stdstrTranslation ;
-  WORD m_wConsecutiveID ;
-} ;
 
 namespace ParseTreeTraverser
 {
