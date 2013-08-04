@@ -9,13 +9,18 @@
 #define	_VTRANSAPP_HPP
 
 #include <wx/app.h>//base class wxApp
+#include <wx/icon.h> //class wxIcon
+
+//Base class TranslationControllerBase
 #include <Controller/TranslationControllerBase.hpp>
-#include <UserInterface/I_UserInterface.hpp>//base class I_UserInterface
+//#include <UserInterface/I_UserInterface.hpp>//base class I_UserInterface
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 #include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include <string> //class std::string
 
-//Fwd decl.
+//#include "UserInterface/MainWindow/MainWindowBase.hpp"
+
+//Forward declarations.
 class wxTextInputDlg ;
 namespace XERCES_CPP_NAMESPACE
 {
@@ -26,6 +31,11 @@ namespace VTrans
   class ShowTranslationRulesDialog;
 }
 class TranslationRule;
+namespace wxWidgets
+{
+  class MainFrame;
+  class MainWindowBase;
+}
 
 namespace wxWidgets
 {
@@ -35,9 +45,11 @@ namespace wxWidgets
     , public TranslationControllerBase
   {
   public:
+    wxIcon m_wxiconVTrans;
     VTrans::ShowTranslationRulesDialog * m_p_showtranslationrulesdialog;
   //  static LetterTree s_lettertree ;
-    wxTextInputDlg * m_p_wx_text_input_dialog ;
+//    wxTextInputDlg * m_p_wx_text_input_dialog ;
+    /*wxWidgets::MainWindowBase*/ wxWidgets::MainFrame * m_p_mainWindow;
     std::map<TranslationRule *, std::string>
       m_std_map_p_translationrule2filepath;
   //  std::string m_stdstrVocabularyFilePath ;

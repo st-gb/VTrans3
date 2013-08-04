@@ -6,7 +6,7 @@
  */
 
 //Class TranslationRulesListCtrl
-#include "wxWidgets/UserInterface/TranslationRulesListCtrl.hpp"
+#include "TranslationRulesListCtrl.hpp"
 #include <map> //std::map
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 //class ConditionsAndTranslation

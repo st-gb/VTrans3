@@ -54,8 +54,8 @@ SAX2TranslationRuleHandler::~SAX2TranslationRuleHandler()
   // TODO Auto-generated destructor stub
 }
 
-//This callback function is needed because a translation rule can be added
-// at first when all inner possible conditions were got.
+/** @brief This callback function is needed because a translation rule can be
+* added at first when all inner possible conditions were got. */
 void SAX2TranslationRuleHandler::endElement(
   const XMLCh * const cpc_xmlchURI,
   const XMLCh * const cpc_xmlchLocalName,
@@ -156,9 +156,10 @@ void SAX2TranslationRuleHandler::endElement(
           p_translationrule
           , m_conditionsandtranslation ) ;
 #ifdef COMPILE_AS_EXECUTABLE
+        const std::string & std_strSystemId = Xerces::ToStdString(
+          m_pc_locator->getSystemId() );
         wxGetApp().m_std_map_p_translationrule2filepath.insert(
-          std::make_pair(p_translationrule, Xerces::ToStdString( m_pc_locator->
-            getSystemId() )) );
+          std::make_pair(p_translationrule, std_strSystemId) );
 #endif //#ifdef COMPILE_AS_EXECUTABLE
       }
       catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )

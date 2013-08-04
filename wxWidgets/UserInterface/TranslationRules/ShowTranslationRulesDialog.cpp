@@ -5,7 +5,7 @@
  *      Author: Stefan
  */
 
-#include "wxWidgets/UserInterface/ShowTranslationRulesDialog.hpp"
+#include "ShowTranslationRulesDialog.hpp"
 #include <wx/sizer.h> //class wxSizer
 #include <wx/button.h> //class wxButton
 #include <wx/combobox.h> //class wxCombobox

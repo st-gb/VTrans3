@@ -14,7 +14,7 @@
 //#include <Translate/SummarizePersonIndex.hpp>//class SummarizePersonIndex
 //header file of this TranslateParseByRiseTree class
 #include <Translate/TranslateParseByRiseTree.hpp>
-#include <Translate/Translationrule.hpp>//class TranslationRule
+#include <Translate/TranslationRule.hpp>//class TranslationRule
 //class ParseTreeTraverser::DoTranslateTreeTraverser
 #include <Translate/TranslateTreeTraverser.hpp>
 //class ParseTreeTraverser::TranslatedTreeTraverser

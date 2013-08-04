@@ -148,51 +148,55 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   SyntaxTreePath::sp_userinterface = this ;
   s_dictionary.SetUserInterface(this);
   s_dictionary.InsertFundamentalWords() ;
-  ReadMainConfigFile(cr_stdstrFilePath) ;
-  m_std_strMainConfigFilePath = cr_stdstrFilePath;
-  if( m_stdstrVocabularyFilePath.empty() )
+  if( ReadMainConfigFile(cr_stdstrFilePath) )
   {
-    Message( "error: The vocabulary file path is empty") ;
-    return TranslationControllerBaseClass::InitFunction::
-      vocabularyFilePathIsEmpty;
+    m_std_strMainConfigFilePath = cr_stdstrFilePath;
+    if( m_stdstrVocabularyFilePath.empty() )
+    {
+      Message( "error: The vocabulary file path is empty") ;
+      return TranslationControllerBaseClass::InitFunction::
+        vocabularyFilePathIsEmpty;
+    }
+    else
+    {
+  //    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
+      TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
+  //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
+  //         //stdstrFilePath
+  //          m_stdstrVocabularyFilePath
+  //        )
+  //      )
+  //    {
+  ////        CreateAndShowMainWindow() ;
+  //      //Return true to continue to run the (main loop of ) this program.
+  ////        return true ;
+  //    }
+      TUchemnitzDictionaryReader tcdr(* this  );
+
+  //    if( b)
+  //    {
+  //
+  //    }
+  //    else
+  //    {
+  //      LoadingVocabularyFileFailed(m_stdstrVocabularyFilePath);
+  //      return TranslationControllerBaseClass::InitFunction::
+  //        loadingVocabularyFileFailed;
+  //    }
+      CreateAndShowMainWindow() ;
+  #ifndef COMPILE_AS_EXECUTABLE
+  //    StartTimer();
+      bool b = TUchemnitzDictionaryReader::extractVocables(
+        m_stdstrVocabularyFilePath.c_str() );
+      LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
+      if( ! b )
+        return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
+  #endif //#ifndef COMPILE_AS_EXECUTABLE
+  ////    StartTimer();
+    }
   }
   else
-  {
-//    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
-    TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
-//    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
-//         //stdstrFilePath
-//          m_stdstrVocabularyFilePath
-//        )
-//      )
-//    {
-////        CreateAndShowMainWindow() ;
-//      //Return true to continue to run the (main loop of ) this program.
-////        return true ;
-//    }
-    TUchemnitzDictionaryReader tcdr(* this  );
-
-//    if( b)
-//    {
-//
-//    }
-//    else
-//    {
-//      LoadingVocabularyFileFailed(m_stdstrVocabularyFilePath);
-//      return TranslationControllerBaseClass::InitFunction::
-//        loadingVocabularyFileFailed;
-//    }
-    CreateAndShowMainWindow() ;
-#ifndef COMPILE_AS_EXECUTABLE
-//    StartTimer();
-    bool b = TUchemnitzDictionaryReader::extractVocables(
-      m_stdstrVocabularyFilePath.c_str() );
-    LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
-    if( ! b )
-      return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
-#endif //#ifndef COMPILE_AS_EXECUTABLE
-////    StartTimer();
-  }
+    return TranslationControllerBaseClass::InitFunction::loadingMainConfigFileFailed;
   return TranslationControllerBaseClass::InitFunction::success;
 }
 
@@ -236,7 +240,7 @@ void TranslationControllerBase::ReadGrammarRuleFile(
   }
 }
 
-void TranslationControllerBase::ReadMainConfigFile(
+bool TranslationControllerBase::ReadMainConfigFile(
   const std::string & cr_stdstrFilePath )
 {
   std::wstring stdwstrErrorMessage ;
@@ -253,6 +257,7 @@ void TranslationControllerBase::ReadMainConfigFile(
     )
   {
     Message("Failed to read main config file" + cr_stdstrFilePath ) ;
+    return false;
   }
   else
   {
@@ -260,6 +265,7 @@ void TranslationControllerBase::ReadMainConfigFile(
     m_stdstrVocabularyFilePath = sax2mainconfighandler.
       m_stdstrVocabularyFilePath ;
   }
+  return true;
 }
 
 void TranslationControllerBase::ReadTranslationRuleFile(
