@@ -25,6 +25,9 @@
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <set>//class std::set
 
+/** for wxWidgets::GetwxString_Inline */
+using namespace wxWidgets;
+
 wxHTMLfileOutput::wxHTMLfileOutput(
 //  const std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    cr_stdvec_stdvecTranslationAndConsecutiveID

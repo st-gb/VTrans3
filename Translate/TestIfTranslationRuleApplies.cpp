@@ -8,8 +8,8 @@
 #include "Translate/TestIfTranslationRuleApplies.hpp"
 //class TranslateParseByRiseTree
 //#include <wx/msw/winundef.h>
-//class ShowTranslationRulesDialog
-#include <wxWidgets/UserInterface/ShowTranslationRulesDialog.hpp>
+/** class ShowTranslationRulesDialog */
+#include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <Translate/TranslationRule.hpp> //class TranslationRule

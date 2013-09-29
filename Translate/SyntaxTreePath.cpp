@@ -9,8 +9,8 @@
 //class VTrans::UnknownGrammarPartNameException
 #include <IO/UnknownGrammarPartNameException.hpp>
 #include <Parse/ParseByRise.hpp>//class ParseByRise
-//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
-#include <preprocessor_macros/suppress_unused_variable.h>
+/** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
+#include <compiler/GCC/suppress_unused_variable.h>
 #include <preprocessor_macros/logging_preprocessor_macros.h>//DEBUG_COUTN(...)
 //for sp_userinterface->Message(const std::string & )
 #include <UserInterface/I_UserInterface.hpp>

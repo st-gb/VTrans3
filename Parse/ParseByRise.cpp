@@ -12,8 +12,8 @@
 
 //TranslationControllerBase::s_lettertree
 #include <Controller/TranslationControllerBase.hpp>
-//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
-#include <preprocessor_macros/suppress_unused_variable.h>
+/** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
+#include <compiler/GCC/suppress_unused_variable.h>
 
 #include "ParseByRise.hpp" //class ParseByRise
 #include <Attributes/EnglishWord.hpp> //for class EnglishWord's English_word_class enum

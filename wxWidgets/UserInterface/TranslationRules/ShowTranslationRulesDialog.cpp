@@ -29,6 +29,9 @@
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <map> //class std::map
 
+/** for wxWidgets::GetwxString_Inline */
+using namespace wxWidgets;
+
 namespace VTrans
 {
   using namespace VTrans;
@@ -205,6 +208,7 @@ namespace VTrans
 
     wxGetApp().m_p_showtranslationrulesdialog = this;
 
+    //TODO crash on empty translation rule
     wxGetApp().m_translateparsebyrisetree.ProcessParseTree(
   //    r_parsebyrise,
       r_stdvec_stdstrWholeTransl,

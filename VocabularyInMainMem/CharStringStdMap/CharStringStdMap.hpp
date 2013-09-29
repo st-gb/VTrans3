@@ -13,32 +13,7 @@
 #include <map> //class std::map
 #include <set> //class std::set
 
-//Forward decl.
-class VocabularyAndTranslation;
-
-/** A word may have more than 1 vocable: "love": to love, the love. This class
- *  handles/ stores these possibilities.
- * This class may be used as the value type of an object of a "std::map" class.
- * */
-class VocablesForWord
-{
-//  VocabularyAndTranslation * m_p_vocabularyandtranslation;
-public:
-  typedef std::set<
-    //As pointer because: for a single vocabulary often exist multiple words:
-    //e.g. for the vocabulary "man": "man" and "men".
-    //So for the last LetterNode of "man" and "men" the pointer to the same
-    //VocabularyAndTranslation should be added.
-    VocabularyAndTranslation *> voc_container_type;
-//  voc_container_type * m_p_setpvocabularyandtranslation ;
-  voc_container_type m_std_set_p_vocabularyandtranslation ;
-  VocablesForWord()
-//    : m_p_setpvocabularyandtranslation(NULL)
-  {
-
-  }
-  void insert(VocabularyAndTranslation * const pvocabularyandtranslation);
-};
+#include "VocabularyInMainMem/VocablesForWord.hpp"
 
 class CharStringStdMap
   : //public I_WordSearch,
@@ -58,6 +33,7 @@ public:
     enum EnglishWord::English_word_class word_class,
     void * p_v);
   void clear();
+//  unsigned GetNumberOfVocPairs();
   /*void * */std::set<VocabularyAndTranslation *> * find(
     const PositionStringVector & psv,
 //      const PositionstdstringVector & psv,
@@ -78,6 +54,9 @@ public:
 //   , bool bInsertNewVocabularyAndTranslation
 //   , BYTE byVocabularyType
 //   );
+  fastestUnsignedDataType GetNumberOfAllocatedBytes();
+  //TODO implement
+  void GetStatistics(fastestUnsignedDataType [] ) { }
   void Insert(EnglishWord&, GermanWord&, VocabularyAndTranslation*) { };
   VocabularyAndTranslation * /*void * */ Insert(//const std::string & stdstr,
     const char * const wordBegin,

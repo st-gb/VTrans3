@@ -9,6 +9,7 @@
 #include <Attributes/Word.hpp>
 
 #include "VocabularyAndTranslation.hpp" //class VocabularyAndTranslation
+#include <IO/dictionary/DictionaryReaderBase.hpp> //class DictionaryReaderBase
 
 #define NUMBER_OF_PERSONAL_PRONOUNS 7
 
@@ -18,7 +19,13 @@ class GermanWord;
 
   class IVocabularyInMainMem
   {
+  protected:
     I_UserInterface * mp_userinterface;
+    DictionaryReader::DictionaryReaderBase * m_p_dictionaryReader;
+    fastestUnsignedDataType m_numberOfVocPairs;
+    /** number of all English words (added inside binary and added from
+     *  dictionary */
+    fastestSignedDataType m_numberOfEnglishWords;
   public:
     typedef std::set<VocabularyAndTranslation *> voc_container_type;
     static std::string s_arstdstrPersonalPronoun [] ; //= {"hh", "j"} ;
@@ -53,6 +60,7 @@ class GermanWord;
     , _3rd_person_plural
   } ;
 
+  fastestUnsignedDataType m_maxTokenToConsider;
   IVocabularyInMainMem() ;
   //Define virtual constructor to avoid g++ warning in subclasses like
   //"`class EngNounsLetterTree' has virtual functions but non-virtual
@@ -64,10 +72,20 @@ class GermanWord;
     void * p_v) = 0;
   /** Delete all dictionary entries. */
   virtual void clear() = 0;
+  virtual unsigned GetNumberOfVocPairs() { return m_numberOfVocPairs; }
+  void DecreaseNumberOfVocPairs() { -- m_numberOfVocPairs; }
+  virtual fastestUnsignedDataType GetNumberOfAllocatedBytes() = 0;
+//  virtual fastestUnsignedDataType GetNumberOfNouns() = 0;
+//  virtual fastestUnsignedDataType GetNumberOfVerbs() = 0;
+  virtual void GetStatistics(
+      fastestUnsignedDataType wordClass[] ) = 0;
+  unsigned GetNumberOfEnglishWords() { return m_numberOfEnglishWords; }
 //  void createMapping();
     //Make methods pure virtual ("virtual [...] = 0" ) to avoid
     //linker error "LNK 2001" in MSVC++.
 //    virtual BYTE GetGermanArticle() = 0 ;
+  /** @return a container because 1 word may have multiple translations:
+   *  e.g. "love": the "love", to "love" */
   virtual /*void * */ std::set<VocabularyAndTranslation *> * find(
     const PositionStringVector & psv,
 //      const PositionstdstringVector & psv,
@@ -95,6 +113,8 @@ class GermanWord;
       Insert(const std::string & stdstrWord,
         enum EnglishWord::English_word_class word_class, void * p_v)
     {
+      ++ m_numberOfEnglishWords;
+//      ++ m_numberOfVocPairs;
       //If not "= 0 ":
       //"undefined reference to `vtable for IVocabularyInMainMem'" when linking
       //with g++ .
@@ -122,10 +142,11 @@ class GermanWord;
       enum EnglishWord::English_word_class word_class
       )
     {
+      ++ m_numberOfVocPairs;
       /*void * p_v =*/ return Insert(ar_chWordBegin, stringLen, word_class, NULL);
 //      AddVocabularyAttributes( word_class, p_v);
     }
-    /** Save memory be referring to existing voc attributes. */
+    /** Save memory by referring to existing voc attributes. */
     virtual /*void*/ VocabularyAndTranslation * InsertAsKeyAndReferToExistingVocData(
       enum EnglishWord::English_word_class word_class,
       const char * ar_chWordBegin,
@@ -138,12 +159,17 @@ class GermanWord;
       if( p_vocandtransl )
       {
         p_vocandtransl->PointToAttributeData(p_vocandtranslAllocated);
-        p_vocandtransl->m_byType = word_class;
+        p_vocandtransl->m_englishWordClass = word_class;
       }
       return p_vocandtransl;
     };
     void SetUserInterface( I_UserInterface * p_userinterface )
     {
       mp_userinterface = p_userinterface ;
+    }
+    virtual void SetDictionaryReader(
+      DictionaryReader::DictionaryReaderBase * p_dictionaryReader)
+    {
+      m_p_dictionaryReader = p_dictionaryReader;
     }
   };

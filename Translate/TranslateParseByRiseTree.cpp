@@ -24,8 +24,8 @@
 #include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
 //class SAX2TranslationRuleHandler
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
-//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
-#include <preprocessor_macros/suppress_unused_variable.h>
+/** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
+#include <compiler/GCC/suppress_unused_variable.h>
 
 #include <string>//class std::string
 
@@ -308,9 +308,10 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
                 if( r_atapas.m_byLanguage ==
                   AttributeTypeAndPosAndSize::English )
                 {
-                  std::string & r_stdstrAttrVal = p_grammarpartLeaf->
-                    m_pvocabularyandtranslation->m_arstrEnglishWord[
-                    r_atapas.m_wIndex ] ;
+                  std::string std_strAttrVal = p_grammarpartLeaf->
+                    m_pvocabularyandtranslation->
+                    //m_arstrEnglishWord[r_atapas.m_wIndex ] ;
+                    GetEnglishWordAsStdString(r_atapas.m_wIndex);
                   //std::string & r_stdstrTextTokens =
                   std::string stdstrTextTokens ;
                     mp_parsebyrise->GetTokensAsSpaceSeparatedString(
@@ -319,7 +320,7 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
                     stdstrTextTokens
                     ) ;
                   if( stdstrTextTokens != ""  && stdstrTextTokens ==
-                    r_stdstrAttrVal )
+                    std_strAttrVal )
                   {
                     //bIdentical = true ;
                   }
@@ -414,22 +415,24 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
               {
                 case AttributeTypeAndPosAndSize::English :
                 {
-                  std::string & r_stdstrAttrVal = p_grammarpartLeaf->
-                    m_pvocabularyandtranslation->m_arstrEnglishWord[
-                    r_atapas.m_wIndex ] ;
+                  std::string stdstrAttrVal = p_grammarpartLeaf->
+                    m_pvocabularyandtranslation->
+                    //m_arstrEnglishWord[r_atapas.m_wIndex ] ;
+                    GetEnglishWordAsStdString(r_atapas.m_wIndex);
                   //std::string & r_stdstrTextTokens =
-                  return r_stdstrAttrVal ;
+                  return stdstrAttrVal ;
                 }
                   break ;
                 case AttributeTypeAndPosAndSize::German :
                   {
                   LOGN_DEBUG("language for choosing attribute value is "
                     "German, index:" << r_atapas.m_wIndex )
-                  std::string & r_stdstrAttrVal = p_grammarpartLeaf->
-                    m_pvocabularyandtranslation->m_arstrGermanWord[
-                    r_atapas.m_wIndex ] ;
+                  std::string stdstrAttrVal = p_grammarpartLeaf->
+                    m_pvocabularyandtranslation->
+                    //m_arstrGermanWord[r_atapas.m_wIndex ] ;
+                    GetGermanWordAsStdString(r_atapas.m_wIndex);
                   //std::string & r_stdstrTextTokens =
-                  return r_stdstrAttrVal ;
+                  return stdstrAttrVal ;
                   }
                   break ;
               }
@@ -1087,13 +1090,13 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
         r_stdvec_wCurrentGrammarPartPath ) ;
       LOGN_DEBUG("All conditions match for STP \"" << stdstrCurrentParseTreePath
         << "\"" )
-      WORD wNumberOfElements = p_translationrule->
-        m_syntaxtreepathInsertionForTranslation.m_wNumberOfElements;
+      const fastestUnsignedDataType numberOfElements = p_translationrule->
+        m_syntaxtreepathInsertionForTranslation.GetNumberOfElements();
       LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "All conditions match for STP \""
         << stdstrCurrentParseTreePath
         << "\"" )
        //std::string str =
-      if( wNumberOfElements > 0)
+      if( numberOfElements > 0)
       {
         p_translationrule->Insert(r_stdvec_p_grammarpartPath,
 //                  r_stdstrTranslation

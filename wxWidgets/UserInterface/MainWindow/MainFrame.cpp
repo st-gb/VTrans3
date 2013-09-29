@@ -24,13 +24,13 @@
 // : "I believe passing -Wno-write-strings to gcc will suppress this warning."
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
+#include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
 //ENable warning
 #pragma GCC diagnostic warning "-Wwrite-strings"
 
 #include "MainFrame.hpp" //class MainFrame
 #include <wxWidgets/UserInterface/wxParseTreePanel.hpp> //class wxParseTreePanel
 #include <wxWidgets/user_interface_control_actions.h> //for enum
-#include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
 
 //#include <wx/string.h> //for class wxString
 #include <wx/splitter.h> //class wxSplitterWindow
@@ -49,20 +49,36 @@ namespace wxWidgets
     wxMenu * p_wxmenu ;
     p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
     p_wxmenu->Append( ID_Translate, wxT("translate") );
-    mp_wxmenubar->Append( p_wxmenu , wxT("tarn")) ;
+    mp_wxmenubar->Append( p_wxmenu , wxT("&action")) ;
+
+    p_wxmenu = new wxMenu();
+    p_wxmenu->Append( ID_LookupWord, wxT("&lookup word") );
+    p_wxmenu->Append( ID_ShowDictionaryStatistics,  wxT("&statistics") );
+    p_wxmenu->Append( ID_UnloadDictionary, wxT("&unload") );
+    mp_wxmenubar->Append( p_wxmenu , wxT("&dictionary")) ;
+
+    p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
+    p_wxmenu->AppendCheckItem(ID_ShowGrammarPartMemoryAddress,
+      wxT("show memory address of grammar part ") );
+    p_wxmenu->AppendCheckItem(ID_ShowGrammarTranslatedWord,
+      wxT("show translated word") );
+    mp_wxmenubar->Append( p_wxmenu , wxT("&view")) ;
+
     SetMenuBar( mp_wxmenubar );
   }
   
   void MainFrame::AddBitmapButtonAndTooltip(
       enum user_interface_control_actions itemID, 
-      const char * const XPMbitmapData [], const wxChar toolTip []//, wxSizer * p_wxsizer
+      const char * const XPMbitmapData [],
+      const wxChar toolTip []//, wxSizer * p_wxsizer
     )
   {
     mp_wxtoolbar->AddTool(
       itemID, //ID_Translate
       toolTip, //wxT("translate")
       //wxBitmap( translate_bitmap_xpm)
-      XPMbitmapData
+      XPMbitmapData,
+      toolTip
 //      , wxNullBitmap, wxITEM_NORMAL,
 //      _T("New file"), _T("This is help for new file tool")
       );
@@ -93,6 +109,7 @@ namespace wxWidgets
         //Necessary for showing a title bar
         | wxDEFAULT_FRAME_STYLE
       )
+    , MainWindowBase(this)
 //    , m_parsebyrise( ::wxGetApp() )
   {
     wxIcon wxiconThisDialog( VT_icon_xpm ) ;
@@ -103,15 +120,28 @@ namespace wxWidgets
     AddInputAndOutputPanels();
     AddMenuBar() ;
     //from wxWidgets' toolbar sample:
-    mp_wxtoolbar = new wxToolBar(
-      (wxFrame*) this,
-      wxID_ANY //,
-//      wxDefaultPosition, wxDefaultSize,
-//      style
-      );
-    mp_wxtoolbar->SetMargins(4, 4);
+    mp_wxtoolbar = //new wxToolBar(
+//      /*(wxFrame*)*/ this,
+//      wxID_ANY //,
+////      wxDefaultPosition, wxDefaultSize,
+////      style
+//      );
+      CreateToolBar();
+
+    mp_wxtoolbar->SetMargins(0, 0);
+//    mp_wxtoolbar->AddTool(
+//      ID_Translate, //itemID,
+//      wxT("translate"), //toolTip,
+//      //wxBitmap( translate_bitmap_xpm)
+//      translate_bitmap_xpm
+////      , wxNullBitmap, wxITEM_NORMAL,
+////      _T("New file"), _T("This is help for new file tool")
+//      );
+//    AddTranslateButton( NULL ) ;
+
     AddToolButtons();
-    SetToolBar( mp_wxtoolbar ) ;
+    //SetToolBar( mp_wxtoolbar ) ;
+    //http://docs.wxwidgets.org/2.8/wx_wxtoolbar.html#wxtoolbaraddtool:
     // "after adding the buttons to the toolbar, must call Realize() to reflect
     // the changes"
     mp_wxtoolbar->Realize();

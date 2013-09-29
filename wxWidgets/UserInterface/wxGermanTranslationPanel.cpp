@@ -27,6 +27,9 @@ BEGIN_EVENT_TABLE(wxGermanTranslationPanel, wxPanel)
   EVT_ERASE_BACKGROUND(wxGermanTranslationPanel::OnEraseBackground)
 END_EVENT_TABLE()
 
+/** for wxWidgets::GetwxString_Inline */
+using namespace wxWidgets;
+
 wxGermanTranslationPanel::wxGermanTranslationPanel()
 {
 //  wxChoice * p_wxchoice = new wxChoice(

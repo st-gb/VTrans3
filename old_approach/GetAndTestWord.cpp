@@ -1,4 +1,5 @@
-//Ohne das folgende include: fatal error C1010: Unerwartetes Dateiende w‰hrend der Suche nach dem vorkompilierten Header.
+Ôªø//Ohne das folgende include: fatal error C1010: Unerwartetes Dateiende
+// w√§hrend der Suche nach dem vorkompilierten Header.
 #include "StdAfx.h"
 #include "GetAndTestWord.h" //for IsConsonant(...) etc.
 #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
@@ -248,7 +249,7 @@ Word * GetGermanAdjectiveOrGermanAdverbOfEnglishAdverb(const CString & str)
 			{ // Art und Weise wird in einem Object der Klasse EnglishAdjective
 				// gespeichert (Member-Variable 'CString adverb'), und nicht in
 				// einem Objekt der Klasse EnglishAdverb
-				// Deswegen m¸ssen wir auch die englischen Adjective nach einem
+				// Deswegen m√ºssen wir auch die englischen Adjective nach einem
 				// Adverb durchsuchen
 				EnglishAdjective * ea=dynamic_cast<EnglishAdjective*>(current->m_pWord);
 				if(ea!=NULL)
@@ -1188,7 +1189,7 @@ WordNode * GetPointerToWordNodeWhereAnEnglishConjunctionIsEncapsulated(const
 					//TRACE("cstrvecEN.size(): %d cstrvec.size(): %d\n",cstrvecEN.size(),cstrvec.size());
 					if(cstrvecEN.size()==sv.size())
 					{
-						//TRACE("Die Grˆﬂen sind gleich.\n");
+						//TRACE("Die Gr√∂√üen sind gleich.\n");
 						BOOL bEqual=TRUE;
 						for(DWORD i=0;i<sv.size();i++)
 						{
@@ -1325,7 +1326,7 @@ CStringVector & cstrvec) ANFANG\n");
 						cstrvecEN=GetCStringVector2(en->m_strPlural);
 						if(cstrvecEN.size()==cstrvec.size())
 						{
-							//TRACE("Die Grˆﬂen sind gleich.\n");
+							//TRACE("Die Gr√∂√üen sind gleich.\n");
 							BOOL bEqual=TRUE;
 							for(DWORD i=0;i<cstrvec.size();i++)
 							{
@@ -1561,7 +1562,7 @@ PrepositionIsEncapsulated(const CStringVector & sv) - return current\n");
 }
 
 //die fortschreitenden Partizipien werden nach dem Buch "ENGLISCH im 
-//TELEKOLLEG I ‹bungsband Seite 13 gebildet
+//TELEKOLLEG I √úbungsband Seite 13 gebildet
 WordNode * GetPointerToWordNodeWhereAnEnglishProgressiveIsEncapsulated(
 	const CString & rstrToken)
 {
@@ -1596,7 +1597,7 @@ Encapsulated(const CString & rstrToken) - ANFANG\n");
 					Right(1)==_T("e"))
 				{
 					//wenn die Zeichenkette mit dem gebildeten 
-					//fortschreitenden Partizip ¸bereinstimmt. Beispiel f¸r ein 
+					//fortschreitenden Partizip √ºbereinstimmt. Beispiel f√ºr ein 
 					//gebildetes forschreitendes Partizip:
 					//"having"
 					if (rstrToken==eav->m_strWords[0].Left(eav->m_strWords[0].
@@ -1610,13 +1611,13 @@ Encapsulated(const CString & rstrToken) - ANFANG\n");
 					Right(2).Left(1)) && IsConsonant(eav->m_strWords[0].Right(1)))
 				{
 					//wenn die Zeichenkette mit dem gebildeten 
-					//fortschreitenden Partizip ¸bereinstimmt.
+					//fortschreitenden Partizip √ºbereinstimmt.
 					if(rstrToken==eav->m_strWords[0]+eav->m_strWords[0].
 						Right(1)+_T("ing"))
 						return pWordNodeCurrent;
 				}
 				//wenn die Zeichenkette mit dem gebildeten 
-				//fortschreitenden Partizip ¸bereinstimmt.
+				//fortschreitenden Partizip √ºbereinstimmt.
 				if(rstrToken==eav->m_strWords[0]+_T("ing"))
 					return pWordNodeCurrent;
 			}
@@ -1637,7 +1638,7 @@ Encapsulated(const CString & rstrToken) - ANFANG\n");
 						englishVerb->m_strInfinitive.Right(1)==_T("e"))
 					{
 						//wenn die Zeichenkette mit dem gebildeten 
-						//fortschreitenden Partizip ¸bereinstimmt. Beispiel f¸r ein 
+						//fortschreitenden Partizip √ºbereinstimmt. Beispiel f√ºr ein 
 						//gebildetes forschreitendes Partizip:
 						//"making","liking","loving"
 						if(rstrToken==englishVerb->m_strInfinitive.Left(
@@ -1650,7 +1651,7 @@ Encapsulated(const CString & rstrToken) - ANFANG\n");
 						IsConsonant(englishVerb->m_strInfinitive.Right(1)))
 					{
 						//wenn die Zeichenkette mit dem gebildeten 
-						//fortschreitenden Partizip ¸bereinstimmt. Beispiel f¸r ein 
+						//fortschreitenden Partizip √ºbereinstimmt. Beispiel f√ºr ein 
 						//gebildetes forschreitendes Partizip:
 						//"putting","preferring","beginning"
 						if(rstrToken==englishVerb->m_strInfinitive+englishVerb->
@@ -1760,8 +1761,8 @@ WordNode *
 					)
 				{
 					//TRACE("ep->m_strWord: %s\n",ep->m_strWord);
-					//gebeugte Verbformen von 1. Person Singular Pr‰sens bis
-					//3. Person Plural Pr‰teritum=12 Verbformen
+					//gebeugte Verbformen von 1. Person Singular Pr√§sens bis
+					//3. Person Plural Pr√§teritum=12 Verbformen
 					for(BYTE byRun=1;byRun<13;++byRun)
 					{
 						if(str==eav->m_strWords[byRun])
@@ -1784,7 +1785,7 @@ WordNode *
 					{
 						//bei einem Vollverb sind alle gebeugten Verbformen
 						//von 1. Person Singular bis 3. Person Plural 
-						//identisch auﬂer 3. Person Singular!
+						//identisch au√üer 3. Person Singular!
 						//Person:  1 2  4  5  6 
 						//       ->2+4+16+32+64=118
 						rwFiniteVerbFormsAffectedbySearchString=118;
@@ -1793,8 +1794,8 @@ WordNode *
 					if(str==ev->m_strPastTense)
 					{
 						//alle gebeugten Verbformen bei einem VOOLverb 
-						//im Pr‰teritum sind identisch!
-						//bin‰r:1111110000000
+						//im Pr√§teritum sind identisch!
+						//bin√§r:1111110000000
 						rwFiniteVerbFormsAffectedbySearchString=8064;
 						return current;
 					}
@@ -1906,8 +1907,8 @@ WordNode *
 					{
 						rbyType=PARTICIPLE_PROGRESSIVE;
 					}
-					//erst an dieser Stelle zur¸ckspringen, da Infinitiv und
-					//Partizip Perfekt eines Verbes identisch sein kˆnnen:
+					//erst an dieser Stelle zur√ºckspringen, da Infinitiv und
+					//Partizip Perfekt eines Verbes identisch sein k√∂nnen:
 					//to hit-I have hit.
 					if(rbyType!=0)
 						return current;
@@ -1933,8 +1934,8 @@ WordNode *
 					{
 						rbyType=PARTICIPLE_PROGRESSIVE;
 					}
-					//erst an dieser Stelle zur¸ckspringen, da Infinitiv und
-					//Partizip Perfekt eines Verbes identisch sein kˆnnen
+					//erst an dieser Stelle zur√ºckspringen, da Infinitiv und
+					//Partizip Perfekt eines Verbes identisch sein k√∂nnen
 					if(rbyType!=0)
 						return current;
 				}
@@ -2033,7 +2034,7 @@ WordNode * GetPointerToWordNodeWhereAnEnglishVerbIsEncapsulated(
 }
 
 //die Bits in bIndexes geben an, ob eine gebeugte Verbform eine Person
-//mit der ¸bergebenen Zeichenkette "str" ¸bereinstimmen
+//mit der √ºbergebenen Zeichenkette "str" √ºbereinstimmen
 //Beispiel: str=="have" -> "to have"       -> 1. Bit setzen
 //                         "I have"        -> 2. Bit setzen
 //                         "you have"      -> 3. Bit setzen
@@ -2041,7 +2042,7 @@ WordNode * GetPointerToWordNodeWhereAnEnglishVerbIsEncapsulated(
 //                         "we have"       -> 5. Bit setzen
 //                         "you have       -> 6. Bit setzen
 //                         "they have"     -> 7. Bit setzen
-//demnach sieht bIndexes bin‰r so aus: 11101110
+//demnach sieht bIndexes bin√§r so aus: 11101110
 WordNode * GetPointerToWordNodeWhereAnEnglishVerbIsEncapsulated(
 	const CString & str,BYTE & bIndexes,BYTE & bTense)
 {
@@ -2162,7 +2163,7 @@ std::vector<PointerToEnglishNoun> IfIsEnglishNounThenGetVectorOfPointerToEnglish
 					//TRACE("cstrvecEN.size(): %d cstrvec.size(): %d\n",cstrvecEN.size(),cstrvec.size());
 					if(cstrvecEN.size()==cstrvec.size())
 					{
-						//TRACE("Die Grˆﬂen sind gleich.\n");
+						//TRACE("Die Gr√∂√üen sind gleich.\n");
 						BOOL bEqual=TRUE;
 						for(DWORD i=0;i<cstrvec.size();i++)
 						{
@@ -2188,7 +2189,7 @@ std::vector<PointerToEnglishNoun> IfIsEnglishNounThenGetVectorOfPointerToEnglish
 						cstrvecEN=GetCStringVector2(en->m_strSingular);
 						if(cstrvecEN.size()==cstrvec.size())
 						{
-							//TRACE("Die Grˆﬂen sind gleich.\n");
+							//TRACE("Die Gr√∂√üen sind gleich.\n");
 							BOOL bEqual=TRUE;
 							for(DWORD i=0;i<cstrvec.size();i++)
 							{
@@ -2242,7 +2243,7 @@ std::vector<EnglishNoun*> IfIsEnglishNounThenGetVectorOfPointersToEnglishNoun(
 					//TRACE("cstrvecEN.size(): %d cstrvec.size(): %d\n",cstrvecEN.size(),cstrvec.size());
 					if(cstrvecEN.size()==cstrvec.size())
 					{
-						//TRACE("Die Grˆﬂen sind gleich.\n");
+						//TRACE("Die Gr√∂√üen sind gleich.\n");
 						BOOL bEqual=TRUE;
 						for(DWORD i=0;i<cstrvec.size();i++)
 						{
@@ -2298,7 +2299,7 @@ CStringVector & cstrvec) ANFANG\n");
 					//TRACE("cstrvecEN.size(): %d cstrvec.size(): %d\n",cstrvecEN.size(),cstrvec.size());
 					if(cstrvecEN.size()==cstrvec.size())
 					{
-						//TRACE("Die Grˆﬂen sind gleich.\n");
+						//TRACE("Die Gr√∂√üen sind gleich.\n");
 						BOOL bEqual=TRUE;
 						for(DWORD i=0;i<cstrvec.size();i++)
 						{
@@ -2325,7 +2326,7 @@ CStringVector & cstrvec) ANFANG\n");
 						cstrvecEN=GetCStringVector2(en->m_strPlural);
 						if(cstrvecEN.size()==cstrvec.size())
 						{
-							//TRACE("Die Grˆﬂen sind gleich.\n");
+							//TRACE("Die Gr√∂√üen sind gleich.\n");
 							BOOL bEqual=TRUE;
 							for(DWORD i=0;i<cstrvec.size();i++)
 							{
@@ -2368,8 +2369,8 @@ CStringVector & cstrvec) ENDE\n");
 	return vecPointerToWordNodeWhereAnEnglishNounIsEncapsulated;
 }
 
-//liefert zur¸ck, ob das erste Zeichen der Zeichenkette ein Konsonant ist
-//sollte KEINE Referenz sein, da str ver‰ndert wird
+//liefert zur√ºck, ob das erste Zeichen der Zeichenkette ein Konsonant ist
+//sollte KEINE Referenz sein, da str ver√§ndert wird
 BYTE IsConsonant(CString str)
 {
 	char ch;
@@ -2546,7 +2547,7 @@ BOOL IsEnglishPlural(const CStringVector & cstrvec)
 					//TRACE("cstrvecEN.size(): %d cstrvec.size(): %d\n",cstrvecEN.size(),cstrvec.size());
 					if(cstrvecEN.size()==cstrvec.size())
 					{
-						//TRACE("Die Grˆﬂen sind gleich.\n");
+						//TRACE("Die Gr√∂√üen sind gleich.\n");
 						BOOL bEqual=TRUE;
 						for(int i=0;i<cstrvec.size();i++)
 						{
@@ -2711,7 +2712,7 @@ BOOL IsEnglishSingular(CStringVector & cstrvec)
 					//TRACE("cstrvecEN.size(): %d cstrvec.size(): %d\n",cstrvecEN.size(),cstrvec.size());
 					if(cstrvecEN.size()==cstrvec.size())
 					{
-						//TRACE("Die Grˆﬂen sind gleich.\n");
+						//TRACE("Die Gr√∂√üen sind gleich.\n");
 						BOOL bEqual=TRUE;
 						for(DWORD i=0;i<cstrvec.size();i++)
 						{
@@ -2797,12 +2798,12 @@ BOOL IsEnglishVerb(CString str)
 	return FALSE;
 }
 
-//ist die ¸bergebene Zeichenkette ein fortschreitendes Partizip ("working"
+//ist die √ºbergebene Zeichenkette ein fortschreitendes Partizip ("working"
 //bei "I am working.","making" bei "I was "making a bread.","putting" bei
 //"I have been putting.","preferring" bei "I had been preferring.",
 //"beginning" bei "I will be beginning.")
 //die fortschreitenden Partizipien werden nach dem Buch "ENGLISCH im 
-//TELEKOLLEG I ‹bungsband Seite 13 gebildet
+//TELEKOLLEG I √úbungsband Seite 13 gebildet
 BYTE IsParticipleProgressive(const CString & rstrToken,const EnglishVerb 
 	& rEnglishVerb)
 {
@@ -2814,8 +2815,8 @@ BYTE IsParticipleProgressive(const CString & rstrToken,const EnglishVerb
 		if(IsConsonant(rEnglishVerb.m_strInfinitive.Right(2).Left(1)) && 
 			rEnglishVerb.m_strInfinitive.Right(1)==_T("e"))
 		{
-			//zur¸ckliefern, ob die Zeichenkette mit dem gebildeten 
-			//fortschreitenden Partizip ¸bereinstimmt. Beispiel f¸r ein 
+			//zur√ºckliefern, ob die Zeichenkette mit dem gebildeten 
+			//fortschreitenden Partizip √ºbereinstimmt. Beispiel f√ºr ein 
 			//gebildetes forschreitendes Partizip:
 			//"making","liking","loving"
 			return rstrToken==rEnglishVerb.m_strInfinitive.Left(rEnglishVerb.
@@ -2826,8 +2827,8 @@ BYTE IsParticipleProgressive(const CString & rstrToken,const EnglishVerb
 		if(IsVowel(rEnglishVerb.m_strInfinitive.Right(2).Left(1)) && 
 			IsConsonant(rEnglishVerb.m_strInfinitive.Right(1)))
 		{
-			//zur¸ckliefern, ob die Zeichenkette mit dem gebildeten 
-			//fortschreitenden Partizip ¸bereinstimmt. Beispiel f¸r ein 
+			//zur√ºckliefern, ob die Zeichenkette mit dem gebildeten 
+			//fortschreitenden Partizip √ºbereinstimmt. Beispiel f√ºr ein 
 			//gebildetes forschreitendes Partizip:
 			//"putting","preferring","beginning"
 			return rstrToken==rEnglishVerb.m_strInfinitive+rEnglishVerb.
@@ -3144,7 +3145,7 @@ BYTE IsEnglishVerb3rdPerson(const CString & str)
 	return FALSE;
 }
 
-//ist die ¸bergebene Zeichenkette eine gebeugte Verbform der dritten Person
+//ist die √ºbergebene Zeichenkette eine gebeugte Verbform der dritten Person
 //Singular ("works","watches","carries","does","says")?
 BYTE IsEnglishVerb3rdPersonSingular(const CString & rstrToken,const 
 	EnglishVerb & rEnglishVerb)
@@ -3155,8 +3156,8 @@ BYTE IsEnglishVerb3rdPersonSingular(const CString & rstrToken,const
 		//wenn die zwei Zeichen ganz rechts "ch"s sind. Beispiel: "watch","match"
 		if(rEnglishVerb.m_strInfinitive.Right(2)==_T("ch"))
 		{
-			//zur¸ckliefern, ob die Zeichenkette mit der gebildeten gebeugten
-			//Verbform der dritten Person Singular ¸bereinstimmt. Beispiel f¸r 
+			//zur√ºckliefern, ob die Zeichenkette mit der gebildeten gebeugten
+			//Verbform der dritten Person Singular √ºbereinstimmt. Beispiel f√ºr 
 			//eine gebildete gebeugte Verbform der dritten Person Singular:
 			//"watches","matches"
 			return rstrToken==rEnglishVerb.m_strInfinitive+_T("es");
@@ -3166,8 +3167,8 @@ BYTE IsEnglishVerb3rdPersonSingular(const CString & rstrToken,const
 		if(IsConsonant(rEnglishVerb.m_strInfinitive.Right(2).Left(1)) && 
 			rEnglishVerb.m_strInfinitive.Right(1)==_T("y"))
 		{
-			//zur¸ckliefern, ob die Zeichenkette mit der gebildeten gebeugten
-			//Verbform der dritten Person Singular ¸bereinstimmt. Beispiel f¸r 
+			//zur√ºckliefern, ob die Zeichenkette mit der gebildeten gebeugten
+			//Verbform der dritten Person Singular √ºbereinstimmt. Beispiel f√ºr 
 			//eine gebildete gebeugte Verbform der dritten Person Singular:
 			//"carries"
 			return rstrToken==rEnglishVerb.m_strInfinitive.Left(rEnglishVerb.
@@ -3180,33 +3181,33 @@ BYTE IsEnglishVerb3rdPersonSingular(const CString & rstrToken,const
 		//wenn das Zeichen ganz rechts ein "o" ist. Beispiel: "go"
 		if(rEnglishVerb.m_strInfinitive.Right(1)==_T("o"))
 		{
-			//zur¸ckliefern, ob die Zeichenkette mit der gebildeten gebeugten
-			//Verbform der dritten Person Singular ¸bereinstimmt. Beispiel f¸r 
+			//zur√ºckliefern, ob die Zeichenkette mit der gebildeten gebeugten
+			//Verbform der dritten Person Singular √ºbereinstimmt. Beispiel f√ºr 
 			//eine gebildete gebeugte Verbform der dritten Person Singular:
 			//"goes"
 			return rstrToken==rEnglishVerb.m_strInfinitive+_T("es");
 		}
 	}
-	//zur¸ckliefern, ob die Zeichenkette mit der gebildeten gebeugten
-	//Verbform der dritten Person Singular ¸bereinstimmt. Beispiel f¸r 
+	//zur√ºckliefern, ob die Zeichenkette mit der gebildeten gebeugten
+	//Verbform der dritten Person Singular √ºbereinstimmt. Beispiel f√ºr 
 	//eine gebildete gebeugte Verbform der dritten Person Singular:
 	//"works", "says"
 	return rstrToken==rEnglishVerb.m_strInfinitive+_T("s");
 }
 
-//diese Funktion liefert zur¸ck, ob die ¸bergebene Zeichenkette ein dem 
+//diese Funktion liefert zur√ºck, ob die √ºbergebene Zeichenkette ein dem 
 //Programm bekannte
 //englische Vokabel ist TRUE/1=bekannt FALSE/0=unbekannt
 BYTE IsEnglishWord(const CString & strWord)
 {
-	//wenn ein Personalpronom (F¸rwort)
+	//wenn ein Personalpronom (F√ºrwort)
 	if(strWord==_T("I") || strWord==_T("you") || strWord==_T("we") || 
 		strWord==_T("they"))
 		return TRUE;
-	//wenn ein Personalpronom (F¸rwort)
+	//wenn ein Personalpronom (F√ºrwort)
 	if(strWord==_T("he") || strWord==_T("she") || strWord==_T("it"))
 		return TRUE;
-	//wenn ein Possesivpronom (besitzanzeigendes F¸rwort)
+	//wenn ein Possesivpronom (besitzanzeigendes F√ºrwort)
 	if(strWord==_T("my") || strWord==_T("your") || strWord==_T("his") || 
 		strWord==_T("her") || strWord==_T("its") || strWord==_T("our") || 
 		strWord==_T("their"))
@@ -3540,8 +3541,8 @@ BOOL IsPersonalPronoun(CString token)
 	return FALSE;
 }
 
-//liefert zur¸ck, ob das erste Zeichen der Zeichenkette ein Vokal ist
-//sollte KEINE Referenz sein, da str ver‰ndert wird
+//liefert zur√ºck, ob das erste Zeichen der Zeichenkette ein Vokal ist
+//sollte KEINE Referenz sein, da str ver√§ndert wird
 BYTE IsVowel(CString str)
 {
 	char ch;
@@ -3550,8 +3551,8 @@ BYTE IsVowel(CString str)
 	return ch=='a' || ch=='e' || ch=='i' || ch=='o'|| ch=='u';
 }
 
-//liefert zur¸ck, ob das erste Zeichen der Zeichenkette ein Vokal ist
-//sollte KEINE Referenz sein, da str ver‰ndert wird
+//liefert zur√ºck, ob das erste Zeichen der Zeichenkette ein Vokal ist
+//sollte KEINE Referenz sein, da str ver√§ndert wird
 BYTE IsVowel(TCHAR ch)
 {
 	ch = tolower(ch);

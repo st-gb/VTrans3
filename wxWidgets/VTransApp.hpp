@@ -17,6 +17,7 @@
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 #include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include <string> //class std::string
+#include <Controller/multithread/nativeCriticalSectionType.hpp>
 
 //#include "UserInterface/MainWindow/MainWindowBase.hpp"
 
@@ -45,6 +46,11 @@ namespace wxWidgets
     , public TranslationControllerBase
   {
   public:
+    /** "volatile" for multithreaded access to this variable */
+    volatile bool m_messageIsShown;
+    bool m_atLeast1MessageToShow;
+//    condition_type;
+    nativeCriticalSection m_critSecShowMessage;
     wxIcon m_wxiconVTrans;
     VTrans::ShowTranslationRulesDialog * m_p_showtranslationrulesdialog;
   //  static LetterTree s_lettertree ;
@@ -52,6 +58,8 @@ namespace wxWidgets
     /*wxWidgets::MainWindowBase*/ wxWidgets::MainFrame * m_p_mainWindow;
     std::map<TranslationRule *, std::string>
       m_std_map_p_translationrule2filepath;
+    /** For buffering before calling new thread */
+    std::string m_std_strLastSelectedDictFilePath;
   //  std::string m_stdstrVocabularyFilePath ;
 
     VTransApp();
@@ -64,7 +72,7 @@ namespace wxWidgets
     virtual bool OnInit();
   //  VTransApp(const VTransApp& orig);
     void LoadingVocabularyFileFailed(const std::string & cr_stdstrFilePath);
-    void Message( const std::string & cr_stdstr ) ;
+    void Message( const std::string & cr_stdstr/*, unsigned threadID*/ ) ;
     void Message( const std::wstring & cr_stdwstr ) ;
     void ProcessSelectedXMLfiles(
       XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
@@ -76,16 +84,22 @@ namespace wxWidgets
       DWORD dwOffsetOfBeginOfEntry,
       DWORD dwOffset
       );
+    inline void ShowMessage(wxString &);
     void EndTimer();
     void StartTimer();
+    void OnMessage(wxCommandEvent &);
   private:
-
+    DECLARE_EVENT_TABLE();
   };
 }
 
 //http://docs.wxwidgets.org/2.6/wx_rttimacros.html#declareapp:
 //"It creates the declaration className& wxGetApp(void)."
 DECLARE_APP(wxWidgets::VTransApp)
+
+BEGIN_DECLARE_EVENT_TYPES()
+  DECLARE_LOCAL_EVENT_TYPE(MessageEvent, wxNewEventType())
+END_DECLARE_EVENT_TYPES()
 
 #endif	/* _VTRANSAPP_HPP */
 

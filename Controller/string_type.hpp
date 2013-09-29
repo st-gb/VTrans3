@@ -8,7 +8,7 @@
 #ifndef _STRING_TYPE_HPP
 #define	_STRING_TYPE_HPP
 
-#include <string>
+#include <string> //class std::string
 
 namespace VTrans
 {

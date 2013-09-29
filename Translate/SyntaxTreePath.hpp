@@ -12,6 +12,7 @@
 #include <vector> //class std::vector
 //#include <rest.h> //DEBUG_COUT(...)
 #include <windef.h> //for BYTE
+#include <fastest_data_type.h> //typedef fastestUnsignedDataType
 //#include <exception>//class std::exception
 
 class GetGrammarPartIDexception
@@ -81,6 +82,7 @@ class SyntaxTreePath
   //unsigned char  m_byOtherReferencesToGrammarPartIDArray ;
   bool m_bReferringOthersGrammarPartIDArray ;
 public:
+  typedef /*WORD*/ fastestUnsignedDataType number_type;
   enum CreateGrammarPartIDArray_return_values
   {
     unknown_grammar_part_name = 0 ,
@@ -104,16 +106,16 @@ public:
     //Important to set for < operator.
     m_wNumberOfElements = 0 ;
   }
-
-  //The copy contructor needs an own implementation because an array is created
-  //on the heap: in order to NOT release memory for this array in the destructor
-  //we simply set a flag that we are referring this array.
+  /** The copy constructor needs an own implementation because an array is created
+  * on the heap: in order to NOT release memory for this array in the destructor
+  * we simply set a flag that we are referring this array. */
   SyntaxTreePath( const SyntaxTreePath & stpToCopyFrom ) ;
-  ~SyntaxTreePath() ;
   SyntaxTreePath(
     const std::string & r_stdstrSyntaxTreePath
     , ParseByRise * p_parsebyrise
     ) ;
+  ~SyntaxTreePath() ;
+
   BYTE CreateGrammarPartIDArray(
     const std::string & r_stdstrSyntaxTreePath
     , ParseByRise * p_parsebyrise
@@ -125,6 +127,7 @@ public:
     std::vector<WORD> & r_stdvec_w_grammarpartPath) ;
   GrammarPart * GetLeaf(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const ;
+  number_type GetNumberOfElements() { return m_wNumberOfElements; }
   SyntaxTreePath & operator = ( const SyntaxTreePath & r) ;
   bool operator < ( const SyntaxTreePath & r) const ;
   bool IsPartOf(std::vector<WORD> & r_stdvec_wGrammarPartPath ) ;

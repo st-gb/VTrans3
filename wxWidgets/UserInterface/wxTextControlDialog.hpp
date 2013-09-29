@@ -10,8 +10,9 @@
 
 //#include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
 #include <wx/dialog.h>
-//SUPPRESS_UNUSED_VARIABLE_WARNING
-#include <preprocessor_macros/suppress_unused_variable.h>
+#include <wx/textctrl.h> //wxTextCtrl, wxTE_READONLY
+/** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
+#include <compiler/GCC/suppress_unused_variable.h>
 
 class wxTextControlDialog
   : public wxDialog
@@ -27,7 +28,7 @@ public:
           wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER
           )
     {
-      //SetIcon( ::wxGetApp().m_wxiconVTrans ) ;
+      SetIcon( ::wxGetApp().m_wxiconVTrans ) ;
       wxTextCtrl * p_wxtextctrl = new wxTextCtrl(
         this //wxWindow* parent
         , wxID_ANY //wxWindowID id

@@ -13,10 +13,16 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
 #include <windef.h> //for BYTE
 #include <typeinfo> //for typeid()
-//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
-#include <preprocessor_macros/suppress_unused_variable.h>
+/** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
+#include <compiler/GCC/suppress_unused_variable.h>
+////TODO
+//#include <wxWidgets/VTransApp.hpp> //wxGetApp(...)
+#include <Controller/TranslationControllerBase.hpp> //class TranslationControllerBase
 
 #define SET_FREED_MEM_TO_NULL
+
+/** static variable definitions */
+TranslationControllerBase * VocabularyAndTranslation::s_p_translationControllerBase;
 
   const VocabularyAndTranslation::ArraySizes VocabularyAndTranslation::
     s_arraysizes [] = {
@@ -38,17 +44,14 @@
 //
 //}
 
-VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
+fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
+  /*const*/ EnglishWord::English_word_class engWordClass,
+  fastestUnsignedDataType & numEngWords,
+  fastestUnsignedDataType & numGerWords
+  )
 {
-  m_byType = byVocabularyType ;
-  BYTE byArraySizeForEng = 0 ;
-
-  //BYTE byArraySizeForGer = 0 ;
-
-//  GetWordClass(byVocabularyType);
-
   //Map grammar part IDs/ classes to word classes.
-  switch(byVocabularyType)
+  switch(engWordClass)
   {
   case //ENGLISH_NOUN:
     EnglishWord::noun:
@@ -56,36 +59,36 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
 //    m_pword = new EnglishNoun() ;
     break;
   case EnglishWord::singular:
-    byVocabularyType = EnglishWord::noun;
+    engWordClass = EnglishWord::noun;
     break;
   case EnglishWord::adjective_positiveForm:
-    byVocabularyType = EnglishWord::adjective;
+    engWordClass = EnglishWord::adjective;
     break;
   case EnglishWord::auxiliary_verb:
-    m_arstrEnglishWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
-    m_arstrGermanWord = new std::string[NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB] ;
-    m_arbyAttribute = new BYTE[2] ;
+    numEngWords = NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB;
+    numGerWords = NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB ;
+    return 2 ;
     break;
   case EnglishWord::main_verb_allows_0object_infinitive:
   case EnglishWord::main_verb_allows_1object_infinitive:
   case EnglishWord::main_verb_allows_2objects_infinitive:
-    byVocabularyType = EnglishWord::main_verb;
+    engWordClass = EnglishWord::main_verb;
     break;
   case WORD_TYPE_CONJUNCTION:
-    m_arstrEnglishWord = new std::string[1] ;
-    m_arstrGermanWord = new std::string[1] ;
-    m_arbyAttribute = new BYTE[1] ;
+    numEngWords = 1;
+    numGerWords = 1 ;
+    return 1 ;
     break;
   //case LetterTree::personal_pronoun :
   case EnglishWord::personal_pronoun :
-    m_arstrEnglishWord = new std::string[1] ;
-    m_arstrGermanWord = new std::string[1] ;
-    m_arbyAttribute = new BYTE[1] ;
+    numEngWords = 1 ;
+    numGerWords = 1 ;
+    return 1 ;
     break;
   case EnglishWord::personal_pronoun_objective_form :
-    m_arstrEnglishWord = new std::string[1] ;
-    m_arstrGermanWord = new std::string[1] ;
-    m_arbyAttribute = new BYTE[1] ;
+    numEngWords = 1 ;
+    numGerWords = 1 ;
+    return 1 ;
     break;
     //Only the singular (for parsing "indefinite article" + "singular"
     // ( if the rule was "indefinite article" + "noun",
@@ -97,27 +100,53 @@ VocabularyAndTranslation::VocabularyAndTranslation(BYTE byVocabularyType)
     // attributes and for types that do not need (e.g. "definite article")
     //these attributes etc.
 //    m_pword = new Word() ;
-    m_arstrEnglishWord = NULL ;
-    m_arstrGermanWord = NULL ;
-    m_arbyAttribute = NULL ;
+    numEngWords = 0 ;
+    numGerWords = 0 ;
+    return 0;
   }
 
-
-  if( byVocabularyType <= EnglishWord:://auxiliary_verb
+  if( engWordClass <= EnglishWord:://auxiliary_verb
 //      adverb
       adjective
       )
   {
-    const ArraySizes & c_r_arraysizes = s_arraysizes[byVocabularyType];
-    byArraySizeForEng = c_r_arraysizes.m_byArraySizeForEnglishWord ;
-    m_arstrEnglishWord = new std::string[byArraySizeForEng] ;
-    m_arstrGermanWord = new std::string[
-      c_r_arraysizes.m_byArraySizeForGermanWord] ;
+    const ArraySizes & c_r_arraysizes = s_arraysizes[engWordClass];
+    numEngWords = c_r_arraysizes.m_byArraySizeForEnglishWord ;
+    numGerWords = c_r_arraysizes.m_byArraySizeForGermanWord ;
     //byArraySizeForGer = NUMBER_OF_STRINGS_FOR_GERMAN_NOUN ;
-    m_arbyAttribute = new BYTE[c_r_arraysizes.m_byArraySizeForByteArray] ;
-    memset(m_arbyAttribute,0,c_r_arraysizes.m_byArraySizeForByteArray) ;
+    return c_r_arraysizes.m_byArraySizeForByteArray;
   }
+  return 0;
+}
 
+VocabularyAndTranslation::VocabularyAndTranslation(/*BYTE*/
+  EnglishWord::English_word_class byVocabularyType)
+{
+  m_englishWordClass = byVocabularyType ;
+  BYTE byArraySizeForEng = 0 ;
+
+  //BYTE byArraySizeForGer = 0 ;
+
+//  GetWordClass(byVocabularyType);
+
+  unsigned numByteArrEles, numEngWords, numGerWords;
+  numByteArrEles = GetNumberOfArrayElements(byVocabularyType, numEngWords,
+    numGerWords);
+  if( numEngWords)
+  {
+    m_arstrEnglishWord = new word_type[numEngWords];
+    memset(m_arstrEnglishWord, 0, sizeof(word_type) * numEngWords);
+  }
+  if( numGerWords)
+  {
+    m_arstrGermanWord = new word_type[numGerWords];
+    memset(m_arstrGermanWord, 0, sizeof(word_type) * numGerWords);
+  }
+  if( numByteArrEles)
+  {
+    m_arbyAttribute = new BYTE[numByteArrEles];
+    memset(m_arbyAttribute,0,numByteArrEles) ;
+  }
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   m_arpletternodeLastEngChar = new LetterNode * [byArraySizeForEng];
 #endif// #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
@@ -136,19 +165,53 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
 //  if( m_pwordTranslation )
 //    delete m_pwordTranslation ;
 
-  switch( m_byType )
+  FreeMemory();
+}
+
+fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfBytes()
+{
+  ArraySizes arraySizes;
+  GetNumberOfArrayElements(m_englishWordClass, arraySizes);
+//  if(arraySizes.m_byArraySizeForByteArray )
+
+  fastestUnsignedDataType numBytesForPointers =
+    arraySizes.m_byArraySizeForEnglishWord * sizeof(word_type) +
+    arraySizes.m_byArraySizeForGermanWord * sizeof(word_type) +
+    sizeof(word_type *) * /*German and English*/ 2 +
+    sizeof(BYTE *) + arraySizes.m_byArraySizeForByteArray;
+  for(int i = 0; i < arraySizes.m_byArraySizeForEnglishWord; i++)
   {
-//  // singular type is only needed for parsing. It shares the same attr as
-//  // the noun. Because for the noun the storage is freed it should NOT be done again
-//  // for the singular.
-//  case EnglishWord::singular :
-//  case EnglishWord::plural_noun :
-//  case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
-//  case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent :
-//  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent :
-//  case EnglishWord::adjective_positiveForm:
-//    break ;
-//  default:
+    if( m_arstrEnglishWord[i])
+      numBytesForPointers += strlen(m_arstrEnglishWord[i]) + /* 0 char */ 1;
+  }
+  for(int i = 0; i < arraySizes.m_byArraySizeForGermanWord; i++)
+  {
+    if(m_arstrGermanWord[i])
+      numBytesForPointers += strlen(m_arstrGermanWord[i]) + /* 0 char */ 1;
+  }
+  return numBytesForPointers;
+}
+
+void VocabularyAndTranslation::FreeMemory()
+{
+  ArraySizes arraySizes;
+  arraySizes.m_byArraySizeForByteArray = GetNumberOfArrayElements(
+    m_englishWordClass,
+    arraySizes.m_byArraySizeForEnglishWord,
+    arraySizes.m_byArraySizeForGermanWord);
+  switch( m_englishWordClass )
+  {
+  //  // singular type is only needed for parsing. It shares the same attr as
+  //  // the noun. Because for the noun the storage is freed it should NOT be done again
+  //  // for the singular.
+  //  case EnglishWord::singular :
+  //  case EnglishWord::plural_noun :
+  //  case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
+  //  case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent :
+  //  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent :
+  //  case EnglishWord::adjective_positiveForm:
+  //    break ;
+  //  default:
   case EnglishWord::singular :
   case EnglishWord::main_verb_allows_0object_infinitive:
   case EnglishWord::main_verb_allows_1object_infinitive:
@@ -158,58 +221,100 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
   case EnglishWord::personal_pronoun:
   case EnglishWord::auxiliary_verb:
   case EnglishWord::personal_pronoun_objective_form:
-    DEBUG_COUTN("freeing voc type" << (WORD) m_byType)
-//    assert(m_arstrEnglishWord) ;
+//    DEBUG_COUTN("freeing voc type" << (WORD) m_englishWordClass)
+  //    assert(m_arstrEnglishWord) ;
     if(m_arstrEnglishWord)
     {
+#ifdef _DEBUG
+      const std::map<WORD, std::string> & r_stdmap_wRuleID2RuleName =
+        s_p_translationControllerBase->m_parsebyrise.m_stdmap_wRuleID2RuleName;
+      std::map<WORD, std::string>::const_iterator c_iterRuleID2RuleName =
+        /*::wxGetApp()*/ r_stdmap_wRuleID2RuleName.find(m_englishWordClass);
+      std::string std_strWordClassName = "";
+      if( c_iterRuleID2RuleName != r_stdmap_wRuleID2RuleName.end() )
+      {
+        std_strWordClassName = c_iterRuleID2RuleName->first;
+      }
+      if(m_arstrEnglishWord[0])
+        LOGN_DEBUG("freeing memory for " << * m_arstrEnglishWord[0]
+          << " word class:" << std_strWordClassName)
+      else
+        LOGN_DEBUG("freeing memory for " << (void *) m_arstrEnglishWord[0]
+          << " word class:" << m_englishWordClass << std_strWordClassName)
+#endif
   #ifdef _DEBUG_FREEING_MEM
       TRACE("~VocabularyAndTranslation()--%x ",this);
-      BYTE byNumWords = g_arbyNumberOfEnglishWords[ m_byType - ENGLISH_NOUN ] ;
+      BYTE byNumWords = g_arbyNumberOfEnglishWords[ m_englishWordClass - ENGLISH_NOUN ] ;
       for(int i = 0 ; i < byNumWords ; i++ )
         TRACE("\"%s\"", m_arstrEnglishWord[i].c_str() ) ;
       TRACE("\n") ;
   #endif
+      const fastestUnsignedDataType numEnglishWords = arraySizes.m_byArraySizeForEnglishWord;
+      word_type englishWord;
+      for(fastestUnsignedDataType i = 0 ; i < numEnglishWords ; i++ )
+      {
+        englishWord = m_arstrEnglishWord[i];
+        if( englishWord)
+        {
+          delete [] englishWord;
+        }
+      }
       delete [] m_arstrEnglishWord ;
-#ifdef SET_FREED_MEM_TO_NULL
+  #ifdef SET_FREED_MEM_TO_NULL
       m_arstrEnglishWord = NULL ;
-#endif
+  #endif
     }
-//    assert(m_arstrGermanWord) ;
+  //    assert(m_arstrGermanWord) ;
     if(m_arstrGermanWord)
     {
+      //Has a German word->is a word pair.
+//      s_p_translationControllerBase->s_dictionary.DecreaseNumberOfVocPairs();
+      const fastestUnsignedDataType numGermanWords = arraySizes.
+        m_byArraySizeForGermanWord;
+      word_type germanWord;
+      for(fastestUnsignedDataType i = 0 ; i < numGermanWords ; i++ )
+      {
+        germanWord = m_arstrGermanWord[i];
+        if(germanWord)
+        {
+          delete [] germanWord;
+        }
+      }
       delete [] m_arstrGermanWord ;
-#ifdef SET_FREED_MEM_TO_NULL
+  #ifdef SET_FREED_MEM_TO_NULL
       m_arstrGermanWord = NULL ;
-#endif
+  #endif
     }
-//    assert(m_arbyAttribute) ;
+  //    assert(m_arbyAttribute) ;
     if(m_arbyAttribute)
     {
       delete [] m_arbyAttribute ;
-#ifdef SET_FREED_MEM_TO_NULL
+  #ifdef SET_FREED_MEM_TO_NULL
       m_arbyAttribute = NULL ;
-#endif
+  #endif
     }
   #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
     delete [] m_arpletternodeLastEngChar ;
   #endif //#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   //delete m_arpletternodeLastGerChar ;
     break;
-  }
+  }//switch
 }
 
-std::string VocabularyAndTranslation::GetEnglishString(BYTE byIndex) const
+std::string VocabularyAndTranslation::GetEnglishWordAsStdString(
+  const fastestUnsignedDataType englishWordArrayIndex) const
 {
-  if( m_byType <= EnglishWord::adverb )
+  if( m_englishWordClass <= EnglishWord::adverb )
   {
-    if( byIndex < s_arraysizes[m_byType].m_byArraySizeForEnglishWord
+    if( englishWordArrayIndex < s_arraysizes[m_englishWordClass].m_byArraySizeForEnglishWord
   //    m_arstrEnglishWord
       )
     {
       DEBUGN("language for choosing attribute value is "
-        "English, index:" << byIndex )
-      std::string & r_stdstrAttrVal = m_arstrEnglishWord[
-        byIndex ] ;
+        "English, index:" << englishWordArrayIndex )
+      word_type englishWord = m_arstrEnglishWord[englishWordArrayIndex ];
+      int strLen = GetEnglishWordLength(englishWordArrayIndex);
+      std::string r_stdstrAttrVal(englishWord, strLen);
       return r_stdstrAttrVal ;
     }
     else
@@ -220,8 +325,9 @@ std::string VocabularyAndTranslation::GetEnglishString(BYTE byIndex) const
   }
   else
   {
-    std::string & r_stdstrAttrVal = m_arstrEnglishWord[
-      byIndex ] ;
+    word_type englishWord = m_arstrEnglishWord[englishWordArrayIndex ];
+    int strLen = GetEnglishWordLength(englishWordArrayIndex);
+    std::string r_stdstrAttrVal(englishWord, strLen);
     return r_stdstrAttrVal ;
   }
   //std::string & r_stdstrTextTokens =
@@ -232,9 +338,9 @@ void VocabularyAndTranslation::GetAttributeValue(BYTE byIndex)
 {
   //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
   //                #pragma GCC diagnostic ignored  "-Wunused"
-  if( m_byType <= EnglishWord::adverb )
+  if( m_englishWordClass <= EnglishWord::adverb )
   {
-    if( byIndex < s_arraysizes[m_byType].m_byArraySizeForByteArray
+    if( byIndex < s_arraysizes[m_englishWordClass].m_byArraySizeForByteArray
   //    m_arbyAttribute
       )
     {
@@ -254,20 +360,72 @@ void VocabularyAndTranslation::GetAttributeValue(BYTE byIndex)
   }
 }
 
-std::string VocabularyAndTranslation::GetGermanString(BYTE byIndex) const
+//VocabularyAndTranslation::word_type VocabularyAndTranslation::
+//  GetAssembledGermanString(
+//  const fastestUnsignedDataType germanWordIndex)
+//{
+//  std::string std_strWortstamm;
+//
+////  if( germanWordIndex >)
+//
+//  const word_type germanInfinitive = m_arstrGermanWord[GermanVerb::arrayIndexForInfinitive];
+////    GermanVerb::GetWordStem(ar_ch, germanWords[Infinitive], std_strWortstamm);
+////    GermanVerb::Get1stPersSing(ar_ch, germanWords[Infinitive] );
+//  GermanVerb::GetWordStem( germanInfinitive,
+//    strlen(germanInfinitive), std_strWortstamm );
+//
+//  if( germanWordIndex > GermanVerb::arrayIndexForInfinitive &&
+//      germanWordIndex < GermanVerb::arrayIndexFor1stPersSingPast )
+//  {
+//    std::string std_strFiniteForm;
+//    std_strFiniteForm = GermanVerb::GetPresentFiniteForm(
+//      std_strWortstamm,
+//      (enum GermanVerb::person_indices) (germanWordIndex - 1) );
+//
+//    if( index == GermanVerb::secondPersonSing ) //Skip 3rd person.
+//      ++ index;
+//  }
+//
+//  WordData & germanThirdPersPres = (WordData &) germanWords[ThirdPersSingPres];
+//  GetFiniteWord(ar_ch, germanThirdPersPres);
+//
+//  WordData & germanThirdPersPast = (WordData &) germanWords[ThirdPersSingPast];
+//  GetFiniteWord(ar_ch, germanThirdPersPast);
+//
+//  if( germanWordIndex > GermanVerb::arrayIndexFor3rdPersPlurPres &&
+//      germanWordIndex < GermanVerb::arrayIndexForPastParticiple )
+//  {
+//    std::string thirdPersPast = std::string(ar_ch + germanThirdPersPast.
+//      m_charIndexOfBegin, germanThirdPersPast.GetStringLength() );
+//    for( unsigned index = GermanVerb::firstPersonSing;
+//        index < GermanVerb::beyondLastPerson; ++ index)
+//    {
+//      std_strFiniteForm = GermanVerb::GetPastFiniteForm(//std_strWortstamm
+//        ar_ch + germanThirdPersPast.m_charIndexOfBegin,
+//        germanThirdPersPast.GetStringLength()
+//        , (enum GermanVerb::person_indices) (GermanVerb::firstPersonSing + index)
+//        );
+//      if( index == GermanVerb::secondPersonSing ) //Skip 3rd person.
+//        ++ index;
+//    }
+//  }
+//}
+
+VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
+    const fastestUnsignedDataType germanWordIndex) const
 {
 //                  DEBUG_COUTN
   DEBUGN("language for choosing attribute value is "
-    "German, index:" << byIndex
+    "German, index:" << germanWordIndex
     //<< "m_pfn_TransformString:" << m_pfn_TransformString
     )
-  if( m_byType <= EnglishWord::adverb)
+  if( m_englishWordClass <= EnglishWord::adverb)
   {
-    if( byIndex < s_arraysizes[ m_byType].m_byArraySizeForGermanWord
+    if( germanWordIndex < s_arraysizes[ m_englishWordClass].m_byArraySizeForGermanWord
 //      m_arstrGermanWord
       )
     {
-      std::string & r_stdstrAttrVal = m_arstrGermanWord[byIndex ] ;
+      word_type & r_stdstrAttrVal = m_arstrGermanWord[germanWordIndex ] ;
       return r_stdstrAttrVal ;
     }
     else
@@ -278,18 +436,95 @@ std::string VocabularyAndTranslation::GetGermanString(BYTE byIndex) const
   }
   else
   {
-    std::string & r_stdstrAttrVal = m_arstrGermanWord[byIndex ] ;
+    word_type & r_stdstrAttrVal = m_arstrGermanWord[germanWordIndex ] ;
     return r_stdstrAttrVal ;
   }
+  /** the dictionary reader knows which attributes were inserted into the
+   *   word arrays (e.g. if there is a 3rd person singular inside the dictionary)
+   *   -> let it deliver the string. */
+//  s_p_translationControllerBase->m_p_dictionaryReader->GetGermanString(
+//    germanWordIndex, this);
   return "";
 }
+
+//BYTE * diff(const char * const word, const fastestUnsignedDataType stringLen)
+//{
+//  BYTE * ar_by = new BYTE[stringLen];
+//  const word_type firstGermanWord = m_arstrGermanWord[0];
+//  BYTE byCurrentValue;
+//  char firstWordCurrentChar;
+//  if( firstGermanWord[0] != '\0' )
+//  {
+//    for(fastestUnsignedDataType i = 0; i < stringLen; ++i)
+//    {
+////          byCurrentValue
+//      firstWordCurrentChar = firstGermanWord[i];
+//      if( firstWordCurrentChar != '\0' )
+//      {
+//        switch(firstWordCurrentChar)
+//        {
+//          case 'a': //Mann - Männer = 0100 255-e,255-r
+//            if( word[i] == 'ä' )// 0|1|0|0|
+//              ar_by[i] = 1;
+//            break;
+//          case 'o': //Tochter - Töchter = 00100
+//           if( word[i] == 'ö' )
+//             ar_by[i] = 1;
+//           break;
+//          case 'u': //Bruder - Brüder = 00100
+//           if( word[i] == 'ü' )
+//             ar_by[i] = 1;
+//           break;
+//        }
+//        ar_by[i] = firstGermanWord[i] - word[i];
+//      }
+//    }
+//  }
+//}
+
+//void decompress()
+//{
+//
+//}
+//
+//// 0 -> 0 (kein Unterschied)
+//// 10 -> 1 (wenn a,u,o->Umlaut, sonst nächster Buchstabe)
+//// 11 -> es folgen 7 Bit Differenzen
+//// 128 -> string end
+//// Mann -> Männer: 0|10|0|0|11|255-e|255-r|128
+//BYTE * compress(const BYTE * const ar_by, const fastestUnsignedDataType len)
+//{
+//  unsigned char char_frequencies[256];
+//  memset(char_frequencies, 0, 256);
+////  BYTE by[];
+//  BYTE byCurrentValue;
+//  unsigned bitIndex = 0;
+//  for(fastestUnsignedDataType i = 0; i < len; i++)
+//  {
+//    byCurrentValue = ar_by[0];
+////    char_frequencies[byCurrentValue]++;
+//    if( byCurrentValue == 0 )
+//      ar_by[bitIndex] = 0
+//  }
+//  BYTE
+//}
+//
+//void VocabularyAndTranslation::InsertGermanString(
+//  char * ch, index )
+//{
+//  if( m_arstrGermanWord[0] && strlen(m_arstrGermanWord[0]) > 0 )
+//  {
+//    m_arstrGermanWord[index] = diff(m_arstrGermanWord[0], pch);
+//    compress();
+//  }
+//}
 
 ////Word
 //void VocabularyAndTranslation::GetWord(//Word & word
 //  AutomDelWord & r_automdelword )
 //{
 //  //Word
-//  switch( m_byType )
+//  switch( m_englishWordClass )
 //  {
 //  case ENGLISH_NOUN:
 //    //m_pword = new EnglishNoun() ;

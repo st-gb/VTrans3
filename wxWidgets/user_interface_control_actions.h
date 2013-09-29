@@ -28,9 +28,14 @@ enum user_interface_control_actions
   ID_ResolveSuperclass ,
   ID_Resolve1ParseLevel ,
   ID_Translate ,
+  ID_LookupWord ,
+  ID_ShowDictionaryStatistics,
+  ID_UnloadDictionary,
   ID_TruncateLogFile,
   ID_Info,
-  ID_Timer
+  ID_Timer,
+  ID_ShowGrammarPartMemoryAddress ,
+  ID_ShowGrammarTranslatedWord
 };
 
 

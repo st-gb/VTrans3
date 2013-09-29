@@ -28,8 +28,8 @@ namespace VTrans
     virtual
     ~CharMappedDictionary();
 
-    //The sense of mapping is to allow the array of the direct child of a
-    //node to be have less than 255 elements.
+    /** The sense of mapping is to allow the array of the direct child of a
+    * node to be have less than 255 elements.*/
     void createMapping() ;
 
     void addToCharValueToArrayIndexMapping(//CHAR

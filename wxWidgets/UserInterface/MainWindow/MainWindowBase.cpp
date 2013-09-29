@@ -65,6 +65,7 @@
 #include <wx/textctrl.h> //class wxTextCtrl
 
 #include <Translate/TranslationRule.hpp> //class TranslationRule
+#include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
 #include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
 
 //class SAX2GrammarRuleHandler
@@ -88,8 +89,9 @@
 
 namespace wxWidgets
 {
-MainWindowBase::MainWindowBase()
-  : m_parsebyrise(::wxGetApp().m_parsebyrise),
+MainWindowBase::MainWindowBase(wxTopLevelWindow * p_mainwindow)
+  : m_p_mainwindow(p_mainwindow),
+    m_parsebyrise(::wxGetApp().m_parsebyrise),
     m_translationcontrollerbase(::wxGetApp())
 {
 //	wxIcon wxiconThisDialog( VT_icon_xpm ) ;
@@ -102,7 +104,9 @@ MainWindowBase::MainWindowBase()
 MainWindowBase::~MainWindowBase() {
 }
 
-void MainWindowBase::AddInputAndOutputPanels()
+#define EVENT_HANDLER_CLASS_NAME wxWidgets::MainWindowBase
+
+void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
 {
 //  mp_wxpanelTop = new wxPanel( mp_wxsplitterwindow ) ;
 
@@ -230,10 +234,10 @@ void MainWindowBase::AddInputAndOutputPanels()
 //    , 2 );
 	
   //m_panelSplitterTop->Layout() ;
-	SetSizer( //p_gridsizerOuter
+  m_p_mainwindow->SetSizer( //p_gridsizerOuter
     p_boxsizerOuter
     );
-	SetAutoLayout(true);
+  m_p_mainwindow->SetAutoLayout(true);
 //	Layout();  
 }
 
@@ -276,7 +280,7 @@ void EVENT_HANDLER_CLASS_NAME::AddToolButtons()
   AddShowInformationButton( p_boxsizerButtons ) ;
   AddDrawParseTreeButton( p_boxsizerButtons);
   AddTruncateLogFileButton( p_boxsizerButtons);
-  p_boxsizerOuter->Add( p_boxsizerButtons ) ;
+//  p_boxsizerOuter->Add( p_boxsizerButtons ) ;
 }
 
 void EVENT_HANDLER_CLASS_NAME::AddReInitializeGrammarButton(wxSizer * p_wxsizer)
@@ -372,26 +376,11 @@ void EVENT_HANDLER_CLASS_NAME::AddAddGrammarRulesButton( wxSizer * p_sizer )
 
 void EVENT_HANDLER_CLASS_NAME::AddLoadDictionaryButton( wxSizer * p_sizer)
 {
-//  mp_wxbutton = new //wxButton(
-//    wxBitmapButton(
-//    //mp_wxsplitterwindow
-//    //m_panelSplitterTop
-//    //p_boxsizerOuter
-//    this
-//    , //wxID_ANY
-//    ID_LoadDictionary
-//    //, wxT("dict")
-//    , wxBitmap( re_load_dictionary_xpm)
-//    ) ;
-//  mp_wxbutton->SetToolTip( wxT("re-load dictionary...") );
-//  p_sizer->Add(
-//    mp_wxbutton
-//    //stretch factor. 0=do not stretch
-//    , 0
-//      //0
-//    , //wxEXPAND |
-//      wxBOTTOM
-//    , 2 );
+  AddBitmapButtonAndTooltip(
+    ID_LoadDictionary
+    , re_load_dictionary_xpm
+    , wxT("re-load dictionary...")
+    ) ;
 }
 
 void EVENT_HANDLER_CLASS_NAME::AddRemoveGrammarRulesButton( wxSizer * p_sizer )
@@ -475,7 +464,7 @@ void EVENT_HANDLER_CLASS_NAME::AddShowInformationButton( wxSizer * p_sizer )
 
 void EVENT_HANDLER_CLASS_NAME::AddTranslateButton( wxSizer * p_sizer )
 {
-  AddBitmapButtonAndTooltip(ID_Translate, translate_bitmap_xpm, 
+  AddBitmapButtonAndTooltip(ID_Translate, translate_bitmap_xpm,
     wxT("translate")/*, p_sizer*/);
 }
 
@@ -485,7 +474,7 @@ void EVENT_HANDLER_CLASS_NAME::AddTruncateLogFileButton( wxSizer * p_sizer )
     wxT("truncate log file to size 0")/*, p_sizer*/);
 }
 
-void MainWindowBase::GetEntireInputText(std::string & r_stdstrInputText)
+void EVENT_HANDLER_CLASS_NAME::GetEntireInputText(std::string & r_stdstrInputText)
 {
 //  std::string stdstrInputText ;
   wxString wxstringWholeInputText ;
@@ -498,6 +487,36 @@ void MainWindowBase::GetEntireInputText(std::string & r_stdstrInputText)
     GetStdString(wxstringWholeInputText);
 //  return stdstrInputText ;
 }
+
+//DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)
+//{
+////  wxCondition & wxCond = *(wxCondition *)p_v;
+//  EVENT_HANDLER_CLASS_NAME & event_handler = *(EVENT_HANDLER_CLASS_NAME *)p_v;
+////  EVENT_HANDLER_CLASS_NAME * p_event_handler = (EVENT_HANDLER_CLASS_NAME *) p_v;
+//  ::wxGetApp().s_dictionary.clear();
+////  wxCond.Signal();
+//  ::wxGetApp().EndTimer();
+//  LOGN("after clearing the dictionary.")
+//  wxCloseEvent wxcloseEvent;
+//  //Add the close event for destroying the window
+//  /*::wxGetApp().*/event_handler.GetEventHandler()->AddPendingEvent(wxcloseEvent);
+//}
+//
+//void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatus()
+//{
+//  ::wxGetApp().StartTimer();
+//  VTrans::thread_type thread;
+////    wxMutex mutex;
+////    wxCondition wxCond(mutex);
+////    //"The mutex object MUST be locked before calling Wait()"
+////    mutex.Lock();
+//  thread.start(UnloadDictionary, /*& wxCond NULL*/ this );
+////    wxCond.Wait();
+////  ::wxGetApp().s_dictionary.clear();
+////    ::wxGetApp().EndTimer();
+////    LOGN("after clearing the dictionary.")
+//}
+
 //};// class MainWindowBase
 
 }

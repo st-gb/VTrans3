@@ -16,6 +16,9 @@
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <wx/filefn.h> //::wxGetCwd()
 
+/** for wxWidgets::GetwxString_Inline */
+using namespace wxWidgets;
+
 namespace VTrans
 {
 
@@ -192,8 +195,14 @@ namespace VTrans
       //This should reflect your data
       SetItemCount(arrayIndex);
     }
-    //The contents are not visually updated after a filter change
-    // (but if the is redrawn).
-    RefreshItems(0, previousItemCount);
+    //Avoid ../src/generic/listctrl.cpp(2640): assert "lineTo < GetItemCount()"
+    //failed in RefreshLines(): invalid line range
+    if( previousItemCount < GetItemCount() )
+    {
+      //The contents are not visually updated after a filter change
+      // (but if the is redrawn).
+      RefreshItems(0,//lineFrom
+        previousItemCount /*lineTo*/ );
+    }
   }
 } /* namespace VTrans */

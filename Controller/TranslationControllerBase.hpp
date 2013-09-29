@@ -42,8 +42,16 @@ class GUIattributes
 {
 public:
   bool m_bShowGrammarPartAddress ;
-  GUIattributes() : m_bShowGrammarPartAddress( //true
-    false) {}
+  bool m_bShowTranslation ;
+  std::string m_std_strGrammarPartIDcolor;
+  std::string m_std_strGrammarPartMemoryAddressColor;
+  GUIattributes()
+    : m_bShowGrammarPartAddress( //true
+      false)
+      , m_bShowTranslation(false)
+      , m_std_strGrammarPartIDcolor("#FF0000")
+      , m_std_strGrammarPartMemoryAddressColor("#FF0000")
+  {}
 };
 
 /** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
@@ -54,6 +62,7 @@ protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
+  fastestUnsignedDataType m_GUIthreadID;
   static dictionary_type s_dictionary ;
   NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
   ParseByRise m_parsebyrise ;
