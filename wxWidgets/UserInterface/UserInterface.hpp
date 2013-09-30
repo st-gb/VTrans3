@@ -29,7 +29,10 @@ namespace wxWidgets
     wxWindow *,
     const wxString & c_r_wxInitialDirForFileSelecion
     ) ;
-  void UnLoadAndLoadDictionary(wxWindow * p_wxwindow) ;
+  void LoadOrReloadDictionary(
+    wxWindow * p_wxwindow,
+    const wxString & wxstrVocabularyDirPath,
+    const wxString & wxstrVocabularyFileName) ;
 }
 
 #endif /* USERINTERFACE_HPP_ */

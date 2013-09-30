@@ -19,7 +19,7 @@
     DWORD m_dwLength;
     DWORD m_dwStart;
     VTrans::string_type m_Str;
-    PositionString(VTrans::string_type str,DWORD dwStart,DWORD dwLength)
+    PositionString(const VTrans::string_type & str, DWORD dwStart,DWORD dwLength)
     {
       m_Str = str;
       m_dwStart = dwStart;
@@ -28,5 +28,9 @@
   };
 
   typedef std::vector<PositionString> PositionStringVector;
+//  class PositionStringVector
+//  {
+//    PositionStringVector(const VTrans::string_type & str);
+//  };
 
 #endif /* POSITIONSTRING_HPP_ */

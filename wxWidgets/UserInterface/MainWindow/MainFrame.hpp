@@ -22,12 +22,12 @@ class wxToolBar ;
 namespace wxWidgets
 {
   class MainFrame
-    : public wxFrame, public MainWindowBase
+    : public wxFrame, public virtual MainWindowBase
   {
+    //using wxPanel::Bind"
     wxMenuBar * mp_wxmenubar ;
     wxToolBar * mp_wxtoolbar ;
     void AddMenuBar() ;
-    void AddInputAndOutputControls();
     void AddBitmapButtonAndTooltip(
       enum user_interface_control_actions itemID, 
       const char * const XPMbitmapData [], const wxChar toolTip []//, wxSizer * p_wxsizer
@@ -49,7 +49,7 @@ namespace wxWidgets
       );
     virtual
     ~MainFrame();
-#include "EventHandlerFunctions.hpp"
+    #include "EventHandlerFunctions.hpp"
   };
 
 }

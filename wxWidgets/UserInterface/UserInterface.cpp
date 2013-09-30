@@ -21,9 +21,10 @@
 
 //class TranslationControllerBase
 #include <Controller/TranslationControllerBase.hpp>
-#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
+//#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
 //class TUchemnitzDictionaryReader
 #include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
+#include <IO/dictionary/TUchemnitzDictEngWord2LineNumberReader.hpp>
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp> //class LetterTree
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_type
 //GetStdString(...)
@@ -95,24 +96,40 @@ namespace wxWidgets
     return n ;
   }
 
-  DWORD THREAD_FUNCTION_CALLING_CONVENTION LoadDictionary(void * p_v )
+  /** @brief This function is meant as parameter for starting a thread:
+   *   thread.start(LoadDictionary_ThreadFunc, p_v);
+   *  @param p_vParam the dictFilePath as char array (convert to
+   *     "const char * const")
+   *  @return Because this function should be called at thread startup this is
+   *    the thread exit code.
+   *    0 = success/ no error*/
+  DWORD THREAD_FUNCTION_CALLING_CONVENTION LoadDictionary_ThreadFunc(
+    void * p_vParam )
   {
-    const char * const dictFilePath = (const char * const) p_v;
+    const char * const dictFilePath = (const char * const) p_vParam;
     if( dictFilePath )
     {
-      TUchemnitzDictionaryReader::extractVocables( dictFilePath);
+      //TUchemnitzDictionaryReader
+      DictionaryReader::TUchemnitzDictEngWord2LineNumberReader tcdr(
+        /** this*/ ::wxGetApp(),
+        & ::wxGetApp().s_dictionary );
+      /*TUchemnitzDictionaryReader::*/ tcdr.read(dictFilePath);//extractVocables( dictFilePath);
+      ::wxGetApp().EndTimer();
       return 0;
     }
     return 1;
   }
 
-  void UnLoadAndLoadDictionary(wxWindow * p_wxwindow)
+  void LoadOrReloadDictionary(
+    wxWindow * p_wxwindowParent,
+    const wxString & wxstrVocabularyDirPath,
+    const wxString & wxstrVocabularyFileName)
   {
     wxFileDialog wxfiledialog(
-      p_wxwindow ,
-      wxT("Choose a dictionary file") ,
-      wxT("") , //defaultDir
-      wxT("") //const wxString&  defaultFile = ""
+      p_wxwindowParent
+      , wxT("Choose a dictionary file")
+      , wxstrVocabularyDirPath //wxT("") , //defaultDir
+      , wxstrVocabularyFileName //wxT("") //const wxString&  defaultFile = ""
       , wxT("*.txt") //const wxString&  wildcard = "*.*"
       , //wxOPEN | wxFILE_MUST_EXIST //long style = 0,
       //wxWidgets 2.9 has no "wxOPEN" or "wxFILE_MUST_EXIST"
@@ -125,10 +142,12 @@ namespace wxWidgets
         // #wxfiledialoggetpath:
         // "Returns the full path (directory and filename) of the selected file."
         GetPath() ;
-      std::string std_strFilePath = GetStdString( wxstrFullPath ) ;
-      wxString wxstrLabel = p_wxwindow->GetLabel() ;
+      /** Save in variable that lives longer than the new thread*/
+      ::wxGetApp().m_std_strLastSelectedDictFilePath = GetStdString( wxstrFullPath ) ;
+      std::string & std_strFilePath = ::wxGetApp().m_std_strLastSelectedDictFilePath;
+      wxString wxstrLabel = p_wxwindowParent->GetLabel() ;
 //      ::wxMessageBox( wxT("freeing memory for existing vocabulary") ) ;
-      p_wxwindow->SetLabel( wxT("freeing memory for existing vocabulary") ) ;
+      p_wxwindowParent->SetLabel( wxT("freeing memory for existing vocabulary") ) ;
 //      g_lettertree.DeleteCompleteList() ;
       TranslationControllerBase::s_dictionary./*DeleteCompleteList()*/clear();
       //MUST be inserted, else some grammar rules can't be applied.
@@ -139,22 +158,21 @@ namespace wxWidgets
 //      wxMessageDialog * p_dlg = new wxMessageDialog( //NULL,
 //        p_wxwindow ,
 //        wxT("inserting vocabulary into memory")) ;
-      p_wxwindow->SetLabel( wxT("inserting vocabulary into memory") ) ;
+      p_wxwindowParent->SetLabel( wxT("inserting vocabulary into memory") ) ;
       {
 //        p_dlg->Show( true ) ;
 //        OneLinePerWordPair::LoadWords( std_strFilePath ) ;
-        TUchemnitzDictionaryReader tcdr(::wxGetApp() );
+//        TUchemnitzDictionaryReader tcdr(::wxGetApp(), & ::wxGetApp().s_dictionary);
         ::wxGetApp().StartTimer();
-//        VTrans::thread_type thread;
-//        thread.start(LoadDictionary, std_strFilePath.c_str() );
-        TUchemnitzDictionaryReader::extractVocables( std_strFilePath.c_str());
+        VTrans::thread_type thread;
+        thread.start(LoadDictionary_ThreadFunc, (void *) std_strFilePath.c_str() );
+//        TUchemnitzDictionaryReader::extractVocables( std_strFilePath.c_str());
 //        if( ::wxMessageBox( wxT("loading vocs"), wxT(""), wxOK | wxCANCEL) ==
 //            wxID_CANCEL )
 //          tcdr.CancelLoading();
-        ::wxGetApp().EndTimer();
 //        p_dlg->Destroy();
       }
-      p_wxwindow->SetLabel( wxstrLabel ) ;
+      p_wxwindowParent->SetLabel( wxstrLabel ) ;
     }
   }
 }

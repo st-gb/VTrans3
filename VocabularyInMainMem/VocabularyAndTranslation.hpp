@@ -1,11 +1,14 @@
 #pragma once
 
 #include <string>
+#include <string.h> //memcpy(...), strlen(...)
 //#include "AutomDelWord.hpp"
 //  //use a relative path, else "VC/include/IO.h" is used
 //  #include <IO/IO.hpp>
   //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
   #include <IO/dictionary/word_class_characters.h>
+#include <Attributes/EnglishWord.hpp> //EnglishWord::English_word_class
+#include <fastest_data_type.h> //fastestUnsignedDataType
 
   #define BIT_POSITION_FOR_TRANSLATION_TYPE 2
 
@@ -20,16 +23,17 @@
   #define NUMBER_OF_STRINGS_FOR_GERMAN_NOUN 2 //2 strings: singular and plural
   #define ENGLISH_NOUN WORD_TYPE_NOUN
   #define ENGLISH_MAIN_VERB WORD_TYPE_MAIN_VERB
-  //infinitive, simple past, past participle, 3rd person present
+  /** infinitive, simple past, past participle, 3rd person present */
   #define NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB 4
   //infinitive + 6*present + 6*past + past participle + imperative singualar & 
   //imperative plural = 1 + 6 + 6 + 1 + 2 = 16
   #define NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB 16
 
 
-//forward decl.
+/** forward decl. */
 class LetterNode ;
 class I_UserInterface;
+class TranslationControllerBase;
 
 //class Word ;
 #include <Attributes/Word.hpp>
@@ -43,18 +47,24 @@ class I_UserInterface;
 
 //  BYTE g_arbyWordType2ArraySizeIndex [100];
 
-  //This class stands for a pair of English and German vocabulary.
+  /** @brief This class stands for a pair of English and German vocabulary.
+   *   If multiple words have the same words (e.g. the "love", to "love")
+   *   then each one has its VocabularyAndTranslation object. */
   class VocabularyAndTranslation
   {
   public:
+    typedef char word_type_for_new_allocator;
+    typedef char * word_type;
     //For both English and German.
     enum nounArrayIndices{ SingularArrayIndex = 0, PluralArrayIndex };
     struct ArraySizes
     {
-      unsigned char m_byArraySizeForEnglishWord;
-      unsigned char m_byArraySizeForGermanWord;
-      unsigned char m_byArraySizeForByteArray;
+      typedef fastestUnsignedDataType data_type;
+      data_type m_byArraySizeForEnglishWord;
+      data_type m_byArraySizeForGermanWord;
+      data_type m_byArraySizeForByteArray;
     };
+    static TranslationControllerBase * s_p_translationControllerBase;
     static const ArraySizes s_arraysizes [];
 
     static I_UserInterface * s_p_userinterface;
@@ -70,7 +80,7 @@ class I_UserInterface;
 //    };
 //    //Count how often this object is referred to from other LetterNodes.
 //    unsigned m_referenceCount;
-    BYTE m_byType ;
+    /*BYTE*/ EnglishWord::English_word_class m_englishWordClass ;
     BYTE * m_arbyAttribute ;
 //    enum array_sizes
 //    {
@@ -127,9 +137,9 @@ class I_UserInterface;
 //    Word m_word ;
 //    Word * m_pwordTranslation ;
     //std::string * m_arstrEnglishWord ;
-    VTrans::string_type * m_arstrEnglishWord ;
+    /*VTrans::string_type * */ word_type * m_arstrEnglishWord ;
     //std::string * m_arstrGermanWord ;
-    VTrans::string_type * m_arstrGermanWord ;
+    /*VTrans::string_type * */ word_type * m_arstrGermanWord ;
     //LetterNode * m_arpletternodeBeginOfWord ;
 
     VocabularyAndTranslation(
@@ -143,9 +153,117 @@ class I_UserInterface;
 //      m_pwordTranslation = & rwordTranslation ;
     }
 
-    VocabularyAndTranslation(BYTE byVocabularyType) ;
+    VocabularyAndTranslation(/*BYTE*/ EnglishWord::English_word_class
+      byVocabularyType) ;
 
     ~VocabularyAndTranslation() ;
+
+    fastestUnsignedDataType GetNumberOfBytes();
+    void FreeMemory();
+    fastestUnsignedDataType GetNumberOfArrayElements(
+      /*const*/ EnglishWord::English_word_class engWordClass,
+      fastestUnsignedDataType & numEngWords,
+      fastestUnsignedDataType & numGerWords
+      );
+    void GetNumberOfArrayElements(
+      const EnglishWord::English_word_class engWordClass,
+      ArraySizes & arrSizes)
+    {
+      arrSizes.m_byArraySizeForByteArray = GetNumberOfArrayElements(
+        engWordClass,
+        arrSizes.m_byArraySizeForEnglishWord,
+        arrSizes.m_byArraySizeForGermanWord);
+    }
+
+    /**  Lexik o   n
+     *         111 110 <-dez
+     * - Lexik a
+     *         97  0   <-dez
+     * = 00000 14  110
+     *
+     *   huff table (sorted by frequency):
+     *   0 -> 1 (implicitely) (not saved/ stored/ written)
+     *   14 (1byte)->"01"
+     *   110 (1byte)->"001"
+     *   0 <- marks the end of the table
+     *
+     *   ---14---- --110---- ---0---        14 -110
+     *   1110 0000 0110 1110 0000000 1111 1 01 0 01  <- bitwise = 5 byte
+     *
+     *   decode:
+     *   ---14---- --110---- ---0---        14 -110
+     *   1110 0000 0110 1110 0000000 1111 1 01 0 01  <- bitwise = 5 byte
+     *
+     *   ->code table
+     *   14->01
+     *   110->001
+     *   0->no more codes
+     *   1->0
+     *
+     *   */
+//    BYTE * diff(const char * const word, const fastestUnsignedDataType stringLen)
+//    {
+//      BYTE * ar_by = new BYTE[stringLen];
+//      const word_type firstGermanWord = m_arstrGermanWord[0];
+//      BYTE byCurrentValue;
+//      char firstWordCurrentChar;
+//      if( firstGermanWord[0] != '\0' )
+//      {
+//        for(fastestUnsignedDataType i = 0; i < stringLen; ++i)
+//        {
+////          byCurrentValue
+//          firstWordCurrentChar = firstGermanWord[i];
+//          if( firstWordCurrentChar != '\0' )
+//          {
+//            switch(firstWordCurrentChar)
+//            {
+//              case 'a': //Mann - Männer = 0100 255-e,255-r
+//                if( word[i] == 'ä' )
+//                  ar_by[i] = 1;
+//                break;
+//              case 'u': //Bruder - Brüder = 00100
+//               if( word[i] == 'ü' )
+//                 ar_by[i] = 1;
+//               break;
+//            }
+//            ar_by[i] = firstGermanWord[i] - word[i];
+//          }
+//        }
+//      }
+//    }
+//    BYTE * compress(const BYTE * const ar_by, const fastestUnsignedDataType len)
+//    {
+//      unsigned char char_frequencies[256];
+//      memset(char_frequencies, 0, 256);
+//      BYTE byCurrentValue;
+//      for(fastestUnsignedDataType i = 0; i < len; i++)
+//      {
+//        byCurrentValue = ar_by[0];
+//        char_frequencies[byCurrentValue]++;
+//      }
+//    }
+    void SetGermanWord(
+      const char * const word,
+      const fastestUnsignedDataType stringLen,
+      fastestUnsignedDataType vocAndTranslArrayIndex)
+    {
+      m_arstrGermanWord[vocAndTranslArrayIndex] = new
+        word_type_for_new_allocator [stringLen
+         // string terminating 0 char.
+          + 1];
+      memcpy( (void *) m_arstrGermanWord[vocAndTranslArrayIndex],
+        word,
+        //+ string terminating 0 char.
+        stringLen //+ 1
+        );
+      //set terminating 0 char.
+      m_arstrGermanWord[vocAndTranslArrayIndex][stringLen] = '\0';
+      //TODO?
+//      if( m_arstrGermanWord[vocAndTranslArrayIndex][0] != '\0' )
+//      {
+//        m_arstrGermanWord[vocAndTranslArrayIndex][0] = diff()
+//      }
+    }
 
     static void Init()
     {
@@ -159,8 +277,19 @@ class I_UserInterface;
       return m_arbyAttribute[1] ;
     }
 
-    std::string GetEnglishString(BYTE byIndex) const;
-    std::string GetGermanString(BYTE byIndex) const;
+    std::string GetEnglishWordAsStdString(const fastestUnsignedDataType byIndex) const;
+    int GetEnglishWordLength(const fastestUnsignedDataType wordIndex) const
+    {
+      return ::strlen(m_arstrEnglishWord[wordIndex]);
+    }
+
+    word_type GetAssembledGermanString(const fastestUnsignedDataType index) const;
+    word_type GetGermanString(const fastestUnsignedDataType index) const;
+    std::string GetGermanWordAsStdString(const fastestUnsignedDataType index) const
+    {
+      std::string std_str(GetGermanString(index));
+      return std_str;
+    }
 
     BYTE GetNumberOfNeededObjects()
     {
@@ -172,7 +301,7 @@ class I_UserInterface;
 
     std::string GetWordTypeAsStdStr()
     {
-      return g_ar_stdstrWordClass[ m_byType - WORD_TYPE_NOUN ] ;
+      return g_ar_stdstrWordClass[ m_englishWordClass - WORD_TYPE_NOUN ] ;
     }
 
     void PointToAttributeData(

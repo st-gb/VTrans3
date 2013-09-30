@@ -12,7 +12,7 @@
 //#include <unistd.h> //usleep()
 #include "DrawParseTreeTraverser.hpp" //class DrawParseTreeTraverser
 //SUPPRESS_UNUSED_VARIABLE_WARNING
-#include <preprocessor_macros/suppress_unused_variable.h>
+#include <compiler/GCC/suppress_unused_variable.h>
 #include <wx/dc.h> //class wxDC
 #include <wx/dcmemory.h> //class wxMemoryDC
 #include <wx/dcclient.h> //for class wxPaintDC
@@ -34,6 +34,9 @@
   //"wx/msw/winundef.h" immediately after it. "
   #include "wx/msw/winundef.h"
 #endif //#ifdef _WIN32 //32 and 64 bit Windows
+
+/** for wxWidgets::GetwxString_Inline */
+using namespace wxWidgets;
 
 BEGIN_EVENT_TABLE(wxParseTreePanel, wxPanel)
   EVT_PAINT  (wxParseTreePanel::OnPaint)
@@ -824,7 +827,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
           mp_parsebyrise ,
           p_grammarpart
           );
-        dptt.m_wCurrentParseTreeLeftEndInPixels =
+        dptt.m_currentParseTreeLeftEndInPixels =
             wCurrentParseTreeLeftEndInPixels ;
         //In order to draw the alternatives untereinander.
         dptt.m_wParseLevelCountedFromRoot =
@@ -832,11 +835,11 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
         dptt.Traverse() ;
         ++ c_iter_stdvec_p_grammarpart ;
 //        wCurrentParseTreeLeftEndInPixels =
-//            dptt.m_wCurrentParseTreeLeftEndInPixels ;
-        if( dptt.m_wCurrentParseTreeLeftEndInPixels >
+//            dptt.m_currentParseTreeLeftEndInPixels ;
+        if( dptt.m_currentParseTreeLeftEndInPixels >
           wNextLeftEndInPixelsOfParseTreeRightOfCurrentTokens )
           wNextLeftEndInPixelsOfParseTreeRightOfCurrentTokens =
-            dptt.m_wCurrentParseTreeLeftEndInPixels ;
+            dptt.m_currentParseTreeLeftEndInPixels ;
         wParseLevelCountedFromRoot =
             //Draw the next alternative 1 line below the current alternative.
             dptt.m_wParseLevelCountedFromRoot + 1 ;

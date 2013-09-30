@@ -284,7 +284,8 @@ public:
   //"static" should be faster because no "this" pointer is IMPLICITELY copied
   // as function argument.
   //inline
-  static void Get3rdPersonForm( VTrans::string_type & r_vtransstr ) ;
+  static void Get3rdPersonSingularPresent( VTrans::string_type & r_vtransstr);
+  static VTrans::string_type Get3rdPersonSingularPresent(const VTrans::string_type & r_vtransstr);
   static void GetProgressiveForm( VTrans::string_type & r_vtransstr ) ;
   //For ability to iterate over all of the word's strings.
   bool GetNextString( std::string & r_stdstr ) { return false ; } ;

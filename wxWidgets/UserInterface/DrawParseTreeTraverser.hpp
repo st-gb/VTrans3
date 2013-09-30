@@ -15,6 +15,7 @@
 #include <map> //class std::map
 //#include <wx/dc.h>
 #include <wx/gdicmn.h> //class wxSize
+#include <fastest_data_type.h> //typedef fastestUnsignedDataType
 
 //Forward declarations
 class GrammarPart ;
@@ -25,7 +26,10 @@ class DrawParseTreeTraverser
 {
 public:
   ParseByRise * mp_parsebyrise ;
-  WORD m_wCurrentParseTreeLeftEndInPixels ;
+  wxColor m_wxcolor;
+  fastestUnsignedDataType m_stringHeigth;
+  fastestUnsignedDataType m_currentParseTreeLeftEndInPixels ;
+  //TODO make type fastestUnsignedDataType
   WORD m_wParseLevelCountedFromRoot ;
   wxDC * mp_wxdc ;
   DrawParseTreeTraverser(
@@ -38,12 +42,18 @@ public:
   std::map<GrammarPart *,DrawGrammarPartAttributes>
     m_stdmap_p_grammarpart2HorizCenter;
 
+  void DrawGrammarPartAtts(
+    const wxString & wxstrGrammarPartName,
+    const wxString & wxstrGrammarPartMemoryAddress,
+    /*const*/ fastestUnsignedDataType leftEndInPixels,
+    const fastestUnsignedDataType stringHeight);
   wxSize GetGrammarPartNameExtent(
   //  wxPaintDC & wxpaintdc ,
     wxDC & r_wxdc ,
     GrammarPart * p_pg ,
     //wxSize & wxsizeText
-    wxString & wxstr
+    wxString & wxstr,
+    wxString & wxstrGrammarPartMemoryAddress
     ) ;
   wxSize GetTokenExtent(
       wxDC & r_wxdc ,
@@ -62,6 +72,17 @@ public:
   void ParseTreePathAdded() ;
 //    void RightChildAdded(WORD wCurrentParseTreeLevel) ;
   void UnprocessedHighestLevelNodeFound() ;
+
+private:
+  void
+  DrawLineFromRightChildToParent(
+    fastestUnsignedDataType & middleBetweenLeftAndRightChild,
+    std::map<GrammarPart*, DrawGrammarPartAttributes>::iterator& iterLeft,
+    std::map<GrammarPart*, DrawGrammarPartAttributes>::iterator& iterRight,
+    fastestUnsignedDataType & childY,
+    DrawGrammarPartAttributes* p_dgpaRight,
+//    wxSize& wxsizeString,
+    fastestUnsignedDataType & thisY);
 };
 
 #endif /* DRAWPARSETREETRAVERSER_H_ */

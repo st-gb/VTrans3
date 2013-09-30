@@ -11,7 +11,12 @@
 #include <wx/dialog.h> //class wxDialog
 #include <wx/textctrl.h> //class wxTextCtrl
 
+/** IGNORE_WRITE_STRINGS_WARNING, ENABLE_WRITE_STRINGS_WARNING */
+#include <compiler/GCC/enable_disable_write_strings_warning.h>
+IGNORE_WRITE_STRINGS_WARNING
 #include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
+ENABLE_WRITE_STRINGS_WARNING
+
 //#include <IO/IO.hpp> //OneLinePerWordPair::LoadWords()
 #include <Controller/Logger/Logger.hpp> //class Logger
 #include <Controller/Logger/Formatter/Log4jFormatter.hpp> //class Log4jFormatter
@@ -50,8 +55,16 @@ using namespace wxWidgets;
 
 IMPLEMENT_APP(VTransApp)
 
+DEFINE_LOCAL_EVENT_TYPE(MessageEvent)
+
+BEGIN_EVENT_TABLE( VTransApp, wxApp )
+  EVT_COMMAND(wxID_ANY, MessageEvent, VTransApp::OnMessage)
+END_EVENT_TABLE()
+
 VTransApp::VTransApp()
   :
+  m_messageIsShown(false),
+  m_atLeast1MessageToShow(false),
 //  m_parsebyrise( * this ) ,
 //  m_translateparsebyrisetree(
 //    m_parsebyrise
@@ -104,8 +117,8 @@ void VTransApp::CreateAndShowMainWindow()
   //         && p_mainframe
     )
   {
-    ((wxFrame *) m_p_mainWindow)->Show(true);
-    m_p_mainWindow->SetEventHandler( (wxWidgets::MainWindowBase*) m_p_mainWindow);
+    (/*(wxFrame *)*/ m_p_mainWindow)->Show(true);
+    //m_p_mainWindow->SetEventHandler( (wxWidgets::MainWindowBase*) m_p_mainWindow);
   //       p_mainframe->Show() ;
   }
   else
@@ -115,27 +128,45 @@ void VTransApp::CreateAndShowMainWindow()
   }
 }
 
-void VTransApp::Message( const std::string & cr_stdstr )
+void VTransApp::Message( const std::string & cr_stdstr /*, unsigned threadID*/ )
 {
-//  ::wxMessageBox( getwxString( cr_stdstr ) , wxT("Translator message") ) ;
-//  ::wxMe
-  wxDialog wxd(NULL, wxID_ANY, wxT("Translator message") );
+  /** Avoid putting to much "show message" events/ showing too much messages at
+  * once: else if this message is called very often then a lot of message
+  * queue entries would be inserted-> a lot of dialogs are shown. */
+//  if( ! m_messageIsShown )
+  {
+    const DWORD dwCurrentThreadNumer = OperatingSystem::GetCurrentThreadNumber();
+    if( dwCurrentThreadNumer == m_GUIthreadID)
+    {
+      wxString wxstrMessage = wxWidgets::getwxString( cr_stdstr);
+      ShowMessage(wxstrMessage);
+    }
+    else
+    {
+      /** Pauses here if a dialog is currently being shown modally until it is
+       * closed. */
+      /** Avoid putting to much "show message" events/ showing too much messages at
+      * once: else if this message is called very often then a lot of message
+      * queue entries would be inserted-> a lot of dialogs are shown. */
+      m_critSecShowMessage.Enter();
+      //TODO Multiple "show message dialog" messages are added before a dialog
+      //is shown.
+//      if( m_atLeast1MessageToShow )
+//        //Waits until dialog is closed.
+//        m_conditionShowMessage.Wait();
+      //Another than GUI thread->put into message queue to avoid program crash.
+      wxCommandEvent wxcommand_event(MessageEvent);
 
-  wxString wxstrMessage = ::getwxString( cr_stdstr);
-//  wxTextCtrl * p_wxtextctrl = new wxTextCtrl(
-//    & wxd //wxWindow* parent
-//    , wxID_ANY //wxWindowID id
-//    , wxstrMessage //const wxString& value = ""
-//    , wxDefaultPosition //const wxPoint& pos = wxDefaultPosition,
-//    , wxDefaultSize //const wxSize& size = wxDefaultSize
-//    , wxTE_READONLY | wxTE_MULTILINE //long style = 0
-//    );
-////  wxd.AddChild( p_wxtextctrl);
-//  wxd.Layout(); //stretch to the whole client window.
-//  wxd.ShowModal();
-  wxTextControlDialog wxtextcontroldialog(
-    wxstrMessage);
-  wxtextcontroldialog.ShowModal();
+      wxcommand_event.SetString(GetwxString_Inline(cr_stdstr));
+    //    AsyncMessage(cr_stdstr);
+    //    QueueEvent  (       wxEvent *       event   );
+      //FIXME: http://docs.wxwidgets.org/trunk/classwx_evt_handler.html#a0737c6d2cbcd5ded4b1ecdd53ed0def3
+      //"[...] can't be used to post events from worker threads for the event
+      //objects with wxString fields (i.e. in practice most of them) [...]"
+      AddPendingEvent(wxcommand_event);
+      m_critSecShowMessage.Leave();
+    }
+  }
 }
 
 void VTransApp::Message( const std::wstring & cr_std_wstr )
@@ -250,13 +281,22 @@ int VTransApp::OnExit()
   return 0 ;
 }
 
+/** @brief for showing messages from threads other than the main/GUI thread.
+ *   (if showing/creating a GUI/ window from another than the main/GUI thread
+ *    the process crashes/ may crash) */
+void VTransApp::OnMessage(wxCommandEvent & event)
+{
+  wxString wxstr = event.GetString();
+  ShowMessage(wxstr);
+}
+
 bool VTransApp::OnInit()
 {
   m_wxiconVTrans = wxIcon( VT_icon_xpm );
   std::string stdstrLogFilePath = "VTrans_log.txt" ;
 //  g_logger.SetLogLevel(/*LogLevel::debug*/ "debug");
   g_logger.m_logLevel = LogLevel::debug;
-  g_logger.OpenFileA(stdstrLogFilePath) ;
+  g_logger.OpenFileA(stdstrLogFilePath, 1000, LogLevel::debug) ;
   const std::vector<FormattedLogEntryProcessor *> & formattedLogEntryProcessors = 
     g_logger.GetFormattedLogEntryProcessors();
   if( formattedLogEntryProcessors.size() > 0 )
@@ -307,6 +347,24 @@ void VTransApp::ProcessSelectedXMLfiles(
         stdstrFilePath ) ;
     }
   }
+}
+
+
+inline void VTransApp::ShowMessage(wxString & wxstrMessage)
+{
+//  if( threadID == m_GUIthreadID)
+//  {
+  m_critSecShowMessage.Enter();
+  m_messageIsShown = true;
+  /** Show wxTextControlDialog because so the message can be copied. */
+  wxTextControlDialog wxtextcontroldialog(
+    wxstrMessage);
+
+  wxtextcontroldialog.ShowModal();
+  m_messageIsShown = false;
+  m_critSecShowMessage.Leave();
+//  }
+//  else
 }
 
 void VTransApp::ShowInvalidVocabularyFileFormatMessage(

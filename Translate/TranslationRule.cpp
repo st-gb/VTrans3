@@ -9,8 +9,8 @@
 #include <Parse/GrammarPart.hpp> //class GrammarPart
 #include <Parse/ParseByRise.hpp> //class ParseByRise for DEBUG_COUTN(...)
 #include <exception> //for class std::exception
-//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
-#include <preprocessor_macros/suppress_unused_variable.h>
+/** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
+#include <compiler/GCC/suppress_unused_variable.h>
 
 #ifndef MAXWORD
   #define MAXWORD 65535

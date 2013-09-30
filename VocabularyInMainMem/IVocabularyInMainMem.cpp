@@ -18,6 +18,9 @@
 //}
 
 IVocabularyInMainMem::IVocabularyInMainMem()
+  : m_numberOfVocPairs(0)
+  , m_numberOfEnglishWords(0)
+  , m_maxTokenToConsider(4) //"hand-held vacuum cleaner"
 {
   //m_arstdstrPersonalPronoun = new std::string[NUMBER_OF_PERSONAL_PRONOUNS] ;
 }

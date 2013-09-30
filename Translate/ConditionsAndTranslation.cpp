@@ -13,8 +13,8 @@
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 #include <map> //std::map
-//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
-#include <preprocessor_macros/suppress_unused_variable.h>
+/** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
+#include <compiler/GCC/suppress_unused_variable.h>
 
 //A static variable also needs to be defined.
 std::map<std::string, pfnTransformString> ConditionsAndTranslation::
@@ -97,9 +97,10 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                 if( r_atapas.m_byLanguage ==
                   AttributeTypeAndPosAndSize::English )
                 {
-                  std::string & r_stdstrAttrVal = p_grammarpartLeaf->
-                    m_pvocabularyandtranslation->m_arstrEnglishWord[
-                    r_atapas.m_wIndex ] ;
+                  std::string stdstrAttrVal = p_grammarpartLeaf->
+                    m_pvocabularyandtranslation->
+                    //m_arstrEnglishWord[r_atapas.m_wIndex ] ;
+                    GetEnglishWordAsStdString(r_atapas.m_wIndex);
                   //std::string & r_stdstrTextTokens =
                   std::string stdstrTextTokens ;
                     sp_parsebyrise->GetTokensAsSpaceSeparatedString(
@@ -108,7 +109,7 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                     stdstrTextTokens
                     ) ;
                   if( stdstrTextTokens != ""  && stdstrTextTokens ==
-                    r_stdstrAttrVal )
+                    stdstrAttrVal )
                   {
                     //bIdentical = true ;
                     LOGN_DEBUG( //FULL_FUNC_NAME << "--"
@@ -136,14 +137,14 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                   LOGN_DEBUG( //FULL_FUNC_NAME << "--"
                     "attribute refers to the German "
                     "language" )
-                  BYTE by = p_grammarpartLeaf->
-                    m_pvocabularyandtranslation->m_arbyAttribute[
-                    r_atapas.m_wIndex ] ;
+                  const fastestUnsignedDataType attributeValue =
+                    p_grammarpartLeaf->m_pvocabularyandtranslation->
+                    m_arbyAttribute[r_atapas.m_wIndex ] ;
                   LOGN_DEBUG( //FULL_FUNC_NAME << "--"
                     "attribute value is "
                     << (WORD) cr_condition.m_byAttributeValue
-                    << ", leaf's value is: " << (WORD) by )
-                  if( cr_condition.m_byAttributeValue != by )
+                    << ", leaf's value is: " << attributeValue )
+                  if( cr_condition.m_byAttributeValue != attributeValue )
                   {
                     LOGN_DEBUG( //FULL_FUNC_NAME << "--"
                       "attribute value mismatches "
@@ -207,7 +208,7 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
 //              grammarpart.index, index2) )
 
   //If no simple replacement (like use "die" for "the" + "English_plural"
-  if( m_stdstrGermanTranslation ==  "" )
+  if( m_stdstrGermanTranslation == "" )
   {
     LOGN_DEBUG( //FULL_FUNC_NAME << "--"
       "German translation string is empty -> use "
@@ -267,7 +268,7 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                 case AttributeTypeAndPosAndSize::English :
                 {
                   return p_grammarpartLeaf->m_pvocabularyandtranslation->
-                    GetEnglishString( (BYTE) r_atapas.m_wIndex);
+                    GetEnglishWordAsStdString( r_atapas.m_wIndex);
                 }
                   break ;
                 case AttributeTypeAndPosAndSize::German :
@@ -283,14 +284,14 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                     p_vocabularyandtranslation )
 
                   std::string stdstrAttrVal = p_vocabularyandtranslation->
-                    GetGermanString( (BYTE) r_atapas.m_wIndex);
+                    GetGermanString( r_atapas.m_wIndex);
 
                   LOGN_INFO( //FULL_FUNC_NAME << "--"
-                    "attribute value at voc&transl's"
+                    "attribute value at voc&transl's "
                     << r_atapas.GetLanguageAsString() << " string index "
                     << r_atapas.m_wIndex << " is \""
                     << stdstrAttrVal << "\""
-                    << " for current leaf"
+                    << " for current leaf" << (void *) p_grammarpartLeaf
                     )
 
                   LOGN_DEBUG( //FULL_FUNC_NAME << "--"

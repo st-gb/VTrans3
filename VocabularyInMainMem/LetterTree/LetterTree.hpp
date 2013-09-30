@@ -592,11 +592,11 @@
       //return VOC_AND_TRANSL_GET_GERMAN_ARTICLE() ;
       return (*m_isetpvocandtransl)->GetGermanArticle() ;
     }
-    std::string GetGermanPlural()
+    /*std::string*/ VocabularyAndTranslation::word_type GetGermanPlural()
     {
-      return (*m_isetpvocandtransl)->m_arstrGermanWord[1] ;
+      return (*m_isetpvocandtransl)->/*m_arstrGermanWord[1]*/GetGermanString(1);
     }
-    std::string GetGermanSingular()
+    /*std::string*/ VocabularyAndTranslation::word_type GetGermanSingular()
     {
       return (*m_isetpvocandtransl)->m_arstrGermanWord[0] ;
     }

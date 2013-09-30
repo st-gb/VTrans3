@@ -1,12 +1,33 @@
 #include <wx/event.h> //BEGIN_EVENT_TABLE
+#include <wx/textdlg.h> //::wxGetTextFromUser(...)
+#include <wx/msgdlg.h> //::wxMessageBox(...)
+
 #include "MainFrame.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h>
+//getwxString(...)
+#include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
+#include <Controller/time/GetTickCount.hpp>
+#include <Attributes/TranslationAndConsecutiveID.hpp>
+#include <Translate/TranslationRule.hpp> //class TranslationRule
+#include <Xerces/SAX2GrammarRuleHandler.hpp>
+#include <Xerces/SAX2TransformationRuleHandler.hpp>
+#include <Xerces/SAX2TranslationRuleHandler.hpp>
+#include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
+#include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
+#include <wxWidgets/UserInterface/UserInterface.hpp>
+#include <wxWidgets/UserInterface/wxParseTreePanel.hpp>
+#include <wxWidgets/UserInterface/wxGermanTranslationPanel.hpp>
+#include <wxWidgets/VTransApp.hpp> //::wxGetApp()
+#include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
+#include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
+#include "VocabularyInMainMem/VocablesForWord.hpp"
 
-#define EVENT_HANDLER_BASE_CLASS_NAME wxFrame /*wxTopLevelWindowBase wxDialog*/
-#define EVENT_HANDLER_CLASS_NAME_NON_SCOPED MainFrame /*wxTextInputDlg*/
+#define EVENT_HANDLER_BASE_CLASS_NAME wxFrame /*MainWindowBase*/ /*wxTopLevelWindowBase wxDialog*/
+#define EVENT_HANDLER_CLASS_NAME_NON_SCOPED MainWindowBase /*MainFrame*/ /*wxTextInputDlg*/
 #define EVENT_HANDLER_CLASS_NAMESPACE "wxWidgets::"
 //#define EVENT_HANDLER_CLASS_NAME wxCONCAT(EVENT_HANDLER_CLASS_NAMESPACE,EVENT_HANDLER_CLASS_NAME_NON_SCOPED) /*wxTextInputDlg*/
-#define EVENT_HANDLER_CLASS_NAME wxWidgets::MainFrame /*wxTextInputDlg*/
+#define EVENT_HANDLER_CLASS_NAME wxWidgets::MainFrame /*MainWindowBase*/
+  //wxWidgets::MainFrame /*wxTextInputDlg*/
 #define EVT_HANDLER_CASTED (EVENT_HANDLER_BASE_CLASS_NAME) EVENT_HANDLER_CLASS_NAME
 
 #define BEGIN_EVENT_TABLE_(theClass, baseClass) \
@@ -23,20 +44,33 @@
 //#define wxStaticCastEvent(type, val) wx_static_cast(type, (& EVENT_HANDLER_BASE_CLASS_NAME) val)
 typedef void (wxEvtHandler::*wxEventFunction)(wxEvent&);
 
+//  EVT_BUTTON( ID_AddGrammarRules , (EVENT_HANDLER_BASE_CLASS_NAME) ( EVENT_HANDLER_CLASS_NAME::)OnAddGrammarRules )
+
+/** see http://docs.wxwidgets.org/trunk/classwx_tool_bar.html:
+ *   if the control is a tool button, it should be "EVT_MENU" should be used,
+ *   else the event handler function is not called.*/
+#define BUTTON_EVENT_TYPE EVT_MENU /*EVT_BUTTON*/
 
 BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   EVT_TIMER( ID_Timer, EVENT_HANDLER_CLASS_NAME::OnTimerEvent)
-  EVT_BUTTON( ID_AddGrammarRules , (EVENT_HANDLER_BASE_CLASS_NAME) ( EVENT_HANDLER_CLASS_NAME::)OnAddGrammarRules )
+  BUTTON_EVENT_TYPE( ID_AddGrammarRules , EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules )
+  BUTTON_EVENT_TYPE( ID_ShowGrammarPartMemoryAddress,
+    EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress)
+  BUTTON_EVENT_TYPE( ID_ShowGrammarTranslatedWord,
+    EVENT_HANDLER_CLASS_NAME::OnShowTranslatedWord)
   EVT_BUTTON( ID_AddTransformationRules ,
     EVENT_HANDLER_CLASS_NAME::OnAddTransformationRules )
   EVT_BUTTON( ID_AddTranslationRules , EVENT_HANDLER_CLASS_NAME::OnAddTranslationRules )
   EVT_BUTTON( ID_AddVocAttrDefs, EVENT_HANDLER_CLASS_NAME::OnAddVocAttrDefs )
-  EVT_BUTTON( ID_Translate , EVENT_HANDLER_CLASS_NAME::OnTranslateButton)
-  EVT_BUTTON( ID_TruncateLogFile, EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton)
-  EVT_BUTTON( ID_LoadDictionary , EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryButton)
+  BUTTON_EVENT_TYPE( ID_Translate , EVENT_HANDLER_CLASS_NAME::OnTranslateButton)
+  BUTTON_EVENT_TYPE( ID_LookupWord , EVENT_HANDLER_CLASS_NAME::OnLookupWord)
+  BUTTON_EVENT_TYPE( ID_ShowDictionaryStatistics , EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics)
+  BUTTON_EVENT_TYPE( ID_UnloadDictionary , EVENT_HANDLER_CLASS_NAME::OnUnloadDictionary)
+  BUTTON_EVENT_TYPE( ID_TruncateLogFile, EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton)
+  BUTTON_EVENT_TYPE( ID_LoadDictionary , EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryButton)
   EVT_BUTTON( ID_ShowTokenIndex2GrammarPart, EVENT_HANDLER_CLASS_NAME::
     OnShowTokenIndex2GrammarPartButton)
-  EVT_BUTTON( ID_ShowTranslationRules,
+  BUTTON_EVENT_TYPE( ID_ShowTranslationRules,
     EVENT_HANDLER_CLASS_NAME::OnShowTranslationRulesButton )
   EVT_BUTTON( ID_ReInitGrammarRules ,
     EVENT_HANDLER_CLASS_NAME::OnReInitGrammarRulesButton)
@@ -54,7 +88,7 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
     EVENT_HANDLER_CLASS_NAME::OnResolve1ParseLevelButton)
   EVT_BUTTON( ID_DrawParseTree ,
     EVENT_HANDLER_CLASS_NAME::OnDrawParseTreeButton)
-  EVT_BUTTON( ID_Info, EVENT_HANDLER_CLASS_NAME::OnInfoButton)
+  BUTTON_EVENT_TYPE( ID_Info, EVENT_HANDLER_CLASS_NAME::OnInfoButton)
   EVT_CLOSE( EVENT_HANDLER_CLASS_NAME::OnClose)
 END_EVENT_TABLE()
 
@@ -70,6 +104,18 @@ void EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules( wxCommandEvent & wxcmd )
     wxstrTitle,
     ::wxGetCwd()
     );
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress( wxCommandEvent & wxcmd )
+{
+  ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress = wxcmd.IsChecked();
+  mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnShowTranslatedWord( wxCommandEvent & wxcmd )
+{
+  ::wxGetApp().m_GUIattributes.m_bShowTranslation = wxcmd.IsChecked();
+  mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnAddTransformationRules( wxCommandEvent & wxcmd )
@@ -114,14 +160,52 @@ void EVENT_HANDLER_CLASS_NAME::OnAddVocAttrDefs( wxCommandEvent & wxcmd )
     );
 }
 
+DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)
+{
+//  wxCondition & wxCond = *(wxCondition *)p_v;
+  EVENT_HANDLER_CLASS_NAME & event_handler = *(EVENT_HANDLER_CLASS_NAME *)p_v;
+//  EVENT_HANDLER_CLASS_NAME * p_event_handler = (EVENT_HANDLER_CLASS_NAME *) p_v;
+  ::wxGetApp().s_dictionary.clear();
+//  wxCond.Signal();
+  ::wxGetApp().EndTimer();
+  LOGN("after clearing the dictionary.")
+//  wxCloseEvent wxcloseEvent;
+//  //Add the close event for destroying the window
+//  /*::wxGetApp().*/event_handler.GetEventHandler()->AddPendingEvent(wxcloseEvent);
+}
+
+void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatus()
+{
+  ::wxGetApp().StartTimer();
+  VTrans::thread_type thread;
+//    wxMutex mutex;
+//    wxCondition wxCond(mutex);
+//    //"The mutex object MUST be locked before calling Wait()"
+//    mutex.Lock();
+  thread.start(UnloadDictionary, /*& wxCond NULL*/ this );
+//    wxCond.Wait();
+//  ::wxGetApp().s_dictionary.clear();
+//    ::wxGetApp().EndTimer();
+//    LOGN("after clearing the dictionary.")
+}
+
 void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
 {
-  LOGN("begin")
+  LOGN("begin before clearing the dictionary")
+  unsigned numberOfVocPairs = ::wxGetApp().s_dictionary.GetNumberOfVocPairs();
+  unsigned numberOfEnglishWords = ::wxGetApp().s_dictionary.GetNumberOfEnglishWords();
+  if( numberOfVocPairs /*numberOfEnglishWords*/  > 0 )
+  {
+    UnloadDictionaryShowingStatus();
+  }
+  else
+  {
 //  //Call delete to exit this application. (without it is not finished)
 //  delete(this) ;
 //  this->Destroy() ;
   Destroy() ;
 //  Close() ;
+  }
   //::wxGetApp().ExitMainLoop() ;
   LOGN("end")
 }
@@ -131,17 +215,38 @@ void EVENT_HANDLER_CLASS_NAME::OnDrawParseTreeButton(wxCommandEvent & wxcmd )
   mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
 }
 
+void EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics(wxCommandEvent & wxcmd )
+{
+  fastestUnsignedDataType numWordClassReps[EnglishWord::beyond_last_entry];
+  VTransApp & vt = ::wxGetApp();
+  vt.s_dictionary.GetStatistics(numWordClassReps);
+
+  wxString wxstr = wxString::Format(
+    wxT("# English words:%lu\n"
+        "# nouns:%lu\n")
+    , numWordClassReps[EnglishWord::noun]
+   );
+  wxTextControlDialog wxd(wxstr);
+  wxd.ShowModal();
+}
+
 void EVENT_HANDLER_CLASS_NAME::OnInfoButton( wxCommandEvent & wxcmd )
 {
+  VTransApp & vt = ::wxGetApp();
   wxString wxstr = wxString::Format(
-    wxT("# voc pairs:%lu\n"
+    wxT("# English words:%lu\n"
+        "# voc pairs:%lu\n"
+        "# bytes for dict:%lu\n"
         "# grammar rules:%u\n"
         "# translation rules:%u\n"
         "# transFORMation rules:%u\n"
         "# vocabulary attribute definitions:%u"
       ) ,
 //    OneLinePerWordPair::s_dwNumberOfVocabularyPairs
-    ::wxGetApp().s_numberOfVocabularyPairs
+//    ::wxGetApp().s_numberOfVocabularyPairs
+    vt.s_dictionary.GetNumberOfEnglishWords()
+    , ::wxGetApp().s_dictionary.GetNumberOfVocPairs()
+    , ::wxGetApp().s_dictionary.GetNumberOfAllocatedBytes()
     , wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.size()
     , wxGetApp().m_translateparsebyrisetree.
       m_stdmap_p_translationrule2ConditionsAndTranslation.size()
@@ -159,7 +264,24 @@ void EVENT_HANDLER_CLASS_NAME::OnInfoButton( wxCommandEvent & wxcmd )
 
 void EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryButton( wxCommandEvent & wxcmd )
 {
-  UnLoadAndLoadDictionary( this ) ;
+  const std::string & std_strVocabularyFilePath = ::wxGetApp().
+    m_stdstrVocabularyFilePath;
+  std::string::size_type lastPathSep = std_strVocabularyFilePath.rfind("/\\");
+  wxString wxstrVocabularyDirPath, wxstrVocabularyFileName;
+  if( lastPathSep == std::string::npos )
+  {
+    wxstrVocabularyDirPath = wxT("");
+    wxstrVocabularyFileName = wxWidgets::getwxString(std_strVocabularyFilePath);
+  }
+  else
+  {
+    wxstrVocabularyDirPath = wxWidgets::getwxString(
+      std_strVocabularyFilePath.substr(0, lastPathSep) );
+    wxstrVocabularyFileName = wxWidgets::getwxString(
+      std_strVocabularyFilePath.substr(lastPathSep + 1) );
+  }
+//  wxString wxstrVocabularyFilePath = wxWidgets::getwxString();
+  LoadOrReloadDictionary( this, wxstrVocabularyDirPath, wxstrVocabularyFileName);
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnReInitGrammarRulesButton( wxCommandEvent & wxcmd )
@@ -315,9 +437,67 @@ void EVENT_HANDLER_CLASS_NAME::OnShowTranslationRulesButton( wxCommandEvent & wx
   showtranslationrulesdialog.ShowModal();
 }
 
+void EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryTimerEvent(wxTimerEvent &event)
+{
+  //TODO show status as "bytes read"/"total bytes" :
+  //  wxGetApp().m_dictionaryReader.GetCurrentPosInByte();
+//  unsigned numberOfBytesRead = ::wxGetApp().m_dictionaryReader.
+//    GetNumberOfBytesRead();
+  SetTitle( wxString::Format( wxT("%u"), //wxGetApp().m_dictionaryFileLineNumber
+//    ::wxGetApp().s_numberOfVocabularyPairs
+    ::wxGetApp().s_dictionary.GetNumberOfVocPairs()
+
+     ) );
+//  SetTitle( wxString::Format(wxT("%f"), TUchemnitzDictionaryReader::m_numBytesRead ) );
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
+{
+  wxString wxstrEnglishWord = ::wxGetTextFromUser(
+    wxT("search for an English word") );
+  PositionStringVector psv;
+  std::string std_strEnglishWord = wxWidgets::GetStdString(wxstrEnglishWord);
+  psv.push_back(PositionString(std_strEnglishWord, 0,
+    std_strEnglishWord.length() )
+    );
+  DWORD dw = 0;
+  uint64_t beginTimeCountInNanoSeconds;
+  OperatingSystem::GetTimeCountInNanoSeconds(beginTimeCountInNanoSeconds);
+  VocablesForWord::voc_container_type * p_voc_container = ::wxGetApp().
+    s_dictionary.find(psv, dw);
+  uint64_t endTimeCountInNanoSeconds;
+  OperatingSystem::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
+  const uint64_t ns = endTimeCountInNanoSeconds - beginTimeCountInNanoSeconds;
+  wxString wxstrLookUpTime = wxString::Format(
+    wxT(" lookup took %lu ns=%fus=%fms=%fs"),
+    ns,
+    ( (long double) ns)/1000.0,
+    ( (long double) ns)/1000000.0,
+    ( (long double) ns)/1000000000.0 );
+  if( p_voc_container )
+  {
+    ::wxMessageBox(
+      wxString::Format( wxT("# English words with name %s: %u"),
+        std_strEnglishWord.c_str(),
+        p_voc_container->size()) + wxstrLookUpTime
+      );
+  }
+  else
+    ::wxMessageBox(
+      wxString::Format( wxT("# English words with name %s: 0"),
+      std_strEnglishWord.c_str()) + wxstrLookUpTime
+      );
+}
+
 void EVENT_HANDLER_CLASS_NAME::OnTimerEvent(wxTimerEvent &event)
 {
-  SetTitle( wxString::Format(wxT("%u"), wxGetApp().m_dictionaryFileLineNumber) );
+  SetTitle( wxString::Format(wxT("%u"), //wxGetApp().m_dictionaryFileLineNumber
+//    ::wxGetApp().s_numberOfVocabularyPairs
+    ::wxGetApp().s_dictionary.GetNumberOfVocPairs()
+     ) );
+  //TODO show status as "bytes read"/"total bytes" :
+//  wxGetApp().m_dictionaryReader.GetCurrentPosInByte();
+//  SetTitle( wxString::Format(wxT("%f"), TUchemnitzDictionaryReader::m_numBytesRead ) );
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton( wxCommandEvent & wxcmd )
@@ -379,3 +559,7 @@ void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
   //m_panel1->Refresh() ;
 }
 
+void EVENT_HANDLER_CLASS_NAME::OnUnloadDictionary( wxCommandEvent & wxcmd )
+{
+  UnloadDictionaryShowingStatus();
+}

@@ -17,7 +17,17 @@ class GermanWord
     public IterableWords
 {
 public:
-  //For ability to iterate over all of the word's strings.
+  enum German_word_class
+  {
+    MasculineNoun,
+    FeminineNoun,
+    NeutralNoun,
+    IntransitiveVerb,
+    TransitiveVerb,
+    adjective,
+    adverb
+  };
+  /** For ability to iterate over all of the word's strings. */
   virtual bool GetNextString( std::string & r_stdstr ) = 0 ;
     //{ return false; }
 };

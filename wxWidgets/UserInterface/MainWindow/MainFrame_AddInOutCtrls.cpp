@@ -1,7 +1,18 @@
+#include "MainWindowBase.hpp"
 
-  void MainFrame::AddInputAndOutputControls()
+#include <wx/defs.h> //wxID_ANY
+#include <wx/textctrl.h> //class wxTextCtrl
+#include <wx/sizer.h> //class wxSplitterWindow
+#include <wx/splitter.h>
+#include <wxWidgets/UserInterface/wxParseTreePanel.hpp> //class wxParseTreePanel
+
+#define EVENT_HANDLER_CLASS_NAME wxWidgets::MainWindowBase
+
+  void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputControls()
   {
-    mp_wxsplitterwindow = new wxSplitterWindow( (wxFrame *) this, wxID_ANY ) ;
+    mp_wxsplitterwindow = new wxSplitterWindow( /*(wxFrame *)*/ // (EVENT_HANDLER_CLASS_NAME *) this
+      m_p_mainwindow
+       , wxID_ANY ) ;
   //  mp_wxpanelTop = new wxPanel( mp_wxsplitterwindow ) ;
 
     mp_wxparsetreepanel = new //wxPanel(
@@ -126,9 +137,9 @@
   //    , 2 );
 
     //m_panelSplitterTop->Layout() ;
-    ((wxFrame *)this)->SetSizer( //p_gridsizerOuter
+    /*((wxFrame *)this)*/m_p_mainwindow->SetSizer( //p_gridsizerOuter
       p_boxsizerOuter
       );
-    ((wxFrame *)this)->SetAutoLayout(true);
-    ((wxFrame *)this)->Layout();
+    /*((wxFrame *)this)*/m_p_mainwindow->SetAutoLayout(true);
+    /*((wxFrame *)this)*/m_p_mainwindow->Layout();
   }

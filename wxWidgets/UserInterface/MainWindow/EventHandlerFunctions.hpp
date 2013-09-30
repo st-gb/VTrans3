@@ -9,6 +9,8 @@
 #define	EVENTHANDLERFUNCTIONS_HPP
 
     void OnAddGrammarRules(wxCommandEvent & wxcmd);
+    void OnShowGrammarPartMemoryAddress(wxCommandEvent & wxcmd);
+    void OnShowTranslatedWord(wxCommandEvent & wxcmd);
     void OnAddTransformationRules(wxCommandEvent & wxcmd);
     void OnAddTranslationRules(wxCommandEvent & wxcmd);
     void OnAddVocAttrDefs(wxCommandEvent & wxcmd);
@@ -25,9 +27,14 @@
     void OnResolve1ParseLevelButton(wxCommandEvent & wxcmd);
     void OnShowTokenIndex2GrammarPartButton(wxCommandEvent & wxcmd);
     void OnShowTranslationRulesButton(wxCommandEvent & wxcmd);
+    void OnLoadDictionaryTimerEvent(wxTimerEvent &event);
+    void OnLookupWord(wxCommandEvent & wxcmd);
+    void OnShowDictionaryStatistics(wxCommandEvent & wxcmd);
     void OnTimerEvent(wxTimerEvent &event);
     void OnTranslateButton(wxCommandEvent & wxcmd);
     void OnTruncateLogFileButton( wxCommandEvent & wxcmd );
+    void OnUnloadDictionary( wxCommandEvent & wxcmd );
+    void UnloadDictionaryShowingStatus();
   DECLARE_EVENT_TABLE()
 
 #endif	/* EVENTHANDLERFUNCTIONS_HPP */

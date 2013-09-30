@@ -82,6 +82,7 @@ wxTextInputDlg::wxTextInputDlg(
   )
   : wxDialog( p_wxwindowParent, wxwindow_id, cr_wxstrTitle,
       cr_wxpointWindowPosition, cr_wxsizeWindow, style )
+    , MainWindowBase(this)
 //  , mp_wxhtmlwindow( NULL)
 //  , m_parsebyrise( ::wxGetApp() )
 //  , m_translationcontrollerbase(r_translationcontrollerbase)

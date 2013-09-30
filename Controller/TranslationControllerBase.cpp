@@ -6,11 +6,14 @@
  */
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <Controller/TranslationControllerBase.hpp>
+#include <Controller/time/GetTickCount.hpp>
 //GenerateXMLtreeFromParseTree(...)
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
 #include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
-//class TUchemnitzDictionaryReader
-#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
+////class TUchemnitzDictionaryReader
+//#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
+//class TUchemnitzDictEngWord2LineNumberReader
+#include <IO/dictionary/TUchemnitzDictEngWord2LineNumberReader.hpp>
 #include <InputOutput/XML/OutputXMLindented.hpp> //OutputXMLindented(...)
 //class ParseTreeTraverser::TransformTreeTraverser
 #include <Translate/TransformTreeTraverser.hpp>
@@ -28,7 +31,9 @@
 I_UserInterface * SyntaxTreePath::sp_userinterface ;
 I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 //LetterTree VTransApp::s_dictionary ;
-/*LetterTree*/dictionary_type TranslationControllerBase::s_dictionary ;
+/*LetterTree*/dictionary_type TranslationControllerBase::s_dictionary
+  //(::wxGetApp(), NULL)
+  ;
 
 //#if defined __cplusplus
 //extern "C" {
@@ -99,6 +104,12 @@ TranslationControllerBase::TranslationControllerBase()
     , * this
     )
 {
+  VocabularyAndTranslation::s_p_translationControllerBase = this;
+  /** Can be used for executing GUI operations: if a GUI control action (e.g.
+   *  showing a dialog) should be performed then the caller's thread can be
+   *  compared to this thread ID and only if it is the same the GUI action is
+   *  executed.*/
+  m_GUIthreadID = OperatingSystem::GetCurrentThreadNumber();
 //  m_nodetrie_ui32GrammarPartName2colour.Create(256);
 //  OneLinePerWordPair::s_p_userinterface = this;
 
@@ -160,22 +171,16 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
     else
     {
   //    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
-      TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
+//      TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
+
+//      DictionaryReader dictReader;
   //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
-  //         //stdstrFilePath
   //          m_stdstrVocabularyFilePath
   //        )
   //      )
   //    {
-  ////        CreateAndShowMainWindow() ;
   //      //Return true to continue to run the (main loop of ) this program.
   ////        return true ;
-  //    }
-      TUchemnitzDictionaryReader tcdr(* this  );
-
-  //    if( b)
-  //    {
-  //
   //    }
   //    else
   //    {
@@ -185,8 +190,14 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   //    }
       CreateAndShowMainWindow() ;
   #ifndef COMPILE_AS_EXECUTABLE
+      //      TUchemnitzDictionaryReader tcdr(* this, s_dictionary );
+      DictionaryReader::TUchemnitzDictEngWord2LineNumberReader dictReader(
+        * this, & s_dictionary);
+//      TUchemnitzDictEngWord1stReader & dictReader = (* this, s_dictionary);
   //    StartTimer();
-      bool b = TUchemnitzDictionaryReader::extractVocables(
+      bool b = /*TUchemnitzDictionaryReader::*/ //tcdr.extractVocables(
+        dictReader.read(
+//      bool b = dictReader::read(
         m_stdstrVocabularyFilePath.c_str() );
       LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
       if( ! b )
@@ -407,6 +418,10 @@ void TranslationControllerBase::Translate(
 {
   LOGN(//"TranslationControllerBase::Translate(...) "
       "begin")
+//  OperatingSystem::GetCurrentTimeInNanoSeconds();
+//    OperatingSystem::GetTimeCountInNanoSeconds();
+  uint64_t timeCountInNanoSeconds;
+  OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
 //  RemoveDuplicateParseTrees();
 

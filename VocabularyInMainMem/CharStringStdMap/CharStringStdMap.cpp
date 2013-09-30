@@ -28,6 +28,23 @@ void VocablesForWord::insert(
   m_std_set_p_vocabularyandtranslation.insert(pvocabularyandtranslation);
 }
 
+std::ostream & operator << (std::ostream & std_os,
+  const VocablesForWord::voc_container_type & voc_container)
+{
+  VocablesForWord::voc_container_type::const_iterator c_iter =
+    voc_container.begin();
+  VocabularyAndTranslation::word_type const * p_word;
+  while( c_iter != voc_container.end() )
+  {
+    p_word = (*c_iter)->m_arstrEnglishWord;
+    if( p_word && p_word[0] )
+    {
+      std_os << p_word[0];
+    }
+  }
+  return std_os;
+}
+
 CharStringStdMap::CharStringStdMap()
 {
   // TODO Auto-generated constructor stub
@@ -59,10 +76,15 @@ void CharStringStdMap::clear()
 {
 //  LOGN_DEBUG("begin")
   //  VocabularyAndTranslation * p_c_vocabularyandtranslation;
+  VocabularyAndTranslation * p_vocabularyAndTranslation;
   for( map_type::const_iterator c_iter_map = m_charStringMap.begin() ;
       c_iter_map != m_charStringMap.end() ;
       ++ c_iter_map )
   {
+#ifdef _DEBUG
+    const std::string & st = c_iter_map->first;
+#endif
+    DEBUGN( "freeing memory for dictionary word \"" << c_iter_map->first << "\"")
     for( std::set<VocabularyAndTranslation *>::iterator
       iter_p_vocabularyandtranslation =
         c_iter_map->second.m_std_set_p_vocabularyandtranslation.begin() ;
@@ -70,11 +92,21 @@ void CharStringStdMap::clear()
       c_iter_map->second.m_std_set_p_vocabularyandtranslation.end() ;
       ++ iter_p_vocabularyandtranslation )
     {
+#ifdef _DEBUG
+      VocabularyAndTranslation * p_vocabularyAndTranslation =
+        * iter_p_vocabularyandtranslation;
+      delete p_vocabularyAndTranslation;
+#else
       delete * iter_p_vocabularyandtranslation;
+#endif
+//      -- ::wxGetApp().s_numberOfVocabularyPairs;
+//      -- m_numberOfVocPairs;
+      -- m_numberOfEnglishWords;
     }
   }
   m_charStringMap.clear();
-//  LOGN_DEBUG("end")
+  map_type::size_type st = m_charStringMap.size();
+  LOGN_DEBUG("end--map size:" << st)
 }
 
 /*void * */ VocablesForWord::voc_container_type * CharStringStdMap::find(
@@ -89,6 +121,7 @@ void CharStringStdMap::clear()
   const int numTokens = psv.size();
   map_type::const_iterator c_iter, c_iterMaxWordMatch = m_charStringMap.end();
   unsigned tokenIndex = r_dwTokenIndex;
+  const unsigned beginTokenIndex = r_dwTokenIndex;
 
   word = psv.at(tokenIndex).m_Str;
   c_iter = m_charStringMap.find( word );
@@ -102,12 +135,17 @@ void CharStringStdMap::clear()
       word += " ";
       word += psv.at(tokenIndex).m_Str;
       c_iter = m_charStringMap.find( word );
-      if( c_iter == m_charStringMap.end() )
-        break;
-      c_iterMaxWordMatch = c_iter;
-      r_dwTokenIndex = tokenIndex;
+      if( c_iter != m_charStringMap.end() )
+      {
+        //          //Do not break here--"hand-held vacuum" does not exist in dict but
+        //          //"hand-held vacuum cleaner"
+        //            break;
+        c_iterMaxWordMatch = c_iter;
+        r_dwTokenIndex = tokenIndex;
+      }
       ++ tokenIndex;
-    }while( tokenIndex < numTokens );
+    }while( tokenIndex < numTokens &&
+        tokenIndex - beginTokenIndex < m_maxTokenToConsider );
   }
 //  r_dwTokenIndex = tokenIndex - 1;
   if( c_iterMaxWordMatch != m_charStringMap.end() )
@@ -125,6 +163,45 @@ void CharStringStdMap::clear()
   return p_voc_container_type;
 }
 
+fastestUnsignedDataType CharStringStdMap::GetNumberOfAllocatedBytes()
+{
+  fastestUnsignedDataType numberOfAllocatedBytes = 0;
+  VocabularyAndTranslation * p_vocabularyAndTranslation;
+  for( map_type::const_iterator c_iter_map = m_charStringMap.begin() ;
+      c_iter_map != m_charStringMap.end() ;
+      ++ c_iter_map )
+  {
+#ifdef _DEBUG
+    const std::string & st = c_iter_map->first;
+    const char * p_ch = st.c_str();
+    numberOfAllocatedBytes += st.size()
+        /*+ sizeof(std::basic_string<char>::_Rep_base)*/;
+#endif
+    DEBUGN( "freeing memory for dictionary word \"" << c_iter_map->first << "\"")
+    for( std::set<VocabularyAndTranslation *>::iterator
+      iter_p_vocabularyandtranslation =
+        c_iter_map->second.m_std_set_p_vocabularyandtranslation.begin() ;
+      iter_p_vocabularyandtranslation !=
+      c_iter_map->second.m_std_set_p_vocabularyandtranslation.end() ;
+      ++ iter_p_vocabularyandtranslation )
+    {
+#ifdef _DEBUG
+      VocabularyAndTranslation * p_vocabularyAndTranslation =
+        * iter_p_vocabularyandtranslation;
+      numberOfAllocatedBytes += p_vocabularyAndTranslation->GetNumberOfBytes();
+#else
+      numberOfAllocatedBytes += (* iter_p_vocabularyandtranslation)->GetNumberOfBytes();
+#endif
+//      -- ::wxGetApp().s_numberOfVocabularyPairs;
+//      -- m_numberOfVocPairs;
+//      -- m_numberOfEnglishWords;
+    }
+  }
+  return numberOfAllocatedBytes;
+}
+
+/** @brief inserts the character string for the current word into the map
+ *  */
 VocabularyAndTranslation * /*void * */ CharStringStdMap::Insert(
 //  const std::string & std_strWord, BYTE byWordClass
   const char * wordBegin, int numChars, //void * p_v
@@ -160,6 +237,8 @@ VocabularyAndTranslation * /*void * */ CharStringStdMap::Insert(
     VocablesForWord & r_vocablesforword = pair_iter_and_inserted.first->second;
     if( /*insertNewVocAtts*/ ! p_vocabularyandtranslation )
       p_vocabularyandtranslation = new VocabularyAndTranslation(word_class);
+
+//    p_vocabularyandtranslation->GetNumberOfBytes();
 
 //    vocablesforword.m_p_setpvocabularyandtranslation->insert(
 //      p_vocabularyandtranslation );

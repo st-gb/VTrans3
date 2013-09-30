@@ -9,8 +9,8 @@
 //TranslationControllerBase::s_dictionary
 #include <Controller/TranslationControllerBase.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
-//SUPPRESS_UNUSED_VARIABLE_WARNING(...)
-#include <preprocessor_macros/suppress_unused_variable.h>
+/** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
+#include <compiler/GCC/suppress_unused_variable.h>
 //#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
@@ -1374,14 +1374,14 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
         //Via the indices the tokens can be got later.
         dwTokenIndex, dwTokenIndexRightMost) ;
   //        //word type
-  //        (*vocAndTranslIter)->m_byType ;
-  //        grammarPart.m_wGrammarPartID = (*vocAndTranslIter)->m_byType ;
-  //        grammarPart.SetGrammarPartID( (*vocAndTranslIter)->m_byType ) ;
+  //        (*vocAndTranslIter)->m_englishWordClass ;
+  //        grammarPart.m_wGrammarPartID = (*vocAndTranslIter)->m_englishWordClass ;
+  //        grammarPart.SetGrammarPartID( (*vocAndTranslIter)->m_englishWordClass ) ;
 //      VocabularyAndTranslation * p_vocabularyandtranslation =
 //        * vocAndTranslIter;
       VocabularyAndTranslation & r_vocabularyandtranslation =
         * ( * vocAndTranslIter);
-      p_grammarPart->SetGrammarPartID( r_vocabularyandtranslation.m_byType ) ;
+      p_grammarPart->SetGrammarPartID( r_vocabularyandtranslation.m_englishWordClass ) ;
       //For accessing the vocabulary attributes later for translating.
   //        grammarPart.m_pvocabularyandtranslation =
       p_grammarPart->m_pvocabularyandtranslation = & r_vocabularyandtranslation ;
@@ -1392,7 +1392,7 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
   //            ( dwTokenIndex, grammarPart )
   //          ) ;
 #ifdef _DEBUG
-      unsigned vocAndTranslType = r_vocabularyandtranslation.m_byType;
+      unsigned vocAndTranslType = r_vocabularyandtranslation.m_englishWordClass;
       const std::string & std_strGrammarPartName = GetGrammarPartName(
         vocAndTranslType );
       LOGN_DEBUG("inserting "

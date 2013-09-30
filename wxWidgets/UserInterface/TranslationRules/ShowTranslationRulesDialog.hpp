@@ -61,7 +61,7 @@ namespace VTrans
         ///*long lineNo*/);
         GetValue();
 #ifdef _DEBUG
-      const std::string & std_strText = GetStdString(wxstrText);
+      const std::string & std_strText = wxWidgets::GetStdString(wxstrText);
 #endif
       m_p_translationruleslistctrl->SetFilter(wxstrText);
     }

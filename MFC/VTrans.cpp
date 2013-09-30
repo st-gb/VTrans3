@@ -1,4 +1,4 @@
-// VTrans.cpp : Legt das Klassenverhalten für die Anwendung fest.
+// VTrans.cpp : Legt das Klassenverhalten fï¿½r die Anwendung fest.
 //
 
 #include "../stdafx.h"
@@ -103,8 +103,8 @@ using namespace std;
 BEGIN_MESSAGE_MAP(CVTransApp, CWinApp)
 	//{{AFX_MSG_MAP(CVTransApp)
 	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-		// HINWEIS - Hier werden Mapping-Makros vom Klassen-Assistenten eingefügt und entfernt.
-		//    Innerhalb dieser generierten Quelltextabschnitte NICHTS VERÄNDERN!
+		// HINWEIS - Hier werden Mapping-Makros vom Klassen-Assistenten eingefï¿½gt und entfernt.
+		//    Innerhalb dieser generierten Quelltextabschnitte NICHTS VERï¿½NDERN!
 	//}}AFX_MSG_MAP
 	// Dateibasierte Standard-Dokumentbefehle
 	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
@@ -118,7 +118,7 @@ END_MESSAGE_MAP()
 
 CVTransApp::CVTransApp()
 {
-	// ZU ERLEDIGEN: Hier Code zur Konstruktion einfügen
+	// ZU ERLEDIGEN: Hier Code zur Konstruktion einfï¿½gen
 	// Alle wichtigen Initialisierungen in InitInstance platzieren
 #ifdef _DEBUG
 	freopen("log.txt","w",stdout); // printf wird nun nach log.txt umgeleitet
@@ -154,9 +154,9 @@ BOOL CVTransApp::InitInstance()
 	AfxEnableControlContainer();
 
 	// Standardinitialisierung
-	// Wenn Sie diese Funktionen nicht nutzen und die Größe Ihrer fertigen 
-	//  ausführbaren Datei reduzieren wollen, sollten Sie die nachfolgenden
-	//  spezifischen Initialisierungsroutinen, die Sie nicht benötigen, entfernen.
+	// Wenn Sie diese Funktionen nicht nutzen und die Grï¿½ï¿½e Ihrer fertigen 
+	//  ausfï¿½hrbaren Datei reduzieren wollen, sollten Sie die nachfolgenden
+	//  spezifischen Initialisierungsroutinen, die Sie nicht benï¿½tigen, entfernen.
 
 #ifdef _AFXDLL
 	Enable3dControls();			// Diese Funktion bei Verwendung von MFC in gemeinsam genutzten DLLs aufrufen
@@ -164,7 +164,7 @@ BOOL CVTransApp::InitInstance()
 	Enable3dControlsStatic();	// Diese Funktion bei statischen MFC-Anbindungen aufrufen
 #endif
 
-	// Ändern des Registrierungsschlüssels, unter dem unsere Einstellungen gespeichert sind.
+	// ï¿½ndern des Registrierungsschlï¿½ssels, unter dem unsere Einstellungen gespeichert sind.
 	// ZU ERLEDIGEN: Sie sollten dieser Zeichenfolge einen geeigneten Inhalt geben
 	// wie z.B. den Namen Ihrer Firma oder Organisation.
 	//SetRegistryKey(_T("Probably Alienmade Software"));
@@ -172,7 +172,7 @@ BOOL CVTransApp::InitInstance()
 	//m_pszRegistryKey=_tcsdup(_T("HKEY_CURRENT_USER\\Software\\Probably Alienmade Software\\"));
 	//m_pszRegistryKey=_tcsdup(_T("Probably Alienmade Software"));
 
-	LoadStdProfileSettings(16);  // Standard INI-Dateioptionen laden (einschließlich MRU)
+	LoadStdProfileSettings(16);  // Standard INI-Dateioptionen laden (einschlieï¿½lich MRU)
 
 	// Dokumentvorlagen der Anwendung registrieren. Dokumentvorlagen
 	//  dienen als Verbindung zwischen Dokumenten, Rahmenfenstern und Ansichten.
@@ -280,7 +280,7 @@ BOOL CVTransApp::InitInstance()
     }
 	  m_pMainWnd = pMainFrame;
 
-	  // Befehlszeile parsen, um zu prüfen auf Standard-Umgebungsbefehle DDE, Datei offen
+	  // Befehlszeile parsen, um zu prï¿½fen auf Standard-Umgebungsbefehle DDE, Datei offen
 	  CCommandLineInfo cmdInfo;
 	  ParseCommandLine(cmdInfo);
 
@@ -322,7 +322,7 @@ void CVTransApp::InitDictionary(
 #ifdef _DEBUG
 	printf("void LoadWords(WordNode * pWordNode) ANFANG\n");
 #endif
-	//zuerst die integralen Vokabeln der verketteten Liste hinzufügen, Anfang
+	//zuerst die integralen Vokabeln der verketteten Liste hinzufï¿½gen, Anfang
 	wordList.m_pWordNodeFirst=new WordNode();
 	wordList.m_pWordNodeFirst->m_pWord=new EnglishAuxiliaryVerb(
 		"be\nam\nare\nis\nare\nare\nare\nwas\nwere\n"
@@ -421,7 +421,7 @@ void CVTransApp::InitDictionary(
 	current->next=new VocNode();
 	GermanConjunction gc;
 	gc.m_strWord=_T("falls");
-	gc.m_Syntax=1; // Satzbau ist Subjekt Objekt Prädikat 
+	gc.m_Syntax=1; // Satzbau ist Subjekt Objekt Prï¿½dikat 
 	current->next->voc=new GermanConjunction(gc); // StandardKopierKonstruktor
 	current=current->next;
 	current->m_Previous=previous;
@@ -440,7 +440,7 @@ void CVTransApp::InitDictionary(
 	current->next=new VocNode();
 	GermanConjunction gc;
 	gc.m_strWord=_T("wenn");
-	gc.m_Syntax=1; // Satzbau ist Subjekt Objekt Prädikat 
+	gc.m_Syntax=1; // Satzbau ist Subjekt Objekt Prï¿½dikat 
 	current->next->voc=new GermanConjunction(gc); // StandardKopierKonstruktor
 	current=current->next;
 	current->m_Previous=previous;
@@ -459,7 +459,7 @@ void CVTransApp::InitDictionary(
 	current->next=new VocNode();
 	GermanConjunction gc;
 	gc.m_strWord=_T("dass");
-	gc.m_Syntax=1; // Satzbau ist Subjekt Objekt Prädikat 
+	gc.m_Syntax=1; // Satzbau ist Subjekt Objekt Prï¿½dikat 
 	current->next->voc=new GermanConjunction(gc); // StandardKopierKonstruktor
 	current=current->next;
 	current->m_Previous=previous;
@@ -517,7 +517,7 @@ void CVTransApp::writeToOutputStream(std::ostream & rofstreamTranslToGerman,
              USES_CONVERSION;
             wstrTranslation=A2W(strvec.at(wTranslationForEnglishWordIndex).
               GetBuffer()
-              //"äöüäöüß"
+              //"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
               );
             nReturnOfWideCharToMultiByte=WideCharToMultiByte(CP_UTF8, 0, //lpwStr
               wstrTranslation,
@@ -635,7 +635,7 @@ void CVTransApp::writeToOutputStream(std::ostream & rofstreamTranslToGerman,
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CAboutDlg-Dialog für Info über Anwendung
+// CAboutDlg-Dialog fï¿½r Info ï¿½ber Anwendung
 
 class CAboutDlg : public CDialog
 {
@@ -653,10 +653,10 @@ public:
 	CString	m_strConfiguration;
 	//}}AFX_DATA
 
-	// Überladungen für virtuelle Funktionen, die vom Anwendungs-Assistenten erzeugt wurden
+	// ï¿½berladungen fï¿½r virtuelle Funktionen, die vom Anwendungs-Assistenten erzeugt wurden
 	//{{AFX_VIRTUAL(CAboutDlg)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstï¿½tzung
 	//}}AFX_VIRTUAL
 
 // Implementierung
@@ -710,7 +710,7 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-// Anwendungsbefehl zum Ausführen des Dialogfelds
+// Anwendungsbefehl zum Ausfï¿½hren des Dialogfelds
 void CVTransApp::OnAppAbout()
 {
 	CAboutDlg aboutDlg;
@@ -728,7 +728,7 @@ void CVTransApp::OnAppAbout()
 
 BOOL CVTransApp::PreTranslateMessage(MSG* pMsg) 
 {
-	// TODO: Speziellen Code hier einfügen und/oder Basisklasse aufrufen
+	// TODO: Speziellen Code hier einfï¿½gen und/oder Basisklasse aufrufen
 	
     /*CWnd* pWnd = GetFocus();
     if (pWnd != NULL)
@@ -756,7 +756,7 @@ UINT OpenFile(LPVOID pParam)
 	printf("UINT OpenFile(LPVOID pParam) ANFANG\n");
 #endif
   if (pOpenFileParameters==NULL)
-    return 0;   // falls pOpenFileParameters ungültig ist
+    return 0;   // falls pOpenFileParameters ungï¿½ltig ist
 	if(file.Open(pOpenFileParameters->m_lpszPathName,CFile::modeReadWrite|
 		CFile::shareDenyRead,NULL))
 	{
@@ -765,11 +765,11 @@ UINT OpenFile(LPVOID pParam)
 		if(!byteArray) //wenn byteArray gleich Null
 		{
 			file.Close();
-			AfxMessageBox("Es existiert momentan nicht genügend Arbeitsspeicher zum \
+			AfxMessageBox("Es existiert momentan nicht genï¿½gend Arbeitsspeicher zum \
 Lesen der Datei.",MB_OK,NULL);
 			return 0;
 		}
-		//TRACE("Datei %s erfolgreich geöffnet\n",lpszPathName);
+		//TRACE("Datei %s erfolgreich geï¿½ffnet\n",lpszPathName);
 		if(g_dwFileLength>0)
 		{
 			//DWORD dwInsertionPos=0;
@@ -783,10 +783,10 @@ Lesen der Datei.",MB_OK,NULL);
 m_phWndLoadStatusDialog));\n");
 #endif
 			// solange warten, 
-			// bis das Fenster-Handle gültig ist (dauert nur wenige Millisekunden)
+			// bis das Fenster-Handle gï¿½ltig ist (dauert nur wenige Millisekunden)
 			// (Das Fenster-Handle ist sonst in manchen Aufrufen von Translate()
-			// ungültig und es kann dann kein Timer installiert werden;
-			// SetTimer() funktioniert nur, wenn das Fenster ein gültiges Handle hat
+			// ungï¿½ltig und es kann dann kein Timer installiert werden;
+			// SetTimer() funktioniert nur, wenn das Fenster ein gï¿½ltiges Handle hat
 			//while(!::IsWindow(pOpenFileParameters->m_pLoadStatusDialog->m_hWnd));
 			while(!::IsWindow(*pOpenFileParameters->m_phWndLoadStatusDialog));
 #ifdef _DEBUG
@@ -796,7 +796,7 @@ m_phWndLoadStatusDialog));\n");
 			//pLoadStatusDialog->SetTimer(1,1000,NULL);
 			::SetDlgItemText(*pOpenFileParameters->m_phWndLoadStatusDialog,
 				IDC_ACTION_STATIC,
-				_T("Aktion: Einfügen der Bytes in die interne Datenstruktur"));
+				_T("Aktion: Einfï¿½gen der Bytes in die interne Datenstruktur"));
 			for(g_dwRun=0;g_dwRun<g_dwFileLength && g_bContinueLoading;g_dwRun++)
 			{
 				//if(byteArray[dwRun]!=10)
@@ -805,7 +805,7 @@ m_phWndLoadStatusDialog));\n");
 					if((pOpenFileParameters->m_pEnglishText->m_first=
 						new TextNode(byteArray[g_dwRun],0))==NULL)
 					{
-						AfxMessageBox(_T("Nicht genügend Arbeitsspeicher vorhanden um \
+						AfxMessageBox(_T("Nicht genï¿½gend Arbeitsspeicher vorhanden um \
 die Datei zu laden."),MB_OK,0);
 						break;
 					}
@@ -816,7 +816,7 @@ die Datei zu laden."),MB_OK,0);
 				{
 					if((pTextNodeCurrent->m_next=new TextNode(byteArray[g_dwRun],0))==NULL)
 					{
-						AfxMessageBox(_T("Nicht genügend Arbeitsspeicher vorhanden um \
+						AfxMessageBox(_T("Nicht genï¿½gend Arbeitsspeicher vorhanden um \
 die Datei zu laden."),MB_OK,0);
 						break;
 					}
@@ -849,13 +849,13 @@ die Datei zu laden."),MB_OK,0);
 #endif
 		//Nach dem Laden der Datei soll das Lade-Status-Dialogfeld geschlossen 
 		//werden.
-		//Dazu muss dieses aber zerstört werden, was mir
+		//Dazu muss dieses aber zerstï¿½rt werden, was mir
 		//von dieser Funktion aus (OpenFile) aber nicht gelang
 		//(Thread-Probleme: ich glaube, dass man von einem anderen Thread
 		//aus kein MFC-Objekt (zum Beispiel CDialog) als der Thread,
-		//der das MFC-Objekt erstellte, zerstören kann).
+		//der das MFC-Objekt erstellte, zerstï¿½ren kann).
 		//Deshalb wird CLoadStatusDialog::OnEndLoadStatusDialog()
-		//ausgeführt, wo das Zerstören einwandfrei funktioniert, weil das
+		//ausgefï¿½hrt, wo das Zerstï¿½ren einwandfrei funktioniert, weil das
 		//Dialogfeld im selben Thread erstellt wurde
 		::PostMessage(*pOpenFileParameters->m_phWndLoadStatusDialog,
 			WM_END_LOADSTATUSDIALOG,NULL,NULL);
@@ -891,7 +891,7 @@ void CVTransApp::RunNonInteractive()
     std::ifstream ifstreamGermanText(
       //Output filename.
       "english.txt",ios_base::in);
-    //wenn erfolgreich geöffnet.
+    //wenn erfolgreich geï¿½ffnet.
     if(ifstreamGermanText)
     {
       char ch;
@@ -985,7 +985,7 @@ void CVTransApp::RunNonInteractive()
         );
 
       //Die Umleitung der Std-Ausgabe(um einfacher in die Log-Datei 
-      //schreiben zu können) wieder rückgängig machen.
+      //schreiben zu kï¿½nnen) wieder rï¿½ckgï¿½ngig machen.
       //freopen(stdout,"a",stdout); 
       //fclose(m_fileLog);
       for(WORD wIndex=0;wIndex<vecstrvec.size();++wIndex)
@@ -1007,12 +1007,41 @@ void CVTransApp::RunNonInteractive()
   }
 }
 
+void CVTransApp::ShowInvalidVocabularyFileFormatMessage(
+  const VTrans::string_type & strWordFile,
+  DWORD dwOffsetOfBeginOfEntry,
+  DWORD dwOffset
+  )
+{
+  //#ifdef _WINDOWS
+//  if( ! pWordNodeCurrent->m_pWordNodeNext->m_pWord)
+  char * pbCurrentDirectory = new char[10001];
+  if( pbCurrentDirectory)
+  {
+    CString strMessage;
+    GetCurrentDirectory(10001, pbCurrentDirectory);
+    strcat(pbCurrentDirectory,"\\");
+    strcat(pbCurrentDirectory, strWordFile.GetBuffer(strWordFile.
+      GetLength()));
+    strMessage.Format( _T("Die Datei %s \nenthÃ¤lt kein gÃ¼ltiges \
+  Format oder sonstiger Fehler zwischen\nOffset (=Position in Byte ab \
+  Dateibeginn) %u (dezimal)\nund Offset (=Position in Byte ab Dateibeginn) \
+  %u (dezimal) .\nDas Laden der Vokabeln wird beendet. Versuchen Sie, den \
+  Fehler in der Dateistruktur zu beheben."),
+    pbCurrentDirectory, dwOffsetOfBeginOfEntry, dwOffset);
+    AfxMessageBox(strMessage, MB_OK, 0);
+    delete [] pbCurrentDirectory;//Speicher an das Betriebssystem freigeben
+//    break;
+  }
+  //#endif //#ifdef _WINDOWS
+}
+
 void UI::ShowWordFileError(DWORD dwOffsetOfBeginOfEntry, DWORD dwOffsetOfEndOfEntry)
 {
   char * pbCurrentDirectory=new char[10001];
   CString strMessage;
   GetCurrentDirectory(10001,pbCurrentDirectory);
-  strMessage.Format(_T("Die Datei %s \nenthält kein gültiges "
+  strMessage.Format(_T("Die Datei %s \nenthï¿½lt kein gï¿½ltiges "
     "Format oder sonstiger Fehler zwischen Offset %u und Offset %u.\n "
     "Das Laden der Vokabeln wird beendet. "
     "Versuchen Sie den Fehler in der Dateistruktur zu beheben"),

@@ -55,14 +55,14 @@ bool EnglishAuxiliaryVerb::GetNextString( std::string & r_stdstr )
 }
 
 //inline
-void EnglishVerb::Get3rdPersonForm(
+void EnglishVerb::Get3rdPersonSingularPresent(
   VTrans::string_type & r_vtransstr )
 {
-  WORD wStringSize = r_vtransstr.size() ;
-  if ( wStringSize > 2 )
+  VTrans::string_type::size_type stringSize = r_vtransstr.size() ;
+  if ( stringSize > 2 )
   {
     VTrans::string_type vtransstrEnding = r_vtransstr.substr(
-      wStringSize - 2 ) ;
+      stringSize - 2 ) ;
    if( vtransstrEnding == //"wish->wishes"
        "sh" || vtransstrEnding ==
            //"switch->switches"
@@ -74,10 +74,10 @@ void EnglishVerb::Get3rdPersonForm(
    }
   }
   else
-    if ( wStringSize > 1 )
+    if ( stringSize > 1 )
     {
       VTrans::string_type vtransstrEnding = r_vtransstr.substr(
-        wStringSize - 1 ) ;
+        stringSize - 1 ) ;
       if( vtransstrEnding ==
           //"go->goes"
           "o"
@@ -85,10 +85,17 @@ void EnglishVerb::Get3rdPersonForm(
       {
         r_vtransstr += "es" ;
         return ;
-
       }
     }
   r_vtransstr += "s" ;
+}
+
+VTrans::string_type EnglishVerb::Get3rdPersonSingularPresent(
+  const VTrans::string_type & r_vtransstr )
+{
+  VTrans::string_type vtransstr(r_vtransstr);
+  Get3rdPersonSingularPresent(vtransstr);
+  return vtransstr;
 }
 
 void EnglishVerb::GetProgressiveForm(

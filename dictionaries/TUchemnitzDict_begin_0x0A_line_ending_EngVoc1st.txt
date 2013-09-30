@@ -1,0 +1,10 @@
+
+devel 2012-12-11 :: #  Version  
+Frank Richter <frank.richter.tu-chemnitz.de>, :: #  Copyright  (c)  
+
+
+GPL Version 2 or later; GNU General Public License :: #  License  
+http://dict.tu-chemnitz.de/ :: #  URL  
+A; A sharp; A flat; A double sharp; A double flat | A major :: A;  Ais;  As;  Aisis;  Ases  [mus.]  |  A-Dur  {n}  
+the nuts and bolts [coll.] :: das  A  und  O  [ugs.]  
+eels (zoological order) :: Aale  {pl};  Aalartige  {pl}  (Anguilliformes)  (zoologische  Ordnung)  

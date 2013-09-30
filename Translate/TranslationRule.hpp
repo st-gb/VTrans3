@@ -13,11 +13,11 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <stdint.h> //int32_t
 
-//A translationrule desribes the path within a syntax tree.
-//It is inserted into a <TranslationRule*,ConditionAndTranslation> map
-//after creation.
-//If this patch matches the current syntax tree path then the dazugehoerige
-//ConditionAndTranslation is processed  to see if the conditions match.
+/** @brief A translationrule desribes the path within a syntax tree.
+* It is inserted into a <TranslationRule*,ConditionAndTranslation> map
+* after creation.
+* If this patch matches the current syntax tree path then the dazugehoerige
+* ConditionAndTranslation is processed  to see if the conditions match.*/
 class TranslationRule
 {
 public:
