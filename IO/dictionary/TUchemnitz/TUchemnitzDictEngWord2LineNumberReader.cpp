@@ -5,8 +5,8 @@
  *      Author: Stefan
  */
 
-#include "IO/dictionary/TUchemnitzDictEngWord2LineNumberReader.hpp"
-#include <IO/dictionary/TUchemnitzDictSeparatorChars.h>
+#include "IO/dictionary/TUchemnitz/TUchemnitzDictEngWord2LineNumberReader.hpp"
+#include <IO/dictionary/TUchemnitz/TUchemnitzDictSeparatorChars.h>
 #include <UserInterface/I_UserInterface.hpp>
 //class IVocabularyInMainMem
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>

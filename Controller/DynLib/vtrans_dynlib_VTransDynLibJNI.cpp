@@ -16,6 +16,7 @@
 //#include <preprocessor_macros/export_function_symbols.h>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include "dynlib_main.h" //Init(...) etc.
+#include <stddef.h> //for "NULL"
 
 //#define JNIEXPORT EXPORT
 

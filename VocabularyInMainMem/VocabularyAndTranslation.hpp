@@ -160,6 +160,10 @@ class TranslationControllerBase;
 
     fastestUnsignedDataType GetNumberOfBytes();
     void FreeMemory();
+//    void GetNumberOfArrayElements(
+//      EnglishWord::English_word_class engWordClass,
+//      ArraySizes & arr_sz
+//      );
     fastestUnsignedDataType GetNumberOfArrayElements(
       /*const*/ EnglishWord::English_word_class engWordClass,
       fastestUnsignedDataType & numEngWords,

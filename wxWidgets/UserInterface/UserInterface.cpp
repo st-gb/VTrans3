@@ -109,11 +109,14 @@ namespace wxWidgets
     const char * const dictFilePath = (const char * const) p_vParam;
     if( dictFilePath )
     {
-      //TUchemnitzDictionaryReader
-      DictionaryReader::TUchemnitzDictEngWord2LineNumberReader tcdr(
-        /** this*/ ::wxGetApp(),
-        & ::wxGetApp().s_dictionary );
-      /*TUchemnitzDictionaryReader::*/ tcdr.read(dictFilePath);//extractVocables( dictFilePath);
+//      TUchemnitzDictionaryReader
+//      //DictionaryReader::TUchemnitzDictEngWord2LineNumberReader
+//	    tcdr(
+//        /** this*/ ::wxGetApp(),
+//        & ::wxGetApp().s_dictionary );
+      /*TUchemnitzDictionaryReader:: tcdr.read(*/
+      ::wxGetApp().m_dictReaderAndVocAccess.loadDictionary(
+        dictFilePath);//extractVocables( dictFilePath);
       ::wxGetApp().EndTimer();
       return 0;
     }

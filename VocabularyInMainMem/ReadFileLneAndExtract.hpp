@@ -10,7 +10,7 @@
 
 #include "IVocabularyInMainMem.hpp"
 #include <map> //class std::map
-#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
+#include <IO/dictionary/TUchemnitz/TUchemnitzDictionaryReader.hpp>
 #include "CharStringStdMap/CharStringStdMap.hpp"
 
 namespace VocabularyAccess
@@ -58,9 +58,11 @@ namespace VocabularyAccess
   //      const PositionstdstringVector & psv,
       DWORD & r_dwTokenIndex
       );// { return NULL; }
-    /*void*/ VocabularyAndTranslation * Insert(
+    /*void*/ //VocabularyAndTranslation *
+    IVocabularyInMainMem::voc_container_type * Insert(
       const char * wordBegin, int numChars, //void * p_v
-      enum EnglishWord::English_word_class, void *);
+      enum EnglishWord::English_word_class, /*void * */
+      VocabularyAndTranslation *& p_vocabularyandtranslation);
     fastestUnsignedDataType GetNumberOfAllocatedBytes();
     fastestUnsignedDataType GetNumberOfNouns();
     fastestUnsignedDataType GetNumberOfVerbs();

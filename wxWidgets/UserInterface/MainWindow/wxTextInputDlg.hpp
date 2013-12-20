@@ -70,6 +70,8 @@ public:
       if(show)
         //If this dialog is closed the app should exit.
         wxGetApp().SetTopWindow( (wxDialog*) this) ;
+      //TODO senseful return value
+      return true;
     }
 };
 

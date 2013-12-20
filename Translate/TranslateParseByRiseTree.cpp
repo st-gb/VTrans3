@@ -21,9 +21,10 @@
 #include <Translate/TranslatedTreeTraverser.hpp>
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
-#include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
-//class SAX2TranslationRuleHandler
-#include <Xerces/SAX2TranslationRuleHandler.hpp>
+
+//#include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
+////class SAX2TranslationRuleHandler
+//#include <Xerces/SAX2TranslationRuleHandler.hpp>
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
 
@@ -1221,9 +1222,9 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 //        m_stdmap_p_translationrule2ConditionsAndTranslation.end() ;
 //      ++ c_iter_p_translationrule2conditionsandtranslation
 //      )
-  for( std::map<TranslationRule ,ConditionsAndTranslation>::
-      //Using const_reverse_iterator produced a g++ error for comparison
-      // " != std::map::rend()"
+  for( std::multimap<TranslationRule ,ConditionsAndTranslation>::
+      /** Using const_reverse_iterator produced a g++ error for comparison
+      * " != std::map::rend()" */
       //const_reverse_iterator
       reverse_iterator
       c_rev_iter_translationrule2conditionsandtranslation =

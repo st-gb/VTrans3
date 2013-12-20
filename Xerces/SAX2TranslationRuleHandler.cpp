@@ -193,10 +193,10 @@ void SAX2TranslationRuleHandler::endElement(
 //        delete p_translationrule ;
 //        mr_i_userinterface.Message( "\"" + e.m_stdstr + "\" is an unknown"
 //          "grammar part name") ;
-        LOGN_TYPE(//"SAX2TranslationRuleHandler::endElement(...)--"
+        LOGN_ERROR(//"SAX2TranslationRuleHandler::endElement(...)--"
           "creating translation "
           "rule for \"" << m_stdstrTranslationRuleSyntaxTreePath
-          << "\" failed.", LogLevel::error)
+          << "\" failed." /*, LogLevel::error*/ )
         ShowMessageToUser(
           "SAX2TranslationRuleHandler::endElement(...)--creating translation "
           "rule for \"" + m_stdstrTranslationRuleSyntaxTreePath
@@ -319,15 +319,15 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
       //        if( m_stdstrConditionByteAttrValue != "" )
           cond.m_byAttributeValue = //byAttributeValue ;
               wAttributeValue ;
-          LOGN_TYPE(//"SAX2TranslationRuleHandler::startElement(...)--"
-            "adding condition", LogLevel::debug)
+          LOGN_DEBUG(//"SAX2TranslationRuleHandler::startElement(...)--"
+            "adding condition" /*, LogLevel::debug*/)
           m_conditionsandtranslation.AddCondition( cond ) ;
         }
         else
         {
-          LOGN_TYPE("Neither a \"byte_attribute_value\" nor a "
+          LOGN_ERROR("Neither a \"byte_attribute_value\" nor a "
             "\"string_attribute_value\" attribute"
-            "-> NOT adding condition to the rule.", LogLevel::error)
+            "-> NOT adding condition to the rule." /*, LogLevel::error*/ )
           ShowMessageToUser( "Neither a \"byte_attribute_value\" nor a "
               "\"string_attribute_value\" attribute\n"
               "-> NOT adding condition to the rule."
@@ -337,8 +337,8 @@ void SAX2TranslationRuleHandler::HandleConditionXMLelement(
     }
   }
   else
-    LOGN_TYPE("condition element--neither \"attribute_name\" attribute value nor "
-      "\"translation\" attribute value", LogLevel::error)
+    LOGN_ERROR("condition element--neither \"attribute_name\" attribute value nor "
+      "\"translation\" attribute value" /*, LogLevel::error*/ )
 }
 
 void SAX2TranslationRuleHandler::GetAttributeNameOrTranslationString(

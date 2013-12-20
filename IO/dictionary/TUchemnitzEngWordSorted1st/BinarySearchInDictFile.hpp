@@ -1,0 +1,109 @@
+/*
+ * TUchemnitzDictEngWord1stReader.hpp
+ *
+ *  Created on: Dec, 2013
+ *      Author: Stefan
+ */
+
+#ifndef TUCHEMNITZDICTENGWORD1STREADER_HPP_
+#define TUCHEMNITZDICTENGWORD1STREADER_HPP_
+
+#include <IO/dictionary/DictionaryReaderBase.hpp> //class DictionaryReaderBase
+#include <fstream> //class std::ifstream
+#include <Attributes/PositionString.hpp>
+#include <data_structures/Trie/NodeTrie/NodeTrie.hpp>
+#include <set> //class std::set
+#include <map> //class std::map
+#include <Attributes/EnglishWord.hpp> //enum EnglishWord::English_word_class
+//IVocabularyInMainMem::voc_container_type
+#include <VocabularyInMainMem/IVocabularyInMainMem.hpp>
+
+/** Forward decl. */
+//class IVocabularyInMainMem;
+class VocabularyAndTranslation;
+
+namespace DictionaryReader
+{
+  namespace TUchemnitzEngWordSorted1st
+  {
+    /** For a TU Chemnitz formatted dictionary where the lines begin with
+     *  English words. So the words are sorted (and a binary search may be
+     *  applied->very fast search) as needed for English->German translation.
+     *
+     *  This reader especially exists for low memory devices such as Android
+     *  smartphones: it should be combined with a vocabulary access class
+     *  that only holds temporary vocabulary information in memory. */
+    class BinarySearchInDictFile
+      : public DictionaryReader::DictionaryReaderBase
+    {
+      enum wordKinds { not_set, adj, adv, mascNoun, femNoun, neutralNoun,
+        intransitiveVerb, transitiveVerb };
+//      typedef void (TUchemnitzDictionaryReader::*insertVocable
+//          )(//char *
+//    //    const std::string &
+//        const char * array,
+//        const WordData englishWords[10], const WordData germanWords[10]);
+
+      void AddGermanAttributes(
+        std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
+        std::vector< std::vector <std::string> > & germanVocables);
+//      VocabularyAndTranslation *
+      IVocabularyInMainMem::voc_container_type * AddVocable(
+        const std::vector<std::string> & englishVocableWords,
+        enum BinarySearchInDictFile::wordKinds wordKind,
+//        enum EnglishWord::English_word_class word_class
+        VocabularyAndTranslation *& p_vocabularyandtranslation
+        );
+      void HandleSynonymSeparatorChar(
+        const bool english,
+        const unsigned pipeCount,
+        const char word[100],
+        //std::vector<std::vector<std::string> > englishVocables,
+        std::vector<std::string> & englishVocables,
+        std::vector< std::vector <std::string> > & germanVocables,
+        unsigned & semicolCountInsideCurrentPipeCharRange,
+        fastestUnsignedDataType & synonymIndex//,
+//        unsigned wordStart
+        );
+      enum BinarySearchInDictFile::wordKinds HandleClosingBrace(
+        const fastestUnsignedDataType charIndex,
+        fastestUnsignedDataType & kindOfWordStart,
+        char wordKind[5]);
+      bool
+      CompareVectors(
+        PositionStringVector::cmp & comp,
+        const PositionStringVector & psvStringToSearch,
+        fastestUnsignedDataType & hi,
+        fastestUnsignedDataType & lo,
+        bool & endSearchForCompareStringInCurrentVocData,
+        const fastestUnsignedDataType numTokenForStringToSearch,
+        PositionStringVector & psvDictFile,
+        const DWORD & r_dwTokenIndex,
+        fastestUnsignedDataType & byteOffset,
+        bool & breakWhile);
+
+      /** static-> no need to (implicitly) pass an object pointer */
+    //  static void read();
+      static NodeTrie<enum wordKinds> s_nodetrieWordKind;
+      std::ifstream m_englishDictionary;
+      IVocabularyInMainMem * m_p_vocabularyAccess;
+    public:
+      BinarySearchInDictFile(IVocabularyInMainMem &);
+      virtual
+      ~BinarySearchInDictFile();
+      void addTrieNodes();
+      IVocabularyInMainMem::voc_container_type * extractVocable(
+        const fastestUnsignedDataType,
+        //IVocabularyInMainMem::voc_container_type & voc_type
+        VocabularyAndTranslation * p_vocabularyandtranslation
+        );
+      bool open(const std::string & std_str);
+      void read();
+      /** @return 1 or multiple vocabulary pairs */
+      std::set<VocabularyAndTranslation *> * findEnglishWord(
+        const PositionStringVector & psv,
+        DWORD & r_dwTokenIndex);
+    };
+  }
+} /* namespace DictionaryReader */
+#endif /* TUCHEMNITZDICTENGWORD1STREADER_HPP_ */

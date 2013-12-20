@@ -12,6 +12,10 @@ namespace TranslationControllerBaseClass
 {
   namespace InitFunction
   {
+//    /*const*/ char ** /*const*/ retCodeDescriptions;
+//    = { "success", "vocabularyFilePathIsEmpty",
+//      "loadingVocabularyFileFailed", "creatingLogFileFailed",
+//      "loadingMainConfigFileFailed" };
     enum Init_return_codes
     {
       success = 0,

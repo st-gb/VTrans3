@@ -104,25 +104,27 @@ class GermanWord;
     void InsertAuxiliaryVerbHave();
     void InsertAuxiliaryVerbWill();
     void InsertFundamentalWords() ;
-    virtual /*void*/ VocabularyAndTranslation * Insert(
+    virtual /*void*/ //VocabularyAndTranslation *
+      IVocabularyInMainMem::voc_container_type * Insert(
       const char * wordBegin, int numChars, //void * p_v
-      enum EnglishWord::English_word_class, void *) = 0;// { };
+      enum EnglishWord::English_word_class, /*void *&*/
+      VocabularyAndTranslation *& p_vocabularyandtranslation) = 0;// { };
     /** For inserting fundamental words etc. */
-    virtual //void
-      void /* * */ /*VocabularyAndTranslation * */
+    virtual void /* * */ /*VocabularyAndTranslation * */
       Insert(const std::string & stdstrWord,
-        enum EnglishWord::English_word_class word_class, void * p_v)
+        enum EnglishWord::English_word_class word_class, /*void * p_v */
+        VocabularyAndTranslation *& p_vocabularyandtranslation)
     {
       ++ m_numberOfEnglishWords;
 //      ++ m_numberOfVocPairs;
       //If not "= 0 ":
       //"undefined reference to `vtable for IVocabularyInMainMem'" when linking
       //with g++ .
-      Insert(stdstrWord.c_str(), stdstrWord.length(), word_class, p_v );
+      Insert(stdstrWord.c_str(), stdstrWord.length(), word_class, /*p_v*/
+        p_vocabularyandtranslation);
     }
     /**For inserting objects of subclasses of "EnglishWord" and "GermanWord".*/
-    virtual void
-      //void *
+    virtual void /* void * */
       Insert(EnglishWord & ew , GermanWord & gw, //void * p_v
         VocabularyAndTranslation * p_vocabularyandtranslation
         ) = 0 ;
@@ -135,34 +137,41 @@ class GermanWord;
       ) {};
     /** Inserts the string as a key value to the container and adds the string
      *  as an attribute value.*/
-    virtual /*void*/ VocabularyAndTranslation *
+    virtual /*void*/ //VocabularyAndTranslation *
+    IVocabularyInMainMem::voc_container_type *
     InsertAsKeyAndAddVocabularyAttributes(
       const char * ar_chWordBegin,
       unsigned stringLen,
-      enum EnglishWord::English_word_class word_class
+      enum EnglishWord::English_word_class word_class,
+      VocabularyAndTranslation *& p_vocabularyandtranslation
       )
     {
       ++ m_numberOfVocPairs;
-      /*void * p_v =*/ return Insert(ar_chWordBegin, stringLen, word_class, NULL);
+      /*void * p_v =*/ return Insert(ar_chWordBegin, stringLen, word_class,
+        /*NULL*/ p_vocabularyandtranslation);
 //      AddVocabularyAttributes( word_class, p_v);
     }
     /** Save memory by referring to existing voc attributes. */
-    virtual /*void*/ VocabularyAndTranslation * InsertAsKeyAndReferToExistingVocData(
+    virtual /*void*/ //VocabularyAndTranslation *
+    IVocabularyInMainMem::voc_container_type *
+    InsertAsKeyAndReferToExistingVocData(
       enum EnglishWord::English_word_class word_class,
       const char * ar_chWordBegin,
       unsigned stringLen,
       const VocabularyAndTranslation * const p_vocandtranslAllocated
       )
     {
-      VocabularyAndTranslation * p_vocandtransl =
-        Insert(ar_chWordBegin, stringLen, word_class, NULL);
+      VocabularyAndTranslation * p_vocandtransl = NULL;
+      IVocabularyInMainMem::voc_container_type * p_voc_container =
+        Insert(ar_chWordBegin, stringLen, word_class, /*NULL*/
+            p_vocandtransl);
       if( p_vocandtransl )
       {
         p_vocandtransl->PointToAttributeData(p_vocandtranslAllocated);
         p_vocandtransl->m_englishWordClass = word_class;
       }
-      return p_vocandtransl;
-    };
+      return p_voc_container;
+    }
     void SetUserInterface( I_UserInterface * p_userinterface )
     {
       mp_userinterface = p_userinterface ;

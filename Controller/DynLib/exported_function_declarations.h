@@ -13,7 +13,8 @@
  */
 typedef unsigned char
   ( * Init_type)(
-  const char * cp_chMainConfigFilePath
+  const char * cp_chMainConfigFilePath,
+  const char * const p_chConfigFilesRootPath
   );
 typedef char * ( * Translate_type)(const char * p_chEnglishText);
 typedef void ( * FreeMemory_type)();

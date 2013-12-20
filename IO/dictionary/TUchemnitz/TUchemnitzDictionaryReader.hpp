@@ -12,9 +12,10 @@
 #include <Attributes/EnglishWord.hpp> //class EnglishWord
 #include <set> //class std::set
 #include <fastest_data_type.h> //typedef fastestUnsignedDataType
-#include "DictionaryReaderBase.hpp" //class DictionaryReaderBase
+#include "../DictionaryReaderBase.hpp" //class DictionaryReaderBase
 #include <fstream>
 #include <Controller/GetErrorMessageFromLastErrorCode.hpp>
+#include <string> //class std::string
 
 #define INDEX_OF_LAST_SMALL_LETTER_IN_ASCII 128
 
@@ -25,6 +26,10 @@ class I_UserInterface;
 class EnglishWord;
 class IVocabularyInMainMem;
 class VocabularyAndTranslation;
+//namespace std
+//{
+//  class string;
+//}
 //class EnglishWord
 //{
 //  enum English_word_class;
@@ -56,6 +61,7 @@ public:
   bool BeginIsSet() const { return ! BeginIsNotSet(); }
   bool EndIsSet() const { return ! EndIsNotSet(); }
   int GetStringLength() const { return m_charIndexOfEnd - m_charIndexOfBegin; }
+  std::string getStdString();
   void Reset()
   {
     m_charIndexOfBegin = isNotSet;
@@ -128,6 +134,8 @@ public:
     //const std::string &
     );
   /*static*/ bool extractVocables(const char * filePath);
+  /*static*/ bool read(const char * filePath)
+    { return extractVocables(filePath); }
 
   //static
     /*LetterNode * */ VocabularyAndTranslation * Insert1stEnglishWord(

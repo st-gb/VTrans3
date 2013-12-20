@@ -15,13 +15,7 @@
 //LOGN(...), g_logger
 #include <preprocessor_macros/logging_preprocessor_macros.h>
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
-//SetCurrentDirectory(...)
-#include <Controller/FileSystem/SetCurrentWorkingDir.hpp>
 //#include <InputOutput/XML/OutputXMLindented.hpp>
-//platformstl::filesystem_traits<char>::set_current_directory(...)
-#include <platformstl/filesystem/current_directory.hpp>
-//#include <unixstl/filesystem/filesystem_traits.hpp>
-#include <platformstl/filesystem/filesystem_traits.hpp>
 
 //Logger g_logger;
 //TranslationControllerBase g_translationcontrollerbase;
@@ -29,36 +23,13 @@ TranslationControllerBase * g_p_translationcontrollerbase = NULL ;
 
 EXPORT void FreeMemory()
 {
-  LOGN("FreeMemory--begin")
+  LOGN("begin")
   if( g_p_translationcontrollerbase)
   {
     delete g_p_translationcontrollerbase;
     g_p_translationcontrollerbase = NULL;
   }
-  LOGN("FreeMemory--begin")
-}
-
-void SetCurrentDirToConfigFilesRootPath(const std::string &
-    c_r_stdstrConfigFilesRootPath)
-{
-  std::string stdstrConfigFilesRootFullDirectoryPath =
-    //stdstrMainConfigFilePath.substr( 0, wIndexOfLastSlashOrBackSlash);
-    c_r_stdstrConfigFilesRootPath;
-
-//  //TODO implement for Linux
-  LOGN("Before setting current directory to \"" //main config file's full path"
-    << stdstrConfigFilesRootFullDirectoryPath << "\"")
-  //::SetCurrentDirectory(stdstrMainConfigFileFullDirectoryPath.c_str()
-//  SetCurrentDirectory( (const char *) stdstrConfigFilesRootFullDirectoryPath.
-//      c_str()
-//    );
-//  platformstl::current_directory cwd; (//char_type const *dir
-//    stdstrConfigFilesRootFullDirectoryPath.c_str() );
-  platformstl::filesystem_traits<char>::set_current_directory(
-    stdstrConfigFilesRootFullDirectoryPath.c_str());
-//  cwd.
-  LOGN("After setting current directory to \"" //main config file's full path"
-    << stdstrConfigFilesRootFullDirectoryPath << "\"")
+  LOGN("end")
 }
 
 /**
@@ -72,10 +43,17 @@ EXPORT BYTE
   const char * p_chConfigFilesRootPath
   )
 {
+  //g_logger.SetFormatter(new CSS::LogFormatter::Log4jFormatter(& g_logger) );
+//  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
+  LOGN("begin")
 //  LOGN("Init--begin")
+#ifdef COMPILE_WITH_LOG
+  const char * const logFormat = "log4j";
   std::string stdstrLogFilePath = //"VTrans_log.txt" ;
-      "VTransDynlib_log.txt" ;
-  bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath) ;
+      "VTransDynlib_log.";
+  stdstrLogFilePath += logFormat;
+  bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 1000,
+    LogLevel::debug) ;
   //g_logger.
   if( ! bFileIsOpen )
   {
@@ -83,9 +61,7 @@ EXPORT BYTE
     << GetErrorMessageFromLastErrorCodeA() << std::endl;
     return TranslationControllerBaseClass::InitFunction::creatingLogFileFailed;
   }
-  //g_logger.SetFormatter(new CSS::LogFormatter::Log4jFormatter(& g_logger) );
-//  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
-  LOGN("Init--begin")
+#endif
   //Create on heap because of g_logger access that causes a crash when the log
   //file has not been opened yet?!
   g_p_translationcontrollerbase = new TranslationControllerBase();
@@ -106,13 +82,16 @@ EXPORT BYTE
 //      stdstdstrsize_typeLastBackSlash > wIndexOfLastSlashOrBackSlash)
 //    wIndexOfLastSlashOrBackSlash = stdstdstrsize_typeLastBackSlash;
 
-  SetCurrentDirToConfigFilesRootPath(stdstrConfigFilesRootPath);
+  g_p_translationcontrollerbase->SetCurrentDirToConfigFilesRootPath(
+    stdstrConfigFilesRootPath);
 
   BYTE byReturn = //g_translationcontrollerbase.Init(//"VTrans_main_config.xml"
     g_p_translationcontrollerbase->Init(
     stdstrMainConfigFilePath);
 //  delete g_p_translationcontrollerbase;
-  LOGN("Init--return " << (WORD) byReturn)
+  LOGN("return " << (fastestUnsignedDataType) byReturn
+    //<< TranslationControllerBaseClass::InitFunction::retCodeDescriptions[byReturn]
+    )
   return byReturn;
 }
 

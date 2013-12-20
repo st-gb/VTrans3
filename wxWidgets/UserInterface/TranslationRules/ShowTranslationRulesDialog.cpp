@@ -5,6 +5,9 @@
  *      Author: Stefan
  */
 
+/** Include as first so that "Yield" from "winbase.h" (MSW) is not defined
+ * before */
+#include <wxWidgets/VTransApp.hpp> //wxGetApp()
 #include "ShowTranslationRulesDialog.hpp"
 #include <wx/sizer.h> //class wxSizer
 #include <wx/button.h> //class wxButton
@@ -24,7 +27,6 @@
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
-#include <wxWidgets/VTransApp.hpp> //wxGetApp()
 //getwxString()
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <map> //class std::map

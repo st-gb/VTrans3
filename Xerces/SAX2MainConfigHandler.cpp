@@ -114,7 +114,7 @@ namespace Xerces
     {
       LOGN_DEBUG("got path: " << stdstrPath )
       m_r_translationcontrollerbase.ReadGrammarRuleFile(
-        m_sax2grammarrulehandler , stdstrPath ) ;
+        /*m_sax2grammarrulehandler ,*/ stdstrPath ) ;
     }
     else
       LOGN_ERROR("Failed to get path.")
@@ -149,10 +149,10 @@ namespace Xerces
     {
       LOGN_DEBUG("got path: " << stdstrPath )
       m_r_translationcontrollerbase.ReadTranslationRuleFile(
-        m_sax2translationrulehandler , stdstrPath ) ;
+        /*m_sax2translationrulehandler ,*/ stdstrPath ) ;
     }
     else
-      LOGN_TYPE("Failed to get path.", LogLevel::error)
+      LOGN_ERROR("Failed to get path.")
   }
 
   void SAX2MainConfigHandler::
@@ -194,7 +194,7 @@ namespace Xerces
 //          stdwstrErrorMessage ) ;
 //      }
       m_r_translationcontrollerbase.ReadVocAttributeDefinitionFile(
-        sax2vocattributedefinitionhandler , stdstrPath ) ;
+        /*sax2vocattributedefinitionhandler ,*/ stdstrPath ) ;
     }
     else
       LOGN_ERROR("Failed to get path.")
@@ -210,7 +210,7 @@ namespace Xerces
     std::wstring stdwstrErrorMessage ;
     // <> 0 = error
     if( //ReadViaSAX2InitAndTermXerces(
-        ! ReadXMLfileInitAndTermXerces_Inline(
+        ! Apache::Xerces::ReadXMLfileInitAndTermXerces_Inline(
         //"translation_rules.xml",
         cr_stdstrFilePath.c_str() ,
     //    p_sax2grammarrulehandler ,

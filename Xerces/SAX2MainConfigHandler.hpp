@@ -8,6 +8,7 @@
 #ifndef SAX2MAINCONFIGHANDLER_HPP_
 #define SAX2MAINCONFIGHANDLER_HPP_
 
+#include <IO/ConfigurationReader.hpp> //class VTrans3::ConfigurationReader
 //class "XERCES_CPP_NAMESPACE::Attributes"
 #include <xercesc/sax2/Attributes.hpp>
 //class "XERCES_CPP_NAMESPACE::DefaultHandler
@@ -28,16 +29,16 @@ namespace Xerces
 {
   class SAX2MainConfigHandler
     :
-    public XERCES_CPP_NAMESPACE::DefaultHandler
+    public XERCES_CPP_NAMESPACE::DefaultHandler,
+    VTrans3::ConfigurationReader
   {
   public:
-    std::string m_stdstrVocabularyFilePath ;
 //    TranslateParseByRiseTree & mr_translateparsebyrisetree ;
     TranslateParseByRiseTree * mp_translateparsebyrisetree ;
     TranslationControllerBase & m_r_translationcontrollerbase ;
     SAX2GrammarRuleHandler m_sax2grammarrulehandler ;
+    SAX2TranslationRuleHandler m_sax2translationrulehandler;
     SAX2TransformationRuleHandler m_sax2transformationrulehandler ;
-    SAX2TranslationRuleHandler m_sax2translationrulehandler ;
     std::string m_strElementName ;
     inline void HandleGrammartPartColourXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & c_r_xercesc_attributes);

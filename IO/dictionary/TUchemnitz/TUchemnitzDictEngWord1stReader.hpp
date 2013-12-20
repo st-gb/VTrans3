@@ -8,6 +8,8 @@
 #ifndef TUCHEMNITZDICTENGWORD1STREADER_HPP_
 #define TUCHEMNITZDICTENGWORD1STREADER_HPP_
 
+#include "DictionaryReaderBase.hpp" //class DictionaryReaderBase
+
 class IVocabularyInMainMem;
 
 namespace DictionaryReader
@@ -16,6 +18,7 @@ namespace DictionaryReader
    *  English words. So the words are sorted (and a binary search may be
    *  applied) as needed for English->German translation. */
   class TUchemnitzDictEngWord1stReader
+    : public DictionaryReader::DictionaryReaderBase
   {
     IVocabularyInMainMem * m_p_vocabularyAccess;
   public:

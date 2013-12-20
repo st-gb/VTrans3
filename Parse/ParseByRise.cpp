@@ -24,36 +24,48 @@
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
-#include <Xerces/ReadViaSAX2.hpp>//ReadViaSAX2InitAndTermXerces(...)
-#include <Xerces/SAX2GrammarRuleHandler.hpp>//class SAX2GrammarRuleHandler
+//#include <Xerces/ReadViaSAX2.hpp>//ReadViaSAX2InitAndTermXerces(...)
+//#include <Xerces/SAX2GrammarRuleHandler.hpp>//class SAX2GrammarRuleHandler
 
 //extern LetterTree g_lettertree ;
 
-ParseByRise::ParseByRise()
-  :
-  m_dwMapIndex(0) ,
-  m_p_userinterface(NULL)
-  , m_wParseLevel(0)
+//ParseByRise::ParseByRise()
+//  :
+//  m_p_userinterface(NULL)
+//{
+////  DEBUGN("ParseByRise "
+//  LOGN_DEBUG("begin")
+//  Init();
+////  DEBUGN("ParseByRise "
+//  LOGN_DEBUG("end")
+//}
+//
+//ParseByRise::ParseByRise(
+//  I_UserInterface & r_userinterface )
+//  :
+//  m_p_userinterface(& r_userinterface)
+//   //m_wNumberOfSuperordinateRules( 0 )
+//  //,
+//{
+//  LOGN_DEBUG("begin")
+//  Init();
+////  DEBUG_COUTN("ParseByRise(I_UserInterface &) "
+//  LOGN_DEBUG("end")
+//}
+
+ParseByRise::ParseByRise( TranslationControllerBase & r_translationcontrollerbase )
+  : m_p_userinterface(& r_translationcontrollerbase)
+  , m_r_translationcontrollerbase(r_translationcontrollerbase)
 {
-//  DEBUGN("ParseByRise "
-  LOGN_DEBUG("begin")
-  InitGrammarRules() ;
-//  DEBUGN("ParseByRise "
-  LOGN_DEBUG("end")
+  Init();
 }
 
-ParseByRise::ParseByRise(
-  I_UserInterface & r_userinterface )
-  :
-   //m_wNumberOfSuperordinateRules( 0 )
-  //,
-  m_dwMapIndex(0)
-//  , mr_userinterface (r_userinterface)
-  , m_p_userinterface( & r_userinterface )
-  , m_wParseLevel(0)
+void ParseByRise::Init()
 {
+  LOGN_DEBUG("begin")
+  m_dwMapIndex = 0;
+  m_wParseLevel = 0;
   InitGrammarRules() ;
-//  DEBUG_COUTN("ParseByRise(I_UserInterface &) "
   LOGN_DEBUG("end")
 }
 
@@ -105,7 +117,10 @@ void ParseByRise::ClearAllGrammarStuff()
 * This should be done for a next parse tree generation . */
 void ParseByRise::ClearParseTree()
 {
-
+  const fastestUnsignedDataType numSuperOrdinateGrammarParts =
+    m_stdset_grammarpartAllSuperordinate.size();
+  LOGN_DEBUG("# of superordinate grammar parts: "
+    << numSuperOrdinateGrammarParts )
   m_stdset_grammarpartAllSuperordinate.clear() ;
   m_wBiggestNumberOfTokensForAppliedGrammarRule = 0 ;
 //   m_stdmultimap_dwRightmostIndex2grammarpart.clear() ;

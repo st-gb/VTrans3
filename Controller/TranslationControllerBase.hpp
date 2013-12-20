@@ -9,6 +9,7 @@
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
 #include <Controller/dictionary_type.hpp> //typedef dictionary_type
+#include <Controller/DictReaderAndVocAccess/dictReaderAndVocAccess_type.hpp>
 #include "TranslateControllerBaseReturnCodes.h" //enum Init_return_codes
 #include <data_structures/Trie/NodeTrie/NodeTrie.hpp> //class NodeTrie
 #include <Parse/ParseByRise.hpp> //class ParseByRise
@@ -19,6 +20,7 @@
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 #include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
+#include "ConfigurationHandler_type.hpp"
 
 #include <map> //class std::map
 #include <stdint.h> //for uint32_t
@@ -62,8 +64,12 @@ protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
+//  dictReaderAndVocAccess_type m_dictReaderAndVocAccess;
+  std::string m_std_strOriginalCurrWorkDir;
+  ConfigurationHandler_type m_configurationHandler;
   fastestUnsignedDataType m_GUIthreadID;
   static dictionary_type s_dictionary ;
+  /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
   NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
   ParseByRise m_parsebyrise ;
   std::string m_stdstrVocabularyFilePath ;
@@ -104,23 +110,26 @@ public:
 
   }
   void ReadGrammarRuleFile(
-    SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
+//    SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
     const std::string & cr_stdstrFilePath
     ) ;
   bool ReadMainConfigFile(const std::string & cr_stdstrFilePath ) ;
   void ReadTranslationRuleFile(
-    SAX2TranslationRuleHandler & r_sax2translationrulehandler ,
+//    SAX2TranslationRuleHandler & r_sax2translationrulehandler ,
     const std::string & cr_stdstrFilePath
     ) ;
   void ReadVocAttributeDefinitionFile(
-    Xerces::SAX2VocAttributeDefinitionHandler &
-      sax2vocattributedefinitionhandler ,
+//    Xerces::SAX2VocAttributeDefinitionHandler &
+//      sax2vocattributedefinitionhandler ,
     const std::string & cr_stdstrFilePath
     ) ;
   void ReadXMLfile(
     XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
     const std::string & cr_stdstrFilePath
     ) ;
+  void SetCurrentDirToConfigFilesRootPath(
+    const std::string & c_r_stdstrConfigFilesRootPath);
+  void SetCurrentDirToOriginalCurrentWorkingDir();
   void Transform() ;
   void Translate(
     const std::string & cr_stdstrWholeInputText ,

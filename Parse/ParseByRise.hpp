@@ -18,6 +18,7 @@
 //Forward declarations (faster than #include)
 class LetterNode;
 class I_UserInterface ;
+class TranslationControllerBase;
 class VocabularyAndTranslation ;
 
 class GrammarRule
@@ -36,6 +37,7 @@ public:
 
 class ParseByRise
 {
+  TranslationControllerBase & m_r_translationcontrollerbase;
 public:
   DWORD m_dwMapIndex ;
 //private:
@@ -201,6 +203,7 @@ public:
     std::string & r_stdstr ) ;
   bool GrammarPartIDIsWordClass( WORD wGrammarPartID ) ;
 
+  void Init();
   void InitGrammar() ;
   void InitGrammarRules() ;
 
@@ -269,8 +272,9 @@ public:
     , //std::string
     const char * cp_chSuperclassGrammarRuleName
     ) ;
-  ParseByRise() ;
-  ParseByRise( I_UserInterface & r_userinterface );
+//  ParseByRise() ;
+//  ParseByRise( I_UserInterface & r_userinterface );
+  ParseByRise( TranslationControllerBase & r_translationcontrollerbase );
 //  ParseByRise(const ParseByRise& orig);
   bool InsertIfGrammarRuleAppliesTo(
     //Maintaining 2 maps with both leftnost and rightmost indexes should be faster

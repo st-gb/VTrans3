@@ -9,31 +9,34 @@
 #include <Controller/time/GetTickCount.hpp>
 //GenerateXMLtreeFromParseTree(...)
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
-#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
-////class TUchemnitzDictionaryReader
+//#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
+//class TUchemnitzDictionaryReader
 //#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
-//class TUchemnitzDictEngWord2LineNumberReader
-#include <IO/dictionary/TUchemnitzDictEngWord2LineNumberReader.hpp>
+#include <Controller/DictReaderAndVocAccess/TUchemnitzEngWordSorted1stAndBinarySearch.hpp>
+////class TUchemnitzDictEngWord2LineNumberReader
+//#include <IO/dictionary/TUchemnitzDictEngWord2LineNumberReader.hpp>
 #include <InputOutput/XML/OutputXMLindented.hpp> //OutputXMLindented(...)
 //class ParseTreeTraverser::TransformTreeTraverser
 #include <Translate/TransformTreeTraverser.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
-#include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
-//Class SAX2GrammarRuleHandler
-#include <Xerces/SAX2GrammarRuleHandler.hpp>
-#include <Xerces/SAX2MainConfigHandler.hpp> //class SAX2MainConfigHandler
-//Class SAX2TranslationRuleHandler
-#include <Xerces/SAX2TranslationRuleHandler.hpp>
-//Class SAX2TranslationRuleHandler
-#include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
+#ifdef __ANDROID__
+        //SetCurrentDirectory(...)
+        #include <Controller/FileSystem/SetCurrentWorkingDir.hpp>
+#else
+        //platformstl::filesystem_traits<char>::set_current_directory(...)
+        #include <platformstl/filesystem/current_directory.hpp>
+        //#include <unixstl/filesystem/filesystem_traits.hpp>
+        #include <platformstl/filesystem/filesystem_traits.hpp>
+#endif
 
 //Static variables need also to be defined in 1 source file.
 I_UserInterface * SyntaxTreePath::sp_userinterface ;
 I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 //LetterTree VTransApp::s_dictionary ;
-/*LetterTree*/dictionary_type TranslationControllerBase::s_dictionary
+///*LetterTree*/dictionary_type TranslationControllerBase::s_dictionary
   //(::wxGetApp(), NULL)
   ;
+//dictReaderAndVocAccess_type TranslationControllerBase::s_dictReaderAndVocAccess;
 
 //#if defined __cplusplus
 //extern "C" {
@@ -97,19 +100,22 @@ void MakePastParticiple(std::string & //r_std_strWordStem
 
 TranslationControllerBase::TranslationControllerBase()
   :
-//  m_parsebyrise( * this ) ,
+  m_parsebyrise( * this ) ,
   m_nodetrie_ui32GrammarPartName2colour(256, 0),
   m_translateparsebyrisetree(
     m_parsebyrise
     , * this
-    )
+    ),
+  m_configurationHandler(*this)
 {
   VocabularyAndTranslation::s_p_translationControllerBase = this;
+#ifndef __ANDROID__
   /** Can be used for executing GUI operations: if a GUI control action (e.g.
    *  showing a dialog) should be performed then the caller's thread can be
    *  compared to this thread ID and only if it is the same the GUI action is
    *  executed.*/
   m_GUIthreadID = OperatingSystem::GetCurrentThreadNumber();
+#endif
 //  m_nodetrie_ui32GrammarPartName2colour.Create(256);
 //  OneLinePerWordPair::s_p_userinterface = this;
 
@@ -135,8 +141,11 @@ TranslationControllerBase::TranslationControllerBase()
 
 TranslationControllerBase::~TranslationControllerBase()
 {
+  LOGN_DEBUG("begin")
   // TODO Auto-generated destructor stub
-  s_dictionary.clear(); //DeleteCompleteList();
+  IVocabularyInMainMem & r_vocAccess = s_dictReaderAndVocAccess.GetVocAccess();
+  r_vocAccess.clear(); //DeleteCompleteList();
+  LOGN_DEBUG("end")
 }
 
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
@@ -157,12 +166,14 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 //    ) ;
   VocabularyAndTranslation::s_p_userinterface = this;
   SyntaxTreePath::sp_userinterface = this ;
-  s_dictionary.SetUserInterface(this);
-  s_dictionary.InsertFundamentalWords() ;
+  IVocabularyInMainMem & r_VocAccess = s_dictReaderAndVocAccess.GetVocAccess();
+  r_VocAccess.SetUserInterface(this);
+  r_VocAccess.InsertFundamentalWords() ;
+
   if( ReadMainConfigFile(cr_stdstrFilePath) )
   {
     m_std_strMainConfigFilePath = cr_stdstrFilePath;
-    if( m_stdstrVocabularyFilePath.empty() )
+    if( /*m_configurationHandler.*/m_stdstrVocabularyFilePath.empty() )
     {
       Message( "error: The vocabulary file path is empty") ;
       return TranslationControllerBaseClass::InitFunction::
@@ -170,6 +181,8 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
     }
     else
     {
+      SetCurrentDirToOriginalCurrentWorkingDir();
+
   //    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
 //      TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
 
@@ -190,13 +203,18 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   //    }
       CreateAndShowMainWindow() ;
   #ifndef COMPILE_AS_EXECUTABLE
-      //      TUchemnitzDictionaryReader tcdr(* this, s_dictionary );
-      DictionaryReader::TUchemnitzDictEngWord2LineNumberReader dictReader(
-        * this, & s_dictionary);
+//	TUchemnitzDictionaryReader dictReader(* this, & s_dictionary );
+//	VTrans3::TUchemnitzEngWordSorted1stAndBinarySearch
+//	  tuchemnitzengwordsorted1standbinarysearch;
+//      DictionaryReader::TUchemnitzDictEngWord2LineNumberReader dictReader(
+//        * this, & s_dictionary);
 //      TUchemnitzDictEngWord1stReader & dictReader = (* this, s_dictionary);
   //    StartTimer();
       bool b = /*TUchemnitzDictionaryReader::*/ //tcdr.extractVocables(
-        dictReader.read(
+//        dictReader
+//        tuchemnitzengwordsorted1standbinarysearch
+        s_dictReaderAndVocAccess
+        .loadDictionary(
 //      bool b = dictReader::read(
         m_stdstrVocabularyFilePath.c_str() );
       LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
@@ -212,135 +230,34 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 }
 
 void TranslationControllerBase::ReadGrammarRuleFile(
-  SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
+  //SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
   const std::string & cr_stdstrFilePath
   )
 {
-  //  SAX2GrammarRuleHandler sax2grammarrulehandler(*this) ;
-  //  ReadViaSAX2("grammar_rules.xml", & sax2grammarrulehandler ) ;
-  //Must create on heap, else the callback functions like "startElement" aren't
-  //called?!
-  //  SAX2GrammarRuleHandler * p_sax2grammarrulehandler = new
-  //    SAX2GrammarRuleHandler( * this ) ;
-//  SAX2GrammarRuleHandler sax2grammarrulehandler( * this ) ;
-
-  std::wstring stdwstrErrorMessage ;
-  // <> 0 = error
-  if( //ReadViaSAX2InitAndTermXerces(
-      ! ReadXMLfileInitAndTermXerces_Inline(
-  //    "grammar_rules.xml",
-      cr_stdstrFilePath.c_str() ,
-    //    p_sax2grammarrulehandler ,
-//      & sax2grammarrulehandler ,
-      & r_sax2grammarrulehandler ,
-      stdwstrErrorMessage
-      )
-    )
-    LOGN("Reading xml file " << cr_stdstrFilePath << "succeeded.")
-  else
-  {
-    LOGN_ERROR("Reading xml file " << cr_stdstrFilePath << "failed:"
-      << GetStdString_Inline(stdwstrErrorMessage) << "." )
-  //    LOGWN_WSPRINTF( "%ls", stdwstrErrorMessage.c_str() )
-    //::wxGetApp().Message( stdwstrErrorMessage ) ;
-  //    mr_userinterface.Message( stdwstrErrorMessage ) ;
-  //      Message( stdwstrErrorMessage ) ;
-//    mp_translateparsebyrisetree->mr_i_userinterface.Message(
-    m_translateparsebyrisetree.mr_i_userinterface.Message(
-      stdwstrErrorMessage ) ;
-  }
+  m_configurationHandler.ReadGrammarRuleFile(cr_stdstrFilePath);
 }
 
 bool TranslationControllerBase::ReadMainConfigFile(
   const std::string & cr_stdstrFilePath )
 {
-  std::wstring stdwstrErrorMessage ;
-  Xerces::SAX2MainConfigHandler sax2mainconfighandler(
-    //m_translateparsebyrisetree
-    * this
-    ) ;
-  if( //ReadViaSAX2InitAndTermXerces(
-      ReadXMLfile_Inline(
-      cr_stdstrFilePath.c_str() ,
-      & sax2mainconfighandler ,
-      stdwstrErrorMessage
-      )
-    )
-  {
-    Message("Failed to read main config file" + cr_stdstrFilePath ) ;
-    return false;
-  }
-  else
-  {
-    LOGN("successfully read main config file " << cr_stdstrFilePath )
-    m_stdstrVocabularyFilePath = sax2mainconfighandler.
-      m_stdstrVocabularyFilePath ;
-  }
-  return true;
+  return m_configurationHandler.ReadMainConfigFile(cr_stdstrFilePath.c_str() );
 }
 
 void TranslationControllerBase::ReadTranslationRuleFile(
-  SAX2TranslationRuleHandler & r_sax2translationrulehandler ,
+//  SAX2TranslationRuleHandler & r_sax2translationrulehandler ,
   const std::string & cr_stdstrFilePath
   )
 {
-  LOGN(//"TranslationControllerBase::ReadTranslationRuleFile( "
-    "\"" << cr_stdstrFilePath << "\")" )
-  std::wstring stdwstrErrorMessage ;
-  // <> 0 = error
-  if( //ReadViaSAX2InitAndTermXerces(
-      ! ReadXMLfileInitAndTermXerces_Inline(
-      //"translation_rules.xml",
-      cr_stdstrFilePath.c_str() ,
-  //    p_sax2grammarrulehandler ,
-      & r_sax2translationrulehandler ,
-      stdwstrErrorMessage
-      )
-    )
-  {
-    LOGN("Successfully read translation rule file \"" << cr_stdstrFilePath
-      << "\"" )
-  //          mr_i_userinterface.Message( wstr ) ;
-  }
-  else
-  {
-    LOGN_TYPE("Failed to read translation rule file \"" << cr_stdstrFilePath
-      << "\"", LogLevel::error )
-    m_translateparsebyrisetree.mr_i_userinterface.Message(
-      stdwstrErrorMessage ) ;
-  }
+  m_configurationHandler.ReadTranslationRuleFile(cr_stdstrFilePath.c_str() );
 }
 
 void TranslationControllerBase::ReadVocAttributeDefinitionFile(
-  Xerces::SAX2VocAttributeDefinitionHandler &
-    r_sax2vocattributedefinitionhandler ,
+//  Xerces::SAX2VocAttributeDefinitionHandler &
+//    r_sax2vocattributedefinitionhandler ,
   const std::string & cr_stdstrFilePath
   )
 {
-  LOGN( "\"" << cr_stdstrFilePath << "\")" )
-  std::wstring stdwstrErrorMessage ;
-  // <> 0 = error
-  if( //ReadViaSAX2InitAndTermXerces(
-      ! ReadXMLfileInitAndTermXerces_Inline(
-      //"translation_rules.xml",
-      cr_stdstrFilePath.c_str() ,
-  //    p_sax2grammarrulehandler ,
-      & r_sax2vocattributedefinitionhandler ,
-      stdwstrErrorMessage
-      )
-    )
-  {
-    LOGN("Successfully read VocAttributeDefinition XML file \""
-      << cr_stdstrFilePath << "\"" )
-  //          mr_i_userinterface.Message( wstr ) ;
-  }
-  else
-  {
-    LOGN_ERROR("Failed to read translation rule file \"" << cr_stdstrFilePath
-      << "\"" )
-    m_translateparsebyrisetree.mr_i_userinterface.Message(
-      stdwstrErrorMessage ) ;
-  }
+  m_configurationHandler.ReadVocAttributeDefinitionFile(cr_stdstrFilePath);
 }
 
 void TranslationControllerBase::ReadXMLfile(
@@ -350,27 +267,69 @@ void TranslationControllerBase::ReadXMLfile(
 {
   LOGN("\"" << cr_stdstrFilePath << "\")" )
   std::wstring stdwstrErrorMessage ;
-  // <> 0 = error
-  if( //ReadViaSAX2InitAndTermXerces(
-      ! ReadXMLfileInitAndTermXerces_Inline(
-      //"translation_rules.xml",
-      cr_stdstrFilePath.c_str() ,
-  //    p_sax2grammarrulehandler ,
-      & r_xercesc_defaulthandler ,
-      stdwstrErrorMessage
-      )
-    )
-  {
-    LOGN("Successfully read XML file \"" << cr_stdstrFilePath
-      << "\"" )
-  //          mr_i_userinterface.Message( wstr ) ;
-  }
-  else
-  {
-    LOGN_ERROR("Failed to read XML file \"" << cr_stdstrFilePath << "\"" )
-    m_translateparsebyrisetree.mr_i_userinterface.Message(
-      stdwstrErrorMessage ) ;
-  }
+//  // <> 0 = error
+//  if( //ReadViaSAX2InitAndTermXerces(
+//      ! Apache::Xerces::ReadXMLfileInitAndTermXerces_Inline(
+//      //"translation_rules.xml",
+//      cr_stdstrFilePath.c_str() ,
+//  //    p_sax2grammarrulehandler ,
+//      & r_xercesc_defaulthandler ,
+//      stdwstrErrorMessage
+//      )
+//    )
+//  {
+//    LOGN("Successfully read XML file \"" << cr_stdstrFilePath
+//      << "\"" )
+//  //          mr_i_userinterface.Message( wstr ) ;
+//  }
+//  else
+//  {
+//    LOGN_ERROR("Failed to read XML file \"" << cr_stdstrFilePath << "\"" )
+//    m_translateparsebyrisetree.mr_i_userinterface.Message(
+//      stdwstrErrorMessage ) ;
+//  }
+}
+
+void TranslationControllerBase::SetCurrentDirToOriginalCurrentWorkingDir()
+{
+  LOGN("setting current dir to " << m_std_strOriginalCurrWorkDir )
+  platformstl::filesystem_traits<char>::set_current_directory(
+    m_std_strOriginalCurrWorkDir.c_str() );
+  char buffer[MAX_PATH];
+  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
+  m_std_strOriginalCurrWorkDir = std::string(buffer);
+  LOGN("current dir is now: " << buffer )
+}
+
+void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
+  const std::string & c_r_stdstrConfigFilesRootPath)
+{
+  std::string stdstrConfigFilesRootFullDirectoryPath =
+    //stdstrMainConfigFilePath.substr( 0, wIndexOfLastSlashOrBackSlash);
+    c_r_stdstrConfigFilesRootPath;
+
+//  //TODO implement for Linux
+  LOGN("Before setting current directory to \"" //main config file's full path"
+    << stdstrConfigFilesRootFullDirectoryPath << "\"")
+  //::SetCurrentDirectory(stdstrMainConfigFileFullDirectoryPath.c_str()
+//  SetCurrentDirectory( (const char *) stdstrConfigFilesRootFullDirectoryPath.
+//      c_str()
+//    );
+//  platformstl::current_directory cwd; (//char_type const *dir
+//    stdstrConfigFilesRootFullDirectoryPath.c_str() );
+#ifdef __ANDROID__
+  //::_chdir(dir);
+  ::SetCurrentDirectory(c_r_stdstrConfigFilesRootPath.c_str() );
+#else
+  char buffer[MAX_PATH];
+  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
+  m_std_strOriginalCurrWorkDir = std::string(buffer);
+  platformstl::filesystem_traits<char>::set_current_directory(
+    stdstrConfigFilesRootFullDirectoryPath.c_str());
+#endif
+//  cwd.
+  LOGN("After setting current directory to \"" //main config file's full path"
+    << stdstrConfigFilesRootFullDirectoryPath << "\"")
 }
 
 void TranslationControllerBase::Transform()
@@ -420,8 +379,14 @@ void TranslationControllerBase::Translate(
       "begin")
 //  OperatingSystem::GetCurrentTimeInNanoSeconds();
 //    OperatingSystem::GetTimeCountInNanoSeconds();
-  uint64_t timeCountInNanoSeconds;
+  /*uint64_t*/ long double timeCountInNanoSeconds;
+//#ifdef WIN32
+//  Windows::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
+//#else
+//#ifndef __ANDROID__
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
+//#endif
+//#endif
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
 //  RemoveDuplicateParseTrees();
 

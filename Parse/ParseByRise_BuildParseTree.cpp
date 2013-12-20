@@ -1471,8 +1471,10 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
       << c_r_positionStringVector.at(dwTokenIndex).m_Str << "\"" )
     //p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
     p_std_set_p_vocabularyandtranslation =
-      TranslationControllerBase::s_dictionary.//searchAndReturnLetterNode(
-      find(
+      //TranslationControllerBase:://s_dictionary.//searchAndReturnLetterNode(
+      //find(
+      m_r_translationcontrollerbase.
+      s_dictReaderAndVocAccess.lookUpEnglishWord(
         c_r_positionStringVector,
       //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
       dwTokenIndexRightMost );

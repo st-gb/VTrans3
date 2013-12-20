@@ -8,7 +8,7 @@
 #ifndef TUCHEMNITZDICTENGWORD2LINENUMBERREADER_HPP_
 #define TUCHEMNITZDICTENGWORD2LINENUMBERREADER_HPP_
 
-#include <IO/dictionary/TUchemnitzDictionaryReader.hpp> //base class
+#include <IO/dictionary/TUchemnitz/TUchemnitzDictionaryReader.hpp> //base class
 
 namespace VocabularyAccess
 {

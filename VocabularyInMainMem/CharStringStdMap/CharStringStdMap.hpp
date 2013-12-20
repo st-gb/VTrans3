@@ -58,11 +58,13 @@ public:
   //TODO implement
   void GetStatistics(fastestUnsignedDataType [] ) { }
   void Insert(EnglishWord&, GermanWord&, VocabularyAndTranslation*) { };
-  VocabularyAndTranslation * /*void * */ Insert(//const std::string & stdstr,
+  //VocabularyAndTranslation * /*void * */
+  IVocabularyInMainMem::voc_container_type * Insert(//const std::string & stdstr,
     const char * const wordBegin,
     int numChars,
     /*BYTE byWordClass*/ enum EnglishWord::English_word_class,
-    /*bool insertNewVocAtts*/ void * );
+    /*bool insertNewVocAtts*/ //void *&
+    VocabularyAndTranslation *& p_vocabularyandtranslation);
 //  void Insert(const char * wordBegin, int numChars, //void * p_v
 //    enum EnglishWord::English_word_class);
 };

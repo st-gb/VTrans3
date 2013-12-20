@@ -1,3 +1,4 @@
+<?xml encoding="UTF-8" ?>
 <!--  -->
 <VTrans_main_cfg>
  <!-- prefix with "0x" for hex numbers-->
@@ -7,7 +8,8 @@
  <log level="debug"/>
 
  <!--vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" /-->
- <vocabulary_file path="dictionaries/de-en.txt" />
+ <!--vocabulary_file path="dictionaries/de-en.txt" /-->
+ <vocabulary_file path="dictionaries/de-en_EnglishWords1st_sorted_by_English_word_wout_'to'.txt" />
  
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/Vocabulary_attribute_definitions.xml" />
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/0objVerbFiniteVerbforms_attribute_definitions.xml" />

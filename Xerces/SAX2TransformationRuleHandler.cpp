@@ -180,6 +180,7 @@ namespace Xerces
 
           if( b2ndSyntaxTreePathAdded && bSyntaxTreePathWhereToInsert )
           {
+#if __GCC__ > 3 /** GCC <= version 3.x does not have std::wostringstream */
             std::wostringstream stdwos;
             stdwos << L"for transformation rule:\n"
                 L"in document " << Xerces::ConvertXercesStringToStdWstring(
@@ -194,6 +195,7 @@ namespace Xerces
             m_r_translationcontrollerbase.Message( stdwos.str()
                 );
             LOGN_TYPE( ::GetStdString(stdwos.str()), LogLevel::warning)
+#endif
           }
            if( XercesAttributesHelper::GetAttributeValue(
                cr_xercesc_attributes ,

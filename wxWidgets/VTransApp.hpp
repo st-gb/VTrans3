@@ -8,6 +8,10 @@
 #ifndef _VTRANSAPP_HPP
 #define	_VTRANSAPP_HPP
 
+#ifdef _WIN32
+  //undefine "#define Yield()" in "winbase.h" for virtual bool wxAppConsole::Yield(bool )
+  //#include <wx/msw/winundef.h>
+#endif
 #include <wx/app.h>//base class wxApp
 #include <wx/icon.h> //class wxIcon
 

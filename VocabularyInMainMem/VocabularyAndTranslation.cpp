@@ -15,6 +15,8 @@
 #include <typeinfo> //for typeid()
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
+/** GCC_DIAG_OFF(...), //GCC_DIAG_ON(...) */
+#include <compiler/GCC/enable_disable_write_strings_warning.h>
 ////TODO
 //#include <wxWidgets/VTransApp.hpp> //wxGetApp(...)
 #include <Controller/TranslationControllerBase.hpp> //class TranslationControllerBase
@@ -42,6 +44,17 @@ TranslationControllerBase * VocabularyAndTranslation::s_p_translationControllerB
 //enum EnglishWord::English_word_class GetWordClass(BYTE byVocabularyType)
 //{
 //
+//}
+
+//void VocabularyAndTranslation::GetNumberOfArrayElements(
+//  EnglishWord::English_word_class engWordClass,
+//  ArraySizes & arr_sz
+//  )
+//{
+//   arr_sz.m_byArraySizeForByteArray = GetNumberOfArrayElements(
+//     engWordClass,
+//     arr_sz.m_byArraySizeForEnglishWord,
+//     arr_sz.m_byArraySizeForGermanWord);
 //}
 
 fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
@@ -164,7 +177,7 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
   //  delete m_pword ;
 //  if( m_pwordTranslation )
 //    delete m_pwordTranslation ;
-
+  //TODO crash here
   FreeMemory();
 }
 
@@ -192,6 +205,8 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfBytes()
   return numBytesForPointers;
 }
 
+/** For switch with m_englishWordClass  */
+//GCC_DIAG_OFF(-Wno-switch)
 void VocabularyAndTranslation::FreeMemory()
 {
   ArraySizes arraySizes;
@@ -199,6 +214,7 @@ void VocabularyAndTranslation::FreeMemory()
     m_englishWordClass,
     arraySizes.m_byArraySizeForEnglishWord,
     arraySizes.m_byArraySizeForGermanWord);
+  GCC_DIAG_OFF(switch)
   switch( m_englishWordClass )
   {
   //  // singular type is only needed for parsing. It shares the same attr as
@@ -299,7 +315,9 @@ void VocabularyAndTranslation::FreeMemory()
   //delete m_arpletternodeLastGerChar ;
     break;
   }//switch
+  GCC_DIAG_ON(switch)
 }
+//GCC_DIAG_ON(-Wno-switch)
 
 std::string VocabularyAndTranslation::GetEnglishWordAsStdString(
   const fastestUnsignedDataType englishWordArrayIndex) const

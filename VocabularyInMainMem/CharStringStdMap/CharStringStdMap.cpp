@@ -202,16 +202,18 @@ fastestUnsignedDataType CharStringStdMap::GetNumberOfAllocatedBytes()
 
 /** @brief inserts the character string for the current word into the map
  *  */
-VocabularyAndTranslation * /*void * */ CharStringStdMap::Insert(
+//VocabularyAndTranslation * /*void * */
+IVocabularyInMainMem::voc_container_type * CharStringStdMap::Insert(
 //  const std::string & std_strWord, BYTE byWordClass
   const char * wordBegin, int numChars, //void * p_v
     enum EnglishWord::English_word_class word_class,
 //    bool insertNewVocAtts
-    void * p_v
+//    void *& p_v
+    VocabularyAndTranslation *& p_vocabularyandtranslation
   )
 {
-  VocabularyAndTranslation * p_vocabularyandtranslation = //NULL;
-    (VocabularyAndTranslation *) p_v;
+//  VocabularyAndTranslation * p_vocabularyandtranslation = //NULL;
+//    (VocabularyAndTranslation *) p_v;
 //  map_type::iterator iter = m_charStringMap.find(std_strWord);
 //  if( iter == m_charStringMap.end() ) //not in map
 //  {
@@ -237,12 +239,14 @@ VocabularyAndTranslation * /*void * */ CharStringStdMap::Insert(
     VocablesForWord & r_vocablesforword = pair_iter_and_inserted.first->second;
     if( /*insertNewVocAtts*/ ! p_vocabularyandtranslation )
       p_vocabularyandtranslation = new VocabularyAndTranslation(word_class);
+//    p_v = p_vocabularyandtranslation;
 
 //    p_vocabularyandtranslation->GetNumberOfBytes();
 
 //    vocablesforword.m_p_setpvocabularyandtranslation->insert(
 //      p_vocabularyandtranslation );
     r_vocablesforword.insert(p_vocabularyandtranslation );
+    return & r_vocablesforword.m_std_set_p_vocabularyandtranslation;
   }
 //  bool bInsertNewVocabularyAndTranslation = true ;
 //  std::set<VocablesForWord *> stdsetpletternodeLastStringChar ;
@@ -250,7 +254,8 @@ VocabularyAndTranslation * /*void * */ CharStringStdMap::Insert(
 //    stdsetpletternodeLastStringChar,
 //    bInsertNewVocabularyAndTranslation,
 //    byWordClass);
-  return p_vocabularyandtranslation;
+  return //p_vocabularyandtranslation;
+    NULL;
 }
 
 //void

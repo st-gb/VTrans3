@@ -5,6 +5,7 @@
  *      Author: Stefan
  */
 #include "TUchemnitzDictionaryReader.hpp"
+#include "TUchemnitzDictSeparatorChars.h" //SYNONYM_SEPERATOR_CHAR etc.
 #include <fstream> //class std::ofstream
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN()
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>
@@ -49,6 +50,17 @@ std::ostream & operator << (std::ostream & std_os, const WordData & wd)
     return std_os;// << "(" << m_charIndexOfEnd << "," << m_charIndexOfBegin << ")";
   }
 }
+
+  std::string WordData::getStdString()
+  {
+	  int strLen = GetStringLength();
+	  if( strLen > 0 )
+	  {
+		  return std::string(begin, strLen);
+	  }
+	  return "";
+  }
+
 
 TUchemnitzDictionaryReader::TUchemnitzDictionaryReader(
   I_UserInterface & i_userinterface
@@ -733,7 +745,8 @@ inline void PossiblySetStringBegin(
 {
   bool bSetBegin = false;
   if( ! insideBracket && wordIndex < WORD_DATA_ARRAY_SIZE
-      && germanPipeCount == englishPipeCount )
+      //&& germanPipeCount == englishPipeCount
+      )
   {
     //e.g. "to fuse; to burn out; to blow"
     //e.g. "Aalleiter {f}; Aaltreppe {f}; Aalpass {m} (Wasserbau) |
@@ -765,7 +778,10 @@ inline void PossiblySetStringBegin(
         bSetBegin = true;
     if( bSetBegin )
     {
-      if( bEnglish )
+      if( bEnglish
+		  && semicolCountInsidePipeCharRangeFor1stWord ==
+			semicolCountInsideCurrentPipeCharRange
+    		  )
       {
         if( englishWords[wordIndex].BeginIsNotSet() )
         {
@@ -1025,9 +1041,11 @@ void TUchemnitzDictionaryReader::ExtractVocables(//const char * array
     else
     {
       std::ostringstream oss;
+
       oss << "array index out of bounds in line #" <<
         s_p_i_userinterface->m_dictionaryFileLineNumber << ":"
-        << englishWords[0] << " " << germanWords[0];
+//        << englishWords[0] << " " << germanWords[0]
+        ;
       LOGN_WARNING( oss.str() )
       s_p_i_userinterface->Message(oss.str());
     }
@@ -1073,11 +1091,11 @@ void TUchemnitzDictionaryReader::extractSingleEntry(
     ch = array[charIndex];
     switch(ch)
     {
-      case '|':
+      case SAME_VOCABLE_SEPERATOR_CHAR :
         ++ pipeCount; //next word
         semicolCountInsideCurrentPipeCharRange = 0;
         break;
-      case ';':
+      case SYNONYM_SEPERATOR_CHAR:
         ++ semicolCountInsideCurrentPipeCharRange;
         //for "Auto {n}; Wagen {m};"
         wordStart = charIndex + 2;
@@ -1275,18 +1293,18 @@ bool TUchemnitzDictionaryReader::extractVocables(const char * filePath)
   // Else errors when reading from the file may occur/ the progress status
   // may vary when the file size can be changed.
   dictFile.open(filePath);
-  dictFile.seekg(0, std::ios_base::end);
-  m_fileSizeInBytes = dictFile.tellg();
-  dictFile.seekg(0, std::ios_base::beg);
-//  m_p_vocaccess->
-//  dictFile.rdbuf()->open(filePath, std::ios_base::app, _SH_DENYWR);
-//  char * array;
-  std::string line;
-//  unsigned ui = 1;
-  s_p_i_userinterface->m_dictionaryFileLineNumber = 1;
   bool dictFileIsOpen = dictFile.is_open();
   if( dictFileIsOpen )
   {
+    dictFile.seekg(0, std::ios_base::end);
+    m_fileSizeInBytes = dictFile.tellg();
+    dictFile.seekg(0, std::ios_base::beg);
+  //  m_p_vocaccess->
+  //  dictFile.rdbuf()->open(filePath, std::ios_base::app, _SH_DENYWR);
+  //  char * array;
+    std::string line;
+  //  unsigned ui = 1;
+    s_p_i_userinterface->m_dictionaryFileLineNumber = 1;
     m_numBytesRead = 0;
     char ar_chDictionaryLine[BUFSIZE];
     unsigned numChars = BUFSIZE;
@@ -1312,7 +1330,7 @@ bool TUchemnitzDictionaryReader::extractVocables(const char * filePath)
 //        ! (dictFile.rdstate() & std::ifstream::eofbit)
       dictFile.good()
       );
+    dictFile.close();
   }
-  dictFile.close();
   return dictFileIsOpen;
 }

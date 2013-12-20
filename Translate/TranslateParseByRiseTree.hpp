@@ -71,13 +71,13 @@ public:
   std_multimap_uint32_t2p_translationrule
     m_std_multimapConcatenationID2p_translationrule;
 //private:
-  //use a multimap because more than 1 translation rule may have the same syntax
-  //tree path: the rules for translating a singular article for an object for
-  //each noun gender male, neuter and female have all the same syntax tree path:
-  //  "3rdPersPluralClauseWith1Obj.obj.*.definite_article_singular."
-  //  "definite_article"
-  //Else using a std::map because of "TranslationRule::operator <" only
-  // 1 rule can with the inserted.
+  /** Use a multimap because more than 1 translation rule may have the same syntax
+  * tree path: the rules for translating a singular article for an object for
+  * each noun gender male, neuter and female have all the same syntax tree path:
+  *  "3rdPersPluralClauseWith1Obj.obj.*.definite_article_singular."
+  *  "definite_article"
+  * Else using a std::map because of "TranslationRule::operator <" only
+  *  1 rule can with the inserted. */
   std::multimap<
     //Use object rather then a pointer because then the "TranslationRule::<"
     //operator that is important for applying translation rules is used.

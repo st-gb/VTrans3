@@ -30,9 +30,11 @@ namespace VocabularyAccess
     clear();
   }
 
-  /*void*/ VocabularyAndTranslation * ReadFileLineAndExtract::Insert(
+  /*void*/ /*VocabularyAndTranslation * */
+  IVocabularyInMainMem::voc_container_type * ReadFileLineAndExtract::Insert(
     const char * wordBegin, int numChars, //void * p_v
-    enum EnglishWord::English_word_class word_class, void *)
+    enum EnglishWord::English_word_class word_class, /*void * */
+    VocabularyAndTranslation *& p_vocabularyandtranslation)
   {
     if( word_class > EnglishWord::pronoun ) //Last non-dictionary word class.
     {
@@ -40,7 +42,8 @@ namespace VocabularyAccess
       m_CharStringStdMap.InsertAsKeyAndAddVocabularyAttributes(
         wordBegin
         , (int &) numChars
-        , word_class);
+        , word_class,
+        p_vocabularyandtranslation);
     }
     else if(m_p_dictionaryReader)
     {

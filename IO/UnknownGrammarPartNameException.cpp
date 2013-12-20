@@ -5,7 +5,7 @@
  *      Author: Stefan
  */
 
-#include "IO/UnknownGrammarPartNameException.hpp"
+#include "UnknownGrammarPartNameException.hpp"
 
 namespace VTrans
 {

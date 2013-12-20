@@ -1,3 +1,6 @@
+/** OperatingSystem::GetTimeCountInNanoSeconds(...) */
+#include <Controller/time/GetTickCount.hpp>
+
 #include <wx/event.h> //BEGIN_EVENT_TABLE
 #include <wx/textdlg.h> //::wxGetTextFromUser(...)
 #include <wx/msgdlg.h> //::wxMessageBox(...)
@@ -6,7 +9,6 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h>
 //getwxString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
-#include <Controller/time/GetTickCount.hpp>
 #include <Attributes/TranslationAndConsecutiveID.hpp>
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 #include <Xerces/SAX2GrammarRuleHandler.hpp>
@@ -462,11 +464,19 @@ void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
     );
   DWORD dw = 0;
   uint64_t beginTimeCountInNanoSeconds;
+#ifdef WIN32
+  Windows::GetTimeCountInNanoSeconds(beginTimeCountInNanoSeconds);
+#else
   OperatingSystem::GetTimeCountInNanoSeconds(beginTimeCountInNanoSeconds);
+#endif
   VocablesForWord::voc_container_type * p_voc_container = ::wxGetApp().
     s_dictionary.find(psv, dw);
   uint64_t endTimeCountInNanoSeconds;
+#ifdef WIN32
+  Windows::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
+#else
   OperatingSystem::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
+#endif
   const uint64_t ns = endTimeCountInNanoSeconds - beginTimeCountInNanoSeconds;
   wxString wxstrLookUpTime = wxString::Format(
     wxT(" lookup took %lu ns=%fus=%fms=%fs"),
