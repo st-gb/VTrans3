@@ -159,6 +159,7 @@ void CharStringStdMap::clear()
     p_voc_container_type = //c_iter->second.m_p_setpvocabularyandtranslation;
       (VocablesForWord::voc_container_type *) & //c_iter->second.
       vocablesforword.m_std_set_p_vocabularyandtranslation;
+    IVocabularyInMainMem::OutputVocs(p_voc_container_type);
   }
   return p_voc_container_type;
 }
@@ -212,6 +213,8 @@ IVocabularyInMainMem::voc_container_type * CharStringStdMap::Insert(
     VocabularyAndTranslation *& p_vocabularyandtranslation
   )
 {
+  LOGN_DEBUG("begin-\"" << std::string(wordBegin, numChars)
+  << "\" voc and tranl ptr:" << p_vocabularyandtranslation)
 //  VocabularyAndTranslation * p_vocabularyandtranslation = //NULL;
 //    (VocabularyAndTranslation *) p_v;
 //  map_type::iterator iter = m_charStringMap.find(std_strWord);
@@ -234,7 +237,12 @@ IVocabularyInMainMem::voc_container_type * CharStringStdMap::Insert(
 //  {
 //
 //  }
-  if( pair_iter_and_inserted.first != m_charStringMap.end() )
+//  LOGN_DEBUG("iterator " << pair_iter_and_inserted.first << " end:"
+//    << m_charStringMap.end() )
+  map_type::iterator iter = pair_iter_and_inserted.first;
+  const bool insertedIntoContainer = pair_iter_and_inserted.second;
+  LOGN_DEBUG("inserted into map?:" << (insertedIntoContainer ? "yes" : "no") )
+  if( /*insertedIntoContainer &&*/ iter != m_charStringMap.end() )
   {
     VocablesForWord & r_vocablesforword = pair_iter_and_inserted.first->second;
     if( /*insertNewVocAtts*/ ! p_vocabularyandtranslation )
@@ -246,7 +254,10 @@ IVocabularyInMainMem::voc_container_type * CharStringStdMap::Insert(
 //    vocablesforword.m_p_setpvocabularyandtranslation->insert(
 //      p_vocabularyandtranslation );
     r_vocablesforword.insert(p_vocabularyandtranslation );
-    return & r_vocablesforword.m_std_set_p_vocabularyandtranslation;
+    IVocabularyInMainMem::voc_container_type * p_voc_container =
+      & r_vocablesforword.m_std_set_p_vocabularyandtranslation;
+    LOGN_DEBUG("return " << p_voc_container)
+    return p_voc_container;
   }
 //  bool bInsertNewVocabularyAndTranslation = true ;
 //  std::set<VocablesForWord *> stdsetpletternodeLastStringChar ;
@@ -254,6 +265,7 @@ IVocabularyInMainMem::voc_container_type * CharStringStdMap::Insert(
 //    stdsetpletternodeLastStringChar,
 //    bInsertNewVocabularyAndTranslation,
 //    byWordClass);
+  LOGN_DEBUG("return NULL")
   return //p_vocabularyandtranslation;
     NULL;
 }

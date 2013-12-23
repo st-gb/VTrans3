@@ -172,6 +172,8 @@ public:
     std::multimap<DWORD, GrammarPart *> & r_std_multimap_dw2p_grammarpart,
     DWORD dwTokenIndex
     );
+  //TODO possibly also pass left, right child (and superordinate)
+  std::string GetErrorMessage(const enum InsertGrammarRuleReturnCodes );
   GrammarPart * GetGrammarPartCoveringMostTokens(
     DWORD dwLeftMostTokenIndex ) ;
   void GetGrammarPartCoveringMostTokens(
@@ -235,7 +237,7 @@ public:
     ) ;
   void InsertGrammarRule(WORD wGrammarRuleID
     , const char * cp_ch ) ;
-  BYTE InsertGrammarRule(
+  enum InsertGrammarRuleReturnCodes InsertGrammarRule(
     const char * cp_chLeftGrammarRuleName
     , const char * cp_chRightGrammarRuleName
     , //std::string
@@ -267,7 +269,7 @@ public:
     const char * cp_chSuperordinateGrammarRuleName
     ) ;
 //  WORD
-  BYTE InsertSuperClassGrammarRule(
+  enum InsertGrammarRuleReturnCodes InsertSuperClassGrammarRule(
     const char * cp_chSubclassGrammarRuleName
     , //std::string
     const char * cp_chSuperclassGrammarRuleName

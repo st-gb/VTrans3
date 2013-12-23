@@ -301,6 +301,14 @@ void TranslationControllerBase::SetCurrentDirToOriginalCurrentWorkingDir()
   LOGN("current dir is now: " << buffer )
 }
 
+std::string TranslationControllerBase::GetCurrentWorkingDir()
+{
+  char buffer[MAX_PATH];
+  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
+  std::string std_strCurrWorkDir = std::string(buffer);
+  return std_strCurrWorkDir;
+}
+
 void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
   const std::string & c_r_stdstrConfigFilesRootPath)
 {
@@ -388,7 +396,14 @@ void TranslationControllerBase::Translate(
 //#endif
 //#endif
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
-//  RemoveDuplicateParseTrees();
+  {
+  std::string std_strXML;
+  GenerateXMLtreeFromParseTree( & m_parsebyrise, std_strXML);
+  std::ostringstream std_ostringstream;
+  OutputXMLindented(std_strXML.c_str(), std_ostringstream);
+  LOGN("parse tree as indented XML:\n" << std_ostringstream.str())
+  }
+  //  RemoveDuplicateParseTrees();
 
   Transform() ;
 //  TranslateParseByRiseTree translateParseByRiseTree(

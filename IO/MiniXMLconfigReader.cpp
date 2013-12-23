@@ -8,18 +8,21 @@
 #include <IO/MiniXMLconfigReader.hpp>
 #include <mxml.h>
 #include <Controller/character_string/ConvertStdStringToTypename.hpp>
-#include <IO/MiniXML/ReadMainConfigFile.hpp>
+#include <IO/MiniXML/MainConfigFileReader.hpp>
+#include <IO/MiniXML/GrammarRuleFileReader.hpp>
+#include <IO/MiniXML/VocAttributeDefintionHandler.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 
+namespace VTrans3 {
 namespace MiniXML
 {
+  TranslationControllerBase * MiniXMLconfigReader::s_p_translationController = NULL;
 
   MiniXMLconfigReader::MiniXMLconfigReader(
       TranslationControllerBase & r_translationController)
     : m_translationController(r_translationController)
   {
-    // TODO Auto-generated constructor stub
-
+    s_p_translationController = & r_translationController;
   }
 
   MiniXMLconfigReader::~MiniXMLconfigReader()
@@ -27,22 +30,55 @@ namespace MiniXML
     // TODO Auto-generated destructor stub
   }
 
-  namespace GrammarRuleFile
+//  namespace GrammarRuleFile
+//  {
+//    /** see http://www.msweet.org/documentation/project3/Mini-XML.html#4_7 */
+//    void sax_cb(
+//      mxml_node_t * node,
+//      mxml_sax_event_t event,
+//      void * data
+//      )
+//    {
+//       if (event == MXML_SAX_ELEMENT_OPEN)
+//       {
+//
+//       }
+//    }
+//  }
+
+  bool MiniXMLconfigReader::ReadFile(const //std::string & cr_stdstrFilePath
+    char * const cr_stdstrFilePath,
+    mxml_sax_cb_t saxCallBack
+    )
   {
-    /** see http://www.msweet.org/documentation/project3/Mini-XML.html#4_7 */
-    void sax_cb(
-      mxml_node_t * node,
-      mxml_sax_event_t event,
-      void * data
-      )
+    bool fileOpenSucceeded = false;
+    FILE * fp = fopen(cr_stdstrFilePath/*.c_str()*/, "r");
+    if( fp == NULL)
     {
-       if (event == MXML_SAX_ELEMENT_OPEN)
-       {
-
-       }
+      std::string cwd = m_translationController.GetCurrentWorkingDir();
+      m_translationController.Message("Failed to open file "
+        + cwd + cr_stdstrFilePath);
     }
+    else
+    {
+      mxml_node_t rootXMLnode;
+      void * sax_data;
+      mxml_node_t * mxml_node_tLoadFileRes = ::mxmlSAXLoadFile(
+        //see http://www.msweet.org/documentation/project3/Mini-XML.pdf
+        NULL, //& rootXMLnode,
+        fp,
+        /** Callback function or MXML_NO_CALLBACK */
+        MXML_NO_CALLBACK,
+  //      MiniXML::MainConfigFile::loadFileCallBackFunction,
+        saxCallBack, //SAX callback or MXML_NO_CALLBACK
+        NULL //sax_data
+        );
+//      //First node or NULL if the file could not be read.
+//      if( mxml_node_tLoadFileRes != NULL )
+        fileOpenSucceeded = true;
+    }
+    return fileOpenSucceeded;
   }
-
 
   void MiniXMLconfigReader::ReadGrammarRuleFile(
       const std::string & cr_stdstrFilePath )
@@ -61,20 +97,25 @@ namespace MiniXML
 //    //First node or NULL if the file could not be read.
 //    if( mxml_node_tLoadFileRes == NULL )
 //      ;
+    VTrans3::MiniXML::GrammarRuleFileReader grammarRuleFileReader(m_translationController);
+    /*return */grammarRuleFileReader.ProcessXML(cr_stdstrFilePath.c_str() );
   }
   bool MiniXMLconfigReader::ReadMainConfigFile(
     const std::string & cr_stdstrFilePath )
   {
-    MiniXML::ReadMainConfigFile mainConfigFileReader(m_translationController);
+    MiniXML::MainConfigFileReader mainConfigFileReader(m_translationController);
     return mainConfigFileReader.ProcessXML(cr_stdstrFilePath);
   }
   void MiniXMLconfigReader::ReadVocAttributeDefinitionFile(
     const std::string & cr_stdstrFilePath)
   {
-
+//    VTrans3::MiniXML::VocAttributeDefintionHandler
+//      vocAttributeDefintionHandler(m_translationController);
+    ReadFile(cr_stdstrFilePath.c_str(), VTrans3::MiniXML::VocAttributeDefintionFile::sax_cb);
   }
   void MiniXMLconfigReader::ReadTranslationRuleFile(const std::string & cr_stdstrFilePath)
   {
 
   }
 } /* namespace MiniXML */
+}

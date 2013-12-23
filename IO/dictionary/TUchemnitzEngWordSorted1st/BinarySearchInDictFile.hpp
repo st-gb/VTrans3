@@ -37,13 +37,21 @@ namespace DictionaryReader
       : public DictionaryReader::DictionaryReaderBase
     {
       enum wordKinds { not_set, adj, adv, mascNoun, femNoun, neutralNoun,
-        intransitiveVerb, transitiveVerb };
+        pluralNoun, intransitiveVerb, transitiveVerb };
 //      typedef void (TUchemnitzDictionaryReader::*insertVocable
 //          )(//char *
 //    //    const std::string &
 //        const char * array,
 //        const WordData englishWords[10], const WordData germanWords[10]);
 
+      void AddAllOffsetsOfMatchingWords(
+        const fastestUnsignedDataType closestBeforeNonMatchOffset,
+        const PositionStringVector & psvStringToSearch,
+//        const PositionStringVector & psvDictFile,
+        DWORD & r_dwTokenIndex,
+        const fastestUnsignedDataType numToken,
+        std::set<fastestUnsignedDataType> & byteOffsetsOfVocData
+        );
       void AddGermanAttributes(
         std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
         std::vector< std::vector <std::string> > & germanVocables);
@@ -53,6 +61,13 @@ namespace DictionaryReader
         enum BinarySearchInDictFile::wordKinds wordKind,
 //        enum EnglishWord::English_word_class word_class
         VocabularyAndTranslation *& p_vocabularyandtranslation
+        );
+      PositionStringVector::cmp ContainsEnglishWord(
+        const PositionStringVector & psvStringToSearch,
+        DWORD & r_dwTokenIndex,
+        const fastestUnsignedDataType numToken,
+//        std::set<fastestUnsignedDataType> & byteOffsetsOfVocData,
+        fastestUnsignedDataType & closestBeforeNonMatchOffset
         );
       void HandleSynonymSeparatorChar(
         const bool english,
@@ -80,6 +95,7 @@ namespace DictionaryReader
         PositionStringVector & psvDictFile,
         const DWORD & r_dwTokenIndex,
         fastestUnsignedDataType & byteOffset,
+        fastestUnsignedDataType &,
         bool & breakWhile);
 
       /** static-> no need to (implicitly) pass an object pointer */
@@ -100,9 +116,17 @@ namespace DictionaryReader
       bool open(const std::string & std_str);
       void read();
       /** @return 1 or multiple vocabulary pairs */
-      std::set<VocabularyAndTranslation *> * findEnglishWord(
+      void findEnglishWord(
         const PositionStringVector & psv,
-        DWORD & r_dwTokenIndex);
+        DWORD & r_dwTokenIndex,
+        const fastestUnsignedDataType endTokenIndex,
+        std::set<fastestUnsignedDataType> & byteOffsetsOfVocData);
+      std::set<VocabularyAndTranslation *> * findEnglishWord(
+        const PositionStringVector & psvStringToSearch,
+        DWORD & r_dwTokenIndex//,
+//        const fastestUnsignedDataType endTokenIndex
+        );
+      fastestUnsignedDataType GetByteOffsetOfVocDataBegin(bool &);
     };
   }
 } /* namespace DictionaryReader */

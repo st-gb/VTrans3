@@ -123,6 +123,20 @@ class GermanWord;
       Insert(stdstrWord.c_str(), stdstrWord.length(), word_class, /*p_v*/
         p_vocabularyandtranslation);
     }
+    /** For inserting fundamental words easily: the pointer is set to NULL
+     *  inside this function. */
+    virtual void /* * */ /*VocabularyAndTranslation * */
+      Insert(
+        const std::string & stdstrWord,
+        enum EnglishWord::English_word_class word_class /*void * p_v */
+        )
+    {
+      VocabularyAndTranslation * p_vocabularyandtranslation = NULL;
+      Insert(
+        stdstrWord,
+        word_class, /*void * p_v */
+        p_vocabularyandtranslation);
+    }
     /**For inserting objects of subclasses of "EnglishWord" and "GermanWord".*/
     virtual void /* void * */
       Insert(EnglishWord & ew , GermanWord & gw, //void * p_v
@@ -172,6 +186,8 @@ class GermanWord;
       }
       return p_voc_container;
     }
+    static void OutputVocs(const voc_container_type &);
+    static void OutputVocs(const voc_container_type *);
     void SetUserInterface( I_UserInterface * p_userinterface )
     {
       mp_userinterface = p_userinterface ;

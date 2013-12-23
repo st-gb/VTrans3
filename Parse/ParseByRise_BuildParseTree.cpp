@@ -199,6 +199,7 @@ void ParseByRise::CreateParseTree(const std::string & cr_stdstrWholeInputText)
   //But on the other hand: if there are translation rules that include at least 1
   //of these superordinate rules, they wouldn't apply.
   RemoveSuperordinateRulesFromRootNodes();
+  LOGN_DEBUG("end")
 }
 
 bool ParseByRise::GrammarPartDoesNotAlreadyExist(GrammarPart *p_grammarpart)
@@ -406,6 +407,14 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 //          m_dwRightmostIndex ;
         iter_wLeftmostIndex2p_grammarpartRightGrammarPart->second->
         m_dwRightmostIndex ;
+
+      LOGN_DEBUG("grammar rule matches: superordinate ID:"
+        << wSuperordinateGrammarPartID << " name:"
+        << GetGrammarPartName(wSuperordinateGrammarPartID)
+        << " left token index:" << dwLeftMostTokenIndexOfRule
+        << " right token index:" << dwRightMostTokenIndexOfRule
+        )
+
       //TODO create on heap and only add pointer to it.
       //GrammarPart grammarpart( //iterLeftGrammarPart->first, //wGrammarPartIDOfRule
       GrammarPart * p_grammarpart = new GrammarPart(
@@ -1282,7 +1291,7 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
 //      stdmultimap_dwRightmostIndex2grammarpartSuperordinate.begin( ),
 //      stdmultimap_dwRightmostIndex2grammarpartSuperordinate.end( )
 //      );
-      DEBUG_COUT("resolving grammar/ parse level " << m_dwMapIndex << "\n" )
+      LOGN_DEBUG("resolving grammar/ parse level " << m_dwMapIndex /*<< "\n"*/ )
   }
   //while no grammar rule for "left + right = parent" applied.
   while( //parsebyrise.m_stdmultimap_dwLeftmostIndex2grammarpart.size() >
@@ -1306,7 +1315,7 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
   }
   while( bReplacedGrammarPartIDsBySuperordinate );
   m_wParseLevel = 0 ;
-  DEBUG_COUT("end of resolving grammar\n" )
+  LOGN_DEBUG("end of resolving grammar" )
 #ifdef _DEBUG
 //  dwSize = //parsebyrise.
 //    m_stdmultimap_dwRightmostIndex2grammarpart.size() ;

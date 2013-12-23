@@ -60,6 +60,20 @@ class TranslationControllerBase;
     struct ArraySizes
     {
       typedef fastestUnsignedDataType data_type;
+      ArraySizes(
+        const data_type arraySizeForEnglishWord,
+        const data_type arraySizeForGermanWord,
+        const data_type arraySizeForByteArray
+        )
+        : m_byArraySizeForEnglishWord(arraySizeForEnglishWord),
+          m_byArraySizeForGermanWord(arraySizeForGermanWord),
+          m_byArraySizeForByteArray(arraySizeForByteArray)
+      { }
+      ArraySizes()
+        : m_byArraySizeForEnglishWord(0),
+          m_byArraySizeForGermanWord(0),
+          m_byArraySizeForByteArray(0)
+      { }
       data_type m_byArraySizeForEnglishWord;
       data_type m_byArraySizeForGermanWord;
       data_type m_byArraySizeForByteArray;
@@ -164,12 +178,13 @@ class TranslationControllerBase;
 //      EnglishWord::English_word_class engWordClass,
 //      ArraySizes & arr_sz
 //      );
-    fastestUnsignedDataType GetNumberOfArrayElements(
+    std::string GetWordClassAsString() const;
+    static fastestUnsignedDataType GetNumberOfArrayElements(
       /*const*/ EnglishWord::English_word_class engWordClass,
       fastestUnsignedDataType & numEngWords,
       fastestUnsignedDataType & numGerWords
       );
-    void GetNumberOfArrayElements(
+    static void GetNumberOfArrayElements(
       const EnglishWord::English_word_class engWordClass,
       ArraySizes & arrSizes)
     {
@@ -177,6 +192,18 @@ class TranslationControllerBase;
         engWordClass,
         arrSizes.m_byArraySizeForEnglishWord,
         arrSizes.m_byArraySizeForGermanWord);
+    }
+
+    void GetNumberOfArrayElements(
+      ArraySizes & arrSizes) const
+    {
+      if( m_englishWordClass <= EnglishWord::adjective )
+      {
+        arrSizes.m_byArraySizeForByteArray = GetNumberOfArrayElements(
+          m_englishWordClass,
+          arrSizes.m_byArraySizeForEnglishWord,
+          arrSizes.m_byArraySizeForGermanWord);
+      }
     }
 
     /**  Lexik o   n
@@ -246,6 +273,19 @@ class TranslationControllerBase;
 //        char_frequencies[byCurrentValue]++;
 //      }
 //    }
+
+    void SetAttributeValue(
+        const fastestUnsignedDataType index,
+        const fastestUnsignedDataType value)
+    {
+      ArraySizes arrsz;
+      GetNumberOfArrayElements(arrsz);
+      if( arrsz.m_byArraySizeForByteArray > 0 )
+      {
+        m_arbyAttribute[index] = value;
+      }
+    }
+
     void SetGermanWord(
       const char * const word,
       const fastestUnsignedDataType stringLen,
@@ -325,12 +365,14 @@ class TranslationControllerBase;
       m_arbyAttribute[0] |= (by >> BIT_POSITION_FOR_TRANSLATION_TYPE) ;
     }
 
-    //for std::set::insert(): there must NOT be:
-    //" (this<right)==false && (right<this)==false"
+    /** for std::set::insert(): there must NOT be:
+    * " (this<right)==false && (right<this)==false" */
     bool operator <(const VocabularyAndTranslation & right) const
     {
       //return m_pword < right.m_pword ;
 //      return &m_word < &right.m_word ;
       return this < & right ;
     }
+
+    friend std::ostream & operator << (std::ostream & os, const VocabularyAndTranslation & obj);
   }; //end class

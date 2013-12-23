@@ -1,27 +1,28 @@
 /*
- * ReadMainConfigFile.cpp
+ * MainConfigFileReader.cpp
  *
  *  Created on: 09.12.2013
  *      Author: mr.sys
  */
 
 #include <Controller/TranslationControllerBase.hpp>
-#include <IO/MiniXML/ReadMainConfigFile.hpp>
+#include <IO/MiniXML/MainConfigFileReader.hpp>
 #include <mxml.h>
 #include <Controller/character_string/ConvertStdStringToTypename.hpp>
 #include <string.h> // strcmp
 
+namespace VTrans3 {
 namespace MiniXML
 {
-  TranslationControllerBase * ReadMainConfigFile::s_p_translationController;
+  TranslationControllerBase * MainConfigFileReader::s_p_translationController;
 
-  ReadMainConfigFile::ReadMainConfigFile(
+  MainConfigFileReader::MainConfigFileReader(
       TranslationControllerBase & r_translationController )
   {
     s_p_translationController = & r_translationController;
   }
 
-  ReadMainConfigFile::~ReadMainConfigFile()
+  MainConfigFileReader::~MainConfigFileReader()
   {
     // TODO Auto-generated destructor stub
   }
@@ -39,13 +40,40 @@ namespace MiniXML
         {
           unsigned dwValue;
           ConvertStdStringToTypename(dwValue, std::string(strColour) );
-          ReadMainConfigFile::s_p_translationController->m_nodetrie_ui32GrammarPartName2colour.
+          MainConfigFileReader::s_p_translationController->m_nodetrie_ui32GrammarPartName2colour.
             insert_inline(
             (BYTE *) strGrammarPartName,
             ::strlen(strGrammarPartName ),
             dwValue
             );
         }
+      }
+    }
+    void HandleReadGrammarRuleFileXMLelement( mxml_node_t * node )
+    {
+      const char * const strGrammarRuleFilePath =
+        mxmlElementGetAttr(node, "path");
+      if( strGrammarRuleFilePath != NULL )
+      {
+        LOGN_DEBUG("grammar rule file path:" << strGrammarRuleFilePath)
+//            strVocabularyFilePath
+        MainConfigFileReader::s_p_translationController->ReadGrammarRuleFile(
+          strGrammarRuleFilePath);
+      }
+    }
+
+    void HandleReadVocabularyAttributeDefinitionFileXMLelement(
+        mxml_node_t * node )
+    {
+      const char * const strVocabularyAttributeDefinitionFilePath =
+        mxmlElementGetAttr(node, "path");
+      if( strVocabularyAttributeDefinitionFilePath != NULL )
+      {
+        LOGN_DEBUG("vocabulary_attribute_definition file path:"
+          << strVocabularyAttributeDefinitionFilePath)
+//            strVocabularyFilePath
+        MainConfigFileReader::s_p_translationController->ReadVocAttributeDefinitionFile(
+          strVocabularyAttributeDefinitionFilePath);
       }
     }
 
@@ -81,13 +109,13 @@ namespace MiniXML
       )
     {
       const char * xmlElementName = mxmlGetElement(node);
-      if (event == MXML_SAX_ELEMENT_CLOSE)
-      {
-        if( ::strcmp(xmlElementName, "VTrans_main_cfg") == 0 )
-        {
-            int i = 0;
-        }
-      }
+//      if (event == MXML_SAX_ELEMENT_CLOSE)
+//      {
+//        if( ::strcmp(xmlElementName, "VTrans_main_cfg") == 0 )
+//        {
+//            int i = 0;
+//        }
+//      }
       if (event == MXML_SAX_ELEMENT_OPEN)
       {
 #ifdef COMPILE_AS_EXECUTABLE
@@ -101,7 +129,7 @@ namespace MiniXML
 #endif
         if( ::strcmp(xmlElementName, "grammar_rule_file") == 0 )
         {
-//          HandleReadGrammarRuleFileXMLelement( node ) ;
+          HandleReadGrammarRuleFileXMLelement( node ) ;
         }
 //         else if( m_strElementName == "transformation_rule_file" )
 //         {
@@ -112,19 +140,20 @@ namespace MiniXML
 //           HandleReadTranslationRuleFileXMLelement( cr_xercesc_attributes ) ;
              int i = 0;
          }
-//         else if( m_strElementName == "vocabulary_attribute_definition_file" )
-//         {
-//           HandleReadVocabularyAttributeDefinitionFileXMLelement(
-//             cr_xercesc_attributes ) ;
-//         }
+         else if( ::strcmp(xmlElementName, "vocabulary_attribute_definition_file") == 0 )
+         {
+           HandleReadVocabularyAttributeDefinitionFileXMLelement(
+             node ) ;
+         }
         else if( ::strcmp(xmlElementName, "vocabulary_file") == 0 )
         {
           const char * const strVocabularyFilePath =
             mxmlElementGetAttr(node, "path");
           if( strVocabularyFilePath != NULL )
           {
+            LOGN_DEBUG("Dict file path:" << strVocabularyFilePath)
 //            strVocabularyFilePath
-            ReadMainConfigFile::s_p_translationController->
+            MainConfigFileReader::s_p_translationController->
               /*m_configurationHandler.*/m_stdstrVocabularyFilePath =
               strVocabularyFilePath;
           }
@@ -133,7 +162,7 @@ namespace MiniXML
     }
   }
 
-  bool ReadMainConfigFile::ProcessXML(const std::string & cr_stdstrFilePath)
+  bool MainConfigFileReader::ProcessXML(const std::string & cr_stdstrFilePath)
   {
     bool fileOpenSucceeded = false;
     FILE * fp = fopen(cr_stdstrFilePath.c_str(), "r");
@@ -158,3 +187,4 @@ namespace MiniXML
     return fileOpenSucceeded;
   }
 } /* namespace MiniXML */
+}

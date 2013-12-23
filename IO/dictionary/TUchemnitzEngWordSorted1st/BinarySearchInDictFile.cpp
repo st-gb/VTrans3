@@ -12,6 +12,7 @@
 #include <limits.h> //UINT_MAX
 #include <vector> //class std::vector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
+#include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF
 
 #define INDEX_OF_LAST_SMALL_LETTER_IN_ASCII 128
 
@@ -58,6 +59,9 @@ namespace DictionaryReader
         wordKind = "n";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           neutralNoun);
+        wordKind = "pl";
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          pluralNoun);
         wordKind = "vi"; //="Verb Intransitive"
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           intransitiveVerb);
@@ -70,10 +74,12 @@ namespace DictionaryReader
     /** Do not load anything into memory. */
     bool BinarySearchInDictFile::open(const std::string & std_str )
     {
+      LOGN_DEBUG("Opening file " << std_str)
       m_englishDictionary.open(std_str.c_str() );
       bool dictFileIsOpen = m_englishDictionary.is_open();
       if( dictFileIsOpen )
       {
+        LOGN_DEBUG("Dict file is open")
         m_englishDictionary.seekg(0, std::ios_base::end);
         m_fileSizeInBytes = m_englishDictionary.tellg();
         m_englishDictionary.seekg(0, std::ios_base::beg);
@@ -126,12 +132,14 @@ namespace DictionaryReader
       VocabularyAndTranslation *& p_vocabularyandtranslation
       )
     {
+      LOGN_DEBUG("begin wordkind:" << wordKind << " " << p_vocabularyandtranslation)
 //      VocabularyAndTranslation * p_vocabularyandtranslation = NULL;
       IVocabularyInMainMem::voc_container_type * p_voc_container = NULL;
 #ifdef _DEBUG
       const int sz = englishVocableWords.size();
 #endif
       enum EnglishWord::English_word_class word_class = EnglishWord::beyond_last_entry;
+      GCC_DIAG_OFF(switch)
       switch(wordKind)
       {
       case BinarySearchInDictFile::adv:
@@ -140,9 +148,15 @@ namespace DictionaryReader
       case BinarySearchInDictFile::femNoun:
       case BinarySearchInDictFile::mascNoun:
       case BinarySearchInDictFile::neutralNoun:
+        /** Must add as singular, else applying grammar rule fails. */
+        word_class = EnglishWord::singular;
+        break;
+      case BinarySearchInDictFile::pluralNoun:
         word_class = EnglishWord::noun;
         break;
       }
+      GCC_DIAG_ON(switch)
+      LOGN_DEBUG("EnglishWord::class: " << word_class)
       if( word_class != EnglishWord::beyond_last_entry &&
           englishVocableWords.size() > 0 )
       {
@@ -156,9 +170,92 @@ namespace DictionaryReader
           , (int &) stringLen
           , word_class,
           p_vocabularyandtranslation);
+        if( p_vocabularyandtranslation)
+        {
+          GCC_DIAG_OFF(switch)
+          switch(wordKind)
+          {
+          case BinarySearchInDictFile::mascNoun :
+            p_vocabularyandtranslation->SetAttributeValue(0, GermanNoun::der);
+            break;
+          case BinarySearchInDictFile::femNoun :
+            p_vocabularyandtranslation->SetAttributeValue(0, GermanNoun::die);
+            break;
+          case BinarySearchInDictFile::neutralNoun :
+            p_vocabularyandtranslation->SetAttributeValue(0, GermanNoun::das);
+            break;
+          }
+          GCC_DIAG_ON(switch)
+        }
 //        p_vocandtransl->SetGermanWord();
       }
+      LOGN_DEBUG("return " << p_voc_container)
       return /*p_vocabularyandtranslation*/ p_voc_container;
+    }
+
+    void AddWord(
+      const bool english,
+      const unsigned pipeCount,
+      char word[100],
+      const fastestUnsignedDataType charIndex,
+//      std::vector<std::vector<std::string> > & englishVocables,
+      std::vector<std::string> & englishVocableWords,
+      /** e.g. synonyms */
+      std::vector< std::vector <std::string> > & germanVocables,
+      unsigned & semicolCountInsideCurrentPipeCharRange,
+      fastestUnsignedDataType & synonymIndex//,
+      )
+    {
+      LOGN_DEBUG("begin")
+      if( word[0] != '\0' )
+      {
+//        word[charIndex] = '\0';
+        //            HandleSynonymSeparatorChar();
+        if (english)
+        {
+          /** A pipe character ('|') separates different words belonging to
+           *  the same vocable (e.g. singular and plural) */
+          //              if(englishVocables.size() > semicolCountInsideCurrentPipeCharRange )
+          if (pipeCount == 0)
+          {
+  //          std::vector<std::string> vec;
+  //          vec.push_back(word);
+  //          englishVocables.push_back(vec);
+            englishVocableWords.push_back(word);
+          }
+          else
+          {
+  //          if (semicolCountInsideCurrentPipeCharRange + 1
+  //              < englishVocables.size())
+            {
+  //            std::vector<std::string> & vec =
+  //              englishVocables[semicolCountInsideCurrentPipeCharRange];
+  //            vec.push_back(word);
+            }
+            //                  englishVocableWords.push_back(word);
+          }
+        }
+        else
+        {
+  #ifdef _DEBUG
+          int sz = germanVocables.size();
+  #endif
+          if( semicolCountInsideCurrentPipeCharRange < germanVocables.size() )
+          {
+            std::vector<std::string> & vec = germanVocables[
+                                  semicolCountInsideCurrentPipeCharRange];
+            vec.push_back(word);
+          }
+          else
+          {
+            std::vector<std::string> vec;
+            vec.push_back(word);
+            germanVocables.push_back( vec);
+          }
+  //        germanVocableWords.push_back(word);
+        }
+        word[0] = '\0';
+      }
     }
 
     void BinarySearchInDictFile::HandleSynonymSeparatorChar(
@@ -175,50 +272,8 @@ namespace DictionaryReader
       )
     {
       LOGN_DEBUG("begin")
-      //            HandleSynonymSeparatorChar();
-      if (english)
-      {
-        //              if(englishVocables.size() > semicolCountInsideCurrentPipeCharRange )
-        if (pipeCount == 0)
-        {
-//          std::vector<std::string> vec;
-//          vec.push_back(word);
-//          englishVocables.push_back(vec);
-          englishVocableWords.push_back(word);
-        }
-        else
-        {
-//          if (semicolCountInsideCurrentPipeCharRange + 1
-//              < englishVocables.size())
-          {
-//            std::vector<std::string> & vec =
-//              englishVocables[semicolCountInsideCurrentPipeCharRange];
-//            vec.push_back(word);
-          }
-          //                  englishVocableWords.push_back(word);
-        }
-      }
-      else
-      {
-#ifdef _DEBUG
-        int sz = germanVocables.size();
-#endif
-        if( semicolCountInsideCurrentPipeCharRange < germanVocables.size() )
-        {
-          std::vector<std::string> & vec = germanVocables[
-                                semicolCountInsideCurrentPipeCharRange];
-          vec.push_back(word);
-        }
-        else
-        {
-          std::vector<std::string> vec;
-          vec.push_back(word);
-          germanVocables.push_back( vec);
-        }
-//        germanVocableWords.push_back(word);
-      }
-      ++semicolCountInsideCurrentPipeCharRange;
-      ++synonymIndex;
+      ++ semicolCountInsideCurrentPipeCharRange;
+      ++ synonymIndex;
       //for "Auto {n}; Wagen {m};"
 //      wordStart = charIndex + 2;
     }
@@ -230,6 +285,8 @@ namespace DictionaryReader
                                 )
     {
       LOGN_DEBUG("begin")
+      enum BinarySearchInDictFile::wordKinds e_wordKind =
+        BinarySearchInDictFile::not_set;
         {
           //        std::string kindOfWord = strCurrentWordData.substr(kindOfWordStart,
           //          charIndex - kindOfWordStart);
@@ -280,17 +337,20 @@ namespace DictionaryReader
                 ;
 
               //          InsertAdjective(array);
-              return p_ntn->m_member;
+//              return p_ntn->m_member;
+              e_wordKind = p_ntn->m_member;
             }
         }
 //      return i;
-        return BinarySearchInDictFile::not_set;
+      LOGN_DEBUG("return " << e_wordKind)
+      return /*BinarySearchInDictFile::not_set*/ e_wordKind;
     }
 
     void BinarySearchInDictFile::AddGermanAttributes(
         std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
         std::vector< std::vector <std::string> > & germanVocables)
     {
+      LOGN_DEBUG("begin")
 #ifdef _DEBUG
       const int numVocsCreated = voc_containerVocsCreated.size();
       const int numGermanVocables = germanVocables.size();
@@ -311,19 +371,35 @@ namespace DictionaryReader
         {
           const VocabularyAndTranslation::ArraySizes & arraySizes =
             VocabularyAndTranslation::s_arraysizes[p_->m_englishWordClass];
-
+          fastestUnsignedDataType germanWordIndex = 0;
           while(c_iterGermanWord != r_.end() )
           {
-            if( index < arraySizes.m_byArraySizeForGermanWord )
+            if( germanWordIndex < arraySizes.m_byArraySizeForGermanWord )
             {
               const std::string & germanWord = * c_iterGermanWord;
-              p_->SetGermanWord(germanWord.c_str(), germanWord.length(), index);
+              LOGN_DEBUG("setting German word " << germanWord << " for index " << germanWordIndex)
+              p_->SetGermanWord(germanWord.c_str(), germanWord.length(), germanWordIndex);
+              ++ germanWordIndex;
             }
+            ++ c_iterGermanWord;
           }
         }
         ++ c_iter;
         ++ c_iterGerman;
       }
+      LOGN_DEBUG("end")
+    }
+
+    inline void output(
+        const fastestUnsignedDataType offset,
+//        const fastestUnsignedDataType charIndex,
+        const int i,
+        const char * const word
+        )
+    {
+//      const fastestUnsignedDataType offset = offsetOfVocBegin + charIndex;
+      LOGN_DEBUG( "offset:" << offset << " char:\'"
+        << (char) i << "\' word: \"" << word << "\"")
     }
 
     /** e.g. "schoolbook; textbook; educational book | schoolbooks; textbooks; educational books :: Lehrbuch {n} | Lehrbücher {pl} "
@@ -335,7 +411,8 @@ namespace DictionaryReader
         , VocabularyAndTranslation * p_vocabularyandtranslation
         )
     {
-      LOGN_DEBUG("begin")
+      LOGN_DEBUG("begin offset:" << offset)
+      bool firstEngGerSepChar = true;
       std::vector< std::vector <std::string> > germanVocables;
 
       IVocabularyInMainMem::voc_container_type * p_voc_container = NULL;
@@ -356,6 +433,7 @@ namespace DictionaryReader
       bool streamIsGood = m_englishDictionary.good();
       bool breakWhile = false;
       char word[100];
+      char prevChar = 0;
       std::vector<std::string> englishVocableWords;
       std::vector<std::vector<std::string> > englishVocables;
       fastestUnsignedDataType synonymIndex = 0;
@@ -371,7 +449,13 @@ namespace DictionaryReader
           if(kindOfWordStart)
             wordKind[/*charIndex - kindOfWordStart*/ charIndexInsideWord] = i;
           else if( ! insideBracket )
-            word[/*charIndex*/ charIndexInsideWord] = i;
+          {
+//            if( i == ' ')
+//
+//            else
+//              wordHasStarted = true;
+              word[/*charIndex*/ charIndexInsideWord] = i;
+          }
           ++ charIndexInsideWord;
         }
         else
@@ -379,17 +463,15 @@ namespace DictionaryReader
           switch(i)
           {
           case SAME_VOCABLE_SEPERATOR_CHAR: // "car ride; drive"
-            word[charIndexInsideWord + 1] = '\0';
-            LOGN_DEBUG( "offset:" << (offset + charIndex) << " char:"
-              << (char) i << "-word: " << word << "\"")
+            word[charIndexInsideWord] = '\0';
+            output(offset + charIndex, i, word);
             charIndexInsideWord = 0;
             break;
           case SYNONYM_SEPERATOR_CHAR: //"car thief |"
           case ENGLISH_GERMAN_SEPERATOR_CHAR: //" carwash ::"
 //            endWord = true;
             word[charIndexInsideWord] = '\0';
-            LOGN_DEBUG( "offset:" << (offset + charIndex) << " char:"
-              << (char) i << "-word: " << word << "\"")
+            output(offset + charIndex, i, word);
             charIndexInsideWord = 0;
             break;
           case '{': //"Autorennen {"
@@ -397,8 +479,7 @@ namespace DictionaryReader
           case '[':
             insideBracket = true;
             word[charIndexInsideWord] = '\0';
-            LOGN_DEBUG( "offset:" << (offset + charIndex) << " char:"
-              << (char) i << "-word: \"" << word << "\"")
+            output(offset + charIndex, i, word);
             charIndexInsideWord = 0;
             break;
           case '}':
@@ -418,22 +499,61 @@ namespace DictionaryReader
             breakWhile = true;
            break;
           case SAME_VOCABLE_SEPERATOR_CHAR :
+            AddWord(
+              english,
+              pipeCount,
+              word,
+              charIndex,
+              englishVocableWords,
+              germanVocables,
+              semicolCountInsideCurrentPipeCharRange,
+              synonymIndex
+              );
             ++ pipeCount; //next word
 //            semicolCountInsideCurrentPipeCharRange = 0;
             synonymIndex = 0;
             break;
           case SYNONYM_SEPERATOR_CHAR: /** "schoolbook; textbook; educational book | "*/
 //            HandleSynonymSeparatorChar();
-            HandleSynonymSeparatorChar(
-              english, pipeCount, word,
-//              englishVocables,
+//            HandleSynonymSeparatorChar(
+//              english, pipeCount, word,
+////              englishVocables,
+//              englishVocableWords,
+//              germanVocables,
+//              semicolCountInsideCurrentPipeCharRange,
+//              synonymIndex//, wordStart
+//              );
+            AddWord(
+              english,
+              pipeCount,
+              word,
+              charIndex,
               englishVocableWords,
               germanVocables,
               semicolCountInsideCurrentPipeCharRange,
-              synonymIndex//, wordStart
+              synonymIndex
               );
+            ++ semicolCountInsideCurrentPipeCharRange;
+            ++ synonymIndex;
             break;
           case ENGLISH_GERMAN_SEPERATOR_CHAR :
+            if( firstEngGerSepChar)
+            {
+            AddWord(
+              english,
+              pipeCount,
+              word,
+              charIndex,
+              englishVocableWords,
+              germanVocables,
+              semicolCountInsideCurrentPipeCharRange,
+              synonymIndex
+              );
+              firstEngGerSepChar = false;
+              semicolCountInsideCurrentPipeCharRange = 0;
+              pipeCount = 0;
+              synonymIndex = 0;
+            }
 //            if ( prevPipeCharIndex == charIndex - 1 ) //-> "::"
 //              //The kind of word may only be specified in English:
 //            //"Hintergrund {m} (Theater) | im Hintergrund (der Bühne) :: back | upstage {adv}"
@@ -442,7 +562,30 @@ namespace DictionaryReader
 //              prevPipeCharIndex = charIndex;
             english = false;
             break;
+          case '(':
+          case '[':
+            AddWord(
+              english,
+              pipeCount,
+              word,
+              charIndex,
+              englishVocableWords,
+              germanVocables,
+              semicolCountInsideCurrentPipeCharRange,
+              synonymIndex
+              );
+            break;
           case '{':
+            AddWord(
+              english,
+              pipeCount,
+              word,
+              charIndex,
+              englishVocableWords,
+              germanVocables,
+              semicolCountInsideCurrentPipeCharRange,
+              synonymIndex
+              );
             kindOfWordStart = charIndex + 1;
             break;
           case '}':
@@ -452,24 +595,37 @@ namespace DictionaryReader
 #ifdef _DEBUG
             const int sz = voc_containerVocsCreated.size();
 #endif
-            std::map<unsigned, VocabularyAndTranslation *>::iterator
-              c_iter = voc_containerVocsCreated.find(semicolCountInsideCurrentPipeCharRange);
-            if( c_iter == voc_containerVocsCreated.end() )
-            {
-              p_voc_container = AddVocable(
-                englishVocableWords,
-                e_wordKind,
-                p_vocabularyandtranslation);
-//              bool b;
-              std::pair<std::map<unsigned, VocabularyAndTranslation *>::iterator, bool> p =
-                  voc_containerVocsCreated.insert(std::make_pair(
-                semicolCountInsideCurrentPipeCharRange, p_vocabularyandtranslation) );
-//              if(p.second )
-//              {
-//                c_iter = p.first;
-//                AddGermanAttributes();
-//              }
-            }
+//            switch( e_wordKind ) //for "plural noun" etc. do nothing
+//              //because it shpuld have been created before
+//            {
+//            case BinarySearchInDictFile::adv:
+//            case BinarySearchInDictFile::femNoun:
+//            case BinarySearchInDictFile::mascNoun:
+//            case BinarySearchInDictFile::neutralNoun:
+              std::map<unsigned, VocabularyAndTranslation *>::iterator
+                c_iter = voc_containerVocsCreated.find(semicolCountInsideCurrentPipeCharRange);
+              const bool isNotInMap = c_iter == voc_containerVocsCreated.end();
+              LOGN_DEBUG(semicolCountInsideCurrentPipeCharRange
+                << " is not in map:" << isNotInMap)
+              if( isNotInMap )
+              {
+                p_voc_container = AddVocable(
+                  englishVocableWords,
+                  e_wordKind,
+  //                p_voc_container,
+                  p_vocabularyandtranslation);
+  //              bool b;
+                std::pair<std::map<unsigned, VocabularyAndTranslation *>::iterator, bool> p =
+                    voc_containerVocsCreated.insert(std::make_pair(
+                  semicolCountInsideCurrentPipeCharRange, p_vocabularyandtranslation) );
+  //              if(p.second )
+  //              {
+  //                c_iter = p.first;
+  //                AddGermanAttributes();
+  //              }
+              }
+              break;
+//            }
           }
           break;
 //          default :
@@ -478,6 +634,7 @@ namespace DictionaryReader
           break;
 //        } //switch
         ++ charIndex;
+        prevChar = i;
         i = m_englishDictionary.get();
         streamIsGood = m_englishDictionary.good();
 #ifdef _DEBUG
@@ -485,11 +642,12 @@ namespace DictionaryReader
 #endif
       } //while
       AddGermanAttributes(voc_containerVocsCreated, germanVocables);
+      IVocabularyInMainMem::OutputVocs(p_voc_container);
+      LOGN_DEBUG("return " << p_voc_container)
       return p_voc_container;
     }
 
-    bool
-    BinarySearchInDictFile::CompareVectors(
+    bool BinarySearchInDictFile::CompareVectors(
       PositionStringVector::cmp & comp,
       const PositionStringVector& psvStringToSearch,
       fastestUnsignedDataType & hi,
@@ -499,10 +657,14 @@ namespace DictionaryReader
       PositionStringVector & psvDictFile,
       const DWORD & r_dwTokenIndex,
       fastestUnsignedDataType & byteOffset,
+      fastestUnsignedDataType & closestBeforeNonMatchOffset,
       bool & breakWhile)
     {
       //                  CompareVectors();
-      comp = psvStringToSearch.Compare(psvDictFile, r_dwTokenIndex);
+//      comp = psvStringToSearch.Compare(psvDictFile, r_dwTokenIndex,
+//          numTokenForStringToSearch);
+      LOGN_DEBUG("return value of comparison: " << PositionStringVector:://GetResultAsString(comp)
+          s_comparisonResultString[comp] )
       switch (comp)
         {
       //                  case PositionStringVector::match :
@@ -512,6 +674,8 @@ namespace DictionaryReader
       ////                      p_voc_container->
       //                    break;
       /** String to search is lower than string in dictionary. */
+      case PositionStringVector::tooFewTokens:
+        endSearchForCompareStringInCurrentVocData;
       case PositionStringVector::lower:
         psvDictFile.clear();
         hi = byteOffset;
@@ -524,6 +688,9 @@ namespace DictionaryReader
         break;
         /** String to search is greater than string in dictionary. */
       case PositionStringVector::greater:
+        /** string to search is greater than string in dictionary-> dictionary
+         *  string is before string to search->memorize the offset*/
+        closestBeforeNonMatchOffset = byteOffset;
         psvDictFile.clear();
         lo = byteOffset;
         byteOffset = /*lo + (hi - lo )*/(lo + hi) / 2;
@@ -550,150 +717,371 @@ namespace DictionaryReader
     }
 
     std::set<VocabularyAndTranslation *> * BinarySearchInDictFile::findEnglishWord(
-      const PositionStringVector & psvStringToSearch, DWORD & r_dwTokenIndex)
+      const PositionStringVector & psvStringToSearch,
+      DWORD & r_dwTokenIndex
+      )
     {
       IVocabularyInMainMem::voc_container_type * p_voc_container = NULL;
-      if( psvStringToSearch.size() > 0 )
+//      fastestUnsignedDataType byteOffsetOfVocable =
+      VocabularyAndTranslation * p_vocandtransl = NULL;
+      std::set<fastestUnsignedDataType> byteOffsetsOfVocData;
+      std::vector< std::set<fastestUnsignedDataType> > byteOffsetsOfVocDataVec;
+      PositionStringVector::cmp comp;// = PositionStringVector;
+      fastestUnsignedDataType numToken = 1;
+      do
       {
-        bool compare = false;
-        bool endSearchForCompareStringInCurrentVocData = false;
-        VocabularyAndTranslation * p_vocandtransl = NULL;
-        const fastestUnsignedDataType numTokenForStringToSearch =
-          psvStringToSearch.size();
-        fastestUnsignedDataType byteOffsetOfVocable = UINT_MAX;
-        fastestUnsignedDataType byteOffset = m_fileSizeInBytes / 2;
-        int i;
-        char word[100];
-        PositionStringVector psvDictFile;
-        char ch;
-        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+        byteOffsetsOfVocData.clear();
+        findEnglishWord(
+          psvStringToSearch,
+          r_dwTokenIndex,
+          numToken,
+          byteOffsetsOfVocData
+          );
+        if( byteOffsetsOfVocData.size() > 0 )
+          byteOffsetsOfVocDataVec.push_back(byteOffsetsOfVocData);
+        ++ numToken;
+        if( r_dwTokenIndex + numToken > psvStringToSearch.size() )
+          break;
+      }while(byteOffsetsOfVocData.size() > 0 );
 #ifdef _DEBUG
-        fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+      const int vecsz = byteOffsetsOfVocDataVec.size();
+      LOGN_DEBUG("# vectors:" << vecsz)
 #endif
-        fastestUnsignedDataType lo = 0, hi = m_fileSizeInBytes;
-        PositionStringVector::cmp comp;
-        bool streamIsGood = m_englishDictionary.good();
-        while( streamIsGood)
+      /** Use vector containing the most tokens. */
+      std::vector< std::set<fastestUnsignedDataType> >::const_reverse_iterator
+        c_rev_iter = byteOffsetsOfVocDataVec.rbegin();
+      if( c_rev_iter != byteOffsetsOfVocDataVec.rend() )
+      {
+        const std::set<fastestUnsignedDataType> & r_byteOffsetsOfVocData = * c_rev_iter;
+#ifdef _DEBUG
+        const int vecsz = r_byteOffsetsOfVocData.size();
+        LOGN_DEBUG("# offset data for same # token:" << vecsz)
+#endif
+        std::set<fastestUnsignedDataType>::const_iterator c_iter =
+          r_byteOffsetsOfVocData.begin();
+        fastestUnsignedDataType byteOffsetOfVocable;
+        while(c_iter != r_byteOffsetsOfVocData.end() )
         {
-          i = m_englishDictionary.get();
-  //        BytePosAndNextChar * p_BytePosAndNextChar;
-          fastestUnsignedDataType charIndex = 0;
-          bool newLine = false;
-          bool englishGermanSeperatorCharOccurred = false;
-          fastestUnsignedDataType tokenIndex = 0;
-          streamIsGood = m_englishDictionary.good();
-          while(//i != std::ios_base::eof
-              streamIsGood )
-          {
-            ch = i;
-            if(ch == 0xA /*'\n'*/ )
-            {
-              byteOffsetOfVocable = m_englishDictionary.tellg();
-              LOGN_DEBUG("offset of voc data begin:" << byteOffsetOfVocable)
-              endSearchForCompareStringInCurrentVocData = false;
-              break;
-            }
-            i = m_englishDictionary.get();
-            streamIsGood = m_englishDictionary.good();
-          }
-#ifdef _DEBUG
-          currOffset = m_englishDictionary.tellg();
-#endif
-          i = m_englishDictionary.get();
-          streamIsGood = m_englishDictionary.good();
-          bool breakWhile = false;
-          while( streamIsGood /*&& ! breakWhile*/ )
-          {
-            if( ::isalpha(i) )
-            {
-              word[charIndex ++] = i;
-            }
-            else
-              switch( i )
-              {
-                case ' ' :
-                {
-                  word[charIndex] = '\0';
-    #ifdef _DEBUG
-                  currOffset = m_englishDictionary.tellg();
-    #endif
-                  LOGN_DEBUG("space reached--word is: \"" << word << "\"")
-                  charIndex = 0;
-                  VTrans::string_type str(word);
-                  PositionString pos_str(str, tokenIndex, tokenIndex);
-                  psvDictFile.push_back(pos_str);
-                  ++ tokenIndex;
-                  endSearchForCompareStringInCurrentVocData =
-                    CompareVectors(
-                      comp,
-                      psvStringToSearch,
-                      hi, lo,
-                      endSearchForCompareStringInCurrentVocData,
-                      numTokenForStringToSearch,
-                      psvDictFile,
-                      r_dwTokenIndex,
-                      byteOffset,
-                      breakWhile);
-                }
-                break;
+          byteOffsetOfVocable = * c_iter;
+          p_voc_container = extractVocable(
+            byteOffsetOfVocable,
+            //p_voc_container,
+            p_vocandtransl);
+          ++ c_iter;
+        }
+        //++ c_rev_iter;
+      }
+//      if()
+      return /*NULL*/ p_voc_container;
+    }
 
-                case ENGLISH_GERMAN_SEPERATOR_CHAR :
-                  endSearchForCompareStringInCurrentVocData = true;
-                  compare = true;
-                  break;
-                case SAME_VOCABLE_SEPERATOR_CHAR :
-                  compare = true;
-                  break;
-                case SYNONYM_SEPERATOR_CHAR :
-                  word[charIndex] = '\0';
-                  charIndex = 0;
-                  VTrans::string_type str(word);
-                  PositionString pos_str(str, tokenIndex, tokenIndex);
-                  psvDictFile.push_back(pos_str);
-                  ++ tokenIndex;
-                  compare = true;
-//                  breakWhile = true;
-//                  break;
-//                  psvDictFile.clear();
-//                  breakWhile = true;
-                  break;
+    inline void HandleEndOfToken(
+      char word [],
+      fastestUnsignedDataType & charIndex,
+      PositionStringVector & psvDictFile,
+      fastestUnsignedDataType & tokenIndex
+      )
+    {
+      word[charIndex] = '\0';
+      LOGN_DEBUG("word:" << word)
+      charIndex = 0;
+      VTrans::string_type str(word);
+      PositionString pos_str(str, tokenIndex, tokenIndex);
+      psvDictFile.push_back(pos_str);
+    }
+
+    void HandleEndOfWord(
+      char word [],
+      fastestUnsignedDataType & charIndex,
+      PositionStringVector & psvDictFile,
+      fastestUnsignedDataType & tokenIndex,
+      bool & compareVectors
+      )
+    {
+//      word[charIndex] = '\0';
+//      charIndex = 0;
+//      VTrans::string_type str(word);
+//      PositionString pos_str(str, tokenIndex, tokenIndex);
+//      psvDictFile.push_back(pos_str);
+//      ++ tokenIndex;
+      LOGN_DEBUG("begin")
+      HandleEndOfToken(word, charIndex, psvDictFile, tokenIndex);
+      compareVectors = true;
+    }
+
+    void BinarySearchInDictFile::AddAllOffsetsOfMatchingWords(
+      const fastestUnsignedDataType c_closestBeforeNonMatchOffset,
+      const PositionStringVector & psvStringToSearch,
+//      const PositionStringVector & psvDictFile,
+      DWORD & r_dwTokenIndex,
+      const fastestUnsignedDataType numToken,
+      std::set<fastestUnsignedDataType> & byteOffsetsOfVocData
+      )
+    {
+//      p_voc_container = extractVocable(byteOffsetOfVocable, p_vocandtransl);
+      m_englishDictionary.seekg(c_closestBeforeNonMatchOffset, std::ios_base::beg);
+#ifdef _DEBUG
+      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+#endif
+      fastestUnsignedDataType closestBeforeNonMatchOffset;
+      fastestUnsignedDataType byteOffsetOfVocable;
+      bool endSearchForCompareStringInCurrentVocData;
+      PositionStringVector::cmp comp = PositionStringVector::lower;
+//      fastestUnsignedDataType closestBeforeNonMatchOffset;
+      do
+      {
+        byteOffsetOfVocable = GetByteOffsetOfVocDataBegin(
+          endSearchForCompareStringInCurrentVocData);
+        if( byteOffsetOfVocable != UINT_MAX )
+        {
+          m_englishDictionary.seekg(byteOffsetOfVocable, std::ios_base::beg);
+
+          comp = ContainsEnglishWord(
+            psvStringToSearch,
+            r_dwTokenIndex,
+            numToken,
+//            byteOffsetsOfVocData,
+            /*(fastestUnsignedDataType) */ closestBeforeNonMatchOffset);
+          if( comp == PositionStringVector::match )
+          {
+            byteOffsetsOfVocData.insert(byteOffsetOfVocable);
+          }
+        }
+      }while(comp == PositionStringVector::match || comp == PositionStringVector::greater );
+    }
+
+    fastestUnsignedDataType BinarySearchInDictFile::GetByteOffsetOfVocDataBegin(
+        bool & endSearchForCompareStringInCurrentVocData)
+    {
+      fastestUnsignedDataType byteOffsetOfVocable = UINT_MAX;
+      int i = m_englishDictionary.get();
+      char ch;
+      bool streamIsGood = m_englishDictionary.good();
+      while(//i != std::ios_base::eof
+          streamIsGood )
+      {
+        ch = i;
+        if(ch == 0xA /*'\n'*/ )
+        {
+          byteOffsetOfVocable = m_englishDictionary.tellg();
+          LOGN_DEBUG("offset of voc data begin:" << byteOffsetOfVocable)
+          endSearchForCompareStringInCurrentVocData = false;
+          break;
+        }
+        i = m_englishDictionary.get();
+        streamIsGood = m_englishDictionary.good();
+      }
+      return byteOffsetOfVocable;
+    }
+
+    /** @brief called to determine whether a specfic word exists in the
+     *  dictionary file. */
+    PositionStringVector::cmp BinarySearchInDictFile::ContainsEnglishWord(
+      const PositionStringVector & psvStringToSearch,
+      DWORD & r_dwTokenIndex,
+      const fastestUnsignedDataType numTokenForStringToSearch,
+//      std::set<fastestUnsignedDataType> & byteOffsetsOfVocData,
+      fastestUnsignedDataType & closestBeforeNonMatchOffset
+      )
+    {
+  #ifdef _DEBUG
+      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+  #endif
+      bool streamIsGood;
+      PositionStringVector psvDictFile;
+      bool breakWhile = false;
+      char word[100];
+      fastestUnsignedDataType charIndex = 0;
+      bool endSearchForCompareStringInCurrentVocData = false;
+      fastestUnsignedDataType tokenIndex = 0;
+      bool compareVectors = false;
+      PositionStringVector::cmp comp;
+
+      int i = m_englishDictionary.get();
+      streamIsGood = m_englishDictionary.good();
+      while( streamIsGood /*&& ! breakWhile*/ )
+      {
+        if( ::isalpha(i) )
+        {
+          word[charIndex ++] = i;
+        }
+        else
+          switch( i )
+          {
+            case ' ' :
+            {
+  #ifdef _DEBUG
+              currOffset = m_englishDictionary.tellg();
+  #endif
+              LOGN_DEBUG("space reached--word is: \"" << word << "\"")
+              HandleEndOfToken(word, charIndex, psvDictFile, tokenIndex);
+              ++ tokenIndex;
+  //                  endSearchForCompareStringInCurrentVocData =
+  //                    CompareVectors(
+  //                      comp,
+  //                      psvStringToSearch,
+  //                      hi, lo,
+  //                      endSearchForCompareStringInCurrentVocData,
+  //                      numTokenForStringToSearch,
+  //                      psvDictFile,
+  //                      r_dwTokenIndex,
+  //                      byteOffset,
+  //                      breakWhile);
+            }
+            break;
+
+            case ENGLISH_GERMAN_SEPERATOR_CHAR :
+              endSearchForCompareStringInCurrentVocData = true;
+  //                  compareVectors = true;
+              HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
+              break;
+            case SAME_VOCABLE_SEPERATOR_CHAR :
+  //                  compareVectors = true;
+              HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
+              break;
+            case SYNONYM_SEPERATOR_CHAR :
+              HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex,
+                  compareVectors);
+  //                  breakWhile = true;
+  //                  break;
+  //                  psvDictFile.clear();
+  //                  breakWhile = true;
+              break;
   //              else
   //                byteOffset
   //              word[charIndex ++] = ch;
-              } //switch
-              if(compare)
-              {
-                LOGN_DEBUG("compare==true")
-                endSearchForCompareStringInCurrentVocData =
-                  CompareVectors(
-                    comp,
-                    psvStringToSearch,
-                    hi, lo,
-                    endSearchForCompareStringInCurrentVocData,
-                    numTokenForStringToSearch,
-                    psvDictFile,
-                    r_dwTokenIndex,
-                    byteOffset,
-                    breakWhile);
-//                comp = psvStringToSearch.Compare(/*word*/ psvDictFile, r_dwTokenIndex);
-                if( comp == PositionStringVector::match)
-                {
-                  p_voc_container = extractVocable(byteOffsetOfVocable, p_vocandtransl);
-                  breakWhile = true;
-                }
-                psvDictFile.clear();
-                compare = false;
-              }
-//            } //while()
-            if( breakWhile || endSearchForCompareStringInCurrentVocData)
-              break;
-            i = m_englishDictionary.get();
-            streamIsGood = m_englishDictionary.good();
-          } //while loop for current voc data
+          } //switch
+          if(compareVectors)
+          {
+            LOGN_DEBUG("compare string vectors==true")
+            endSearchForCompareStringInCurrentVocData =
+//              CompareVectors(
+//                comp,
+//                psvStringToSearch,
+//                hi, lo,
+//                endSearchForCompareStringInCurrentVocData,
+//  //                    numTokenForStringToSearch,
+//                numToken,
+//                psvDictFile,
+//                r_dwTokenIndex,
+//                byteOffset,
+//                closestBeforeNonMatchOffset,
+//                breakWhile);
+              comp = psvStringToSearch.Compare(psvDictFile, r_dwTokenIndex,
+                numTokenForStringToSearch);
+              LOGN_DEBUG("return value of comparison: " << PositionStringVector:://GetResultAsString(comp)
+                s_comparisonResultString[comp] )
+  //                comp = psvStringToSearch.Compare(/*word*/ psvDictFile, r_dwTokenIndex);
+            if( comp == PositionStringVector::match)
+            { /** Word is found. Now add all words with the same name. */
+  //                  p_voc_container = extractVocable(byteOffsetOfVocable, p_vocandtransl);
+//              AddAllOffsetOfMatchingWords(
+//                closestBeforeNonMatchOffset,
+//                psvStringToSearch,
+//                psvDictFile,
+//                r_dwTokenIndex,
+//                numToken,
+//                byteOffsetsOfVocData
+//                );
+  //                  byteOffsetsOfVocData.insert(byteOffsetOfVocable);
+              breakWhile = true;
+            }
+            psvDictFile.clear();
+            compareVectors = false;
+          }
+  //            } //while()
+        if( breakWhile || endSearchForCompareStringInCurrentVocData)
+          break;
+        i = m_englishDictionary.get();
+        streamIsGood = m_englishDictionary.good();
+//        psvDictFile.clear();
+//        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+      } //while loop for current voc data
+      return comp;
+    }
+
+    /** @brief indirectly called when */
+    void BinarySearchInDictFile::findEnglishWord(
+      const PositionStringVector & psvStringToSearch,
+      DWORD & r_dwTokenIndex,
+      const fastestUnsignedDataType numToken,
+      std::set<fastestUnsignedDataType> & byteOffsetsOfVocData
+      )
+    {
+      LOGN_DEBUG("# token: " << numToken)
+//      IVocabularyInMainMem::voc_container_type * p_voc_container = NULL;
+      if( psvStringToSearch.size() > 0 )
+      {
+        PositionStringVector psvDictFile;
+//        VocabularyAndTranslation * p_vocandtransl = NULL;
+        const fastestUnsignedDataType numTokenForStringToSearch =
+          psvStringToSearch.size();
+
+        fastestUnsignedDataType byteOffsetOfVocable = UINT_MAX;
+        fastestUnsignedDataType closestBeforeNonMatchOffset = UINT_MAX;
+//        int i;
+//        char ch;
+#ifdef _DEBUG
+        fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+#endif
+        bool breakWhile = false;
+        bool endSearchForCompareStringInCurrentVocData = false;
+
+        fastestUnsignedDataType byteOffset = m_fileSizeInBytes / 2;
+        fastestUnsignedDataType lo = 0, hi = m_fileSizeInBytes;
+        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+        bool streamIsGood = m_englishDictionary.good();
+        while( streamIsGood)
+        {
+  //        BytePosAndNextChar * p_BytePosAndNextChar;
+          bool newLine = false;
+          bool englishGermanSeperatorCharOccurred = false;
+
+          byteOffsetOfVocable = GetByteOffsetOfVocDataBegin(
+            endSearchForCompareStringInCurrentVocData);
+
+          fastestUnsignedDataType closestBeforeNonMatchOffset;
+          PositionStringVector::cmp comp = ContainsEnglishWord(
+            psvStringToSearch,
+//            psvDictFile,
+            r_dwTokenIndex,
+            numToken,
+//                byteOffsetsOfVocData,
+            closestBeforeNonMatchOffset
+            );
+          if( comp == PositionStringVector::match )
+          {
+            AddAllOffsetsOfMatchingWords(
+              closestBeforeNonMatchOffset,
+              psvStringToSearch,
+//              psvDictFile,
+              r_dwTokenIndex,
+              numToken,
+              byteOffsetsOfVocData
+              );
+//            return;
+            breakWhile = true;
+          }
+          else
+          {
+            CompareVectors(
+              comp,
+              psvStringToSearch,
+              hi, lo,
+              endSearchForCompareStringInCurrentVocData,
+//                    numTokenForStringToSearch,
+              numToken,
+              psvDictFile,
+              r_dwTokenIndex,
+              byteOffset,
+              closestBeforeNonMatchOffset,
+              breakWhile);
+            m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+          }
           if( breakWhile )
             break;
-          psvDictFile.clear();
-          m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+//          psvDictFile.clear();
+//          m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
         }//while(1);
       }
 
@@ -711,7 +1099,7 @@ namespace DictionaryReader
 ////        }
 //      }
       LOGN_DEBUG("return")
-      return p_voc_container;
+//      return p_voc_container;
     }
 
     //TODO idea: because words are sorted lexicographically:

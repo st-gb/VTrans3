@@ -1,0 +1,2 @@
+e.g. call "bash"
+inside bash execute the scripts

@@ -86,6 +86,7 @@ public:
   ~TranslationControllerBase();
 
   virtual void CreateAndShowMainWindow() {};
+  std::string GetCurrentWorkingDir();
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
   BYTE Init(const std::string & cr_stdstrFilePath) ;

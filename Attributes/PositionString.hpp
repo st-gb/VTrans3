@@ -35,7 +35,8 @@
   {
   public:
 //    PositionStringVector(const VTrans::string_type & str);
-    enum cmp { fullMatchOf2nd, match, lower, greater };
+    enum cmp { fullMatchOf2nd, match, lower, greater, tooFewTokens, prefixMatch };
+    static const char * const s_comparisonResultString [];
     /** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */
     friend std::ostream & operator << (std::ostream& os, const PositionStringVector &);
     enum cmp Compare(const char * const p_ch) const
@@ -79,7 +80,9 @@
       return match;
     }
     enum cmp Compare(const PositionStringVector & psvCompare,
-      const unsigned indexOf1stToken) const;
+      const unsigned indexOf1stToken,
+      //TODO make parameter const?!
+      unsigned numTokens) const;
   };
 
 

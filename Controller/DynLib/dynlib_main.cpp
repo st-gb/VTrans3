@@ -82,8 +82,8 @@ EXPORT BYTE
 //      stdstdstrsize_typeLastBackSlash > wIndexOfLastSlashOrBackSlash)
 //    wIndexOfLastSlashOrBackSlash = stdstdstrsize_typeLastBackSlash;
 
-  g_p_translationcontrollerbase->SetCurrentDirToConfigFilesRootPath(
-    stdstrConfigFilesRootPath);
+//  g_p_translationcontrollerbase->SetCurrentDirToConfigFilesRootPath(
+//    stdstrConfigFilesRootPath);
 
   BYTE byReturn = //g_translationcontrollerbase.Init(//"VTrans_main_config.xml"
     g_p_translationcontrollerbase->Init(

@@ -59,14 +59,15 @@
     const std::string & stdstrSuperordinate
     )
   {
-    BYTE by = mr_parsebyrise.InsertGrammarRule(
+    enum ParseByRise::InsertGrammarRuleReturnCodes insertGrammarRuleReturnCode
+      = mr_parsebyrise.InsertGrammarRule(
       stdstrLeftChild.c_str() //const char * cp_chLeftGrammarRuleName
       , stdstrRightChild.c_str() //const char * cp_chRightGrammarRuleName
       , //std::string
       stdstrSuperordinate.c_str() //const char * cp_chSuperordinateGrammarRuleName
       ) ;
     std::wstring std_wstrMessage;
-    if( by != ParseByRise::AllGrammarPartsAreKnown )
+    if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
     {
       std_wstrMessage = L"In document \n\"" +
         Xerces::ConvertXercesStringToStdWstring(m_pc_locator->
@@ -80,26 +81,10 @@
             getColumnNumber() ) ) +
         L" : grammar rule \"" + GetStdWstring(stdstrSuperordinate)
         + L"\" was not added because: ";
-    }
-    switch(by)
-    {
-    case ParseByRise::unknownLeftGrammarPart:
+      std::string insertGrammarRuleErrMsg = mr_parsebyrise.GetErrorMessage(
+        insertGrammarRuleReturnCode);
       mr_parsebyrise.m_p_userinterface->Message( std_wstrMessage +
-        L"unknown left child grammar part \"" +
-        GetStdWstring(stdstrLeftChild) + L"\"" );
-      break;
-    case ParseByRise::unknownRightGrammarPart:
-      mr_parsebyrise.m_p_userinterface->Message( std_wstrMessage +
-        L"unknown right child grammar part \""
-        + GetStdWstring(stdstrRightChild) + L"\"" );
-      break;
-    case ParseByRise::unknownLeftAndRightGrammarPart:
-      mr_parsebyrise.m_p_userinterface->Message( std_wstrMessage +
-        L"unknown left \""
-        + GetStdWstring(stdstrLeftChild)
-        + L"\" and right \"" + GetStdWstring(stdstrRightChild)
-        + L"\" child grammar part");
-      break;
+        GetStdWstring(insertGrammarRuleErrMsg) );
     }
   }
 
@@ -166,11 +151,13 @@
           }
           else
           {
-            BYTE by = mr_parsebyrise.InsertSuperClassGrammarRule(
-              stdstrLeftChild.c_str() , //cp_chSubclassGrammarRuleName
-              stdstrSuperordinate.c_str() //cp_chSuperclassGrammarRuleName
+            enum ParseByRise::InsertGrammarRuleReturnCodes
+              insertGrammarRuleReturnCode = mr_parsebyrise.
+              InsertSuperClassGrammarRule(
+                stdstrLeftChild.c_str() , //cp_chSubclassGrammarRuleName
+                stdstrSuperordinate.c_str() //cp_chSuperclassGrammarRuleName
               ) ;
-            if( by != ParseByRise::AllGrammarPartsAreKnown )
+            if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
             {
               std::wstring std_wstrMessage = L"In document \n\"" +
                 Xerces::ConvertXercesStringToStdWstring(m_pc_locator->
@@ -187,6 +174,8 @@
               + L"\"was not added because: unknown grammar part \n"
                 + GetStdWstring(stdstrLeftChild) + L"\""
                 ;
+              //TODO should use mr_parsebyrise.GetErrorMessage(
+              //  insertGrammarRuleReturnCode);??
               mr_parsebyrise.m_p_userinterface->Message(std_wstrMessage);
             }
           }

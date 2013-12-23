@@ -169,6 +169,31 @@ void ParseByRise::DeleteFromOutMostTokenIndexContainer(
   }
 }
 
+std::string ParseByRise::GetErrorMessage(
+  const enum ParseByRise::InsertGrammarRuleReturnCodes insertGrammarRuleReturnCode
+  //,stdstrLeftChild
+  )
+{
+  switch(insertGrammarRuleReturnCode)
+  {
+  case ParseByRise::unknownLeftGrammarPart:
+    return "unknown left child grammar part"; // \""
+      /*GetStdWstring(stdstrLeftChild ) + L"\"";*/
+//    break;
+  case ParseByRise::unknownRightGrammarPart:
+    return "unknown right child grammar part";// \""
+      /* + GetStdWstring(stdstrRightChild ) + L"\"";*/
+//    break;
+  case ParseByRise::unknownLeftAndRightGrammarPart:
+      return "unknown left "// \""
+//      + GetStdWstring(stdstrLeftChild)
+        "and right " //\"" + GetStdWstring(stdstrRightChild)
+      /*+ L"\*/" child grammar part";
+    break;
+  }
+  return "";
+}
+
 //Return the grammar part where all of its (sub-)children cover the widest
 //range of tokens. This is senseful because it is wanted to translate a
 //the largest contigious block of tokens.
@@ -755,14 +780,14 @@ void ParseByRise::InsertGrammarRule(
   }
 }
 
-BYTE ParseByRise::InsertGrammarRule(
+enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertGrammarRule(
   const char * cp_chLeftGrammarRuleName
   , const char * cp_chRightGrammarRuleName
   , //std::string
   const char * cp_chSuperordinateGrammarRuleName
   )
 {
-  BYTE byReturnValue = AllGrammarPartsAreKnown;
+  enum ParseByRise::InsertGrammarRuleReturnCodes byReturnValue = AllGrammarPartsAreKnown;
   std::map<std::string,WORD>::const_iterator c_iterLeft =
     m_stdmap_RuleName2RuleID.find(
     cp_chLeftGrammarRuleName ) ;
@@ -957,13 +982,13 @@ WORD ParseByRise::InsertSuperClassGrammarRule(
 }
 
 //WORD
-BYTE ParseByRise::InsertSuperClassGrammarRule(
+enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertSuperClassGrammarRule(
   const char * cp_chSubclassGrammarRuleName
   , //std::string
   const char * cp_chSuperclassGrammarRuleName
   )
 {
-  BYTE byReturnValue = AllGrammarPartsAreKnown;
+  enum ParseByRise::InsertGrammarRuleReturnCodes returnValue = AllGrammarPartsAreKnown;
   //This condition prevented inserting a super class rule for grammar part
   // whose name was already in the map.
   std::map<std::string,WORD>::const_iterator iter =
@@ -993,10 +1018,10 @@ BYTE ParseByRise::InsertSuperClassGrammarRule(
   else
   {
     LOGN("InsertSuperClassGrammarRule rule already in map")
-    byReturnValue = unknownLeftGrammarPart;
+    returnValue = unknownLeftGrammarPart;
   }
 //  return m_wNumberOfSuperordinateRules - 1 ;
-  return byReturnValue;
+  return returnValue;
 }
 
 void ParseByRise::InsertGrammarRule(

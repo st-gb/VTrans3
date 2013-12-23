@@ -12,7 +12,7 @@
   //#include <IO/TinyXMLconfigReader.hpp>
 //  typedef TinyXML::TinyXMLconfigReader ConfigurationHandler_type;
   #include <IO/MiniXMLconfigReader.hpp>
-  typedef MiniXML::MiniXMLconfigReader ConfigurationHandler_type;
+  typedef VTrans3::MiniXML::MiniXMLconfigReader ConfigurationHandler_type;
 //#else
 //  typedef Apache::Xerces::SAX2configReader ConfigurationHandler_type;
 //#endif

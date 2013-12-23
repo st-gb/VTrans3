@@ -72,9 +72,12 @@ namespace VTrans3
         VocabularyAndTranslation *& p_vocabularyandtranslation
         )
       {
+        LOGN_DEBUG("begin " << wordBegin << " " << word_class << " "
+            << p_vocabularyandtranslation)
         VocablesForWord::voc_container_type * p_voc_container = NULL;
         if( word_class > EnglishWord::pronoun ) //Last non-dictionary word class.
         {
+          LOGN_DEBUG("inserting into fundamental words map")
           p_voc_container =
             m_charStringStdMap.InsertAsKeyAndAddVocabularyAttributes(
             wordBegin
@@ -85,6 +88,7 @@ namespace VTrans3
         }
         else
         {
+          LOGN_DEBUG("inserting into temporary map")
           p_voc_container = m_charStringStdMapTemp.
             InsertAsKeyAndAddVocabularyAttributes(
             wordBegin
@@ -93,6 +97,7 @@ namespace VTrans3
             p_vocabularyandtranslation
             );
         }
+        LOGN_DEBUG("return " << p_voc_container)
         return p_voc_container;
       }
     }

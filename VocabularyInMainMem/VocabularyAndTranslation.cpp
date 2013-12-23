@@ -181,6 +181,22 @@ VocabularyAndTranslation::~VocabularyAndTranslation()
   FreeMemory();
 }
 
+std::string VocabularyAndTranslation::GetWordClassAsString() const
+{
+  std::string std_str;
+  GCC_DIAG_OFF(switch)
+  switch(m_englishWordClass)
+  {
+  case EnglishWord::English_definite_article:
+    return "definite_article";
+  case EnglishWord::beyond_last_entry:
+    return "beyond_last_entry";
+//    break;
+  }
+  GCC_DIAG_ON(switch)
+  return "";
+}
+
 fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfBytes()
 {
   ArraySizes arraySizes;
@@ -463,6 +479,30 @@ VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
 //  s_p_translationControllerBase->m_p_dictionaryReader->GetGermanString(
 //    germanWordIndex, this);
   return "";
+}
+
+std::ostream & operator << (std::ostream & os, const VocabularyAndTranslation & obj)
+{
+  os << obj.m_englishWordClass << obj.GetWordClassAsString() << " ";
+  VocabularyAndTranslation::ArraySizes sz;
+  obj.GetNumberOfArrayElements(sz);
+  if( obj.m_arstrGermanWord)
+  {
+    for(fastestUnsignedDataType index = 0; index < sz.m_byArraySizeForGermanWord;
+      ++ index )
+    {
+      os << obj.m_arstrGermanWord[index] << " ";
+    }
+  }
+  if( obj.m_arstrEnglishWord)
+  {
+    for(fastestUnsignedDataType index = 0; index < sz.m_byArraySizeForEnglishWord;
+      ++ index )
+    {
+      os << obj.m_arstrEnglishWord[index] << " ";
+    }
+  }
+  return os;
 }
 
 //BYTE * diff(const char * const word, const fastestUnsignedDataType stringLen)
