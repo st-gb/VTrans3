@@ -44,6 +44,32 @@ public:
     , main_verb_allows_2objects_infinitive
     , preposition
     , pronoun
+    //For parsing (constructing a grammar rule ) "a >>singular<<"
+    //(if the rule was just "a >>noun<<", then
+    // "a cars" would also be possible.
+    , singular
+    , plural_noun
+    //For parsing (constructing a grammar rule ) "the sheep >>3rd_pers_sing_pres"
+    //(if the rule was just "the >>noun<< >>main verb<<", then the
+    //  "person index" -> "finite verb form" match could
+    // be done after the parse tree was created at first.
+    // If using a rule ">>mainVerbAllows0object3rdPersonSingularPresent<<
+    //And so "The cars sits" could not be a parse tree by using the rule
+    //  "the >>singular<< >>3rd_pers_sing_pres<<"
+    // would also be possible parse tree at first.
+    , mainVerbAllows0object3rdPersonSingularPresent
+    , mainVerbAllows1object3rdPersonSingularPresent
+    , mainVerbAllows2objects3rdPersonSingularPresent
+    , main_verb_allows_0object_past_form
+    , main_verb_allows_1object_past_form
+    , main_verb_allows_2objects_past_form
+    , mainVerbPastParticiple0Obj
+    , mainVerbPastParticiple1Obj
+    , mainVerbPastParticiple2Obj
+    , main_verb_allows_0object_progressive_form //e.g. "have been walking"
+    , main_verb_allows_1object_progressive_form //e.g. "am hitting you"
+    , main_verb_allows_2objects_progressive_form //e.g. "was giving you a car"
+    , main_verb_past
     , auxiliary_verb
     //for predicate/ tense
     , be1stPersonSingular
@@ -93,33 +119,6 @@ public:
 
     //for relative_pronoun + 3rdPersSingClauseAllows1Obj = relative_clause
     , relative_pronoun
-    //For parsing (constructing a grammar rule ) "a >>singular<<"
-    //(if the rule was just "a >>noun<<", then
-    // "a cars" would also be possible.
-    , singular
-    , plural_noun
-    //For parsing (constructing a grammar rule ) "the sheep >>3rd_pers_sing_pres"
-    //(if the rule was just "the >>noun<< >>main verb<<", then the
-    //  "person index" -> "finite verb form" match could
-    // be done after the parse tree was created at first.
-    // If using a rule ">>mainVerbAllows0object3rdPersonSingularPresent<<
-    //And so "The cars sits" could not be a parse tree by using the rule
-    //  "the >>singular<< >>3rd_pers_sing_pres<<"
-    // would also be possible parse tree at first.
-    , mainVerbAllows0object3rdPersonSingularPresent
-    , mainVerbAllows1object3rdPersonSingularPresent
-    , mainVerbAllows2objects3rdPersonSingularPresent
-    , main_verb_allows_0object_past_form
-    , main_verb_allows_1object_past_form
-    , main_verb_allows_2objects_past_form
-    , mainVerbPastParticiple0Obj
-    , mainVerbPastParticiple1Obj
-    , mainVerbPastParticiple2Obj
-    , main_verb_allows_0object_progressive_form //e.g. "have been walking"
-    , main_verb_allows_1object_progressive_form //e.g. "am hitting you"
-    , main_verb_allows_2objects_progressive_form //e.g. "was giving you a car"
-    , main_verb_past
-
     , am
     , are
     , is
@@ -129,6 +128,7 @@ public:
   /** Needed for English words to determine the word class resp. for
   * insertion into trie from a derived class of this class. */
   virtual /*BYTE*/ English_word_class GetWordClass() = 0 ;
+  static English_word_class MapGrammarPartIDtoWordClass(English_word_class grammarPartID);
 };
 
 class EnglishAdjective

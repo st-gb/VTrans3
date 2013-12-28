@@ -197,7 +197,9 @@ class TranslationControllerBase;
     void GetNumberOfArrayElements(
       ArraySizes & arrSizes) const
     {
-      if( m_englishWordClass <= EnglishWord::adjective )
+      EnglishWord::English_word_class word_class = EnglishWord::
+        MapGrammarPartIDtoWordClass(m_englishWordClass);
+      if( /*m_englishWordClass*/ word_class <= EnglishWord::adjective )
       {
         arrSizes.m_byArraySizeForByteArray = GetNumberOfArrayElements(
           m_englishWordClass,

@@ -184,7 +184,7 @@ public:
   bool GrammarPartDoesNotAlreadyExist(GrammarPart * p_grammarpart);
   bool GetGrammarPartID( const std::string & r_str , WORD & wID ) ;
 
-  std::string GetGrammarPartName(WORD wRuleID ) ;
+  std::string GetGrammarPartName(WORD wRuleID ) const;
 
   std::string GetPathAs_std_string( const std::vector<WORD> & ) ;
   std::string GetPathAs_std_string(

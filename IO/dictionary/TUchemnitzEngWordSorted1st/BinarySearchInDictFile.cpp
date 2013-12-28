@@ -6,6 +6,7 @@
  */
 
 #include "BinarySearchInDictFile.hpp"
+#include <InputOutput/GetCharInACSIIcodePage850.hpp>
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>//class IVocabularyInMainMem
 /** SAME_VOCABLE_SEPERATOR_CHAR etc. */
 #include <IO/dictionary/TUchemnitz/TUchemnitzDictSeparatorChars.h>
@@ -16,10 +17,10 @@
 
 #define INDEX_OF_LAST_SMALL_LETTER_IN_ASCII 128
 
-NodeTrie<enum DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile::wordKinds>
+NodeTrie<enum TUchemnitzDictionary::wordKinds>
   DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile::s_nodetrieWordKind(
     INDEX_OF_LAST_SMALL_LETTER_IN_ASCII,
-    DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile::not_set);
+    TUchemnitzDictionary::not_set);
 
 namespace DictionaryReader
 {
@@ -46,28 +47,28 @@ namespace DictionaryReader
         //Wortart: adj, adv, vi=verb intrans. vr=verb reflexiv.
         std::string wordKind = "adj";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          adj);
+          TUchemnitzDictionary::adj);
         wordKind = "adv";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          adv);
+          TUchemnitzDictionary::adv);
         wordKind = "m";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          mascNoun);
+          TUchemnitzDictionary::mascNoun);
         wordKind = "f";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          femNoun);
+          TUchemnitzDictionary::femNoun);
         wordKind = "n";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          neutralNoun);
+          TUchemnitzDictionary::neutralNoun);
         wordKind = "pl";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          pluralNoun);
+          TUchemnitzDictionary::pluralNoun);
         wordKind = "vi"; //="Verb Intransitive"
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          intransitiveVerb);
+          TUchemnitzDictionary::intransitiveVerb);
         wordKind = "vt"; //="Verb Transitive"
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          transitiveVerb);
+          TUchemnitzDictionary::transitiveVerb);
       }
     }
 
@@ -126,7 +127,7 @@ namespace DictionaryReader
 //    VocabularyAndTranslation *
     IVocabularyInMainMem::voc_container_type * BinarySearchInDictFile::AddVocable(
       const std::vector<std::string> & englishVocableWords,
-      enum BinarySearchInDictFile::wordKinds wordKind,
+      enum TUchemnitzDictionary::wordKinds wordKind,
 //      enum EnglishWord::English_word_class word_class
 //      IVocabularyInMainMem::voc_container_type & voc_container
       VocabularyAndTranslation *& p_vocabularyandtranslation
@@ -142,17 +143,37 @@ namespace DictionaryReader
       GCC_DIAG_OFF(switch)
       switch(wordKind)
       {
-      case BinarySearchInDictFile::adv:
+//      case TUchemnitzDictionary::reflexiveVerb:
+//        word_class = EnglishWord::ref
+      case TUchemnitzDictionary::intransitiveVerb:
+        /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+        word_class = EnglishWord::main_verb_allows_0object_infinitive;
+        break;
+      case TUchemnitzDictionary::transitiveVerb:
+        /** http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29:
+        * " sowohl Subjekt als auch ein Objekt benötigen, damit ein Satz, der
+        * mit diesem Verb gebildet wird, grammatisch ist." */
+        word_class = EnglishWord::main_verb_allows_1object_infinitive;
+        break;
+      case TUchemnitzDictionary::adv:
         word_class = EnglishWord::adverb;
         break;
-      case BinarySearchInDictFile::femNoun:
-      case BinarySearchInDictFile::mascNoun:
-      case BinarySearchInDictFile::neutralNoun:
+      case TUchemnitzDictionary::femNoun:
+      case TUchemnitzDictionary::mascNoun:
+      case TUchemnitzDictionary::neutralNoun:
         /** Must add as singular, else applying grammar rule fails. */
         word_class = EnglishWord::singular;
+        /** =NULL means: The next time a VocabularyAndTranslation should be
+         *   created. (multiple singular nouns may appear in a row->create
+         *   a VocabularyAndTranslation for each noun. */
+        p_vocabularyandtranslation = NULL;
         break;
-      case BinarySearchInDictFile::pluralNoun:
-        word_class = EnglishWord::noun;
+      case TUchemnitzDictionary::pluralNoun:
+//        word_class = EnglishWord::noun;
+        /** =NULL means: The next time a VocabularyAndTranslation should be
+         *   created.*/
+        p_vocabularyandtranslation = NULL;
+        word_class = EnglishWord::beyond_last_entry;
         break;
       }
       GCC_DIAG_ON(switch)
@@ -170,18 +191,19 @@ namespace DictionaryReader
           , (int &) stringLen
           , word_class,
           p_vocabularyandtranslation);
+        LOGN_DEBUG("p_vocabularyandtranslation:" << p_vocabularyandtranslation)
         if( p_vocabularyandtranslation)
         {
           GCC_DIAG_OFF(switch)
           switch(wordKind)
           {
-          case BinarySearchInDictFile::mascNoun :
+          case TUchemnitzDictionary::mascNoun :
             p_vocabularyandtranslation->SetAttributeValue(0, GermanNoun::der);
             break;
-          case BinarySearchInDictFile::femNoun :
+          case TUchemnitzDictionary::femNoun :
             p_vocabularyandtranslation->SetAttributeValue(0, GermanNoun::die);
             break;
-          case BinarySearchInDictFile::neutralNoun :
+          case TUchemnitzDictionary::neutralNoun :
             p_vocabularyandtranslation->SetAttributeValue(0, GermanNoun::das);
             break;
           }
@@ -189,7 +211,7 @@ namespace DictionaryReader
         }
 //        p_vocandtransl->SetGermanWord();
       }
-      LOGN_DEBUG("return " << p_voc_container)
+      LOGN_DEBUG("return p_voc_container:" << p_voc_container)
       return /*p_vocabularyandtranslation*/ p_voc_container;
     }
 
@@ -206,7 +228,7 @@ namespace DictionaryReader
       fastestUnsignedDataType & synonymIndex//,
       )
     {
-      LOGN_DEBUG("begin")
+      LOGN_DEBUG("begin--add English word?:" << (english ? "yes" : "no") )
       if( word[0] != '\0' )
       {
 //        word[charIndex] = '\0';
@@ -221,7 +243,9 @@ namespace DictionaryReader
   //          std::vector<std::string> vec;
   //          vec.push_back(word);
   //          englishVocables.push_back(vec);
-            englishVocableWords.push_back(word);
+              /**crashed when using "push_back(word)" when calling vector dtor.*/
+//            englishVocableWords.push_back(word);
+            englishVocableWords.push_back(std::string(word) );
           }
           else
           {
@@ -242,20 +266,25 @@ namespace DictionaryReader
   #endif
           if( semicolCountInsideCurrentPipeCharRange < germanVocables.size() )
           {
+            LOGN_DEBUG("using German vocable at index "
+              << semicolCountInsideCurrentPipeCharRange )
             std::vector<std::string> & vec = germanVocables[
-                                  semicolCountInsideCurrentPipeCharRange];
-            vec.push_back(word);
+              semicolCountInsideCurrentPipeCharRange];
+            vec.push_back(std::string(word) );
           }
           else
           {
+            LOGN_DEBUG("appending German vocable at index "
+              << germanVocables.size() )
             std::vector<std::string> vec;
-            vec.push_back(word);
+            vec.push_back(std::string(word) );
             germanVocables.push_back( vec);
           }
   //        germanVocableWords.push_back(word);
         }
         word[0] = '\0';
       }
+//      LOGN_DEBUG("end")
     }
 
     void BinarySearchInDictFile::HandleSynonymSeparatorChar(
@@ -278,71 +307,72 @@ namespace DictionaryReader
 //      wordStart = charIndex + 2;
     }
 
-    enum BinarySearchInDictFile::wordKinds BinarySearchInDictFile::HandleClosingBrace(//int i,
+    enum TUchemnitzDictionary::wordKinds
+      BinarySearchInDictFile::HandleClosingBrace(//int i,
       const fastestUnsignedDataType charIndex,
       fastestUnsignedDataType & kindOfWordStart,
       char wordKind[5]
-                                )
+      )
     {
       LOGN_DEBUG("begin")
-      enum BinarySearchInDictFile::wordKinds e_wordKind =
-        BinarySearchInDictFile::not_set;
-        {
-          //        std::string kindOfWord = strCurrentWordData.substr(kindOfWordStart,
-          //          charIndex - kindOfWordStart);
-          //            int i = s_p_i_userinterface->m_dictionaryFileLineNumber;
+      enum TUchemnitzDictionary::wordKinds e_wordKind =
+        TUchemnitzDictionary::not_set;
+      {
+        //        std::string kindOfWord = strCurrentWordData.substr(kindOfWordStart,
+        //          charIndex - kindOfWordStart);
+        //            int i = s_p_i_userinterface->m_dictionaryFileLineNumber;
 //          int i = 55;
-          //        NodeTrieNode<TUchemnitzDictionaryReader::extractVocable> * p_ntn =
-          //          s_nodetrieWordKind.contains(
-          //          (BYTE *) (array + kindOfWordStart), charIndex - kindOfWordStart,
-          //          true);
-          //#else
-          const int numWordKindChars = charIndex - kindOfWordStart
+        //        NodeTrieNode<TUchemnitzDictionaryReader::extractVocable> * p_ntn =
+        //          s_nodetrieWordKind.contains(
+        //          (BYTE *) (array + kindOfWordStart), charIndex - kindOfWordStart,
+        //          true);
+        //#else
+        const int numWordKindChars = charIndex - kindOfWordStart
 //              //NULL terminating char
 //              + 1
+            ;
+        //            char * wordKind = new char[numWordKindChars];
+        wordKind[numWordKindChars /*- 1*/ ] = '\0';
+        NodeTrieNode<
+            enum TUchemnitzDictionary::wordKinds>* p_ntn =
+            s_nodetrieWordKind.contains_inline((BYTE*) ((wordKind)),
+                numWordKindChars /*- 1*/, true);
+        //            delete [] wordKind;
+        kindOfWordStart = 0;
+        //#endif
+        if (p_ntn)
+          {
+            bool bExtractVocables = false;
+            //          ( * (extractVocable) p_ntn->m_member )(array, numChars
+            //              /*strCurrentWordData*/, charIndex, pipeCount);
+            //              if( p_ntn->m_member == & TUchemnitzDictionaryReader::InsertIntransitiveVerb )
+            //              {
+            //                //Else: "tries to add other data like finite verbs for
+            //                //"[...]; anlaufen (Vorgang) {vi}" although there is no such data.
+            //                if( semicolCountInsideCurrentPipeCharRange == 0 && pipeCount == 0 )
+            //                  bExtractVocables = true;
+            //              }
+            //              else
+            //                bExtractVocables = true;
+            if (bExtractVocables)            //            return
+              //                ExtractVocables(
+              //                  array + wordStart,
+              //                  numChars
+              //                  /*strCurrentWordData*/, charIndex,
+              //                  pipeCount,
+              //                  semicolCountInsideCurrentPipeCharRange,
+              //                  p_ntn->m_member,
+              //                  * this);
+              //                AddVocable(p_ntn->m_member);
               ;
-          //            char * wordKind = new char[numWordKindChars];
-          wordKind[numWordKindChars /*- 1*/ ] = '\0';
-          NodeTrieNode<
-              enum DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile::wordKinds>* p_ntn =
-              s_nodetrieWordKind.contains_inline((BYTE*) ((wordKind)),
-                  numWordKindChars /*- 1*/, true);
-          //            delete [] wordKind;
-          kindOfWordStart = 0;
-          //#endif
-          if (p_ntn)
-            {
-              bool bExtractVocables = false;
-              //          ( * (extractVocable) p_ntn->m_member )(array, numChars
-              //              /*strCurrentWordData*/, charIndex, pipeCount);
-              //              if( p_ntn->m_member == & TUchemnitzDictionaryReader::InsertIntransitiveVerb )
-              //              {
-              //                //Else: "tries to add other data like finite verbs for
-              //                //"[...]; anlaufen (Vorgang) {vi}" although there is no such data.
-              //                if( semicolCountInsideCurrentPipeCharRange == 0 && pipeCount == 0 )
-              //                  bExtractVocables = true;
-              //              }
-              //              else
-              //                bExtractVocables = true;
-              if (bExtractVocables)            //            return
-                //                ExtractVocables(
-                //                  array + wordStart,
-                //                  numChars
-                //                  /*strCurrentWordData*/, charIndex,
-                //                  pipeCount,
-                //                  semicolCountInsideCurrentPipeCharRange,
-                //                  p_ntn->m_member,
-                //                  * this);
-                //                AddVocable(p_ntn->m_member);
-                ;
 
-              //          InsertAdjective(array);
+            //          InsertAdjective(array);
 //              return p_ntn->m_member;
-              e_wordKind = p_ntn->m_member;
-            }
-        }
+            e_wordKind = p_ntn->m_member;
+          }
+      }
 //      return i;
-      LOGN_DEBUG("return " << e_wordKind)
+      LOGN_DEBUG("return " << e_wordKind << wordKind )
       return /*BinarySearchInDictFile::not_set*/ e_wordKind;
     }
 
@@ -350,41 +380,49 @@ namespace DictionaryReader
         std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
         std::vector< std::vector <std::string> > & germanVocables)
     {
-      LOGN_DEBUG("begin")
+      LOGN_DEBUG("begin--# vocs created:" << voc_containerVocsCreated.size()
+          << "# german vocs:" << germanVocables.size() )
 #ifdef _DEBUG
       const int numVocsCreated = voc_containerVocsCreated.size();
       const int numGermanVocables = germanVocables.size();
 #endif
-      std::map<unsigned, VocabularyAndTranslation *>::const_iterator c_iter =
-        voc_containerVocsCreated.begin();
+      std::map<unsigned, VocabularyAndTranslation *>::const_iterator
+        c_iterPipeIndex2VocAndTranslPtr = voc_containerVocsCreated.begin();
       std::vector< std::vector <std::string> >::const_iterator c_iterGerman =
         germanVocables.begin();
       std::vector<std::string>::const_iterator c_iterGermanWord;
-      while( c_iterGerman != germanVocables.end() && c_iter !=
+      while( c_iterGerman != germanVocables.end() && c_iterPipeIndex2VocAndTranslPtr !=
           voc_containerVocsCreated.end() )
       {
         const std::vector<std::string> & r_ = ( * c_iterGerman);
         c_iterGermanWord = r_.begin();
-        VocabularyAndTranslation * p_ = c_iter->second;
-        const int index = c_iter->first;
-        if( p_ && p_->m_englishWordClass <= EnglishWord::adjective )
+        VocabularyAndTranslation * p_vocAndTransl = c_iterPipeIndex2VocAndTranslPtr->second;
+        const int index = c_iterPipeIndex2VocAndTranslPtr->first;
+
+        EnglishWord::English_word_class engWordClass = EnglishWord::
+            MapGrammarPartIDtoWordClass(p_vocAndTransl->m_englishWordClass);
+        if( p_vocAndTransl && /*p_vocAndTransl->m_englishWordClass*/ engWordClass <= EnglishWord::adjective )
         {
           const VocabularyAndTranslation::ArraySizes & arraySizes =
-            VocabularyAndTranslation::s_arraysizes[p_->m_englishWordClass];
+            VocabularyAndTranslation::s_arraysizes[engWordClass];
           fastestUnsignedDataType germanWordIndex = 0;
           while(c_iterGermanWord != r_.end() )
           {
             if( germanWordIndex < arraySizes.m_byArraySizeForGermanWord )
             {
               const std::string & germanWord = * c_iterGermanWord;
-              LOGN_DEBUG("setting German word " << germanWord << " for index " << germanWordIndex)
-              p_->SetGermanWord(germanWord.c_str(), germanWord.length(), germanWordIndex);
+              LOGN_DEBUG("setting German word \"" << germanWord
+                << "\" for index " << germanWordIndex
+                << " for pipe index " << index
+                << " ,vocl&transl ptr " << p_vocAndTransl)
+              p_vocAndTransl->SetGermanWord(germanWord.c_str(),
+                  germanWord.length(), germanWordIndex);
               ++ germanWordIndex;
             }
             ++ c_iterGermanWord;
           }
         }
-        ++ c_iter;
+        ++ c_iterPipeIndex2VocAndTranslPtr;
         ++ c_iterGerman;
       }
       LOGN_DEBUG("end")
@@ -400,6 +438,20 @@ namespace DictionaryReader
 //      const fastestUnsignedDataType offset = offsetOfVocBegin + charIndex;
       LOGN_DEBUG( "offset:" << offset << " char:\'"
         << (char) i << "\' word: \"" << word << "\"")
+    }
+
+    inline void SetWordCharacter(char word[100],
+        const fastestUnsignedDataType charIndexInsideWord,
+        const char ch)
+    {
+      if(charIndexInsideWord < 100)
+        word[charIndexInsideWord] = ch;
+#ifdef _DEBUG
+      else
+      {
+        int i = ch;
+      }
+#endif
     }
 
     /** e.g. "schoolbook; textbook; educational book | schoolbooks; textbooks; educational books :: Lehrbuch {n} | Lehrbücher {pl} "
@@ -433,44 +485,61 @@ namespace DictionaryReader
       bool streamIsGood = m_englishDictionary.good();
       bool breakWhile = false;
       char word[100];
-      char prevChar = 0;
+      int prevChar = 0;
       std::vector<std::string> englishVocableWords;
       std::vector<std::vector<std::string> > englishVocables;
       fastestUnsignedDataType synonymIndex = 0;
       bool english = true;
       fastestUnsignedDataType kindOfWordStart = 0;
       fastestUnsignedDataType charIndex = 0, charIndexInsideWord = 0;
-      char wordKind[5];
+      char wordKind[/*5*/ 100];
       bool insideBracket = false;
+      char ASCIIcodePage850Char;
+      char ch;
       while( streamIsGood /*&& ! breakWhile*/ )
       {
         if( ( ::isalpha(i) || i == ' ' ) )
         {
           if(kindOfWordStart)
-            wordKind[/*charIndex - kindOfWordStart*/ charIndexInsideWord] = i;
-          else if( ! insideBracket )
+            SetWordCharacter(wordKind,/*charIndex - kindOfWordStart*/
+              charIndexInsideWord, i);
+          else if( ! insideBracket && charIndexInsideWord < 100)
           {
 //            if( i == ' ')
 //
 //            else
 //              wordHasStarted = true;
-              word[/*charIndex*/ charIndexInsideWord] = i;
+            if(prevChar > 127 )
+            {
+              ASCIIcodePage850Char = GetCharInASCIIcodePage850(i);
+              if( ASCIIcodePage850Char != 0 )
+                SetWordCharacter(word,/*charIndex*/ charIndexInsideWord,
+                  ASCIIcodePage850Char);
+              else
+                SetWordCharacter(word,/*charIndex*/ charIndexInsideWord, i);
+            }
+            else
+            {
+              ch = i;
+              SetWordCharacter(word,/*charIndex*/ charIndexInsideWord, ch);
+            }
           }
           ++ charIndexInsideWord;
+//          prevChar = i;
         }
         else
         {
           switch(i)
           {
           case SAME_VOCABLE_SEPERATOR_CHAR: // "car ride; drive"
-            word[charIndexInsideWord] = '\0';
+            SetWordCharacter(word, charIndexInsideWord, '\0');
             output(offset + charIndex, i, word);
             charIndexInsideWord = 0;
             break;
           case SYNONYM_SEPERATOR_CHAR: //"car thief |"
           case ENGLISH_GERMAN_SEPERATOR_CHAR: //" carwash ::"
 //            endWord = true;
-            word[charIndexInsideWord] = '\0';
+            SetWordCharacter(word,charIndexInsideWord,'\0');
             output(offset + charIndex, i, word);
             charIndexInsideWord = 0;
             break;
@@ -478,7 +547,7 @@ namespace DictionaryReader
           case '(':
           case '[':
             insideBracket = true;
-            word[charIndexInsideWord] = '\0';
+            SetWordCharacter(word,charIndexInsideWord,'\0');
             output(offset + charIndex, i, word);
             charIndexInsideWord = 0;
             break;
@@ -509,6 +578,7 @@ namespace DictionaryReader
               semicolCountInsideCurrentPipeCharRange,
               synonymIndex
               );
+            semicolCountInsideCurrentPipeCharRange = 0;
             ++ pipeCount; //next word
 //            semicolCountInsideCurrentPipeCharRange = 0;
             synonymIndex = 0;
@@ -590,7 +660,12 @@ namespace DictionaryReader
             break;
           case '}':
           {
-            enum BinarySearchInDictFile::wordKinds e_wordKind =
+            /** e.g. to not trying to get word kind of "{work,wrought; worked, wrought}"
+             *   from line "work{work,wrought; worked, wrought}|"
+               to use word "work" before '{' */
+            if( ! english )
+            {
+            enum TUchemnitzDictionary::wordKinds e_wordKind =
               HandleClosingBrace(charIndex, kindOfWordStart, wordKind);
 #ifdef _DEBUG
             const int sz = voc_containerVocsCreated.size();
@@ -605,7 +680,7 @@ namespace DictionaryReader
               std::map<unsigned, VocabularyAndTranslation *>::iterator
                 c_iter = voc_containerVocsCreated.find(semicolCountInsideCurrentPipeCharRange);
               const bool isNotInMap = c_iter == voc_containerVocsCreated.end();
-              LOGN_DEBUG(semicolCountInsideCurrentPipeCharRange
+              LOGN_DEBUG("pipe count" << semicolCountInsideCurrentPipeCharRange
                 << " is not in map:" << isNotInMap)
               if( isNotInMap )
               {
@@ -614,10 +689,16 @@ namespace DictionaryReader
                   e_wordKind,
   //                p_voc_container,
                   p_vocabularyandtranslation);
-  //              bool b;
-                std::pair<std::map<unsigned, VocabularyAndTranslation *>::iterator, bool> p =
-                    voc_containerVocsCreated.insert(std::make_pair(
-                  semicolCountInsideCurrentPipeCharRange, p_vocabularyandtranslation) );
+                /** Prevent from adding a NULL pointer. */
+                if( p_vocabularyandtranslation)
+                {
+                  LOGN_DEBUG("adding " << semicolCountInsideCurrentPipeCharRange
+                      << "->" << p_vocabularyandtranslation << " to the container")
+    //              bool b;
+                  std::pair<std::map<unsigned, VocabularyAndTranslation *>::iterator, bool> p =
+                      voc_containerVocsCreated.insert(std::make_pair(
+                    semicolCountInsideCurrentPipeCharRange, p_vocabularyandtranslation) );
+                }
   //              if(p.second )
   //              {
   //                c_iter = p.first;
@@ -625,7 +706,9 @@ namespace DictionaryReader
   //              }
               }
               break;
-//            }
+            }
+//            else
+              kindOfWordStart = 0;
           }
           break;
 //          default :
@@ -642,6 +725,7 @@ namespace DictionaryReader
 #endif
       } //while
       AddGermanAttributes(voc_containerVocsCreated, germanVocables);
+      englishVocables.clear();
       IVocabularyInMainMem::OutputVocs(p_voc_container);
       LOGN_DEBUG("return " << p_voc_container)
       return p_voc_container;
@@ -936,6 +1020,9 @@ namespace DictionaryReader
               HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
               break;
             case SAME_VOCABLE_SEPERATOR_CHAR :
+              /** e.g. for "work{work,wrought; worked, wrought}|"
+               to use word "work" before '{' */
+            case '{' :
   //                  compareVectors = true;
               HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
               break;

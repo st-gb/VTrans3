@@ -7,6 +7,34 @@
 #include "EnglishWord.hpp"
 #include "Word.hpp" //IsVowel(...), IsConsonant(...)
 
+EnglishWord::English_word_class EnglishWord::MapGrammarPartIDtoWordClass(
+  English_word_class grammarPartID)
+{
+  English_word_class engWordClass = beyond_last_entry;
+  /** Map grammar part IDs/ classes to word classes. */
+  switch(grammarPartID)
+  {
+//  case EnglishWord::noun:
+//  case EnglishWord::adverb:
+////    m_pword = new EnglishNoun() ;
+//    break;
+  case EnglishWord::singular:
+    engWordClass = EnglishWord::noun;
+    break;
+  case EnglishWord::adjective_positiveForm:
+    engWordClass = EnglishWord::adjective;
+    break;
+  case EnglishWord::main_verb_allows_0object_infinitive:
+  case EnglishWord::main_verb_allows_1object_infinitive:
+  case EnglishWord::main_verb_allows_2objects_infinitive:
+    engWordClass = EnglishWord::main_verb;
+    break;
+  default:
+    engWordClass = grammarPartID;
+  }
+  return engWordClass;
+}
+
 EnglishAuxiliaryVerb::EnglishAuxiliaryVerb(
   //const CString & str,
   const VTrans::string_type & str,

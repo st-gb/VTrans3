@@ -86,6 +86,8 @@ public:
   ~TranslationControllerBase();
 
   virtual void CreateAndShowMainWindow() {};
+  template <typename XMLelementType> bool GetAttributeValue(
+      XMLelementType & xmlElement, const char * const, std::string &);
   std::string GetCurrentWorkingDir();
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};

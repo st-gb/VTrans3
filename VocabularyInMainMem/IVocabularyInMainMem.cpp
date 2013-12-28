@@ -176,7 +176,7 @@ void IVocabularyInMainMem::OutputVocs(const voc_container_type & voc_container)
 
 void IVocabularyInMainMem::OutputVocs(const voc_container_type * p_voc_container)
 {
-  LOGN_DEBUG("begin--" << p_voc_container)
+  LOGN_DEBUG("begin--pointer to voc container :" << p_voc_container)
   if(p_voc_container)
     OutputVocs(* p_voc_container);
 //  LOGN_DEBUG("end")

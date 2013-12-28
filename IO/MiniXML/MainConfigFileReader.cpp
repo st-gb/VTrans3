@@ -62,6 +62,19 @@ namespace MiniXML
       }
     }
 
+    void HandleReadTranslationRuleFileXMLelement( mxml_node_t * node )
+    {
+      const char * const strGrammarRuleFilePath =
+        mxmlElementGetAttr(node, "path");
+      if( strGrammarRuleFilePath != NULL )
+      {
+        LOGN_DEBUG("translation rule file path:" << strGrammarRuleFilePath)
+//            strVocabularyFilePath
+        MainConfigFileReader::s_p_translationController->ReadTranslationRuleFile(
+          strGrammarRuleFilePath);
+      }
+    }
+
     void HandleReadVocabularyAttributeDefinitionFileXMLelement(
         mxml_node_t * node )
     {
@@ -137,7 +150,7 @@ namespace MiniXML
 //         }
          else if( ::strcmp(xmlElementName, "translation_rule_file") == 0 )
          {
-//           HandleReadTranslationRuleFileXMLelement( cr_xercesc_attributes ) ;
+           HandleReadTranslationRuleFileXMLelement( node) ;
              int i = 0;
          }
          else if( ::strcmp(xmlElementName, "vocabulary_attribute_definition_file") == 0 )

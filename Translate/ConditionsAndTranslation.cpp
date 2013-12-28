@@ -229,11 +229,12 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
       //if( p_grammarpartLeaf )
       {
 //        DEBUG_COUTN
+        const std::string & grammarPartName = sp_parsebyrise->GetGrammarPartName(
+            p_grammarpartLeaf->m_wGrammarPartID);
         LOGN_DEBUG( //"GetTranslationEquivalent()"
           //FULL_FUNC_NAME << "--"
-          "grammar part leaf found: \"" <<
-          sp_parsebyrise->GetGrammarPartName(
-          p_grammarpartLeaf->m_wGrammarPartID) << "\"")
+          "grammar part leaf found: \"" << grammarPartName
+           << "\"")
       }
       std::map<std::string,AttributeTypeAndPosAndSize>::const_iterator
         c_iter_stdstrSttrName2atapas =

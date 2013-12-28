@@ -17,6 +17,8 @@
 #include <Attributes/EnglishWord.hpp> //enum EnglishWord::English_word_class
 //IVocabularyInMainMem::voc_container_type
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>
+/** for enum TUchemnitzDictionary::wordKinds */
+#include <IO/dictionary/TUchemnitz/TUchemnitzDictionary.hpp>
 
 /** Forward decl. */
 //class IVocabularyInMainMem;
@@ -36,8 +38,6 @@ namespace DictionaryReader
     class BinarySearchInDictFile
       : public DictionaryReader::DictionaryReaderBase
     {
-      enum wordKinds { not_set, adj, adv, mascNoun, femNoun, neutralNoun,
-        pluralNoun, intransitiveVerb, transitiveVerb };
 //      typedef void (TUchemnitzDictionaryReader::*insertVocable
 //          )(//char *
 //    //    const std::string &
@@ -58,7 +58,7 @@ namespace DictionaryReader
 //      VocabularyAndTranslation *
       IVocabularyInMainMem::voc_container_type * AddVocable(
         const std::vector<std::string> & englishVocableWords,
-        enum BinarySearchInDictFile::wordKinds wordKind,
+        enum TUchemnitzDictionary::wordKinds wordKind,
 //        enum EnglishWord::English_word_class word_class
         VocabularyAndTranslation *& p_vocabularyandtranslation
         );
@@ -80,7 +80,7 @@ namespace DictionaryReader
         fastestUnsignedDataType & synonymIndex//,
 //        unsigned wordStart
         );
-      enum BinarySearchInDictFile::wordKinds HandleClosingBrace(
+      enum TUchemnitzDictionary::wordKinds HandleClosingBrace(
         const fastestUnsignedDataType charIndex,
         fastestUnsignedDataType & kindOfWordStart,
         char wordKind[5]);
@@ -100,7 +100,7 @@ namespace DictionaryReader
 
       /** static-> no need to (implicitly) pass an object pointer */
     //  static void read();
-      static NodeTrie<enum wordKinds> s_nodetrieWordKind;
+      static NodeTrie<enum TUchemnitzDictionary::wordKinds> s_nodetrieWordKind;
       std::ifstream m_englishDictionary;
       IVocabularyInMainMem * m_p_vocabularyAccess;
     public:

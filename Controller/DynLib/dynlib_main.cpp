@@ -52,7 +52,7 @@ EXPORT BYTE
   std::string stdstrLogFilePath = //"VTrans_log.txt" ;
       "VTransDynlib_log.";
   stdstrLogFilePath += logFormat;
-  bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 1000,
+  bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 4000,
     LogLevel::debug) ;
   //g_logger.
   if( ! bFileIsOpen )

@@ -160,6 +160,9 @@ void TranslateParseByRiseTree::AddTranslationRule(
   //  subject.def_article_noun.noun.German_gender]"
   )
 {
+  LOGN_DEBUG("begin")
+//  if(p_translationrule )
+//    LOGN_DEBUG("")
 #ifdef _DEBUG
     std::pair<std::map<TranslationRule*,ConditionsAndTranslation>::iterator,bool>
       _pair =
@@ -1198,7 +1201,7 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 {
   bool bAtLeast1TranslationRuleApplies = false;
   LOGN_DEBUG("begin")
-  LOGN_DEBUG("number of translation rules:" <<
+  LOGN_DEBUG("# of translation rule->condition and translation entries:" <<
     m_stdmap_translationrule2ConditionsAndTranslation.size() << "\n")
 #ifdef _DEBUG
   std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(

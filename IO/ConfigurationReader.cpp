@@ -10,15 +10,17 @@
 namespace VTrans3
 {
 
-  ConfigurationReader::ConfigurationReader()
-  {
-    // TODO Auto-generated constructor stub
-
-  }
-
-  ConfigurationReader::~ConfigurationReader()
-  {
-    // TODO Auto-generated destructor stub
-  }
+//  template <typename attributeType>
+//    ConfigurationReader<attributeType>::ConfigurationReader(TranslationControllerBase * p)
+//  {
+//    m_translationController = * p;
+////    s_p_translationController = & r_translationController;
+//  }
+//
+//  template <typename attributeType> ConfigurationReader<attributeType>::
+//    ~ConfigurationReader<attributeType>()
+//  {
+//    // TODO Auto-generated destructor stub
+//  }
 
 } /* namespace VTrans3 */

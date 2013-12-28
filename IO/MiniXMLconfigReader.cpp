@@ -10,6 +10,7 @@
 #include <Controller/character_string/ConvertStdStringToTypename.hpp>
 #include <IO/MiniXML/MainConfigFileReader.hpp>
 #include <IO/MiniXML/GrammarRuleFileReader.hpp>
+#include <IO/MiniXML/TranslationRuleFileReader.hpp>
 #include <IO/MiniXML/VocAttributeDefintionHandler.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 
@@ -20,7 +21,8 @@ namespace MiniXML
 
   MiniXMLconfigReader::MiniXMLconfigReader(
       TranslationControllerBase & r_translationController)
-    : m_translationController(r_translationController)
+    : VTrans3::ConfigurationReader<mxml_node_t *>( & r_translationController)
+//      m_translationController(r_translationController)
   {
     s_p_translationController = & r_translationController;
   }
@@ -45,6 +47,28 @@ namespace MiniXML
 //       }
 //    }
 //  }
+
+//  template <typename XMLelementType> /*virtual*/ bool MiniXMLconfigReader::GetAttributeValue(
+//    XMLelementType & xmlElement,
+//    std::string & std_strAttributeValue,
+//    const char * const attributeName) /*= 0*/
+//  {
+//    const char * const attributeValue = mxmlElementGetAttr(xmlElement, attributeName);
+//    if( attributeValue)
+//      std_strAttributeValue = attributeValue;
+//    return attributeValue;
+//  }
+
+  bool MiniXMLconfigReader::GetAttributeValue(
+    mxml_node_t * & xmlElement,
+    std::string & std_strAttributeValue,
+    const char * const attributeName) /*= 0*/
+  {
+    const char * const attributeValue = mxmlElementGetAttr(xmlElement, attributeName);
+    if( attributeValue)
+      std_strAttributeValue = attributeValue;
+    return attributeValue;
+  }
 
   bool MiniXMLconfigReader::ReadFile(const //std::string & cr_stdstrFilePath
     char * const cr_stdstrFilePath,
@@ -115,7 +139,13 @@ namespace MiniXML
   }
   void MiniXMLconfigReader::ReadTranslationRuleFile(const std::string & cr_stdstrFilePath)
   {
-
+    TranslationRuleFileReader translationRuleFileReader(
+        s_p_translationController->m_translateparsebyrisetree
+        , s_p_translationController->m_parsebyrise
+        , * s_p_translationController
+        , * this
+        );
+    ReadFile(cr_stdstrFilePath.c_str(), VTrans3::MiniXML::ReadTranslationRuleFile::sax_cb);
   }
 } /* namespace MiniXML */
 }

@@ -23,7 +23,12 @@ namespace ParseTreeTraverser
           p_grammarpart
           )
         );
+#ifdef _DEBUG
+      const std::string & stdstrTranslation = p_grammarpart->m_stdstrTranslation;
+      m_std_strWholeTranslation += stdstrTranslation + " ";
+#else
       m_std_strWholeTranslation += p_grammarpart->m_stdstrTranslation + " ";
+#endif
     }
   }
 }

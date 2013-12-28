@@ -66,8 +66,12 @@ namespace ParseTreeTraverser
   {
     GrammarPart * p_grammarpart = m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart;
+    const std::string & stdstrTranslation = p_grammarpart->m_stdstrTranslation;
+  #ifdef _DEBUG
+    const char * strTranslation = stdstrTranslation.c_str();
+  #endif
     m_std_strXML += "<word"
-      " translation=\"" + p_grammarpart->m_stdstrTranslation + "\""
+      " translation=\"" + stdstrTranslation + "\""
       + " concatenation_ID=\"" + ::convertToStdString(p_grammarpart->
         m_ui32ConcatenationID) + "\""
       "/>";

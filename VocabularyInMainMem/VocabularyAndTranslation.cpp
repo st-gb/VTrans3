@@ -58,66 +58,51 @@ TranslationControllerBase * VocabularyAndTranslation::s_p_translationControllerB
 //}
 
 fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
-  /*const*/ EnglishWord::English_word_class engWordClass,
+  /*const*/ EnglishWord::English_word_class grammarPartID,
   fastestUnsignedDataType & numEngWords,
   fastestUnsignedDataType & numGerWords
   )
 {
-  //Map grammar part IDs/ classes to word classes.
-  switch(engWordClass)
-  {
-  case //ENGLISH_NOUN:
-    EnglishWord::noun:
-  case EnglishWord::adverb:
-//    m_pword = new EnglishNoun() ;
-    break;
-  case EnglishWord::singular:
-    engWordClass = EnglishWord::noun;
-    break;
-  case EnglishWord::adjective_positiveForm:
-    engWordClass = EnglishWord::adjective;
-    break;
-  case EnglishWord::auxiliary_verb:
-    numEngWords = NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB;
-    numGerWords = NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB ;
-    return 2 ;
-    break;
-  case EnglishWord::main_verb_allows_0object_infinitive:
-  case EnglishWord::main_verb_allows_1object_infinitive:
-  case EnglishWord::main_verb_allows_2objects_infinitive:
-    engWordClass = EnglishWord::main_verb;
-    break;
-  case WORD_TYPE_CONJUNCTION:
-    numEngWords = 1;
-    numGerWords = 1 ;
-    return 1 ;
-    break;
-  //case LetterTree::personal_pronoun :
-  case EnglishWord::personal_pronoun :
-    numEngWords = 1 ;
-    numGerWords = 1 ;
-    return 1 ;
-    break;
-  case EnglishWord::personal_pronoun_objective_form :
-    numEngWords = 1 ;
-    numGerWords = 1 ;
-    return 1 ;
-    break;
-    //Only the singular (for parsing "indefinite article" + "singular"
-    // ( if the rule was "indefinite article" + "noun",
-    //  "indefinite article" + "plural" which is wrong would also be possible)
-    // singular type is only needed for parsing. It shares the same attr as
-    // the noun.
-  default:
-    //For vocabulary types that just refer another vocandtransl object's
-    // attributes and for types that do not need (e.g. "definite article")
-    //these attributes etc.
-//    m_pword = new Word() ;
-    numEngWords = 0 ;
-    numGerWords = 0 ;
-    return 0;
-  }
+  EnglishWord::English_word_class engWordClass = EnglishWord::
+    MapGrammarPartIDtoWordClass(grammarPartID);
 
+  switch(grammarPartID)
+  {
+    case EnglishWord::auxiliary_verb:
+      numEngWords = NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB;
+      numGerWords = NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB ;
+      return 2 ;
+      break;
+    case WORD_TYPE_CONJUNCTION:
+      numEngWords = 1;
+      numGerWords = 1 ;
+      return 1 ;
+      break;
+    //case LetterTree::personal_pronoun :
+    case EnglishWord::personal_pronoun :
+      numEngWords = 1 ;
+      numGerWords = 1 ;
+      return 1 ;
+      break;
+    case EnglishWord::personal_pronoun_objective_form :
+      numEngWords = 1 ;
+      numGerWords = 1 ;
+      return 1 ;
+      break;
+      //Only the singular (for parsing "indefinite article" + "singular"
+      // ( if the rule was "indefinite article" + "noun",
+      //  "indefinite article" + "plural" which is wrong would also be possible)
+      // singular type is only needed for parsing. It shares the same attr as
+      // the noun.
+    default:
+      //For vocabulary types that just refer another vocandtransl object's
+      // attributes and for types that do not need (e.g. "definite article")
+      //these attributes etc.
+  //    m_pword = new Word() ;
+      numEngWords = 0 ;
+      numGerWords = 0 ;
+//      return 0;
+  }
   if( engWordClass <= EnglishWord:://auxiliary_verb
 //      adverb
       adjective
@@ -135,6 +120,7 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
 VocabularyAndTranslation::VocabularyAndTranslation(/*BYTE*/
   EnglishWord::English_word_class byVocabularyType)
 {
+  LOGN_DEBUG("begin--pointer to this object:" << this)
   m_englishWordClass = byVocabularyType ;
   BYTE byArraySizeForEng = 0 ;
 
@@ -150,16 +136,22 @@ VocabularyAndTranslation::VocabularyAndTranslation(/*BYTE*/
     m_arstrEnglishWord = new word_type[numEngWords];
     memset(m_arstrEnglishWord, 0, sizeof(word_type) * numEngWords);
   }
+  else
+    m_arstrEnglishWord = NULL;
   if( numGerWords)
   {
     m_arstrGermanWord = new word_type[numGerWords];
     memset(m_arstrGermanWord, 0, sizeof(word_type) * numGerWords);
   }
+  else
+    m_arstrGermanWord = NULL;
   if( numByteArrEles)
   {
     m_arbyAttribute = new BYTE[numByteArrEles];
     memset(m_arbyAttribute,0,numByteArrEles) ;
   }
+  else
+    m_arbyAttribute = NULL;
 #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   m_arpletternodeLastEngChar = new LetterNode * [byArraySizeForEng];
 #endif// #ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
@@ -483,7 +475,10 @@ VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
 
 std::ostream & operator << (std::ostream & os, const VocabularyAndTranslation & obj)
 {
-  os << obj.m_englishWordClass << obj.GetWordClassAsString() << " ";
+  EnglishWord::English_word_class word_class = EnglishWord::
+    MapGrammarPartIDtoWordClass(obj.m_englishWordClass);
+  os << "grammar part ID:" << obj.m_englishWordClass << "-> word class:"
+    << word_class << " " << obj.GetWordClassAsString() << " Ger:";
   VocabularyAndTranslation::ArraySizes sz;
   obj.GetNumberOfArrayElements(sz);
   if( obj.m_arstrGermanWord)
@@ -491,15 +486,16 @@ std::ostream & operator << (std::ostream & os, const VocabularyAndTranslation & 
     for(fastestUnsignedDataType index = 0; index < sz.m_byArraySizeForGermanWord;
       ++ index )
     {
-      os << obj.m_arstrGermanWord[index] << " ";
+      os << "(" << index << ";" << obj.m_arstrGermanWord[index] << "|";
     }
   }
+  os << " Eng:";
   if( obj.m_arstrEnglishWord)
   {
     for(fastestUnsignedDataType index = 0; index < sz.m_byArraySizeForEnglishWord;
       ++ index )
     {
-      os << obj.m_arstrEnglishWord[index] << " ";
+      os << "(" << index << ";" << obj.m_arstrEnglishWord[index] << "|";
     }
   }
   return os;

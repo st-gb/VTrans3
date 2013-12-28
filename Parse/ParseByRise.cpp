@@ -388,9 +388,9 @@ bool ParseByRise::GetGrammarPartID(
   return bSuccess ;
 }
 
-std::string ParseByRise::GetGrammarPartName(WORD wRuleID )
+std::string ParseByRise::GetGrammarPartName(WORD wRuleID ) const
 {
-  std::string stdstrRuleName ;
+//  std::string stdstrRuleName ;
   std::map<WORD,std::string>::const_iterator iter =
     m_stdmap_wRuleID2RuleName.find( wRuleID ) ;
   if( iter != m_stdmap_wRuleID2RuleName.end() )
