@@ -9,8 +9,9 @@
 #define	_VTRANSAPP_HPP
 
 #ifdef _WIN32
-  //undefine "#define Yield()" in "winbase.h" for virtual bool wxAppConsole::Yield(bool )
-  //#include <wx/msw/winundef.h>
+  /** Undefine "#define Yield()" in "winbase.h" for virtual bool
+   *   wxAppConsole::Yield(bool )  */
+  #include <wx/msw/winundef.h>
 #endif
 #include <wx/app.h>//base class wxApp
 #include <wx/icon.h> //class wxIcon
@@ -19,7 +20,7 @@
 #include <Controller/TranslationControllerBase.hpp>
 //#include <UserInterface/I_UserInterface.hpp>//base class I_UserInterface
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
-#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
+//#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include <string> //class std::string
 #include <Controller/multithread/nativeCriticalSectionType.hpp>
 
@@ -60,8 +61,6 @@ namespace wxWidgets
   //  static LetterTree s_lettertree ;
 //    wxTextInputDlg * m_p_wx_text_input_dialog ;
     /*wxWidgets::MainWindowBase*/ wxWidgets::MainFrame * m_p_mainWindow;
-    std::map<TranslationRule *, std::string>
-      m_std_map_p_translationrule2filepath;
     /** For buffering before calling new thread */
     std::string m_std_strLastSelectedDictFilePath;
   //  std::string m_stdstrVocabularyFilePath ;
@@ -78,11 +77,12 @@ namespace wxWidgets
     void LoadingVocabularyFileFailed(const std::string & cr_stdstrFilePath);
     void Message( const std::string & cr_stdstr/*, unsigned threadID*/ ) ;
     void Message( const std::wstring & cr_stdwstr ) ;
-    void ProcessSelectedXMLfiles(
-      XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
-      const wxString & r_wxstrTitle,
-      const wxString & c_r_wxInitialDirForFileSelecion
-      );
+    //TODO make usable for class ConfigReaderBase
+//    void ProcessSelectedXMLfiles(
+//      XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
+//      const wxString & r_wxstrTitle,
+//      const wxString & c_r_wxInitialDirForFileSelecion
+//      );
     void ShowInvalidVocabularyFileFormatMessage(
       const VTrans::string_type & strWordFile,
       DWORD dwOffsetOfBeginOfEntry,

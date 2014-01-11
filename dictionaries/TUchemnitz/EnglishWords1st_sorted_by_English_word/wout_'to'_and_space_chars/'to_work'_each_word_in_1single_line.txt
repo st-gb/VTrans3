@@ -1,0 +1,15 @@
+work{work,wrought; worked, wrought}::arbeiten{vi}
+working::arbeitend{vi_presProgr}
+worked::gearbeitet{vi_past}
+works::arbeitet{vi_3singPres}
+worked::arbeitete{vi_3singPast}
+worked::gearbeitet{vi_3pp}
+work on sth.; be working on sth.::an etw. arbeiten
+work hard::schwer arbeiten
+work for a company::für eine Firma arbeiten
+work with a firm::bei einer Firma arbeiten
+work in the kitchen::in der Küche arbeiten
+work as teacher::als Lehrer arbeiten
+work with one's hands::mit seinen Händen arbeiten
+work oneself death::sich zu Tode arbeiten
+work rule::gemäß den Vorschriften arbeiten.

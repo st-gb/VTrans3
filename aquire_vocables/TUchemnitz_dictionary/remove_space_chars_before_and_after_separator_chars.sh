@@ -13,7 +13,7 @@ awk ' BEGIN { ORS = "" } { gsub( "\n", "" ); gsub( /\n$/, "" );
 	
 		if(tokenIndex==1)
 		{
-			if(tokenIndex+1 < NF)
+			if(tokenIndex < NF)
 				printf "%s",$(tokenIndex)
 		}
 		else
@@ -24,12 +24,23 @@ awk ' BEGIN { ORS = "" } { gsub( "\n", "" ); gsub( /\n$/, "" );
 			indexOfOpeningBrace = index($tokenIndex, "{")
 			indexOfOpeningBracket = index($tokenIndex, "(")
 			indexOfOpeningSquareBracket = index($tokenIndex, "[")
-			if ( $tokenIndex == "|" || $tokenIndex == "::" || indexOfOpeningBracket > 0 || indexOfOpeningSquareBracket > 0 || indexOfOpeningBrace > 0 ) {
+			indexOfSculp = index($tokenIndex, "::") #e.g. "::Auto"
+			#print $tokenIndex indexOfSculp
+			if ( $tokenIndex == "|" || indexOfSculp == 1 || indexOfOpeningBracket > 0 || indexOfOpeningSquareBracket > 0 || indexOfOpeningBrace > 0 ) {
 				prevCharIsSpecial=1
 				printf "%s",$(tokenIndex)
 			}
 			else
 			{
+				#if( indexOfSculp > 1) # e.g. "work-filled::arbeitsreich"
+				#{
+				#	printf "%s",$(tokenIndex)					
+				#}
+				#if( $(tokenIndex == " " )
+				#{
+				#	if(
+				#}
+				#else
 				if(prevCharIsSpecial==1)
 				{
 					printf "%s",$(tokenIndex)

@@ -6,6 +6,7 @@
  */
 #include "EnglishWord.hpp"
 #include "Word.hpp" //IsVowel(...), IsConsonant(...)
+#include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF(...)
 
 EnglishWord::English_word_class EnglishWord::MapGrammarPartIDtoWordClass(
   English_word_class grammarPartID)
@@ -19,12 +20,16 @@ EnglishWord::English_word_class EnglishWord::MapGrammarPartIDtoWordClass(
 ////    m_pword = new EnglishNoun() ;
 //    break;
   case EnglishWord::singular:
+  case EnglishWord::plural_noun:
     engWordClass = EnglishWord::noun;
     break;
   case EnglishWord::adjective_positiveForm:
     engWordClass = EnglishWord::adjective;
     break;
   case EnglishWord::main_verb_allows_0object_infinitive:
+  case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent:
+  case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent:
+  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent:
   case EnglishWord::main_verb_allows_1object_infinitive:
   case EnglishWord::main_verb_allows_2objects_infinitive:
     engWordClass = EnglishWord::main_verb;
@@ -33,6 +38,31 @@ EnglishWord::English_word_class EnglishWord::MapGrammarPartIDtoWordClass(
     engWordClass = grammarPartID;
   }
   return engWordClass;
+}
+
+fastestUnsignedDataType EnglishWord::GetGermanWordIndexFromGramarPartID(
+  English_word_class grammarPartID)
+{
+  fastestUnsignedDataType germanWordIndex = 0;
+  GCC_DIAG_OFF(switch)
+  /** Map grammar part IDs/ classes to word classes. */
+  switch(grammarPartID)
+  {
+//  case EnglishWord::noun:
+//  case EnglishWord::adverb:
+////    m_pword = new EnglishNoun() ;
+//    break;
+  case EnglishWord::plural_noun:
+    germanWordIndex = 1;
+    break;
+  case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent:
+  case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent:
+  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent:
+    germanWordIndex = 3;
+    break;
+  }
+  GCC_DIAG_ON(switch)
+  return germanWordIndex;
 }
 
 EnglishAuxiliaryVerb::EnglishAuxiliaryVerb(

@@ -1,0 +1,11 @@
+e.g. call "bash"
+inside bash execute the scripts
+
+e.g. :
+
+T:\SourceCodeManagement\VTrans3\dictionaries\TUchemnitz\EnglishWords1st_sorted_b
+y_English_word\verbs_wout_'to'>cat "de-en_EnglishWords1st_sorted_by_English_word
+_wout_'to'_each_part_in_single_line.txt" | sh "T:\SourceCodeManagement\VTrans3\a
+quire_vocables\TUchemnitz_dictionary\remove_space_chars_before_and_after_separat
+or_chars.sh" > "de-en_EnglishWords1st_sorted_by_English_word_wout_'to'_and_space
+_chars,each_part_in_single_line.txt"

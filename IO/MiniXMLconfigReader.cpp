@@ -79,8 +79,8 @@ namespace MiniXML
     FILE * fp = fopen(cr_stdstrFilePath/*.c_str()*/, "r");
     if( fp == NULL)
     {
-      std::string cwd = m_translationController.GetCurrentWorkingDir();
-      m_translationController.Message("Failed to open file "
+      std::string cwd = s_p_translationController->GetCurrentWorkingDir();
+      s_p_translationController->Message("Failed to open file "
         + cwd + cr_stdstrFilePath);
     }
     else
@@ -145,7 +145,8 @@ namespace MiniXML
         , * s_p_translationController
         , * this
         );
-    ReadFile(cr_stdstrFilePath.c_str(), VTrans3::MiniXML::ReadTranslationRuleFile::sax_cb);
+//    ReadFile(cr_stdstrFilePath.c_str(), VTrans3::MiniXML::ReadTranslationRuleFile::sax_cb);
+    translationRuleFileReader.Process(cr_stdstrFilePath);
   }
 } /* namespace MiniXML */
 }

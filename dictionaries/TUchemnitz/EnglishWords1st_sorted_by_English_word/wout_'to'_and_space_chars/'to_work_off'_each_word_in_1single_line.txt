@@ -1,0 +1,3 @@
+work off::(Gefühle)abreagieren{vt}
+working off::abreagierend{vt_presProgr}
+worked off::abreagiert{vt_past}

@@ -9,7 +9,7 @@
 
  <!--vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" /-->
  <!--vocabulary_file path="dictionaries/de-en.txt" /-->
- <vocabulary_file path="dictionaries/de-en_EnglishWords1st_sorted_by_English_word_wout_'to'_and_space_chars.txt" />
+ <vocabulary_file path="dictionaries/TUchemnitz/en-de,each_part_in_single_line,wout_'to',sorted,wout_' '.txt" />
  
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/Vocabulary_attribute_definitions.xml" />
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/0objVerbFiniteVerbforms_attribute_definitions.xml" />

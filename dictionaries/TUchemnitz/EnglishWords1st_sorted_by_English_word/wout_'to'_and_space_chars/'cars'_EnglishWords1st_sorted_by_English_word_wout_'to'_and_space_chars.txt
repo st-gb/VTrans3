@@ -1,0 +1,2 @@
+car|cars::Fahrkorb{m}|Fahrkörbe{pl}
+car|cars|go by car; travel by car|a car with a capital C|I'm going by car.::Auto{n};Wagen{m};Kraftwagen{m}|Autos{pl};Wagen{pl};Kraftwagen{pl}|mit dem Auto fahren; mit dem Wagen fahren|ein richtiges Auto|Ich fahre mit dem Auto.

@@ -18,13 +18,14 @@
 #define INDEX_OF_LAST_SMALL_LETTER_IN_ASCII 128
 
 NodeTrie<enum TUchemnitzDictionary::wordKinds>
-  DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile::s_nodetrieWordKind(
+  DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile::s_nodetrieWordKind(
     INDEX_OF_LAST_SMALL_LETTER_IN_ASCII,
     TUchemnitzDictionary::not_set);
 
 namespace DictionaryReader
 {
-  namespace TUchemnitzEngWordSorted1st
+  namespace TUchemnitz {
+  namespace EngWordSorted1st
   {
     BinarySearchInDictFile::BinarySearchInDictFile(
         IVocabularyInMainMem & vocaccess)
@@ -76,7 +77,8 @@ namespace DictionaryReader
     bool BinarySearchInDictFile::open(const std::string & std_str )
     {
       LOGN_DEBUG("Opening file " << std_str)
-      m_englishDictionary.open(std_str.c_str() );
+      m_englishDictionary.open(std_str.c_str(),
+        std::ios_base::in | std::ios_base::binary );
       bool dictFileIsOpen = m_englishDictionary.is_open();
       if( dictFileIsOpen )
       {
@@ -498,6 +500,13 @@ namespace DictionaryReader
       char ch;
       while( streamIsGood /*&& ! breakWhile*/ )
       {
+        if(kindOfWordStart)
+          if( ::isdigit(i) || i == '_' )
+          {
+            SetWordCharacter(wordKind,/*charIndex - kindOfWordStart*/
+              charIndexInsideWord, i);
+            ++ charIndexInsideWord;
+          }
         if( ( ::isalpha(i) || i == ' ' ) )
         {
           if(kindOfWordStart)
@@ -731,6 +740,7 @@ namespace DictionaryReader
       return p_voc_container;
     }
 
+    /** @param comp: lower: word to search is before current word in dictionary*/
     bool BinarySearchInDictFile::CompareVectors(
       PositionStringVector::cmp & comp,
       const PositionStringVector& psvStringToSearch,
@@ -902,6 +912,7 @@ namespace DictionaryReader
       std::set<fastestUnsignedDataType> & byteOffsetsOfVocData
       )
     {
+      LOGN_DEBUG("begin")
 //      p_voc_container = extractVocable(byteOffsetOfVocable, p_vocandtransl);
       m_englishDictionary.seekg(c_closestBeforeNonMatchOffset, std::ios_base::beg);
 #ifdef _DEBUG
@@ -918,6 +929,7 @@ namespace DictionaryReader
           endSearchForCompareStringInCurrentVocData);
         if( byteOffsetOfVocable != UINT_MAX )
         {
+          LOGN_DEBUG("seeking to byte offset " << byteOffsetOfVocable)
           m_englishDictionary.seekg(byteOffsetOfVocable, std::ios_base::beg);
 
           comp = ContainsEnglishWord(
@@ -932,6 +944,7 @@ namespace DictionaryReader
           }
         }
       }while(comp == PositionStringVector::match || comp == PositionStringVector::greater );
+      LOGN_DEBUG("end")
     }
 
     fastestUnsignedDataType BinarySearchInDictFile::GetByteOffsetOfVocDataBegin(
@@ -1023,6 +1036,8 @@ namespace DictionaryReader
               /** e.g. for "work{work,wrought; worked, wrought}|"
                to use word "work" before '{' */
             case '{' :
+            case '(' : // e.g. "bank of(gas) cylinders"
+            case ')' : // e.g. "bank of(gas) cylinders"
   //                  compareVectors = true;
               HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
               break;
@@ -1084,6 +1099,7 @@ namespace DictionaryReader
 //        psvDictFile.clear();
 //        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
       } //while loop for current voc data
+      LOGN_DEBUG("return " << comp)
       return comp;
     }
 
@@ -1270,5 +1286,6 @@ namespace DictionaryReader
 //      }
 //      return p_vocandtransl;
 //    };
+  }
   }
 } /* namespace DictionaryReader */

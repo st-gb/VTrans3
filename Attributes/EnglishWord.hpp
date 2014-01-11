@@ -10,6 +10,7 @@
 
 #include "IterableWords.hpp"
 #include "Word.hpp"
+#include <fastest_data_type.h> /** typedef fastestUnsignedDataType */
 
 class EnglishWord:
   public Word,
@@ -128,7 +129,16 @@ public:
   /** Needed for English words to determine the word class resp. for
   * insertion into trie from a derived class of this class. */
   virtual /*BYTE*/ English_word_class GetWordClass() = 0 ;
-  static English_word_class MapGrammarPartIDtoWordClass(English_word_class grammarPartID);
+  /** @brief for boundary checking/ access to arrays: e.g. gets
+   *   -index "1" for "plural_noun"
+   *   -index "0" for "singular_noun" */
+  static fastestUnsignedDataType GetGermanWordIndexFromGramarPartID(
+    English_word_class grammarPartID);
+  /** @brief for allocating memory etc.
+   *  @param grammarPartID: e.g. "intransitive verb infinitive" (should be
+   *    mapped to word class "full verb" )*/
+  static English_word_class MapGrammarPartIDtoWordClass(
+    English_word_class grammarPartID);
 };
 
 class EnglishAdjective

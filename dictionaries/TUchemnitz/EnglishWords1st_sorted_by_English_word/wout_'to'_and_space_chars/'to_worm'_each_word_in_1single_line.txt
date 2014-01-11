@@ -1,0 +1,5 @@
+worm::sich winden{vr}
+worming::sich windend{vr_presProgr}
+wormed::sich gewunden{vr_past}
+worms::windet sich{vr_3singPres}
+wormed::wand sich{vr_3singPast}

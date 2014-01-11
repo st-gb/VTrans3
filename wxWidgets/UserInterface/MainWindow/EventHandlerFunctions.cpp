@@ -97,15 +97,16 @@ END_EVENT_TABLE()
 void EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules( wxCommandEvent & wxcmd )
 {
 //  AddTranslationRules() ;
-  SAX2GrammarRuleHandler sax2grammarrulehandler(
-    wxGetApp().m_parsebyrise
-    ) ;
+//  SAX2GrammarRuleHandler sax2grammarrulehandler(
+//    wxGetApp().m_parsebyrise
+//    ) ;
   wxString wxstrTitle( wxT("Choose at least 1 grammar rule file") ) ;
-  wxGetApp().ProcessSelectedXMLfiles(
-    sax2grammarrulehandler ,
-    wxstrTitle,
-    ::wxGetCwd()
-    );
+  //TODO make usable for class ConfigReaderBase
+//  wxGetApp().ProcessSelectedXMLfiles(
+//    sax2grammarrulehandler ,
+//    wxstrTitle,
+//    ::wxGetCwd()
+//    );
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress( wxCommandEvent & wxcmd )
@@ -123,43 +124,46 @@ void EVENT_HANDLER_CLASS_NAME::OnShowTranslatedWord( wxCommandEvent & wxcmd )
 void EVENT_HANDLER_CLASS_NAME::OnAddTransformationRules( wxCommandEvent & wxcmd )
 {
 //  AddTranslationRules() ;
-  Xerces::SAX2TransformationRuleHandler sax2transformationrulehandler(
-    wxGetApp()
-    ) ;
-  wxGetApp().ProcessSelectedXMLfiles(
-    sax2transformationrulehandler,
-    wxString( wxT("Choose at least 1 transFORMation rule file") ),
-    ::wxGetCwd()
-    ) ;
+//  Xerces::SAX2TransformationRuleHandler sax2transformationrulehandler(
+//    wxGetApp()
+//    ) ;
+  //TODO make usable for class ConfigReaderBase
+//  wxGetApp().ProcessSelectedXMLfiles(
+//    sax2transformationrulehandler,
+//    wxString( wxT("Choose at least 1 transFORMation rule file") ),
+//    ::wxGetCwd()
+//    ) ;
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnAddTranslationRules( wxCommandEvent & wxcmd )
 {
 //  AddTranslationRules() ;
-  SAX2TranslationRuleHandler sax2translationrulehandler(
-    wxGetApp().m_translateparsebyrisetree ,
-    wxGetApp().m_parsebyrise ,
-    wxGetApp()
-    ) ;
-  wxGetApp().ProcessSelectedXMLfiles(
-    sax2translationrulehandler ,
-    wxT("Choose at least 1 translation rule file"),
-    ::wxGetCwd()
-    ) ;
+//  SAX2TranslationRuleHandler sax2translationrulehandler(
+//    wxGetApp().m_translateparsebyrisetree ,
+//    wxGetApp().m_parsebyrise ,
+//    wxGetApp()
+//    ) ;
+  //TODO make usable for class ConfigReaderBase
+//  wxGetApp().ProcessSelectedXMLfiles(
+//    sax2translationrulehandler ,
+//    wxT("Choose at least 1 translation rule file"),
+//    ::wxGetCwd()
+//    ) ;
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnAddVocAttrDefs( wxCommandEvent & wxcmd )
 {
 //  AddTranslationRules() ;
-  Xerces::SAX2VocAttributeDefinitionHandler sax2vocattributedefintionhandler(
-    wxGetApp().m_translateparsebyrisetree ,
-    wxGetApp()
-    ) ;
-  wxGetApp().ProcessSelectedXMLfiles(
-    sax2vocattributedefintionhandler ,
-    wxT("Choose at least 1 vocabulary attribute definitions file"),
-    ::wxGetCwd()
-    );
+  //TODO make usable for class ConfigReaderBase
+//  Xerces::SAX2VocAttributeDefinitionHandler sax2vocattributedefintionhandler(
+//    wxGetApp().m_translateparsebyrisetree ,
+//    wxGetApp()
+//    ) ;
+//  wxGetApp().ProcessSelectedXMLfiles(
+//    sax2vocattributedefintionhandler ,
+//    wxT("Choose at least 1 vocabulary attribute definitions file"),
+//    ::wxGetCwd()
+//    );
 }
 
 DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)
@@ -167,7 +171,7 @@ DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)
 //  wxCondition & wxCond = *(wxCondition *)p_v;
   EVENT_HANDLER_CLASS_NAME & event_handler = *(EVENT_HANDLER_CLASS_NAME *)p_v;
 //  EVENT_HANDLER_CLASS_NAME * p_event_handler = (EVENT_HANDLER_CLASS_NAME *) p_v;
-  ::wxGetApp().s_dictionary.clear();
+  ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.clear();
 //  wxCond.Signal();
   ::wxGetApp().EndTimer();
   LOGN("after clearing the dictionary.")
@@ -194,8 +198,8 @@ void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatus()
 void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
 {
   LOGN("begin before clearing the dictionary")
-  unsigned numberOfVocPairs = ::wxGetApp().s_dictionary.GetNumberOfVocPairs();
-  unsigned numberOfEnglishWords = ::wxGetApp().s_dictionary.GetNumberOfEnglishWords();
+  unsigned numberOfVocPairs = ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfVocPairs();
+  unsigned numberOfEnglishWords = ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfEnglishWords();
   if( numberOfVocPairs /*numberOfEnglishWords*/  > 0 )
   {
     UnloadDictionaryShowingStatus();
@@ -221,7 +225,7 @@ void EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics(wxCommandEvent & wxcmd
 {
   fastestUnsignedDataType numWordClassReps[EnglishWord::beyond_last_entry];
   VTransApp & vt = ::wxGetApp();
-  vt.s_dictionary.GetStatistics(numWordClassReps);
+  vt.s_dictReaderAndVocAccess.m_vocAccess.GetStatistics(numWordClassReps);
 
   wxString wxstr = wxString::Format(
     wxT("# English words:%lu\n"
@@ -246,9 +250,9 @@ void EVENT_HANDLER_CLASS_NAME::OnInfoButton( wxCommandEvent & wxcmd )
       ) ,
 //    OneLinePerWordPair::s_dwNumberOfVocabularyPairs
 //    ::wxGetApp().s_numberOfVocabularyPairs
-    vt.s_dictionary.GetNumberOfEnglishWords()
-    , ::wxGetApp().s_dictionary.GetNumberOfVocPairs()
-    , ::wxGetApp().s_dictionary.GetNumberOfAllocatedBytes()
+    vt.s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfEnglishWords()
+    , ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfVocPairs()
+    , ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfAllocatedBytes()
     , wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.size()
     , wxGetApp().m_translateparsebyrisetree.
       m_stdmap_p_translationrule2ConditionsAndTranslation.size()
@@ -447,7 +451,7 @@ void EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryTimerEvent(wxTimerEvent &event)
 //    GetNumberOfBytesRead();
   SetTitle( wxString::Format( wxT("%u"), //wxGetApp().m_dictionaryFileLineNumber
 //    ::wxGetApp().s_numberOfVocabularyPairs
-    ::wxGetApp().s_dictionary.GetNumberOfVocPairs()
+    ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfVocPairs()
 
      ) );
 //  SetTitle( wxString::Format(wxT("%f"), TUchemnitzDictionaryReader::m_numBytesRead ) );
@@ -463,20 +467,19 @@ void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
     std_strEnglishWord.length() )
     );
   DWORD dw = 0;
-  uint64_t beginTimeCountInNanoSeconds;
-#ifdef WIN32
-  Windows::GetTimeCountInNanoSeconds(beginTimeCountInNanoSeconds);
-#else
+  long double beginTimeCountInNanoSeconds, endTimeCountInNanoSeconds;
+//#ifdef WIN32
+//  Windows_API::GetTimeCountInNanoSeconds(beginTimeCountInNanoSeconds);
+//#else
   OperatingSystem::GetTimeCountInNanoSeconds(beginTimeCountInNanoSeconds);
-#endif
+//#endif
   VocablesForWord::voc_container_type * p_voc_container = ::wxGetApp().
-    s_dictionary.find(psv, dw);
-  uint64_t endTimeCountInNanoSeconds;
-#ifdef WIN32
-  Windows::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
-#else
+    s_dictReaderAndVocAccess.m_vocAccess.find(psv, dw);
+//#ifdef WIN32
+//  Windows_API::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
+//#else
   OperatingSystem::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
-#endif
+//#endif
   const uint64_t ns = endTimeCountInNanoSeconds - beginTimeCountInNanoSeconds;
   wxString wxstrLookUpTime = wxString::Format(
     wxT(" lookup took %lu ns=%fus=%fms=%fs"),
@@ -503,7 +506,7 @@ void EVENT_HANDLER_CLASS_NAME::OnTimerEvent(wxTimerEvent &event)
 {
   SetTitle( wxString::Format(wxT("%u"), //wxGetApp().m_dictionaryFileLineNumber
 //    ::wxGetApp().s_numberOfVocabularyPairs
-    ::wxGetApp().s_dictionary.GetNumberOfVocPairs()
+    ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfVocPairs()
      ) );
   //TODO show status as "bytes read"/"total bytes" :
 //  wxGetApp().m_dictionaryReader.GetCurrentPosInByte();

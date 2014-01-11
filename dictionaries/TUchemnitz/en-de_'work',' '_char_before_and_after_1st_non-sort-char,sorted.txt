@@ -1,0 +1,4 @@
+work ;  work out ;  go smoothly ;  go right  :: klappen [ugs.] ;  funktionieren ;  gelingen ;  glücken  { vi}
+work | labour :: arbeiten  { vi}
+work { work, wrought ;  worked, wrought}  { s, }  :: arbeiten  { vi}
+work wonders :: Wunder wirken

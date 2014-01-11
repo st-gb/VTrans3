@@ -1,0 +1,261 @@
+work ::arbeiten; funktionieren 
+work ::Arbeit {f} [phys.] 
+mechanical work ::mechanische Arbeit 
+principle of virtual work ::Prinzip der virtuellen Arbeit 
+work ::Arbeit {f}; Tätigkeit {f} 
+works ::Arbeiten {pl} 
+at work ::bei der Arbeit 
+in the works; work in progress ::in Arbeit; in Arbeit begriffen 
+go work ::zur Arbeit gehen; an die Arbeit gehen 
+dirty work ::niedere Arbeit; schmutzige Arbeit 
+illegal work ::illegale Arbeit 
+look for work ::Arbeit suchen 
+set work ::sich an die Arbeit machen 
+down tools ::die Arbeit niederlegen; mit der Arbeit aufhören 
+be snowed under with work; be up one's neck in work; be swamped with work [fig.] ::in der Arbeit erstickt [übtr.] 
+make-work; busywork ::unproduktive Tätigkeit; Beschäftigungstherapie {f} [ugs.] 
+He has a lot of work. ::Er hat viel Arbeit. 
+work addiction ::Arbeitssucht {f} 
+work against ::entgegenwirken {vi} 
+working against ::entgegenwirkend {vi_presProgr}
+worked against ::entgegengewirkt {vi_past}
+work agreement ::Arbeitsvereinbarung {f} 
+work agreements ::Arbeitsvereinbarungen {pl} 
+work and tumble sth. ::etw. umstülpen; stülpen (Seitenmarke bleibt gleich, Vordermarke wechselt) {vt} [print] 
+work animal, working animal ::Arbeitstier {n} 
+work animal, working animals ::Arbeitstiere {pl} 
+work area; working area ::Arbeitsbereich {m} 
+work areas; working areas ::Arbeitsbereiche {pl} 
+work as a cleaner ::putzen gehen 
+work assignment ::Arbeitsvorgabe {f} 
+work assignment; assignment ::Arbeitseinsatz {m}; Einsatz {m} 
+work assistant ::Arbeitsassistent {m}; Arbeitsassistentin {f} 
+work assistants ::Arbeitsassistenten {pl}; Arbeitsassistentinnen {pl} 
+work at full stretch ::auf Hochtouren arbeiten 
+be / run in high gear; be in full swing; operate / work at full speed ::auf Hochtouren laufen / arbeiten 
+work away ::drauflosarbeiten {vi} 
+working away ::drauflosarbeitend {vi_presProgr}
+worked away ::drauflosgearbeitet {vi_past}
+work bench ::Arbeitsumgebung {f} (Software) 
+work boots ::Arbeitsschuhe {pl} 
+bunnies [Austr.] ::feste, halbhohe Arbeitsschuhe 
+work climate; working atmosphere ::Betriebsklima {n}; Arbeitsklima {n}; Arbeitsatmosphäre {f} 
+work content ::Arbeitsinhalt {m} 
+work contents ::Arbeitsinhalte {pl} 
+work curve ::Arbeitskurve {f} 
+work disc [Br.]; work disk [Am.] ::Arbeitsplatte {f} 
+work discs; work disks ::Arbeitsplatten {pl} 
+work drawing ::Werkzeichnung {f} 
+work drawings ::Werkzeichnungen {pl} 
+work ethic ::Arbeitsethos {n} 
+work experience ::Berufserfahrung {f}; Arbeitserfahrung {f} 
+work experience ::Berufspraktikum {n} (für Schüler); Schülerpraktikum {n} 
+work file ::Arbeitsdatei {f} [comp.] 
+work files ::Arbeitsdateien {pl} 
+editor workspace file ::Arbeitsdatei des Editors 
+work finish ::Arbeitsende {n} 
+work for the stage ::Bühnenstück {n} [art] 
+works for the stage ::Bühnenstücke {pl} 
+work force; labour force; human resources; workers; labour ::Arbeitskräfte {pl} 
+senior employees ::Arbeitskräfte mit längerer Zugehörigkeit 
+illicit labour ::Arbeitskräfte ohne Arbeitsgenehmigung 
+work force; labour force potential ::Arbeitskräftepotenzial {n}; Arbeitskräftepotential {n} [alt] 
+work freelance; freelance ::freiberuflich arbeiten; freiberuflich tätig sein 
+work group; working group ::Arbeitsgruppe {f}; Arbeitskreis {m} 
+work groups; working groups ::Arbeitsgruppen {pl}; Arbeitskreise {pl} 
+work group; working group; syndicate ::Arbeitsgemeinschaft {f} 
+work groups; working groups; syndicates ::Arbeitsgemeinschaften {pl} 
+work (hard) for ::erarbeiten; sich etw. erarbeiten 
+work hard/act/fight secure sth. ::sich etw. erkämpfen {vr} 
+act secure more rights ::sich mehr Rechte erkämpfen {vr_presProgr}
+work hard access new markets ::sich neue Märkte erkämpfen {vr_past}
+fight be treated properly ::sich eine faire Behandlung erkämpfen {vr_3singPres}
+I had fight all the way for it.; I had fight tooth and nail for it. ::Ich musste mir das hart erkämpfen. {vr_3singPast}
+work in ::einwirken {vi} [med.] 
+working in ::einwirkend {vi_presProgr}
+worked in ::eingewirkt {vi_past}
+let sth. work in ::etw. einwirken lassen {vi_3singPres}
+work in a factory ::Fabrikarbeit {f} 
+work in a jig ::schablonieren {vt} 
+working in a jig ::schablonierend {vt_presProgr}
+worked in a jig ::schabloniert {vt_past}
+works in a jig ::schabloniert {vt_3singPres}
+worked in a jig ::schablonierte {vt_3singPast}
+work in harness ::zusammenarbeiten 
+work incompetently ::stümpern {vi} 
+work instruction; operating instruction ::Arbeitsanweisung {f} [techn.] 
+work instructions; operating instructions ::Arbeitsanweisungen {pl} 
+work it out ::eine Rechnung aufmachen 
+work item ::Arbeitsaufgabe {f}; Arbeitsschritt {m} 
+work items ::Arbeitsaufgaben {pl}; Arbeitsschritte {pl} 
+work journey; travel for work ::Arbeitsreise {f} 
+work journeys; travels for work ::Arbeitsreisen {pl} 
+work load; workload ::Arbeitsaufwand {m} 
+work loose ::sich lockern {vr} 
+working loose ::sich lockernd {vr_presProgr}
+worked loose ::sich gelockert {vr_past}
+work mate ::Berufskollege {m}; Berufskollegin {f} 
+work mates ::Berufskollegen {pl}; Berufskolleginnen {pl} 
+work method ::Arbeitsmethode {f} 
+work methods ::Arbeitsmethoden {pl} 
+work meticulously ::tüfteln 
+working meticulously ::tüftelnd 
+worked meticulously ::getüftelt 
+works meticulously ::tüftelt 
+worked meticulously ::tüftelte 
+work of art ::Kunstwerk {n} 
+works of art ::Kunstwerke {pl} 
+potboiler ::minderwertiges Kunstwerk 
+work of deformation ::Formänderungsarbeit {f} 
+work off ::Aufarbeiten {n}; Aufarbeitung {f} (von Rückständen) [adm.] 
+work off ::sich losmachen 
+work off ::Gefühle) abreagieren {vt} 
+working off ::abreagierend {vt_presProgr}
+worked off ::abreagiert {vt_past}
+work off ::aufarbeiten; abarbeiten {vt} 
+working off ::aufarbeitend; abarbeitend {vt_presProgr}
+worked off ::aufgearbeitet; abgearbeitet {vt_past}
+work off a debt ::eine Schuld abarbeiten {vt_3singPres}
+work off (a material) ::einen Werkstoff) abtragen; abarbeiten {vt} [techn.] 
+working off ::abtragend; abarbeitend {vt_presProgr}
+worked off ::abgetragen; abgearbeitet {vt_past}
+work on ::bearbeiten; behandeln {vt} 
+working on ::bearbeitend; behandelnd {vt_presProgr}
+worked on ::bearbeitet; behandelt {vt_past}
+work on the side; nixer [coll.] ::Schwarzarbeit {f} 
+work one's way up ::sich emporarbeiten 
+work one's way through (to) ::sich emporarbeiten (zu) 
+work one's way up ::sich heraufarbeiten {vr} 
+working one's way up ::sich heraufarbeitend {vr_presProgr}
+worked one's way up ::sich heraufgearbeitet {vr_past}
+work one's way up ::sich hocharbeiten 
+working one's way up ::sich hocharbeitend {vr_presProgr}
+worked one's way up ::sich hochgearbeitet {vr_past}
+work (oneself) death ::sich) totarbeiten 
+work oneself death ::sich abplagen {vr} 
+working oneself death ::sich abplagend {vr_presProgr}
+worked oneself death ::sich abgeplagt {vr_past}
+work oneself up ::sich aufregen {vr} 
+get worked up about sb./sth. ::sich über jdn./etw. aufregen {vr_presProgr}
+Don't get (yourself) so worked up! ::Reg dich nicht so auf! {vr_past}
+work order; manufacturing order; factory order ::Arbeitsauftrag {m} 
+work orders; manufacturing orders; factory orders ::Arbeitsaufträge {pl} 
+work out ::abbauen {vt} [min.] (Bergbau) 
+working out ::abbauend {vt_presProgr}
+worked out ::abgebaut {vt_past}
+work out ::lösen; berechnen; austüfteln {vt} 
+working out ::lösend; berechnend; austüftelnd {vt_presProgr}
+worked out ::gelöst; berechnet; ausgetüftelt {vt_past}
+work out ::trainieren; Sport treiben {vi} [sport] 
+working out ::trainierend; Sport treibend {vi_presProgr}
+worked out ::trainiert; Sport getrieben {vi_past}
+work out at the gym ::Gymnastik machen {vi_3singPres}
+work out of town ::außerhalb arbeiten 
+work out; prepare ::ausarbeiten 
+work package; working package; activity package ::Arbeitspaket {n} 
+work packages; working packages; activity packages ::Arbeitspakete {pl} 
+work permit; working permission ::Arbeitserlaubnis {f}; Arbeitsbewilligung {f}; Arbeitsgenehmigung {f} 
+work physiology ::Arbeitsphysiologie {f} 
+work piece current ::Werkstückstrom {m} [techn.] 
+work piece; workpiece ::Werkstück {n} 
+work pieces ::Werkstücke {pl} 
+work pleasure; pleasure in working ::Arbeitslust {f} 
+work position ::Arbeitsposition {f} 
+work positions ::Arbeitspositionen {pl} 
+work programme; work program ::Arbeitsprogramm {n} 
+work progress ::Arbeitsfortschritt {m} 
+monitoring of work progress ::Kontrolle des Arbeitsfortschrittes 
+work protective clothing ::Arbeitsschutzkleidung {f} 
+work protective helmet; safety hat; safety cap ::Arbeitsschutzhelm {m} 
+work protective helmets; safety hats; safety caps ::Arbeitsschutzhelme {pl} 
+work regulations; work rules [Am.] ::Arbeitsordnung {f}; Betriebsordnung {f} 
+work report; employment report ::Arbeitsbericht {m} 
+work reports; employment reports ::Arbeitsberichte {pl} 
+work sampling study ::Multimomentaufnahme {f} 
+work schedule; production schedule; working plan ::Arbeitsplan {m}; Ablaufplan {m} 
+work schedules; production schedules ::Arbeitspläne {pl}; Ablaufpläne {pl} 
+work scheduler; work planner ::Arbeitsvorbereiter {m} 
+work shadowing; job shadowing ::Hospitation {f} (im Beruf) 
+work shoe ::Berufsschuh; Arbeitsschuh {m} 
+work shoes ::Berufsschuhe; Arbeitsschuhe {pl} 
+work simplification ::Arbeitsvereinfachung {f} 
+work sloppily ::schludern {vi} 
+working sloppily ::schludernd {vi_presProgr}
+worked sloppily ::geschludert {vi_past}
+work space ::Arbeitsfläche {f} 
+work spaces ::Arbeitsflächen {pl} 
+work sth. ::etw. bedienen {vt}; etw. betreiben {vt} 
+work sth. in/into sth. ::etw. in etw. einarbeiten; hineinarbeiten; einbeziehen; einbauen; einstreuen {vt} 
+I haven't worked in the references my article yet. ::Die Quellenangaben habe ich noch nicht in meinen Artikel eingearbeitet. {vt_presProgr}
+Broccoli is a vegetable that you can work into your diet in many ways. ::Brokkoli ist ein Gemüse, das Sie auf vielerlei Weise in Ihre Diät einbauen können. {vt_past}
+During the speech, he worked in a few jokes. ::Während seiner Rede hat er einige Witze eingestreut. {vt_3singPres}
+My schedule is pretty full, but I can work you in at 10:30. [Am.] ::Mein Terminkalender ist ziemlich voll, aber ich kann dich noch um 10:30 Uhr unterbringen. {vt_3singPast}
+work sth. out/up; write sth. out/up ::etw. Schriftliches) ausarbeiten {vt} [adm.] 
+working out/up; writing out/up ::ausarbeitend {vt_presProgr}
+worked out/up; written out/up ::ausgearbeitet {vt_past}
+work out the solution ::die Lösung ausarbeiten {vt_3singPres}
+write up an article ::einen Artikel ausarbeiten {vt_3singPast}
+work sth. up (into sth.) ::etw. ausbauen; etw. erweitern (zu etw.) {vt} [übtr.] 
+working up ::ausbauend; erweiternd {vt_presProgr}
+worked up ::ausgebaut; erweitert {vt_past}
+I took notes which I will work up into a report later. ::Ich habe mir Notizen gemacht, die ich später zu einem Bericht ausbauen werde. {vt_3singPres}
+work sth. up; work onself up into sth. (feelings, Interesse) ::Gefühle, Interesse) entwickeln {vt} [psych.] 
+get worked up; work oneself up ::sich aufregen; sich ereifern [geh.] {vt_presProgr}
+work up a rage; work oneself up into a rage ::sich in eine Wut hineinsteigern {vt_past}
+I can't work up any enthusiasm for it. ::Ich kann mich dafür nicht begeistern. {vt_3singPres}
+work stoppage ::Arbeitsunterbrechung {f}; Arbeitsniederlegung {f}; Arbeitseinstellung {f} 
+work study ::Arbeitsstudie {f} 
+work studies ::Arbeitsstudien {pl} 
+work surface ::Arbeitsfläche {f} 
+work surfaces ::Arbeitsflächen {pl} 
+work table ::Werktisch {m} 
+work tables ::Werktische {pl} 
+work team; brigade ::Brigade {f} 
+work teams; brigades ::Brigaden {pl} 
+work team leader; brigadier ::Brigadier {m} 
+work technique ::Arbeitstechnik {f} 
+work techniques ::Arbeitstechniken {pl} 
+work through ::durcharbeiten 
+working through ::durcharbeitend 
+worked through ::durchgearbeitet 
+work one's way through sth. ::sich durch etw. durcharbeiten 
+work title ::Werktitel {m} [art] 
+work titles ::Werktitel {pl} 
+work towards sth.; encourage sth. ::auf etw. hinwirken 
+working towards sth.; encouraging sth. ::auf etw. hinwirkend 
+worked towards sth.; encouraged sth. ::auf etw. hingewirkt 
+encourage building cycling paths ::auf den Bau von Radwegen hinwirken 
+work towards enhancing access health services ::auf einen verbesserten Zugang zu Gesundheitsleistungen hinwirken 
+She said that her concern would be that everyone be treated fairly. ::Sie sagte, sie werde darauf hinwirken, dass alle fair behandelt werden. 
+I talked him try and get him change his behaviour [Br.] / bahavior [Am.]. ::Ich sprach mit ihm, um darauf hinwirken, dass er sein Verhalten ändert. 
+work up ::aufstacheln {vt} 
+working up ::aufstachelnd {vt_presProgr}
+worked up ::aufgestachelt {vt_past}
+work with the disabled ::Behindertenarbeit {f} 
+work; work out; go smoothly; go right ::klappen [ugs.]; funktionieren; gelingen; glücken {vi} 
+working; working out; going smoothly; going right ::klappend; funktionierend; gelingens; klappend {vi_presProgr}
+worked; worked out; gone smoothly; gone right ::geklappt; funktioniert; gelingt; klappt {vi_past}
+it works; it works out; it goes smoothly ::es klappt {vi_3singPres}
+it worked; it worked out; it went smoothly ::es klappte {vi_3singPast}
+if it works ::wenn es gelingt; wenn es klappt {vi_3pp}
+That works.; OK, that's fine. ::Das hat geklappt. 
+Finally it works. ::Jetzt endlich klappte es. 
+If that works out. ::Wenn das mal klappt. 
+Did you get the flight all right? ::Hat mit dem Flug alles geklappt? 
+This works especially well. ::Das funktioniert besonders gut. 
+It won't work out. ::Die Rechnung geht nicht auf. [übtr.] 
+work {work, wrought; worked, wrought} ::arbeiten {vi} 
+working ::arbeitend {vi_presProgr}
+worked ::gearbeitet {vi_past}
+works ::arbeitet {vi_3singPres}
+worked ::arbeitete {vi_3singPast}
+worked ::gearbeitet {vi_3pp}
+work on sth.; be working on sth. ::an etw. arbeiten 
+work hard ::schwer arbeiten 
+work for a company ::für eine Firma arbeiten 
+work with a firm ::bei einer Firma arbeiten 
+work in the kitchen ::in der Küche arbeiten 
+work as teacher ::als Lehrer arbeiten 
+work with one's hands ::mit seinen Händen arbeiten 
+work oneself death ::sich zu Tode arbeiten 
+work rule ::gemäß den Vorschriften arbeiten 

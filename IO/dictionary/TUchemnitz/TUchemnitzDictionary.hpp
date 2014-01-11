@@ -11,7 +11,8 @@
 namespace TUchemnitzDictionary
 {
   enum wordKinds { not_set, adj, adv, mascNoun, femNoun, neutralNoun,
-    pluralNoun, intransitiveVerb, transitiveVerb, reflexiveVerb };
+    pluralNoun, intransitiveVerb, transitiveVerb, reflexiveVerb,
+    vi_3singPres};
 }
 
 #endif /* TUCHEMNITZDICTIONARY_HPP_ */

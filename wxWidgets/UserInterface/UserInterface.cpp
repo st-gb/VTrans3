@@ -23,8 +23,8 @@
 #include <Controller/TranslationControllerBase.hpp>
 //#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
 //class TUchemnitzDictionaryReader
-#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
-#include <IO/dictionary/TUchemnitzDictEngWord2LineNumberReader.hpp>
+//#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
+//#include <IO/dictionary/TUchemnitzDictEngWord2LineNumberReader.hpp>
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp> //class LetterTree
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_type
 //GetStdString(...)
@@ -37,6 +37,7 @@
 
 ////Static variables need also to be defined in the source file.
 //LetterTree TranslationControllerBase::s_dictionary ;
+extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 namespace wxWidgets
 {
@@ -115,7 +116,7 @@ namespace wxWidgets
 //        /** this*/ ::wxGetApp(),
 //        & ::wxGetApp().s_dictionary );
       /*TUchemnitzDictionaryReader:: tcdr.read(*/
-      ::wxGetApp().m_dictReaderAndVocAccess.loadDictionary(
+      ::wxGetApp().s_dictReaderAndVocAccess.loadDictionary(
         dictFilePath);//extractVocables( dictFilePath);
       ::wxGetApp().EndTimer();
       return 0;
@@ -152,10 +153,10 @@ namespace wxWidgets
 //      ::wxMessageBox( wxT("freeing memory for existing vocabulary") ) ;
       p_wxwindowParent->SetLabel( wxT("freeing memory for existing vocabulary") ) ;
 //      g_lettertree.DeleteCompleteList() ;
-      TranslationControllerBase::s_dictionary./*DeleteCompleteList()*/clear();
+      g_p_translationcontrollerbase->s_dictReaderAndVocAccess.m_vocAccess./*DeleteCompleteList()*/clear();
       //MUST be inserted, else some grammar rules can't be applied.
 //      g_lettertree.InsertFundamentalWords() ;
-      TranslationControllerBase::s_dictionary.InsertFundamentalWords() ;
+      g_p_translationcontrollerbase->s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords() ;
 //      OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
       ::wxGetApp().s_numberOfVocabularyPairs = 0;
 //      wxMessageDialog * p_dlg = new wxMessageDialog( //NULL,

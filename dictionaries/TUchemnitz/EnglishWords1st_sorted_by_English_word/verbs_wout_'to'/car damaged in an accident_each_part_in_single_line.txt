@@ -1,0 +1,2 @@
+car damaged in an accident ::Unfallwagen {m}; Unfallauto {n} 
+cars damaged in an accident ::Unfallwagen {pl}; Unfallautos {pl} 

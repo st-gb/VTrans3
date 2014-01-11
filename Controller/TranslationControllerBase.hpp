@@ -19,7 +19,7 @@
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
-#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
+//#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include "ConfigurationHandler_type.hpp"
 
 #include <map> //class std::map
@@ -64,11 +64,13 @@ protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
+  std::map<TranslationRule *, std::string>
+    m_std_map_p_translationrule2filepath;
 //  dictReaderAndVocAccess_type m_dictReaderAndVocAccess;
   std::string m_std_strOriginalCurrWorkDir;
   ConfigurationHandler_type m_configurationHandler;
   fastestUnsignedDataType m_GUIthreadID;
-  static dictionary_type s_dictionary ;
+//  static dictionary_type s_dictionary ;
   /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
   NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
   ParseByRise m_parsebyrise ;

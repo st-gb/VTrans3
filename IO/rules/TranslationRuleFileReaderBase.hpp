@@ -50,6 +50,7 @@ namespace VTrans3
     std::string m_stdstrTranslation;
     std::string m_stdstrTranslationRuleSyntaxTreePath;
     std::string m_std_strSyntaxTreePathForInsertionForTranslation;
+    std::string m_std_strFilePath; /** Should be set in "Process(...)" */
     unsigned m_uiTranslationInsertion;
     unsigned m_uiParentNodeInsertion;
     uint32_t m_ui32ConcatenationID;
@@ -73,6 +74,7 @@ namespace VTrans3
     /*template <typename XMLelement_Type>*/ /*inline*/
       void HandleBeginOfConditionXMLelement(
       /*XMLelement_Type*/ attributeType & xmlElement);
+    virtual void Process(const std::string & filePath) = 0;
     void SetConditionAttributesAndAddCondition(const WORD wAttributeValue);
     virtual void ShowMessageToUser(const std::string &) = 0;
   };

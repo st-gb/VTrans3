@@ -5,6 +5,7 @@
  *      Author: mr.sys
  */
 
+#include <Controller/TranslationControllerBase.hpp> //class TranslationControllerBase
 #include <IO/UnknownGrammarPartNameException.hpp>
 #include <IO/rules/TranslationRuleFileReaderBase.hpp>
 #include <IO/ConfigurationReader.hpp>
@@ -14,6 +15,8 @@
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
+
+extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 namespace VTrans3
 {
@@ -38,7 +41,6 @@ namespace VTrans3
     , m_ui32ConcatenationID(0)
     , m_r_configurationReader(configurationReader)
   {
-    // TODO Auto-generated constructor stub
 
   }
 
@@ -136,10 +138,10 @@ namespace VTrans3
           p_translationrule
           , m_conditionsandtranslation ) ;
 #ifdef COMPILE_AS_EXECUTABLE
-        const std::string & std_strSystemId = Xerces::ToStdString(
-          m_pc_locator->getSystemId() );
-        wxGetApp().m_std_map_p_translationrule2filepath.insert(
-          std::make_pair(p_translationrule, std_strSystemId) );
+//        const std::string & std_strSystemId = Xerces::ToStdString(
+//          m_pc_locator->getSystemId() );
+        g_p_translationcontrollerbase->m_std_map_p_translationrule2filepath.insert(
+          std::make_pair(p_translationrule, m_std_strFilePath) );
 #endif //#ifdef COMPILE_AS_EXECUTABLE
       }
       catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
@@ -293,6 +295,11 @@ namespace VTrans3
       LOGN_ERROR("condition element--neither \"attribute_name\" attribute value nor "
         "\"translation\" attribute value" /*, LogLevel::error*/ )
   }
+
+//  void TranslationRuleFileReaderBase::Process(const std::string & filePath)
+//  {
+//
+//  }
 
   void TranslationRuleFileReaderBase::SetConditionAttributesAndAddCondition(
     const WORD wAttributeValue)

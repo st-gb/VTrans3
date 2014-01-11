@@ -53,6 +53,7 @@ namespace VTrans3
       void GetStringTransformationFunctionName(mxml_node_t * node);
       void GetSyntaxTreePathWhereToInsertTranslation(mxml_node_t * node);
       void HandleTranslationRuleElementName( mxml_node_t * );
+      void Process(const std::string & filePath);
       void ShowMessageToUser(const /*char * const*/ std::string & cpc_chMessage);
     };
 //    TranslationRuleFileReader * g_p_translationRuleFileReader;

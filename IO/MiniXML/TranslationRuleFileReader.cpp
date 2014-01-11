@@ -6,6 +6,7 @@
  */
 
 #include <IO/MiniXML/TranslationRuleFileReader.hpp>
+#include <IO/MiniXMLconfigReader.hpp> //MiniXMLconfigReader::ReadFile(...)
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
@@ -217,6 +218,13 @@ namespace VTrans3
         else
           m_std_strGrammarPartName = "";
       }
+    }
+
+    void TranslationRuleFileReader::Process(const std::string & filePath)
+    {
+      MiniXMLconfigReader::ReadFile(filePath.c_str(),
+        VTrans3::MiniXML::ReadTranslationRuleFile::sax_cb);
+      m_std_strFilePath = filePath;
     }
 
     void TranslationRuleFileReader::ShowMessageToUser(

@@ -1,0 +1,2 @@
+home-on-jam (missile) :: Störzielansteuerung {f} (Rakete) [mil.] 
+home-on-jam (radar) :: Störzielansteuerung {f} (Radar) [techn.] 

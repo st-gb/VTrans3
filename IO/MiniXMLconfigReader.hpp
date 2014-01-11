@@ -113,7 +113,7 @@ namespace MiniXML
       mxml_node_s * & xmlElement, std::string &, const char * const) /*= 0*/;
     /** Provides showing an error message in case of an error for loading an
      * arbitrary XML file via MiniXML. */
-    bool ReadFile(const char * const cr_stdstrFilePath, mxml_sax_cb_t sax);
+    static bool ReadFile(const char * const cr_stdstrFilePath, mxml_sax_cb_t sax);
     void ReadGrammarRuleFile(const std::string & cr_stdstrFilePath );
     bool ReadMainConfigFile(const std::string & cr_stdstrFilePath );
     void ReadVocAttributeDefinitionFile(

@@ -20,13 +20,13 @@ namespace DictionaryReader
   {
   protected:
     std::string m_std_strFilePath;
-    IVocabularyInMainMem * m_p_vocaccess;
     //TODO check if static functions are really faster
     /*static*/ fastestUnsignedDataType m_numBytesRead;
     fastestUnsignedDataType m_currentLineBeginFileOffset;
     fastestUnsignedDataType m_fileSizeInBytes;
     fastestUnsignedDataType m_currentLineNumber;
   public:
+    IVocabularyInMainMem * m_p_vocaccess;
     DictionaryReaderBase(IVocabularyInMainMem *);
     virtual
     ~DictionaryReaderBase();

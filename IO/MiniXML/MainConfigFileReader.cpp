@@ -136,8 +136,10 @@ namespace MiniXML
         {
           HandleGrammartPartColourXMLelement(node);
         }
-        else if( m_strElementName == "drawing" )
-          HandleGUI_XMLelement(cr_xercesc_attributes);
+        //TODO implement in base class of "MainConfigFileReader" or
+        // MiniXML-specific/ enable this feature
+//        else if( m_strElementName == "drawing" )
+//          HandleGUI_XMLelement(cr_xercesc_attributes);
         else
 #endif
         if( ::strcmp(xmlElementName, "grammar_rule_file") == 0 )

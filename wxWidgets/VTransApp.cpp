@@ -296,7 +296,7 @@ bool VTransApp::OnInit()
   std::string stdstrLogFilePath = "VTrans_log.txt" ;
 //  g_logger.SetLogLevel(/*LogLevel::debug*/ "debug");
   g_logger.m_logLevel = LogLevel::debug;
-  g_logger.OpenFileA(stdstrLogFilePath, 1000, LogLevel::debug) ;
+  g_logger.OpenFileA(stdstrLogFilePath, "log4j", 4000, LogLevel::debug) ;
   const std::vector<FormattedLogEntryProcessor *> & formattedLogEntryProcessors = 
     g_logger.GetFormattedLogEntryProcessors();
   if( formattedLogEntryProcessors.size() > 0 )
@@ -317,38 +317,38 @@ bool VTransApp::OnInit()
 //  return false ;
 }
 
-void VTransApp::ProcessSelectedXMLfiles(
-  XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
-  const wxString & r_wxstrTitle,
-  const wxString & c_r_wxInitialDirForFileSelecion
-  )
-{
-  wxArrayString wxarraystringPaths ;
-  if( wxWidgets::ShowMultipleFileSelectionDialog(
-      r_wxstrTitle ,
-      wxarraystringPaths ,
-      NULL,
-      ::wxGetCwd()
-      ) == wxID_OK
-    )
-  {
-    std::string stdstrFilePath ;
-    wxString wxstrFullPath ;
-    for( size_t size_tArrayIndex = 0 ;
-        size_tArrayIndex < wxarraystringPaths.GetCount() ;
-        ++ size_tArrayIndex
-       )
-    {
-      wxstrFullPath = wxarraystringPaths.Item(size_tArrayIndex ) ;
-      stdstrFilePath = GetStdString( wxstrFullPath ) ;
-      std::string stdstrFilePath = GetStdString( wxstrFullPath ) ;
-      wxGetApp().ReadXMLfile(
-        r_xercesc_defaulthandler ,
-        stdstrFilePath ) ;
-    }
-  }
-}
-
+//TODO make usable for class ConfigReaderBase
+//void VTransApp::ProcessSelectedXMLfiles(
+//  XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
+//  const wxString & r_wxstrTitle,
+//  const wxString & c_r_wxInitialDirForFileSelecion
+//  )
+//{
+//  wxArrayString wxarraystringPaths ;
+//  if( wxWidgets::ShowMultipleFileSelectionDialog(
+//      r_wxstrTitle ,
+//      wxarraystringPaths ,
+//      NULL,
+//      ::wxGetCwd()
+//      ) == wxID_OK
+//    )
+//  {
+//    std::string stdstrFilePath ;
+//    wxString wxstrFullPath ;
+//    for( size_t size_tArrayIndex = 0 ;
+//        size_tArrayIndex < wxarraystringPaths.GetCount() ;
+//        ++ size_tArrayIndex
+//       )
+//    {
+//      wxstrFullPath = wxarraystringPaths.Item(size_tArrayIndex ) ;
+//      stdstrFilePath = GetStdString( wxstrFullPath ) ;
+//      std::string stdstrFilePath = GetStdString( wxstrFullPath ) ;
+//      wxGetApp().ReadXMLfile(
+//        r_xercesc_defaulthandler ,
+//        stdstrFilePath ) ;
+//    }
+//  }
+//}
 
 inline void VTransApp::ShowMessage(wxString & wxstrMessage)
 {

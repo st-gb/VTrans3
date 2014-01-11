@@ -25,6 +25,8 @@
     return os;
   }
 
+  /** @return greater: if token inside _this_ object would appear after
+   *   @see psvCompare in a dictionary. */
   enum PositionStringVector::cmp PositionStringVector::Compare(
     const PositionStringVector & psvCompare,
     const unsigned indexOf1stToken,

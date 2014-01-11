@@ -9,7 +9,7 @@
 #define BINARYSEARCHINDICTFILE_HPP_
 
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>
-#include <IO/dictionary/TUchemnitzEngWordSorted1st/BinarySearchInDictFile.hpp>
+#include <IO/dictionary/TUchemnitz/EngWordSorted1st/BinarySearchInDictFile.hpp>
 //#include <map> //class std::map
 //#include <VocabularyInMainMem/VocablesForWord.hpp> //class VocablesForWord
 #include <VocabularyInMainMem/CharStringStdMap/CharStringStdMap.hpp>
@@ -33,7 +33,7 @@ namespace VTrans3
         typedef std::map<std::string, VocablesForWord> map_type;
 //        map_type m_charStringMap;
 //        DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile & m_r_dictReader;
-        DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile * m_p_dictReader;
+        DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile * m_p_dictReader;
       public:
         BinarySearchInDictFile();
         virtual
@@ -66,7 +66,7 @@ namespace VTrans3
         {
           m_p_dictionaryReader = p_dictionaryReader;
           m_p_dictReader =
-            (DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile *) p_dictionaryReader;
+            (DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile *) p_dictionaryReader;
         }
       };
     }
