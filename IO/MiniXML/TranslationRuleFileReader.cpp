@@ -12,6 +12,7 @@
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <Translate/TranslationRule.hpp>//class TranslationRule
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
+#include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG
 
 /** for void VTrans3::TranslationRuleFileReaderBase::HandleBeginOfConditionXMLelement */
 //#include <IO/rules/TranslationRuleFileReaderBase.cpp>
@@ -258,6 +259,7 @@ namespace VTrans3
   //              int i = 0;
   //          }
   //        }
+        GCC_DIAG_ON(switch)
         switch(event )
         {
           case MXML_SAX_ELEMENT_CLOSE :
@@ -288,6 +290,7 @@ namespace VTrans3
               }
             break;
         }
+        GCC_DIAG_OFF(switch)
       }
     }
   } /* namespace MiniXML */

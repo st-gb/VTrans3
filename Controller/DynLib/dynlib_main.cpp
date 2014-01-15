@@ -58,7 +58,7 @@ EXPORT BYTE
   if( ! bFileIsOpen )
   {
     std::cerr << "Failed to open the log file:"
-    << GetErrorMessageFromLastErrorCodeA() << std::endl;
+      << GetErrorMessageFromLastErrorCodeA() << std::endl;
     return TranslationControllerBaseClass::InitFunction::creatingLogFileFailed;
   }
 #endif

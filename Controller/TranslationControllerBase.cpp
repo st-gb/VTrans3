@@ -20,13 +20,17 @@
 #include <Translate/TransformTreeTraverser.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 #ifdef __ANDROID__
-        //SetCurrentDirectory(...)
-        #include <Controller/FileSystem/SetCurrentWorkingDir.hpp>
+  //SetCurrentDirectory(...)
+  #include <Controller/FileSystem/SetCurrentWorkingDir.hpp>
 #else
-        //platformstl::filesystem_traits<char>::set_current_directory(...)
-        #include <platformstl/filesystem/current_directory.hpp>
-        //#include <unixstl/filesystem/filesystem_traits.hpp>
-        #include <platformstl/filesystem/filesystem_traits.hpp>
+  //platformstl::filesystem_traits<char>::set_current_directory(...)
+  #include <platformstl/filesystem/current_directory.hpp>
+  //#include <unixstl/filesystem/filesystem_traits.hpp>
+  #include <platformstl/filesystem/filesystem_traits.hpp>
+#endif
+
+#ifndef MAX_PATH
+  #define MAX_PATH 2000
 #endif
 
 //Static variables need also to be defined in 1 source file.
@@ -387,7 +391,7 @@ void TranslationControllerBase::Translate(
       "begin")
 //  OperatingSystem::GetCurrentTimeInNanoSeconds();
 //    OperatingSystem::GetTimeCountInNanoSeconds();
-  /*uint64_t*/ long double timeCountInNanoSeconds;
+  TimeCountInNanosec_type timeCountInNanoSeconds;
 //#ifdef WIN32
 //  Windows::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
 //#else

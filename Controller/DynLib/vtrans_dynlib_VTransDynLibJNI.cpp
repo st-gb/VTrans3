@@ -71,14 +71,18 @@ jbyte JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Init
     strMainConfigFile, strConfigFilesRootPath);
   //jni_env->ReleaseStringChars(jstrMainCfgFile,p_chMainConfigFilePath);
   //( *
+  LOGN_DEBUG(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init" FULL_FUNC_NAME <<
+    "before ReleaseStringUTFChars" << strMainConfigFile )
   p_jni_env//)
     ->ReleaseStringUTFChars(//jni_env,
     jstrMainCfgFile, strMainConfigFile);
+  LOGN_DEBUG(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init" FULL_FUNC_NAME <<
+    "before ReleaseStringUTFChars" << strConfigFilesRootPath )
   p_jni_env//)
     ->ReleaseStringUTFChars(//jni_env,
     jstrCfgFilesRootPath, strConfigFilesRootPath);
-  LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init"
-    FULL_FUNC_NAME << "--end")
+  LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init" FULL_FUNC_NAME <<
+    "return " << jInitResult)
   return jInitResult;
 }
 

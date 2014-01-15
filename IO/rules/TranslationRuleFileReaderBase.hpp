@@ -13,6 +13,7 @@
 #include <string> //class std::string
 //#include <IO/MiniXMLconfigReader.hpp> //base class VTrans3::MiniXML::MiniXMLconfigReader
 #include <Controller/ConfigurationHandler_type.hpp>
+#include <stdint.h> //uint32_t
 
 #define TRANSLATION_RULE_XML_ELEMENT_ANSI "translation_rule"
 #define ATTRIBUTE_NAME_ANSI_STRING "attribute_name"

@@ -74,7 +74,7 @@ public:
       , ParseByRise * p_parsebyrise ) ;
   ~TranslationRule( )
   {
-    DEBUG_COUT("~TranslationRule (destructor)\n")
+    LOGN_DEBUG("")
 //    //Release mem.
 //    delete [] m_ar_wElements ;
   }
