@@ -165,9 +165,12 @@ void IVocabularyInMainMem::OutputVocs(const voc_container_type & voc_container)
     p_vocabularyandtranslation = * c_iter_voc_container;
     if( p_vocabularyandtranslation)
     {
+      //TODO solve problem outputting under Android
+#ifndef __ANDROID__
       std::ostringstream oss;
       oss << * p_vocabularyandtranslation;
       LOGN_DEBUG( oss.str() )
+#endif
     }
     ++ c_iter_voc_container;
   }

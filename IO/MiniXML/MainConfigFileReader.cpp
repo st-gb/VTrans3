@@ -29,6 +29,7 @@ namespace MiniXML
 
   namespace MainConfigFile
   {
+#ifndef TEST_MINI_XML
     void HandleGrammartPartColourXMLelement(
         mxml_node_t * node)
     {
@@ -49,6 +50,7 @@ namespace MiniXML
         }
       }
     }
+
     void HandleReadGrammarRuleFileXMLelement( mxml_node_t * node )
     {
       const char * const strGrammarRuleFilePath =
@@ -89,6 +91,7 @@ namespace MiniXML
           strVocabularyAttributeDefinitionFilePath);
       }
     }
+#endif //#ifndef TEST_MINI_XML
 
     /** from mxml-2.7/doc/mxml.html#LOAD_CALLBACKS */
     mxml_type_t loadFileCallBackFunction(mxml_node_t *node)
@@ -121,7 +124,16 @@ namespace MiniXML
       void * data
       )
     {
+//      LOGN_DEBUG("begin--node:" << node )
+//      std::cout << "begin--node:" << node << std::endl;
       const char * xmlElementName = mxmlGetElement(node);
+      if( xmlElementName == NULL )
+    	  LOGN_DEBUG("element name:NULL")
+	  else
+      {
+    	  LOGN_DEBUG("element name:" << xmlElementName)
+//      std::cout << "element nameXX:" << xmlElementName << std::endl;
+//#ifndef __linux__
 //      if (event == MXML_SAX_ELEMENT_CLOSE)
 //      {
 //        if( ::strcmp(xmlElementName, "VTrans_main_cfg") == 0 )
@@ -164,6 +176,7 @@ namespace MiniXML
         {
           const char * const strVocabularyFilePath =
             mxmlElementGetAttr(node, "path");
+          LOGN_DEBUG("Dict file path address:" << (void*) strVocabularyFilePath)
           if( strVocabularyFilePath != NULL )
           {
             LOGN_DEBUG("Dict file path:" << strVocabularyFilePath)
@@ -173,7 +186,9 @@ namespace MiniXML
               strVocabularyFilePath;
           }
         }
-     }
+      }
+//#endif
+    }
     }
   }
 
@@ -198,6 +213,7 @@ namespace MiniXML
 //      //First node or NULL if the file could not be read.
 //      if( mxml_node_tLoadFileRes != NULL )
         fileOpenSucceeded = true;
+      fclose(fp);
     }
     return fileOpenSucceeded;
   }

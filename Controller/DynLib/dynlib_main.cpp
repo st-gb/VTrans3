@@ -8,6 +8,7 @@
 #include <Controller/character_string/stdstring_format.hpp>//to_stdstring(...)
 #include <Controller/Logger/Logger.hpp> //class Logger
 #include <Controller/GetErrorMessageFromLastErrorCode.hpp>
+#include <FileSystem/GetCurrentWorkingDir.hpp>
 //class CSS::LogFormatter::Log4jFormatter
 #include <Controller/Logger/Formatter/Log4jFormatter.hpp>
 #include <Controller/TranslationControllerBase.hpp>
@@ -40,20 +41,26 @@ EXPORT BYTE
   const char * p_chMainConfigFilePath,
   //Root path where the rule file pathes contained in the main config file
   //are appended to.
-  const char * p_chConfigFilesRootPath
+  const char * const p_chConfigFilesRootPath
   )
 {
   //g_logger.SetFormatter(new CSS::LogFormatter::Log4jFormatter(& g_logger) );
 //  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
   LOGN("begin")
 //  LOGN("Init--begin")
-#ifdef COMPILE_WITH_LOG
+#ifdef /*COMPILE_WITH_LOG*/ USE_OWN_LOGGER
   const char * const logFormat = "log4j";
-  std::string stdstrLogFilePath = //"VTrans_log.txt" ;
-      "VTransDynlib_log.";
+  //TODO use other path than this one as log file directory
+  std::string stdstrLogFilePath = p_chConfigFilesRootPath;
+  stdstrLogFilePath += "/VTransDynlib_log.";
   stdstrLogFilePath += logFormat;
   bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 4000,
     LogLevel::debug) ;
+#ifdef __linux__
+#ifndef __ANDROID__
+  g_logger.AddConsoleLogEntryWriter();
+#endif
+#endif
   //g_logger.
   if( ! bFileIsOpen )
   {
@@ -61,6 +68,10 @@ EXPORT BYTE
       << GetErrorMessageFromLastErrorCodeA() << std::endl;
     return TranslationControllerBaseClass::InitFunction::creatingLogFileFailed;
   }
+  LOGN_INFO("compile time:" << __DATE__ << " " << __TIME__ )
+  std::string std_strCurrentWorkingDir;
+  ::GetCurrentWorkingDir(std_strCurrentWorkingDir);
+  LOGN_INFO("current dir is:\"" << std_strCurrentWorkingDir << "\"")
 #endif
   //Create on heap because of g_logger access that causes a crash when the log
   //file has not been opened yet?!
@@ -95,6 +106,7 @@ EXPORT BYTE
   return byReturn;
 }
 
+#ifndef TEST_MINI_XML
 /**
  * @return: XML data that might be used for InterProcess Communication (can be
  *  sent to the presentation component/ web interface).
@@ -222,3 +234,4 @@ EXPORT char * Translate(const char * p_chEnglishText)
   LOGN("::Translate(...) end")
   return ar_chTranslation;
 }
+#endif //#ifdef TEST_MINI_XML

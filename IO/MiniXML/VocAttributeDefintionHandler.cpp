@@ -36,7 +36,13 @@ namespace VTrans3
         void * data
         )
       {
+    	LOGN_DEBUG("begin")
         const char * xmlElementName = mxmlGetElement(node);
+    	if( xmlElementName == NULL )
+          LOGN_DEBUG("element name: NULL")
+        else
+        {
+    	LOGN_DEBUG("element:" << xmlElementName)
   //        if (event == MXML_SAX_ELEMENT_CLOSE)
   //        {
   //          if( ::strcmp(xmlElementName, "VTrans_main_cfg") == 0 )
@@ -70,15 +76,17 @@ namespace VTrans3
 
             const char * const strAttributeIndex =
               mxmlElementGetAttr(node, "attribute_index");
-            if( ! ConvertStdStringToTypename(wAttributeIndex,
-                strAttributeIndex) )
-                ;
+            if( ConvertStdStringToTypename(wAttributeIndex,
+                strAttributeIndex) == NS_ConvertStdStringToTypename::failed )
+              //TODO message
+              MiniXML::MiniXMLconfigReader::s_p_translationController->Message("");
 
             const char * const strAttributeLength =
               mxmlElementGetAttr(node, "attribute_length");
-            if( ! ConvertStdStringToTypename(wAttributeLength,
-                strAttributeLength) )
-                ;
+            if( ConvertStdStringToTypename(wAttributeLength,
+                strAttributeLength) == NS_ConvertStdStringToTypename::failed )
+              //TODO message
+              MiniXML::MiniXMLconfigReader::s_p_translationController->Message("");
 
             if( strcmp(strLanguage , "German") == 0 )
               wLanguage = AttributeTypeAndPosAndSize::German ;
@@ -109,6 +117,7 @@ namespace VTrans3
             }
           }
         }
+		}
       }
     }
   } /* namespace MiniXML */

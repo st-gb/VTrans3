@@ -15,6 +15,8 @@ public:
   {
 
   }
+  /** avoid g++ warning : "virtual method but non-virtual d'tor" */
+  virtual ~I_UserInterface() { }
   unsigned s_numberOfVocabularyPairs;
   volatile unsigned m_dictionaryFileLineNumber;
   virtual void Message(const std::string & cr_stdstr ) = 0;

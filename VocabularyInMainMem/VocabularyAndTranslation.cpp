@@ -101,6 +101,7 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
   //    m_pword = new Word() ;
       numEngWords = 0 ;
       numGerWords = 0 ;
+      break;
 //      return 0;
   }
   if( engWordClass <= EnglishWord:://auxiliary_verb

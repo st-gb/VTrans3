@@ -68,14 +68,16 @@
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
 #include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
 
-//class SAX2GrammarRuleHandler
-#include <Xerces/SAX2GrammarRuleHandler.hpp>
-//class SAX2TransformationRuleHandler
-#include <Xerces/SAX2TransformationRuleHandler.hpp>
-//class SAX2TranslationRuleHandler
-#include <Xerces/SAX2TranslationRuleHandler.hpp>
-//class SAX2VocAttributeDefintionHandler
-#include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
+////class SAX2GrammarRuleHandler
+//#include <Xerces/SAX2GrammarRuleHandler.hpp>
+////class SAX2TransformationRuleHandler
+//#include <Xerces/SAX2TransformationRuleHandler.hpp>
+////class SAX2TranslationRuleHandler
+//#include <Xerces/SAX2TranslationRuleHandler.hpp>
+////class SAX2VocAttributeDefintionHandler
+//#include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
+#include <Controller/ConfigurationHandler_type.hpp>
+
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 //UnLoadAndLoadDictionary(wxWindow *);
 #include <wxWidgets/UserInterface/UserInterface.hpp>

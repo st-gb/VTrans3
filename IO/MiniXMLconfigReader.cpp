@@ -103,7 +103,7 @@ namespace MiniXML
     }
     return fileOpenSucceeded;
   }
-
+#ifndef TEST_MINI_XML
   void MiniXMLconfigReader::ReadGrammarRuleFile(
       const std::string & cr_stdstrFilePath )
   {
@@ -124,15 +124,19 @@ namespace MiniXML
     VTrans3::MiniXML::GrammarRuleFileReader grammarRuleFileReader(m_translationController);
     /*return */grammarRuleFileReader.ProcessXML(cr_stdstrFilePath.c_str() );
   }
+#endif// #ifndef TEST_MINI_XML
   bool MiniXMLconfigReader::ReadMainConfigFile(
     const std::string & cr_stdstrFilePath )
   {
+	LOGN_DEBUG("begin")
     MiniXML::MainConfigFileReader mainConfigFileReader(m_translationController);
     return mainConfigFileReader.ProcessXML(cr_stdstrFilePath);
   }
+#ifndef TEST_MINI_XML
   void MiniXMLconfigReader::ReadVocAttributeDefinitionFile(
     const std::string & cr_stdstrFilePath)
   {
+	LOGN_DEBUG("begin")
 //    VTrans3::MiniXML::VocAttributeDefintionHandler
 //      vocAttributeDefintionHandler(m_translationController);
     ReadFile(cr_stdstrFilePath.c_str(), VTrans3::MiniXML::VocAttributeDefintionFile::sax_cb);
@@ -148,5 +152,6 @@ namespace MiniXML
 //    ReadFile(cr_stdstrFilePath.c_str(), VTrans3::MiniXML::ReadTranslationRuleFile::sax_cb);
     translationRuleFileReader.Process(cr_stdstrFilePath);
   }
+#endif //#ifndef TEST_MINI_XML
 } /* namespace MiniXML */
 }

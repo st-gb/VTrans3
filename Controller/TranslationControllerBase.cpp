@@ -19,9 +19,10 @@
 //class ParseTreeTraverser::TransformTreeTraverser
 #include <Translate/TransformTreeTraverser.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
-#ifdef __ANDROID__
+#ifdef /*__ANDROID__*/ __unix__
   //SetCurrentDirectory(...)
-  #include <Controller/FileSystem/SetCurrentWorkingDir.hpp>
+  #include <FileSystem/GetCurrentWorkingDir.hpp>
+  #include <FileSystem/SetCurrentWorkingDir.hpp>
 #else
   //platformstl::filesystem_traits<char>::set_current_directory(...)
   #include <platformstl/filesystem/current_directory.hpp>
@@ -66,6 +67,7 @@ void MakeNeutral(std::string & r_stdstr )
   r_stdstr += "es";
 }
 
+#ifndef TEST_MINI_XML
 /** Make 1st person singular */
 void Make1stPersonSing(std::string & //r_std_strWordStem
   r_std_strInfinitive)
@@ -97,22 +99,28 @@ void MakePastParticiple(std::string & //r_std_strWordStem
     std_strWordStem.c_str(), std_strWordStem.length(),
     (enum GermanVerb::person_indices) (GermanVerb::firstPersonSing ) );
 }
-
+#endif //#ifndef TEST_MINI_XML
 //#if defined __cplusplus
 //}
 //#endif
 
 TranslationControllerBase::TranslationControllerBase()
   :
+#ifndef TEST_MINI_XML
   m_parsebyrise( * this ) ,
+#endif
   m_nodetrie_ui32GrammarPartName2colour(256, 0),
+#ifndef TEST_MINI_XML
   m_translateparsebyrisetree(
     m_parsebyrise
     , * this
     ),
+#endif  //#ifndef TEST_MINI_XML
   m_configurationHandler(*this)
 {
+#ifndef TEST_MINI_XML
   VocabularyAndTranslation::s_p_translationControllerBase = this;
+#endif
 #ifndef __ANDROID__
   /** Can be used for executing GUI operations: if a GUI control action (e.g.
    *  showing a dialog) should be performed then the caller's thread can be
@@ -123,6 +131,7 @@ TranslationControllerBase::TranslationControllerBase()
 //  m_nodetrie_ui32GrammarPartName2colour.Create(256);
 //  OneLinePerWordPair::s_p_userinterface = this;
 
+#ifndef TEST_MINI_XML
   std::string std_str = "makeFemale";
   ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
     std::make_pair(std_str, //(pfnTransformString)
@@ -141,19 +150,23 @@ TranslationControllerBase::TranslationControllerBase()
   std_str = "makePastParticiple";
   ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
     std::make_pair(std_str, & Make1stPersonSing) );
+#endif //#ifndef TEST_MINI_XML
 }
 
 TranslationControllerBase::~TranslationControllerBase()
 {
   LOGN_DEBUG("begin")
   // TODO Auto-generated destructor stub
+#ifndef TEST_MINI_XML
   IVocabularyInMainMem & r_vocAccess = s_dictReaderAndVocAccess.GetVocAccess();
   r_vocAccess.clear(); //DeleteCompleteList();
+#endif //TEST_MINI_XML
   LOGN_DEBUG("end")
 }
 
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 {
+  LOGN_DEBUG("begin")
 //  TransformationRule transformationrule ;
 //  transformationrule.m_stdstrParseTreePathWhereToInsert = "clauseWith1Obj.obj" ;
 //  transformationrule.m_bInsertLeftChild = false ;
@@ -170,22 +183,35 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 //    ) ;
   VocabularyAndTranslation::s_p_userinterface = this;
   SyntaxTreePath::sp_userinterface = this ;
+#ifndef TEST_MINI_XML
   IVocabularyInMainMem & r_VocAccess = s_dictReaderAndVocAccess.GetVocAccess();
   r_VocAccess.SetUserInterface(this);
   r_VocAccess.InsertFundamentalWords() ;
+#endif  //#ifndef TEST_MINI_XML
 
-  if( ReadMainConfigFile(cr_stdstrFilePath) )
+  bool readMainConfigFileSucceeded = true;
+//#ifndef __ANDROID__
+  readMainConfigFileSucceeded = ReadMainConfigFile(cr_stdstrFilePath);
+//#endif
+  if( readMainConfigFileSucceeded )
   {
+#ifdef TEST_MINI_XML
+  return 4;
+#else
     m_std_strMainConfigFilePath = cr_stdstrFilePath;
     if( /*m_configurationHandler.*/m_stdstrVocabularyFilePath.empty() )
     {
       Message( "error: The vocabulary file path is empty") ;
+#ifndef COMPILE_AS_EXECUTABLE
       return TranslationControllerBaseClass::InitFunction::
         vocabularyFilePathIsEmpty;
+#endif
     }
-    else
+//    else
     {
+//#ifndef __ANDROID__
       SetCurrentDirToOriginalCurrentWorkingDir();
+//#endif
 
   //    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
 //      TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
@@ -227,12 +253,14 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   #endif //#ifndef COMPILE_AS_EXECUTABLE
   ////    StartTimer();
     }
+#endif
   }
   else
     return TranslationControllerBaseClass::InitFunction::loadingMainConfigFileFailed;
   return TranslationControllerBaseClass::InitFunction::success;
 }
 
+#ifndef TEST_MINI_XML
 void TranslationControllerBase::ReadGrammarRuleFile(
   //SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
   const std::string & cr_stdstrFilePath
@@ -240,13 +268,19 @@ void TranslationControllerBase::ReadGrammarRuleFile(
 {
   m_configurationHandler.ReadGrammarRuleFile(cr_stdstrFilePath);
 }
+#endif //#ifndef TEST_MINI_XML
 
 bool TranslationControllerBase::ReadMainConfigFile(
   const std::string & cr_stdstrFilePath )
 {
+  std::string std_strCurrentWorkingDir;
+  ::GetCurrentWorkingDir(std_strCurrentWorkingDir);
+  LOGN_DEBUG("begin--should open file \"" +  std_strCurrentWorkingDir +
+    cr_stdstrFilePath )
   return m_configurationHandler.ReadMainConfigFile(cr_stdstrFilePath.c_str() );
 }
 
+#ifndef TEST_MINI_XML
 void TranslationControllerBase::ReadTranslationRuleFile(
 //  SAX2TranslationRuleHandler & r_sax2translationrulehandler ,
   const std::string & cr_stdstrFilePath
@@ -261,8 +295,10 @@ void TranslationControllerBase::ReadVocAttributeDefinitionFile(
   const std::string & cr_stdstrFilePath
   )
 {
+  LOGN_DEBUG("begin")
   m_configurationHandler.ReadVocAttributeDefinitionFile(cr_stdstrFilePath);
 }
+#endif //#ifndef TEST_MINI_XML
 
 void TranslationControllerBase::ReadXMLfile(
   XERCES_CPP_NAMESPACE::DefaultHandler & r_xercesc_defaulthandler ,
@@ -297,19 +333,24 @@ void TranslationControllerBase::ReadXMLfile(
 void TranslationControllerBase::SetCurrentDirToOriginalCurrentWorkingDir()
 {
   LOGN("setting current dir to " << m_std_strOriginalCurrWorkDir )
-  platformstl::filesystem_traits<char>::set_current_directory(
-    m_std_strOriginalCurrWorkDir.c_str() );
-  char buffer[MAX_PATH];
-  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
-  m_std_strOriginalCurrWorkDir = std::string(buffer);
-  LOGN("current dir is now: " << buffer )
+//  platformstl::filesystem_traits<char>::set_current_directory(
+//    m_std_strOriginalCurrWorkDir.c_str() );
+  SetCurrentWorkingDir_inl(m_std_strOriginalCurrWorkDir.c_str());
+//  char buffer[MAX_PATH];
+//  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
+//  LOGN("current dir is now: " << buffer )
+
+  m_std_strOriginalCurrWorkDir = /*std::string(buffer);*/ GetCurrentWorkingDir();
+  LOGN("current dir is now: " << m_std_strOriginalCurrWorkDir )
 }
 
 std::string TranslationControllerBase::GetCurrentWorkingDir()
 {
-  char buffer[MAX_PATH];
-  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
-  std::string std_strCurrWorkDir = std::string(buffer);
+//  char buffer[MAX_PATH];
+//  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
+//  std::string std_strCurrWorkDir = /*std::string(buffer);*/
+  std::string std_strCurrWorkDir;
+  ::GetCurrentWorkingDir(std_strCurrWorkDir);
   return std_strCurrWorkDir;
 }
 
@@ -329,9 +370,9 @@ void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
 //    );
 //  platformstl::current_directory cwd; (//char_type const *dir
 //    stdstrConfigFilesRootFullDirectoryPath.c_str() );
-#ifdef __ANDROID__
+#ifdef /*__ANDROID__*/ __unix__
   //::_chdir(dir);
-  ::SetCurrentDirectory(c_r_stdstrConfigFilesRootPath.c_str() );
+  ::SetCurrentWorkingDir_inl(c_r_stdstrConfigFilesRootPath.c_str() );
 #else
   char buffer[MAX_PATH];
   platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
@@ -344,6 +385,7 @@ void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
     << stdstrConfigFilesRootFullDirectoryPath << "\"")
 }
 
+#ifndef TEST_MINI_XML
 void TranslationControllerBase::Transform()
 {
   LOGN(//"TranslationControllerBase::Transform() "
@@ -437,3 +479,4 @@ void TranslationControllerBase::Translate(
   LOGN(//"TranslationControllerBase::Translate(...) "
       "end")
 }
+#endif

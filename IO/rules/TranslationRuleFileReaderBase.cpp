@@ -16,7 +16,9 @@
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <UserInterface/I_UserInterface.hpp>//class I_UserInterface
 
+#ifdef COMPILE_AS_EXECUTABLE
 extern TranslationControllerBase * g_p_translationcontrollerbase;
+#endif //#ifdef COMPILE_AS_EXECUTABLE
 
 namespace VTrans3
 {

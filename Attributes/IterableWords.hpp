@@ -17,6 +17,8 @@ public:
   BYTE m_byIndex ;
   IterableWords()
     : m_byIndex(0) {};
+  /** avoid g++ warning : "virtual method but non-virtual d'tor" */
+  virtual ~IterableWords() { }
   void InitGetNextString()
   {
     m_byIndex = 0 ;

@@ -85,7 +85,8 @@ void CharStringStdMap::clear()
     const std::string & st = c_iter_map->first;
 #endif
     DEBUGN( "freeing memory for dictionary word \"" << c_iter_map->first << "\"")
-    for( std::set<VocabularyAndTranslation *>::iterator
+    /** "const_iterator" for Android NDK. */
+    for( std::set<VocabularyAndTranslation *>::const_iterator
       iter_p_vocabularyandtranslation =
         c_iter_map->second.m_std_set_p_vocabularyandtranslation.begin() ;
       iter_p_vocabularyandtranslation !=
@@ -179,7 +180,8 @@ fastestUnsignedDataType CharStringStdMap::GetNumberOfAllocatedBytes()
         /*+ sizeof(std::basic_string<char>::_Rep_base)*/;
 #endif
     DEBUGN( "freeing memory for dictionary word \"" << c_iter_map->first << "\"")
-    for( std::set<VocabularyAndTranslation *>::iterator
+    /** "const_iterator" for Android NDK. */
+    for( std::set<VocabularyAndTranslation *>::const_iterator
       iter_p_vocabularyandtranslation =
         c_iter_map->second.m_std_set_p_vocabularyandtranslation.begin() ;
       iter_p_vocabularyandtranslation !=

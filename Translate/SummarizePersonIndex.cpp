@@ -187,6 +187,7 @@ namespace ParseTreeTraverser
               VocabularyAndTranslation::second_person_plural ;
           break ;
         }
+        break;
       }
     }
     else

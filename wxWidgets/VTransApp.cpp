@@ -32,7 +32,7 @@ ENABLE_WRITE_STRINGS_WARNING
 #include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 
-#include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
+//#include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
 //#include <Xerces/SAX2MainConfigHandler.hpp> //class SAX2MainConfigHandler
 
 //#include <fstream> //for std::ofstream
@@ -52,6 +52,8 @@ ENABLE_WRITE_STRINGS_WARNING
 //I_UserInterface * SyntaxTreePath::sp_userinterface ;
 
 using namespace wxWidgets;
+
+TranslationControllerBase * g_p_translationcontrollerbase = NULL ;
 
 IMPLEMENT_APP(VTransApp)
 
@@ -73,6 +75,7 @@ VTransApp::VTransApp()
   m_p_mainWindow(NULL)//,
   //,m_wxiconVTrans( VT_icon_xpm )
 {
+  g_p_translationcontrollerbase = this;
   m_parsebyrise.SetUserInterface( this ) ;
 }
 

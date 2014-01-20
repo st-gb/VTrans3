@@ -15,8 +15,10 @@
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TransformationRule.hpp> //class TransformationRule
+#ifndef TEST_MINI_XML
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
+#endif
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 //#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
@@ -64,22 +66,30 @@ protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
+#ifndef TEST_MINI_XML
   std::map<TranslationRule *, std::string>
     m_std_map_p_translationrule2filepath;
+#endif //#ifndef TEST_MINI_XML
 //  dictReaderAndVocAccess_type m_dictReaderAndVocAccess;
   std::string m_std_strOriginalCurrWorkDir;
   ConfigurationHandler_type m_configurationHandler;
   fastestUnsignedDataType m_GUIthreadID;
 //  static dictionary_type s_dictionary ;
+#ifndef TEST_MINI_XML
   /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
+#endif //TEST_MINI_XML
   NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
+#ifndef TEST_MINI_XML
   ParseByRise m_parsebyrise ;
+#endif
   std::string m_stdstrVocabularyFilePath ;
 //  std::map<std::string,TransformationRule>
 //    m_stdmap_stdstrTransformationRule2transformationrule ;
+#ifndef TEST_MINI_XML
   std::map<SyntaxTreePath,TransformationRule>
     m_stdmap_syntaxtreepath2transformationrule ;
   TranslateParseByRiseTree m_translateparsebyrisetree ;
+#endif //#ifndef TEST_MINI_XML
   std::string m_std_strMainConfigFilePath;
   GUIattributes m_GUIattributes;
 
@@ -135,6 +145,7 @@ public:
   void SetCurrentDirToConfigFilesRootPath(
     const std::string & c_r_stdstrConfigFilesRootPath);
   void SetCurrentDirToOriginalCurrentWorkingDir();
+#ifndef TEST_MINI_XML
   void Transform() ;
   void Translate(
     const std::string & cr_stdstrWholeInputText ,
@@ -147,6 +158,7 @@ public:
     std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
       r_stdvec_stdvec_stdvecTranslationAndGrammarPart
     ) ;
+#endif //#ifndef TEST_MINI_XML
 //  virtual void StartTimer();
 };
 

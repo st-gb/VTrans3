@@ -36,6 +36,7 @@ EnglishWord::English_word_class EnglishWord::MapGrammarPartIDtoWordClass(
     break;
   default:
     engWordClass = grammarPartID;
+    break;
   }
   return engWordClass;
 }

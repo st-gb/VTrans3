@@ -20,6 +20,7 @@ namespace TinyXML
   {
     // TODO Auto-generated destructor stub
   }
+
   bool ReadMainConfigFile(const char * const)
   {
 

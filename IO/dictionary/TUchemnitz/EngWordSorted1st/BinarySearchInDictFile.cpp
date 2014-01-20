@@ -11,6 +11,7 @@
 /** SAME_VOCABLE_SEPERATOR_CHAR etc. */
 #include <IO/dictionary/TUchemnitz/TUchemnitzDictSeparatorChars.h>
 #include <limits.h> //UINT_MAX
+#include <ctype.h> //::isdigit(...)
 #include <vector> //class std::vector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 #include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF
@@ -768,8 +769,9 @@ namespace DictionaryReader
       ////                      p_voc_container->
       //                    break;
       /** String to search is lower than string in dictionary. */
-      case PositionStringVector::tooFewTokens:
-        endSearchForCompareStringInCurrentVocData;
+//      case PositionStringVector::tooFewTokens:
+//        endSearchForCompareStringInCurrentVocData;
+//        break;
       case PositionStringVector::lower:
         psvDictFile.clear();
         hi = byteOffset;
@@ -816,6 +818,8 @@ namespace DictionaryReader
       )
     {
       IVocabularyInMainMem::voc_container_type * p_voc_container = NULL;
+      typedef std::vector< std::set<fastestUnsignedDataType> > offsetVec;
+
 //      fastestUnsignedDataType byteOffsetOfVocable =
       VocabularyAndTranslation * p_vocandtransl = NULL;
       std::set<fastestUnsignedDataType> byteOffsetsOfVocData;
@@ -841,8 +845,10 @@ namespace DictionaryReader
       const int vecsz = byteOffsetsOfVocDataVec.size();
       LOGN_DEBUG("# vectors:" << vecsz)
 #endif
-      /** Use vector containing the most tokens. */
-      std::vector< std::set<fastestUnsignedDataType> >::const_reverse_iterator
+      /** Use vector containing the most tokens.
+       *  Must use "reverse_iterator" rather than "const_reverse_iterator"
+       *  for Android NDK. */
+      offsetVec::reverse_iterator
         c_rev_iter = byteOffsetsOfVocDataVec.rbegin();
       if( c_rev_iter != byteOffsetsOfVocDataVec.rend() )
       {

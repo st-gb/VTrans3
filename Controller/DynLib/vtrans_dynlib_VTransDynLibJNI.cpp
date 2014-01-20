@@ -17,13 +17,22 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include "dynlib_main.h" //Init(...) etc.
 #include <stddef.h> //for "NULL"
+#include <FileSystem/SetCurrentWorkingDir.hpp>
 
 //#define JNIEXPORT EXPORT
 
 #ifndef _Included_vtrans_dynlib_VTransDynLibJNI
 #define _Included_vtrans_dynlib_VTransDynLibJNI
+
 #ifdef __cplusplus
-extern "C" {
+	/** For avoiding C++ name mangling. */
+	extern "C" {
+	#define JNI_ENV_ACCESS(x) x
+    #define JNI_ENV_POINTER(x)
+#else
+  #include <malloc.h>
+  #define JNI_ENV_ACCESS(x) (*x)
+  #define JNI_ENV_POINTER(x) x,
 #endif
 
 /*
@@ -31,26 +40,33 @@ extern "C" {
  * Method:    Init
  * Signature: (Ljava/lang/String;)B
  */
-JNIEXPORT
-jbyte JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Init
+//JNIEXPORT
+extern "C" jbyte /*JNICALL*/ Java_vtrans_dynlib_VTransDynLibJNI_Init
   (JNIEnv * p_jni_env, //jobject thiz
     jclass jc,
     jstring jstrMainCfgFile,
-    jstring jstrCfgFilesRootPath)
+    jstring jstrCfgFilesRootPath,
+    jstring jstrCurrentWorkingDir)
 {
+  jboolean jb = /*false*/ JNI_FALSE;
+  const char * strCurrentWorkingDir = JNI_ENV_ACCESS(p_jni_env)->GetStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
+    jstrCurrentWorkingDir, //NULL
+	& jb);
+  ::SetCurrentWorkingDir_inl(strCurrentWorkingDir);
   LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Init"
     FULL_FUNC_NAME << "--begin")
-  jboolean jb = false;
 //  const jbyte * str;
   const char * strMainConfigFile;
   const char * strConfigFilesRootPath;
   //from http://java.sun.com/docs/books/jni/html/objtypes.html:
   strMainConfigFile = //( *
-    p_jni_env//)
-    ->GetStringUTFChars(//jni_env,
+  JNI_ENV_ACCESS(p_jni_env)->GetStringUTFChars(//jni_env,
+	  JNI_ENV_POINTER(p_jni_env)
       jstrMainCfgFile, //NULL
       & jb);
-  strConfigFilesRootPath = p_jni_env->GetStringUTFChars(//jni_env,
+  strConfigFilesRootPath = JNI_ENV_ACCESS(p_jni_env)->GetStringUTFChars(
+	  JNI_ENV_POINTER(p_jni_env)
     jstrCfgFilesRootPath, //NULL
     & jb);
   LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Translate"
@@ -72,38 +88,44 @@ jbyte JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Init
   //jni_env->ReleaseStringChars(jstrMainCfgFile,p_chMainConfigFilePath);
   //( *
   LOGN_DEBUG(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init" FULL_FUNC_NAME <<
-    "before ReleaseStringUTFChars" << strMainConfigFile )
-  p_jni_env//)
-    ->ReleaseStringUTFChars(//jni_env,
+    "before ReleaseStringUTFChars " << strMainConfigFile )
+  JNI_ENV_ACCESS(p_jni_env)->ReleaseStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
     jstrMainCfgFile, strMainConfigFile);
   LOGN_DEBUG(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init" FULL_FUNC_NAME <<
-    "before ReleaseStringUTFChars" << strConfigFilesRootPath )
-  p_jni_env//)
-    ->ReleaseStringUTFChars(//jni_env,
-    jstrCfgFilesRootPath, strConfigFilesRootPath);
+    "before ReleaseStringUTFChars " << strConfigFilesRootPath )
+  JNI_ENV_ACCESS(p_jni_env)->ReleaseStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
+    jstrCfgFilesRootPath,
+    strConfigFilesRootPath);
+  LOGN_DEBUG("before ReleaseStringUTFChars " << strCurrentWorkingDir )
+  JNI_ENV_ACCESS(p_jni_env)->ReleaseStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
+    jstrCurrentWorkingDir,
+    strCurrentWorkingDir);
   LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init" FULL_FUNC_NAME <<
-    "return " << jInitResult)
+    "return " << (unsigned) jInitResult)
   return jInitResult;
 }
 
+#ifndef TEST_MINI_XML
 /*
  * Class:     vtrans_dynlib_VTransDynLibJNI
  * Method:    Translate
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Translate
+JNIEXPORT jstring JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Translate
   (JNIEnv * p_jni_env, //jobject,
     jclass jc, jstring jstrEnglishText)
 {
   LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Translate"
     FULL_FUNC_NAME << "--begin")
-  jboolean jb = false;
+  jboolean jb = /*false*/ JNI_FALSE;
 //  const jbyte * str;
   const char * str;
   //from http://java.sun.com/docs/books/jni/html/objtypes.html:
-  str = //( *
-    p_jni_env//)
-    ->GetStringUTFChars(//jni_env,
+  str = JNI_ENV_ACCESS(p_jni_env)->GetStringUTFChars(
+	  JNI_ENV_POINTER(p_jni_env)
       jstrEnglishText, //NULL
       & jb);
   LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Translate"
@@ -126,12 +148,18 @@ JNIEXPORT jstring JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Translate
   LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_Translate--transl. result:"
     << ar_chTranslation)
   //jni_env->ReleaseStringChars(jstrMainCfgFile,p_chMainConfigFilePath);
-  //( *
-  p_jni_env//)
-    ->ReleaseStringUTFChars(//jni_env,
+  JNI_ENV_ACCESS(p_jni_env)->ReleaseStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
     jstrEnglishText, str);
-  jstring jstr = p_jni_env->NewStringUTF(ar_chTranslation);
+  jstring jstr = JNI_ENV_ACCESS(p_jni_env)->NewStringUTF(
+	  JNI_ENV_POINTER(p_jni_env)
+	  ar_chTranslation);
+#ifdef __cplusplus
   delete [] ar_chTranslation;
+#else
+  //TODO free may only be called when allocated via malloc(...)?!
+  free(ar_chTranslation);
+#endif
   LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_Translate--end")
   return jstr;
 }
@@ -141,13 +169,14 @@ JNIEXPORT jstring JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_Translate
  * Method:    FreeMemory
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_vtrans_1dynlib_VTransDynLibJNI_FreeMemory
-  (JNIEnv *, //jobject
+JNIEXPORT void JNICALL Java_vtrans_dynlib_VTransDynLibJNI_FreeMemory
+  (JNIEnv * p_jni_env, //jobject
     jclass jc)
 {
   LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_FreeMemory--begin")
   FreeMemory();
 }
+#endif //TEST_MINI_XML
 
 #ifdef __cplusplus
 }

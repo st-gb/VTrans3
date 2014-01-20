@@ -16,10 +16,10 @@
 
 //"ofstreamLogFile" should be declared in the module that starts the translation:
 //Either the TransApp constructor or a DLL module.
-extern std::ofstream ofstreamLogFile;
+//extern std::ofstream ofstreamLogFile;
 //extern VocNode * m_first;
-extern WordNode * m_first ;
-extern WordList wordList;
+//extern WordNode * m_first ;
+//extern WordList wordList;
 
 BOOL Word::operator == (Word * pWordCompare)
 {

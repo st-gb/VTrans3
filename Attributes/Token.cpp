@@ -6,7 +6,7 @@
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <compiler/GCC/suppress_unused_variable.h>
 
-extern std::ofstream ofstreamLogFile; //for "LOGN" macro
+//extern std::ofstream ofstreamLogFile; //for "LOGN" macro
 
 //void Append(VTrans_string_typeVector & destinationCStringVector,const VTrans_string_typeVector & append)
 //{

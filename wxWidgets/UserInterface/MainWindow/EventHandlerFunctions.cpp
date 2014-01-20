@@ -11,10 +11,13 @@
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <Attributes/TranslationAndConsecutiveID.hpp>
 #include <Translate/TranslationRule.hpp> //class TranslationRule
-#include <Xerces/SAX2GrammarRuleHandler.hpp>
-#include <Xerces/SAX2TransformationRuleHandler.hpp>
-#include <Xerces/SAX2TranslationRuleHandler.hpp>
-#include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
+
+//#include <Xerces/SAX2GrammarRuleHandler.hpp>
+//#include <Xerces/SAX2TransformationRuleHandler.hpp>
+//#include <Xerces/SAX2TranslationRuleHandler.hpp>
+//#include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
+#include <Controller/ConfigurationHandler_type.hpp>
+
 #include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
 #include <wxWidgets/UserInterface/UserInterface.hpp>
 #include <wxWidgets/UserInterface/wxParseTreePanel.hpp>
@@ -467,7 +470,7 @@ void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
     std_strEnglishWord.length() )
     );
   DWORD dw = 0;
-  long double beginTimeCountInNanoSeconds, endTimeCountInNanoSeconds;
+  TimeCountInNanosec_type beginTimeCountInNanoSeconds, endTimeCountInNanoSeconds;
 //#ifdef WIN32
 //  Windows_API::GetTimeCountInNanoSeconds(beginTimeCountInNanoSeconds);
 //#else
