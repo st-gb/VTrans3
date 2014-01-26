@@ -5,6 +5,8 @@
  *      Author: Stefan
  */
 #include <Attributes/EnglishWord.hpp> //for EnglishWord::UnknownWord
+#include <Controller/TranslationControllerBase.hpp> //class TranslationControllerBase
+#include <Controller/character_string/convertFromAndToStdString.hpp>
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <UserInterface/I_UserInterface.hpp> //for I_UserInterface::Message(...)
 //class AttributeTypeAndPosAndSize
@@ -33,6 +35,8 @@
 std::map<std::string, AttributeTypeAndPosAndSize > *
   ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef ;
 ParseByRise * ConditionsAndTranslation::sp_parsebyrise ;
+
+extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 //E.g. add "German_definite_article" , "der\ndie\ndas\ndie"
 void TranslateParseByRiseTree::AddTranslationArray(
@@ -974,6 +978,8 @@ void TranslateParseByRiseTree::TranslateParseTree(
 
   translatetreetraverser.Traverse() ;
 
+  if( ! g_p_translationcontrollerbase->m_vbContinue )
+	return;
   //The tree may have been modified (tree branches moved or inserted)
   //So get all leaves from left to right for the whole tree.
   ParseTreeTraverser::TranslatedTreeTraverser translated_treetraverser(
@@ -1065,6 +1071,7 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   , const std::string & std_strTranslationRuleSyntaxTreePath
   )
 {
+  LOGN_DEBUG("(8 params) begin")
   bool bAtLeast1TranslationRuleApplies = false;
   bool bTranslationRuleSTPmatchesCurrentSTP = false ;
   bTranslationRuleSTPmatchesCurrentSTP = //p_translationrule->Matches(
@@ -1200,13 +1207,13 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   )
 {
   bool bAtLeast1TranslationRuleApplies = false;
-  LOGN_DEBUG("begin")
+  LOGN_DEBUG("(5 params) begin")
   LOGN_DEBUG("# of translation rule->condition and translation entries:" <<
     m_stdmap_translationrule2ConditionsAndTranslation.size() << "\n")
-#ifdef _DEBUG
-  std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
+//#ifdef _DEBUG
+  const std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
     r_stdvec_wCurrentGrammarPartPath ) ;
-#endif
+//#endif
   if( ! r_stdvec_p_grammarpartPath.empty() )
   {
     const GrammarPart & c_r_grammarpart = * r_stdvec_p_grammarpartPath.back();
@@ -1216,7 +1223,18 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
       return true;
     }
   }
+  const fastestUnsignedDataType numTranslationRules =
+	  m_stdmap_translationrule2ConditionsAndTranslation.size();
 //   ;
+
+	std::string statusMessage = std::string("for current parse tree path \"") +
+	  stdstrCurrentParseTreePath + "\"";
+	g_p_translationcontrollerbase->SetStatus(
+	  VTrans::translationRules,
+	  statusMessage.c_str()
+	  );
+
+  fastestUnsignedDataType currentTranslationRuleIndex = 0;
 //  m_stdvec_wCurrentGrammarPartPath ;
 //  for( std::map<TranslationRule * ,ConditionsAndTranslation>::const_iterator
 //      c_iter_p_translationrule2conditionsandtranslation =
@@ -1242,8 +1260,10 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
       // is more correct than "der" for "the man"
         m_stdmap_translationrule2ConditionsAndTranslation.rbegin() ;
       c_rev_iter_translationrule2conditionsandtranslation !=
-        m_stdmap_translationrule2ConditionsAndTranslation.rend() ;
-      ++ c_rev_iter_translationrule2conditionsandtranslation
+        m_stdmap_translationrule2ConditionsAndTranslation.rend()
+        && g_p_translationcontrollerbase->m_vbContinue ;
+      ++ c_rev_iter_translationrule2conditionsandtranslation,
+      ++ currentTranslationRuleIndex
       )
   {
     //E.g. m_stdvec_wCurrentGrammarPartPath is
@@ -1280,11 +1300,25 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 //          ) ;
         p_translationrule->m_syntaxtreepathCompareWithCurrentPath.
           GetAs_std_string();
+//	  if( ! r_stdvec_p_grammarpartPath.empty() )
+//	  {
+//	    const GrammarPart & c_r_grammarpart = * r_stdvec_p_grammarpartPath.back();
+//	    c_r_grammarpart.
+//	  }
+//      std::string statusMessage = //std::string("for current parse tree path \"") +
+//		  //stdstrCurrentParseTreePath + "\" : \"" +
+//		  std_strTranslationRuleSyntaxTreePath + "\" " +
+//		  convertToStdString(currentTranslationRuleIndex) + "/" +
+//	     convertToStdString(numTranslationRules);
+//      g_p_translationcontrollerbase->SetStatus(
+//        VTrans::translationRules,
+//        statusMessage.c_str()
+//        );
 #ifdef _DEBUG
       if( stdstrCurrentParseTreePath == "clause.main_verb" ||
           std_strTranslationRuleSyntaxTreePath == "main_verb" )
         //Just for setting a breakpoint.
-        stdstrCurrentParseTreePath += "" ;
+//        stdstrCurrentParseTreePath += "" ;
       LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "Comparing " << stdstrCurrentParseTreePath
         << " and " <<
         std_strTranslationRuleSyntaxTreePath //<< "\n" ;

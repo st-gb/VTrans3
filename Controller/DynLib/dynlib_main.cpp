@@ -22,6 +22,11 @@
 //TranslationControllerBase g_translationcontrollerbase;
 TranslationControllerBase * g_p_translationcontrollerbase = NULL ;
 
+EXPORT void Stop()
+{
+  g_p_translationcontrollerbase->Stop();
+}
+
 EXPORT void FreeMemory()
 {
   LOGN("begin")
@@ -70,7 +75,7 @@ EXPORT BYTE
   }
   LOGN_INFO("compile time:" << __DATE__ << " " << __TIME__ )
   std::string std_strCurrentWorkingDir;
-  ::GetCurrentWorkingDir(std_strCurrentWorkingDir);
+  OperatingSystem::GetCurrentWorkingDirA_inl(std_strCurrentWorkingDir);
   LOGN_INFO("current dir is:\"" << std_strCurrentWorkingDir << "\"")
 #endif
   //Create on heap because of g_logger access that causes a crash when the log
@@ -116,6 +121,7 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
   )
 {
   LOGN("::TranslateAsXML(...) begin")
+  g_p_translationcontrollerbase->m_vbContinue = true;
   char * ar_chTranslation;
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
@@ -196,6 +202,11 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
   LOGN("")
   LOGN("::TranslateAsXML(...) end")
   return ar_chTranslation;
+}
+
+EXPORT BYTE GetStatus(std::string & item, struct tm & time)
+{
+  return g_p_translationcontrollerbase->GetStatus(item, time);
 }
 
 /**

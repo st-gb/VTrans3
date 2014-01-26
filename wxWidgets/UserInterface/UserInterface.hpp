@@ -29,6 +29,10 @@ namespace wxWidgets
     wxWindow *,
     const wxString & c_r_wxInitialDirForFileSelecion
     ) ;
+  void InsertIntoVocabularyIntoMemory_Async(
+    wxWindow * p_wxwindowParent,
+    const std::string & std_strFilePath
+    );
   void LoadOrReloadDictionary(
     wxWindow * p_wxwindow,
     const wxString & wxstrVocabularyDirPath,

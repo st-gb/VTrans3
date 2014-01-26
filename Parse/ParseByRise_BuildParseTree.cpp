@@ -11,6 +11,7 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
+#include <Controller/character_string/convertFromAndToStdString.hpp>
 //#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
@@ -1479,6 +1480,14 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
     LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "current token:\""
       << c_r_positionStringVector.at(dwTokenIndex).m_Str << "\"" )
     //p_letternode = //g_lettertree.searchAndReturnLetterNode( psv,
+    const std::string & item =
+      c_r_positionStringVector.at(dwTokenIndexRightMost).m_Str +
+      " beginning from token index #" +
+      convertToStdString(dwTokenIndexRightMost);
+    m_r_translationcontrollerbase.SetStatus(
+      VTrans::lookUpWordInDictBeginningFromTokenIndex,
+      item.c_str()
+      );
     p_std_set_p_vocabularyandtranslation =
       //TranslationControllerBase:://s_dictionary.//searchAndReturnLetterNode(
       //find(
@@ -1503,7 +1512,8 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
     }
   }
   while( ! /*p_letternode*/ p_std_set_p_vocabularyandtranslation
-    && dwTokenIndexRightMost < c_r_positionStringVector.size() - 1 );
+    && dwTokenIndexRightMost < c_r_positionStringVector.size() - 1
+    && m_r_translationcontrollerbase.m_vbContinue );
   if( //dwTokenIndexRightMostUnknownToken
       bUnknownTokenFound)
   {

@@ -451,6 +451,53 @@ void UnderlineGrammarParts(
   r_wxdc.SetPen(r_wxpen);
 }
 
+void wxGermanTranslationPanel::AddChoice(
+  wxWindowID wxwindowid,
+  wxCoord & wxcoordX,
+  wxCoord & wxcoordY,
+  const wxArrayString & wxarraystringTranslation,
+  wxCoord wxcoordYBottom,
+  const bool bConnectedControl,
+  uint32_t ui32ConcatenationID
+  )
+{
+  wxChoice * p_wxchoice = new wxChoice(
+    this, //wxWindow *    parent,
+//      wxID_ANY, // wxWindowID    id,
+    wxwindowid,
+    wxPoint(wxcoordX, wxcoordY), //const wxPoint &   pos = wxDefaultPosition,
+    wxDefaultSize, //const wxSize & size = wxDefaultSize,
+    //    int   n = 0,
+    //    const wxString    choices[] = NULL,
+    //    long    style = 0,
+    //    const wxValidator &   validator = wxDefaultValidator,
+    //    const wxString &    name = wxChoiceNameStr
+//        c_r_wxarraystringTranslation //const wxArrayString & choices,
+    wxarraystringTranslation
+    //long style=0,
+    //const wxValidator & validator = wxDefaultValidator,
+    //const wxString &name=wxChoiceNameStr
+    );
+  p_wxchoice->Select(0);
+//      p_wxchoice->SetMinClientSize (const wxSize &size);
+//      p_wxchoice->
+  wxSize wxsizeChoiceControl = p_wxchoice->GetSize();
+  wxcoordX += wxsizeChoiceControl.GetWidth();
+  wxcoordYBottom = wxcoordY + wxsizeChoiceControl.GetHeight() + 2;
+  if( bConnectedControl )
+  {
+    Connect( wxwindowid, wxEVT_COMMAND_CHOICE_SELECTED,
+      wxCommandEventHandler(
+        wxGermanTranslationPanel::SelectConnectedListEntries) );
+    m_std_multimap_ui32ConcatenationID2p_wxchoice.insert( std::make_pair(
+      ui32ConcatenationID, p_wxchoice)
+      );
+    m_std_multimap_p_wxchoice2ui32ConcatenationID.insert(
+      std::make_pair(p_wxchoice, ui32ConcatenationID)
+      );
+  }
+}
+
 void wxGermanTranslationPanel::PossiblyAddChoice(
 //    const wxArrayString & c_r_wxarraystringTranslation,
 //  std::set<TranslationAndConcatenationID> &
@@ -499,8 +546,11 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
 //      m_std_strTranslation.c_str();
       c_iter_std_set_grammarpartpointerandconcatenationid->
       m_p_grammarpartToken->m_stdstrTranslation.c_str();
-    wxarraystringTranslation.Add( GetwxString_Inline( p_chTranslation)
-      );
+    const wxString wxstrGermanTranslation = //GetwxString_Inline( p_chTranslation);
+      //wxString::FromAscii(p_chTranslation);
+    /** @see http://de.wikipedia.org/wiki/ISO_8859-1 */
+    /*wxstr =*/ wxString(p_chTranslation, wxConvISO8859_1);
+    wxarraystringTranslation.Add( wxstrGermanTranslation );
 //    ++ c_iter_std_set_translationandconcatenationid;
     ++ c_iter_std_set_grammarpartpointerandconcatenationid;
   }
@@ -513,42 +563,15 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
       wxarraystringTranslation.size() > 1
       )
     {
-
-      wxChoice * p_wxchoice = new wxChoice(
-        this, //wxWindow *    parent,
-  //      wxID_ANY, // wxWindowID    id,
+      AddChoice(
         wxwindowid,
-        wxPoint(wxcoordX, wxcoordY), //const wxPoint &   pos = wxDefaultPosition,
-        wxDefaultSize, //const wxSize & size = wxDefaultSize,
-        //    int   n = 0,
-        //    const wxString    choices[] = NULL,
-        //    long    style = 0,
-        //    const wxValidator &   validator = wxDefaultValidator,
-        //    const wxString &    name = wxChoiceNameStr
-//        c_r_wxarraystringTranslation //const wxArrayString & choices,
-        wxarraystringTranslation
-        //long style=0,
-        //const wxValidator & validator = wxDefaultValidator,
-        //const wxString &name=wxChoiceNameStr
+        wxcoordX,
+        wxcoordY,
+        wxarraystringTranslation,
+        wxcoordYBottom,
+        bConnectedControl,
+        ui32ConcatenationID
         );
-      p_wxchoice->Select(0);
-//      p_wxchoice->SetMinClientSize (const wxSize &size);
-//      p_wxchoice->
-      wxSize wxsizeChoiceControl = p_wxchoice->GetSize();
-      wxcoordX += wxsizeChoiceControl.GetWidth();
-      wxcoordYBottom = wxcoordY + wxsizeChoiceControl.GetHeight() + 2;
-      if( bConnectedControl )
-      {
-        Connect( wxwindowid, wxEVT_COMMAND_CHOICE_SELECTED,
-          wxCommandEventHandler(
-            wxGermanTranslationPanel::SelectConnectedListEntries) );
-        m_std_multimap_ui32ConcatenationID2p_wxchoice.insert( std::make_pair(
-          ui32ConcatenationID, p_wxchoice)
-          );
-        m_std_multimap_p_wxchoice2ui32ConcatenationID.insert(
-          std::make_pair(p_wxchoice, ui32ConcatenationID)
-          );
-      }
     }
     else //if( )
     {

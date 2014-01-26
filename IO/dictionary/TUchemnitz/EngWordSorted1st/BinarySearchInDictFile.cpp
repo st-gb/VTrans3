@@ -508,6 +508,20 @@ namespace DictionaryReader
               charIndexInsideWord, i);
             ++ charIndexInsideWord;
           }
+        if(prevChar > 127 )
+        {
+          if( ! insideBracket && charIndexInsideWord < 100)
+          {
+            ASCIIcodePage850Char = GetCharInASCIIcodePage850(i);
+            if( ASCIIcodePage850Char != 0 )
+              SetWordCharacter(word,/*charIndex*/ charIndexInsideWord,
+                ASCIIcodePage850Char);
+            else
+              SetWordCharacter(word,/*charIndex*/ charIndexInsideWord, i);
+            ++ charIndexInsideWord;
+          }
+        }
+        else
         if( ( ::isalpha(i) || i == ' ' ) )
         {
           if(kindOfWordStart)
@@ -519,20 +533,11 @@ namespace DictionaryReader
 //
 //            else
 //              wordHasStarted = true;
-            if(prevChar > 127 )
-            {
-              ASCIIcodePage850Char = GetCharInASCIIcodePage850(i);
-              if( ASCIIcodePage850Char != 0 )
-                SetWordCharacter(word,/*charIndex*/ charIndexInsideWord,
-                  ASCIIcodePage850Char);
-              else
-                SetWordCharacter(word,/*charIndex*/ charIndexInsideWord, i);
-            }
-            else
-            {
+//            else
+//            {
               ch = i;
               SetWordCharacter(word,/*charIndex*/ charIndexInsideWord, ch);
-            }
+//            }
           }
           ++ charIndexInsideWord;
 //          prevChar = i;
@@ -784,6 +789,7 @@ namespace DictionaryReader
         break;
         /** String to search is greater than string in dictionary. */
       case PositionStringVector::greater:
+      case PositionStringVector::tooFewTokensInComparisonVector:
         /** string to search is greater than string in dictionary-> dictionary
          *  string is before string to search->memorize the offset*/
         closestBeforeNonMatchOffset = byteOffset;
@@ -883,11 +889,12 @@ namespace DictionaryReader
       )
     {
       word[charIndex] = '\0';
-      LOGN_DEBUG("word:" << word)
+      LOGN_DEBUG("word: \"" << word << "\"")
       charIndex = 0;
       VTrans::string_type str(word);
       PositionString pos_str(str, tokenIndex, tokenIndex);
       psvDictFile.push_back(pos_str);
+      LOGN_DEBUG("size of position string vector created from dict file: " << psvDictFile.size() )
     }
 
     void HandleEndOfWord(
@@ -977,7 +984,7 @@ namespace DictionaryReader
       return byteOffsetOfVocable;
     }
 
-    /** @brief called to determine whether a specfic word exists in the
+    /** @brief called to determine whether a specific word exists in the
      *  dictionary file. */
     PositionStringVector::cmp BinarySearchInDictFile::ContainsEnglishWord(
       const PositionStringVector & psvStringToSearch,
@@ -987,6 +994,10 @@ namespace DictionaryReader
       fastestUnsignedDataType & closestBeforeNonMatchOffset
       )
     {
+      LOGN_DEBUG("begin--\"" << psvStringToSearch << "\" "
+          << "token index:" << r_dwTokenIndex
+          << "# token:" << numTokenForStringToSearch
+          << "cloest before non-match offset:" << closestBeforeNonMatchOffset)
   #ifdef _DEBUG
       fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
   #endif
@@ -1185,6 +1196,8 @@ namespace DictionaryReader
               byteOffset,
               closestBeforeNonMatchOffset,
               breakWhile);
+            LOGN_DEBUG("seeking to dict file offset " << byteOffset)
+            //TODO catch seek error
             m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
           }
           if( breakWhile )

@@ -19,16 +19,16 @@
 //class ParseTreeTraverser::TransformTreeTraverser
 #include <Translate/TransformTreeTraverser.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
-#ifdef /*__ANDROID__*/ __unix__
+//#ifdef /*__ANDROID__*/ __unix__
   //SetCurrentDirectory(...)
   #include <FileSystem/GetCurrentWorkingDir.hpp>
   #include <FileSystem/SetCurrentWorkingDir.hpp>
-#else
-  //platformstl::filesystem_traits<char>::set_current_directory(...)
-  #include <platformstl/filesystem/current_directory.hpp>
-  //#include <unixstl/filesystem/filesystem_traits.hpp>
-  #include <platformstl/filesystem/filesystem_traits.hpp>
-#endif
+//#else
+//  //platformstl::filesystem_traits<char>::set_current_directory(...)
+//  #include <platformstl/filesystem/current_directory.hpp>
+//  //#include <unixstl/filesystem/filesystem_traits.hpp>
+//  #include <platformstl/filesystem/filesystem_traits.hpp>
+//#endif
 
 #ifndef MAX_PATH
   #define MAX_PATH 2000
@@ -106,6 +106,7 @@ void MakePastParticiple(std::string & //r_std_strWordStem
 
 TranslationControllerBase::TranslationControllerBase()
   :
+  m_vbContinue(true),
 #ifndef TEST_MINI_XML
   m_parsebyrise( * this ) ,
 #endif
@@ -232,7 +233,8 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   //        loadingVocabularyFileFailed;
   //    }
       CreateAndShowMainWindow() ;
-  #ifndef COMPILE_AS_EXECUTABLE
+  #ifdef COMPILE_AS_EXECUTABLE
+  #else
 //	TUchemnitzDictionaryReader dictReader(* this, & s_dictionary );
 //	VTrans3::TUchemnitzEngWordSorted1stAndBinarySearch
 //	  tuchemnitzengwordsorted1standbinarysearch;
@@ -260,6 +262,34 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
   return TranslationControllerBaseClass::InitFunction::success;
 }
 
+enum VTrans::StatusCode TranslationControllerBase::GetStatus( /*const std::string & str*/
+  std::string & str, struct tm & time)
+{
+  LOGN_DEBUG("begin")
+  VTrans::StatusCode statusCode;
+
+  m_critSecStatus.Enter();
+  m_currentStatus.GetItem(str);
+  statusCode = m_currentStatus.GetCode();
+  m_currentStatus.GetTime(time);
+  m_critSecStatus.Leave();
+
+  LOGN_DEBUG("return status code:" << statusCode << " " << str)
+  return statusCode;
+}
+
+void TranslationControllerBase::SetStatus(
+  enum VTrans::StatusCode statusCode,
+//  const std::string & str
+  const char * const pch
+  )
+{
+  LOGN_DEBUG("begin--status code:" << statusCode << " " << pch)
+  m_critSecStatus.Enter();
+  m_currentStatus.Set(statusCode, /*str*/ pch);
+  m_critSecStatus.Leave();
+}
+
 #ifndef TEST_MINI_XML
 void TranslationControllerBase::ReadGrammarRuleFile(
   //SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
@@ -274,7 +304,7 @@ bool TranslationControllerBase::ReadMainConfigFile(
   const std::string & cr_stdstrFilePath )
 {
   std::string std_strCurrentWorkingDir;
-  ::GetCurrentWorkingDir(std_strCurrentWorkingDir);
+  OperatingSystem::GetCurrentWorkingDirA_inl(std_strCurrentWorkingDir);
   LOGN_DEBUG("begin--should open file \"" +  std_strCurrentWorkingDir +
     cr_stdstrFilePath )
   return m_configurationHandler.ReadMainConfigFile(cr_stdstrFilePath.c_str() );
@@ -335,7 +365,7 @@ void TranslationControllerBase::SetCurrentDirToOriginalCurrentWorkingDir()
   LOGN("setting current dir to " << m_std_strOriginalCurrWorkDir )
 //  platformstl::filesystem_traits<char>::set_current_directory(
 //    m_std_strOriginalCurrWorkDir.c_str() );
-  SetCurrentWorkingDir_inl(m_std_strOriginalCurrWorkDir.c_str());
+  OperatingSystem::SetCurrentWorkingDirA_inl(m_std_strOriginalCurrWorkDir.c_str());
 //  char buffer[MAX_PATH];
 //  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
 //  LOGN("current dir is now: " << buffer )
@@ -350,7 +380,7 @@ std::string TranslationControllerBase::GetCurrentWorkingDir()
 //  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
 //  std::string std_strCurrWorkDir = /*std::string(buffer);*/
   std::string std_strCurrWorkDir;
-  ::GetCurrentWorkingDir(std_strCurrWorkDir);
+  OperatingSystem::GetCurrentWorkingDirA_inl(std_strCurrWorkDir);
   return std_strCurrWorkDir;
 }
 
@@ -370,19 +400,24 @@ void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
 //    );
 //  platformstl::current_directory cwd; (//char_type const *dir
 //    stdstrConfigFilesRootFullDirectoryPath.c_str() );
-#ifdef /*__ANDROID__*/ __unix__
+//#ifdef /*__ANDROID__*/ __unix__
   //::_chdir(dir);
-  ::SetCurrentWorkingDir_inl(c_r_stdstrConfigFilesRootPath.c_str() );
-#else
-  char buffer[MAX_PATH];
-  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
-  m_std_strOriginalCurrWorkDir = std::string(buffer);
-  platformstl::filesystem_traits<char>::set_current_directory(
-    stdstrConfigFilesRootFullDirectoryPath.c_str());
-#endif
+  OperatingSystem::SetCurrentWorkingDirA_inl(c_r_stdstrConfigFilesRootPath.c_str() );
+//#else
+//  char buffer[MAX_PATH];
+//  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
+//  m_std_strOriginalCurrWorkDir = std::string(buffer);
+//  platformstl::filesystem_traits<char>::set_current_directory(
+//    stdstrConfigFilesRootFullDirectoryPath.c_str());
+//#endif
 //  cwd.
   LOGN("After setting current directory to \"" //main config file's full path"
     << stdstrConfigFilesRootFullDirectoryPath << "\"")
+}
+
+void TranslationControllerBase::Stop()
+{
+  m_vbContinue = false;
 }
 
 #ifndef TEST_MINI_XML
@@ -390,6 +425,10 @@ void TranslationControllerBase::Transform()
 {
   LOGN(//"TranslationControllerBase::Transform() "
       "begin")
+  	SetStatus(
+  	  VTrans::transformParseTree,
+  	  ""
+  	  );
   DWORD dwLeftMostTokenIndex = 0 ;
   std::vector<GrammarPart *> stdvec_p_grammarpartRootNode ;
   m_parsebyrise.GetGrammarPartCoveringMostTokens(
@@ -441,6 +480,8 @@ void TranslationControllerBase::Translate(
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
 //#endif
 //#endif
+  if(! m_vbContinue)
+  	return;
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
   {
   std::string std_strXML;
@@ -451,6 +492,8 @@ void TranslationControllerBase::Translate(
   }
   //  RemoveDuplicateParseTrees();
 
+  if(! m_vbContinue)
+  	return;
   Transform() ;
 //  TranslateParseByRiseTree translateParseByRiseTree(
 //    m_parsebyrise
@@ -461,6 +504,8 @@ void TranslationControllerBase::Translate(
     m_translateparsebyrisetree ;
   DEBUG_COUT("before translation\n")
 
+  if(! m_vbContinue)
+  	return;
   translateParseByRiseTree.Translate(
     m_parsebyrise,
     r_stdvec_stdstrWholeTransl ,
@@ -470,6 +515,8 @@ void TranslationControllerBase::Translate(
     ) ;
 
   std::string std_strXML;
+  if(! m_vbContinue)
+  	return;
   GenerateXMLtreeFromParseTree( & m_parsebyrise, std_strXML);
   std::ostringstream std_ostringstream;
   OutputXMLindented(std_strXML.c_str(), std_ostringstream);

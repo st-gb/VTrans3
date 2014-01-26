@@ -60,9 +60,6 @@
     , int first
     , int last
     );
-  PositionStringVector				GetBetween(
-    const PositionStringVector & sv,
-		int first, int last );
   VTrans_string_typeVector		GetBetweenAsCStringVector(
     const PositionStringVector & pcstrv
     ,int first

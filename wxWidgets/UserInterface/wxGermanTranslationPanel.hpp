@@ -69,6 +69,15 @@ public:
     , m_wxwindowidCurrent(0)
   {
   }
+  void AddChoice(
+    wxWindowID wxwindowid,
+    wxCoord & wxcoordX,
+    wxCoord & wxcoordY,
+    const wxArrayString & wxarraystringTranslation,
+    wxCoord wxcoordYBottom,
+    const bool bConnectedControl,
+    uint32_t ui32ConcatenationID
+    );
   void Create();
   void DrawParseTreesAtSameTokenIndex(
   //  * c_iterAllSentencesAtSameTokenIndex

@@ -183,36 +183,6 @@ VTrans_string_typeVector GetBetween(
 	return retCStrVec;
 }
 
-PositionStringVector GetBetween(
-  const PositionStringVector & pcstrv,
-  int first,
-  int last
-  )
-{
-//  DEBUG_COUT("GetBetween ANFANG\n");
-#ifdef _DEBUG
-	int size = pcstrv.size() ;
-	SUPPRESS_UNUSED_VARIABLE_WARNING(size)
-#endif
-	PositionStringVector retPCStrVec;
-	#ifdef _DEBUG
-//	printf("first: %d\t last: %d\n",first,last);
-//	printf("last-first: %d\n",last-first);
-#endif
-//	DEBUG_COUT("pcstrv.size():" << pcstrv.size() << "\n")
-	for(DWORD i=first;i<pcstrv.size() && i<=(DWORD)last;)
-	{
-//		#ifdef _DEBUG
-//		printf("pcstrv.at(i): %s\n",pcstrv.at(i).m_Str.c_str() );
-//    #endif
-		PositionString pcstr=pcstrv.at(i++);
-		retPCStrVec.push_back(pcstr);
-	}
-//	DEBUG_COUT("PositionCStringVector GetBetween(const PositionCStringVector & ")
-//    "pcstrv,int first,int last) ENDE\n");
-	return retPCStrVec;
-}
-
 //VTrans_string_typeVector GetBetweenAsCStringVector(
 //  const PositionCStringVector & pcstrv,
 //  int first,
@@ -244,13 +214,15 @@ PositionStringVector GetBetween(
 //	return retCStrVec;
 //}
 
+//TODO make as member function of class PositionStringVector
 std::string GetBetweenAsStdString(
   const PositionStringVector & rc_pstrv
   ,int first
   ,int last )
 {
   std::string stdstr ;
-  PositionStringVector pstrv = GetBetween(rc_pstrv,first,last) ;
+  const PositionStringVector pstrv = //GetBetween(rc_pstrv,first,last) ;
+    rc_pstrv.GetBetween(first,last);
 //    last = pstrv.size() ;
   PositionStringVector::const_iterator c_iter = pstrv.begin() ;
   if( c_iter != pstrv.end() )

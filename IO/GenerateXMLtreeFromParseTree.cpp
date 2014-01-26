@@ -4,14 +4,17 @@
  *  Created on: 24.09.2011
  *      Author: Stefan
  */
+//convertToStdString(...)
+#include <Controller/character_string/stdstring_format.hpp>
+#include <Controller/TranslationControllerBase.hpp>
 #include "ParseTree2XMLtreeTraverser.hpp"
 #include <Parse/GrammarPart.hpp> //class GrammarPart
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <map> //class std::multimap
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
-//convertToStdString(...)
-#include <Controller/character_string/stdstring_format.hpp>
 #include <fastest_data_type.h> //typedef fastestUnsignedDataType
+
+extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 void GenerateXMLtreeFromParseTree(
   std::vector<GrammarPart *>::const_iterator
@@ -43,6 +46,10 @@ void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
 //  std::string std_strXML;
   if( p_parsebyrise )
   {
+	g_p_translationcontrollerbase->SetStatus(
+	  VTrans::generateXMLtreeFromParseTree,
+	  ""
+	  );
     fastestUnsignedDataType leftMostTokenIndex = 0 ;
 //    GrammarPart * p_grammarpart ;
 //    GrammarPart * p_grammarpartChild ;

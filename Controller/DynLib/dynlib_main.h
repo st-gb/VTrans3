@@ -13,6 +13,8 @@
 typedef unsigned char BYTE;
 
 EXPORT void FreeMemory();
+EXPORT void Stop();
+
 /**
  * @return: result of initialization: 0=success, else error.
  */
@@ -23,6 +25,13 @@ EXPORT BYTE
   //are appended to.
   const char * p_chConfigFilesRootPath
   );
+/** @param item: detailed message of current status: current word/ translation
+ *    rule path etc.
+ *  @param time: time when the last status was set
+ * @return: status of current translation: must be a number because a status
+ *   message may be shown in different languages
+ */
+EXPORT BYTE GetStatus(std::string & item, struct tm & time);
 /**
  * @return: translated text as 0-terminated character array.
  */

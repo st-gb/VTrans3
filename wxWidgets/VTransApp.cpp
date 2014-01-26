@@ -123,6 +123,11 @@ void VTransApp::CreateAndShowMainWindow()
     (/*(wxFrame *)*/ m_p_mainWindow)->Show(true);
     //m_p_mainWindow->SetEventHandler( (wxWidgets::MainWindowBase*) m_p_mainWindow);
   //       p_mainframe->Show() ;
+    InsertIntoVocabularyIntoMemory_Async(
+      m_p_mainWindow, //wxWindow * p_wxwindowParent,
+      //const std::string & std_strFilePath
+      m_stdstrVocabularyFilePath
+      );
   }
   else
   {
@@ -299,17 +304,29 @@ bool VTransApp::OnInit()
   std::string stdstrLogFilePath = "VTrans_log.txt" ;
 //  g_logger.SetLogLevel(/*LogLevel::debug*/ "debug");
   g_logger.m_logLevel = LogLevel::debug;
-  g_logger.OpenFileA(stdstrLogFilePath, "log4j", 4000, LogLevel::debug) ;
+  try
+  {
+    g_logger.OpenFileA(stdstrLogFilePath, "log4j", 4000, LogLevel::debug) ;
+  }
+  catch(OpeningLogFileException & oe)
+  {
+    wxString wxstrCurrWorkDir = ::wxGetCwd();
+    const wxString wxstrMessage =  wxString(wxT("Opening log file \"") ) +
+        wxstrCurrWorkDir +
+        wxWidgets::getwxString(stdstrLogFilePath) + wxT("\"failed:") +
+        wxWidgets::getwxString( oe.GetErrorMessage() );
+    ShowMessage(wxstrMessage);
+  }
   const std::vector<FormattedLogEntryProcessor *> & formattedLogEntryProcessors = 
     g_logger.GetFormattedLogEntryProcessors();
-  if( formattedLogEntryProcessors.size() > 0 )
-  {
-    FormattedLogEntryProcessor * formattedLogEntryProcessor =
-      formattedLogEntryProcessors.front();
-    formattedLogEntryProcessor->SetFormatter( 
-      new CSS::LogFormatter::Log4jFormatter( formattedLogEntryProcessor
-    ) );
-  }
+//  if( formattedLogEntryProcessors.size() > 0 )
+//  {
+//    FormattedLogEntryProcessor * formattedLogEntryProcessor =
+//      formattedLogEntryProcessors.front();
+//    formattedLogEntryProcessor->SetFormatter(
+//      new CSS::LogFormatter::Log4jFormatter( formattedLogEntryProcessor
+//    ) );
+//  }
 //  //Add a string as filter, else _nothing_ will be logged (cause is unknown).
 //  std::string stdstr = "sdsdsd" ;
 //  g_logger.AddExcludeFromLogging( stdstr ) ;
@@ -353,7 +370,7 @@ bool VTransApp::OnInit()
 //  }
 //}
 
-inline void VTransApp::ShowMessage(wxString & wxstrMessage)
+inline void VTransApp::ShowMessage(const wxString & wxstrMessage)
 {
 //  if( threadID == m_GUIthreadID)
 //  {

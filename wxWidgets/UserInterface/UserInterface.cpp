@@ -108,6 +108,8 @@ namespace wxWidgets
     void * p_vParam )
   {
     const char * const dictFilePath = (const char * const) p_vParam;
+    /** obtain a copy (dictFilePath may be destroyed in other thread)*/
+    std::string std_strDictFilePath = std::string(dictFilePath);
     if( dictFilePath )
     {
 //      TUchemnitzDictionaryReader
@@ -116,12 +118,33 @@ namespace wxWidgets
 //        /** this*/ ::wxGetApp(),
 //        & ::wxGetApp().s_dictionary );
       /*TUchemnitzDictionaryReader:: tcdr.read(*/
-      ::wxGetApp().s_dictReaderAndVocAccess.loadDictionary(
-        dictFilePath);//extractVocables( dictFilePath);
+      bool b = ::wxGetApp().s_dictReaderAndVocAccess.loadDictionary(
+        std_strDictFilePath.c_str() );//extractVocables( dictFilePath);
+      if( ! b )
+        ::wxGetApp().LoadingVocabularyFileFailed(std_strDictFilePath);
       ::wxGetApp().EndTimer();
-      return 0;
+      return b;
     }
     return 1;
+  }
+
+  void InsertIntoVocabularyIntoMemory_Async(
+    wxWindow * p_wxwindowParent,
+    const std::string & std_strFilePath
+    )
+  {
+    p_wxwindowParent->SetLabel( wxT("inserting vocabulary into memory") ) ;
+//        p_dlg->Show( true ) ;
+//        OneLinePerWordPair::LoadWords( std_strFilePath ) ;
+//        TUchemnitzDictionaryReader tcdr(::wxGetApp(), & ::wxGetApp().s_dictionary);
+    ::wxGetApp().StartTimer();
+    VTrans::thread_type thread;
+    thread.start(LoadDictionary_ThreadFunc, (void *) std_strFilePath.c_str() );
+//        TUchemnitzDictionaryReader::extractVocables( std_strFilePath.c_str());
+//        if( ::wxMessageBox( wxT("loading vocs"), wxT(""), wxOK | wxCANCEL) ==
+//            wxID_CANCEL )
+//          tcdr.CancelLoading();
+//        p_dlg->Destroy();
   }
 
   void LoadOrReloadDictionary(
@@ -162,20 +185,10 @@ namespace wxWidgets
 //      wxMessageDialog * p_dlg = new wxMessageDialog( //NULL,
 //        p_wxwindow ,
 //        wxT("inserting vocabulary into memory")) ;
-      p_wxwindowParent->SetLabel( wxT("inserting vocabulary into memory") ) ;
-      {
-//        p_dlg->Show( true ) ;
-//        OneLinePerWordPair::LoadWords( std_strFilePath ) ;
-//        TUchemnitzDictionaryReader tcdr(::wxGetApp(), & ::wxGetApp().s_dictionary);
-        ::wxGetApp().StartTimer();
-        VTrans::thread_type thread;
-        thread.start(LoadDictionary_ThreadFunc, (void *) std_strFilePath.c_str() );
-//        TUchemnitzDictionaryReader::extractVocables( std_strFilePath.c_str());
-//        if( ::wxMessageBox( wxT("loading vocs"), wxT(""), wxOK | wxCANCEL) ==
-//            wxID_CANCEL )
-//          tcdr.CancelLoading();
-//        p_dlg->Destroy();
-      }
+      InsertIntoVocabularyIntoMemory_Async(
+        p_wxwindowParent,
+        std_strFilePath
+        );
       p_wxwindowParent->SetLabel( wxstrLabel ) ;
     }
   }

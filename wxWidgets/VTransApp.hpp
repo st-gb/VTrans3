@@ -55,7 +55,7 @@ namespace wxWidgets
     volatile bool m_messageIsShown;
     bool m_atLeast1MessageToShow;
 //    condition_type;
-    nativeCriticalSection m_critSecShowMessage;
+    nativeCriticalSection_type m_critSecShowMessage;
     wxIcon m_wxiconVTrans;
     VTrans::ShowTranslationRulesDialog * m_p_showtranslationrulesdialog;
   //  static LetterTree s_lettertree ;
@@ -88,7 +88,7 @@ namespace wxWidgets
       DWORD dwOffsetOfBeginOfEntry,
       DWORD dwOffset
       );
-    inline void ShowMessage(wxString &);
+    inline void ShowMessage(const wxString &);
     void EndTimer();
     void StartTimer();
     void OnMessage(wxCommandEvent &);

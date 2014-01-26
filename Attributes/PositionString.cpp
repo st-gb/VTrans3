@@ -13,7 +13,7 @@
   };
 
   /** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */
-  std::ostream & operator << (std::ostream& os, const PositionStringVector & psv)
+  std::ostream & operator << (std::ostream & os, const PositionStringVector & psv)
   {
     PositionStringVector::const_iterator c_iter = psv.begin();
     while( c_iter != psv.end() )
@@ -35,14 +35,14 @@
     const
   {
 //    fastestUnsignedDataType numTokens = indexOfLastToken - indexOf1stToken + 1;
-#ifdef _DEBUG
+//#ifdef _DEBUG
     const int ownSize = size();
     const int cmpSize = psvCompare.size();
     LOGN_DEBUG( "comparing \"" << *this << "\" beginning from token #"
       << indexOf1stToken //<< "to " << indexOfLastToken
       << "(# tokens:"
       << numTokens << "); and \"" << psvCompare << "\"")
-#endif
+//#endif
     const_iterator c_iter = begin() + indexOf1stToken, c_iterCmp = psvCompare.begin();
     bool prefixMatches = false;
     while( c_iter != end() && c_iterCmp != psvCompare.end() && numTokens)
@@ -60,13 +60,13 @@
       }
       -- numTokens;
     }
-    if( numTokens)
+    if( numTokens) /** comparison ended before comparing all tokens */
     {
       /** e.g. from token #3 (2 tokens) "the car still works" , dict: "works pension" */
       if( c_iter == end() )
         return lower;
-      else
-        return tooFewTokens;
+      else /** # token to compare is greateer than comparison vector */
+        return tooFewTokensInComparisonVector;
     }
     else
     {
@@ -99,4 +99,45 @@
       }
       return match;
     }
+  }
+
+  PositionStringVector PositionStringVector::GetBetween(
+//    const PositionStringVector & pcstrv,
+    const int first,
+    const int last
+    ) const
+  {
+  //  DEBUG_COUT("GetBetween ANFANG\n");
+//  #ifdef _DEBUG
+    const int size = this->size() ;
+    SUPPRESS_UNUSED_VARIABLE_WARNING(size)
+//  #endif
+    PositionStringVector retPCStrVec;
+          #ifdef _DEBUG
+  //      printf("first: %d\t last: %d\n",first,last);
+  //      printf("last-first: %d\n",last-first);
+  #endif
+  //      DEBUG_COUT("pcstrv.size():" << pcstrv.size() << "\n")
+    PositionStringVector::const_iterator pos_strCurrentElement =
+      //see http://stackoverflow.com/questions/671423/c-stl-vectors-get-iterator-from-index
+//      begin() + first;
+      begin();
+    if( first < size )
+      //see http://stackoverflow.com/questions/671423/c-stl-vectors-get-iterator-from-index
+      std::advance( pos_strCurrentElement, first );
+//    for(DWORD i = first; i < pcstrv.size() && i <= (DWORD) last;)
+    int currentIndex = first;
+    while( pos_strCurrentElement != end() && currentIndex <= last)
+    {
+//              #ifdef _DEBUG
+//              printf("pcstrv.at(i): %s\n",pcstrv.at(i).m_Str.c_str() );
+//    #endif
+//      PositionString pcstr = pcstrv.at( i++);
+      retPCStrVec.push_back(/*pcstr*/ (* pos_strCurrentElement) );
+      ++ pos_strCurrentElement;
+      ++ currentIndex;
+    }
+//      DEBUG_COUT("PositionCStringVector GetBetween(const PositionCStringVector & ")
+//    "pcstrv,int first,int last) ENDE\n");
+    return retPCStrVec;
   }

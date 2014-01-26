@@ -246,7 +246,8 @@ wxSize DrawParseTreeTraverser::GetTokenExtent(
   wxstr = //wxString(r_stdstrTokens) ;
     GetwxString_Inline(r_stdstrTokens);
   if( ::wxGetApp().m_GUIattributes.m_bShowTranslation )
-    wxstr += GetwxString_Inline(p_pg->m_stdstrTranslation);
+    wxstr += //GetwxString_Inline(p_pg->m_stdstrTranslation);
+      wxString(p_pg->m_stdstrTranslation.c_str(), wxConvISO8859_1);
   wxSize wxsizeText = r_wxdc.GetTextExtent( wxstr ) ;
   return wxsizeText ;
 }

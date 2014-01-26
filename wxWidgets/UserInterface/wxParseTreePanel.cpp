@@ -1029,7 +1029,8 @@ void wxParseTreePanel::DrawGrammarPartToken(
         mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
         p_pg->m_dwRightmostIndex
         ) ;
-      const wxString & c_wxstrTokens = GetwxString_Inline( r_stdstrTokens);
+      const wxString & c_wxstrTokens = //GetwxString_Inline( r_stdstrTokens);
+        wxString(r_stdstrTokens.c_str(), wxConvISO8859_1);
       r_wxdc.DrawText( //citer->second.m_stdstrGrammarPartName
           c_wxstrTokens
          , wxPoint( dwXcoordinate ,m_wParseLevel * 20 ) ) ;

@@ -53,7 +53,7 @@ extern "C" jbyte /*JNICALL*/ Java_vtrans_dynlib_VTransDynLibJNI_Init
     JNI_ENV_POINTER(p_jni_env)
     jstrCurrentWorkingDir, //NULL
 	& jb);
-  ::SetCurrentWorkingDir_inl(strCurrentWorkingDir);
+  OperatingSystem::SetCurrentWorkingDirA_inl(strCurrentWorkingDir);
   LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Init"
     FULL_FUNC_NAME << "--begin")
 //  const jbyte * str;
@@ -116,10 +116,11 @@ extern "C" jbyte /*JNICALL*/ Java_vtrans_dynlib_VTransDynLibJNI_Init
  */
 JNIEXPORT jstring JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Translate
   (JNIEnv * p_jni_env, //jobject,
-    jclass jc, jstring jstrEnglishText)
+    jclass jc,
+    jstring jstrEnglishText)
 {
-  LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Translate"
-    FULL_FUNC_NAME << "--begin")
+  LOGN( //"Java_vtrans_1dynlib_VTransDynLibJNI_Translate" FULL_FUNC_NAME << "--"
+    "begin")
   jboolean jb = /*false*/ JNI_FALSE;
 //  const jbyte * str;
   const char * str;
@@ -128,12 +129,12 @@ JNIEXPORT jstring JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Translate
 	  JNI_ENV_POINTER(p_jni_env)
       jstrEnglishText, //NULL
       & jb);
-  LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Translate"
-    FULL_FUNC_NAME <<
-    "--English text from "
+  LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Translate" FULL_FUNC_NAME << "--"
+    "English text from "
     "Java string:\"" << str << "\"")
   if (str == NULL)
   {
+	  LOGN_ERROR("string returned by GetStringUTFChars is NULL")
     return //NULL; /* OutOfMemoryError already thrown */
       NULL;
   }
@@ -145,7 +146,7 @@ JNIEXPORT jstring JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Translate
   char * ar_chTranslation = //Translate(//p_chMainConfigFilePath
     TranslateAsXML(
     str);
-  LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_Translate--transl. result:"
+  LOGN("transl. result:"
     << ar_chTranslation)
   //jni_env->ReleaseStringChars(jstrMainCfgFile,p_chMainConfigFilePath);
   JNI_ENV_ACCESS(p_jni_env)->ReleaseStringUTFChars(
@@ -160,7 +161,7 @@ JNIEXPORT jstring JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Translate
   //TODO free may only be called when allocated via malloc(...)?!
   free(ar_chTranslation);
 #endif
-  LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_Translate--end")
+  LOGN("end")
   return jstr;
 }
 
@@ -173,8 +174,82 @@ JNIEXPORT void JNICALL Java_vtrans_dynlib_VTransDynLibJNI_FreeMemory
   (JNIEnv * p_jni_env, //jobject
     jclass jc)
 {
-  LOGN("Java_vtrans_1dynlib_VTransDynLibJNI_FreeMemory--begin")
+  LOGN("begin")
   FreeMemory();
+}
+
+/*
+ * Class:     vtrans_dynlib_VTransDynLibJNI
+ * Method:    Stop
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Stop
+  (JNIEnv * p_jni_env, //jobject
+    jclass jc)
+{
+  LOGN_DEBUG("begin")
+  Stop();
+  LOGN_DEBUG("end")
+}
+
+/*
+ * Class:     vtrans_dynlib_VTransDynLibJNI
+ * Method:    FreeMemory
+ * Signature: ()V
+ */
+JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_GetStatus
+  (JNIEnv * p_jni_env, //jobject
+    jclass jclazz,
+    /*jstring*/ jobject jobjItem,
+    jstring jstrTime)
+{
+  LOGN("begin")
+  std::string item;
+  struct tm time;
+  BYTE byStatusCode = GetStatus(item, time);
+
+//  jstrItem = JNI_ENV_ACCESS(p_jni_env)->NewStringUTF(
+//	  JNI_ENV_POINTER(p_jni_env)
+//	  item.c_str() );
+
+  //from http://www.javaworld.com/article/2077554/learn-java/java-tip-54--returning-data-in-reference-arguments-via-jni.html
+
+  // Obtain the Java StringBuffer class handle that corresponds to the
+  // Java StringBuffer object handle.
+  jclazz = p_jni_env->GetObjectClass (jobjItem);
+  LOGN_DEBUG("calling GetMethodID")
+  // Obtain the method ID for the StringBuffer append method which takes
+  // a StringBuffer object reference argument and returns a String object
+  // reference.
+  jmethodID methodID = p_jni_env->GetMethodID (jclazz,
+	"append",
+    "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+  // If this method does not exist then return.
+  if (methodID == 0)
+  {
+	  LOGN_ERROR("Java method ID is 0")
+	 return -2;
+  }
+  LOGN_DEBUG("calling NewStringUTF")
+  // Create a new Java String object and populate it with the environment
+  // variable value.  Obtain a handle to this object.
+  jstring jstrItem = p_jni_env->NewStringUTF( (const char *) item.c_str() );
+  LOGN_DEBUG("calling CallObjectMethod")
+  /** Call the StringBuffer object's append method passing the handle to
+  * the new Java String object. */
+  p_jni_env->CallObjectMethod (jobjItem, methodID, jstrItem);
+  /**If not called then SIGSEV? if this method is called to often? */
+  p_jni_env->DeleteLocalRef(jstrItem);
+
+  std::ostringstream oss;
+  oss << time.tm_hour << time.tm_min << time.tm_sec;
+  //TODO create java.util.Date object from struct tm rather than using a jstring
+  const char * pch = oss.str().c_str();
+//  jstrTime = JNI_ENV_ACCESS(p_jni_env)->NewStringUTF(
+//	  JNI_ENV_POINTER(p_jni_env)
+//	  pch );
+  LOGN("return " << (fastestUnsignedDataType) byStatusCode )
+  return byStatusCode;
 }
 #endif //TEST_MINI_XML
 

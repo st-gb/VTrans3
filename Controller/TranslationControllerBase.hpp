@@ -15,6 +15,8 @@
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TransformationRule.hpp> //class TransformationRule
+#include <Controller/multithread/nativeCriticalSectionType.hpp>
+#include <OperatingSystem/time/GetCurrentTime.hpp>
 #ifndef TEST_MINI_XML
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
@@ -58,14 +60,45 @@ public:
   {}
 };
 
+namespace VTrans
+{
+  enum StatusCode {not_set, lookUpWordInDictBeginningFromTokenIndex,
+	translationRules, transformParseTree, generateXMLtreeFromParseTree
+    };
+  class CurrentStatus
+  {
+    private:
+    StatusCode m_code;
+    std::string m_item;
+    struct tm m_time;
+    public:
+    CurrentStatus() : m_code(not_set)
+    {
+
+    }
+    StatusCode GetCode() { return m_code; }
+    void GetItem(std::string & str ) { str = m_item; }
+    void GetTime(struct tm & time ) { time = m_time; }
+    void Set(StatusCode code, const char * const pch)
+    {
+      m_item = std::string(pch);
+      m_code = code;
+      OperatingSystem::GetCurrentTime(m_time);
+    }
+  };
+}
+
 /** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
 class TranslationControllerBase
   : public I_UserInterface
 {
+  nativeCriticalSection_type m_critSecStatus;
+  VTrans::CurrentStatus m_currentStatus;
 protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
+  volatile bool m_vbContinue;
 #ifndef TEST_MINI_XML
   std::map<TranslationRule *, std::string>
     m_std_map_p_translationrule2filepath;
@@ -116,6 +149,12 @@ public:
   {
 
   }
+
+  void SetStatus(enum VTrans::StatusCode, /*const std::string & str*/
+    const char * const);
+  enum VTrans::StatusCode GetStatus( /*const std::string & str*/
+    std::string &, struct tm &);
+
   virtual void ShowInvalidVocabularyFileFormatMessage(
     const VTrans::string_type & strWordFile,
     DWORD dwOffsetOfBeginOfEntry,
@@ -145,6 +184,7 @@ public:
   void SetCurrentDirToConfigFilesRootPath(
     const std::string & c_r_stdstrConfigFilesRootPath);
   void SetCurrentDirToOriginalCurrentWorkingDir();
+  void Stop();
 #ifndef TEST_MINI_XML
   void Transform() ;
   void Translate(
