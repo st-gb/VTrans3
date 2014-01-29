@@ -81,6 +81,8 @@ EXPORT BYTE
   //Create on heap because of g_logger access that causes a crash when the log
   //file has not been opened yet?!
   g_p_translationcontrollerbase = new TranslationControllerBase();
+  g_p_translationcontrollerbase->m_std_strOriginalCurrWorkDir = std_strCurrentWorkingDir;
+
 
   std::string stdstrMainConfigFilePath(p_chMainConfigFilePath);
   std::string stdstrConfigFilesRootPath(p_chConfigFilesRootPath);
@@ -207,6 +209,11 @@ EXPORT char * TranslateAsXML(const char * p_chEnglishText//,
 EXPORT BYTE GetStatus(std::string & item, struct tm & time)
 {
   return g_p_translationcontrollerbase->GetStatus(item, time);
+}
+
+EXPORT void Settings(const char * cp_chName, const char * cp_chValue)
+{
+  g_p_translationcontrollerbase->Settings(cp_chName, cp_chValue);
 }
 
 /**

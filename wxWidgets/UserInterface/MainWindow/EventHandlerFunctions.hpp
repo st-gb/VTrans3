@@ -29,6 +29,7 @@
     void OnShowTranslationRulesButton(wxCommandEvent & wxcmd);
     void OnLoadDictionaryTimerEvent(wxTimerEvent &event);
     void OnLookupWord(wxCommandEvent & wxcmd);
+    void OnSettings(wxCommandEvent & wxcmd );
     void OnShowDictionaryStatistics(wxCommandEvent & wxcmd);
     void OnTimerEvent(wxTimerEvent &event);
     void OnTranslateButton(wxCommandEvent & wxcmd);

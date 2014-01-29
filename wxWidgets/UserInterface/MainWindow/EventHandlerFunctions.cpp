@@ -67,6 +67,7 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
     EVENT_HANDLER_CLASS_NAME::OnAddTransformationRules )
   EVT_BUTTON( ID_AddTranslationRules , EVENT_HANDLER_CLASS_NAME::OnAddTranslationRules )
   EVT_BUTTON( ID_AddVocAttrDefs, EVENT_HANDLER_CLASS_NAME::OnAddVocAttrDefs )
+  BUTTON_EVENT_TYPE( ID_Settings , EVENT_HANDLER_CLASS_NAME::OnSettings)
   BUTTON_EVENT_TYPE( ID_Translate , EVENT_HANDLER_CLASS_NAME::OnTranslateButton)
   BUTTON_EVENT_TYPE( ID_LookupWord , EVENT_HANDLER_CLASS_NAME::OnLookupWord)
   BUTTON_EVENT_TYPE( ID_ShowDictionaryStatistics , EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics)
@@ -212,7 +213,7 @@ void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
 //  //Call delete to exit this application. (without it is not finished)
 //  delete(this) ;
 //  this->Destroy() ;
-  Destroy() ;
+    Destroy() ;
 //  Close() ;
   }
   //::wxGetApp().ExitMainLoop() ;
@@ -222,6 +223,17 @@ void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
 void EVENT_HANDLER_CLASS_NAME::OnDrawParseTreeButton(wxCommandEvent & wxcmd )
 {
   mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnSettings(wxCommandEvent & wxcmd )
+{
+  wxString wxstrName = ::wxGetTextFromUser(
+    wxT("enter a settings name:") );
+  wxString wxstrValue = ::wxGetTextFromUser(
+    wxT("enter a settings value:") );
+  ::wxGetApp().Settings(
+    wxWidgets::GetStdString(wxstrName).c_str(),
+    wxWidgets::GetStdString(wxstrValue).c_str() );
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics(wxCommandEvent & wxcmd )

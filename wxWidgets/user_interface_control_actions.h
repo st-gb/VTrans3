@@ -27,6 +27,7 @@ enum user_interface_control_actions
   ID_RemoveVocAttrDefs ,
   ID_ResolveSuperclass ,
   ID_Resolve1ParseLevel ,
+  ID_Settings,
   ID_Translate ,
   ID_LookupWord ,
   ID_ShowDictionaryStatistics,

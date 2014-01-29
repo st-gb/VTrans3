@@ -49,6 +49,7 @@ namespace wxWidgets
     wxMenu * p_wxmenu ;
     p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
     p_wxmenu->Append( ID_Translate, wxT("translate") );
+    p_wxmenu->Append( ID_Settings, wxT("settings...") );
     mp_wxmenubar->Append( p_wxmenu , wxT("&action")) ;
 
     p_wxmenu = new wxMenu();

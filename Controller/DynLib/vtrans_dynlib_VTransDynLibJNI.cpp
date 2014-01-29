@@ -126,15 +126,15 @@ JNIEXPORT jstring JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Translate
   const char * str;
   //from http://java.sun.com/docs/books/jni/html/objtypes.html:
   str = JNI_ENV_ACCESS(p_jni_env)->GetStringUTFChars(
-	  JNI_ENV_POINTER(p_jni_env)
-      jstrEnglishText, //NULL
-      & jb);
+    JNI_ENV_POINTER(p_jni_env)
+    jstrEnglishText, //NULL
+    & jb);
   LOGN(//"Java_vtrans_1dynlib_VTransDynLibJNI_Translate" FULL_FUNC_NAME << "--"
     "English text from "
     "Java string:\"" << str << "\"")
   if (str == NULL)
   {
-	  LOGN_ERROR("string returned by GetStringUTFChars is NULL")
+    LOGN_ERROR("string returned by GetStringUTFChars is NULL")
     return //NULL; /* OutOfMemoryError already thrown */
       NULL;
   }
@@ -176,6 +176,58 @@ JNIEXPORT void JNICALL Java_vtrans_dynlib_VTransDynLibJNI_FreeMemory
 {
   LOGN("begin")
   FreeMemory();
+}
+
+/*
+ * Class:     vtrans_dynlib_VTransDynLibJNI
+ * Method:    Settings
+ * Signature: ()V
+ */
+JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Settings
+  (JNIEnv * p_jni_env, //jobject
+    jclass jc,
+    jstring jstrName,
+    jstring jstrValue
+    )
+{
+  LOGN_DEBUG("begin")
+  jboolean jb = /*false*/ JNI_FALSE;
+  const char * cp_chName, * cp_chValue;
+  /** from http://java.sun.com/docs/books/jni/html/objtypes.html: */
+  cp_chName = JNI_ENV_ACCESS(p_jni_env)->GetStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
+    jstrName, //NULL
+    & jb);
+  LOGN(// FULL_FUNC_NAME << "--"
+    "name  from Java string:\"" << cp_chName << "\"")
+  if (cp_chName == NULL)
+  {
+    LOGN_ERROR("string returned by GetStringUTFChars is NULL")
+    return //NULL; /* OutOfMemoryError already thrown */
+      1;
+  }
+  /** from http://java.sun.com/docs/books/jni/html/objtypes.html: */
+  cp_chValue = JNI_ENV_ACCESS(p_jni_env)->GetStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
+    jstrValue, //NULL
+    & jb);
+  LOGN(// FULL_FUNC_NAME << "--"
+    "name  from Java string:\"" << cp_chName << "\"")
+  if (cp_chValue == NULL)
+  {
+    LOGN_ERROR("string returned by GetStringUTFChars is NULL")
+    return //NULL; /* OutOfMemoryError already thrown */
+      2;
+  }
+  Settings(cp_chName, cp_chValue);
+  JNI_ENV_ACCESS(p_jni_env)->ReleaseStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
+    jstrName, cp_chName);
+  JNI_ENV_ACCESS(p_jni_env)->ReleaseStringUTFChars(
+    JNI_ENV_POINTER(p_jni_env)
+    jstrValue, cp_chValue);
+  LOGN_DEBUG("end")
+  return 0;
 }
 
 /*

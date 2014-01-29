@@ -210,9 +210,9 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
     }
 //    else
     {
-//#ifndef __ANDROID__
+#ifndef __ANDROID__
       SetCurrentDirToOriginalCurrentWorkingDir();
-//#endif
+#endif
 
   //    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
 //      TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
@@ -235,6 +235,9 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
       CreateAndShowMainWindow() ;
   #ifdef COMPILE_AS_EXECUTABLE
   #else
+      std::string std_strCurrentWorkingDir;
+      OperatingSystem::GetCurrentWorkingDirA_inl(std_strCurrentWorkingDir);
+      LOGN_INFO("current dir is:\"" << std_strCurrentWorkingDir << "\"")
 //	TUchemnitzDictionaryReader dictReader(* this, & s_dictionary );
 //	VTrans3::TUchemnitzEngWordSorted1stAndBinarySearch
 //	  tuchemnitzengwordsorted1standbinarysearch;
@@ -242,15 +245,16 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 //        * this, & s_dictionary);
 //      TUchemnitzDictEngWord1stReader & dictReader = (* this, s_dictionary);
   //    StartTimer();
-      bool b = /*TUchemnitzDictionaryReader::*/ //tcdr.extractVocables(
+      bool bLoadingDictFileSucceeded = /*TUchemnitzDictionaryReader::*/ //tcdr.extractVocables(
 //        dictReader
 //        tuchemnitzengwordsorted1standbinarysearch
         s_dictReaderAndVocAccess
         .loadDictionary(
 //      bool b = dictReader::read(
         m_stdstrVocabularyFilePath.c_str() );
+      LOGN_INFO( "dictionary file is open:" << (bLoadingDictFileSucceeded ? "yes" : "no") )
       LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
-      if( ! b )
+      if( ! bLoadingDictFileSucceeded )
         return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
   #endif //#ifndef COMPILE_AS_EXECUTABLE
   ////    StartTimer();
@@ -362,7 +366,7 @@ void TranslationControllerBase::ReadXMLfile(
 
 void TranslationControllerBase::SetCurrentDirToOriginalCurrentWorkingDir()
 {
-  LOGN("setting current dir to " << m_std_strOriginalCurrWorkDir )
+  LOGN("setting current dir to \"" << m_std_strOriginalCurrWorkDir << "\"")
 //  platformstl::filesystem_traits<char>::set_current_directory(
 //    m_std_strOriginalCurrWorkDir.c_str() );
   OperatingSystem::SetCurrentWorkingDirA_inl(m_std_strOriginalCurrWorkDir.c_str());
@@ -371,7 +375,7 @@ void TranslationControllerBase::SetCurrentDirToOriginalCurrentWorkingDir()
 //  LOGN("current dir is now: " << buffer )
 
   m_std_strOriginalCurrWorkDir = /*std::string(buffer);*/ GetCurrentWorkingDir();
-  LOGN("current dir is now: " << m_std_strOriginalCurrWorkDir )
+  LOGN("current dir is now: \"" << m_std_strOriginalCurrWorkDir << "\"")
 }
 
 std::string TranslationControllerBase::GetCurrentWorkingDir()
@@ -450,6 +454,19 @@ void TranslationControllerBase::Transform()
   }
   LOGN(//"TranslationControllerBase::Transform() "
     "end")
+}
+
+/** @brief Pass settings from a dynamic library etc. */
+void TranslationControllerBase::Settings(
+  const char * cp_chName, const char * cp_chValue)
+{
+  if( strcmp(cp_chName, "logging") == 0)
+  {
+    if( strcmp(cp_chValue, "disable") == 0 )
+      g_logger.SetLogLevel("warning");
+    else if( strcmp(cp_chValue, "enable") == 0 )
+      g_logger.SetLogLevel("debug");
+  }
 }
 
 void TranslationControllerBase::Translate(

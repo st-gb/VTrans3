@@ -184,6 +184,7 @@ public:
   void SetCurrentDirToConfigFilesRootPath(
     const std::string & c_r_stdstrConfigFilesRootPath);
   void SetCurrentDirToOriginalCurrentWorkingDir();
+  void Settings(const char * cp_chName, const char * cp_chValue);
   void Stop();
 #ifndef TEST_MINI_XML
   void Transform() ;
