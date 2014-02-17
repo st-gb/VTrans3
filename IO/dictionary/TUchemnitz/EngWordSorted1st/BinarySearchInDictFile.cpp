@@ -15,6 +15,8 @@
 #include <vector> //class std::vector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 #include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF
+#include <FileSystem/File/File.hpp> //class I_File
+#include <IO/dictionary/OpenDictFileException.hpp>//class OpenDictFileException
 
 #define INDEX_OF_LAST_SMALL_LETTER_IN_ASCII 128
 
@@ -78,16 +80,25 @@ namespace DictionaryReader
     bool BinarySearchInDictFile::open(const std::string & std_str )
     {
       LOGN_DEBUG("Opening file " << std_str)
-      m_englishDictionary.open(std_str.c_str(),
-        std::ios_base::in | std::ios_base::binary );
-      bool dictFileIsOpen = m_englishDictionary.is_open();
-      if( dictFileIsOpen )
+//      m_englishDictionary.open(std_str.c_str(),
+//        std::ios_base::in | std::ios_base::binary );
+      enum I_File::OpenError openError = m_dictFile.OpenA(
+        std_str.c_str(),
+        I_File::readOnly
+        );
+//      bool dictFileIsOpen = m_englishDictionary.is_open();
+      bool dictFileIsOpen = openError == I_File::success;
+      if( /*dictFileIsOpen*/ openError == I_File::success )
       {
         LOGN_DEBUG("Dict file is open")
-        m_englishDictionary.seekg(0, std::ios_base::end);
-        m_fileSizeInBytes = m_englishDictionary.tellg();
-        m_englishDictionary.seekg(0, std::ios_base::beg);
+//        m_englishDictionary.seekg(0, std::ios_base::end);
+//        m_fileSizeInBytes = m_englishDictionary.tellg();
+        m_fileSizeInBytes = m_dictFile.GetFileSizeInBytes();
+//        m_englishDictionary.seekg(0, std::ios_base::beg);
+//        m_dictFile.Seek(0);
       }
+      else //Or throw enum I_File::OpenError openError
+        throw VTrans3::OpenDictFileException(openError);
       return dictFileIsOpen;
     }
 
@@ -479,13 +490,20 @@ namespace DictionaryReader
       /** Separates synonyms */
       unsigned semicolCountInsideCurrentPipeCharRange = 0;
 #ifdef _DEBUG
-      int currOffset = m_englishDictionary.tellg();
+      int currOffset = //m_englishDictionary.tellg();
+        m_dictFile.GetCurrentFilePointerPosition();
 #endif
-      m_englishDictionary.seekg(offset, std::ios_base::beg);
+//      m_englishDictionary.seekg(offset, std::ios_base::beg);
+      //TODO error handling on seek failure.
+      const bool streamIsGood = m_dictFile.SeekFilePointerPosition(offset);
+      if( ! streamIsGood )
+        LOGN_ERROR("error seeking file pointer to offset" << byteOffset);
       LOGN_DEBUG("after seeking to offset " << offset)
       int i;
-      i = m_englishDictionary.get();
-      bool streamIsGood = m_englishDictionary.good();
+//      i = m_englishDictionary.get();
+      i = m_dictFile.ReadByte();
+//      bool streamIsGood = m_englishDictionary.good();
+      bool streamIsGood = i > -1;
       bool breakWhile = false;
       char word[100];
       int prevChar = 0;
@@ -733,10 +751,13 @@ namespace DictionaryReader
 //        } //switch
         ++ charIndex;
         prevChar = i;
-        i = m_englishDictionary.get();
-        streamIsGood = m_englishDictionary.good();
+//        i = m_englishDictionary.get();
+        i = m_dictFile.ReadByte();
+//        streamIsGood = m_englishDictionary.good();
+        streamIsGood = i > -1;
 #ifdef _DEBUG
-        currOffset = m_englishDictionary.tellg();
+//        currOffset = m_englishDictionary.tellg();
+        currOffset = m_dictFile.GetCurrentFilePointerPosition();
 #endif
       } //while
       AddGermanAttributes(voc_containerVocsCreated, germanVocables);
@@ -927,9 +948,15 @@ namespace DictionaryReader
     {
       LOGN_DEBUG("begin")
 //      p_voc_container = extractVocable(byteOffsetOfVocable, p_vocandtransl);
-      m_englishDictionary.seekg(c_closestBeforeNonMatchOffset, std::ios_base::beg);
+//      m_englishDictionary.seekg(c_closestBeforeNonMatchOffset, std::ios_base::beg);
+      //TODO error handling on seek failure.
+      bool streamIsGood = m_dictFile.SeekFilePointerPosition(
+        c_closestBeforeNonMatchOffset);
+      if( ! streamIsGood )
+        LOGN_ERROR("error seeking file pointer to offset" << byteOffset);
 #ifdef _DEBUG
-      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+//      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+      fastestUnsignedDataType currOffset = m_dictFile.GetCurrentFilePointerPosition();
 #endif
       fastestUnsignedDataType closestBeforeNonMatchOffset;
       fastestUnsignedDataType byteOffsetOfVocable;
@@ -943,8 +970,14 @@ namespace DictionaryReader
         if( byteOffsetOfVocable != UINT_MAX )
         {
           LOGN_DEBUG("seeking to byte offset " << byteOffsetOfVocable)
-          m_englishDictionary.seekg(byteOffsetOfVocable, std::ios_base::beg);
-
+//          m_englishDictionary.seekg(byteOffsetOfVocable, std::ios_base::beg);
+          //TODO error handling on seek failure.
+          streamIsGood = m_dictFile.SeekFilePointerPosition(byteOffsetOfVocable);
+          if( ! streamIsGood )
+          {
+            LOGN_ERROR("error seeking file pointer to offset" << byteOffset);
+            break;
+          }
           comp = ContainsEnglishWord(
             psvStringToSearch,
             r_dwTokenIndex,
@@ -964,22 +997,27 @@ namespace DictionaryReader
         bool & endSearchForCompareStringInCurrentVocData)
     {
       fastestUnsignedDataType byteOffsetOfVocable = UINT_MAX;
-      int i = m_englishDictionary.get();
+//      int i = m_englishDictionary.get();
+      int i = m_dictFile.ReadByte();
       char ch;
-      bool streamIsGood = m_englishDictionary.good();
+//      bool streamIsGood = m_englishDictionary.good();
+      bool streamIsGood = i > -1;
       while(//i != std::ios_base::eof
           streamIsGood )
       {
         ch = i;
         if(ch == 0xA /*'\n'*/ )
         {
-          byteOffsetOfVocable = m_englishDictionary.tellg();
+//          byteOffsetOfVocable = m_englishDictionary.tellg();
+          byteOffsetOfVocable = m_dictFile.GetCurrentFilePointerPosition();
           LOGN_DEBUG("offset of voc data begin:" << byteOffsetOfVocable)
           endSearchForCompareStringInCurrentVocData = false;
           break;
         }
-        i = m_englishDictionary.get();
-        streamIsGood = m_englishDictionary.good();
+//        i = m_englishDictionary.get();
+        i = m_dictFile.ReadByte();
+//        streamIsGood = m_englishDictionary.good();
+        streamIsGood = i > -1;
       }
       return byteOffsetOfVocable;
     }
@@ -999,7 +1037,8 @@ namespace DictionaryReader
           << "# token:" << numTokenForStringToSearch
           << "cloest before non-match offset:" << closestBeforeNonMatchOffset)
   #ifdef _DEBUG
-      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+//      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+      fastestUnsignedDataType currOffset = m_dictFile.GetCurrentFilePointerPosition();
   #endif
       bool streamIsGood;
       PositionStringVector psvDictFile;
@@ -1011,8 +1050,10 @@ namespace DictionaryReader
       bool compareVectors = false;
       PositionStringVector::cmp comp;
 
-      int i = m_englishDictionary.get();
-      streamIsGood = m_englishDictionary.good();
+//      int i = m_englishDictionary.get();
+      int i = m_dictFile.ReadByte();
+//      streamIsGood = m_englishDictionary.good();
+      streamIsGood = i > -1;
       while( streamIsGood /*&& ! breakWhile*/ )
       {
         if( ::isalpha(i) )
@@ -1025,7 +1066,8 @@ namespace DictionaryReader
             case ' ' :
             {
   #ifdef _DEBUG
-              currOffset = m_englishDictionary.tellg();
+//              currOffset = m_englishDictionary.tellg();
+              currOffset = m_dictFile.GetCurrentFilePointerPosition();
   #endif
               LOGN_DEBUG("space reached--word is: \"" << word << "\"")
               HandleEndOfToken(word, charIndex, psvDictFile, tokenIndex);
@@ -1111,8 +1153,10 @@ namespace DictionaryReader
   //            } //while()
         if( breakWhile || endSearchForCompareStringInCurrentVocData)
           break;
-        i = m_englishDictionary.get();
-        streamIsGood = m_englishDictionary.good();
+//        i = m_englishDictionary.get();
+        i = m_dictFile.ReadByte();
+//        streamIsGood = m_englishDictionary.good();
+        streamIsGood = i > -1;
 //        psvDictFile.clear();
 //        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
       } //while loop for current voc data
@@ -1142,15 +1186,20 @@ namespace DictionaryReader
 //        int i;
 //        char ch;
 #ifdef _DEBUG
-        fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+//        fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+        fastestUnsignedDataType currOffset = m_dictFile.GetCurrentFilePointerPosition();
 #endif
         bool breakWhile = false;
         bool endSearchForCompareStringInCurrentVocData = false;
 
         fastestUnsignedDataType byteOffset = m_fileSizeInBytes / 2;
         fastestUnsignedDataType lo = 0, hi = m_fileSizeInBytes;
-        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
-        bool streamIsGood = m_englishDictionary.good();
+//        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+//        bool streamIsGood = m_englishDictionary.good();
+        //TODO error handling on seek failure.
+        bool streamIsGood = m_dictFile.SeekFilePointerPosition(byteOffset);
+        if( ! streamIsGood )
+          LOGN_ERROR("error seeking file pointer to offset" << byteOffset);
         while( streamIsGood)
         {
   //        BytePosAndNextChar * p_BytePosAndNextChar;
@@ -1198,7 +1247,11 @@ namespace DictionaryReader
               breakWhile);
             LOGN_DEBUG("seeking to dict file offset " << byteOffset)
             //TODO catch seek error
-            m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+//            m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+            //TODO error handling on seek failure.
+            streamIsGood = m_dictFile.SeekFilePointerPosition(byteOffset);
+            if( ! streamIsGood )
+              LOGN_ERROR("error seeking file pointer to offset" << byteOffset);
           }
           if( breakWhile )
             break;

@@ -74,7 +74,8 @@ namespace wxWidgets
     virtual int OnExit();
     virtual bool OnInit();
   //  VTransApp(const VTransApp& orig);
-    void LoadingVocabularyFileFailed(const std::string & cr_stdstrFilePath);
+    void LoadingVocabularyFileFailed(const std::string & cr_stdstrFilePath,
+        const std::string & std_strErrorMessage);
     void Message( const std::string & cr_stdstr/*, unsigned threadID*/ ) ;
     void Message( const std::wstring & cr_stdwstr ) ;
     //TODO make usable for class ConfigReaderBase

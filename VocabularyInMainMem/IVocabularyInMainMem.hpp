@@ -1,4 +1,6 @@
 #pragma once //incl. guard
+#ifndef IVOCABULARYINMAINMEM_HPP
+#define IVOCABULARYINMAINMEM_HPP
 
 #include <string>
 #include <windef.h> //for BYTE etc.
@@ -198,3 +200,4 @@ class GermanWord;
       m_p_dictionaryReader = p_dictionaryReader;
     }
   };
+#endif

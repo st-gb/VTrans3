@@ -151,12 +151,14 @@
         {
           const std::vector<std::string> & r_ = ( * c_iterGerman);
           c_iterGermanWord = r_.begin();
-          VocabularyAndTranslation * p_vocAndTransl = c_iterPipeIndex2VocAndTranslPtr->second;
+          VocabularyAndTranslation * p_vocAndTransl =
+            c_iterPipeIndex2VocAndTranslPtr->second;
           const int index = c_iterPipeIndex2VocAndTranslPtr->first;
 
           EnglishWord::English_word_class engWordClass = EnglishWord::
             MapGrammarPartIDtoWordClass(p_vocAndTransl->m_englishWordClass);
-          if( p_vocAndTransl && /*p_vocAndTransl->m_englishWordClass*/ engWordClass <= EnglishWord::adjective )
+          if( p_vocAndTransl && /*p_vocAndTransl->m_englishWordClass*/
+              engWordClass <= EnglishWord::adjective )
           {
             const VocabularyAndTranslation::ArraySizes & arraySizes =
               VocabularyAndTranslation::s_arraysizes[engWordClass];
@@ -171,9 +173,15 @@
                   << "\" for index " << germanWordIndex
                   << " for pipe index " << index
                   << " ,vocl&transl ptr " << p_vocAndTransl)
-                p_vocAndTransl->SetGermanWord(germanWord.c_str(),
-                    germanWord.length(), germanWordIndex);
+                p_vocAndTransl->SetGermanWord(
+                    germanWord.c_str(),
+                    germanWord.length(),
+                    germanWordIndex);
 //                ++ germanWordIndex;
+                p_vocAndTransl->PossiblyGenerateAndAddGermanAttributes(
+                  engWordClass,
+                  germanWord
+                  );
               }
 //              ++ c_iterGermanWord;
 //            }

@@ -19,6 +19,8 @@
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>
 /** for enum TUchemnitzDictionary::wordKinds */
 #include <IO/dictionary/TUchemnitz/TUchemnitzDictionary.hpp>
+//#include <FileSystem/File/File.hpp>
+#include <FileSystem/File/native_File_type.hpp> //typedef native_File_type
 
 /** Forward decl. */
 //class IVocabularyInMainMem;
@@ -103,7 +105,8 @@ namespace DictionaryReader
 
         /** static-> no need to (implicitly) pass an object pointer */
       //  static void read();
-        std::ifstream m_englishDictionary;
+//        std::ifstream m_englishDictionary;
+        native_File_type m_dictFile;
         IVocabularyInMainMem * m_p_vocabularyAccess;
       protected:
         static NodeTrie<enum TUchemnitzDictionary::wordKinds> s_nodetrieWordKind;

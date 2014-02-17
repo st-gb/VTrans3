@@ -15,6 +15,9 @@ const char * const GermanVerb::presentPersonEndings [] = {
   , "t" //ihr gehT
   , "en"//sie gehEN
   };
+
+/** For verbs with word stem ending with an "e", e.g. word stem "arbeite" for
+ *  infinitive "arbeiten" */
 const char * const GermanVerb::presentPersonEndings2 [] = {
   "" //ich arbeite
   , "st" //du arbeiteST

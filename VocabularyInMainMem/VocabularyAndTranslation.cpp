@@ -41,6 +41,13 @@ TranslationControllerBase * VocabularyAndTranslation::s_p_translationControllerB
         NUMBER_OF_STRINGS_FOR_GERMAN_ADJECTIVE, 0}
     };
 
+  const char * VocabularyAndTranslation::s_ar_chWordClass[] = {
+    //By "(char *)" : avoid g++ error message
+    //"warning: deprecated conversion from string constant to 'char*'"
+    (char *) "noun"
+    , "main verb"
+    , "adjective"
+  } ;
 //enum EnglishWord::English_word_class GetWordClass(BYTE byVocabularyType)
 //{
 //
@@ -116,6 +123,58 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
     return c_r_arraysizes.m_byArraySizeForByteArray;
   }
   return 0;
+}
+
+/** Add words to a word family from a single word.
+ *  So words may be added although they are missing in the dictionary.
+ *  So e.g. add:
+ *   -a plural from a singular: from "Katze" : add "Katzen"
+ *   -finite verb form from infinitive: "geht" from "gehen"
+ *  But remember: so only _regular_ word forms are added appropriately(!)
+ *  */
+void VocabularyAndTranslation::PossiblyGenerateAndAddGermanAttributes(
+  const EnglishWord::English_word_class engWordClass,
+  const std::string & germanWord)
+{
+  GCC_DIAG_OFF(switch)
+  switch(engWordClass)
+  {
+//  case EnglishWord::main_verb_allows_0object_infinitive :
+//  case EnglishWord::main_verb_allows_1object_infinitive :
+//  case EnglishWord::main_verb_allows_2objects_infinitive :
+  case EnglishWord::main_verb :
+    /** if inf. is added (index 0) then derive finite German verb forms
+    * from inf. and add to voc and transl. */
+//                  GermanVerb::GenerateRemainingAttributeValues(germanWordIndex, germanWord);
+//    if( germanWordIndex == 0 )
+    {
+      std::string std_strWordStem;
+      GermanVerb::GetWordStem(
+        germanWord.c_str(),
+        germanWord.length(),
+        std_strWordStem );
+      std::string std_strFiniteForm;
+      for( fastestUnsignedDataType /*enum GermanVerb::person_indices*/ person_index =
+          GermanVerb::firstPersonSing;
+          person_index <= GermanVerb::thirdPersonPlur;
+          ++ person_index
+         )
+      {
+        //TODO also add simple past form
+        std_strFiniteForm = GermanVerb::GetPresentFiniteForm(
+          std_strWordStem,
+          (enum GermanVerb::person_indices) person_index
+          );
+        SetGermanWord(
+          std_strFiniteForm.c_str(),
+          std_strFiniteForm.length(),
+          person_index + 1
+          );
+      }
+    }
+    break;
+  }
+  GCC_DIAG_ON(switch)
 }
 
 VocabularyAndTranslation::VocabularyAndTranslation(/*BYTE*/
@@ -464,6 +523,8 @@ VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
   else
   {
     word_type & r_stdstrAttrVal = m_arstrGermanWord[germanWordIndex ] ;
+    if( r_stdstrAttrVal == NULL )
+      return "";
     return r_stdstrAttrVal ;
   }
   /** the dictionary reader knows which attributes were inserted into the

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef VOCABULARY_AND_TRANSLATION_HPP
+#define VOCABULARY_AND_TRANSLATION_HPP
 
 #include <string>
 #include <string.h> //memcpy(...), strlen(...)
@@ -38,11 +40,11 @@ class TranslationControllerBase;
 //class Word ;
 #include <Attributes/Word.hpp>
 
-    static std::string g_ar_stdstrWordClass [] = {
-      "noun"
-      , "main verb"
-      , "adjective"
-    } ;
+//  /*static*/ /*std::string*/ char * g_ar_stdstrWordClass [];// = {
+//    "noun"
+//    , "main verb"
+//    , "adjective"
+//  } ;
 
 
 //  BYTE g_arbyWordType2ArraySizeIndex [100];
@@ -53,6 +55,7 @@ class TranslationControllerBase;
   class VocabularyAndTranslation
   {
   public:
+    static /*std::string*/ const char * s_ar_chWordClass [];// = {
     typedef char word_type_for_new_allocator;
     typedef char * word_type;
     //For both English and German.
@@ -193,6 +196,10 @@ class TranslationControllerBase;
         arrSizes.m_byArraySizeForEnglishWord,
         arrSizes.m_byArraySizeForGermanWord);
     }
+    void PossiblyGenerateAndAddGermanAttributes(
+      const EnglishWord::English_word_class engWordClass,
+      const std::string &
+      );
 
     void GetNumberOfArrayElements(
       ArraySizes & arrSizes) const
@@ -347,7 +354,8 @@ class TranslationControllerBase;
 
     std::string GetWordTypeAsStdStr()
     {
-      return g_ar_stdstrWordClass[ m_englishWordClass - WORD_TYPE_NOUN ] ;
+      return //g_ar_stdstrWordClass[ m_englishWordClass - WORD_TYPE_NOUN ] ;
+        VocabularyAndTranslation::s_ar_chWordClass[ m_englishWordClass - WORD_TYPE_NOUN ];
     }
 
     void PointToAttributeData(
@@ -378,3 +386,5 @@ class TranslationControllerBase;
 
     friend std::ostream & operator << (std::ostream & os, const VocabularyAndTranslation & obj);
   }; //end class
+
+#endif //VOCABULARY_AND_TRANSLATION_HPP

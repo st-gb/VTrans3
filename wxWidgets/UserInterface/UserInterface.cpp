@@ -32,6 +32,7 @@
 #include <wxWidgets/UserInterface/UserInterface.hpp>
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 #include <string> //class std::string
+#include <IO/dictionary/OpenDictFileException.hpp>
 
 //extern LetterTree g_lettertree ;
 
@@ -118,12 +119,27 @@ namespace wxWidgets
 //        /** this*/ ::wxGetApp(),
 //        & ::wxGetApp().s_dictionary );
       /*TUchemnitzDictionaryReader:: tcdr.read(*/
-      bool b = ::wxGetApp().s_dictReaderAndVocAccess.loadDictionary(
-        std_strDictFilePath.c_str() );//extractVocables( dictFilePath);
-      if( ! b )
-        ::wxGetApp().LoadingVocabularyFileFailed(std_strDictFilePath);
-      ::wxGetApp().EndTimer();
-      return b;
+      try
+      {
+        bool b = ::wxGetApp().s_dictReaderAndVocAccess.loadDictionary(
+          std_strDictFilePath.c_str() );//extractVocables( dictFilePath);
+//        if( ! b )
+//          ::wxGetApp().LoadingVocabularyFileFailed(std_strDictFilePath);
+        ::wxGetApp().EndTimer();
+      }
+      //TODO Maybe simply catch an "enum I_File::OpenError" value ?
+      catch( VTrans3::OpenDictFileException & odfe )
+      {
+        switch(odfe.m_openError)
+        {
+        case I_File::fileNotFound:
+          ::wxGetApp().LoadingVocabularyFileFailed(std_strDictFilePath,
+              " file not found");
+          break;
+        }
+        return 0;
+      }
+//      return b;
     }
     return 1;
   }

@@ -36,6 +36,7 @@
     void OnTruncateLogFileButton( wxCommandEvent & wxcmd );
     void OnUnloadDictionary( wxCommandEvent & wxcmd );
     void UnloadDictionaryShowingStatus();
+    void UnloadDictionaryShowingStatusAndSendCloseEvent();
   DECLARE_EVENT_TABLE()
 
 #endif	/* EVENTHANDLERFUNCTIONS_HPP */

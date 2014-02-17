@@ -182,10 +182,27 @@ DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)
 //  wxCloseEvent wxcloseEvent;
 //  //Add the close event for destroying the window
 //  /*::wxGetApp().*/event_handler.GetEventHandler()->AddPendingEvent(wxcloseEvent);
+  return 0;
+}
+
+/** The sequence:
+ *  -unloading the dictionary and
+ *  -sending a main window close event afterwards
+ *  must be done in this thread function. */
+DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionaryAndSendCloseEvent(void * p_v)
+{
+  UnloadDictionary(p_v);
+  EVENT_HANDLER_CLASS_NAME & event_handler = *(EVENT_HANDLER_CLASS_NAME *) p_v;
+//  EVENT_HANDLER_CLASS_NAME * p_event_handler = (EVENT_HANDLER_CLASS_NAME *) p_v;
+  wxCloseEvent wxcloseEvent;
+  //Add the close event for destroying the window
+  /*::wxGetApp().*/event_handler.GetEventHandler()->AddPendingEvent(wxcloseEvent);
+  return 0;
 }
 
 void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatus()
 {
+  //TODO SIGSEGV here
   ::wxGetApp().StartTimer();
   VTrans::thread_type thread;
 //    wxMutex mutex;
@@ -197,6 +214,25 @@ void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatus()
 //  ::wxGetApp().s_dictionary.clear();
 //    ::wxGetApp().EndTimer();
 //    LOGN("after clearing the dictionary.")
+
+//  thread.WaitForTermination();
+//  wxCloseEvent wxcloseEvent;
+//  //Add the close event for destroying the window
+//  /*::wxGetApp().*/AddPendingEvent(wxcloseEvent);
+}
+
+/** The close event must be sent after unloading the dictionary.
+ *  While unloading the dictionary a status should be shown. */
+void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatusAndSendCloseEvent()
+{
+  //TODO SIGSEGV here
+  ::wxGetApp().StartTimer();
+  VTrans::thread_type thread;
+  thread.start(UnloadDictionaryAndSendCloseEvent, /*& wxCond NULL*/ this );
+
+//  wxCloseEvent wxcloseEvent;
+//  /** Add the close event for destroying the window */
+//  /*::wxGetApp().*/AddPendingEvent(wxcloseEvent);
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
@@ -206,7 +242,7 @@ void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
   unsigned numberOfEnglishWords = ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfEnglishWords();
   if( numberOfVocPairs /*numberOfEnglishWords*/  > 0 )
   {
-    UnloadDictionaryShowingStatus();
+    UnloadDictionaryShowingStatusAndSendCloseEvent();
   }
   else
   {

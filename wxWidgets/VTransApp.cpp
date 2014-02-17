@@ -256,16 +256,26 @@ bool VTransApp::HandleCommandLineArgs()
     true ;
 }
 
-void VTransApp::LoadingVocabularyFileFailed(const std::string & stdstrFilePath)
+void VTransApp::LoadingVocabularyFileFailed(
+  const std::string & stdstrFilePath,
+  const std::string & std_strErrorMessage)
 {
-  wxString wxstrCwd = wxGetCwd() ;
+  wxString wxstrFilePath = wxWidgets::getwxString( stdstrFilePath.c_str() );
+  const wxString wxstrErrorMessage = wxWidgets::getwxString(
+    std_strErrorMessage.c_str() );
+  if( ! ::wxIsAbsolutePath( wxstrFilePath) )
+  {
+    const wxString wxstrCwd = wxGetCwd() ;
+//    if( ! wxEndsWithPathSeparator(wxstrCwd) )
+    wxstrFilePath = wxstrCwd + wxFILE_SEP_PATH + wxstrFilePath;
+  }
   ::wxMessageBox(
       wxString::Format( wxT("Error loading vocabulary file \"%s\""
-      "\%s\" ")
+      "\n:\%s\" ")
       //"->exiting"
       ,
-      wxstrCwd.c_str(),
-      stdstrFilePath.c_str()
+      wxstrFilePath.c_str(),
+      wxstrErrorMessage.c_str()
       )
     ) ;
 }

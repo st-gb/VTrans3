@@ -1,10 +1,12 @@
+if 4 points and unknown words inbetween: too many (14) translation possibilities are shown
+the cars drive->crash
 the vacuum cleaner transmit
 I and the sheep transmit me and the sheep
 I and the sheep transmit
-the sheep transmits  <- muss als "das Schaf überträgt" übersetzt werden.
-the sheep transmit  <- muss als "die Schafe übertragen" übersetzt werden.
+the sheep transmits  <- muss als "das Schaf ï¿½bertrï¿½gt" ï¿½bersetzt werden.
+the sheep transmit  <- muss als "die Schafe ï¿½bertragen" ï¿½bersetzt werden.
 he and the vacuum cleaners transmit
-the sheep and  <- gramm-Regel wurde fälschlicherweise mehrfach angewendet
+the sheep and  <- gramm-Regel wurde fï¿½lschlicherweise mehrfach angewendet
 the sheep trust the boy and the boys <- ob statt "dem Junge" "dem Jungen" und "den Jungen" nicht zu "den Jungen>>n<<"
 the sheep trust the vacuum cleaner
 

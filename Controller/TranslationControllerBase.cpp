@@ -519,7 +519,7 @@ void TranslationControllerBase::Translate(
   TranslateParseByRiseTree & translateParseByRiseTree =
     //::wxGetApp().
     m_translateparsebyrisetree ;
-  DEBUG_COUT("before translation\n")
+//  DEBUG_COUT("before translation\n")
 
   if(! m_vbContinue)
   	return;

@@ -188,29 +188,46 @@ public:
     m_bReflexive = FALSE;
     m_bIntegral = FALSE;
   }
+
+  /** @param wordBegin: tense needs to be "simple present". */
   static void GetWordStem(
     const char * wordBegin,
     //const WordData & germanWord
-    int len
-    , std::string & std_strWortstamm)
+    int len,
+    std::string & std_strWortstamm
+    )
   {
     unsigned minus;
-    if( len > 2 && *(wordBegin + len - 3) == 't' ) //arbeiTen -> arbeite ST
+    if( len > 2 && *(wordBegin + len - 3) == 't' ) //arbeiTen -> arbeiteST
       minus = 1;
-    else
+    else /** e.g. "geHen" -> "gehST" */
       minus = 2;
+    //TODO for words that are prepended with a preposition:
+    //  subtract preposition: e.g. "zukaufen": minus preposition "zu" ->
+    //  "kaufen" -> "kaufe zu"
     std_strWortstamm = std::string(wordBegin //+ germanWord.m_charIndexOfBegin,
       , //germanWord.GetStringLength()
       len - minus);
   }
-  static std::string GetPresentFiniteForm(const std::string & wortStamm,
-    enum person_indices person_index)
+
+  //TODO umlauts: e.g. "laufen" -> du "lÄufst" ("a"->"ä")
+  /** @brief Get simple present finite verb form for a person index from a
+   *   word stem.
+   *  @param person_index: e.g. 2nd person plural */
+  static std::string GetPresentFiniteForm(
+    const std::string & wortStamm,
+    const enum person_indices person_index)
   {
 //    if( wortStamm.substr(wortStamm.length() - 1, 1) == "h" )
-    if( *(wortStamm.c_str() + wortStamm.length() - 1) == 'h' ) //gehen, sehen, stehen
+    const char lastChar = *(wortStamm.c_str() + wortStamm.length() - 1);
+    switch( lastChar )
+    {
+    case 'h' : //geHen, seHen, steHen
+    case 'r' : //fahRen,
       return wortStamm + presentPersonEndings[person_index];
-    else
-      return wortStamm + presentPersonEndings2[person_index];
+//    default:
+    }
+    return wortStamm + presentPersonEndings2[person_index];
   }
   static std::string GetPastFiniteForm(//const std::string & wortStamm,
     const char * const prefix, int len,
