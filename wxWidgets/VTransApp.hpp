@@ -23,11 +23,14 @@
 //#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include <string> //class std::string
 #include <Controller/multithread/nativeCriticalSectionType.hpp>
+//class wxTextControlDialog
+#include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
 
 //#include "UserInterface/MainWindow/MainWindowBase.hpp"
 
 //Forward declarations.
 class wxTextInputDlg ;
+class wxIcon;
 namespace XERCES_CPP_NAMESPACE
 {
   class DefaultHandler ;
@@ -69,8 +72,15 @@ namespace wxWidgets
     virtual ~VTransApp();
 
     void CreateAndShowMainWindow() ;
+    bool GetProgramIconFromFile(wxIcon & r_wxicon );
     void GetSourceText(std::string & std_string);
     bool HandleCommandLineArgs() ;
+    /** Override in order to catch all log file access exceptions that arise
+     *  from (in)directly be called via a GUI message/ action. */
+    void HandleEvent(
+      wxEvtHandler *handler,
+      wxEventFunction func,
+      wxEvent& event) const;
     virtual int OnExit();
     virtual bool OnInit();
   //  VTransApp(const VTransApp& orig);
@@ -89,7 +99,8 @@ namespace wxWidgets
       DWORD dwOffsetOfBeginOfEntry,
       DWORD dwOffset
       );
-    inline void ShowMessage(const wxString &);
+    inline int ShowMessage(const wxString &,
+      const fastestUnsignedDataType flags = wxTextControlDialog::OK_Button);
     void EndTimer();
     void StartTimer();
     void OnMessage(wxCommandEvent &);

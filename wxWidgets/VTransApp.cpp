@@ -9,6 +9,7 @@
 
 #include <wx/wx.h>
 #include <wx/dialog.h> //class wxDialog
+#include <wx/icon.h> //class wxIcon
 #include <wx/textctrl.h> //class wxTextCtrl
 
 /** IGNORE_WRITE_STRINGS_WARNING, ENABLE_WRITE_STRINGS_WARNING */
@@ -30,6 +31,8 @@ ENABLE_WRITE_STRINGS_WARNING
 //#include <wxWidgets/UserInterface/MainWindow/wxTextInputDlg.hpp>//class wxTextInputDlg
 //class wxTextControlDialog
 #include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
+//class LogFileAccessException
+#include <Controller/Logger/LogFileAccessException.hpp>
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 
 //#include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
@@ -256,6 +259,27 @@ bool VTransApp::HandleCommandLineArgs()
     true ;
 }
 
+void VTransApp::HandleEvent(
+  wxEvtHandler *handler,
+  wxEventFunction func,
+  wxEvent& event) const
+{
+  try
+  {
+    /** Following code is from "wxAppConsole::HandleEvent(...) */
+    // by default, simply call the handler
+    (handler->*func)(event);
+  }
+  catch(const LogFileAccessException & lfae)
+  {
+    const std::string std_strErrorMessage = lfae.GetErrorMessage();
+    const wxString & wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
+    ( (VTransApp *) this)->ShowMessage(//wxT("HandleEvent--LogFileAccessException")
+      wxstrMessage );
+//    wxGetApp().ShowMessage(wxstrMessage);
+  }
+}
+
 void VTransApp::LoadingVocabularyFileFailed(
   const std::string & stdstrFilePath,
   const std::string & std_strErrorMessage)
@@ -308,25 +332,71 @@ void VTransApp::OnMessage(wxCommandEvent & event)
   ShowMessage(wxstr);
 }
 
+bool VTransApp::GetProgramIconFromFile(wxIcon & r_wxicon )
+{
+  bool bLoadFileRetVal =
+    //http://docs.wxwidgets.org/stable/wx_wxicon.html:
+      //"true if the operation succeeded, false otherwise."
+    r_wxicon.LoadFile(
+  //http://docs.wxwidgets.org/trunk/classwx_bitmap.html:
+  //"wxMSW supports BMP and ICO files, BMP and ICO resources;
+  // wxGTK supports XPM files;"
+  #ifdef _WIN32
+    //Use wxT() macro to enable to compile with both unicode and ANSI.
+    wxT("VTrans.ico") ,
+    wxBITMAP_TYPE_ICO
+  #endif
+  #ifdef __linux__
+    //Use wxT() macro to enable to compile with both unicode and ANSI.
+    wxT("VTrans.xpm") //,
+  //        wxBITMAP_TYPE_XBM
+    //"Note that the wxBITMAP_DEFAULT_TYPE constant has different value
+    //under different wxWidgets ports. See the bitmap.h header for the
+    //value it takes for a specific port."
+    //wxBITMAP_DEFAULT_TYPE
+  #endif
+    );
+  LOGN( "loading icon from file " << (bLoadFileRetVal ?
+      " succeeded" : "failed") )
+  return bLoadFileRetVal;
+}
+
 bool VTransApp::OnInit()
 {
-  m_wxiconVTrans = wxIcon( VT_icon_xpm );
+//  wxIcon wxicon;
+  if( ! GetProgramIconFromFile(m_wxiconVTrans) )
+  {
+    m_wxiconVTrans = wxIcon( VT_icon_xpm );
+  }
   std::string stdstrLogFilePath = "VTrans_log.txt" ;
 //  g_logger.SetLogLevel(/*LogLevel::debug*/ "debug");
   g_logger.m_logLevel = LogLevel::debug;
-  try
+  int retVal;
+  bool continueLoop;
+  do
   {
-    g_logger.OpenFileA(stdstrLogFilePath, "log4j", 4000, LogLevel::debug) ;
+    try
+    {
+      stdstrLogFilePath = "VTrans_log.txt" ;
+      g_logger.OpenFileA(stdstrLogFilePath, "log4j", 4000, LogLevel::debug) ;
+      retVal = wxTextControlDialog::OK_Button;
+    }
+    catch(const LogFileAccessException & lfae)
+    {
+//      wxString wxstrCurrWorkDir = ::wxGetCwd();
+//      const wxString wxstrMessage =  wxString(wxT("Opening log file \"") ) +
+//        wxstrCurrWorkDir +
+//        wxWidgets::getwxString(stdstrLogFilePath) + wxT("\"failed:") +
+//        wxWidgets::getwxString( lfae.GetErrorMessage() );
+      const std::string std_strErrorMessage = lfae.GetErrorMessage();
+      const wxString wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
+      retVal = ShowMessage(
+        wxstrMessage,
+        wxTextControlDialog::OK_Button | wxTextControlDialog::Retry_Button );
+    }
+    continueLoop = retVal == wxTextControlDialog::Retry_Button;
   }
-  catch(OpeningLogFileException & oe)
-  {
-    wxString wxstrCurrWorkDir = ::wxGetCwd();
-    const wxString wxstrMessage =  wxString(wxT("Opening log file \"") ) +
-        wxstrCurrWorkDir +
-        wxWidgets::getwxString(stdstrLogFilePath) + wxT("\"failed:") +
-        wxWidgets::getwxString( oe.GetErrorMessage() );
-    ShowMessage(wxstrMessage);
-  }
+  while( continueLoop );
   const std::vector<FormattedLogEntryProcessor *> & formattedLogEntryProcessors = 
     g_logger.GetFormattedLogEntryProcessors();
 //  if( formattedLogEntryProcessors.size() > 0 )
@@ -380,7 +450,10 @@ bool VTransApp::OnInit()
 //  }
 //}
 
-inline void VTransApp::ShowMessage(const wxString & wxstrMessage)
+inline int VTransApp::ShowMessage(
+  const wxString & wxstrMessage,
+  const fastestUnsignedDataType flags
+  )
 {
 //  if( threadID == m_GUIthreadID)
 //  {
@@ -388,13 +461,17 @@ inline void VTransApp::ShowMessage(const wxString & wxstrMessage)
   m_messageIsShown = true;
   /** Show wxTextControlDialog because so the message can be copied. */
   wxTextControlDialog wxtextcontroldialog(
-    wxstrMessage);
+    wxstrMessage,
+    wxT(""),
+    flags
+    );
 
-  wxtextcontroldialog.ShowModal();
+  const int retVal = wxtextcontroldialog.ShowModal();
   m_messageIsShown = false;
   m_critSecShowMessage.Leave();
 //  }
 //  else
+  return retVal;
 }
 
 void VTransApp::ShowInvalidVocabularyFileFormatMessage(

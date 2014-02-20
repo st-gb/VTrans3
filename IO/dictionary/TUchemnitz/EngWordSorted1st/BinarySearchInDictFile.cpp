@@ -298,7 +298,7 @@ namespace DictionaryReader
         }
         word[0] = '\0';
       }
-//      LOGN_DEBUG("end")
+      LOGN_DEBUG("end")
     }
 
     void BinarySearchInDictFile::HandleSynonymSeparatorChar(
@@ -495,15 +495,15 @@ namespace DictionaryReader
 #endif
 //      m_englishDictionary.seekg(offset, std::ios_base::beg);
       //TODO error handling on seek failure.
-      const bool streamIsGood = m_dictFile.SeekFilePointerPosition(offset);
+      bool streamIsGood = m_dictFile.SeekFilePointerPosition(offset);
       if( ! streamIsGood )
-        LOGN_ERROR("error seeking file pointer to offset" << byteOffset);
+        LOGN_ERROR("error seeking file pointer to offset" << offset);
       LOGN_DEBUG("after seeking to offset " << offset)
       int i;
 //      i = m_englishDictionary.get();
       i = m_dictFile.ReadByte();
 //      bool streamIsGood = m_englishDictionary.good();
-      bool streamIsGood = i > -1;
+      streamIsGood = i > -1;
       bool breakWhile = false;
       char word[100];
       int prevChar = 0;
@@ -953,7 +953,8 @@ namespace DictionaryReader
       bool streamIsGood = m_dictFile.SeekFilePointerPosition(
         c_closestBeforeNonMatchOffset);
       if( ! streamIsGood )
-        LOGN_ERROR("error seeking file pointer to offset" << byteOffset);
+        LOGN_ERROR("error seeking file pointer to offset"
+          << c_closestBeforeNonMatchOffset);
 #ifdef _DEBUG
 //      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
       fastestUnsignedDataType currOffset = m_dictFile.GetCurrentFilePointerPosition();
@@ -975,7 +976,8 @@ namespace DictionaryReader
           streamIsGood = m_dictFile.SeekFilePointerPosition(byteOffsetOfVocable);
           if( ! streamIsGood )
           {
-            LOGN_ERROR("error seeking file pointer to offset" << byteOffset);
+            LOGN_ERROR("error seeking file pointer to offset"
+              << byteOffsetOfVocable);
             break;
           }
           comp = ContainsEnglishWord(

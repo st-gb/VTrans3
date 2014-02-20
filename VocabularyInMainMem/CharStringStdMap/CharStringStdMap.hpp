@@ -57,6 +57,7 @@ public:
   fastestUnsignedDataType GetNumberOfAllocatedBytes();
   //TODO implement
   void GetStatistics(fastestUnsignedDataType [] ) { }
+  unsigned GetNumberOfEnglishWords() { return m_charStringMap.size(); }
   void Insert(EnglishWord&, GermanWord&, VocabularyAndTranslation*) { };
   //VocabularyAndTranslation * /*void * */
   IVocabularyInMainMem::voc_container_type * Insert(//const std::string & stdstr,

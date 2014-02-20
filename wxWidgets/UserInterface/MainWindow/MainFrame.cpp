@@ -113,8 +113,8 @@ namespace wxWidgets
     , MainWindowBase(this)
 //    , m_parsebyrise( ::wxGetApp() )
   {
-    wxIcon wxiconThisDialog( VT_icon_xpm ) ;
-  	( (wxFrame*) this)->SetIcon( wxiconThisDialog ) ;
+    wxIcon wxiconThisDialog( /*VT_icon_xpm*/ wxGetApp().m_wxiconVTrans ) ;
+    ( (wxFrame*) this)->SetIcon( wxiconThisDialog ) ;
 //    AddInputAndOutputControls();
     mp_wxsplitterwindow = new wxSplitterWindow( //NULL
       (wxFrame *) this, wxID_ANY ) ;

@@ -13,6 +13,7 @@
 #include <wx/timer.h> //class wxTimer
 //for enum user_interface_control_actions
 #include <wxWidgets/user_interface_control_actions.h>
+#include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
 
 class ParseByRise;
 class TranslationControllerBase;
@@ -61,6 +62,7 @@ namespace wxWidgets
     void AddResolveSuperClassesButton( wxSizer * p_sizer ) ;
     void AddShowInformationButton( wxSizer * p_sizer ) ;
     void AddTranslateButton( wxSizer * p_sizer ) ;
+//    void AddSettingsButton( wxSizer * p_sizer );
     void AddTruncateLogFileButton( wxSizer * p_sizer ) ;
     void AddReInitializeGrammarButton(wxSizer * p_wxsizer);
     void GetEntireInputText(std::string & r_stdstrInputText);
@@ -79,6 +81,7 @@ namespace wxWidgets
       m_wxtimer.SetOwner(/*this*/ m_p_mainwindow, ID_Timer) ;
     }
   protected:
+    VTrans::thread_type m_unloadDictAndCloseWindowThread;
     wxBoxSizer * p_boxsizerOuter;
     wxTextCtrl * mp_textctrlEnglishText;
     wxGermanTranslationPanel * m_p_wxgermantranslationpanel;

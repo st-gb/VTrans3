@@ -17,6 +17,8 @@
 //#include <Xerces/SAX2TranslationRuleHandler.hpp>
 //#include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
 #include <Controller/ConfigurationHandler_type.hpp>
+#include <Controller/GetErrorMessageFromLastErrorCode.hpp>
+#include <Controller/Logger/LogFileAccessException.hpp>
 
 #include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
 #include <wxWidgets/UserInterface/UserInterface.hpp>
@@ -196,7 +198,8 @@ DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionaryAndSendCloseEvent(void 
 //  EVENT_HANDLER_CLASS_NAME * p_event_handler = (EVENT_HANDLER_CLASS_NAME *) p_v;
   wxCloseEvent wxcloseEvent;
   //Add the close event for destroying the window
-  /*::wxGetApp().*/event_handler.GetEventHandler()->AddPendingEvent(wxcloseEvent);
+//  /*::wxGetApp().*/event_handler.GetEventHandler()->AddPendingEvent(wxcloseEvent);
+  ::wxPostEvent(event_handler.GetEventHandler(), wxcloseEvent);
   return 0;
 }
 
@@ -227,8 +230,12 @@ void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatusAndSendCloseEvent()
 {
   //TODO SIGSEGV here
   ::wxGetApp().StartTimer();
-  VTrans::thread_type thread;
-  thread.start(UnloadDictionaryAndSendCloseEvent, /*& wxCond NULL*/ this );
+  /** Must use a thread object that persists longer than the thread function,
+   *  else this program may crash? (if thread.start(...) or functions called
+   *  from it accesses member variables of the thread object) */
+//  VTrans::thread_type thread;
+  /*thread*/ m_unloadDictAndCloseWindowThread.start(
+    UnloadDictionaryAndSendCloseEvent, /*& wxCond NULL*/ this );
 
 //  wxCloseEvent wxcloseEvent;
 //  /** Add the close event for destroying the window */
@@ -238,9 +245,11 @@ void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatusAndSendCloseEvent()
 void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
 {
   LOGN("begin before clearing the dictionary")
-  unsigned numberOfVocPairs = ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfVocPairs();
-  unsigned numberOfEnglishWords = ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfEnglishWords();
-  if( numberOfVocPairs /*numberOfEnglishWords*/  > 0 )
+  const unsigned numberOfVocPairs = ::wxGetApp().s_dictReaderAndVocAccess.
+    m_vocAccess.GetNumberOfVocPairs();
+  const unsigned numberOfEnglishWords = ::wxGetApp().s_dictReaderAndVocAccess.
+    m_vocAccess.GetNumberOfEnglishWords();
+  if( /*numberOfVocPairs*/ numberOfEnglishWords > 0 )
   {
     UnloadDictionaryShowingStatusAndSendCloseEvent();
   }
@@ -571,6 +580,9 @@ void EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton( wxCommandEvent & wxcmd )
 
 void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
 {
+  LOGN_DEBUG("begin")
+//  try
+//  {
   std::string stdstrWholeInputText ;
   GetEntireInputText(stdstrWholeInputText) ;
 //  AxSpeech axspeech ;
@@ -618,9 +630,29 @@ void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
 
 //  mp_textctrlGermanText->SetValue( stdstrWholeTransl ) ;
   mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
-  DEBUGN("end of OnTranslateButton\n")
   //You can also trigger this call by calling Refresh()/Update()
   //m_panel1->Refresh() ;
+//  }
+//  catch(/*const*/ LogFileAccessException & lfae)
+//  {
+////    std::string std_strErrorMessage = ::GetErrorMesageFromErrorCodeA(
+////      lfae.m_errorCode);
+////    wxString wxstrMessage;
+////    switch(lfae.m_action)
+////    {
+////    case LogFileAccessException::deleteLogFile:
+////      wxstrMessage = wxT("deleting file failed");
+////      break;
+////    }
+////    wxstrMessage += wxT(":");
+////    const wxString & wxstr = wxWidgets::getwxString( std_strErrorMessage);
+////    wxstrMessage += wxstr;
+//    const std::string std_strErrorMessage = lfae.GetErrorMessage();
+//    const wxString wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
+//    wxGetApp().ShowMessage(wxstrMessage);
+//    throw lfae;
+//  }
+  LOGN_DEBUG("end")
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnUnloadDictionary( wxCommandEvent & wxcmd )

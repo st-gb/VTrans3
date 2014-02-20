@@ -1,3 +1,4 @@
+umlauts in English source text
 if 4 points and unknown words inbetween: too many (14) translation possibilities are shown
 the cars drive->crash
 the vacuum cleaner transmit

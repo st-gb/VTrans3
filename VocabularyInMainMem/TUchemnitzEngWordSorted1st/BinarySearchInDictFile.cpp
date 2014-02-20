@@ -62,6 +62,15 @@ namespace VTrans3
         }
       }
 
+      unsigned BinarySearchInDictFile::GetNumberOfEnglishWords()
+      {
+        const fastestUnsignedDataType mapSize = m_charStringStdMap.
+          GetNumberOfEnglishWords();
+        const fastestUnsignedDataType tempMapSize = m_charStringStdMapTemp.
+          GetNumberOfEnglishWords();
+        return mapSize + tempMapSize;
+      }
+
       /** For inserting fundamental words like "the" etc. */
 //      VocabularyAndTranslation*
       IVocabularyInMainMem::voc_container_type * BinarySearchInDictFile::Insert(

@@ -52,6 +52,7 @@ namespace VTrans3
         void AddVocabularyAttributes(EnglishWord::English_word_class, void*) {};
         void clear();
         fastestUnsignedDataType GetNumberOfAllocatedBytes() { return 0; }
+        unsigned GetNumberOfEnglishWords();
         void GetStatistics(fastestUnsignedDataType*) {}
         /** For inserting fundamental words like "the" etc. */
 //        VocabularyAndTranslation*

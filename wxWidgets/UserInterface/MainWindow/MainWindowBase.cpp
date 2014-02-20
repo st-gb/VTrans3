@@ -81,7 +81,7 @@
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 //UnLoadAndLoadDictionary(wxWindow *);
 #include <wxWidgets/UserInterface/UserInterface.hpp>
-#include "../wxTextControlDialog.hpp" //class wxTextControlDialog
+#include <wxWidgets/UserInterface/wxTextControlDialog.hpp> //class wxTextControlDialog
 
 //#define EVENT_HANDLER_BASE_CLASS_NAME wxTopLevelWindow /*wxTopLevelWindowBase wxDialog*/
 //#define EVENT_HANDLER_CLASS_NAME_NON_SCOPED MainWindowBase /*wxTextInputDlg*/
@@ -248,6 +248,7 @@ void EVENT_HANDLER_CLASS_NAME::AddToolButtons()
   wxButton * p_wxbutton ;
   wxBoxSizer * p_boxsizerButtons = NULL;
   AddTranslateButton( p_boxsizerButtons ) ;
+//  AddSettingsButton( p_boxsizerButtons ) ;
 
   AddAddTranslationRulesButton( p_boxsizerButtons ) ;
   AddRemoveTranslationRulesButton( p_boxsizerButtons ) ;
@@ -463,6 +464,12 @@ void EVENT_HANDLER_CLASS_NAME::AddShowInformationButton( wxSizer * p_sizer )
   AddBitmapButtonAndTooltip(ID_Info, info_xpm, wxT("show information")/*, 
     p_sizer*/);
 }
+
+//void EVENT_HANDLER_CLASS_NAME::AddSettingsButton( wxSizer * p_sizer )
+//{
+//  AddBitmapButtonAndTooltip(ID_Settings, translate_bitmap_xpm,
+//    wxT("settings")/*, p_sizer*/);
+//}
 
 void EVENT_HANDLER_CLASS_NAME::AddTranslateButton( wxSizer * p_sizer )
 {
