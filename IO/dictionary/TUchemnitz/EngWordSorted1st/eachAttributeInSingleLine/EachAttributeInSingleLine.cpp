@@ -25,6 +25,18 @@
         std::string wordKind = "vi_3singPres"; //="Verb Intransitive"
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::vi_3singPres);
+
+        wordKind = "vi_3singPast"; //="Verb Intransitive"
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::vi_3singPast);
+
+        wordKind = "vt_3singPast"; //="Verb Transitive"
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::vt_3singPast);
+        wordKind = "vr_3singPast"; //="Verb Reflexive"
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::vr_3singPast);
+        //TODO  insert more nodes: for "vt", "vr", ...
       }
 
       BinarySearchInDictFile::~BinarySearchInDictFile()
@@ -65,11 +77,43 @@
            *   a VocabularyAndTranslation for each noun. */
           p_vocabularyandtranslation = NULL;
           break;
+        case TUchemnitzDictionary::vt_3singPres:
+          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+          word_class = EnglishWord::mainVerbAllows1object3rdPersonSingularPresent;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+          p_vocabularyandtranslation = NULL;
+          break;
+        case TUchemnitzDictionary::vi_3singPast:
+          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+          word_class = EnglishWord::mainVerbAllows0object3rdPersonSingularPast;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+          p_vocabularyandtranslation = NULL;
+          break;
+        case TUchemnitzDictionary::vt_3singPast:
+          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+          word_class = EnglishWord::mainVerbAllows1object3rdPersonSingularPast;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+          p_vocabularyandtranslation = NULL;
+          break;
+          //TODO handle more wordkinds
         case TUchemnitzDictionary::transitiveVerb:
           /** http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29:
           * " sowohl Subjekt als auch ein Objekt benötigen, damit ein Satz, der
           * mit diesem Verb gebildet wird, grammatisch ist." */
           word_class = EnglishWord::main_verb_allows_1object_infinitive;
+          break;
+        case TUchemnitzDictionary::adj:
+          word_class = EnglishWord::adjective;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+          p_vocabularyandtranslation = NULL;
           break;
         case TUchemnitzDictionary::adv:
           word_class = EnglishWord::adverb;
@@ -179,7 +223,8 @@
                     germanWordIndex);
 //                ++ germanWordIndex;
                 p_vocAndTransl->PossiblyGenerateAndAddGermanAttributes(
-                  engWordClass,
+//                  engWordClass,
+                  p_vocAndTransl->m_englishWordClass,
                   germanWord
                   );
               }

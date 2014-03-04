@@ -125,54 +125,136 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
   return 0;
 }
 
+/** Add finite past verb form from 3rd person singular past.
+ *  So words may be added although they are missing in the dictionary.
+ *  So e.g. add:
+ *   -"gingen" from "ging"
+ *  But remember: so only _regular_ word forms are added appropriately(!)
+ *  */
+void VocabularyAndTranslation::AddFiniteVerbFormsFromGerman3rdPersPast(
+  const std::string & std_strWordStem)
+{
+  std::string std_strFiniteForm;
+  for( fastestUnsignedDataType /*enum GermanVerb::person_indices*/ person_index =
+      GermanVerb::firstPersonSing;
+      person_index <= GermanVerb::thirdPersonPlur;
+      ++ person_index
+     )
+  {
+    /** 3rd person singular is already passed as parameter. */
+    if( person_index == GermanVerb::thirdPersonSing )
+      SetGermanWord(
+        std_strWordStem.c_str(),
+        std_strWordStem.length(),
+        /** index 0 is infinitive->add "1". */
+        GermanVerb::arrayIndexFor3rdPersSingPres
+        );
+    else
+    {
+      std_strFiniteForm = GermanVerb::GetPastFiniteForm(
+        std_strWordStem,
+        (enum GermanVerb::person_indices) person_index
+        );
+      SetGermanWord(
+        std_strFiniteForm.c_str(),
+        std_strFiniteForm.length(),
+        /** index 0 is infinitive->add "1". */
+        person_index + 1
+        );
+    }
+  }
+}
+
+/** Add finite verb form from 3rd person singular present.
+ *  So words may be added although they are missing in the dictionary.
+ *  So e.g. add:
+ *   -"gehe" from "geht"
+ *  But remember: so only _regular_ word forms are added appropriately(!)
+ *  */
+void VocabularyAndTranslation::AddFiniteVerbFormsFromGerman3rdPersPresent(
+  const std::string & germanWord)
+{
+  std::string std_strWordStem;
+  GermanVerb::GetWordStemFrom3rdPersonPresent(
+    germanWord.c_str(),
+    germanWord.length(),
+//    grammarPartID,
+    std_strWordStem);
+  std::string std_strFiniteForm;
+  for( fastestUnsignedDataType /*enum GermanVerb::person_indices*/ person_index =
+      GermanVerb::firstPersonSing;
+      person_index <= GermanVerb::thirdPersonPlur;
+      ++ person_index
+     )
+  {
+    /** 3rd person singular is already passed as parameter. */
+    if( person_index == GermanVerb::thirdPersonSing )
+      SetGermanWord(
+        germanWord.c_str(),
+        germanWord.length(),
+        /** index 0 is infinitive->add "1". */
+        GermanVerb::arrayIndexFor3rdPersSingPres
+        );
+    else
+    {
+      std_strFiniteForm = GermanVerb::GetPresentFiniteForm(
+        std_strWordStem,
+        (enum GermanVerb::person_indices) person_index
+        );
+      SetGermanWord(
+        std_strFiniteForm.c_str(),
+        std_strFiniteForm.length(),
+        /** index 0 is infinitive->add "1". */
+        person_index + 1
+        );
+    }
+  }
+}
+
 /** Add words to a word family from a single word.
  *  So words may be added although they are missing in the dictionary.
  *  So e.g. add:
  *   -a plural from a singular: from "Katze" : add "Katzen"
  *   -finite verb form from infinitive: "geht" from "gehen"
+ *   -infinitive
  *  But remember: so only _regular_ word forms are added appropriately(!)
  *  */
 void VocabularyAndTranslation::PossiblyGenerateAndAddGermanAttributes(
-  const EnglishWord::English_word_class engWordClass,
+  const EnglishWord::English_word_class grammarPartID,
   const std::string & germanWord)
 {
+  const EnglishWord::English_word_class engWordClass = EnglishWord::
+    MapGrammarPartIDtoWordClass(grammarPartID);
+
   GCC_DIAG_OFF(switch)
-  switch(engWordClass)
+  switch(/*engWordClass*/ grammarPartID)
   {
 //  case EnglishWord::main_verb_allows_0object_infinitive :
 //  case EnglishWord::main_verb_allows_1object_infinitive :
 //  case EnglishWord::main_verb_allows_2objects_infinitive :
-  case EnglishWord::main_verb :
+//  case EnglishWord::main_verb :
     /** if inf. is added (index 0) then derive finite German verb forms
     * from inf. and add to voc and transl. */
 //                  GermanVerb::GenerateRemainingAttributeValues(germanWordIndex, germanWord);
 //    if( germanWordIndex == 0 )
-    {
-      std::string std_strWordStem;
-      GermanVerb::GetWordStem(
-        germanWord.c_str(),
-        germanWord.length(),
-        std_strWordStem );
-      std::string std_strFiniteForm;
-      for( fastestUnsignedDataType /*enum GermanVerb::person_indices*/ person_index =
-          GermanVerb::firstPersonSing;
-          person_index <= GermanVerb::thirdPersonPlur;
-          ++ person_index
-         )
-      {
-        //TODO also add simple past form
-        std_strFiniteForm = GermanVerb::GetPresentFiniteForm(
-          std_strWordStem,
-          (enum GermanVerb::person_indices) person_index
-          );
-        SetGermanWord(
-          std_strFiniteForm.c_str(),
-          std_strFiniteForm.length(),
-          person_index + 1
-          );
-      }
-    }
+//    {
+//      std::string std_strWordStem;
+//      GermanVerb::GetWordStem(
+//        germanWord.c_str(),
+//        germanWord.length(),
+//        grammarPartID,
+//        std_strWordStem);
+  case EnglishWord::mainVerbAllows0object3rdPersonSingularPast :
+  case EnglishWord::mainVerbAllows1object3rdPersonSingularPast :
+  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPast :
+    AddFiniteVerbFormsFromGerman3rdPersPast(germanWord);
     break;
+  case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
+  case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent :
+  case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent :
+    AddFiniteVerbFormsFromGerman3rdPersPresent(germanWord);
+    break;
+//  default:
   }
   GCC_DIAG_ON(switch)
 }

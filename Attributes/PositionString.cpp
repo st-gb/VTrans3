@@ -9,7 +9,7 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 
   const char * const PositionStringVector::s_comparisonResultString [] = {
-    "fullMatchOfCompareVector", "match", "lower", "greater", "tooFewTokens"
+    "not set", "fullMatchOfCompareVector", "match", "lower", "greater", "tooFewTokens"
   };
 
   /** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */

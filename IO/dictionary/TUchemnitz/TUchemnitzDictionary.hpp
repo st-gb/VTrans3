@@ -12,7 +12,12 @@ namespace TUchemnitzDictionary
 {
   enum wordKinds { not_set, adj, adv, mascNoun, femNoun, neutralNoun,
     pluralNoun, intransitiveVerb, transitiveVerb, reflexiveVerb,
-    vi_3singPres};
+    //TODO rename "vi" to "intransitiveVerb"
+    //     rename "vt" to "transitiveVerb"
+    //     rename "vr" to "reflexiveVerb"
+    vi_3singPres, vi_3singPast,
+    vt_3singPres, vt_3singPast,
+    vr_3singPast};
 }
 
 #endif /* TUCHEMNITZDICTIONARY_HPP_ */

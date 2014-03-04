@@ -10,6 +10,8 @@
 
 #include "Word.hpp"
 #include "IterableWords.hpp"
+//GCC_DIAG_OFF(...), GCC_DIAG_ON(...)
+#include <compiler/GCC/enable_disable_warning.h>
 
 class GermanWord
   //For ability to iterate over all of the word's strings.
@@ -190,14 +192,35 @@ public:
   }
 
   /** @param wordBegin: tense needs to be "simple present". */
-  static void GetWordStem(
+  static void GetWordStemFrom3rdPersonPresent(
     const char * wordBegin,
     //const WordData & germanWord
     int len,
     std::string & std_strWortstamm
     )
   {
-    unsigned minus;
+    unsigned minus = 0;
+    if( len > 2 && *(wordBegin + len - 3) == 't' ) //arbeiTet -> arbeiT
+      minus = 2;
+    else /** e.g. "geHT" -> "geh" */
+      minus = 1;
+    //TODO for words that are prepended with a preposition:
+    //  subtract preposition: e.g. "zukaufen": minus preposition "zu" ->
+    //  "kaufen" -> "kaufe zu"
+    std_strWortstamm = std::string(wordBegin //+ germanWord.m_charIndexOfBegin,
+      , //germanWord.GetStringLength()
+      len - minus);
+  }
+
+  /** @param wordBegin: tense needs to be "simple present". */
+  static void GetWordStemFromInfinitive(
+    const char * wordBegin,
+    //const WordData & germanWord
+    int len,
+    std::string & std_strWortstamm
+    )
+  {
+    unsigned minus = 0;
     if( len > 2 && *(wordBegin + len - 3) == 't' ) //arbeiTen -> arbeiteST
       minus = 1;
     else /** e.g. "geHen" -> "gehST" */
@@ -209,6 +232,49 @@ public:
       , //germanWord.GetStringLength()
       len - minus);
   }
+
+  /** @param wordBegin: tense needs to be a verb. */
+  static void GetWordStem(
+    const char * wordBegin,
+    //const WordData & germanWord
+    int len,
+    const EnglishWord::English_word_class grammarPartID,
+    std::string & std_strWortstamm
+    )
+  {
+    unsigned minus;
+    GCC_DIAG_OFF(switch)
+    switch(grammarPartID)
+    {
+    case EnglishWord::main_verb_allows_0object_past_form :
+    case EnglishWord::main_verb_allows_1object_past_form:
+    case EnglishWord::main_verb_allows_2objects_past_form:
+      if( len > 3 && *(wordBegin + len - 4) == 't' ) //arbeiTete -> arbeiT
+        minus = 3;
+      else /** e.g. "ging" -> "ging" ("gingST, gingT, gingEN) */
+        minus = 0;
+      break;
+    case EnglishWord::mainVerbAllows0object3rdPersonSingularPresent :
+    case EnglishWord::mainVerbAllows1object3rdPersonSingularPresent:
+    case EnglishWord::mainVerbAllows2objects3rdPersonSingularPresent:
+      GetWordStemFrom3rdPersonPresent(wordBegin, len, std_strWortstamm);
+      break;
+    case EnglishWord::main_verb_allows_0object_infinitive:
+    case EnglishWord::main_verb_allows_1object_infinitive:
+    case EnglishWord::main_verb_allows_2objects_infinitive:
+      GetWordStemFromInfinitive(wordBegin, len, std_strWortstamm);
+      break;
+    }
+    GCC_DIAG_ON(switch)
+  }
+
+  //TODO umlauts: e.g. "laufen" -> du "lÄufst" ("a"->"ä")
+  // kaufen kauft
+//  static void HandleUmlauts(const std::string & wortStamm)
+//  {
+//    std::string::size_type pos = wortStamm.find("au");
+//    if( )
+//  }
 
   //TODO umlauts: e.g. "laufen" -> du "lÄufst" ("a"->"ä")
   /** @brief Get simple present finite verb form for a person index from a
@@ -230,7 +296,8 @@ public:
     return wortStamm + presentPersonEndings2[person_index];
   }
   static std::string GetPastFiniteForm(//const std::string & wortStamm,
-    const char * const prefix, int len,
+    const char * const prefix,
+    int len,
     enum person_indices person_index)
   {
     const std::string wortStamm(prefix, len);
@@ -238,6 +305,12 @@ public:
       return wortStamm + pastPersonEndings[person_index];
 //    else
 //      return wortStamm + pastPersonEndings[person_index];
+  }
+  static std::string GetPastFiniteForm(//const std::string & wortStamm,
+    const std::string & wortStamm,
+    enum person_indices person_index)
+  {
+    return GetPastFiniteForm(wortStamm, person_index);
   }
 };
 

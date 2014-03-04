@@ -61,6 +61,9 @@ public:
     , mainVerbAllows0object3rdPersonSingularPresent
     , mainVerbAllows1object3rdPersonSingularPresent
     , mainVerbAllows2objects3rdPersonSingularPresent
+    , mainVerbAllows0object3rdPersonSingularPast
+    , mainVerbAllows1object3rdPersonSingularPast
+    , mainVerbAllows2objects3rdPersonSingularPast
     , main_verb_allows_0object_past_form
     , main_verb_allows_1object_past_form
     , main_verb_allows_2objects_past_form

@@ -172,6 +172,13 @@ namespace DictionaryReader
       case TUchemnitzDictionary::adv:
         word_class = EnglishWord::adverb;
         break;
+      case TUchemnitzDictionary::adj:
+        word_class = EnglishWord::adjective;
+        /** =NULL means: The next time a VocabularyAndTranslation should be
+         *   created. (multiple singular nouns may appear in a row->create
+         *   a VocabularyAndTranslation for each noun. */
+        p_vocabularyandtranslation = NULL;
+        break;
       case TUchemnitzDictionary::femNoun:
       case TUchemnitzDictionary::mascNoun:
       case TUchemnitzDictionary::neutralNoun:
@@ -280,7 +287,7 @@ namespace DictionaryReader
   #endif
           if( semicolCountInsideCurrentPipeCharRange < germanVocables.size() )
           {
-            LOGN_DEBUG("using German vocable at index "
+            LOGN_DEBUG("using German vocable \"" << word << "\" at index "
               << semicolCountInsideCurrentPipeCharRange )
             std::vector<std::string> & vec = germanVocables[
               semicolCountInsideCurrentPipeCharRange];
@@ -288,7 +295,7 @@ namespace DictionaryReader
           }
           else
           {
-            LOGN_DEBUG("appending German vocable at index "
+            LOGN_DEBUG("appending German vocable \"" << word << "\" at index "
               << germanVocables.size() )
             std::vector<std::string> vec;
             vec.push_back(std::string(word) );
@@ -514,6 +521,7 @@ namespace DictionaryReader
       fastestUnsignedDataType kindOfWordStart = 0;
       fastestUnsignedDataType charIndex = 0, charIndexInsideWord = 0;
       char wordKind[/*5*/ 100];
+//      unsigned char UTF8sequence[8];
       bool insideBracket = false;
       char ASCIIcodePage850Char;
       char ch;
@@ -526,17 +534,26 @@ namespace DictionaryReader
               charIndexInsideWord, i);
             ++ charIndexInsideWord;
           }
-        if(prevChar > 127 )
+//        enum UTF8byteSequence::bytePos bp = UTF8byteSequence::IsByteOfUTF8sequence(prevChar);
+        const bool isByteOfMultiByteUTF8sequence =
+          UTF8byteSequence::IsByteOfMultiByteUTF8sequence(i);
+        if(//prevChar > 127
+//            bp == UTF8byteSequence::insideUTF8sequence
+            isByteOfMultiByteUTF8sequence
+           )
         {
           if( ! insideBracket && charIndexInsideWord < 100)
           {
             ASCIIcodePage850Char = GetCharInASCIIcodePage850(i);
             if( ASCIIcodePage850Char != 0 )
+            {
               SetWordCharacter(word,/*charIndex*/ charIndexInsideWord,
                 ASCIIcodePage850Char);
-            else
-              SetWordCharacter(word,/*charIndex*/ charIndexInsideWord, i);
-            ++ charIndexInsideWord;
+              ++ charIndexInsideWord;
+            }
+//            else
+//              SetWordCharacter(word,/*charIndex*/ charIndexInsideWord, i);
+//            ++ charIndexInsideWord;
           }
         }
         else
@@ -798,6 +815,10 @@ namespace DictionaryReader
 //      case PositionStringVector::tooFewTokens:
 //        endSearchForCompareStringInCurrentVocData;
 //        break;
+      case PositionStringVector::notSet: //e.g. searching for word "Ö"
+        breakWhile = true;
+        endSearchForCompareStringInCurrentVocData = true;
+        break;
       case PositionStringVector::lower:
         psvDictFile.clear();
         hi = byteOffset;
@@ -1050,7 +1071,10 @@ namespace DictionaryReader
       bool endSearchForCompareStringInCurrentVocData = false;
       fastestUnsignedDataType tokenIndex = 0;
       bool compareVectors = false;
-      PositionStringVector::cmp comp;
+      /** Set to a default value to avoid using an array out of bounds error
+       *  if "cmp" was too large and it was used as a array index for
+       *  PositionStringVector::s_comparisonResultString */
+      PositionStringVector::cmp comp = PositionStringVector::notSet;
 
 //      int i = m_englishDictionary.get();
       int i = m_dictFile.ReadByte();

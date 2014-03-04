@@ -175,6 +175,11 @@ class TranslationControllerBase;
 
     ~VocabularyAndTranslation() ;
 
+    void AddFiniteVerbFormsFromGerman3rdPersPast(
+      const std::string & std_strWordStem);
+    void AddFiniteVerbFormsFromGerman3rdPersPresent(
+      const std::string & std_strWordStem);
+
     fastestUnsignedDataType GetNumberOfBytes();
     void FreeMemory();
 //    void GetNumberOfArrayElements(

@@ -4,6 +4,9 @@
  *  Created on: Dec 6, 2010
  *      Author: Stefan
  */
+/** Must be the 1st inclusion, else compilation error in GCC files <time.h>
+ *  indirectly included from this header file: ~ "undefined asctime", ... */
+#include <InputOutput/XML/OutputXMLindented.hpp> //OutputXMLindented(...)
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
@@ -15,7 +18,6 @@
 #include <Controller/DictReaderAndVocAccess/TUchemnitzEngWordSorted1stAndBinarySearch.hpp>
 ////class TUchemnitzDictEngWord2LineNumberReader
 //#include <IO/dictionary/TUchemnitzDictEngWord2LineNumberReader.hpp>
-#include <InputOutput/XML/OutputXMLindented.hpp> //OutputXMLindented(...)
 //class ParseTreeTraverser::TransformTreeTraverser
 #include <Translate/TransformTreeTraverser.hpp>
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
@@ -73,8 +75,10 @@ void Make1stPersonSing(std::string & //r_std_strWordStem
   r_std_strInfinitive)
 {
   std::string std_strWordStem;
-  GermanVerb::GetWordStem( r_std_strInfinitive.c_str(),
-    r_std_strInfinitive.length(), std_strWordStem );
+  GermanVerb::GetWordStemFromInfinitive(
+    r_std_strInfinitive.c_str(),
+    r_std_strInfinitive.length(),
+    std_strWordStem );
   //e.g. "arbeit" "E"
   r_std_strInfinitive = GermanVerb::GetPresentFiniteForm(std_strWordStem,
     (enum GermanVerb::person_indices) (GermanVerb::firstPersonSing ) );
@@ -92,8 +96,9 @@ void MakePastParticiple(std::string & //r_std_strWordStem
   //ending consonant + "en" -> "ge" + infinitive
   //if begin = preposition ("an", "zu" etc.): preposition + "ge" + inf.
   std::string std_strWordStem;
-  GermanVerb::GetWordStem( r_std_strInfinitive.c_str(),
+  GermanVerb::GetWordStemFromInfinitive( r_std_strInfinitive.c_str(),
     r_std_strInfinitive.length(), std_strWordStem );
+  //TODO get past participle, but not finite simple past form
   //e.g. "arbeit" "E"
   r_std_strInfinitive = GermanVerb::GetPastFiniteForm(
     std_strWordStem.c_str(), std_strWordStem.length(),
@@ -150,7 +155,7 @@ TranslationControllerBase::TranslationControllerBase()
     std::make_pair(std_str, & Make1stPersonSing) );
   std_str = "makePastParticiple";
   ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
-    std::make_pair(std_str, & Make1stPersonSing) );
+    std::make_pair(std_str, & MakePastParticiple) );
 #endif //#ifndef TEST_MINI_XML
 }
 

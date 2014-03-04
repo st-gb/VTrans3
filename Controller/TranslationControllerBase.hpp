@@ -130,6 +130,7 @@ public:
   virtual
   ~TranslationControllerBase();
 
+  //TODO possibly rename to a more general/generic/ abstract name like "PostInit"
   virtual void CreateAndShowMainWindow() {};
   template <typename XMLelementType> bool GetAttributeValue(
       XMLelementType & xmlElement, const char * const, std::string &);

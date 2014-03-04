@@ -65,10 +65,10 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
     EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress)
   BUTTON_EVENT_TYPE( ID_ShowGrammarTranslatedWord,
     EVENT_HANDLER_CLASS_NAME::OnShowTranslatedWord)
-  EVT_BUTTON( ID_AddTransformationRules ,
+  BUTTON_EVENT_TYPE( ID_AddTransformationRules ,
     EVENT_HANDLER_CLASS_NAME::OnAddTransformationRules )
-  EVT_BUTTON( ID_AddTranslationRules , EVENT_HANDLER_CLASS_NAME::OnAddTranslationRules )
-  EVT_BUTTON( ID_AddVocAttrDefs, EVENT_HANDLER_CLASS_NAME::OnAddVocAttrDefs )
+  BUTTON_EVENT_TYPE( ID_AddTranslationRules , EVENT_HANDLER_CLASS_NAME::OnAddTranslationRules )
+  BUTTON_EVENT_TYPE( ID_AddVocAttrDefs, EVENT_HANDLER_CLASS_NAME::OnAddVocAttrDefs )
   BUTTON_EVENT_TYPE( ID_Settings , EVENT_HANDLER_CLASS_NAME::OnSettings)
   BUTTON_EVENT_TYPE( ID_Translate , EVENT_HANDLER_CLASS_NAME::OnTranslateButton)
   BUTTON_EVENT_TYPE( ID_LookupWord , EVENT_HANDLER_CLASS_NAME::OnLookupWord)
@@ -76,25 +76,25 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   BUTTON_EVENT_TYPE( ID_UnloadDictionary , EVENT_HANDLER_CLASS_NAME::OnUnloadDictionary)
   BUTTON_EVENT_TYPE( ID_TruncateLogFile, EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton)
   BUTTON_EVENT_TYPE( ID_LoadDictionary , EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryButton)
-  EVT_BUTTON( ID_ShowTokenIndex2GrammarPart, EVENT_HANDLER_CLASS_NAME::
+  BUTTON_EVENT_TYPE( ID_ShowTokenIndex2GrammarPart, EVENT_HANDLER_CLASS_NAME::
     OnShowTokenIndex2GrammarPartButton)
   BUTTON_EVENT_TYPE( ID_ShowTranslationRules,
     EVENT_HANDLER_CLASS_NAME::OnShowTranslationRulesButton )
-  EVT_BUTTON( ID_ReInitGrammarRules ,
+  BUTTON_EVENT_TYPE( ID_ReInitGrammarRules ,
     EVENT_HANDLER_CLASS_NAME::OnReInitGrammarRulesButton)
-  EVT_BUTTON( ID_RemoveGrammarRules ,
+  BUTTON_EVENT_TYPE( ID_RemoveGrammarRules ,
     EVENT_HANDLER_CLASS_NAME::OnRemoveGrammarRules )
-  EVT_BUTTON( ID_RemoveTransformationRules ,
+  BUTTON_EVENT_TYPE( ID_RemoveTransformationRules ,
     EVENT_HANDLER_CLASS_NAME::OnRemoveTransformationRules )
-  EVT_BUTTON( ID_RemoveTranslationRules ,
+  BUTTON_EVENT_TYPE( ID_RemoveTranslationRules ,
     EVENT_HANDLER_CLASS_NAME::OnRemoveTranslationRules )
-  EVT_BUTTON( ID_RemoveVocAttrDefs ,
+  BUTTON_EVENT_TYPE( ID_RemoveVocAttrDefs ,
     EVENT_HANDLER_CLASS_NAME::OnRemoveVocAttrDefs )
-  EVT_BUTTON( ID_ResolveSuperclass,
+  BUTTON_EVENT_TYPE( ID_ResolveSuperclass,
     EVENT_HANDLER_CLASS_NAME::OnResolveSuperclassGrammarParts )
-  EVT_BUTTON( ID_Resolve1ParseLevel ,
+  BUTTON_EVENT_TYPE( ID_Resolve1ParseLevel ,
     EVENT_HANDLER_CLASS_NAME::OnResolve1ParseLevelButton)
-  EVT_BUTTON( ID_DrawParseTree ,
+  BUTTON_EVENT_TYPE( ID_DrawParseTree ,
     EVENT_HANDLER_CLASS_NAME::OnDrawParseTreeButton)
   BUTTON_EVENT_TYPE( ID_Info, EVENT_HANDLER_CLASS_NAME::OnInfoButton)
   EVT_CLOSE( EVENT_HANDLER_CLASS_NAME::OnClose)

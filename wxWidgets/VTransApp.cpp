@@ -115,7 +115,12 @@ void VTransApp::CreateAndShowMainWindow()
 //    //wxDEFAULT_DIALOG_STYLE | wxCLOSE_BOX
 //    );
   /*m_p_wx_text_input_dialog*/ //m_p_mainWindow = p_wx_text_input_dialog ;
-  m_p_mainWindow = new MainFrame();
+  m_p_mainWindow = new MainFrame(
+    wxEmptyString,
+    wxDefaultPosition,
+    //TODO read size from config file and pass it here
+    wxSize(500,400)
+    );
   //      wxWidgets::MainFrame * p_mainframe = new wxWidgets::MainFrame(
   //        wxT("dfd"), wxPoint(0,0) , wxSize(400,400)
   //        ) ;

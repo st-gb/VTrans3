@@ -39,6 +39,7 @@ inline bool isStringTokenDelimiter(char ch)
   return false ;
 }
 
+//TODO possibly move to class PositionStringVector
 void BuildTokenVector(
   const std::string & stdstrText
 //  , PositionstdstringVector & psv
@@ -126,14 +127,14 @@ void ParseByRise::CreateInitialGrammarParts ( const std::string &
 //  PositionstdstringVector::const_iterator iter = m_psv.begin() ;
   PositionStringVector::const_iterator iter = m_psv.begin() ;
   #ifdef _DEBUG
-  DEBUG_COUT( "tokens:\n" );
+//  DEBUG_COUT( "tokens:\n" );
   #endif
   DWORD wTokenIndex = 0 ;
   //ParseByRise parsebyrise ;
   while( iter != m_psv.end() )
   {
     #ifdef _DEBUG
-    std::cout << "\"" << (*iter).m_Str << "\"\n" ;
+//    std::cout << "\"" << (*iter).m_Str << "\"\n" ;
     #endif
     //std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
 
