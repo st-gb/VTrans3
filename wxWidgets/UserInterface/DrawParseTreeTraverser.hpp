@@ -55,7 +55,7 @@ public:
     wxString & wxstr,
     wxString & wxstrGrammarPartMemoryAddress
     ) ;
-  wxSize GetTokenExtent(
+  wxSize GetSourceTextTokenExtent(
       wxDC & r_wxdc ,
       GrammarPart * p_pg ,
   //    wxSize & wxsizeText

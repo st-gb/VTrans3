@@ -2,6 +2,10 @@
   <!-- -->
   
   <translation_rule 
+    syntax_tree_path="*.MainVerb3rdPersSingPres1Obj"
+    attribute_name="GerMainVerb1Obj3rdPersSingPres" 
+  />
+  <translation_rule 
     syntax_tree_path="*.he_PresentClauseAllows1Obj.MainVerb3rdPersSingPres1Obj"
     attribute_name="GerMainVerb1Obj3rdPersSingPres" 
   />

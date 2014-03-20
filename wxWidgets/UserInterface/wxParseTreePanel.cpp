@@ -343,7 +343,7 @@ WORD wxParseTreePanel::DrawLeavesOfParseTree(
       wxsizeString = GetGrammarPartNameExtent( r_wxdc, p_grammarpart,
           wxstrGrammarPartName ) ;
       wTextWidthInPixels = wxsizeString.GetWidth() ;
-      wxsizeString = GetTokenExtent( r_wxdc, p_grammarpart, wxstrTokens ) ;
+      wxsizeString = GetSourceTextTokenExtent( r_wxdc, p_grammarpart, wxstrTokens ) ;
       if ( wxsizeString.GetWidth() > wTextWidthInPixels )
         wTextWidthInPixels = wxsizeString.GetWidth() ;
 
@@ -636,7 +636,7 @@ void wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
 //        wxsizeString = GetGrammarPartNameExtent( wxpaintdc, p_grammarpart,
 //            wxstrGrammarPartName ) ;
 //        wWidth = wxsizeString.GetWidth() ;
-//        wxsizeString = GetTokenExtent( wxpaintdc, p_grammarpart, wxstrTokens ) ;
+//        wxsizeString = GetSourceTextTokenExtent( wxpaintdc, p_grammarpart, wxstrTokens ) ;
 //        if ( wxsizeString.GetWidth() > wWidth )
 //          wWidth = wxsizeString.GetWidth() ;
 //
@@ -1073,18 +1073,18 @@ wxSize wxParseTreePanel::GetGrammarPartNameExtent(
   return wxsizeText ;
 }
 
-//void
-wxSize wxParseTreePanel::GetTokenExtent(
+/** @brief Gets the size in pixels of tokens contained by grammar part @see p_g */
+wxSize wxParseTreePanel::GetSourceTextTokenExtent(
     wxDC & r_wxdc ,
-    GrammarPart * p_pg ,
+    GrammarPart * p_grammarPart ,
 //    wxSize & wxsizeText
     wxString & wxstr
     )
 {
   const std::string & r_stdstrTokens = //citer->second.
      GetBetweenAsStdString(
-     mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
-     p_pg->m_dwRightmostIndex ) ;
+     mp_parsebyrise->m_psv, p_grammarPart->m_dwLeftmostIndex,
+     p_grammarPart->m_dwRightmostIndex ) ;
   wxstr = GetwxString_Inline(r_stdstrTokens) ;
   wxSize wxsizeText = r_wxdc.GetTextExtent( wxstr ) ;
   return wxsizeText ;

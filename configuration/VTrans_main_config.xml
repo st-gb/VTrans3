@@ -1,15 +1,19 @@
-<?xml encoding="UTF-8" ?>
+﻿<?xml encoding="UTF-8" ?>
 <!--  -->
 <VTrans_main_cfg>
  <!-- prefix with "0x" for hex numbers-->
  <grammar_part name="singular_noun" colour="0xFF0000"/>
  <grammar_part name="plural_noun" colour="0x0000FF"/>
+ <!-- "<natural number>pix": pixels  -->
+ <main_window width="600pix" height="500pix"/>
 
  <log level="debug"/>
 
  <!--vocabulary_file path="germanNounsFromTUdictInVTransFormatVeryShort.txt" /-->
  <!--vocabulary_file path="dictionaries/de-en.txt" /-->
- <vocabulary_file path="dictionaries/TUchemnitz/en-de,each_part_in_single_line,wout_'to',sorted,wout_' '.txt" />
+ <!--vocabulary_file path="dictionaries/TUchemnitz/en-de/en-de,each_part_in_single_line,wout_'to',sorted,wout_' '.txt" /-->
+ <vocabulary_file path="dictionaries/TUchemnitz/en-de/en-de_composed_from_word_classes,sorted,wout' '.txt" />
+ <!--<vocabulary_file path="en-de,each_part_in_single_line,wout_'to',sorted,wout_' '.txt" />-->
  
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/Vocabulary_attribute_definitions.xml" />
  <vocabulary_attribute_definition_file path="configuration/vocabulary_attribute_definitions/0objVerbFiniteVerbforms_attribute_definitions.xml" />
@@ -47,6 +51,7 @@
  <translation_rule_file path="configuration/translation_rules/3rdPersPlur_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSing_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSingClauseAllows0Obj_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/3rdPersSingClauseAllows1Obj_translation_rules.xml" />
  
  <translation_rule_file path="configuration/translation_rules/definiteArticleTranslationRules.xml" />
  <translation_rule_file path="configuration/translation_rules/definiteArticleWithAdjectiveTranslationRules.xml" />

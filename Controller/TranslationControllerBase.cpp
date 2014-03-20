@@ -6,7 +6,7 @@
  */
 /** Must be the 1st inclusion, else compilation error in GCC files <time.h>
  *  indirectly included from this header file: ~ "undefined asctime", ... */
-#include <InputOutput/XML/OutputXMLindented.hpp> //OutputXMLindented(...)
+#include <InputOutput/XML/OutputXMLindented_inl.hpp> //OutputXMLindented(...)
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
@@ -509,7 +509,7 @@ void TranslationControllerBase::Translate(
   std::string std_strXML;
   GenerateXMLtreeFromParseTree( & m_parsebyrise, std_strXML);
   std::ostringstream std_ostringstream;
-  OutputXMLindented(std_strXML.c_str(), std_ostringstream);
+  OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
   LOGN("parse tree as indented XML:\n" << std_ostringstream.str())
   }
   //  RemoveDuplicateParseTrees();
@@ -541,7 +541,7 @@ void TranslationControllerBase::Translate(
   	return;
   GenerateXMLtreeFromParseTree( & m_parsebyrise, std_strXML);
   std::ostringstream std_ostringstream;
-  OutputXMLindented(std_strXML.c_str(), std_ostringstream);
+  OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
   LOGN("translation as indented XML:" << std_ostringstream.str())
 
   LOGN( /*FULL_FUNC_NAME <<*/ "generated XML data:" << std_strXML)

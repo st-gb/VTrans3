@@ -19,6 +19,10 @@
     syntax_tree_path="*.adverb"
     attribute_name="German_adverb"
   />
+  <translation_rule 
+    syntax_tree_path="*.adjective"
+    attribute_name="German_positive"
+  />
   
   <!--<translation_rule 
     syntax_tree_path="3rdPersSingClauseAllows0Obj.MainVerb3rdPersSingPres0Obj"

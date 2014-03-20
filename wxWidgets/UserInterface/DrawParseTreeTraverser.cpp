@@ -107,7 +107,7 @@ void DrawParseTreeTraverser::LeaveFound()
       //wLeftEndOfLeftmostTokenInPixels
       ;
   fastestSignedDataType textWidthInPixels ;
-  wxSize wxsizeString ;
+  wxSize wxsizeString, wxsizeSourceTextTokens, wxsizeGermanTranslation;
   wxString wxstrGrammarPartName ;
   wxString wxstrGrammarPartMemoryAddress ;
 
@@ -117,13 +117,25 @@ void DrawParseTreeTraverser::LeaveFound()
     GetGrammarPartName(p_grammarpart->m_wGrammarPartID);
   LOGN_DEBUG(//"DrawParseTreeTraverser::LeaveFound()--" <<
     std_strGrammarPartName )
-  wxString wxstrTokens ;
+  wxString wxstrSourceTextTokens ;
 //      wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
   wxsizeString = GetGrammarPartNameExtent( * mp_wxdc, p_grammarpart,
     wxstrGrammarPartName, wxstrGrammarPartMemoryAddress ) ;
   textWidthInPixels = wxsizeString.GetWidth() ;
 
-  wxsizeString = GetTokenExtent( * mp_wxdc, p_grammarpart, wxstrTokens ) ;
+  wxsizeSourceTextTokens = GetSourceTextTokenExtent( * mp_wxdc, p_grammarpart,
+    wxstrSourceTextTokens ) ;
+
+//  GetGermanTranslationExtent();
+  wxString wxstrGermanTranslation;
+  if( ::wxGetApp().m_GUIattributes.m_bShowTranslation )
+  {
+    wxstrGermanTranslation = //GetwxString_Inline(p_pg->m_stdstrTranslation);
+      wxString(p_grammarpart->m_stdstrTranslation.c_str(), wxConvISO8859_1);
+    wxsizeGermanTranslation = mp_wxdc->GetTextExtent( wxstrGermanTranslation ) ;
+  }
+  wxsizeString = wxsizeSourceTextTokens + wxsizeGermanTranslation;
+
   if ( wxsizeString.GetWidth() > textWidthInPixels )
     textWidthInPixels = wxsizeString.GetWidth() ;
 
@@ -143,14 +155,28 @@ void DrawParseTreeTraverser::LeaveFound()
     /*wxsizeString.GetHeight()*/ m_stringHeigth *
     //Was increased before by "BeforeBeginAtRoot".
     (m_wParseLevelCountedFromRoot - 1);
+
   wxPen wxpenDraw(* wxBLUE//int width = 1, int style = wxSOLID
     );
   mp_wxdc->SetPen( wxpenDraw);
   mp_wxdc->DrawRectangle(m_currentParseTreeLeftEndInPixels, yCoord,
     textWidthInPixels, /*wxsizeString.GetHeight()*/ m_stringHeigth );
+
   mp_wxdc->SetPen( * wxBLACK_PEN);
+
+  m_wxcolor.Set( GetwxString_Inline(
+    ::wxGetApp().m_GUIattributes.m_std_strGrammarPartIDcolor) );
+  mp_wxdc->SetTextForeground(m_wxcolor);
+  mp_wxdc->DrawText( wxstrGermanTranslation , //wXcoord
+    m_currentParseTreeLeftEndInPixels + wxsizeSourceTextTokens.x,
+    //0
+    yCoord
+    ) ;
+
+  m_wxcolor.Set( wxT("#000000") );
+  mp_wxdc->SetTextForeground(m_wxcolor);
 //  mp_wxdc->Set
-  mp_wxdc->DrawText( wxstrTokens , //wXcoord
+  mp_wxdc->DrawText( wxstrSourceTextTokens , //wXcoord
     m_currentParseTreeLeftEndInPixels ,
     //0
     yCoord
@@ -186,6 +212,7 @@ void DrawParseTreeTraverser::LeaveFound()
         draw_grammar_part_attributes )
     ) ;
 }
+
 void DrawParseTreeTraverser::ParseTreePathAdded()
 {
 
@@ -232,7 +259,7 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   return wxsizeText ;
 }
 
-wxSize DrawParseTreeTraverser::GetTokenExtent(
+wxSize DrawParseTreeTraverser::GetSourceTextTokenExtent(
     wxDC & r_wxdc ,
     GrammarPart * p_pg ,
 //    wxSize & wxsizeText
@@ -245,9 +272,9 @@ wxSize DrawParseTreeTraverser::GetTokenExtent(
      p_pg->m_dwRightmostIndex ) ;
   wxstr = //wxString(r_stdstrTokens) ;
     GetwxString_Inline(r_stdstrTokens);
-  if( ::wxGetApp().m_GUIattributes.m_bShowTranslation )
-    wxstr += //GetwxString_Inline(p_pg->m_stdstrTranslation);
-      wxString(p_pg->m_stdstrTranslation.c_str(), wxConvISO8859_1);
+//  if( ::wxGetApp().m_GUIattributes.m_bShowTranslation )
+//    wxstr += //GetwxString_Inline(p_pg->m_stdstrTranslation);
+//      wxString(p_pg->m_stdstrTranslation.c_str(), wxConvISO8859_1);
   wxSize wxsizeText = r_wxdc.GetTextExtent( wxstr ) ;
   return wxsizeText ;
 }

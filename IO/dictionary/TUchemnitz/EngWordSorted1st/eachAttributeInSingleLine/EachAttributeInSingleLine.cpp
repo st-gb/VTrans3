@@ -22,7 +22,8 @@
       BinarySearchInDictFile::BinarySearchInDictFile(IVocabularyInMainMem & vocaccess)
         : DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile(vocaccess)
       {
-        std::string wordKind = "vi_3singPres"; //="Verb Intransitive"
+        /** "Intransitive Verb 3rd person singular present" */
+        std::string wordKind = "vi3Pres";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::vi_3singPres);
 
@@ -30,12 +31,29 @@
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::vi_3singPast);
 
-        wordKind = "vt_3singPast"; //="Verb Transitive"
+        /** "Transitive Verb 3rd person singular present" */
+        wordKind = "vt3Pres";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          TUchemnitzDictionary::vt_3singPast);
-        wordKind = "vr_3singPast"; //="Verb Reflexive"
+          TUchemnitzDictionary::vt_3singPres);
+
+        /** "Reflexive Verb 3rd person singular present" */
+        wordKind = "vr3Pres";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          TUchemnitzDictionary::vr_3singPast);
+          TUchemnitzDictionary::vr_3singPres);
+
+        wordKind = "positive"; //=adjective in positive form
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::adjPositive);
+
+        wordKind = "viInf"; /** "Intransitive Verb infinitive" */
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::intransitiveVerb);
+        wordKind = "vrInf"; /** "Reflexive Verb infinitive" */
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::reflexiveVerb);
+        wordKind = "vtInf"; /** "Transitive Verb infinitive" */
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::transitiveVerb);
         //TODO  insert more nodes: for "vt", "vr", ...
       }
 
@@ -110,6 +128,13 @@
           break;
         case TUchemnitzDictionary::adj:
           word_class = EnglishWord::adjective;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+          p_vocabularyandtranslation = NULL;
+          break;
+        case TUchemnitzDictionary::adjPositive:
+          word_class = EnglishWord::adjective_positiveForm;
           /** =NULL means: The next time a VocabularyAndTranslation should be
            *   created. (multiple singular nouns may appear in a row->create
            *   a VocabularyAndTranslation for each noun. */

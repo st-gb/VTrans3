@@ -17,7 +17,9 @@ namespace TUchemnitzDictionary
     //     rename "vr" to "reflexiveVerb"
     vi_3singPres, vi_3singPast,
     vt_3singPres, vt_3singPast,
-    vr_3singPast};
+    vr_3singPres, vr_3singPast,
+    adjPositive
+  };
 }
 
 #endif /* TUCHEMNITZDICTIONARY_HPP_ */

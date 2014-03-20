@@ -31,6 +31,7 @@ namespace VTrans3
         m_charStringStdMap.clear();
         LOGN_DEBUG("before emptying the temporary words map")
         m_charStringStdMapTemp.clear();
+        m_p_dictReader->close();
       }
       /*virtual void * */ std::set<VocabularyAndTranslation *> *
         BinarySearchInDictFile::find(

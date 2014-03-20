@@ -120,6 +120,7 @@ namespace DictionaryReader
           //IVocabularyInMainMem::voc_container_type & voc_type
           VocabularyAndTranslation * p_vocabularyandtranslation
           );
+        I_File::CloseError close() { return m_dictFile.Close(); }
         bool open(const std::string & std_str);
         void read();
         /** @return 1 or multiple vocabulary pairs */

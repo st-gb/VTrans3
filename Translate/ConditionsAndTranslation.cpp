@@ -61,6 +61,8 @@ bool ConditionsAndTranslation::AllConditionsMatch(
       if( p_grammarpartLeaf &&
         p_grammarpartLeaf->m_pvocabularyandtranslation )
       {
+        LOGN_DEBUG("grammar part leaf: " << p_grammarpartLeaf << " voc&transl: "
+          << p_grammarpartLeaf->m_pvocabularyandtranslation )
         //if( p_grammarpartLeaf )
 //        {
 //          DEBUG_COUT

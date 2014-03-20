@@ -223,9 +223,9 @@ namespace VTrans3
 
     void TranslationRuleFileReader::Process(const std::string & filePath)
     {
+      m_std_strFilePath = filePath;
       MiniXMLconfigReader::ReadFile(filePath.c_str(),
         VTrans3::MiniXML::ReadTranslationRuleFile::sax_cb);
-      m_std_strFilePath = filePath;
     }
 
     void TranslationRuleFileReader::ShowMessageToUser(

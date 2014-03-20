@@ -310,10 +310,10 @@ GrammarPart * SyntaxTreePath::GetLeaf(
   std::string strWORDarray = GetAs_std_string( ) ;
 //  DEBUG_COUTN("SyntaxTreePath(" <<
   LOGN_DEBUG(
-    this << ")::GetLeaf()"
-    "--array as string:"
-    << strWORDarray << "  "
-    << strPathFromGrammarPartPointerVector )
+    this //<< ")::GetLeaf()"
+    //"--array as string: "
+    << " this STP: " << strWORDarray
+    << " other STP: " << strPathFromGrammarPartPointerVector )
 #endif
   if( m_wNumberOfElements > 0 )
   {

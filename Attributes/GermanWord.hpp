@@ -10,6 +10,7 @@
 
 #include "Word.hpp"
 #include "IterableWords.hpp"
+#include "EnglishWord.hpp" //EnglishWord::English_word_class
 //GCC_DIAG_OFF(...), GCC_DIAG_ON(...)
 #include <compiler/GCC/enable_disable_warning.h>
 

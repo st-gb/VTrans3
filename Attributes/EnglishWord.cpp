@@ -6,7 +6,7 @@
  */
 #include "EnglishWord.hpp"
 #include "Word.hpp" //IsVowel(...), IsConsonant(...)
-#include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF(...)
+#include <compiler/GCC/enable_disable_warning.h> //GCC_DIAG_OFF(...)
 
 EnglishWord::English_word_class EnglishWord::MapGrammarPartIDtoWordClass(
   English_word_class grammarPartID)

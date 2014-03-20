@@ -134,7 +134,7 @@ public:
     wxDC & r_wxdc ) ;
 	GrammarPart * GetNextRightGrammarPartNotProcessedYet() ;
 	//void
-	wxSize GetTokenExtent(
+	wxSize GetSourceTextTokenExtent(
     //Use base class wxDC, so subclasses of it can be used as actual parameters.
     //This allows e.g. to use either a wxMemoryDC (-> no flicker) or a
     //wxPaintDC (original DC for OnPaint(), may flicker ).
