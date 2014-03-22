@@ -285,6 +285,7 @@ void wxParseTreePanel::DrawGrammarPartParentToChildLine(
 
 void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise )
 {
+  LOGN_DEBUG("begin")
 //  m_wParseLevel = 0 ;
 //  m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
   mp_parsebyrise = & r_parsebyrise ;
@@ -295,6 +296,7 @@ void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise )
     m_wxmemorydc) ;
   //Force a repaint.
   Refresh() ;
+  LOGN_DEBUG("end")
 }
 
 WORD wxParseTreePanel::DrawLeavesOfParseTree(
@@ -695,6 +697,7 @@ void wxParseTreePanel::DrawNextParseTreeLevelDirectingRoot(
 void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     wxDC & r_wxdc )
 {
+  LOGN_DEBUG("begin")
 //  DWORD dwNumberOfAlreadyDrawnItems = 0 ;
   DWORD dwLeftMostTokenIndex = 0 ;
   GrammarPart * p_grammarpart ;
@@ -706,6 +709,9 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     r_stdmultimap_dwLeftmostIndex2grammarpart = mp_parsebyrise->
     //m_stdmultimap_dwLeftmostIndex2grammarpart ;
     m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
+#ifdef _DEBUG
+//  r_stdmultimap_dwLeftmostIndex2grammarpart.size();
+#endif
   //Before each draw in order to begin at x position "0".
   m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
   m_wParseLevel = 0 ;
@@ -724,6 +730,10 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     dwLeftMostTokenIndex
     , stdvec_p_grammarpart
     ) ;
+#ifdef _DEBUG
+  const int num = stdvec_p_grammarpart.size();
+#endif
+
   std::set<GrammarPart * > setFinalNodesOfCurrentParseLevel ;
 //  std::map<GrammarPart *,WORD> map_p_grammarpart2HorizCenter;
   //E.g. for "the car"
@@ -886,6 +896,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
 //      if( mp_parsebyrise->m_psv.size() > dwLeftMostTokenIndex )
 //      bDrawText
   }
+  LOGN_DEBUG("end")
 }
 
 void wxParseTreePanel::DrawParseTreeBeginningFromRoots(

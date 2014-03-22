@@ -13,8 +13,9 @@
 #include <Attributes/Word.hpp> //class EnglishWord
 #include <stdint.h> //for uint32_t
 
-//pre-declare (so no include of a file that declares this class->faster compilation)
+/** Forward declarations (so no include of a file that declares this class->faster compilation) */
 class VocabularyAndTranslation ;
+class ParseByRise;
 
 //class GrammarRule
 //idea: model the syntax tree of the source text as a binary tree structure.
@@ -103,6 +104,8 @@ public:
 //  VTrans::string_type m_vtrans_strTranslation ;
   std::string m_stdstrTranslation ;
 
+  GrammarPart * DuplicateSubTree(const ParseByRise & ) const;
+  GrammarPart * PossiblyDuplicateSubTree(const ParseByRise & );
   void SetLeftChild(GrammarPart & r_grammarpart) ;
 
   void SetRightChild(GrammarPart & r_grammarpart) ;

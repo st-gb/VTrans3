@@ -7,6 +7,7 @@
 #include "GrammarPart.hpp"
 #include <Attributes/EnglishWord.hpp> //class EnglishWord's enum
 #include <Translate/TranslationRule.hpp> //class TranslationRule
+#include "DuplicateParseTree.hpp" //class ParseTreeTraverser::DuplicateParseTree
 
 #ifndef MAXWORD
   #define MAXWORD 65535
@@ -58,6 +59,27 @@ GrammarPart::GrammarPart(
   m_dwLeftmostIndex = dwTokenIndexLeftMost ;
   m_dwRightmostIndex = dwTokenIndexRightMost ;
   m_wGrammarPartID = wGrammarPartID ;
+}
+
+GrammarPart * GrammarPart::DuplicateSubTree(const ParseByRise & pbr) const
+{
+  ParseTreeTraverser::DuplicateParseTree parseTreeDuplicater(
+      (const GrammarPart *) this, (ParseByRise &) pbr);
+  parseTreeDuplicater./*Traverse()*/ProcessLeavesOfParseTree();
+  return parseTreeDuplicater.m_p_rootOfDuplicatedSubTree;
+}
+
+GrammarPart * GrammarPart::PossiblyDuplicateSubTree(const ParseByRise & pbr)
+{
+  if( m_bAssignedAsChild )
+  {
+//  p_grammarpartLeftChild = p_grammarpartLeftChild->DuplicateSubtree();
+//    p_grammarpartParent->SetLeftChild(p_grammarpartLeftChild);
+    return DuplicateSubTree(pbr);
+  }
+  else
+    m_bAssignedAsChild = true;
+  return NULL;
 }
 
 void GrammarPart::Init()

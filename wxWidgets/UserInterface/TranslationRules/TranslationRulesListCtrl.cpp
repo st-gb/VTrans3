@@ -12,7 +12,7 @@
 //class ConditionsAndTranslation
 #include <Translate/ConditionsAndTranslation.hpp>
 #include <wxWidgets/VTransApp.hpp> //wxGetApp()
-//getwxString()
+//wxWidgets::getwxString()
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <wx/filefn.h> //::wxGetCwd()
 
@@ -23,9 +23,11 @@ namespace VTrans
 {
 
   TranslationRulesListCtrl::TranslationRulesListCtrl(wxWindow * parent, int ID)
-    : wxListCtrl(parent, //wxID_ANY
-      ID, wxDefaultPosition, wxDefaultSize,
-      wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS)
+//    : wxListCtrl(parent, //wxID_ANY
+//      ID, wxDefaultPosition, wxDefaultSize,
+//      wxLC_REPORT | wxLC_VIRTUAL | wxLC_EDIT_LABELS)
+    : wxWidgets::RulesListCtrl(parent, //wxID_ANY
+      ID)
   {
     // Add first column
     wxListItem col0;
@@ -141,9 +143,20 @@ namespace VTrans
                 if( c_iterTranslRule2filePath !=
                   wxGetApp().m_std_map_p_translationrule2filepath.end() )
                 {
-                  wxString filePath//(c_iterTranslRule2filePath->second.c_str() );
-                    = GetwxString_Inline(c_iterTranslRule2filePath->second.c_str() );
-                  return filePath.Right(filePath.length() - currWorkDirLen);
+                  const std::string & std_strGrammarRuleFilePath =
+                    c_iterTranslRule2filePath->second.c_str();
+
+                  const int lastSlashIndex = std_strGrammarRuleFilePath.rfind('/');
+                  const std::string std_strGrammarRuleFileName =
+                    std_strGrammarRuleFilePath.substr(lastSlashIndex + 1);
+
+                  const wxString grammarRuleFileName//(c_iterTranslRule2filePath->second.c_str() );
+                    = GetwxString_Inline( /*std_strGrammarRuleFilePath*/
+                      std_strGrammarRuleFileName );
+//                  grammarRuleFileName.Last('');
+                  return //filePath.Right(filePath.length() - currWorkDirLen);
+                    //getwxString(std_strGrammarRuleFileName.c_str() );
+                    grammarRuleFileName;
                 }
                 else
                   break;

@@ -9,16 +9,11 @@
  * before */
 #include <wxWidgets/VTransApp.hpp> //wxGetApp()
 #include "ShowTranslationRulesDialog.hpp"
-#include <wx/sizer.h> //class wxSizer
-#include <wx/button.h> //class wxButton
-#include <wx/combobox.h> //class wxCombobox
-#include <wx/listbox.h> //class wxListbox
-#include <wx/textctrl.h> //class wxTextCtrl
+
 //class TranslationAndGrammarPart
 #include <Attributes/TranslationAndGrammarPart.hpp>
 //convertToStdString(...)
 #include <Controller/character_string/convertFromAndToStdString.hpp>
-#include "TranslationRulesListCtrl.hpp" //class class TranslationRulesListCtrl
 #include <Translate/Condition.hpp> //class Condition
 //class ConditionsAndTranslation
 #include <Translate/ConditionsAndTranslation.hpp>
@@ -30,38 +25,28 @@
 //getwxString()
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <map> //class std::map
+#include "TranslationRulesListCtrl.hpp"
 
 /** for wxWidgets::GetwxString_Inline */
 using namespace wxWidgets;
 
 namespace VTrans
 {
-  using namespace VTrans;
-  BEGIN_EVENT_TABLE(ShowTranslationRulesDialog, wxDialog)
-    EVT_SIZE(ShowTranslationRulesDialog::OnSize)
-    EVT_TEXT(ShowTranslationRulesDialog::translRuleTextCtrl,
-      ShowTranslationRulesDialog::ChangeTranslRulePath)
-    EVT_LIST_ITEM_SELECTED(ShowTranslationRulesDialog::translRuleList,
-      ShowTranslationRulesDialog::SelectSyntaxTreePath)
-    EVT_BUTTON(ShowTranslationRulesDialog::TestTranslRule,
-      ShowTranslationRulesDialog::OnTestTranslRule)
-  END_EVENT_TABLE()
 
   ShowTranslationRulesDialog::ShowTranslationRulesDialog(
     wxWindow * parent,
     wxString choices[],
     int arraySize
     )
-    : wxDialog(
-      parent //wxWindow * parent
-       ,wxID_ANY //wxWindowID id
+    : ShowRulesDialogBase(
+       parent //wxWindow * parent
+       , choices
+       , arraySize
        , wxT("translation rules") //const wxString & title//,
-       , wxDefaultPosition //const wxPoint& pos = wxDefaultPosition,
-       , wxDefaultSize //const wxSize& size = wxDefaultSize,
-//       long style = wxDEFAULT_DIALOG_STYLE,
-       , wxRESIZE_BORDER | wxDEFAULT_DIALOG_STYLE
 //       const wxString& name = wxDialogNameStr
       )
+      , m_p_translationruleSelected(0)
+      , m_p_conditionsandtranslation(0)
   {
     Create(choices, arraySize);
   }
@@ -106,77 +91,13 @@ namespace VTrans
     m_std_vec_window.push_back(p_wxstatictext);
   }
 
-  void ShowTranslationRulesDialog::Create(
-    wxString choices[],
-    int arraySize
-    )
+  void ShowTranslationRulesDialog::CreateRulesListControl()
   {
-    m_p_translationruleslistctrl = new VTrans::TranslationRulesListCtrl(this,
-      translRuleList);
-    m_p_translationruleslistctrl->SetData(choices, arraySize);
-
-    m_p_wxsizer = new wxBoxSizer(wxVERTICAL);
-  //    wxComboBox * p_wxcombobox = new wxComboBox(this, wxID_ANY, "",
-  //      wxDefaultPosition, wxDefaultSize, arraySize, choices);
-  //    wxListBox * p_wxlistbox = new wxListBox(this, wxID_ANY,
-  //      wxDefaultPosition, wxDefaultSize, arraySize, choices,
-  //      wxLB_HSCROLL | wxLB_NEEDED_SB);
-  //    wxListCtrl * p_wxlistctrl = new wxListCtrl();
-    m_p_wxtextctrl = new wxTextCtrl(this, translRuleTextCtrl);
-    wxButton * p_wxbuttonTest = new wxButton( this, TestTranslRule,
-      wxT("test"));
-    p_wxbuttonTest->SetToolTip( wxT("test if rule applies to current parse "
-      "tree") );
-    wxBoxSizer * p_wxsizer = new wxBoxSizer(wxHORIZONTAL);
-  //    m_p_wxsizer->Add(
-    p_wxsizer->Add(
-  //      p_wxcombobox
-      m_p_wxtextctrl
-      //new wxText
-  ////      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
-  ////      //[...]can change its size in the main orientation of the wxBoxSizer -
-  ////      //where 0 stands for not changeable[...]
-        , 1
-        , //wxEXPAND |
-          wxALL
-  //      //wxFIXED_MINSIZE //| wxLEFT | wxRIGHT
-  //      wxALIGN_CENTER_VERTICAL
-        , 0
-//      //from http://docs.wxwidgets.org/2.8/wx_sizeroverview.html#boxsizerprogramming
-//      , wxSizerFlags(1)//.Expand()
-      );
-    p_wxsizer->Add(p_wxbuttonTest, 0);
-    p_wxsizer->Layout();
-  //    m_p_wxsizer->Add(p_wxbuttonTest);
-    m_p_wxsizer->Add(p_wxsizer, 0, wxEXPAND);
-  //    m_p_wxsizer->Add( p_wxlistbox
-  //      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
-  //      //[...]can change its size in the main orientation of the wxBoxSizer -
-  //      //where 0 stands for not changeable[...]
-  //      , 1
-  //      , wxEXPAND |
-  //      //wxFIXED_MINSIZE |
-  //      wxALL
-  //      , 0
-  //      );
-    m_p_wxsizer->Add(
-      //p_wxlistctrl
-      m_p_translationruleslistctrl
-      //http://docs.wxwidgets.org/2.6/wx_wxsizer.html#wxsizeradd:
-      //[...]can change its size in the main orientation of the wxBoxSizer -
-      //where 0 stands for not changeable[...]
-      , 1
-      , wxEXPAND |
-      //wxFIXED_MINSIZE |
-      wxALL
-      , 0
-      );
-    SetSizer(m_p_wxsizer);
-    Layout();
-    SetAutoLayout(true /*bool autoLayout*/);
+    m_p_rulesListCtrl = new VTrans::TranslationRulesListCtrl(
+      this, rulesList);
   }
 
-  void ShowTranslationRulesDialog::OnTestTranslRule(wxCommandEvent & evt)
+  void ShowTranslationRulesDialog::TestRule(/*wxCommandEvent & evt*/)
   {
 //    const wxString & wxstrText = m_p_wxtextctrl->//GetLineText (0
 //      ///*long lineNo*/);

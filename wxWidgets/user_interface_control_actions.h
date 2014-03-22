@@ -16,6 +16,7 @@ enum user_interface_control_actions
   ID_AddTransformationRules ,
   ID_AddTranslationRules ,
   ID_ShowTranslationRules,
+  ID_ShowParseRules,
   ID_AddVocAttrDefs ,
   ID_DrawParseTree,
   ID_LoadDictionary ,

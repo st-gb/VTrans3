@@ -304,6 +304,11 @@ public:
     std::multimap<DWORD, GrammarPart *> & mm_idx2grammarpt
     , bool bMemorizeInsertion
     ) ;
+  bool PossiblyDuplicateSubTrees(
+    GrammarPart * const p_grammarpartParent,
+    GrammarPart * const p_grammarpartLeftChild,
+    GrammarPart * const p_grammarpartRightChild
+    );
   inline void PossiblyCreateNewLeaves(
     GrammarPart * p_grammarpart,
     GrammarPart * p_grammarpartLeftChild,

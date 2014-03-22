@@ -54,6 +54,7 @@ namespace wxWidgets
     void AddRemoveVocAttrDefsButton( wxSizer * p_sizer ) ;
     void AddAddTranslationRulesButton( wxSizer * p_sizer ) ;
     void AddShowTranslationRulesButton( wxSizer * p_sizer ) ;
+    void AddShowParseRulesButton( wxSizer * p_sizer ) ;
     void AddAddTransformationRulesButton( wxSizer * p_sizer ) ;
     void AddAddVocAttrDefsButton( wxSizer * p_sizer ) ;
     void AddRemoveTranslationRulesButton( wxSizer * p_sizer ) ;

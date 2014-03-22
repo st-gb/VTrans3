@@ -299,6 +299,53 @@ void ParseByRise::GetRuleNames(
   SUPPRESS_UNUSED_VARIABLE_WARNING(i)
 }
 
+/** For different translations:
+ *  e.g. for "the tiny car" :
+ *               \/    /
+ * defArticlePositive /
+ *                \  /
+ *                 \/
+ *              defArticleNoun
+ *   if subtree is NOT duplicated:
+ *     German translations "Auto" and "Fahrkorb" share the SAME GrammarPart
+ *       "defArticlePositive", so its translation gets the same:
+ *    "der große Auto" <- assigned "the tiny" as left child for when here
+ *    der große Fahrkorb
+ *   only if subtree is duplicated:
+ *    das große Auto <- assigned "the tiny" as left child for when here
+ *    der große Fahrkorb */
+bool ParseByRise::PossiblyDuplicateSubTrees(
+  GrammarPart * const p_grammarpartParent,
+  GrammarPart * const p_grammarpartLeftChild,
+  GrammarPart * const p_grammarpartRightChild
+  )
+{
+  bool createdNewSubTree = false;
+  GrammarPart * possibleNewSubTree;// =
+//            p_grammarpartLeftChild->PossiblyDuplicateSubTree(*this);
+  if( /*possibleNewSubTree*/
+      p_grammarpartLeftChild->m_bAssignedAsChild )
+  {
+    possibleNewSubTree = p_grammarpartLeftChild->DuplicateSubTree(* this);
+    createdNewSubTree = true;
+//          p_grammarpartLeftChild = possibleNewSubTree;
+//          p_grammarpartLeftChild = p_grammarpartLeftChild->DuplicateSubtree();
+    p_grammarpartParent->SetLeftChild(* possibleNewSubTree);
+  }
+  else
+    p_grammarpartLeftChild->m_bAssignedAsChild = true;
+  if( p_grammarpartRightChild->m_bAssignedAsChild )
+  {
+    possibleNewSubTree = p_grammarpartRightChild->DuplicateSubTree(
+//            (const ParseByRise &) (* this)
+      * this);
+    createdNewSubTree = true;
+    p_grammarpartParent->SetRightChild(* possibleNewSubTree);
+  }
+  else
+    p_grammarpartRightChild->m_bAssignedAsChild = true;
+}
+
 bool ParseByRise:://GrammarRuleAppliesTo(
   InsertIfGrammarRuleAppliesTo(
   //Maintaining 2 maps with both leftmost and rightmost indexes should be faster
@@ -376,7 +423,7 @@ bool ParseByRise:://GrammarRuleAppliesTo(
     //ID.
     const GrammarRule & r_grammarrule = iterLeft2RightGrammarPartIDCurrent->
       second ;
-    //Rule matches for 2 neighboured grammatical items.
+    /** Rule matches for 2 neighboured grammatical items. */
     if( //iterLeft2RightGrammarPartIDCurrent->second ==
 
       //The 2 passed grammar parts belong to the same rule:
@@ -419,7 +466,7 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 
       //TODO create on heap and only add pointer to it.
       //GrammarPart grammarpart( //iterLeftGrammarPart->first, //wGrammarPartIDOfRule
-      GrammarPart * p_grammarpart = new GrammarPart(
+      GrammarPart * p_grammarpartParent = new GrammarPart(
         //wLeftGrammarPartIDForRule
         dwLeftMostTokenIndexOfRule
         , //wRightGrammarPartIDForRule
@@ -429,27 +476,50 @@ bool ParseByRise:://GrammarRuleAppliesTo(
       GrammarPart * p_grammarpartLeftChild =
         iter_mm_rightmostidx2p_grammarptLeftGrammarPart->second;
       GrammarPart * p_grammarpartRightChild =
-          iter_wLeftmostIndex2p_grammarpartRightGrammarPart->second;
+        iter_wLeftmostIndex2p_grammarpartRightGrammarPart->second;
 
-      //e.g. for the grammar part "def_article_noun" add "the" (article) and
-      //"car" (noun)
-      //In order to translate: add children; also for GrammarPart::"<" operator
+      LOGN_DEBUG("grammar rule matches:"
+        " left grammar part:" << p_grammarpartLeftChild
+        << " right grammar part:" << p_grammarpartRightChild
+        )
+
+      /** e.g. for the grammar part "def_article_noun" add "the" (article) and
+      * "car" (noun)
+      * In order to translate: add children; also for GrammarPart::"<" operator */
 //      grammarpart.SetLeftChild(
-      p_grammarpart->SetLeftChild(
+      p_grammarpartParent->SetLeftChild(
 //        iter_mm_rightmostidx2grammarptLeftGrammarPart->second ) ;
         * p_grammarpartLeftChild ) ;
 //      grammarpart.SetRightChild(
-      p_grammarpart->SetRightChild(
+      p_grammarpartParent->SetRightChild(
 //        iter_wLeftmostIndex2grammarpartRightGrammarPart->second ) ;
         * p_grammarpartRightChild ) ;
 
-      //This must be checked as a break criteria! Else resolving grammar rules
-      //was endless.
-      if( GrammarPartDoesNotAlreadyExist(p_grammarpart) )
+      /** This must be checked as a break criteria! Else resolving grammar rules
+      * was endless. */
+      if( GrammarPartDoesNotAlreadyExist(p_grammarpartParent) )
       {
-        p_grammarpartLeftChild->m_bAssignedAsChild = true;
-        p_grammarpartRightChild->m_bAssignedAsChild = true;
-//        GrammarPart & grammarpart = * p_grammarpart ;
+          //In order to not to add it again to the list of ALL grammar parts
+  #ifdef _DEBUG
+          const int numSuperordinateGPs = m_stdset_grammarpartAllSuperordinate.size();
+          std::pair<std::set<GrammarPart>::iterator,bool> pair_ =
+  #endif
+            m_stdset_grammarpartAllSuperordinate.insert(
+            //grammarpart
+            * p_grammarpartParent ) ;
+//          InsertIntoOutmostTokenIndexMaps(
+//            p_grammarpartParent,
+//            dwLeftMostTokenIndexOfRule,
+//            dwRightMostTokenIndexOfRule
+//            );
+
+        bool createdNewSubTree = PossiblyDuplicateSubTrees(
+          p_grammarpartParent,
+          p_grammarpartLeftChild,
+          p_grammarpartRightChild
+          );
+
+//        GrammarPart & grammarpart = * p_grammarpartParent ;
         bRuleApplied = true ;
 //        //e.g. for the grammar part "def_article_noun" add "the" (article) and
 //        //"car" (noun)
@@ -499,22 +569,25 @@ bool ParseByRise:://GrammarRuleAppliesTo(
   //      m_stdset_p_grammarpartAllSuperordinate.insert(
   //        & iter_wLeftmostIndex2grammarpartRightGrammarPart->second ) ;
 
+        if( createdNewSubTree )
+        {
         //In order to not to add it again to the list of ALL grammar parts
 #ifdef _DEBUG
         std::pair<std::set<GrammarPart>::iterator,bool> pair_ =
 #endif
           m_stdset_grammarpartAllSuperordinate.insert(
           //grammarpart
-          * p_grammarpart ) ;
+          * p_grammarpartParent ) ;
 
-        //Must assign as child after inserting into the std::set, else
-        //endless loop?!
-        PossiblyCreateNewLeaves(
-          p_grammarpart,
-          p_grammarpartLeftChild,
-          p_grammarpartRightChild
-          );
+//        //Must assign as child after inserting into the std::set, else
+//        //endless loop?!
+//        PossiblyCreateNewLeaves(
+//          p_grammarpartParent,
+//          p_grammarpartLeftChild,
+//          p_grammarpartRightChild
+//          );
 #ifdef _DEBUG
+        const int numSuperordinateGPs = m_stdset_grammarpartAllSuperordinate.size();
         //"false if the set already contained an element whose key had an
         //equivalent value in the ordering"
         if( pair_.second == false )
@@ -529,6 +602,7 @@ bool ParseByRise:://GrammarRuleAppliesTo(
           DEBUG_COUT( "already contained")
         }
 #endif
+        }
 
         m_wNumberOfTokensForAppliedGrammarRule = dwRightMostTokenIndexOfRule -
             dwLeftMostTokenIndexOfRule ;
@@ -539,11 +613,12 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 
       //  m_stdmultimap_.insert( iterLeftGrammarPart->first , )
 
-        InsertIntoOutmostTokenIndexMaps(
-          p_grammarpart,
-          dwLeftMostTokenIndexOfRule,
-          dwRightMostTokenIndexOfRule
-          );
+//        if( createdNewSubTree )
+          InsertIntoOutmostTokenIndexMaps(
+            p_grammarpartParent,
+            dwLeftMostTokenIndexOfRule,
+            dwRightMostTokenIndexOfRule
+            );
 
   //      //Now delete the 2 inner grammar parts as a break criteria to avoid
   //      //an endless loop. e.g. delete the token indices of
@@ -554,7 +629,6 @@ bool ParseByRise:://GrammarRuleAppliesTo(
   //      //Delete the right of the 2 inner grammar parts.
   //      m_stdmultimap_dwLeftmostIndex2grammarpart.erase(
   //        iter_wLeftmostIndex2grammarpartRightGrammarPart ) ;
-
 
         #ifdef _DEBUG
           GetRuleNames(
@@ -567,7 +641,7 @@ bool ParseByRise:://GrammarRuleAppliesTo(
       else
       {
         //already applied a rule to these children-> delete.
-        delete p_grammarpart ;
+        delete p_grammarpartParent ;
 //        DEBUG_COUTN("grammar part " << GetGrammarPartName(
 //          grammarpart.m_wGrammarPartID ) << grammarpart.m_dwLeftmostIndex
 //          << "," <<

@@ -211,24 +211,27 @@ bool VTransApp::HandleCommandLineArgs()
   WRITE_TO_LOG_FILE_AND_STDOUT_NEWLINE("usage: <this_program> "
     "<path to main config_file> <path to root directory for all config files>")
 //  bool bRet = false ;
+  std::string std_strMainConfigFilePath;
   if( argc > MainConfigFilePathProgArgIndex )
   {
     //Needed for SyntaxTreePath::CreateGrammarPartIDArray(...).
     SyntaxTreePath::sp_userinterface = this ;
-    std::string stdstrFilePath =//(
+    std_strMainConfigFilePath =//(
       //"germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
       GetStdString( wxString(argv[MainConfigFilePathProgArgIndex]) ) ;
 //    g_lettertree.InsertFundamentalWords() ;
-
+  }
+  else
+    std_strMainConfigFilePath = "configuration/VTrans_main_config.xml";
 //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
-//         stdstrFilePath )
+//         std_strMainConfigFilePath )
 //      )
 //    {
 //      CreateAndShowMainWindow() ;
 //      if( argc > 2 )
 //      {
-//        stdstrFilePath = argv[2] ;
-//        ReadMainConfigFile(stdstrFilePath) ;
+//        std_strMainConfigFilePath = argv[2] ;
+//        ReadMainConfigFile(std_strMainConfigFilePath) ;
 //      }
 //      return true;
 //    }
@@ -236,7 +239,7 @@ bool VTransApp::HandleCommandLineArgs()
 //    {
 //      wxString wxstrCwd = wxGetCwd() ;
 //      ::wxMessageBox( wxString::Format("Error loading vocabulary file \"%s\\%s\" "
-//        "->exiting", wxstrCwd.c_str(), stdstrFilePath.c_str() )
+//        "->exiting", wxstrCwd.c_str(), std_strMainConfigFilePath.c_str() )
 //        ) ;
 //    }
 //    m_translateparsebyrisetree.AddVocAndTranslDefinitions() ;
@@ -251,14 +254,14 @@ bool VTransApp::HandleCommandLineArgs()
         //main config file's full path"
         << argv[2] << "\"")
     }
-    Init(stdstrFilePath) ;
-  }
-  else
-  {
-    ::wxMessageBox( wxT("No main config file specified as 1st command line "
-      "argument ->exiting" )
-      ) ;
-  }
+    Init(std_strMainConfigFilePath) ;
+//  }
+//  else
+//  {
+//    ::wxMessageBox( wxT("No main config file specified as 1st command line "
+//      "argument ->exiting" )
+//      ) ;
+//  }
   //Return true to continue to run the (main loop of ) this program.
   return //false ;
     true ;

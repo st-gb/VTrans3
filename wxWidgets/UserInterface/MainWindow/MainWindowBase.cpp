@@ -46,6 +46,7 @@
 #include <bitmaps/resolve_superclasses24x24.xpm> //for array resolve_superclasses_xpm
 #include <bitmaps/resolve_1parse_level24x24.xpm> //for array resolve_1parse_level_xpm
 #include <bitmaps/show_translation_rules24x24.xpm>
+#include <bitmaps/show_parse_rules24x24.xpm>
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
 #include <bitmaps/truncate_log_file.xpm> //for array truncate_log_file_xpm
 #include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
@@ -253,6 +254,7 @@ void EVENT_HANDLER_CLASS_NAME::AddToolButtons()
   AddAddTranslationRulesButton( p_boxsizerButtons ) ;
   AddRemoveTranslationRulesButton( p_boxsizerButtons ) ;
   AddShowTranslationRulesButton( p_boxsizerButtons ) ;
+  AddShowParseRulesButton( p_boxsizerButtons ) ;
   AddAddTransformationRulesButton( p_boxsizerButtons ) ;
   AddRemoveTransformationRulesButton( p_boxsizerButtons ) ;
   AddAddGrammarRulesButton( p_boxsizerButtons ) ;
@@ -303,6 +305,13 @@ void EVENT_HANDLER_CLASS_NAME::AddShowTranslationRulesButton( wxSizer * p_sizer 
 {
   AddBitmapButtonAndTooltip(ID_ShowTranslationRules
     , show_translation_rules24x24_xpm, wxT("show translation rules")//, p_sizer
+    );
+}
+
+void EVENT_HANDLER_CLASS_NAME::AddShowParseRulesButton( wxSizer * p_sizer )
+{
+  AddBitmapButtonAndTooltip(ID_ShowParseRules
+    , show_parse_rules24x24_xpm, wxT("show parse rules")//, p_sizer
     );
 }
 

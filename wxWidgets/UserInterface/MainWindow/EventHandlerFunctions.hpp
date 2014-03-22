@@ -26,6 +26,7 @@
     void OnResolveSuperclassGrammarParts(wxCommandEvent & wxcmd);
     void OnResolve1ParseLevelButton(wxCommandEvent & wxcmd);
     void OnShowTokenIndex2GrammarPartButton(wxCommandEvent & wxcmd);
+    void OnShowParseRulesButton(wxCommandEvent & wxcmd);
     void OnShowTranslationRulesButton(wxCommandEvent & wxcmd);
     void OnLoadDictionaryTimerEvent(wxTimerEvent &event);
     void OnLookupWord(wxCommandEvent & wxcmd);

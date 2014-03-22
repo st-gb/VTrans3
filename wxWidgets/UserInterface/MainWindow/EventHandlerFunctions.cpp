@@ -26,6 +26,7 @@
 #include <wxWidgets/UserInterface/wxGermanTranslationPanel.hpp>
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 #include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
+#include <wxWidgets/UserInterface/ShowParseRulesDialog.hpp>
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
 #include "VocabularyInMainMem/VocablesForWord.hpp"
 
@@ -80,6 +81,8 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
     OnShowTokenIndex2GrammarPartButton)
   BUTTON_EVENT_TYPE( ID_ShowTranslationRules,
     EVENT_HANDLER_CLASS_NAME::OnShowTranslationRulesButton )
+  BUTTON_EVENT_TYPE( ID_ShowParseRules,
+    EVENT_HANDLER_CLASS_NAME::OnShowParseRulesButton )
   BUTTON_EVENT_TYPE( ID_ReInitGrammarRules ,
     EVENT_HANDLER_CLASS_NAME::OnReInitGrammarRulesButton)
   BUTTON_EVENT_TYPE( ID_RemoveGrammarRules ,
@@ -462,6 +465,25 @@ void EVENT_HANDLER_CLASS_NAME::OnShowTokenIndex2GrammarPartButton( wxCommandEven
 //  mp_textctrlGermanText->SetValue( stdstr ) ;
 }
 
+void EVENT_HANDLER_CLASS_NAME::OnShowParseRulesButton( wxCommandEvent & wxcmd )
+{
+
+  std::map<WORD,WORD>::const_iterator c_iter =
+    m_parsebyrise.m_stdmap_wGrammarPartID2SuperordinateID.begin();
+  int arraySize = m_parsebyrise.m_stdmap_wGrammarPartID2SuperordinateID.size();
+  wxString choices[arraySize];
+  fastestUnsignedDataType arrayIndex = 0;
+  while( c_iter != m_parsebyrise.m_stdmap_wGrammarPartID2SuperordinateID.end() )
+  {
+    choices[arrayIndex ++] = wxWidgets::getwxString(
+      m_parsebyrise.GetGrammarPartName(c_iter->second) );
+    ++ c_iter;
+  }
+  wxWidgets::ShowParseRulesDialog showParseRulesDialog(this, choices,
+    arraySize);
+  showParseRulesDialog.ShowModal();
+}
+
 void EVENT_HANDLER_CLASS_NAME::OnShowTranslationRulesButton( wxCommandEvent & wxcmd )
 {
   wxString wxstr, wxstrSyntaxTreePath;
@@ -519,7 +541,7 @@ void EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryTimerEvent(wxTimerEvent &event)
 
 void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
 {
-  wxString wxstrEnglishWord = ::wxGetTextFromUser(
+  const wxString wxstrEnglishWord = ::wxGetTextFromUser(
     wxT("search for an English word") );
   PositionStringVector psv;
   std::string std_strEnglishWord = wxWidgets::GetStdString(wxstrEnglishWord);
@@ -541,24 +563,27 @@ void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
   OperatingSystem::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
 //#endif
   const uint64_t ns = endTimeCountInNanoSeconds - beginTimeCountInNanoSeconds;
+  long double seconds = ( (long double) ns)/1000000000.0;
+  /** http://forums.wxwidgets.org/viewtopic.php?f=23&t=35759 :
+   *  "Print long double" */
   wxString wxstrLookUpTime = wxString::Format(
-    wxT(" lookup took %lu ns=%fus=%fms=%fs"),
+    wxT(" lookup took %lu ns=%Lfus=%Lfms=%Lfs"),
     ns,
     ( (long double) ns)/1000.0,
     ( (long double) ns)/1000000.0,
-    ( (long double) ns)/1000000000.0 );
+    seconds );
   if( p_voc_container )
   {
     ::wxMessageBox(
       wxString::Format( wxT("# English words with name %s: %u"),
-        std_strEnglishWord.c_str(),
+        /*std_strEnglishWord.c_str()*/ wxstrEnglishWord.c_str(),
         p_voc_container->size()) + wxstrLookUpTime
       );
   }
   else
     ::wxMessageBox(
       wxString::Format( wxT("# English words with name %s: 0"),
-      std_strEnglishWord.c_str()) + wxstrLookUpTime
+        wxstrEnglishWord.c_str()) + wxstrLookUpTime
       );
 }
 

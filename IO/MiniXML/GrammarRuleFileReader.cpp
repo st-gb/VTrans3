@@ -12,6 +12,8 @@
 #include <Parse/ParseByRise.hpp>
 #include <mxml.h>
 
+extern TranslationControllerBase * g_p_translationcontrollerbase;
+
 namespace VTrans3
 {
   namespace MiniXML
@@ -94,12 +96,20 @@ namespace VTrans3
             if( strLeftChildSyntaxTreePath != NULL &&
                 strSuperOrdinateSyntaxTreePath )
             {
+#ifdef COMPILE_AS_EXECUTABLE
+                g_p_translationcontrollerbase->
+                  m_std_map_grammarRuleName2filepath.insert(
+                  std::make_pair(std::string(strSuperOrdinateSyntaxTreePath),
+                    g_p_translationcontrollerbase->m_std_strCurrentGrammarRuleFilePath) );
+#endif
               if( strRightChildSyntaxTreePath )
+              {
                 InsertGrammarRule(
                   strLeftChildSyntaxTreePath,
                   strRightChildSyntaxTreePath,
                   strSuperOrdinateSyntaxTreePath
                   );
+              }
               else
               {
                 ParseByRise & parseByRise =
@@ -136,6 +146,11 @@ namespace VTrans3
       }
       else
       {
+#ifdef COMPILE_AS_EXECUTABLE
+        // cr_stdstrFilePath = GetAbsoluteFilePath(cr_stdstrFilePath)
+        g_p_translationcontrollerbase->m_std_strCurrentGrammarRuleFilePath =
+          cr_stdstrFilePath;
+#endif
         mxml_node_t rootXMLnode;
         void * sax_data;
         mxml_node_t * mxml_node_tLoadFileRes = ::mxmlSAXLoadFile(

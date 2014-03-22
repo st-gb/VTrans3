@@ -74,6 +74,9 @@ namespace ParseTreeTraverser
 
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void ParseTreePathAdded() {} ;
+    virtual void EnteredLeftChild() { };
+    virtual void EnteredRightChild() { };
+    virtual void MemorizedRightChildToProcess() {};
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void ParseTreePathPopped() { } ;
     inline void PopElementsTillNextRightChild(//WORD wNumberOfElementsToPop
@@ -81,7 +84,9 @@ namespace ParseTreeTraverser
         p_grammarpartpointerandparselevelRightChild
       ) ;
     inline void ProcessLastAddedRightNode() ;
+    /** This method is useful e.g. for drawing a parse tree beginning with leaves. */
     void ProcessLeavesOfParseTree() ;
+    /** This method is useful e.g. for drawing a parse tree beginning with leaves. */
     void ProcessNextParseTreeLevelDirectingRoot(
         //const GrammarPart * p_grammarpart
         ) ;

@@ -98,10 +98,12 @@ protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
+  std::string m_std_strCurrentGrammarRuleFilePath;
   volatile bool m_vbContinue;
 #ifndef TEST_MINI_XML
   std::map<TranslationRule *, std::string>
     m_std_map_p_translationrule2filepath;
+  std::map<std::string, std::string> m_std_map_grammarRuleName2filepath;
 #endif //#ifndef TEST_MINI_XML
 //  dictReaderAndVocAccess_type m_dictReaderAndVocAccess;
   std::string m_std_strOriginalCurrWorkDir;
