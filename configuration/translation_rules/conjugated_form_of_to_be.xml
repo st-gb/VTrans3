@@ -1,0 +1,24 @@
+<translation_rules>
+  <!--personal pronouns begin-->
+  <translation_rule 
+    syntax_tree_path="*.am"
+    translation="bin" />
+  <translation_rule 
+    syntax_tree_path="*.you_are.are"
+    translation="bist">
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="*.is"
+    translation="ist">
+  </translation_rule>
+  <translation_rule 
+    syntax_tree_path="*.we_are.are"
+    translation="sind" />
+  <translation_rule 
+    syntax_tree_path="*.youPlur_are.are"
+    translation="seid" />
+  <translation_rule 
+    syntax_tree_path="*.they_are.are"
+    translation="sind">
+  </translation_rule>  
+</translation_rules>

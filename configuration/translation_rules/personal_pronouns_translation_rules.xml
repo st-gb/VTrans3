@@ -2,12 +2,10 @@
   <!--personal pronouns begin-->
   <translation_rule 
     syntax_tree_path="*.I"
-    translation="ich">
-  </translation_rule>  
-  <!--<translation_rule 
-    syntax_tree_path="you"
-    translation="du">
-  </translation_rule>-->
+    translation="ich" />
+  <translation_rule 
+    syntax_tree_path="*.you"
+    translation="du" />
   <translation_rule 
     syntax_tree_path="*.he"
     translation="er">
@@ -24,12 +22,10 @@
     syntax_tree_path="*.we"
     translation="wir">
   </translation_rule>  
-  <!--<translation_rule 
-    syntax_tree_path="you"
-    translation="ihr">
-  </translation_rule>-->
+  <translation_rule 
+    syntax_tree_path="*.you_plur"
+    translation="ihr" />
   <translation_rule 
     syntax_tree_path="*.they"
-    translation="sie">
-  </translation_rule>  
+    translation="sie" />
 </translation_rules>

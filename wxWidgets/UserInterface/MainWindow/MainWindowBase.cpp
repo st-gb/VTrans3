@@ -111,6 +111,7 @@ MainWindowBase::~MainWindowBase() {
 
 void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
 {
+  LOGN_DEBUG("begin")
 //  mp_wxpanelTop = new wxPanel( mp_wxsplitterwindow ) ;
 
   mp_wxparsetreepanel = new /*wxPanel(*/ wxParseTreePanel(
@@ -242,6 +243,7 @@ void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
     );
   m_p_mainwindow->SetAutoLayout(true);
 //	Layout();  
+  LOGN_DEBUG("end")
 }
 
 void EVENT_HANDLER_CLASS_NAME::AddToolButtons()

@@ -1,0 +1,8 @@
+<grammar_rules>
+  <!-- E. g. "the man" -->
+  <grammar_rule left_child="I" right_child="am" superordinate="I_am"/>
+  <grammar_rule left_child="you" right_child="are" superordinate="you_are"/>
+  <grammar_rule left_child="you_plur" right_child="are" superordinate="youPlur_are"/>
+  <grammar_rule left_child="we" right_child="are" superordinate="we_are"/>
+  <grammar_rule left_child="they" right_child="are" superordinate="they_are"/>
+</grammar_rules>

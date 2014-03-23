@@ -155,16 +155,18 @@ namespace VTrans3
              c_r_getgrammarpartidexception.m_stdstr + " \""
           );
       }
-      catch(VTrans::UnknownGrammarPartNameException & exc)
+      catch(const VTrans::UnknownGrammarPartNameException & exc)
       {
 //        mr_i_userinterface.Message(
 //          );
-        ShowMessageToUser(
+        const std::string errorMessage =
+          "In file \"" + m_std_strFilePath + "\":\n"
           "Error adding translation rule for Syntax Tree Path \"" +
           m_stdstrTranslationRuleSyntaxTreePath + "\" : "
           "unknown grammar part name \"" +
-          exc.GetGrammarPartPath() + " \""
-          );
+          exc.GetGrammarPartPath() + "\"";
+        LOGN_ERROR( errorMessage)
+        ShowMessageToUser(errorMessage);
       }
       catch( //std::string e
 //          GetGrammarPartIDexception & e

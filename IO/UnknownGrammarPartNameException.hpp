@@ -20,7 +20,7 @@ namespace VTrans
     UnknownGrammarPartNameException(const std::string & c_r_std_strGrammarPartPath);
     virtual
     ~UnknownGrammarPartNameException();
-    const std::string & GetGrammarPartPath()
+    const std::string & GetGrammarPartPath() const
       { return m_std_strGrammarPartPath; }
   };
 

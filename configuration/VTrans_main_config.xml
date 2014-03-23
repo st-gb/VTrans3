@@ -25,6 +25,7 @@
  <!--grammar_rule_file must appear before translation_rule_file with translation_rules 
    that depend on the grammar rule within the grammar_rule_file -->
   <!--ensure the obj grammar rules are loaded at first. -->  
+  <grammar_rule_file path="configuration/grammar_rules/00_personal_pronoun_grammar_rules.xml" />
   <grammar_rule_file path="configuration/grammar_rules/00_article_grammar_rules.xml" />
   <grammar_rule_file path="configuration/grammar_rules/00_tenses_grammar_rules.xml" />
   <!-- "clause1Obj" in 02_grammar_rules.xml -->
@@ -42,6 +43,7 @@
  
  <transformation_rule_file path="configuration/transformation_rules.xml" />
  
+ <translation_rule_file path="configuration/translation_rules/conjugated_form_of_to_be.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePresentClause.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingPresentPerfectClause_transl_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePastClause_transl_rules.xml" />
