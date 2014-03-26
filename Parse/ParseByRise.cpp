@@ -24,6 +24,7 @@
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
+#include <IO/UnknownGrammarPartNameException.hpp>
 //#include <Xerces/ReadViaSAX2.hpp>//ReadViaSAX2InitAndTermXerces(...)
 //#include <Xerces/SAX2GrammarRuleHandler.hpp>//class SAX2GrammarRuleHandler
 
@@ -788,6 +789,7 @@ enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertGrammarRule(
   )
 {
   enum ParseByRise::InsertGrammarRuleReturnCodes byReturnValue = AllGrammarPartsAreKnown;
+  std::string unknownGrammarPartNames;
   std::map<std::string,WORD>::const_iterator c_iterLeft =
     m_stdmap_RuleName2RuleID.find(
     cp_chLeftGrammarRuleName ) ;
@@ -803,6 +805,7 @@ enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertGrammarRule(
   {
 //    m_p_userinterface->Message("Unknown grammar part ");
     byReturnValue = unknownLeftGrammarPart;
+    unknownGrammarPartNames = "\"" + std::string(cp_chLeftGrammarRuleName) + "\"";
   }
   if( //c_iterLeft
     c_iterRight == //m_stdmap_RuleName2RuleID.end()
@@ -810,9 +813,15 @@ enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertGrammarRule(
     )
   {
     if( byReturnValue == unknownLeftGrammarPart )
+    {
       byReturnValue = unknownLeftAndRightGrammarPart;
+      unknownGrammarPartNames += ",\"" + std::string(cp_chRightGrammarRuleName) + "\"";
+    }
     else
+    {
       byReturnValue = unknownRightGrammarPart;
+      unknownGrammarPartNames = "\"" + std::string(cp_chRightGrammarRuleName) + "\"";
+    }
   }
   if( byReturnValue == AllGrammarPartsAreKnown )
   {
@@ -830,6 +839,13 @@ enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertGrammarRule(
       , cp_chSuperordinateGrammarRuleName ) ;
     LOGN_DEBUG("After inserting rule \"" << cp_chSuperordinateGrammarRuleName
       << "\" " )
+  }
+  else //if( byReturnValue != AllGrammarPartsAreKnown )
+  {
+    LOGN_ERROR("at least 1 child has an unknown grammar part names:" <<
+      unknownGrammarPartNames);
+    VTrans::UnknownGrammarPartNameException ugpne(unknownGrammarPartNames);
+    throw ugpne;
   }
   return byReturnValue;
 }
@@ -1017,8 +1033,12 @@ enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertSuperClassGram
   }
   else
   {
-    LOGN("InsertSuperClassGrammarRule rule already in map")
+//    LOGN_ERROR("subclass rule not in map")
     returnValue = unknownLeftGrammarPart;
+    LOGN_ERROR("left child \"" + std::string(cp_chSubclassGrammarRuleName) +
+      "\" has an unknown grammar part name");
+    VTrans::UnknownGrammarPartNameException ugpne(cp_chSubclassGrammarRuleName);
+    throw ugpne;
   }
 //  return m_wNumberOfSuperordinateRules - 1 ;
   return returnValue;

@@ -67,7 +67,7 @@ namespace MiniXML
     const char * const attributeValue = mxmlElementGetAttr(xmlElement, attributeName);
     if( attributeValue)
       std_strAttributeValue = attributeValue;
-    return attributeValue;
+    return attributeValue != NULL;
   }
 
   bool MiniXMLconfigReader::ReadFile(const //std::string & cr_stdstrFilePath
@@ -87,6 +87,7 @@ namespace MiniXML
     {
       mxml_node_t rootXMLnode;
       void * sax_data;
+      s_p_translationController->m_std_strCurrentConfigfile = cr_stdstrFilePath;
       mxml_node_t * mxml_node_tLoadFileRes = ::mxmlSAXLoadFile(
         //see http://www.msweet.org/documentation/project3/Mini-XML.pdf
         NULL, //& rootXMLnode,
@@ -125,11 +126,21 @@ namespace MiniXML
     /*return */grammarRuleFileReader.ProcessXML(cr_stdstrFilePath.c_str() );
   }
 #endif// #ifndef TEST_MINI_XML
+
+  void error_callback(const char * message)
+  {
+    const std::string std_strMessage = "in file \"" + MiniXMLconfigReader::
+      s_p_translationController->m_std_strCurrentConfigfile + "\" : " + message;
+    LOGN_ERROR(std_strMessage)
+    MiniXMLconfigReader::s_p_translationController->Message(std_strMessage);
+  }
+
   bool MiniXMLconfigReader::ReadMainConfigFile(
     const std::string & cr_stdstrFilePath )
   {
 	LOGN_DEBUG("begin")
     MiniXML::MainConfigFileReader mainConfigFileReader(m_translationController);
+    mxmlSetErrorCallback(error_callback);
     return mainConfigFileReader.ProcessXML(cr_stdstrFilePath);
   }
 #ifndef TEST_MINI_XML

@@ -45,13 +45,13 @@
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::adjPositive);
 
-        wordKind = "viInf"; /** "Intransitive Verb infinitive" */
+        wordKind = "viI"; /** "Intransitive Verb infinitive" */
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::intransitiveVerb);
-        wordKind = "vrInf"; /** "Reflexive Verb infinitive" */
+        wordKind = "vrI"; /** "Reflexive Verb infinitive" */
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::reflexiveVerb);
-        wordKind = "vtInf"; /** "Transitive Verb infinitive" */
+        wordKind = "vtI"; /** "Transitive Verb infinitive" */
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::transitiveVerb);
         //TODO  insert more nodes: for "vt", "vr", ...
@@ -71,7 +71,7 @@
         VocabularyAndTranslation *& p_vocabularyandtranslation
         )
       {
-        LOGN_DEBUG("begin wordkind:" << wordKind << " " << p_vocabularyandtranslation)
+        LOGN_DEBUG("begin wordkind:" << wordKind << " voc&transl:" << p_vocabularyandtranslation)
   //      VocabularyAndTranslation * p_vocabularyandtranslation = NULL;
         IVocabularyInMainMem::voc_container_type * p_voc_container = NULL;
   #ifdef _DEBUG

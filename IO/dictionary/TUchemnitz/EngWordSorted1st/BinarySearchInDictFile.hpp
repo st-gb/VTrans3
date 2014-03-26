@@ -74,6 +74,7 @@ namespace DictionaryReader
   //        std::set<fastestUnsignedDataType> & byteOffsetsOfVocData,
           fastestUnsignedDataType & closestBeforeNonMatchOffset
           );
+        int GetCurrentFilePointerPosition();
         void HandleSynonymSeparatorChar(
           const bool english,
           const unsigned pipeCount,
@@ -114,6 +115,7 @@ namespace DictionaryReader
         BinarySearchInDictFile(IVocabularyInMainMem &);
         virtual
         ~BinarySearchInDictFile();
+
         void addTrieNodes();
         IVocabularyInMainMem::voc_container_type * extractVocable(
           const fastestUnsignedDataType,
@@ -123,6 +125,8 @@ namespace DictionaryReader
         I_File::CloseError close() { return m_dictFile.Close(); }
         bool open(const std::string & std_str);
         void read();
+        int ReadByte();
+        bool SeekFilePointerPosition(const fastestUnsignedDataType byteOffset);
         /** @return 1 or multiple vocabulary pairs */
         void findEnglishWord(
           const PositionStringVector & psv,

@@ -13,19 +13,19 @@
 //#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <Translate/SyntaxTreePath.hpp>//class SyntaxTreePath
 
-//Condition for translation. E.g. that could mean:
-//current grammar part: English definite article.
-//condition: "If token from noun grammar part equals the plural of this
-//  vocabulary translate the article with "die"
+/** Condition for translation. E.g. that could mean:
+* current grammar part: English definite article.
+* condition: "If token from noun grammar part equals the plural of this
+*  vocabulary translate the article with "die" */
 class Condition
 {
 public:
   enum compare_operator { equals } ;
   BYTE m_byCompareType ;  //e.g. "equals" etc.
-  //Whether the condition refers to English or German vocabulary.
+  /** Whether the condition refers to English or German vocabulary. */
   BYTE byLanguage ;
-  //The attribute name that should be used as a key to an
-  //AttributeTypeAndPosAndSize object stored somewhere.
+  /** The attribute name that should be used as a key to an
+  * AttributeTypeAndPosAndSize object stored somewhere. */
   std::string m_stdstrAttributeName ;
   BYTE m_byAttributeValue ;
   SyntaxTreePath m_syntaxtreepath ;

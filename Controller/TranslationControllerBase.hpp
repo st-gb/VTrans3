@@ -98,7 +98,7 @@ protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
-  std::string m_std_strCurrentGrammarRuleFilePath;
+  std::string m_std_strCurrentConfigfile;
   volatile bool m_vbContinue;
 #ifndef TEST_MINI_XML
   std::map<TranslationRule *, std::string>
@@ -189,6 +189,7 @@ public:
   void SetCurrentDirToOriginalCurrentWorkingDir();
   void Settings(const char * cp_chName, const char * cp_chValue);
   void Stop();
+  void ResetVocabularyInMainMemToFundamentalWordsOnly();
 #ifndef TEST_MINI_XML
   void Transform() ;
   void Translate(

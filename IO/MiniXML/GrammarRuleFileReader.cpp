@@ -9,6 +9,7 @@
 #include <string> //class std::string
  //class TranslationControllerBase
 #include <Controller/TranslationControllerBase.hpp>
+#include <IO/UnknownGrammarPartNameException.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <mxml.h>
 
@@ -39,31 +40,41 @@ namespace VTrans3
         const char * stdstrSuperordinate
         )
       {
-        enum ParseByRise::InsertGrammarRuleReturnCodes
-          insertGrammarRuleReturnCode = GrammarRuleFileReader::s_p_translationController->
-          m_parsebyrise.InsertGrammarRule(
-          stdstrLeftChild //const char * cp_chLeftGrammarRuleName
-          , stdstrRightChild //const char * cp_chRightGrammarRuleName
-          , //std::string
-          stdstrSuperordinate //const char * cp_chSuperordinateGrammarRuleName
-          ) ;
-//        std::wstring std_wstrMessage;
-        if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
+        ParseByRise & parseByRise =
+          GrammarRuleFileReader::s_p_translationController->m_parsebyrise;
+        try
         {
-//          std_wstrMessage = L"In document \n\"" +
-//            Xerces::ConvertXercesStringToStdWstring(m_pc_locator->
-//              getSystemId() ) +
-//            L"\"\n"
-//            L" line:"
-//            + GetStdWstring( convertToStdString(m_pc_locator->
-//                getLineNumber() ) )
-//            + L" column:"
-//            + GetStdWstring( convertToStdString(m_pc_locator->
-//                getColumnNumber() ) ) +
+          enum ParseByRise::InsertGrammarRuleReturnCodes
+            insertGrammarRuleReturnCode = parseByRise.InsertGrammarRule(
+            stdstrLeftChild //const char * cp_chLeftGrammarRuleName
+            , stdstrRightChild //const char * cp_chRightGrammarRuleName
+            , //std::string
+            stdstrSuperordinate //const char * cp_chSuperordinateGrammarRuleName
+            ) ;
+  //        std::wstring std_wstrMessage;
+          if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
+          {
+            //TODO output line and column of error
+//          std_wstrMessage = L" line:"            + L" column:"
 //            L" : grammar rule \"" + GetStdWstring(stdstrSuperordinate)
-//            + L"\" was not added because: ";
-          GrammarRuleFileReader::s_p_translationController->Message(
-           "error in grammar rule file: was not added because: unknown grammar part" );
+
+            const std::string insertGrammarRuleErrMsg = parseByRise.GetErrorMessage(
+              insertGrammarRuleReturnCode);
+            const std::string message = "error in grammar rule file \"" +
+              g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+              + "\"\n: was not added because: " +
+              insertGrammarRuleErrMsg;
+            GrammarRuleFileReader::s_p_translationController->Message(message);
+          }
+        }
+        catch(const VTrans::UnknownGrammarPartNameException & ugpne)
+        {
+          const std::string message = "error in grammar rule file \"" +
+            g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+            + "\"\n: \"" + stdstrSuperordinate + "\" was not added because:\n" +
+//            insertGrammarRuleErrMsg;
+            ugpne.GetErrorMessage();
+          GrammarRuleFileReader::s_p_translationController->Message(message);
         }
       }
 
@@ -100,7 +111,7 @@ namespace VTrans3
                 g_p_translationcontrollerbase->
                   m_std_map_grammarRuleName2filepath.insert(
                   std::make_pair(std::string(strSuperOrdinateSyntaxTreePath),
-                    g_p_translationcontrollerbase->m_std_strCurrentGrammarRuleFilePath) );
+                    g_p_translationcontrollerbase->m_std_strCurrentConfigfile) );
 #endif
               if( strRightChildSyntaxTreePath )
               {
@@ -114,17 +125,38 @@ namespace VTrans3
               {
                 ParseByRise & parseByRise =
                   GrammarRuleFileReader::s_p_translationController->m_parsebyrise;
-                enum ParseByRise::InsertGrammarRuleReturnCodes
-                  insertGrammarRuleReturnCode = parseByRise.InsertSuperClassGrammarRule(
-                    strLeftChildSyntaxTreePath , //cp_chSubclassGrammarRuleName
-                    strSuperOrdinateSyntaxTreePath //cp_chSuperclassGrammarRuleName
-                  ) ;
-                if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
+                try
                 {
-                  std::string insertGrammarRuleErrMsg = parseByRise.GetErrorMessage(
-                    insertGrammarRuleReturnCode);
-                  GrammarRuleFileReader::s_p_translationController->Message(
-                   "error in grammar rule file: was not added because: unknown grammar part" );
+                  enum ParseByRise::InsertGrammarRuleReturnCodes
+                    insertGrammarRuleReturnCode = parseByRise.InsertSuperClassGrammarRule(
+                      strLeftChildSyntaxTreePath , //cp_chSubclassGrammarRuleName
+                      strSuperOrdinateSyntaxTreePath //cp_chSuperclassGrammarRuleName
+                    ) ;
+                  if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
+                  {
+                    const std::string insertGrammarRuleErrMsg = parseByRise.GetErrorMessage(
+                      insertGrammarRuleReturnCode);
+
+                    const std::string message = "error in grammar rule file \"" +
+                      g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+                      + "\": \"\n" +
+                      strSuperOrdinateSyntaxTreePath + "\" was not added because:\n"
+                        " unknown grammar part " +
+                        insertGrammarRuleErrMsg;
+                    GrammarRuleFileReader::s_p_translationController->Message(message);
+
+                    GrammarRuleFileReader::s_p_translationController->Message(
+                     "error in grammar rule file: was not added because: unknown grammar part" );
+                  }
+                }
+                catch(const VTrans::UnknownGrammarPartNameException & ugpne)
+                {
+                  const std::string message = "error in grammar rule file \"" +
+                    g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+                    + "\"\n: was not added because:\n" +
+        //            insertGrammarRuleErrMsg;
+                    ugpne.GetErrorMessage();
+                  GrammarRuleFileReader::s_p_translationController->Message(message);
                 }
               }
             }
@@ -146,11 +178,11 @@ namespace VTrans3
       }
       else
       {
-#ifdef COMPILE_AS_EXECUTABLE
+//#ifdef COMPILE_AS_EXECUTABLE
         // cr_stdstrFilePath = GetAbsoluteFilePath(cr_stdstrFilePath)
-        g_p_translationcontrollerbase->m_std_strCurrentGrammarRuleFilePath =
+        g_p_translationcontrollerbase->m_std_strCurrentConfigfile =
           cr_stdstrFilePath;
-#endif
+//#endif
         mxml_node_t rootXMLnode;
         void * sax_data;
         mxml_node_t * mxml_node_tLoadFileRes = ::mxmlSAXLoadFile(

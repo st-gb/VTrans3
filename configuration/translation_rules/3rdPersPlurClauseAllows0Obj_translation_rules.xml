@@ -1,5 +1,10 @@
+<!-- This file is for sentences where the person of the verb is the 3rd 
+   person plural. So the subject may be either e.g. 
+   -a  plural noun
+   -enumeration of multiple singular nouns
+   -personal pronoun "they"  
+   -multiple 3rd person singular pronouns, e.g. "he and she" -->
 <translation_rules>
-
   <!-- _subject_ enumeration element -->
   <translation_rule 
     syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.*.definite_article_plural.plural_noun"
@@ -7,8 +12,8 @@
   />
   
   <translation_rule 
-    syntax_tree_path="*.MainVerb3rdPersSingPres0Obj"
-    attribute_name="GerMainVerb0Obj3rdPersSing" 
+    syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
+    attribute_name="GerMainVerb0Obj3rdPersPlurPres" 
   />
 
   <!-- _subject_'s definite article -->
@@ -18,14 +23,14 @@
   />
 
   <!--translation of predicate/ (finite) verb-->
-  <translation_rule 
+  <!--translation_rule 
     syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
     attribute_name="GerMainVerb3rdPersPlur" 
-  />
-  <translation_rule 
+  /-->
+  <!--translation_rule 
     syntax_tree_path="*.3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
     attribute_name="GerMainVerb1Obj3rdPersPlur" 
-  />
+  /-->
   
   <!--index 6 is finite verb form for 3rd person plural -->
   <!--translation_rule 
@@ -33,11 +38,11 @@
     attribute_name="Ger0ObjMainVerb3rdPersPlur" 
     byte_attribute_value="6"
   /-->
-  <translation_rule 
+  <!--translation_rule 
     syntax_tree_path="3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
     attribute_name="Ger1ObjMainVerb3rdPersPlur" 
     byte_attribute_value="6"
-  />
+  /-->
   <!--translation_rule 
     syntax_tree_path="3rdPersPlurClauseAllows2Obj.mainVerbInf2Obj"
     attribute_name="Ger2ObjMainVerb3rdPersPlur" 
@@ -90,28 +95,28 @@
   <!--e.g. the sheep trust themselves and the cars."-->
   <!--translation_rule 
     syntax_tree_path="3rdPersPlurClauseWith1Obj.themselves_ObjEnumEle.*.definite_article_plural.definite_article"-->
-  <translation_rule 
+  <!--translation_rule 
     syntax_tree_path="clauseWith0Obj.themselves_ObjEnumEle.*.definite_article_plural.definite_article"
-    translation="den">
+    translation="den"-->
     <!--grammatical_case=3 <=> dative verb-->
     <!--condition 
       syntax_tree_path="3rdPersPlurClauseWith1Obj.3rdPersPlurClauseAllows1Obj.mainVerbInf1Obj"-->
-    <condition 
+    <!--condition 
       syntax_tree_path="clauseWith0Obj.3rdPersPlurClauseAllows0Obj.mainVerbInf0Obj"
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />
-  </translation_rule>
+  </translation_rule-->
 
   <!--for _subject_-->
-  <translation_rule 
+  <!--translation_rule 
     syntax_tree_path="3rdPersPlurClauseAllows0Obj.*.definite_article_plural.definite_article"
-    translation="die">
+    translation="die"-->
     <!--grammatical_case=3 <=> dative verb-->
-    <condition syntax_tree_path="clauseWith0Obj.clause0Obj.3rdPersSingClause0Obj.MainVerb3rdPersSingPres0Obj"
+    <!--condition syntax_tree_path="clauseWith0Obj.clause0Obj.3rdPersSingClause0Obj.MainVerb3rdPersSingPres0Obj"
       attribute_name="grammatical_case"
       byte_attribute_value="3"
     />
-  </translation_rule>
+  </translation_rule-->
   
 </translation_rules>

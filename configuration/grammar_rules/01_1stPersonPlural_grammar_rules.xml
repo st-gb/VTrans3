@@ -1,0 +1,14 @@
+<grammar_rules>
+  <!-- needs personal pronoun grammar rules -->
+  <!--grammar_rule left_child="you_and" right_child="and" superordinate="we"/>
+  <grammar_rule left_child="he_and" right_child="I" superordinate="we"/>
+  <grammar_rule left_child="she_and" right_child="I" superordinate="we"/>
+  <grammar_rule left_child="it_and" right_child="I" superordinate="we"/-->
+  <!--grammar_rule left_child="I_and" right_child="you" superordinate="we"/>
+  <grammar_rule left_child="I_and" right_child="he" superordinate="we"/>
+  <grammar_rule left_child="I_and" right_child="she" superordinate="we"/>
+  <grammar_rule left_child="I_and" right_child="it" superordinate="we"/-->
+  
+  <grammar_rule left_child="we" superordinate="1stPersPlurSubjOrObjEnumEle"/>
+  <grammar_rule left_child="1stPersPlurSubjOrObjEnumEle" right_child="mainVerbInf0Obj" superordinate="1stPersPlurClauseAllows0Obj"/>
+</grammar_rules>

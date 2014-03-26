@@ -1,0 +1,11 @@
+<!-- This file is for sentences where the person of the verb is the  
+   1st person plural. So the subject may be either e.g. 
+   -1 personal pronoun in subject plus at least 1 another person ("you") 
+     ("I" + "you"="we")
+   -personal pronoun "we"   -->
+<translation_rules>
+  <translation_rule 
+    syntax_tree_path="*.1stPersPlurClauseAllows0Obj.mainVerbInf0Obj"
+    attribute_name="GerMainVerb0Obj3rdPersPlurPres" 
+  />
+</translation_rules>

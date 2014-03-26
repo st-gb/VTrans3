@@ -13,6 +13,7 @@
 #include "EnglishWord.hpp" //EnglishWord::English_word_class
 //GCC_DIAG_OFF(...), GCC_DIAG_ON(...)
 #include <compiler/GCC/enable_disable_warning.h>
+#include <string.h> //strcmp()
 
 class GermanWord
   //For ability to iterate over all of the word's strings.
@@ -217,21 +218,44 @@ public:
   static void GetWordStemFromInfinitive(
     const char * wordBegin,
     //const WordData & germanWord
-    int len,
+    const int len,
     std::string & std_strWortstamm
     )
   {
     unsigned minus = 0;
-    if( len > 2 && *(wordBegin + len - 3) == 't' ) //arbeiTen -> arbeiteST
-      minus = 1;
-    else /** e.g. "geHen" -> "gehST" */
-      minus = 2;
+    if( len > 3 )
+    {
+//      const std::string last2Chars = std::string(wordBegin + len - 2, 2);
+      /** e.g. wandeRN, flunkeRN, meckeRN, moseRN */
+      if( strcmp( (wordBegin + len - 2), "rn") == 0 ) //wanderN -> wanderST
+        minus = 1;
+      /** geHEN, seHEN, steHEN*/
+      else if ( strcmp( (wordBegin + len - 3), "hen") == 0 )
+        minus = 2;
+      else //if( *(wordBegin + len - 3) == 't' ) //arbeiTen -> arbeiteST
+        minus = 1;
+//      else /** e.g. "geHen" -> "gehST" */
+//        minus = 2;
+    }
     //TODO for words that are prepended with a preposition:
     //  subtract preposition: e.g. "zukaufen": minus preposition "zu" ->
     //  "kaufen" -> "kaufe zu"
     std_strWortstamm = std::string(wordBegin //+ germanWord.m_charIndexOfBegin,
       , //germanWord.GetStringLength()
       len - minus);
+  }
+
+  static void GetWordStemFromInfinitive(
+    const std::string word,
+    //const WordData & germanWord
+    std::string & std_strWortstamm
+    )
+  {
+    GetWordStemFromInfinitive(
+      word.c_str(),// const char * wordBegin,
+      //const WordData & germanWord
+      word.length(), //const int len,
+      std_strWortstamm);
   }
 
   /** @param wordBegin: tense needs to be a verb. */

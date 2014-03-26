@@ -18,7 +18,7 @@ namespace VTrans3
     namespace ReadTranslationRuleFile
     {
       /** see http://www.msweet.org/documentation/project3/Mini-XML.html#4_7 */
-      void sax_cb(
+      void SAX_callback(
         mxml_node_t * node,
         mxml_sax_event_t event,
         void * data

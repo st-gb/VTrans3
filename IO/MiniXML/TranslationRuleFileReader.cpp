@@ -225,7 +225,7 @@ namespace VTrans3
     {
       m_std_strFilePath = filePath;
       MiniXMLconfigReader::ReadFile(filePath.c_str(),
-        VTrans3::MiniXML::ReadTranslationRuleFile::sax_cb);
+        VTrans3::MiniXML::ReadTranslationRuleFile::SAX_callback);
     }
 
     void TranslationRuleFileReader::ShowMessageToUser(
@@ -245,7 +245,7 @@ namespace VTrans3
     namespace ReadTranslationRuleFile
     {
       /** see http://www.msweet.org/documentation/project3/Mini-XML.html#4_7 */
-      void sax_cb(
+      void SAX_callback(
         mxml_node_t * node,
         mxml_sax_event_t event,
         void * data
@@ -259,7 +259,7 @@ namespace VTrans3
   //              int i = 0;
   //          }
   //        }
-        GCC_DIAG_ON(switch)
+        GCC_DIAG_OFF(switch)
         switch(event )
         {
           case MXML_SAX_ELEMENT_CLOSE :
@@ -290,7 +290,7 @@ namespace VTrans3
               }
             break;
         }
-        GCC_DIAG_OFF(switch)
+        GCC_DIAG_ON(switch)
       }
     }
   } /* namespace MiniXML */

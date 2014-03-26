@@ -33,6 +33,7 @@ ENABLE_WRITE_STRINGS_WARNING
 #include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
 //class LogFileAccessException
 #include <Controller/Logger/LogFileAccessException.hpp>
+#include <IO/dictionary/DictionaryFileAccessException.hpp>
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 
 //#include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
@@ -106,6 +107,7 @@ VTransApp::~VTransApp()
 
 void VTransApp::CreateAndShowMainWindow()
 {
+  LOGN_DEBUG("begin")
   
 //  wxTextInputDlg * p_wx_text_input_dialog = new wxTextInputDlg(
 //    NULL,
@@ -142,6 +144,7 @@ void VTransApp::CreateAndShowMainWindow()
     std::cerr << "error: couldn't create window\n" ;
     LOGN_ERROR("couldn't create main window")
   }
+  LOGN_DEBUG("end")
 }
 
 void VTransApp::Message( const std::string & cr_stdstr /*, unsigned threadID*/ )
@@ -280,7 +283,15 @@ void VTransApp::HandleEvent(
   }
   catch(const LogFileAccessException & lfae)
   {
-    const std::string std_strErrorMessage = lfae.GetErrorMessage();
+    const std::string std_strErrorMessage = lfae.GetErrorMessageA();
+    const wxString & wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
+    ( (VTransApp *) this)->ShowMessage(//wxT("HandleEvent--LogFileAccessException")
+      wxstrMessage );
+//    wxGetApp().ShowMessage(wxstrMessage);
+  }
+  catch(const DictionaryFileAccessException & dfae)
+  {
+    const std::string std_strErrorMessage = dfae.GetErrorMessageA();
     const wxString & wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
     ( (VTransApp *) this)->ShowMessage(//wxT("HandleEvent--LogFileAccessException")
       wxstrMessage );
@@ -396,7 +407,7 @@ bool VTransApp::OnInit()
 //        wxstrCurrWorkDir +
 //        wxWidgets::getwxString(stdstrLogFilePath) + wxT("\"failed:") +
 //        wxWidgets::getwxString( lfae.GetErrorMessage() );
-      const std::string std_strErrorMessage = lfae.GetErrorMessage();
+      const std::string std_strErrorMessage = lfae.GetErrorMessageA();
       const wxString wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
       retVal = ShowMessage(
         wxstrMessage,

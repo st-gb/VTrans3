@@ -32,6 +32,7 @@
  <grammar_rule_file path="configuration/grammar_rules/01_3rd_person_singular_grammar_rules.xml" />
   <!-- "3rdPersPluralClausWith1Obj" in 02_grammar_rules.xml -->
  <grammar_rule_file path="configuration/grammar_rules/02_3rd_person_plural_grammar_rules.xml" />
+ <grammar_rule_file path="configuration/grammar_rules/01_1stPersonPlural_grammar_rules.xml" />
  <grammar_rule_file path="configuration/grammar_rules/04_reflexive_pronouns_grammar_rules.xml" />
  <grammar_rule_file path="configuration/grammar_rules/05_object_grammar_rules.xml" />
  
@@ -47,9 +48,11 @@
  <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePresentClause.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingPresentPerfectClause_transl_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingSimplePastClause_transl_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/1stPersPlurClauseAllows0Obj_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/1stPersSingWill-FutureClause_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/2ndPers_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersPlurClauseAllows1Obj_translation_rules.xml" />
+ <translation_rule_file path="configuration/translation_rules/3rdPersPlurClauseAllows0Obj_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersPlur_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSing_translation_rules.xml" />
  <translation_rule_file path="configuration/translation_rules/3rdPersSingClauseAllows0Obj_translation_rules.xml" />

@@ -156,8 +156,9 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
 //          sp_userinterface->Message( "unknown grammar part name:" +
 //            stdstrCurrentElement ) ;
           r_std_strUnknownGrammarPartID = stdstrCurrentElement;
-          LOGN_DEBUG(//"SyntaxTreePath::CreateGrammarPartIDArray(...)--"
-            "unknown grammar part name:" << r_stdstrSyntaxTreePath )
+          LOGN_ERROR(//"SyntaxTreePath::CreateGrammarPartIDArray(...)--"
+            "unknown grammar part name:" << /*r_stdstrSyntaxTreePath*/
+            stdstrCurrentElement )
           throw VTrans::UnknownGrammarPartNameException(stdstrCurrentElement);
           return unknown_grammar_part_name ;
         }

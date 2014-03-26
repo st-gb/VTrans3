@@ -6,7 +6,7 @@
  */
 #include "GermanWord.hpp"
 
-//static var definitions.
+/** Definitions of static variables. */
 const char * const GermanVerb::presentPersonEndings [] = {
   "e" //gehE
   , "st" //gehST

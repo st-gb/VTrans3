@@ -175,6 +175,8 @@ class TranslationControllerBase;
 
     ~VocabularyAndTranslation() ;
 
+    void AddFiniteVerbFormsFromGermanInfinitive(
+      const std::string & std_strWordStem);
     void AddFiniteVerbFormsFromGerman3rdPersPast(
       const std::string & std_strWordStem);
     void AddFiniteVerbFormsFromGerman3rdPersPresent(
@@ -303,7 +305,7 @@ class TranslationControllerBase;
     void SetGermanWord(
       const char * const word,
       const fastestUnsignedDataType stringLen,
-      fastestUnsignedDataType vocAndTranslArrayIndex)
+      const fastestUnsignedDataType vocAndTranslArrayIndex)
     {
       m_arstrGermanWord[vocAndTranslArrayIndex] = new
         word_type_for_new_allocator [stringLen
@@ -321,6 +323,16 @@ class TranslationControllerBase;
 //      {
 //        m_arstrGermanWord[vocAndTranslArrayIndex][0] = diff()
 //      }
+    }
+
+    void SetGermanWord(
+      const std::string & word,
+      const fastestUnsignedDataType vocAndTranslArrayIndex)
+    {
+      SetGermanWord(
+        word.c_str(),
+        word.length(),
+        vocAndTranslArrayIndex);
     }
 
     static void Init()

@@ -26,6 +26,7 @@ namespace VTrans3
   bool TUchemnitzEngWordSorted1stAndBinarySearch::loadDictionary(
       const std::string & s)
   {
+    LOGN_DEBUG("begin")
 //    return m_dictReader.read();
     return m_dictReader.open(s);
   }

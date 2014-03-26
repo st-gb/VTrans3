@@ -474,6 +474,17 @@ void TranslationControllerBase::Settings(
   }
 }
 
+void TranslationControllerBase::ResetVocabularyInMainMemToFundamentalWordsOnly()
+{
+  /** Else too many words may be held in the temporary words map of a
+  * BinarySearchInDictFile if translating too often with different words. */
+  s_dictReaderAndVocAccess.m_vocAccess.clear();
+  /** Is closed by "clear()" -> reopen */
+  s_dictReaderAndVocAccess.m_dictReader.open(m_stdstrVocabularyFilePath);
+  //  s_dictReaderAndVocAccess.loadDictionary(m_stdstrVocabularyFilePath);
+  s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords();
+}
+
 void TranslationControllerBase::Translate(
 //  ParseByRise & r_parsebyrise ,
   const std::string & cr_stdstrWholeInputText ,
@@ -498,6 +509,9 @@ void TranslationControllerBase::Translate(
 //#ifdef WIN32
 //  Windows::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
 //#else
+
+  ResetVocabularyInMainMemToFundamentalWordsOnly();
+
 //#ifndef __ANDROID__
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
 //#endif

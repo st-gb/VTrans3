@@ -5,6 +5,7 @@
  *      Author: mr.sys
  */
 
+#include <Controller/character_string/ConvertStdStringToTypename.hpp>
 #include <Controller/TranslationControllerBase.hpp> //class TranslationControllerBase
 #include <IO/UnknownGrammarPartNameException.hpp>
 #include <IO/rules/TranslationRuleFileReaderBase.hpp>
@@ -162,7 +163,7 @@ namespace VTrans3
         const std::string errorMessage =
           "In file \"" + m_std_strFilePath + "\":\n"
           "Error adding translation rule for Syntax Tree Path \"" +
-          m_stdstrTranslationRuleSyntaxTreePath + "\" : "
+          m_stdstrTranslationRuleSyntaxTreePath + "\" :\n"
           "unknown grammar part name \"" +
           exc.GetGrammarPartPath() + "\"";
         LOGN_ERROR( errorMessage)
@@ -190,6 +191,18 @@ namespace VTrans3
       }
     }
     m_conditionsandtranslation.clear();
+  }
+
+  inline bool TranslationRuleFileReaderBase::HasByteAttributeValue(
+    attributeType & xmlElement, std::string & std_strAttributeValue)
+  {
+    const bool hasByteAttributeValue = m_r_configurationReader.
+      GetAttributeValue(
+        xmlElement,
+        std_strAttributeValue,
+        "byte_attribute_value" // const XMLCh *const qName
+        ) ;
+    return hasByteAttributeValue;
   }
 
 //  template <typename XMLelementType>
@@ -226,48 +239,56 @@ namespace VTrans3
           LOGN_DEBUG("Got attribute value for \"condition\" element's "
             "\"attribute_name\":"
             "\"" << m_stdstrConditionAttributeName << "\"" )
-          //The translation definition may refer a definition of an vocabulary
-          //attribute definition (e.g. "German_noun_plural: string attribute
-          //type, string at string array index 2).
-          if( mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.
-            find( m_stdstrConditionAttributeName) ==
-            mr_translateparsebyrise.m_stdmap_AttrName2VocAndTranslAttrDef.end()
-            )
-          {
-            ShowMessageToUser( "The translation attribute definition "
-              "for the name \"" + m_stdstrConditionAttributeName
-              + "\" is not available."
-              ) ;
-          }
+          /** The translation definition may refer a definition of an vocabulary
+          * attribute definition (e.g. "German_noun_plural: "string" attribute
+          * type, string at string array index "2" ). */
+          const bool translAttrDefinitionDoesNotExist = mr_translateparsebyrise.
+            m_stdmap_AttrName2VocAndTranslAttrDef.find(
+            m_stdstrConditionAttributeName) == mr_translateparsebyrise.
+            m_stdmap_AttrName2VocAndTranslAttrDef.end();
 
-          if( m_stdstrConditionAttributeName != "" )
+          if( translAttrDefinitionDoesNotExist )
+          {
+            const std::string errorMessage = "The translation attribute definition "
+              "for the name \"" + m_stdstrConditionAttributeName
+              + "\" is not available.";
+            LOGN_ERROR(errorMessage)
+            ShowMessageToUser( errorMessage ) ;
+          }
+          else if( m_stdstrConditionAttributeName != "" )
           {
             bool outputErrorMessage = false;
-            //            XercesAttributesHelper::getValue(
-            //          attrs ,
-            //          m_stdstrConditionByteAttrValue,
-            //          //Use attribute name "German_plural" from the
-            //          // VocabularyAndTranslation data.
-            //          L"byte_attribute_value"
-            //          )
-            bool convertingSucceeded =
-              VTrans3::ConfigurationReader<attributeType>::
-              ConvertAttributeValue//<//BYTE
-              //WORD>
-//                  <WORD>
-              (
-              xmlElement ,
-              m_r_configurationReader,
-              //byAttributeValue ,
-              wAttributeValue ,
-              //L"byte_attribute_value"
-              "byte_attribute_value"
-              );
-            if( convertingSucceeded )
-              SetConditionAttributesAndAddCondition(wAttributeValue);
+//            bool hasByteAttributeValue =
+//              VTrans3::ConfigurationReader<attributeType>::
+//              ConvertAttributeValue(
+//              xmlElement ,
+//              m_r_configurationReader,
+//              wAttributeValue ,
+//              "byte_attribute_value"
+//              );
+            std::string std_strAttributeValue;
+            const bool hasByteAttributeValue =
+              HasByteAttributeValue(xmlElement, std_strAttributeValue);
+            if( hasByteAttributeValue )
+            {
+              const bool convertingSucceeded = ConvertStdStringToTypename(
+                wAttributeValue, std_strAttributeValue);
+              if( convertingSucceeded)
+                try
+                {
+                  SetConditionAttributesAndAddCondition(wAttributeValue);
+                }
+                catch(const VTrans::UnknownGrammarPartNameException & ugne )
+                {
+                  const std::string errorMessage = "in file \"" +
+                    m_std_strFilePath + "\"\n:" + ugne.GetErrorMessage();
+                  LOGN_ERROR(errorMessage)
+                  ShowMessageToUser( errorMessage ) ;
+                }
+            }
             else
             {
-              convertingSucceeded =
+              bool convertingSucceeded =
                 m_r_configurationReader.GetAttributeValue(
                   xmlElement ,
                   m_stdstrConditionStringAttrValue ,
@@ -277,7 +298,26 @@ namespace VTrans3
                   "string_attribute_value"
                   );
               if( convertingSucceeded )
-                SetConditionAttributesAndAddCondition(wAttributeValue);
+              {
+                std::string errorMessage = "string for a conditions' attribute "
+                  "is uimplemented (yet)";
+                LOGN_ERROR(errorMessage)
+                ShowMessageToUser( errorMessage ) ;
+//                try
+//                {
+//                  //TODO needs to be
+//                  //SetConditionAttributesAndAddCondition(string ) ???
+//                  SetConditionAttributesAndAddCondition(wAttributeValue);
+//                }
+//                catch(const VTrans::UnknownGrammarPartNameException & ugne )
+//                {
+//                  const std::string errorMessage = "in file " +
+//                    m_std_strFilePath + " : unknown grammar part name "
+//                    + ugne.GetGrammarPartPath();
+//                  LOGN_ERROR(errorMessage)
+//                  ShowMessageToUser( errorMessage ) ;
+//                }
+              }
               else
                 outputErrorMessage = true;
             }

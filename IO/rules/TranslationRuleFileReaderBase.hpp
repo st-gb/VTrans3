@@ -75,6 +75,8 @@ namespace VTrans3
     /*template <typename XMLelement_Type>*/ /*inline*/
       void HandleBeginOfConditionXMLelement(
       /*XMLelement_Type*/ attributeType & xmlElement);
+    inline bool HasByteAttributeValue(
+      attributeType & xmlElement, std::string & std_strAttributeValue);
     virtual void Process(const std::string & filePath) = 0;
     void SetConditionAttributesAndAddCondition(const WORD wAttributeValue);
     virtual void ShowMessageToUser(const std::string &) = 0;

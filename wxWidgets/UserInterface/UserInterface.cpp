@@ -108,6 +108,7 @@ namespace wxWidgets
   DWORD THREAD_FUNCTION_CALLING_CONVENTION LoadDictionary_ThreadFunc(
     void * p_vParam )
   {
+    LOGN_DEBUG("begin")
     const char * const dictFilePath = (const char * const) p_vParam;
     /** obtain a copy (dictFilePath may be destroyed in other thread)*/
     std::string std_strDictFilePath = std::string(dictFilePath);
@@ -149,6 +150,7 @@ namespace wxWidgets
     const std::string & std_strFilePath
     )
   {
+    LOGN_DEBUG("begin")
     p_wxwindowParent->SetLabel( wxT("inserting vocabulary into memory") ) ;
 //        p_dlg->Show( true ) ;
 //        OneLinePerWordPair::LoadWords( std_strFilePath ) ;

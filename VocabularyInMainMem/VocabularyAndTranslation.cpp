@@ -125,6 +125,48 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
   return 0;
 }
 
+void VocabularyAndTranslation::AddFiniteVerbFormsFromGermanInfinitive(
+  const std::string & std_strInfinitive)
+{
+  std::string std_strWordStem;
+  GermanVerb::GetWordStemFromInfinitive(
+    std_strInfinitive, std_strWordStem);
+  std::string std_strFiniteForm;
+  for( fastestUnsignedDataType /*enum GermanVerb::person_indices*/ person_index =
+      GermanVerb::firstPersonSing;
+      person_index < GermanVerb::beyondLastPerson;
+      ++ person_index
+     )
+  {
+    switch(person_index)
+    {
+    /** Infinitive is equal to 1st and 3rd persons plural:
+     *   wandern->wir wandern, sie wandern
+     *   laufen wir laufen sie laufen
+     *   gehen wir gehen sie gehen
+     *   arbeiten: wir arbeiten sie arbeiten */
+    case GermanVerb::firstPersonPlur:
+    case GermanVerb::thirdPersonPlur:
+      SetGermanWord(
+        std_strInfinitive,
+        /** index 0 is infinitive->add "1". */
+        person_index + 1
+        );
+      break;
+    default:
+      std_strFiniteForm = GermanVerb::GetPresentFiniteForm(
+        std_strWordStem,
+        (enum GermanVerb::person_indices) person_index
+        );
+      SetGermanWord(
+        std_strFiniteForm,
+        /** index 0 is infinitive->add "1". */
+        person_index + 1
+        );
+    } //switch
+  }
+}
+
 /** Add finite past verb form from 3rd person singular past.
  *  So words may be added although they are missing in the dictionary.
  *  So e.g. add:
@@ -144,8 +186,7 @@ void VocabularyAndTranslation::AddFiniteVerbFormsFromGerman3rdPersPast(
     /** 3rd person singular is already passed as parameter. */
     if( person_index == GermanVerb::thirdPersonSing )
       SetGermanWord(
-        std_strWordStem.c_str(),
-        std_strWordStem.length(),
+        std_strWordStem,
         /** index 0 is infinitive->add "1". */
         GermanVerb::arrayIndexFor3rdPersSingPres
         );
@@ -156,8 +197,7 @@ void VocabularyAndTranslation::AddFiniteVerbFormsFromGerman3rdPersPast(
         (enum GermanVerb::person_indices) person_index
         );
       SetGermanWord(
-        std_strFiniteForm.c_str(),
-        std_strFiniteForm.length(),
+        std_strFiniteForm,
         /** index 0 is infinitive->add "1". */
         person_index + 1
         );
@@ -190,8 +230,7 @@ void VocabularyAndTranslation::AddFiniteVerbFormsFromGerman3rdPersPresent(
     /** 3rd person singular is already passed as parameter. */
     if( person_index == GermanVerb::thirdPersonSing )
       SetGermanWord(
-        germanWord.c_str(),
-        germanWord.length(),
+        germanWord,
         /** index 0 is infinitive->add "1". */
         GermanVerb::arrayIndexFor3rdPersSingPres
         );
@@ -202,8 +241,7 @@ void VocabularyAndTranslation::AddFiniteVerbFormsFromGerman3rdPersPresent(
         (enum GermanVerb::person_indices) person_index
         );
       SetGermanWord(
-        std_strFiniteForm.c_str(),
-        std_strFiniteForm.length(),
+        std_strFiniteForm,
         /** index 0 is infinitive->add "1". */
         person_index + 1
         );
@@ -229,9 +267,11 @@ void VocabularyAndTranslation::PossiblyGenerateAndAddGermanAttributes(
   GCC_DIAG_OFF(switch)
   switch(/*engWordClass*/ grammarPartID)
   {
-//  case EnglishWord::main_verb_allows_0object_infinitive :
-//  case EnglishWord::main_verb_allows_1object_infinitive :
-//  case EnglishWord::main_verb_allows_2objects_infinitive :
+  case EnglishWord::main_verb_allows_0object_infinitive :
+  case EnglishWord::main_verb_allows_1object_infinitive :
+  case EnglishWord::main_verb_allows_2objects_infinitive :
+    AddFiniteVerbFormsFromGermanInfinitive(germanWord);
+    break;
 //  case EnglishWord::main_verb :
     /** if inf. is added (index 0) then derive finite German verb forms
     * from inf. and add to voc and transl. */
