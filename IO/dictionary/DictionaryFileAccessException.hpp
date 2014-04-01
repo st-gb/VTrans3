@@ -22,9 +22,9 @@ public:
   enum action m_action;
   uint64_t m_seekOffset;
 
-  DictionaryFileAccessException();
+//  DictionaryFileAccessException();
   virtual
-  ~DictionaryFileAccessException();
+  ~DictionaryFileAccessException() { };
 
   DictionaryFileAccessException(
     const enum action action,

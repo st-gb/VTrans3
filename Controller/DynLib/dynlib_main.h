@@ -9,6 +9,10 @@
 #define DYNLIB_MAIN_H_
 
 #include <preprocessor_macros/export_function_symbols.h>
+//#include <data_structures/ByteArray.hpp>
+
+/** Forward decl.*/
+class ByteArray;
 
 typedef unsigned char BYTE;
 
@@ -41,5 +45,6 @@ EXPORT char * Translate(const char * p_chEnglishText);
  * @return: XML data that might be used for InterProcess Communication (can be
  *  sent to the presentation component/ web interface).
  */
-EXPORT char * TranslateAsXML(const char * p_chEnglishText);
+EXPORT /*char * */ /*ByteArray*/ void TranslateAsXML(const char * p_chEnglishText,
+  ByteArray &);
 #endif /* DYNLIB_MAIN_H_ */

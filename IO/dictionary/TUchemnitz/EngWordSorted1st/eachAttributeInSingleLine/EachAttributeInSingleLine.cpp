@@ -10,6 +10,9 @@
 #include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>//class IVocabularyInMainMem
 #include <IO/dictionary/TUchemnitz/TUchemnitzDictionary.hpp>
+#include <ctype.h> //isalpha(int)
+/** SAME_VOCABLE_SEPERATOR_CHAR etc. */
+#include <IO/dictionary/TUchemnitz/TUchemnitzDictSeparatorChars.h>
 
 //namespace VTrans3
 //{
@@ -260,6 +263,161 @@
           ++ c_iterGerman;
         }
         LOGN_DEBUG("end")
+      }
+
+      /** @brief called to determine whether a specific word exists in the
+       *  dictionary file. */
+      PositionStringVector::cmp BinarySearchInDictFile::ContainsEnglishWord(
+        const PositionStringVector & psvStringToSearch,
+        DWORD & r_dwTokenIndex,
+        const fastestUnsignedDataType numTokenForStringToSearch,
+  //      std::set<fastestUnsignedDataType> & byteOffsetsOfVocData,
+        fastestUnsignedDataType & closestBeforeNonMatchOffset
+        )
+      {
+        LOGN_DEBUG("begin--\"" << psvStringToSearch << "\" "
+            << "token index:" << r_dwTokenIndex
+            << " # token:" << numTokenForStringToSearch
+            //<< " closest before non-match offset:" << closestBeforeNonMatchOffset
+          )
+    #ifdef _DEBUG
+  //      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
+        fastestUnsignedDataType currOffset = GetCurrentFilePointerPosition();
+    #endif
+        bool streamIsGood;
+        PositionStringVector psvDictFile;
+        bool breakWhile = false;
+        bool afterOpeningBracket = false;
+        char word[100];
+        fastestUnsignedDataType charIndex = 0;
+        bool endSearchForCompareStringInCurrentVocData = false;
+        fastestUnsignedDataType tokenIndex = 0;
+        bool compareVectors = false;
+        /** Set to a default value to avoid using an array out of bounds error
+         *  if "cmp" was too large and it was used as a array index for
+         *  PositionStringVector::s_comparisonResultString */
+        PositionStringVector::cmp comp = PositionStringVector::notSet;
+
+  //      int i = m_englishDictionary.get();
+        int i = ReadByte();
+  //      streamIsGood = m_englishDictionary.good();
+        streamIsGood = i > -1;
+        while( streamIsGood /*&& ! breakWhile*/ )
+        {
+          if( ! afterOpeningBracket && ( ::isalpha(i) ||
+              /** e.g. "fork-lift" */
+              i == '-' ) )
+          {
+            word[charIndex ++] = i;
+          }
+          else
+          {
+            /** Only for outputting the character that caused the call to
+             * HandleEndOfWord(...) */
+            word[charIndex] = i;
+            switch( i )
+            {
+              case ' ' :
+              {
+    #ifdef _DEBUG
+  //              currOffset = m_englishDictionary.tellg();
+                currOffset = GetCurrentFilePointerPosition();
+    #endif
+                LOGN_DEBUG("space reached--word is: \"" << word << "\"")
+                HandleEndOfToken(word, charIndex, psvDictFile, tokenIndex);
+                ++ tokenIndex;
+    //                  endSearchForCompareStringInCurrentVocData =
+    //                    CompareVectors(
+    //                      comp,
+    //                      psvStringToSearch,
+    //                      hi, lo,
+    //                      endSearchForCompareStringInCurrentVocData,
+    //                      numTokenForStringToSearch,
+    //                      psvDictFile,
+    //                      r_dwTokenIndex,
+    //                      byteOffset,
+    //                      breakWhile);
+              }
+              break;
+
+              case SYNONYM_SEPERATOR_CHAR :
+    //                  break;
+    //                  psvDictFile.clear();
+              case SAME_VOCABLE_SEPERATOR_CHAR :
+                /** e.g. for "work{work,wrought; worked, wrought}|"
+                 to use word "work" before '{' */
+              case '{' :
+              case ENGLISH_GERMAN_SEPERATOR_CHAR :
+                endSearchForCompareStringInCurrentVocData = true;
+    //                  compareVectors = true;
+                HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
+                break;
+              /** e.g. "captive bolt pistol(slaughter house)" : do not consider
+               *   words inside brackets. */
+              case '(' : // e.g. "bank of(gas) cylinders"
+                afterOpeningBracket = true;
+  //            case ')' : // e.g. "bank of(gas) cylinders"
+    //                  compareVectors = true;
+                HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
+                break;
+              case ')' :
+                afterOpeningBracket = false;
+                break;
+    //              else
+    //                byteOffset
+    //              word[charIndex ++] = ch;
+            } //switch
+            if(compareVectors)
+            {
+              LOGN_DEBUG("compare string vectors==true")
+  //            endSearchForCompareStringInCurrentVocData =
+  //              CompareVectors(
+  //                comp,
+  //                psvStringToSearch,
+  //                hi, lo,
+  //                endSearchForCompareStringInCurrentVocData,
+  //  //                    numTokenForStringToSearch,
+  //                numToken,
+  //                psvDictFile,
+  //                r_dwTokenIndex,
+  //                byteOffset,
+  //                closestBeforeNonMatchOffset,
+  //                breakWhile);
+                comp = psvStringToSearch.Compare(psvDictFile, r_dwTokenIndex,
+                  numTokenForStringToSearch);
+                LOGN_DEBUG("return value of comparison: " << PositionStringVector:://GetResultAsString(comp)
+                  s_comparisonResultString[comp] )
+    //                comp = psvStringToSearch.Compare(/*word*/ psvDictFile, r_dwTokenIndex);
+              if( comp == PositionStringVector::match)
+              { /** Word is found. Now add all words with the same name. */
+    //                  p_voc_container = extractVocable(byteOffsetOfVocable, p_vocandtransl);
+  //              AddAllOffsetOfMatchingWords(
+  //                closestBeforeNonMatchOffset,
+  //                psvStringToSearch,
+  //                psvDictFile,
+  //                r_dwTokenIndex,
+  //                numToken,
+  //                byteOffsetsOfVocData
+  //                );
+    //                  byteOffsetsOfVocData.insert(byteOffsetOfVocable);
+                breakWhile = true;
+              }
+              psvDictFile.clear();
+              compareVectors = false;
+            }
+          }
+    //            } //while()
+          if( breakWhile || endSearchForCompareStringInCurrentVocData)
+            break;
+  //        i = m_englishDictionary.get();
+          i = ReadByte();
+  //        streamIsGood = m_englishDictionary.good();
+          streamIsGood = i > -1;
+  //        psvDictFile.clear();
+  //        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+        } //while loop for current voc data
+        LOGN_DEBUG("return " << comp)
+        return comp;
       }
     }
     }

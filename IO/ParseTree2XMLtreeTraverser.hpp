@@ -13,6 +13,7 @@
 //class ParseTreeTraverser::DirectingLeavesTraverser
 #include <Parse/DirectingLeavesInSingleIterationTraverser.hpp>
 #include <string>
+#include <data_structures/ByteArray.hpp>
 
 namespace ParseTreeTraverser
 {
@@ -23,7 +24,9 @@ namespace ParseTreeTraverser
     std::vector<GrammarPartPointerAndParseLevel>
       m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath;
   public:
-    std::string m_std_strXML;
+//    std::string m_std_strXML;
+//    unsigned char * m_pchUTF8_XML;
+    ByteArray m_byteArray;
     ParseTree2XMLtreeTraverser(
       const GrammarPart * p_grammarpartStartNode
       , ParseByRise & r_parsebyrise
@@ -31,6 +34,9 @@ namespace ParseTreeTraverser
     virtual
     ~ParseTree2XMLtreeTraverser();
 
+//    void AddToUTF8sequence(
+//      const BYTE * const arby,
+//      fastestUnsignedDataType utf8arraySizeInByte = 0);
     //Called from base class "DirectingLeavesMultipleIterTraverser" (they are
     //virtual in the base class).
     void CurrentNodeIsLastAddedRightChild() ;

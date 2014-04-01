@@ -32,6 +32,20 @@ namespace DictionaryReader
   {
     namespace EngWordSorted1st
     {
+      inline void HandleEndOfToken(
+        char word [],
+        fastestUnsignedDataType & charIndex,
+        PositionStringVector & psvDictFile,
+        fastestUnsignedDataType & tokenIndex
+        );
+      void HandleEndOfWord(
+        char word [],
+        fastestUnsignedDataType & charIndex,
+        PositionStringVector & psvDictFile,
+        fastestUnsignedDataType & tokenIndex,
+        bool & compareVectors
+  //      ,const char currentChar
+        );
       /** For a TU Chemnitz formatted dictionary where the lines begin with
        *  English words. So the words are sorted (and a binary search may be
        *  applied->very fast search) as needed for English->German translation.
@@ -67,14 +81,13 @@ namespace DictionaryReader
   //        enum EnglishWord::English_word_class word_class
           VocabularyAndTranslation *& p_vocabularyandtranslation
           );
-        PositionStringVector::cmp ContainsEnglishWord(
+        virtual PositionStringVector::cmp ContainsEnglishWord(
           const PositionStringVector & psvStringToSearch,
           DWORD & r_dwTokenIndex,
           const fastestUnsignedDataType numToken,
   //        std::set<fastestUnsignedDataType> & byteOffsetsOfVocData,
           fastestUnsignedDataType & closestBeforeNonMatchOffset
           );
-        int GetCurrentFilePointerPosition();
         void HandleSynonymSeparatorChar(
           const bool english,
           const unsigned pipeCount,
@@ -110,6 +123,7 @@ namespace DictionaryReader
         native_File_type m_dictFile;
         IVocabularyInMainMem * m_p_vocabularyAccess;
       protected:
+        int GetCurrentFilePointerPosition();
         static NodeTrie<enum TUchemnitzDictionary::wordKinds> s_nodetrieWordKind;
       public:
         BinarySearchInDictFile(IVocabularyInMainMem &);

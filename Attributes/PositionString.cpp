@@ -12,17 +12,32 @@
     "not set", "fullMatchOfCompareVector", "match", "lower", "greater", "tooFewTokens"
   };
 
+//  inline void OutputAndIncrement(PositionStringVector::const_iterator & c_iter,
+//    std::ostream & os )
+//  {
+//    const PositionString & ps = * c_iter;
+//    os << ps.m_Str;
+//    ++ c_iter;
+//  }
+
   /** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */
-  std::ostream & operator << (std::ostream & os, const PositionStringVector & psv)
+  std::ostream & operator << (std::ostream & std_ostream,
+      const PositionStringVector & psv)
   {
     PositionStringVector::const_iterator c_iter = psv.begin();
-    while( c_iter != psv.end() )
+    if( c_iter != psv.end() )
     {
-      const PositionString & ps = * c_iter;
-      os << ps.m_Str << " ";
+      const PositionString & positionString = * c_iter;
+      std_ostream << positionString.m_Str;
       ++ c_iter;
+      while( c_iter != psv.end() )
+      {
+        const PositionString & positionString = * c_iter;
+        std_ostream  << " " << positionString.m_Str;
+        ++ c_iter;
+      }
     }
-    return os;
+    return std_ostream;
   }
 
   /** @return greater: if token inside _this_ object would appear after

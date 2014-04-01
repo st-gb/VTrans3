@@ -7,14 +7,14 @@
 
 #include <IO/dictionary/DictionaryFileAccessException.hpp>
 
-DictionaryFileAccessException::DictionaryFileAccessException()
-{
-  // TODO Auto-generated constructor stub
-
-}
-
-DictionaryFileAccessException::~DictionaryFileAccessException()
-{
-  // TODO Auto-generated destructor stub
-}
+//DictionaryFileAccessException::DictionaryFileAccessException()
+//{
+//  // TODO Auto-generated constructor stub
+//
+//}
+//
+//DictionaryFileAccessException::~DictionaryFileAccessException()
+//{
+//  // TODO Auto-generated destructor stub
+//}
 

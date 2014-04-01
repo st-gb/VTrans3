@@ -7,14 +7,14 @@
 
 #include <IO/FileAccessException.hpp>
 
-FileAccessException::FileAccessException()
-{
-  // TODO Auto-generated constructor stub
-
-}
-
-FileAccessException::~FileAccessException()
-{
-  // TODO Auto-generated destructor stub
-}
+//FileAccessException::FileAccessException()
+//{
+//  // TODO Auto-generated constructor stub
+//
+//}
+//
+//FileAccessException::~FileAccessException()
+//{
+//  // TODO Auto-generated destructor stub
+//}
 

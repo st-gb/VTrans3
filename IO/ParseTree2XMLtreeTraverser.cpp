@@ -9,6 +9,7 @@
 #include "IO/ParseTree2XMLtreeTraverser.hpp"
 #include <Parse/GrammarPart.hpp> //class GrammarPart
 #include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <Controller/character_string/ISO_8859_1.hpp>
 
 namespace ParseTreeTraverser
 {
@@ -53,15 +54,29 @@ namespace ParseTreeTraverser
       //if the right node was at parse level 1 (2nd level), then 1 element
       //should remain.
       m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ) ;
-    m_std_strXML += "<grammar_part name=\""
-      //Grammar part names can't be XML element names because they (may)
-      //contain numbers/ digits. So make it an attribute value."
-      + mp_parsebyrise->GetGrammarPartName(
+
+    m_byteArray.add("<grammar_part name=\"");
+      /** Grammar part names can't be XML element names because they (may)
+      * contain numbers/ digits. So make it an attribute value." */
+    m_byteArray.add( mp_parsebyrise->GetGrammarPartName(
       m_grammarpartpointer_and_parselevelCurrent.
-      m_p_grammarpart->m_wGrammarPartID) + "\">";
+      m_p_grammarpart->m_wGrammarPartID).c_str() );
+    m_byteArray.add("\">");
+//    m_byteArray.add(std_strXML.c_str(), std_strXML.length() );
+
     m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent ) ;
   }
+
+//  void ParseTree2XMLtreeTraverser::AddToUTF8sequence(
+//    const BYTE * const arby, fastestUnsignedDataType utf8arraySizeInByte)
+//  {
+////    m_pchUTF8_XML
+//    if( utf8arraySizeInByte == 0)
+//      utf8arraySizeInByte = ::strlen( arby);
+//    m_byteArray.add(arby, utf8arraySizeInByte);
+//  }
+
   void ParseTree2XMLtreeTraverser::LeaveFound()
   {
     GrammarPart * p_grammarpart = m_grammarpartpointer_and_parselevelCurrent.
@@ -70,31 +85,47 @@ namespace ParseTreeTraverser
   #ifdef _DEBUG
     const char * strTranslation = stdstrTranslation.c_str();
   #endif
-    m_std_strXML += "<word"
-      " translation=\"" + stdstrTranslation + "\""
-      + " concatenation_ID=\"" + ::convertToStdString(p_grammarpart->
-        m_ui32ConcatenationID) + "\""
-      "/>";
+
+    fastestUnsignedDataType utf8arraySizeInByte;
+    const BYTE * arbyTranslationAsUTF8 = ISO_8859_1::GetAsUTF8(
+      stdstrTranslation.c_str(), utf8arraySizeInByte);
+//    std::string std_strTranslationInUTF8 = std::string( (const char *) arbyTranslationAsUTF8);
+    m_byteArray.add("<word translation=\"");
+//    AddToUTF8sequence(std_str.c_str(), std_str.length() );
+    //    AddToUTF8sequence(arbyTranslationAsUTF8, utf8arraySizeInByte);
+    m_byteArray.add(arbyTranslationAsUTF8, utf8arraySizeInByte);
+    delete [] arbyTranslationAsUTF8;
+    m_byteArray.add("\" concatenation_ID=\"");
+    m_byteArray.add( ::convertToStdString(
+      p_grammarpart->m_ui32ConcatenationID).c_str() );
+    m_byteArray.add("\"/>");
+//    m_byteArray.add(std_str.c_str(), std_str.length() );
+//    delete [] arbyTranslationAsUTF8;
   }
   void ParseTree2XMLtreeTraverser::ParseTreePathAdded()
   {
-    m_std_strXML += "<grammar_part name=\"" +
+    m_byteArray.add("<grammar_part name=\"");
       //Grammar part names can't be XML element names because they (may)
       //contain numbers/ digits. So make it an attribute value.
-      mp_parsebyrise->GetGrammarPartName(
+    m_byteArray.add(mp_parsebyrise->GetGrammarPartName(
       m_grammarpartpointer_and_parselevelCurrent.
-      m_p_grammarpart->m_wGrammarPartID) + "\">";
+      m_p_grammarpart->m_wGrammarPartID).c_str() );
+    m_byteArray.add("\">");
+//    m_byteArray.add(std_strXML.c_str(), std_strXML.length() );
+
     m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent);
   }
   void ParseTree2XMLtreeTraverser::ParseTreePathPopped()
   {
 //    GrammarPartPointerAndParseLevel & r_grammarpartpointerandparselevel =
-      m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.back();
-    m_std_strXML += //"</" + mp_parsebyrise->GetGrammarPartName(
+    m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.back();
+    m_byteArray.add( //"</" + mp_parsebyrise->GetGrammarPartName(
       //r_grammarpartpointerandparselevel.
       //m_p_grammarpart->m_wGrammarPartID) + ">";
-      "</grammar_part>";
+      "</grammar_part>");
+//    m_byteArray.add(std_strXML.c_str(), std_strXML.length() );
+
     m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.pop_back() ;
   }
 } /* namespace ParseTreeTraverser */

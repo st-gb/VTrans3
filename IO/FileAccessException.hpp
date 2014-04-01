@@ -17,9 +17,9 @@ protected:
   std::string m_filePath;
   DWORD m_operatingSystemErrorCode;
 public:
-  FileAccessException();
+//  FileAccessException();
   virtual
-  ~FileAccessException();
+  ~FileAccessException() { };
 
   const std::string GetAbsoluteFilePathA() const
   {

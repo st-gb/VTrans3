@@ -15,7 +15,9 @@
 /* Header for class vtrans_dynlib_VTransDynLibJNI */
 //#include <preprocessor_macros/export_function_symbols.h>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
+#include <Controller/character_string/format_as_string.hpp>
 #include "dynlib_main.h" //Init(...) etc.
+#include <character_string/modifiedUTF8.hpp>
 #include <stddef.h> //for "NULL"
 #include <FileSystem/SetCurrentWorkingDir.hpp>
 
@@ -109,6 +111,17 @@ extern "C" jbyte /*JNICALL*/ Java_vtrans_dynlib_VTransDynLibJNI_Init
 }
 
 #ifndef TEST_MINI_XML
+
+void ReleaseArrayMemory(void * const array)
+{
+  #ifdef __cplusplus
+    delete [] array;
+  #else
+    //TODO free may only be called when allocated via malloc(...)?!
+    free(array);
+  #endif
+}
+
 /*
  * Class:     vtrans_dynlib_VTransDynLibJNI
  * Method:    Translate
@@ -143,24 +156,41 @@ JNIEXPORT jstring JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Translate
 //      jstrMainCfgFile,//0
 //      & jb
 //      );
-  char * ar_chTranslation = //Translate(//p_chMainConfigFilePath
+//  char * ar_chTranslation = //Translate(//p_chMainConfigFilePath
+//  const ByteArray byteArray =
+  ByteArray byteArray(512);
     TranslateAsXML(
-    str);
-  LOGN("transl. result:"
-    << ar_chTranslation)
+    str, byteArray);
+//  LOGN("transl. result:" << ar_chTranslation)
   //jni_env->ReleaseStringChars(jstrMainCfgFile,p_chMainConfigFilePath);
   JNI_ENV_ACCESS(p_jni_env)->ReleaseStringUTFChars(
     JNI_ENV_POINTER(p_jni_env)
     jstrEnglishText, str);
+
+  const unsigned arraySizeWithoutTerminatingNullChar = byteArray.GetSize();
+  const unsigned arraySizePlusTerminatingNullChar =
+    arraySizeWithoutTerminatingNullChar + 1
+//    ModifiedUTF8::byteSizeOfTerminatingNullChar;
+    ;
+  char * ar_chTranslation = new char[ arraySizePlusTerminatingNullChar
+    /** For terminating the string. */ ];
+  ::memcpy(ar_chTranslation, byteArray.GetArray(),
+    arraySizeWithoutTerminatingNullChar );
+  ar_chTranslation[arraySizeWithoutTerminatingNullChar ] = '\0';
+//  ModifiedUTF8::AppendNullCharacter(ar_chTranslation +
+//    arraySizeWithoutTerminatinfNullChar );
+
+  std::string std_str = format_output_data( (const BYTE *) ar_chTranslation,
+    arraySizePlusTerminatingNullChar, 80);
+  LOGN_DEBUG( std_str)
+
   jstring jstr = JNI_ENV_ACCESS(p_jni_env)->NewStringUTF(
-	  JNI_ENV_POINTER(p_jni_env)
-	  ar_chTranslation);
-#ifdef __cplusplus
-  delete [] ar_chTranslation;
-#else
-  //TODO free may only be called when allocated via malloc(...)?!
-  free(ar_chTranslation);
-#endif
+    JNI_ENV_POINTER(p_jni_env)
+    /** http://stackoverflow.com/questions/12127817/android-ics-4-0-ndk-newstringutf-is-crashing-down-the-app:
+    * "Strings that you pass to NewStringUTF() need to be valid Modified UTF-8." */
+    /*ar_chTranslation*/ /*(const char *) byteArray.GetArray()*/
+    ar_chTranslation);
+  ReleaseArrayMemory((void *) ar_chTranslation);
   LOGN("end")
   return jstr;
 }

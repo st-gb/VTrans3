@@ -6,12 +6,13 @@
  */
 
 #include "BinarySearchInDictFile.hpp"
+#include <Controller/character_string/ISO_8859_1.hpp>
 #include <InputOutput/GetCharInACSIIcodePage850.hpp>
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>//class IVocabularyInMainMem
 /** SAME_VOCABLE_SEPERATOR_CHAR etc. */
 #include <IO/dictionary/TUchemnitz/TUchemnitzDictSeparatorChars.h>
 #include <limits.h> //UINT_MAX
-#include <ctype.h> //::isdigit(...)
+#include <ctype.h> //::isdigit(...), isalpha(int)
 #include <vector> //class std::vector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 #include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF
@@ -596,7 +597,8 @@ namespace DictionaryReader
         {
           if( ! insideBracket && charIndexInsideWord < 100)
           {
-            ASCIIcodePage850Char = GetCharInASCIIcodePage850(i);
+            ASCIIcodePage850Char = //GetCharInASCIIcodePage850(i);
+              ISO_8859_1::GetFromUTF8(i);
             if( ASCIIcodePage850Char != 0 )
             {
               SetWordCharacter(word,/*charIndex*/ charIndexInsideWord,
@@ -891,8 +893,9 @@ namespace DictionaryReader
         lo = byteOffset;
         byteOffset = /*lo + (hi - lo )*/(lo + hi) / 2;
         LOGN_DEBUG(
-            "string to search is > string in dict -> new offset:("
-            << lo << "+" << hi << ")/2=" << byteOffset)
+          "string to search is > string in dict -> new offset:("
+          << lo << "+" << hi << ")/2=" << byteOffset << "=0x" << std::ios::hex
+          << byteOffset)
         endSearchForCompareStringInCurrentVocData = true;
         /** e.g. "vacuum" (string to search) is < "vacuum cleaner"
          *   */
@@ -984,11 +987,16 @@ namespace DictionaryReader
     {
       word[charIndex] = '\0';
       LOGN_DEBUG("word: \"" << word << "\"")
-      charIndex = 0;
-      VTrans::string_type str(word);
-      PositionString pos_str(str, tokenIndex, tokenIndex);
-      psvDictFile.push_back(pos_str);
-      LOGN_DEBUG("size of position string vector created from dict file: " << psvDictFile.size() )
+      /** For "issuance; issue(of sth.)" : between ";" and " " is an empty
+       * string token -> do not add to vector. */
+      if( charIndex > 0 )
+      {
+        charIndex = 0;
+        VTrans::string_type str(word);
+        PositionString pos_str(str, tokenIndex, tokenIndex);
+        psvDictFile.push_back(pos_str);
+        LOGN_DEBUG("size of position string vector created from dict file: " << psvDictFile.size() )
+      }
     }
 
     void HandleEndOfWord(
@@ -997,6 +1005,7 @@ namespace DictionaryReader
       PositionStringVector & psvDictFile,
       fastestUnsignedDataType & tokenIndex,
       bool & compareVectors
+//      ,const char currentChar
       )
     {
 //      word[charIndex] = '\0';
@@ -1005,9 +1014,16 @@ namespace DictionaryReader
 //      PositionString pos_str(str, tokenIndex, tokenIndex);
 //      psvDictFile.push_back(pos_str);
 //      ++ tokenIndex;
-      LOGN_DEBUG("begin")
-      HandleEndOfToken(word, charIndex, psvDictFile, tokenIndex);
-      compareVectors = true;
+      LOGN_DEBUG("begin current char: \'" << word[charIndex] << "\'")
+      /** For "issue(of sth.)::Ausgabe{f}" : between ")" and "::" is an empty
+       * string token -> do not compare. */
+      if( charIndex == 0 )
+        compareVectors = false;
+      else
+      {
+        compareVectors = true;
+        HandleEndOfToken(word, charIndex, psvDictFile, tokenIndex);
+      }
     }
 
     void BinarySearchInDictFile::AddAllOffsetsOfMatchingWords(
@@ -1103,8 +1119,9 @@ namespace DictionaryReader
     {
       LOGN_DEBUG("begin--\"" << psvStringToSearch << "\" "
           << "token index:" << r_dwTokenIndex
-          << "# token:" << numTokenForStringToSearch
-          << "cloest before non-match offset:" << closestBeforeNonMatchOffset)
+          << " # token:" << numTokenForStringToSearch
+          //<< " closest before non-match offset:" << closestBeforeNonMatchOffset
+        )
   #ifdef _DEBUG
 //      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
       fastestUnsignedDataType currOffset = GetCurrentFilePointerPosition();
@@ -1128,11 +1145,17 @@ namespace DictionaryReader
       streamIsGood = i > -1;
       while( streamIsGood /*&& ! breakWhile*/ )
       {
-        if( ::isalpha(i) )
+        if( ::isalpha(i) ||
+            /** e.g. "fork-lift" */
+            i == '-' )
         {
           word[charIndex ++] = i;
         }
         else
+        {
+          /** Only for outputting the character that caused the call to
+           * HandleEndOfWord(...) */
+          word[charIndex] = i;
           switch( i )
           {
             case ' ' :
@@ -1168,7 +1191,7 @@ namespace DictionaryReader
                to use word "work" before '{' */
             case '{' :
             case '(' : // e.g. "bank of(gas) cylinders"
-            case ')' : // e.g. "bank of(gas) cylinders"
+//            case ')' : // e.g. "bank of(gas) cylinders"
   //                  compareVectors = true;
               HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
               break;
@@ -1222,6 +1245,7 @@ namespace DictionaryReader
             psvDictFile.clear();
             compareVectors = false;
           }
+        }
   //            } //while()
         if( breakWhile || endSearchForCompareStringInCurrentVocData)
           break;

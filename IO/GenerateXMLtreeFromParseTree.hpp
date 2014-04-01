@@ -8,11 +8,17 @@
 #ifndef GENERATEXMLTREEFROMPARSETREE_HPP_
 #define GENERATEXMLTREEFROMPARSETREE_HPP_
 
-#include <string> //class std::string
+//#include <string> //class std::string
+//#include <data_structures/ByteArray.hpp>
 
+/** Forward decl.*/
 class ParseByRise;
+class ByteArray;
 
-void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
-  std::string & std_strXML);
+namespace IO
+{
+  void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
+    /*std::string & std_strXML*/ ByteArray & byteArray);
+}
 
 #endif /* GENERATEXMLTREEFROMPARSETREE_HPP_ */

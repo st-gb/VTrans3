@@ -10,6 +10,8 @@
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
+#include <data_structures/ByteArray.hpp>
+#include <data_structures/UTF8string.hpp>
 //GenerateXMLtreeFromParseTree(...)
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
 //#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
@@ -485,6 +487,21 @@ void TranslationControllerBase::ResetVocabularyInMainMemToFundamentalWordsOnly()
   s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords();
 }
 
+std::string GetParseTreeAsIntendedXML(const ParseByRise & parsebyrise)
+{
+  std::string std_strXML, std_strIntendedXML;
+  ByteArray byteArray;
+  IO::GenerateXMLtreeFromParseTree( (ParseByRise *) & parsebyrise, /*std_strXML*/ byteArray);
+  const BYTE * const byteArrayBegin = byteArray.GetArray();
+  const fastestUnsignedDataType byteArraySize = byteArray.GetSize();
+  std_strXML = UTF8string::GetAsISO_8859_1StdString(byteArrayBegin,
+    byteArraySize );
+  std::ostringstream std_ostringstream;
+  OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
+  std_strIntendedXML = std_ostringstream.str();
+  return std_strIntendedXML;
+}
+
 void TranslationControllerBase::Translate(
 //  ParseByRise & r_parsebyrise ,
   const std::string & cr_stdstrWholeInputText ,
@@ -521,7 +538,13 @@ void TranslationControllerBase::Translate(
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
   {
   std::string std_strXML;
-  GenerateXMLtreeFromParseTree( & m_parsebyrise, std_strXML);
+  ByteArray byteArray;
+  IO::GenerateXMLtreeFromParseTree( & m_parsebyrise, /*std_strXML*/
+    byteArray);
+  const BYTE * const byteArrayBegin = byteArray.GetArray();
+  const fastestUnsignedDataType byteArraySize = byteArray.GetSize();
+  std_strXML = UTF8string::GetAsISO_8859_1StdString(byteArrayBegin,
+    byteArraySize );
   std::ostringstream std_ostringstream;
   OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
   LOGN("parse tree as indented XML:\n" << std_ostringstream.str())
@@ -550,15 +573,13 @@ void TranslationControllerBase::Translate(
 //    stdvec_stdvecTranslationAndConsecutiveID
     ) ;
 
-  std::string std_strXML;
+//  std::string std_strXML;
   if(! m_vbContinue)
-  	return;
-  GenerateXMLtreeFromParseTree( & m_parsebyrise, std_strXML);
-  std::ostringstream std_ostringstream;
-  OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
-  LOGN("translation as indented XML:" << std_ostringstream.str())
+    return;
+  std::string std_strIntendedXML = GetParseTreeAsIntendedXML(m_parsebyrise);
+  LOGN("translation as indented XML:" << std_strIntendedXML)
 
-  LOGN( /*FULL_FUNC_NAME <<*/ "generated XML data:" << std_strXML)
+//  LOGN( /*FULL_FUNC_NAME <<*/ "generated XML data:" << std_strXML)
   LOGN(//"TranslationControllerBase::Translate(...) "
       "end")
 }

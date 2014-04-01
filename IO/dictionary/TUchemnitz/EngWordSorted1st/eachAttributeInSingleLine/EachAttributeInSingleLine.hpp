@@ -41,6 +41,13 @@ class VocabularyAndTranslation;
     //        enum EnglishWord::English_word_class word_class
             VocabularyAndTranslation *& p_vocabularyandtranslation
             );
+          PositionStringVector::cmp ContainsEnglishWord(
+            const PositionStringVector & psvStringToSearch,
+            DWORD & r_dwTokenIndex,
+            const fastestUnsignedDataType numToken,
+    //        std::set<fastestUnsignedDataType> & byteOffsetsOfVocData,
+            fastestUnsignedDataType & closestBeforeNonMatchOffset
+            );
         };
       }
     } //EngWordSorted1st
