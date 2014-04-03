@@ -10,6 +10,7 @@
 //getwxString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <Attributes/TranslationAndConsecutiveID.hpp>
+#include <Attributes/TranslationResult.hpp> //class WordCompound
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 
 //#include <Xerces/SAX2GrammarRuleHandler.hpp>
@@ -617,14 +618,16 @@ void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
   std::vector<std::string> stdvec_stdstrWholeTransl ;
 //  std::vector<std::vector<TranslationAndGrammarPart> >
 //    stdvec_stdvecTranslationAndGrammarPart ;
-  //A vector of sentences that begin at the same token index
-  // (sentences that begin at the same token index:
-  // vector of sentences that each contains a vector of words).
-  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > >
+  /** A vector of sentences that begin at the same token index
+  * (sentences that begin at the same token index:
+  * vector of sentences that each contains a vector of words). */
+  //TODO exchange "std::vector<ele>" by a class that is derived from std::vector
+  std::vector <std::vector <std::vector <TranslationAndGrammarPart>
+    /* WordCompound */ > >
     stdvec_stdvec_stdvecTranslationAndGrammarPart;
 
-  std::vector<std::vector<TranslationAndConsecutiveID> >
-    stdvec_stdvecTranslationAndConsecutiveID ;
+//  std::vector<std::vector<TranslationAndConsecutiveID> >
+//    stdvec_stdvecTranslationAndConsecutiveID ;
 
   ::wxGetApp().Translate(
     stdstrWholeInputText ,
@@ -632,6 +635,10 @@ void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
 //    stdvec_stdvecTranslationAndGrammarPart
     stdvec_stdvec_stdvecTranslationAndGrammarPart
     ) ;
+
+  const fastestUnsignedDataType numParseTrees = ::wxGetApp().
+    GetNumberOfParseTrees(stdvec_stdvec_stdvecTranslationAndGrammarPart);
+  SetTitle( wxString::Format(wxT("%u parse trees"), numParseTrees) );
 
 //  std::string stdstrAllPossibilities = GetAllTranslationPossibilites(
 //    stdvec_stdstrWholeTransl,

@@ -87,8 +87,8 @@ ParseByRise::~ParseByRise()
     LOGN_DEBUG(
       "deleting grammar part " << GetGrammarPartName(
       c_iter->second->m_wGrammarPartID ) )
-    //Release mem only for the GrammarPart for the leftmost index mmap and not twice:
-    //leftmost index mmap has the address of the _same_ GrammarPart stored.
+    /** Release mem only for the GrammarPart for the leftmost index mmap and not twice:
+    * leftmost index mmap has the address of the _same_ GrammarPart stored. */
     //FIXME SIGSEV here
     delete c_iter->second ;
   }
@@ -130,10 +130,12 @@ void ParseByRise::ClearParseTree()
 
    std::multimap<DWORD, GrammarPart *>::const_iterator c_iter =
        m_stdmultimap_dwLeftmostIndex2p_grammarpart.begin();
+   GrammarPart * p_gpCurrent;
    while( c_iter != m_stdmultimap_dwLeftmostIndex2p_grammarpart.end() )
    {
-     //Was allocated on the heap
-     delete c_iter->second;
+     /** Was allocated on the heap */
+     p_gpCurrent = c_iter->second;
+     delete p_gpCurrent;
      ++ c_iter;
    }
    m_stdmultimap_dwLeftmostIndex2p_grammarpart.clear() ;

@@ -18,6 +18,7 @@
 #include <Controller/character_string/format_as_string.hpp>
 #include "dynlib_main.h" //Init(...) etc.
 #include <character_string/modifiedUTF8.hpp>
+#include <data_structures/ByteArray.hpp> //class ByteArray
 #include <stddef.h> //for "NULL"
 #include <FileSystem/SetCurrentWorkingDir.hpp>
 

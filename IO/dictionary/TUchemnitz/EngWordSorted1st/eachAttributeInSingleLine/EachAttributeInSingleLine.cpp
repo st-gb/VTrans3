@@ -287,7 +287,8 @@
         bool streamIsGood;
         PositionStringVector psvDictFile;
         bool breakWhile = false;
-        bool afterOpeningBracket = false;
+        bool afterRoundOpeningBracket = false;
+        bool afterSquaredOpeningBracket = false;
         char word[100];
         fastestUnsignedDataType charIndex = 0;
         bool endSearchForCompareStringInCurrentVocData = false;
@@ -304,7 +305,8 @@
         streamIsGood = i > -1;
         while( streamIsGood /*&& ! breakWhile*/ )
         {
-          if( ! afterOpeningBracket && ( ::isalpha(i) ||
+          if( ! afterRoundOpeningBracket && ! afterSquaredOpeningBracket &&
+              ( ::isalpha(i) ||
               /** e.g. "fork-lift" */
               i == '-' ) )
           {
@@ -344,6 +346,7 @@
     //                  break;
     //                  psvDictFile.clear();
               case SAME_VOCABLE_SEPERATOR_CHAR :
+              case '/' : // e.g. "engineer(with university degree) /eng./"
                 /** e.g. for "work{work,wrought; worked, wrought}|"
                  to use word "work" before '{' */
               case '{' :
@@ -355,19 +358,26 @@
               /** e.g. "captive bolt pistol(slaughter house)" : do not consider
                *   words inside brackets. */
               case '(' : // e.g. "bank of(gas) cylinders"
-                afterOpeningBracket = true;
-  //            case ')' : // e.g. "bank of(gas) cylinders"
-    //                  compareVectors = true;
+                afterRoundOpeningBracket = true;
                 HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
                 break;
-              case ')' :
-                afterOpeningBracket = false;
+              case '[' : // e.g. "losings [Am.]"
+    //                  compareVectors = true;
+                afterSquaredOpeningBracket = true;
+                endSearchForCompareStringInCurrentVocData = true;
+                HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
+                break;
+              case ')' : // e.g. "bank of(gas) cylinders"
+                afterRoundOpeningBracket = false;
+                break;
+              case ']' :
+                afterSquaredOpeningBracket = false;
                 break;
     //              else
     //                byteOffset
     //              word[charIndex ++] = ch;
             } //switch
-            if(compareVectors)
+            if( /*compareVectors ||*/  endSearchForCompareStringInCurrentVocData )
             {
               LOGN_DEBUG("compare string vectors==true")
   //            endSearchForCompareStringInCurrentVocData =

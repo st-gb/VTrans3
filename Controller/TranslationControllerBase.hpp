@@ -8,6 +8,7 @@
 #ifndef TRANSLATIONCONTROLLERBASE_HPP_
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
+#include <Attributes/TranslationAndGrammarPart.hpp>
 #include <Controller/dictionary_type.hpp> //typedef dictionary_type
 #include <Controller/DictReaderAndVocAccess/dictReaderAndVocAccess_type.hpp>
 #include "TranslateControllerBaseReturnCodes.h" //enum Init_return_codes
@@ -25,6 +26,7 @@
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 //#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include "ConfigurationHandler_type.hpp"
+#include <fastest_data_type.h>
 
 #include <map> //class std::map
 #include <stdint.h> //for uint32_t
@@ -137,6 +139,14 @@ public:
   template <typename XMLelementType> bool GetAttributeValue(
       XMLelementType & xmlElement, const char * const, std::string &);
   std::string GetCurrentWorkingDir();
+
+  fastestUnsignedDataType GetNumberOfParseTrees(
+    /** A vector of sentences that begin at the same token index
+    * (sentences that begin at the same token index:
+    * vector of sentences that each contains a vector of words). */
+    std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+      stdvec_stdvec_stdvecTranslationAndGrammarPart
+    );
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
   BYTE Init(const std::string & cr_stdstrFilePath) ;

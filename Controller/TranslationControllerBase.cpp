@@ -395,6 +395,45 @@ std::string TranslationControllerBase::GetCurrentWorkingDir()
   return std_strCurrWorkDir;
 }
 
+fastestUnsignedDataType TranslationControllerBase::GetNumberOfParseTrees(
+  /** A vector of sentences that begin at the same token index
+  * (sentences that begin at the same token index:
+  * vector of sentences that each contains a vector of words). */
+  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+    stdvec_stdvec_stdvecTranslationAndGrammarPart
+  )
+{
+  fastestUnsignedDataType numParseTrees = 0;
+  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > >::
+    const_iterator c_iterBeginTokenIndexOfParseTree =
+    stdvec_stdvec_stdvecTranslationAndGrammarPart.begin();
+//    for(fastestUnsignedDataType beginTokenIndexOfParseTree = 0;
+//      beginTokenIndexOfParseTree <
+//      stdvec_stdvec_stdvecTranslationAndGrammarPart.size() ;
+//      ++ beginTokenIndexOfParseTree )
+  while( c_iterBeginTokenIndexOfParseTree !=
+    stdvec_stdvec_stdvecTranslationAndGrammarPart.end() )
+  {
+    std::vector <std::vector <TranslationAndGrammarPart> >::const_iterator
+      c_iterParseTreeAtSameTokenIndex = c_iterBeginTokenIndexOfParseTree->begin();
+    while( c_iterParseTreeAtSameTokenIndex !=
+        c_iterBeginTokenIndexOfParseTree->end() )
+    {
+      std::vector <TranslationAndGrammarPart>::const_iterator
+        c_iterTranslationAndGrammarPart =
+        c_iterParseTreeAtSameTokenIndex->begin();
+      while( c_iterTranslationAndGrammarPart != c_iterParseTreeAtSameTokenIndex->end() )
+      {
+        ++ numParseTrees;
+        ++ c_iterTranslationAndGrammarPart;
+      }
+      ++ c_iterParseTreeAtSameTokenIndex;
+    }
+    ++ c_iterBeginTokenIndexOfParseTree;
+  }
+  return numParseTrees;
+}
+
 void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
   const std::string & c_r_stdstrConfigFilesRootPath)
 {
@@ -487,7 +526,7 @@ void TranslationControllerBase::ResetVocabularyInMainMemToFundamentalWordsOnly()
   s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords();
 }
 
-std::string GetParseTreeAsIntendedXML(const ParseByRise & parsebyrise)
+std::string GetParseTreeAsIndentedXML(const ParseByRise & parsebyrise)
 {
   std::string std_strXML, std_strIntendedXML;
   ByteArray byteArray;
@@ -534,21 +573,13 @@ void TranslationControllerBase::Translate(
 //#endif
 //#endif
   if(! m_vbContinue)
-  	return;
+    return;
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
-  {
-  std::string std_strXML;
-  ByteArray byteArray;
-  IO::GenerateXMLtreeFromParseTree( & m_parsebyrise, /*std_strXML*/
-    byteArray);
-  const BYTE * const byteArrayBegin = byteArray.GetArray();
-  const fastestUnsignedDataType byteArraySize = byteArray.GetSize();
-  std_strXML = UTF8string::GetAsISO_8859_1StdString(byteArrayBegin,
-    byteArraySize );
-  std::ostringstream std_ostringstream;
-  OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
-  LOGN("parse tree as indented XML:\n" << std_ostringstream.str())
-  }
+
+  std::string std_strIndentedXML = GetParseTreeAsIndentedXML(
+    m_parsebyrise);
+  LOGN("parse tree as indented XML:\n" << std_strIndentedXML)
+
   //  RemoveDuplicateParseTrees();
 
   if(! m_vbContinue)
@@ -576,8 +607,9 @@ void TranslationControllerBase::Translate(
 //  std::string std_strXML;
   if(! m_vbContinue)
     return;
-  std::string std_strIntendedXML = GetParseTreeAsIntendedXML(m_parsebyrise);
-  LOGN("translation as indented XML:" << std_strIntendedXML)
+  std_strIndentedXML = GetParseTreeAsIndentedXML(
+    m_parsebyrise);
+  LOGN("translation as indented XML:" << std_strIndentedXML)
 
 //  LOGN( /*FULL_FUNC_NAME <<*/ "generated XML data:" << std_strXML)
   LOGN(//"TranslationControllerBase::Translate(...) "

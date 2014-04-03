@@ -368,6 +368,15 @@ public:
 //    , std::multimap<DWORD, GrammarPart> & r_stdmultimap_wLeftmostIndex2grammarpart
 //    , std::multimap<DWORD, GrammarPart> & r_stdmultimap_wRightmostIndex2grammarpart
     ) ;
+  void RemoveAllBetweenInRightIndexMap(
+      std::multimap<DWORD, GrammarPart *>::iterator & iterFirstUnknownWord,
+      std::multimap<DWORD, GrammarPart *>::iterator & iterLastUnknownWord);
+  void PossiblySumUp(
+    std::multimap<DWORD, GrammarPart *>::iterator & iterFirstUnknownWord,
+    std::multimap<DWORD, GrammarPart *>::iterator & iterLastUnknownWord);
+  void DeleteFromMultiMap(
+    std::multimap<DWORD, GrammarPart *> & std_multimap_dwIndex2p_grammarpart);
+  void SummarizeUnknownWords();
   virtual ~ParseByRise();
 private:
 

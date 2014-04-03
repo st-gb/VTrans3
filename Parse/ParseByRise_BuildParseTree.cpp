@@ -181,10 +181,181 @@ void ParseByRise::CreateInitialGrammarParts ( const std::string &
   }
 }
 
+void ParseByRise::RemoveAllBetweenInRightIndexMap(
+  std::multimap<DWORD, GrammarPart *>::iterator & iterFirstUnknownWord,
+  std::multimap<DWORD, GrammarPart *>::iterator & iterLastUnknownWord//,
+//  const GrammarPart * p_grammarPart
+  )
+{
+  std::multimap<DWORD, GrammarPart *>::iterator c_iterCurrentLeftMost =
+    iterFirstUnknownWord;
+  std::multimap<DWORD, GrammarPart *>::iterator c_iterCurrentRightMost;// =
+//    m_stdmultimap_dwRightmostIndex2p_grammarpart;
+
+  while( c_iterCurrentLeftMost !=
+    m_stdmultimap_dwLeftmostIndex2p_grammarpart.end() )
+  {
+    //traverse right index vecor
+    const GrammarPart * p_leftCurrentMostGrammarPart = c_iterCurrentLeftMost->second;
+    c_iterCurrentRightMost = m_stdmultimap_dwRightmostIndex2p_grammarpart.
+      find(p_leftCurrentMostGrammarPart->m_dwRightmostIndex);
+
+    if( c_iterCurrentRightMost->second == p_leftCurrentMostGrammarPart )
+    {
+      m_stdmultimap_dwRightmostIndex2p_grammarpart.erase(c_iterCurrentRightMost);
+    }
+
+//    m_stdmultimap_dwLeftmostIndex2p_grammarpart.erase(c_iterCurrentLeftMost);
+
+    /** Free memory for the grammarpart object ( it has been copied to a new,
+     *  summed up mmap entry. */
+    delete p_leftCurrentMostGrammarPart;
+    if( c_iterCurrentLeftMost == iterLastUnknownWord )
+      break;
+    ++ c_iterCurrentLeftMost;
+  }
+}
+
+void ParseByRise::PossiblySumUp(
+  std::multimap<DWORD, GrammarPart *>::iterator & iterFirstUnknownWord,
+  std::multimap<DWORD, GrammarPart *>::iterator & iterLastUnknownWord
+//  std::multimap<DWORD, GrammarPart *> & std_multimap_dwIndex2p_grammarpart,
+//  const bool leftMostIndices
+  )
+{
+  if( iterFirstUnknownWord != m_stdmultimap_dwLeftmostIndex2p_grammarpart.end()
+    && iterLastUnknownWord != m_stdmultimap_dwLeftmostIndex2p_grammarpart.end()
+    )
+  {
+    const fastestUnsignedDataType leftTokenIndex = iterFirstUnknownWord->first;
+    const fastestUnsignedDataType rightTokenIndex = iterLastUnknownWord->first;
+    GrammarPart * gp = new GrammarPart(
+      leftTokenIndex,
+      rightTokenIndex,
+      iterFirstUnknownWord->second->m_wGrammarPartID);
+
+    gp->m_stdstrTranslation = GetBetweenAsStdString(
+      m_psv,
+      leftTokenIndex,
+      rightTokenIndex);
+
+    RemoveAllBetweenInRightIndexMap(iterFirstUnknownWord, iterLastUnknownWord);
+
+//    /** Free memory for the grammarpart object */
+//    delete iterFirstUnknownWord->second;
+
+#ifdef _DEBUG
+    int leftIndexMapSize = m_stdmultimap_dwLeftmostIndex2p_grammarpart.size();
+#endif
+    //          std_multimap_dwIndex2p_grammarpart.equal_range()
+    /** http://www.cplusplus.com/reference/map/map/erase/:
+     * " including the element pointed by first but not the one pointed by last." */
+    m_stdmultimap_dwLeftmostIndex2p_grammarpart.erase(
+      iterFirstUnknownWord, ++ iterLastUnknownWord );
+#ifdef _DEBUG
+    leftIndexMapSize = m_stdmultimap_dwLeftmostIndex2p_grammarpart.size();
+#endif
+    /** Set to "not set".*/
+    iterFirstUnknownWord = m_stdmultimap_dwLeftmostIndex2p_grammarpart.end();
+    iterLastUnknownWord = m_stdmultimap_dwLeftmostIndex2p_grammarpart.end();
+    //          m_stdmultimap_dwRightmostIndex2p_grammarpart.find()
+
+//    if( leftMostIndices )
+    m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
+        std::make_pair(gp->m_dwLeftmostIndex, gp) );
+    m_stdmultimap_dwRightmostIndex2p_grammarpart.insert(
+        std::make_pair(gp->m_dwRightmostIndex, gp) );
+//    else
+//      std_multimap_dwIndex2p_grammarpart.insert(
+//        std::make_pair(gp->m_dwRightmostIndex, gp) );
+  }
+}
+
+void ParseByRise::DeleteFromMultiMap(
+  std::multimap<DWORD, GrammarPart *> & std_multimap_dwIndex2p_grammarpart
+//  , const bool leftMostIndices
+  )
+{
+  std::multimap<DWORD, GrammarPart *>::iterator c_iterLeftMost =
+      std_multimap_dwIndex2p_grammarpart.begin();
+  std::multimap<DWORD, GrammarPart *>::iterator iterFirstUnknownWord =
+      std_multimap_dwIndex2p_grammarpart.end();
+  std::multimap<DWORD, GrammarPart *>::iterator iterPreviousUnknownWord =
+      std_multimap_dwIndex2p_grammarpart.end();
+  std::multimap<DWORD, GrammarPart *>::iterator iterLastUnknownWord =
+      std_multimap_dwIndex2p_grammarpart.end();
+
+#ifdef _DEBUG
+  const int mapSize = std_multimap_dwIndex2p_grammarpart.size();
+#endif
+
+  GrammarPart * p_gpCurrentLeftMost = NULL, * p_gpPreviousLeftMost = NULL;
+  bool firstUnknowWordAssigned = false, unknownWordsAreDirectNeighbours;
+//  GrammarPart * p_gpFirst = NULL, * p_gpLast = NULL;
+//  if( c_iterLeftMost != std_multimap_dwIndex2p_grammarpart.end() )
+  {
+    while(c_iterLeftMost != std_multimap_dwIndex2p_grammarpart.end() )
+    {
+      p_gpCurrentLeftMost = c_iterLeftMost->second;
+      if( p_gpCurrentLeftMost->m_wGrammarPartID == EnglishWord::UnknownWord )
+      {
+        firstUnknowWordAssigned = iterFirstUnknownWord !=
+          std_multimap_dwIndex2p_grammarpart.end();
+//          summedUpUnknownWords;
+        if( firstUnknowWordAssigned )
+        {
+          unknownWordsAreDirectNeighbours =
+            p_gpPreviousLeftMost->m_dwLeftmostIndex + 1 ==
+            p_gpCurrentLeftMost->m_dwLeftmostIndex;
+          if( unknownWordsAreDirectNeighbours )
+          {
+            iterLastUnknownWord = c_iterLeftMost;
+            iterPreviousUnknownWord = iterLastUnknownWord;
+            p_gpPreviousLeftMost = iterPreviousUnknownWord->second;
+//          /** Free memory for the grammarpart object */
+//          delete iterLastUnknownWord->second;
+          }
+        }
+        else
+        {
+          iterFirstUnknownWord = c_iterLeftMost;
+//          p_gpFirst = p_gpPreviousLeftMost;
+          iterPreviousUnknownWord = iterFirstUnknownWord;
+          p_gpPreviousLeftMost = iterPreviousUnknownWord->second;
+        }
+      }
+      else
+      {
+        PossiblySumUp(iterFirstUnknownWord, iterLastUnknownWord//,
+//          std_multimap_dwIndex2p_grammarpart, leftMostIndices
+          );
+      }
+      ++ c_iterLeftMost;
+    }
+  }
+  PossiblySumUp(iterFirstUnknownWord, iterLastUnknownWord//,
+//    std_multimap_dwIndex2p_grammarpart, leftMostIndices
+    );
+}
+
+/** Sums up unknown words in a row to minimize the number of parse trees. */
+void ParseByRise::SummarizeUnknownWords()
+{
+  DeleteFromMultiMap(m_stdmultimap_dwLeftmostIndex2p_grammarpart/*, true*/);
+#ifdef _DEBUG
+  const int leftIndexMapSize = m_stdmultimap_dwLeftmostIndex2p_grammarpart.size();
+  int rightIndexMapSize = m_stdmultimap_dwLeftmostIndex2p_grammarpart.size();
+  ++ rightIndexMapSize;
+#endif
+//  DeleteFromMultiMap(m_stdmultimap_dwRightmostIndex2p_grammarpart, false);
+}
+
 void ParseByRise::CreateParseTree(const std::string & cr_stdstrWholeInputText)
 {
   ClearParseTree() ;
   CreateInitialGrammarParts ( cr_stdstrWholeInputText ) ;
+
+  SummarizeUnknownWords();
 
   DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
   ResolveGrammarRulesForAllParseLevels() ;

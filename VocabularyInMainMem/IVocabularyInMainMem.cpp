@@ -115,6 +115,7 @@ void IVocabularyInMainMem::InsertFundamentalWords()
   //Inserts e.g. into a trie structure.
   Insert("the", EnglishWord::English_definite_article ) ;
   Insert("a", EnglishWord::English_indefinite_article) ;
+  Insert("an", EnglishWord::English_indefinite_article) ;
 
   Insert( "I" , EnglishWord::personal_pronoun_I) ;
 //  Insert( "you" , EnglishWord::personal_pronoun_you_sing ) ;
