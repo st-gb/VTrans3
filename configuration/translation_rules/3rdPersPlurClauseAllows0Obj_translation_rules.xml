@@ -76,7 +76,7 @@
 		  byte_attribute_value="4"
 		/>
 		<!-- article=3 <=> neutral article ("das") -->
-		<condition syntax_tree_path="definite_article_singular.definite_article"
+		<condition syntax_tree_path="definite_article_singular.singular_noun"
 		  attribute_name="German_noun_article"
 		  byte_attribute_value="3"
 		/>

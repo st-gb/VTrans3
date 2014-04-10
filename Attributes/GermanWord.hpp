@@ -141,6 +141,7 @@ public:
   static const char * const presentPersonEndings [];
   static const char * const presentPersonEndings2 [];
   static const char * const pastPersonEndings [];
+  static const char * const s_irregularVerbPresentSingularPersonEndings [];
 
   enum person_indices { firstPersonSing = 0, secondPersonSing, thirdPersonSing,
     firstPersonPlur, secondPersonPlur, thirdPersonPlur, beyondLastPerson };
@@ -313,11 +314,19 @@ public:
     const char lastChar = *(wortStamm.c_str() + wortStamm.length() - 1);
     switch( lastChar )
     {
+    case 'b' : //geBen, lieBen
+    case 'f' : //schärFen, kauFen
+    case 'g' : //leGen
     case 'h' : //geHen, seHen, steHen
+    case 'l' : //lalLen, gefalLen
+    case 'm' : //miMen
+    case 'n' : //nenNen, grieNen
+    case 'p' : //popPen
     case 'r' : //fahRen,
       return wortStamm + presentPersonEndings[person_index];
 //    default:
     }
+    //MelDen ->EST, gedulDen
     return wortStamm + presentPersonEndings2[person_index];
   }
   static std::string GetPastFiniteForm(//const std::string & wortStamm,

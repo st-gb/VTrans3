@@ -17,7 +17,9 @@ namespace VTrans
     : public /*wxListCtrl*/ wxWidgets::RulesListCtrl
   {
     enum ColumnIDs { SyntaxTreePath = 0, FilePath};
+    enum ContextMenuItemIDs{ ID_CopySTPtoClipBoard = 5, ID_CopyRuleFilePathToClipBoard };
   public:
+    int m_itemIndexOfContextMenu;
     TranslationRulesListCtrl(wxWindow * parent, int ID);
     virtual
     ~TranslationRulesListCtrl();
@@ -28,6 +30,11 @@ namespace VTrans
     wxString OnGetItemText(long item, long column) const;
     void SetFilter(const wxString&);
     wxString GetItemText_noFilter(long item, long column) const;
+    void OnRightClick(wxListEvent & evt);
+    void OnCopySTPtoClipBoard(wxCommandEvent &);
+    void OnCopyRuleFilePathToClipBoard(wxCommandEvent &);
+
+    DECLARE_EVENT_TABLE()
   };
 
 } /* namespace VTrans */

@@ -260,7 +260,8 @@ namespace DictionaryReader
       fastestUnsignedDataType & synonymIndex//,
       )
     {
-      LOGN_DEBUG("begin--add English word?:" << (english ? "yes" : "no") )
+      LOGN_DEBUG("begin--English word?:" << (english ? "yes" : "no") << "# '|':"
+        << pipeCount << "# ';':" << semicolCountInsideCurrentPipeCharRange)
       if( word[0] != '\0' )
       {
 //        word[charIndex] = '\0';
@@ -296,12 +297,15 @@ namespace DictionaryReader
   #ifdef _DEBUG
           int sz = germanVocables.size();
   #endif
-          if( semicolCountInsideCurrentPipeCharRange < germanVocables.size() )
+          if( semicolCountInsideCurrentPipeCharRange /*pipeCount*/ <
+              germanVocables.size() )
           {
+            const fastestUnsignedDataType vocableIndex =
+              semicolCountInsideCurrentPipeCharRange;
             LOGN_DEBUG("using German vocable \"" << word << "\" at index "
-              << semicolCountInsideCurrentPipeCharRange )
+              << /*semicolCountInsideCurrentPipeCharRange*/ vocableIndex )
             std::vector<std::string> & vec = germanVocables[
-              semicolCountInsideCurrentPipeCharRange];
+              /*semicolCountInsideCurrentPipeCharRange*/ vocableIndex];
             vec.push_back(std::string(word) );
           }
           else

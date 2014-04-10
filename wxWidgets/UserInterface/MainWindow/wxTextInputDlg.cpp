@@ -54,7 +54,7 @@ using namespace wxWidgets ;
 
 ///////////////////////////////////////////////////////////////////////////
 
-void wxTextInputDlg::AddBitmapButtonAndTooltip(
+wxToolBarToolBase * wxTextInputDlg::AddBitmapButtonAndTooltip(
   enum user_interface_control_actions itemID, 
   const char * const XPMbitmapData [], const wxChar toolTip [])
 {
@@ -68,7 +68,8 @@ void wxTextInputDlg::AddBitmapButtonAndTooltip(
     );
   mp_wxbutton->SetToolTip( toolTip ) ;
   m_p_boxsizerToolButtons->Add(mp_wxbutton, 0 //stretch factor. 0=do not stretch
-    , wxBOTTOM, 2);  
+    , wxBOTTOM, 2);
+  return NULL;
 }
 
 wxTextInputDlg::wxTextInputDlg(

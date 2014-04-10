@@ -32,12 +32,12 @@ namespace wxWidgets
   {
   protected:
     std::vector<wxWindow *> m_std_vec_window;
-    enum windowIDs{ ruleTextCtrl, rulesList, testRule };
 //    VTrans::TranslationRulesListCtrl * m_p_translationruleslistctrl;
     wxWidgets::RulesListCtrl * m_p_rulesListCtrl;
     wxTextCtrl * m_p_wxtextctrl;
     wxBoxSizer * m_p_wxsizer;
   public:
+    enum windowIDs{ ruleTextCtrl, rulesList, testRule };
     ShowRulesDialogBase(
       wxWindow * parent,
       wxString choices[],

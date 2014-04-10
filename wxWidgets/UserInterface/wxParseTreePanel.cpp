@@ -285,7 +285,15 @@ void wxParseTreePanel::DrawGrammarPartParentToChildLine(
 
 void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise )
 {
-  LOGN_DEBUG("begin")
+  LOGN_DEBUG("begin--r_parsebyrise:" << & r_parsebyrise)
+
+//  if( m_p_wxbitmapBuffer != NULL )
+//    delete m_p_wxbitmapBuffer;
+//  const wxRect clientRect = GetClientRect();
+//  m_p_wxbitmapBuffer = new wxBitmap(clientRect.GetWidth(), clientRect.GetHeight() );
+////  wxMemoryDC wxmemorydc( * m_p_wxbitmapBuffer);
+//  m_wxmemorydc.SelectObject( * m_p_wxbitmapBuffer);
+
 //  m_wParseLevel = 0 ;
 //  m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
   mp_parsebyrise = & r_parsebyrise ;
@@ -787,13 +795,13 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
       {
         p_grammarpart = *c_iter_stdvec_p_grammarpart ;
             dwLeftMostTokenIndex = p_grammarpart->m_dwRightmostIndex + 1 ;
-        DEBUG_COUT("wxParseTreePanel::DrawParseTreeBeginningFromLeaves--"
+        LOGN_DEBUG(//"wxParseTreePanel::DrawParseTreeBeginningFromLeaves--"
           "topmost grammar part from token indices ["
           //<< dwLeftMostTokenIndex << ":"
           << p_grammarpart->m_dwLeftmostIndex << ":"
           << p_grammarpart->m_dwRightmostIndex << "] :"
           << p_grammarpart
-          << "\n" )
+          /*<< "\n"*/ )
 //        WORD wHorizTextCenter = 0 ;
         const std::string & r_stdstrGrammarPartName = //citer->second.
           //m_stdstrGrammarPartName ;
@@ -860,8 +868,8 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
       //because it would start with the value "1" and would not get "0".
       m_wParseLevel = 0 ;
       m_stdvecNodesToProcess.clear() ;
-      DEBUG_COUT("DrawParseTreeBeginningFromLeaves--no more nodes to process"
-          << "\n")
+      LOGN_DEBUG(/*"DrawParseTreeBeginningFromLeaves--"*/ "no more nodes to process"
+          )
     }
     else //token not part of a parse tree.
     {
@@ -1105,8 +1113,7 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
 {
 
   wxPaintDC wxpaintdc(this);
-  DEBUG_COUT("wxParseTreePanel::OnPaint--mp_parsebyrise:" << mp_parsebyrise
-      << "\n")
+  LOGN_DEBUG("mp_parsebyrise:" << mp_parsebyrise)
 //  PrepareDC(wxpaintdc);
   if( mp_parsebyrise )
   {
@@ -1145,11 +1152,13 @@ void wxParseTreePanel::OnSize(wxSizeEvent & evt)
 {
   if( m_p_wxbitmapBuffer != NULL )
     delete m_p_wxbitmapBuffer;
-  m_p_wxbitmapBuffer = new wxBitmap(evt.m_size.x, evt.m_size.y);
+  m_p_wxbitmapBuffer = new wxBitmap( evt.m_size.x, evt.m_size.y );
 //  wxMemoryDC wxmemorydc( * m_p_wxbitmapBuffer);
   m_wxmemorydc.SelectObject( * m_p_wxbitmapBuffer);
+
   if( mp_parsebyrise )
   {
     DrawParseTree( * mp_parsebyrise);
   }
+  m_wxsizeClientRect = evt.GetSize();
 }

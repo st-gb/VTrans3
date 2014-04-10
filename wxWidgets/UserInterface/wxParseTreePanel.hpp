@@ -24,6 +24,7 @@
 #endif //#ifdef _WIN32
 #include <wx/panel.h> //base class wxPanel
 #include <wx/dcmemory.h> //class wxMemoryDC
+#include <wx/gdicmn.h> //class wxSize
 //#include <wx/dcclient.h> //for class wxPaintDC
 #include <map> //class std::map
 #include <vector> //class std::vector
@@ -42,6 +43,7 @@ class wxParseTreePanel
   : public wxPanel
 {
     WORD m_wParseLevel ;
+    wxSize m_wxsizeClientRect;
     ParseByRise * mp_parsebyrise ;
     wxBitmap * m_p_wxbitmapBuffer;
     wxMemoryDC m_wxmemorydc;

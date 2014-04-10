@@ -167,6 +167,57 @@ void VocabularyAndTranslation::AddFiniteVerbFormsFromGermanInfinitive(
   }
 }
 
+/** irregular: "können" -> ich/er kann */
+void VocabularyAndTranslation::AddFiniteVerbFormsFromIrregularGerman1stPersSing(
+  const std::string & std_strIrregularGerman1stPersSing)
+{
+  std::string std_strFiniteForm;
+//  for( fastestUnsignedDataType /*enum GermanVerb::person_indices*/ person_index =
+//      GermanVerb::firstPersonSing;
+//      person_index < GermanVerb::beyondLastPerson;
+//      ++ person_index
+//     )
+//  {
+//    /** 3rd person singular is already passed as parameter. */
+//    if( person_index == GermanVerb::thirdPersonSing )
+//      SetGermanWord(
+//        std_strIrregularGerman1stPersSing,
+//        /** index 0 is infinitive->add "1". */
+//        GermanVerb::arrayIndexFor3rdPersSingPres
+//        );
+//    else
+//    {
+//      std_strFiniteForm = std_strIrregularGerman1stPersSing +
+//        GermanVerb::s_irregularVerbPresentSingularPersonEndings[person_index];
+//      SetGermanWord(
+//        std_strFiniteForm,
+//        /** index 0 is infinitive->add "1". */
+//        person_index + 1
+//        );
+//    }
+//  }
+  SetGermanWord(
+      std_strIrregularGerman1stPersSing,
+    /** index 0 is infinitive->add "1". */
+    GermanVerb::firstPersonSing + 1
+    );
+
+  fastestUnsignedDataType person_index = GermanVerb::secondPersonSing;
+  std_strFiniteForm = std_strIrregularGerman1stPersSing +
+    GermanVerb::s_irregularVerbPresentSingularPersonEndings[person_index];
+  SetGermanWord(
+    std_strFiniteForm,
+    /** index 0 is infinitive->add "1". */
+    person_index + 1
+    );
+
+  SetGermanWord(
+      std_strIrregularGerman1stPersSing,
+    /** index 0 is infinitive->add "1". */
+    GermanVerb::thirdPersonSing + 1
+    );
+}
+
 /** Add finite past verb form from 3rd person singular past.
  *  So words may be added although they are missing in the dictionary.
  *  So e.g. add:
@@ -259,8 +310,13 @@ void VocabularyAndTranslation::AddFiniteVerbFormsFromGerman3rdPersPresent(
  *  */
 void VocabularyAndTranslation::PossiblyGenerateAndAddGermanAttributes(
   const EnglishWord::English_word_class grammarPartID,
-  const std::string & germanWord)
+  const std::string & germanWord,
+  const fastestUnsignedDataType attributeIndexInsideDictFile
+  )
 {
+  LOGN_DEBUG("begin--grammar part ID:" << grammarPartID
+    << " word:" << germanWord
+    << " attributeIndexInsideDictFile:" << attributeIndexInsideDictFile)
   const EnglishWord::English_word_class engWordClass = EnglishWord::
     MapGrammarPartIDtoWordClass(grammarPartID);
 
@@ -270,7 +326,10 @@ void VocabularyAndTranslation::PossiblyGenerateAndAddGermanAttributes(
   case EnglishWord::main_verb_allows_0object_infinitive :
   case EnglishWord::main_verb_allows_1object_infinitive :
   case EnglishWord::main_verb_allows_2objects_infinitive :
-    AddFiniteVerbFormsFromGermanInfinitive(germanWord);
+    if( attributeIndexInsideDictFile == 0)
+      AddFiniteVerbFormsFromGermanInfinitive(germanWord);
+    else if(attributeIndexInsideDictFile == 1)
+      AddFiniteVerbFormsFromIrregularGerman1stPersSing(germanWord);
     break;
 //  case EnglishWord::main_verb :
     /** if inf. is added (index 0) then derive finite German verb forms

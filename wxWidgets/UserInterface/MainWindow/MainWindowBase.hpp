@@ -22,6 +22,7 @@ class wxGermanTranslationPanel;
 class wxParseTreePanel ;
 class wxSplitterWindow ;
 class wxTextCtrl ;
+class wxToolBarToolBase;
 
 namespace wxWidgets
 {
@@ -36,6 +37,8 @@ namespace wxWidgets
     /**make a member of this class and do NOT inherit from it else
      * subclasses of this class may both inherit from wxEvtHandler */
     wxTopLevelWindow * m_p_mainwindow;
+  protected:
+    wxToolBarToolBase * m_p_wxToolBarToolBaseLoadDictionary;
   public:
     ParseByRise & m_parsebyrise;
     TranslationControllerBase & m_translationcontrollerbase;
@@ -88,7 +91,7 @@ namespace wxWidgets
     wxGermanTranslationPanel * m_p_wxgermantranslationpanel;
     wxParseTreePanel * mp_wxparsetreepanel;
     wxSplitterWindow * mp_wxsplitterwindow;
-    virtual void AddBitmapButtonAndTooltip(
+    virtual wxToolBarToolBase * AddBitmapButtonAndTooltip(
       enum user_interface_control_actions itemID, 
       const char * const XPMbitmapData [],
       const wxChar toolTip []//, wxSizer * p_wxsizer

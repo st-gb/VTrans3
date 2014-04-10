@@ -14,13 +14,32 @@
 #include <wxWidgets/VTransApp.hpp> //wxGetApp()
 //wxWidgets::getwxString()
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
+//ShowRulesDialogBase::rulesList
+#include <wxWidgets/UserInterface/ShowRulesDialogBase.hpp>
+
+#include <wx/clipbrd.h> //wxTheClipboard
 #include <wx/filefn.h> //::wxGetCwd()
+#include <wx/menu.h> //class wxMenu
+
 
 /** for wxWidgets::GetwxString_Inline */
 using namespace wxWidgets;
 
 namespace VTrans
 {
+
+  BEGIN_EVENT_TABLE(TranslationRulesListCtrl, wxListCtrl)
+  //http://stackoverflow.com/questions/14487102/wxwidgets-contextmenu-popup
+//    EVT_CONTEXT_MENU(
+  EVT_LIST_ITEM_RIGHT_CLICK(
+    ShowRulesDialogBase::rulesList,
+    TranslationRulesListCtrl::OnRightClick)
+//  EVT_BUTTON(ID_CopySTPtoClipBoard,
+  EVT_MENU(ID_CopySTPtoClipBoard,
+    TranslationRulesListCtrl::OnCopySTPtoClipBoard )
+  EVT_MENU(ID_CopyRuleFilePathToClipBoard,
+    TranslationRulesListCtrl::OnCopyRuleFilePathToClipBoard )
+  END_EVENT_TABLE()
 
   TranslationRulesListCtrl::TranslationRulesListCtrl(wxWindow * parent, int ID)
 //    : wxListCtrl(parent, //wxID_ANY
@@ -30,16 +49,17 @@ namespace VTrans
       ID)
   {
     // Add first column
-    wxListItem col0;
-    col0.SetId(0);
-    col0.SetText( wxT("syntax tree path") );
-    col0.SetWidth(500);
-    InsertColumn(SyntaxTreePath, col0);
-    wxListItem col1;
-    col1.SetId(1);
-    col1.SetText( wxT("file path") );
-    col1.SetWidth(200);
-    InsertColumn(FilePath, col1);
+    wxListItem syntaxTreePathColumn;
+    syntaxTreePathColumn.SetId(SyntaxTreePath);
+    syntaxTreePathColumn.SetText( wxT("syntax tree path") );
+    syntaxTreePathColumn.SetWidth(500);
+    InsertColumn(SyntaxTreePath, syntaxTreePathColumn);
+
+    wxListItem translationRuleFilePathColumn;
+    translationRuleFilePathColumn.SetId(FilePath);
+    translationRuleFilePathColumn.SetText( wxT("file path") );
+    translationRuleFilePathColumn.SetWidth(200);
+    InsertColumn(FilePath, translationRuleFilePathColumn);
 
     SetItemCount(wxGetApp().
       m_translateparsebyrisetree.
@@ -217,5 +237,51 @@ namespace VTrans
       RefreshItems(0,//lineFrom
         previousItemCount /*lineTo*/ );
     }
+  }
+
+  void TranslationRulesListCtrl::OnCopySTPtoClipBoard(wxCommandEvent & cmdevt)
+  {
+    wxString wxstr = OnGetItemText(m_itemIndexOfContextMenu, SyntaxTreePath);
+    //http://docs.wxwidgets.org/trunk/classwx_clipboard.html
+    if (wxTheClipboard->Open())
+    {
+      // This data objects are held by the clipboard,
+      // so do not delete them in the app.
+      wxTheClipboard->SetData( new wxTextDataObject(wxstr) );
+      wxTheClipboard->Close();
+    }
+  }
+
+  void TranslationRulesListCtrl::OnCopyRuleFilePathToClipBoard(wxCommandEvent & cmdevt)
+  {
+    wxString wxstr = OnGetItemText(m_itemIndexOfContextMenu, FilePath);
+    //http://docs.wxwidgets.org/trunk/classwx_clipboard.html
+    if (wxTheClipboard->Open())
+    {
+      // This data objects are held by the clipboard,
+      // so do not delete them in the app.
+      wxTheClipboard->SetData( new wxTextDataObject(wxstr) );
+      wxTheClipboard->Close();
+    }
+  }
+
+  void TranslationRulesListCtrl::OnRightClick(wxListEvent & event)
+  {
+    //from http://stackoverflow.com/questions/14487102/wxwidgets-contextmenu-popup
+    // Show popupmenu at position
+    wxMenu menu(wxT("Test"));
+    //TODO implement copying to clipboard
+    const int col = event.GetColumn();
+    m_itemIndexOfContextMenu = event.GetIndex();
+//    switch( col)
+//    {
+//    case SyntaxTreePath:
+      menu.Append(ID_CopySTPtoClipBoard, wxT("&copy syntax tree path to clipboard"));
+//      break;
+//    case FilePath:
+      menu.Append(ID_CopyRuleFilePathToClipBoard, wxT("&copy file path to clipboard"));
+//      break;
+//    }
+    PopupMenu(&menu, event.GetPoint());
   }
 } /* namespace VTrans */

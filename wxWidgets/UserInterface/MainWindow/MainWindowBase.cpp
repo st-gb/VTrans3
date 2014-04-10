@@ -390,7 +390,7 @@ void EVENT_HANDLER_CLASS_NAME::AddAddGrammarRulesButton( wxSizer * p_sizer )
 
 void EVENT_HANDLER_CLASS_NAME::AddLoadDictionaryButton( wxSizer * p_sizer)
 {
-  AddBitmapButtonAndTooltip(
+  m_p_wxToolBarToolBaseLoadDictionary = AddBitmapButtonAndTooltip(
     ID_LoadDictionary
     , re_load_dictionary_xpm
     , wxT("re-load dictionary...")

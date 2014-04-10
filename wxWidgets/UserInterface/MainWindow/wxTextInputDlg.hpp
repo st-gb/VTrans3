@@ -45,7 +45,7 @@ private:
   wxButton * mp_wxbutton ;
   wxBoxSizer * m_p_boxsizerToolButtons;
 
-  void AddBitmapButtonAndTooltip(user_interface_control_actions itemID, 
+  wxToolBarToolBase * AddBitmapButtonAndTooltip(user_interface_control_actions itemID,
     /**constant array of constant char arrays*/
     const char * const * XPMbitmapData, const wxChar toolTip []//, wxSizer * p_wxsizer
     );

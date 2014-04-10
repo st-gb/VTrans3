@@ -55,7 +55,7 @@ namespace wxWidgets
     p_wxmenu = new wxMenu();
     p_wxmenu->Append( ID_LookupWord, wxT("&lookup word") );
     p_wxmenu->Append( ID_ShowDictionaryStatistics,  wxT("&statistics") );
-    p_wxmenu->Append( ID_UnloadDictionary, wxT("&unload") );
+    m_p_wxMeniItemUnloadDictionary = p_wxmenu->Append( ID_UnloadDictionary, wxT("&unload") );
     mp_wxmenubar->Append( p_wxmenu , wxT("&dictionary")) ;
 
     p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
@@ -68,13 +68,13 @@ namespace wxWidgets
     SetMenuBar( mp_wxmenubar );
   }
   
-  void MainFrame::AddBitmapButtonAndTooltip(
+  wxToolBarToolBase * MainFrame::AddBitmapButtonAndTooltip(
       enum user_interface_control_actions itemID, 
       const char * const XPMbitmapData [],
       const wxChar toolTip []//, wxSizer * p_wxsizer
     )
   {
-    mp_wxtoolbar->AddTool(
+    return mp_wxtoolbar->AddTool(
       itemID, //ID_Translate
       toolTip, //wxT("translate")
       //wxBitmap( translate_bitmap_xpm)
@@ -84,7 +84,15 @@ namespace wxWidgets
 //      _T("New file"), _T("This is help for new file tool")
       );
   }
-      
+
+  void MainFrame::SetDictionaryFilePath(const wxString & wxstrDictionaryFilePath)
+  {
+    m_p_wxMeniItemUnloadDictionary->SetText( wxT("Unload ") +
+      wxstrDictionaryFilePath);
+    m_p_wxToolBarToolBaseLoadDictionary->SetShortHelp(
+      wxT("(re-)load dictionary ") + wxstrDictionaryFilePath);
+  }
+
   MainFrame::MainFrame(
     const wxString & cr_wxstrTitle,
     const wxPoint & cr_wxpointPos,

@@ -16,7 +16,10 @@
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
 //#include <VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp>
 
+/** Forward declarations. */
 class GrammarPart ;
+//class I_UserInterface;
+class TranslationControllerBase;
 
 //Function pointer for a function that is able to change a string.
 //That is important e.g. for changing "Männer" to "Männern" for
@@ -36,6 +39,8 @@ class ConditionsAndTranslation
 public:
   static std::map<std::string, pfnTransformString>
     s_std_mapFunctionName2Function;
+//  static I_UserInterface * s_p_userinterface;
+  static TranslationControllerBase * s_p_translationControllerBase;
   enum compare_type { equals } ;
   BYTE m_byCompareType ;
   //The person index that belongs to the conditions. e.g. person index
@@ -86,6 +91,7 @@ public:
     //, const std::vector<WORD> & r_stdvec_wGrammarPartPath
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath
     ) const ;
+
   ConditionsAndTranslation()
     : m_byPersonIndex (0)
     , m_pfn_TransformString( NULL)

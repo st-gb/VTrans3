@@ -103,6 +103,7 @@ namespace wxWidgets
       const fastestUnsignedDataType flags = wxTextControlDialog::OK_Button);
     void EndTimer();
     void StartTimer();
+    void SetDictionaryFilePath(const wxString & wxstr );
     void OnMessage(wxCommandEvent &);
   private:
     DECLARE_EVENT_TABLE();

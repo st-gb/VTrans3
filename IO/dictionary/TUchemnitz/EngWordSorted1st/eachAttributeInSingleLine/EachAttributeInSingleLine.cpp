@@ -203,6 +203,8 @@
         return /*p_vocabularyandtranslation*/ p_voc_container;
       }
 
+      /** @param germanVocables: vector of vocables.
+       *     each vocable has vector of words */
       void BinarySearchInDictFile::AddGermanAttributes(
           std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
           std::vector< std::vector <std::string> > & germanVocables)
@@ -221,8 +223,11 @@
         while( c_iterGerman != germanVocables.end() && c_iterPipeIndex2VocAndTranslPtr !=
             voc_containerVocsCreated.end() )
         {
-          const std::vector<std::string> & r_ = ( * c_iterGerman);
-          c_iterGermanWord = r_.begin();
+          const std::vector<std::string> & r_currentVocableWords = ( * c_iterGerman);
+//#ifdef _DEBUG
+          const int numGermanWords = r_currentVocableWords.size();
+//#endif
+          c_iterGermanWord = r_currentVocableWords.begin();
           VocabularyAndTranslation * p_vocAndTransl =
             c_iterPipeIndex2VocAndTranslPtr->second;
           const int index = c_iterPipeIndex2VocAndTranslPtr->first;
@@ -236,8 +241,9 @@
               VocabularyAndTranslation::s_arraysizes[engWordClass];
             const fastestUnsignedDataType germanWordIndex = EnglishWord::
               GetGermanWordIndexFromGramarPartID(p_vocAndTransl->m_englishWordClass);
-//            while(c_iterGermanWord != r_.end() )
-//            {
+            fastestUnsignedDataType attributeIndexInsideDictFile = 0;
+            while(c_iterGermanWord != r_currentVocableWords.end() )
+            {
               if( germanWordIndex < arraySizes.m_byArraySizeForGermanWord )
               {
                 const std::string & germanWord = * c_iterGermanWord;
@@ -250,14 +256,29 @@
                     germanWord.length(),
                     germanWordIndex);
 //                ++ germanWordIndex;
-                p_vocAndTransl->PossiblyGenerateAndAddGermanAttributes(
-//                  engWordClass,
-                  p_vocAndTransl->m_englishWordClass,
-                  germanWord
-                  );
+//                if(
+//                    ( p_vocAndTransl->m_englishWordClass ==
+//                    EnglishWord::main_verb_allows_0object_infinitive ||
+//                    p_vocAndTransl->m_englishWordClass ==
+//                    EnglishWord::main_verb_allows_1object_infinitive ||
+//                    p_vocAndTransl->m_englishWordClass ==
+//                    EnglishWord::main_verb_allows_2objects_infinitive )
+//                    && (attributeIndexInsideDictFile == 1 ||
+//                    numGermanWords == 1
+//                    )
+//                  )
+                {
+                  p_vocAndTransl->PossiblyGenerateAndAddGermanAttributes(
+  //                  engWordClass,
+                    p_vocAndTransl->m_englishWordClass,
+                    germanWord,
+                    attributeIndexInsideDictFile
+                    );
+                }
               }
-//              ++ c_iterGermanWord;
-//            }
+              ++ attributeIndexInsideDictFile;
+              ++ c_iterGermanWord;
+            }
           }
           ++ c_iterPipeIndex2VocAndTranslPtr;
           ++ c_iterGerman;

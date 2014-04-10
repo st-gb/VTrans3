@@ -15,6 +15,11 @@ const char * const GermanVerb::presentPersonEndings [] = {
   , "t" //ihr gehT
   , "en"//sie gehEN
   };
+const char * const GermanVerb::s_irregularVerbPresentSingularPersonEndings [] = {
+  "" //kann
+  , "st" //kannST
+  , "" //er kann
+  };
 
 /** For verbs with word stem ending with an "e", e.g. word stem "arbeite" for
  *  infinitive "arbeiten" */

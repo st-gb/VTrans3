@@ -182,19 +182,24 @@ namespace wxWidgets
       ) ;
     if( wxfiledialog.ShowModal() == wxID_OK )
     {
-      wxString wxstrFullPath = wxfiledialog.
+      const wxString wxstrFullPath = wxfiledialog.
         //http://docs.wxwidgets.org/2.8/wx_wxfiledialog.html
         // #wxfiledialoggetpath:
         // "Returns the full path (directory and filename) of the selected file."
         GetPath() ;
-      /** Save in variable that lives longer than the new thread*/
+      wxGetApp().SetDictionaryFilePath(wxstrFullPath);
+      /** Save in variable that lives longer than the new thread */
       ::wxGetApp().m_std_strLastSelectedDictFilePath = GetStdString( wxstrFullPath ) ;
-      std::string & std_strFilePath = ::wxGetApp().m_std_strLastSelectedDictFilePath;
+      const std::string & std_strFilePath = ::wxGetApp().m_std_strLastSelectedDictFilePath;
+      LOGN_DEBUG("Selected file path: " << std_strFilePath)
       wxString wxstrLabel = p_wxwindowParent->GetLabel() ;
 //      ::wxMessageBox( wxT("freeing memory for existing vocabulary") ) ;
       p_wxwindowParent->SetLabel( wxT("freeing memory for existing vocabulary") ) ;
 //      g_lettertree.DeleteCompleteList() ;
-      g_p_translationcontrollerbase->s_dictReaderAndVocAccess.m_vocAccess./*DeleteCompleteList()*/clear();
+      g_p_translationcontrollerbase->s_dictReaderAndVocAccess.m_vocAccess.
+        /*DeleteCompleteList()*/clear();
+      g_p_translationcontrollerbase->s_dictReaderAndVocAccess.loadDictionary(
+        std_strFilePath);
       //MUST be inserted, else some grammar rules can't be applied.
 //      g_lettertree.InsertFundamentalWords() ;
       g_p_translationcontrollerbase->s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords() ;

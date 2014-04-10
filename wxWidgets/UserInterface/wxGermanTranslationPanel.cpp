@@ -49,16 +49,40 @@ wxGermanTranslationPanel::wxGermanTranslationPanel()
 
 void wxGermanTranslationPanel::Create()
 {
+  LOGN_DEBUG("begin")
   m_wxrectClient = GetClientRect();
-  m_wxbitmapForMemoryDC.Create(m_wxrectClient.width, m_wxrectClient.height);
-  m_wxmemorydc.SelectObject( m_wxbitmapForMemoryDC);
-
-  m_wxmemorydc.FloodFill(0,0, * wxWHITE,
-    //* wxBLACK,
-    wxFLOOD_BORDER //: the area to be flooded is bounded by the given colour.
-    );
-//  m_wxbitmapForMemoryDC.S
-  DrawTranslationAndCreateChoices(m_wxmemorydc);
+  LOGN_DEBUG("width:" << m_wxrectClient.width << " height:" <<
+    m_wxrectClient.height)
+  /** Only works with local wxMemoryDC object, not with member variable. */
+  wxMemoryDC wxmemorydc;
+  /** http://docs.wxwidgets.org/trunk/classwx_memory_d_c.html#a93d218796ba9359eb4aec2ae46a813e6:
+  * "Use the wxDC::IsOk() member to test whether the constructor was successful
+  * in creating a usable device context. Don't forget to select a bitmap into
+  * the DC before drawing on it."  */
+  if( wxmemorydc.IsOk() )
+  {
+    const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
+      m_wxrectClient.width, m_wxrectClient.height);
+    if( creationSucceeded )
+    {
+//      LOGN_DEBUG("before SelectObject")
+//      m_wxmemorydc.SelectObject(wxNullBitmap);
+      LOGN_DEBUG("before SelectObject")
+      wxmemorydc.SelectObject( m_wxbitmapForMemoryDC);
+      LOGN_DEBUG("before FloodFill")
+      wxmemorydc.FloodFill(0,0, * wxWHITE,
+        //* wxBLACK,
+        wxFLOOD_BORDER //: the area to be flooded is bounded by the given colour.
+        );
+    //  m_wxbitmapForMemoryDC.S
+      DrawTranslationAndCreateChoices(wxmemorydc);
+    }
+    else
+      LOGN_ERROR("creation of bitmap for memory DC failed")
+  }
+  else
+    LOGN_ERROR("memory DC is not OK")
+  LOGN_DEBUG("end")
 }
 
 void GetTokenIndex2TranslationAndConcatenationID(
@@ -123,6 +147,7 @@ void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
    wxCoord & wxcoordY
   )
 {
+  LOGN_DEBUG("begin")
   unsigned uiTokenIndex = 0;
 //  std::vector<std::vector<TranslationAndGrammarPart> >
 //     std_vector_stdvecTranslationAndGrammarPart;
@@ -246,10 +271,12 @@ void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
 //    std_set_translationandconcatenationid
     std_set_grammarpartpointerandconcatenationid
     , r_wxdc, wxcoordX, wxcoordY);
+  LOGN_DEBUG("end")
 }
 
 void wxGermanTranslationPanel::DrawParseTreesFromLeaves(wxDC & r_wxdc)
 {
+  LOGN_DEBUG("begin")
   wxCoord wxcoordX = 0;
   wxCoord wxcoordY = 0;
   std::vector<std::vector<std::vector<TranslationAndGrammarPart> > >
@@ -264,10 +291,12 @@ void wxGermanTranslationPanel::DrawParseTreesFromLeaves(wxDC & r_wxdc)
       , r_wxdc, wxcoordX, wxcoordY);
     ++ c_iterAllSentencesAtSameTokenIndex;
   }
+  LOGN_DEBUG("end")
 }
 
 void wxGermanTranslationPanel::DrawTranslationAndCreateChoices(wxDC & r_wxdc)
 {
+  LOGN_DEBUG("begin")
   //Delete existing choice windows
   bool bOk =
     //"returns true if ok"
@@ -305,6 +334,7 @@ void wxGermanTranslationPanel::DrawTranslationAndCreateChoices(wxDC & r_wxdc)
 //  //important when the choice controls are created after a resize?!
 //  Layout();
 //  Fit();
+  LOGN_DEBUG("end")
 }
 
 void wxGermanTranslationPanel::DrawTranslationFromAllParseTrees(wxDC & r_wxdc)
@@ -707,16 +737,17 @@ void wxGermanTranslationPanel::DrawMemoryDCbitmap(wxPaintDC & r_wxpaintdc)
 {
   wxRect wxrectClient = GetClientRect();
 
-  //http://docs.wxwidgets.org/stable/wx_wxmemorydc.html:
-  r_wxpaintdc.Blit(
-    0, //wxCoord xdest,
-    0, //wxCoord ydest,
-    wxrectClient.width, //wxCoord width,
-    wxrectClient.height, //wxCoord height
-    & m_wxmemorydc, //wxDC *source,
-    0, //wxCoord xsrc,
-    0 //wxCoord ysrc
-    );
+//  //http://docs.wxwidgets.org/stable/wx_wxmemorydc.html:
+//  r_wxpaintdc.Blit(
+//    0, //wxCoord xdest,
+//    0, //wxCoord ydest,
+//    wxrectClient.width, //wxCoord width,
+//    wxrectClient.height, //wxCoord height
+//    & m_wxmemorydc, //wxDC *source,
+//    0, //wxCoord xsrc,
+//    0 //wxCoord ysrc
+//    );
+  r_wxpaintdc.DrawBitmap(m_wxbitmapForMemoryDC, wxPoint(0,0), false);
 }
 
 //http://docs.wxwidgets.org/stable/wx_wxeraseevent.html#wxeraseevent

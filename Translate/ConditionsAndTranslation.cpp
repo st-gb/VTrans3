@@ -10,15 +10,18 @@
 #include <Parse/ParseByRise.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN()
 #include <Translate/AttributeTypeAndPosAndSize.hpp>
-#include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
+//#include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
+#include <Controller/TranslationControllerBase.hpp> //class TranslationControllerBase
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 #include <map> //std::map
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
 
-//A static variable also needs to be defined.
+/** Static variables also need to be defined once. */
 std::map<std::string, pfnTransformString> ConditionsAndTranslation::
   s_std_mapFunctionName2Function;
+//I_UserInterface * ConditionsAndTranslation::s_p_userinterface;
+TranslationControllerBase * ConditionsAndTranslation::s_p_translationControllerBase;
 
 bool ConditionsAndTranslation::AllConditionsMatch(
   // So it can be used with data from outside this class.
@@ -50,7 +53,7 @@ bool ConditionsAndTranslation::AllConditionsMatch(
         )
     {
       const Condition & cr_condition = *c_ConditionIterator ;
-      std::string std_stringSyntaxTreePathOfCondition = cr_condition.
+      const std::string std_stringSyntaxTreePathOfCondition = cr_condition.
         m_syntaxtreepath.GetAs_std_string();
       LOGN_DEBUG("current condition's syntax tree path:" <<
         std_stringSyntaxTreePathOfCondition )
@@ -139,21 +142,40 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                   LOGN_DEBUG( //FULL_FUNC_NAME << "--"
                     "attribute refers to the German "
                     "language" )
-                  const fastestUnsignedDataType attributeValue =
-                    p_grammarpartLeaf->m_pvocabularyandtranslation->
-                    m_arbyAttribute[r_atapas.m_wIndex ] ;
-                  LOGN_DEBUG( //FULL_FUNC_NAME << "--"
-                    "attribute value is "
-                    << (WORD) cr_condition.m_byAttributeValue
-                    << ", leaf's value is: " << attributeValue )
-                  if( cr_condition.m_byAttributeValue != attributeValue )
+                  const BYTE * c_arbyAttribute = p_grammarpartLeaf->
+                    m_pvocabularyandtranslation->m_arbyAttribute;
+                  if(c_arbyAttribute)
                   {
+                    const fastestUnsignedDataType attributeValue =
+                      c_arbyAttribute[r_atapas.m_wIndex ] ;
                     LOGN_DEBUG( //FULL_FUNC_NAME << "--"
-                      "attribute value mismatches "
-                      "leaf's value" )
-                    bAllConditionsMatch = false ;
+                      "attribute value is "
+                      << (WORD) cr_condition.m_byAttributeValue
+                      << ", leaf's value is: " << attributeValue )
+                    if( cr_condition.m_byAttributeValue != attributeValue )
+                    {
+                      LOGN_DEBUG( //FULL_FUNC_NAME << "--"
+                        "attribute value mismatches "
+                        "leaf's value" )
+                      bAllConditionsMatch = false ;
+                    }
                   }
+                  else
+                  {
 //                    return false ;
+                    const std::string grammarpartPath =
+                      s_p_translationControllerBase->m_parsebyrise.GetPathAs_std_string(
+                      r_stdvec_p_grammarpartPath);
+
+                    const std::string errorMessage =
+                      cr_condition.m_stdstrAttributeName +
+                      "'s byte array for between \"" +
+                      std_stringSyntaxTreePathOfCondition + "\" and \"" +
+                      grammarpartPath + "\" is not allocated" ;
+                    LOGN_ERROR(errorMessage)
+                    //TODO show in GUI
+                    s_p_translationControllerBase->Message(errorMessage);
+                  }
                 }
                 break;
             }//switch

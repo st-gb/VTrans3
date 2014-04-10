@@ -18,6 +18,7 @@ class wxMenuBar ;
 class wxParseTreePanel ;
 class wxSplitterWindow ;
 class wxToolBar ;
+class wxToolBarToolBase;
 
 namespace wxWidgets
 {
@@ -27,8 +28,9 @@ namespace wxWidgets
     //using wxPanel::Bind"
     wxMenuBar * mp_wxmenubar ;
     wxToolBar * mp_wxtoolbar ;
+    wxMenuItem * m_p_wxMeniItemUnloadDictionary;
     void AddMenuBar() ;
-    void AddBitmapButtonAndTooltip(
+    wxToolBarToolBase * AddBitmapButtonAndTooltip(
       enum user_interface_control_actions itemID, 
       const char * const XPMbitmapData [], const wxChar toolTip []//, wxSizer * p_wxsizer
       );
@@ -49,6 +51,8 @@ namespace wxWidgets
       );
     virtual
     ~MainFrame();
+
+    void SetDictionaryFilePath(const wxString & wxstr);
     #include "EventHandlerFunctions.hpp"
   };
 

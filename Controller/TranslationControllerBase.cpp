@@ -139,6 +139,7 @@ TranslationControllerBase::TranslationControllerBase()
 //  m_nodetrie_ui32GrammarPartName2colour.Create(256);
 //  OneLinePerWordPair::s_p_userinterface = this;
 
+  ConditionsAndTranslation::s_p_translationControllerBase = this;
 #ifndef TEST_MINI_XML
   std::string std_str = "makeFemale";
   ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(

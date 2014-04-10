@@ -177,6 +177,8 @@ class TranslationControllerBase;
 
     void AddFiniteVerbFormsFromGermanInfinitive(
       const std::string & std_strWordStem);
+    void AddFiniteVerbFormsFromIrregularGerman1stPersSing(
+      const std::string & std_strIrregularGerman1stPersSing);
     void AddFiniteVerbFormsFromGerman3rdPersPast(
       const std::string & std_strWordStem);
     void AddFiniteVerbFormsFromGerman3rdPersPresent(
@@ -205,7 +207,8 @@ class TranslationControllerBase;
     }
     void PossiblyGenerateAndAddGermanAttributes(
       const EnglishWord::English_word_class engWordClass,
-      const std::string &
+      const std::string &,
+      const fastestUnsignedDataType attributeIndexInsideDictFile = 0
       );
 
     void GetNumberOfArrayElements(
@@ -307,6 +310,9 @@ class TranslationControllerBase;
       const fastestUnsignedDataType stringLen,
       const fastestUnsignedDataType vocAndTranslArrayIndex)
     {
+      /** This method may be called multiple times with the same index. */
+      if( m_arstrGermanWord[vocAndTranslArrayIndex] != NULL)
+        delete [] m_arstrGermanWord[vocAndTranslArrayIndex];
       m_arstrGermanWord[vocAndTranslArrayIndex] = new
         word_type_for_new_allocator [stringLen
          // string terminating 0 char.

@@ -522,6 +522,11 @@ void VTransApp::EndTimer()
   m_p_mainWindow->EndTimer();
 }
 
+void VTransApp::SetDictionaryFilePath(const wxString & wxstr )
+{
+  m_p_mainWindow->SetDictionaryFilePath(wxstr);
+}
+
 void VTransApp::StartTimer()
 {
   m_p_mainWindow->StartTimer();

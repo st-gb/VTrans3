@@ -22,12 +22,12 @@ namespace wxWidgets
   {
     // Add first column
     wxListItem col0;
-    col0.SetId(0);
+    col0.SetId(ParseRuleName);
     col0.SetText( wxT("parse rule's superordinate grammar part") );
     col0.SetWidth(500);
     InsertColumn(ParseRuleName, col0);
     wxListItem col1;
-    col1.SetId(1);
+    col1.SetId(FilePath);
     col1.SetText( wxT("file path") );
     col1.SetWidth(200);
     InsertColumn(FilePath, col1);
