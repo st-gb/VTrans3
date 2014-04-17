@@ -112,7 +112,7 @@ namespace wxWidgets
     return wxT("/");
   }
 
-  //Overload virtual method of wxListCtrl to provide text data for virtual list
+  /** Override virtual method of wxListCtrl to provide text data for virtual list*/
   wxString ParseRulesListCtrl::OnGetItemText(long item, long column) const
   {
     wxString wxstr, wxstrSyntaxTreePath;

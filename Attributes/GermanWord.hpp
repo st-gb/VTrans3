@@ -170,6 +170,9 @@ public:
     //          \/   \    /
     //       dative accusative
     , dativ_and_accusativ
+    /** If a grammatical case is not given in the dictionary, it typically may
+     *  be either dative or accusative. */
+    , dative_or_accusative
     } ;
   VTrans::string_type m_strWords[16];
   //Für Uebersetzung: ob "wo" oder "wohin":

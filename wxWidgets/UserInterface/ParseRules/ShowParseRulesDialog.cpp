@@ -5,7 +5,7 @@
  *      Author: mr.sys
  */
 
-#include <wxWidgets/UserInterface/ShowParseRulesDialog.hpp>
+#include "ShowParseRulesDialog.hpp"
 #include <wxWidgets/UserInterface/ParseRules/ParseRulesListCtrl.hpp>
 
 namespace wxWidgets

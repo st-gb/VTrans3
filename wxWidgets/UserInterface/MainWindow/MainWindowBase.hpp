@@ -14,6 +14,7 @@
 //for enum user_interface_control_actions
 #include <wxWidgets/user_interface_control_actions.h>
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
+#include <wxWidgets/UserInterface/LogEntries/LogEntriesDialog.hpp>
 
 class ParseByRise;
 class TranslationControllerBase;
@@ -39,6 +40,7 @@ namespace wxWidgets
     wxTopLevelWindow * m_p_mainwindow;
   protected:
     wxToolBarToolBase * m_p_wxToolBarToolBaseLoadDictionary;
+    LogEntriesDialog * m_p_logEntriesDialog;
   public:
     ParseByRise & m_parsebyrise;
     TranslationControllerBase & m_translationcontrollerbase;

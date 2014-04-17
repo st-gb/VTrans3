@@ -55,7 +55,7 @@ namespace ParseTreeTraverser
       m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
         m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
     }
-    void ParseTreePathAdded()
+    /*virtual*/ void ParseTreePathAdded()
     {
       m_vec_wGrammarPartIDcurrentParsePath.push_back(
         m_grammarpartpointer_and_parselevelCurrent.

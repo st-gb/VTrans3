@@ -27,7 +27,7 @@
 #include <wxWidgets/UserInterface/wxGermanTranslationPanel.hpp>
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 #include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
-#include <wxWidgets/UserInterface/ShowParseRulesDialog.hpp>
+#include <wxWidgets/UserInterface/ParseRules/ShowParseRulesDialog.hpp>
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
 #include "VocabularyInMainMem/VocablesForWord.hpp"
 
@@ -602,6 +602,10 @@ void EVENT_HANDLER_CLASS_NAME::OnTimerEvent(wxTimerEvent &event)
 void EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton( wxCommandEvent & wxcmd )
 {
   g_logger.TruncateOutputSizeToZero();
+//  LogEntriesDialog dlg;
+  m_p_logEntriesDialog = new LogEntriesDialog(g_logger);
+//  m_logEntriesDialog.Show();
+  m_p_logEntriesDialog->Show();
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )

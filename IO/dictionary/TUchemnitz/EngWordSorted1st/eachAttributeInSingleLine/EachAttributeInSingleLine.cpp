@@ -194,6 +194,11 @@
             case TUchemnitzDictionary::neutralNoun :
               p_vocabularyandtranslation->SetAttributeValue(0, GermanNoun::das);
               break;
+            case TUchemnitzDictionary::transitiveVerb:
+              /** If a grammatical case is not given in the dictionary, it
+               *  typically may be either dative or accusative. */
+              p_vocabularyandtranslation->SetAttributeValue(0,
+                GermanVerb::dative_or_accusative);
             }
             GCC_DIAG_ON(switch)
           }

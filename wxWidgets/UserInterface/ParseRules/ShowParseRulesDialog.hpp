@@ -8,7 +8,7 @@
 #ifndef SHOWPARSERULESDIALOG_HPP_
 #define SHOWPARSERULESDIALOG_HPP_
 
-#include "ShowRulesDialogBase.hpp"
+#include <wxWidgets/UserInterface/ShowRulesDialogBase.hpp>
 
 namespace wxWidgets
 {

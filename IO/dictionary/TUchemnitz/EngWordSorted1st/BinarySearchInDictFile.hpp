@@ -32,7 +32,7 @@ namespace DictionaryReader
   {
     namespace EngWordSorted1st
     {
-      inline void HandleEndOfToken(
+      /*inline*/ void HandleEndOfToken(
         char word [],
         fastestUnsignedDataType & charIndex,
         PositionStringVector & psvDictFile,
