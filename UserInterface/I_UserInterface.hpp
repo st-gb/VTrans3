@@ -26,6 +26,11 @@ public:
     DWORD dwOffsetOfBeginOfEntry,
     DWORD dwOffset
     ) = 0;
+  /** Intension: for multithreaded translation: called from the translation
+   *   thread after translating.
+   *  Sample implementation: send a message to the GUI thread to show the
+   *   translation result in GUI thread. */
+  virtual void UpdateAfterTranslation() {};
 //  virtual void DictionaryFileLine(unsigned );
   virtual void EndTimer() { };
   virtual void StartTimer() { };

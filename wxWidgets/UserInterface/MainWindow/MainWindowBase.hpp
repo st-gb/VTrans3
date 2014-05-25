@@ -11,6 +11,8 @@
 //#include <wx/window.h>
 #include <wx/toplevel.h> //Base class wxTopLevelWindow/ wxTopLevelWindowBase
 #include <wx/timer.h> //class wxTimer
+
+#include <Attributes/TranslationResult.hpp> //class TranslationResult
 //for enum user_interface_control_actions
 #include <wxWidgets/user_interface_control_actions.h>
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
@@ -27,6 +29,9 @@ class wxToolBarToolBase;
 
 namespace wxWidgets
 {
+  /** Base class of all possible main windows (subclasses of this class may/
+   *  should additionally be a subclass of a wxToplevelWindow-derived class,
+   *  e.g. class wxFrame ) */
   class MainWindowBase
     /** Base class of wxDialog and wxFrame for calling its common methods
        such as "SetTitle(...)". */
@@ -35,13 +40,22 @@ namespace wxWidgets
     //private
     //  wxTopLevelWindow
   {
-    /**make a member of this class and do NOT inherit from it else
-     * subclasses of this class may both inherit from wxEvtHandler */
+    /** Make wxTopLevelWindow as member of this class instead of subclassing
+     *  this class from class wxTopLevelWindow ,
+     *  else subclasses of this class may both inherit from wxEvtHandler ->
+     *  double inheritance problem (compile errors).*/
     wxTopLevelWindow * m_p_mainwindow;
   protected:
+    /** Member variables for multi threaded translations. */
+    VTrans::thread_type m_translateThread;
+    std::string m_std_strWholeInputText;
+    TranslationResult m_translationResult;
+    /** Member variables for multi threaded translations END. */
+
     wxToolBarToolBase * m_p_wxToolBarToolBaseLoadDictionary;
     LogEntriesDialog * m_p_logEntriesDialog;
   public:
+    static unsigned s_windowID;
     ParseByRise & m_parsebyrise;
     TranslationControllerBase & m_translationcontrollerbase;
   public:
@@ -77,6 +91,9 @@ namespace wxWidgets
       m_wxtimer.Stop();
       m_p_mainwindow->SetTitle( wxT("VTrans") );
     }
+    /** Implementations of this method in in subclasses should e.g. deactivate
+     *  "do translate" buttons or menu items. */
+    virtual void DisableDoTranslateControls() {};
     void StartTimer()
     {
       m_wxtimer.Start(1000);
@@ -103,6 +120,10 @@ namespace wxWidgets
     
   };
 }
+
+BEGIN_DECLARE_EVENT_TYPES()
+  DECLARE_LOCAL_EVENT_TYPE(UpdateAfterTranslationEvent, wxNewEventType())
+END_DECLARE_EVENT_TYPES()
 
 #endif	/* MAINWINDOWBASE_HPP */
 

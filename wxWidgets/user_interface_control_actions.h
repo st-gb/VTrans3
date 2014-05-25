@@ -8,7 +8,8 @@
 #ifndef USER_INTERFACE_CONTROL_ACTIONS_H_
 #define USER_INTERFACE_CONTROL_ACTIONS_H_
 
-//An enum guarantees a unique number for each element.
+/** IDs for the event table (assignment of event ID -> event handler function).
+ *  Use an enum because it guarantees a unique number for each element. */
 enum user_interface_control_actions
 {
   ID_Close = 1 ,
@@ -37,7 +38,9 @@ enum user_interface_control_actions
   ID_Info,
   ID_Timer,
   ID_ShowGrammarPartMemoryAddress ,
-  ID_ShowGrammarTranslatedWord
+  ID_ShowTranslatedWord,
+  ID_DecreaseFontSize,
+  ID_IncreaseFontSize
 };
 
 

@@ -25,6 +25,8 @@
       BinarySearchInDictFile::BinarySearchInDictFile(IVocabularyInMainMem & vocaccess)
         : DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile(vocaccess)
       {
+        try
+        {
         /** "Intransitive Verb 3rd person singular present" */
         std::string wordKind = "vi3Pres";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
@@ -58,6 +60,10 @@
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::transitiveVerb);
         //TODO  insert more nodes: for "vt", "vr", ...
+        }catch( const NS_NodeTrie::RootNodeNotInitalizedException & e)
+        {
+          LOGN_ERROR("NS_NodeTrie::RootNodeNotInitalizedException")
+        }
       }
 
       BinarySearchInDictFile::~BinarySearchInDictFile()
@@ -195,6 +201,8 @@
               p_vocabularyandtranslation->SetAttributeValue(0, GermanNoun::das);
               break;
             case TUchemnitzDictionary::transitiveVerb:
+            case TUchemnitzDictionary::vt_3singPres:
+            case TUchemnitzDictionary::vt_3singPast:
               /** If a grammatical case is not given in the dictionary, it
                *  typically may be either dative or accusative. */
               p_vocabularyandtranslation->SetAttributeValue(0,

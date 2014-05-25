@@ -338,7 +338,17 @@ void ParseByRise::DeleteFromMultiMap(
     );
 }
 
-/** Sums up unknown words in a row to minimize the number of parse trees. */
+/** Sums up unknown words in a row to minimize the number of parse trees.
+ *  If not done the parse tree can get extremely large if the source text 
+ *  contains many unknown words and the parsing get very slow.
+ * 
+   e.g. for "Stefan Gebauer is a freak." : 
+ *  "Stefan"       "Gebauer" 
+ *  unknown word   unknown word
+ *       \           /
+ *     "Stefan Gebauer"
+ *      unknown word
+ */
 void ParseByRise::SummarizeUnknownWords()
 {
   DeleteFromMultiMap(m_stdmultimap_dwLeftmostIndex2p_grammarpart/*, true*/);
@@ -375,7 +385,7 @@ void ParseByRise::CreateParseTree(const std::string & cr_stdstrWholeInputText)
   LOGN_DEBUG("end")
 }
 
-bool ParseByRise::GrammarPartDoesNotAlreadyExist(GrammarPart *p_grammarpart)
+bool ParseByRise::GrammarPartDoesNotAlreadyExist(GrammarPart * p_grammarpart)
 {
   bool bGrammarPartDoesNotAlreadyExist =
     //Do not store 1 and the same grammar part more than once in
@@ -393,9 +403,11 @@ bool ParseByRise::GrammarPartDoesNotAlreadyExist(GrammarPart *p_grammarpart)
     ////       def_plural    def_plural
     ////               \          /
     ////               3rdPersPlural
-    m_stdset_grammarpartAllSuperordinate.find( //grammarpart
+    //m_stdset_grammarpartAllSuperordinate.find( //grammarpart
+    m_allSuperordinateGrammarParts2pointerToThem.find(
       * p_grammarpart ) ==
-      m_stdset_grammarpartAllSuperordinate.end();
+      //m_stdset_grammarpartAllSuperordinate.end();
+      m_allSuperordinateGrammarParts2pointerToThem.end();
   return bGrammarPartDoesNotAlreadyExist;
 }
 
@@ -515,6 +527,31 @@ bool ParseByRise::PossiblyDuplicateSubTrees(
   }
   else
     p_grammarpartRightChild->m_bAssignedAsChild = true;
+}
+
+/*bool*/ GrammarPart * ParseByRise::InsertIntoSuperordinateGrammarPartContainer(
+  GrammarPart * p_grammarPartToInsert)
+{
+//  LOGN_DEBUG("inserting " << * p_grammarpartSuperordinate
+//    << " into container for all superordinate grammar parts")
+  LOGN_DEBUG("inserting " << p_grammarPartToInsert 
+    << " " << * p_grammarPartToInsert
+    << " with new subtree into container for all superordinate grammar parts")
+  /** In order to not to add it again to the list of ALL grammar parts.*/
+#ifdef _DEBUG
+  //std::pair<std::set<GrammarPart>::iterator,bool> pair_ =
+  std::pair<std::map<GrammarPart, GrammarPart *>::iterator,bool> pair_ =
+#endif
+  //m_stdset_grammarpartAllSuperordinate.insert(
+//          //grammarpart
+//          * p_grammarpartParent ) ;
+    m_allSuperordinateGrammarParts2pointerToThem.insert( std::make_pair(
+      * p_grammarPartToInsert, p_grammarPartToInsert) );
+  //"false if the set already contained an element whose key had an
+  //equivalent value in the ordering"
+  if( /*valueAlreadyContained =*/  pair_.second == false )
+   return pair_.first->second;
+  return NULL;
 }
 
 bool ParseByRise:://GrammarRuleAppliesTo(
@@ -651,7 +688,9 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 
       LOGN_DEBUG("grammar rule matches:"
         " left grammar part:" << p_grammarpartLeftChild
+        << " " << GetGrammarPartName(p_grammarpartLeftChild->m_wGrammarPartID)
         << " right grammar part:" << p_grammarpartRightChild
+        << " " << GetGrammarPartName(p_grammarpartRightChild->m_wGrammarPartID)
         )
 
       /** e.g. for the grammar part "def_article_noun" add "the" (article) and
@@ -666,18 +705,21 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 //        iter_wLeftmostIndex2grammarpartRightGrammarPart->second ) ;
         * p_grammarpartRightChild ) ;
 
+      const bool grammarPartDoesNotAlreadyExist =
+        GrammarPartDoesNotAlreadyExist(p_grammarpartParent);
+      LOGN_DEBUG("grammarPartDoesNotAlreadyExist?:" <<
+        grammarPartDoesNotAlreadyExist)
       /** This must be checked as a break criteria! Else resolving grammar rules
       * was endless. */
-      if( GrammarPartDoesNotAlreadyExist(p_grammarpartParent) )
+      if( grammarPartDoesNotAlreadyExist )
       {
           //In order to not to add it again to the list of ALL grammar parts
   #ifdef _DEBUG
-          const int numSuperordinateGPs = m_stdset_grammarpartAllSuperordinate.size();
-          std::pair<std::set<GrammarPart>::iterator,bool> pair_ =
+          const int numSuperordinateGPs = //m_stdset_grammarpartAllSuperordinate.size();
+            m_allSuperordinateGrammarParts2pointerToThem.size();
+//          std::pair<std::set<GrammarPart>::iterator,bool> pair_ =
   #endif
-            m_stdset_grammarpartAllSuperordinate.insert(
-            //grammarpart
-            * p_grammarpartParent ) ;
+        InsertIntoSuperordinateGrammarPartContainer(p_grammarpartParent);
 //          InsertIntoOutmostTokenIndexMaps(
 //            p_grammarpartParent,
 //            dwLeftMostTokenIndexOfRule,
@@ -742,13 +784,9 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 
         if( createdNewSubTree )
         {
-        //In order to not to add it again to the list of ALL grammar parts
-#ifdef _DEBUG
-        std::pair<std::set<GrammarPart>::iterator,bool> pair_ =
-#endif
-          m_stdset_grammarpartAllSuperordinate.insert(
-          //grammarpart
-          * p_grammarpartParent ) ;
+//        const bool valueAlreadyContained = 
+        const GrammarPart * p_grammarPart =
+          InsertIntoSuperordinateGrammarPartContainer(p_grammarpartParent);
 
 //        //Must assign as child after inserting into the std::set, else
 //        //endless loop?!
@@ -758,14 +796,14 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 //          p_grammarpartRightChild
 //          );
 #ifdef _DEBUG
-        const int numSuperordinateGPs = m_stdset_grammarpartAllSuperordinate.size();
-        //"false if the set already contained an element whose key had an
-        //equivalent value in the ordering"
-        if( pair_.second == false )
+        const int numSuperordinateGPs = //m_stdset_grammarpartAllSuperordinate.size();
+          m_allSuperordinateGrammarParts2pointerToThem.size ();
+        if( /*valueAlreadyContained*/ p_grammarPart )
         {
           //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 //          #pragma GCC diagnostic ignored  "-Wunused"
-          const GrammarPart & r_gp = *(pair_.first) ;
+          //const GrammarPart & r_gp = *(pair_.first) ;
+          const GrammarPart & r_gp = /*pair_.first->first*/ * p_grammarPart;
           SUPPRESS_UNUSED_VARIABLE_WARNING(r_gp)
 //          #pragma GCC diagnostic pop
           int i = 0 ;
@@ -862,6 +900,29 @@ bool ParseByRise:://GrammarRuleAppliesTo(
     }
 #endif
   }
+#ifdef _DEBUG
+  const int numSuperordinateGPs = //m_stdset_grammarpartAllSuperordinate.size();
+    m_allSuperordinateGrammarParts2pointerToThem.size();
+  std::ostringstream std_oss;
+  std_oss << "# superordinate grammar parts: " << numSuperordinateGPs;
+  m_r_translationcontrollerbase.SetStatus(VTrans::not_set, std_oss.str().c_str() );
+  
+  //std::set<GrammarPart>::const_iterator c_iter = 
+  //  m_stdset_grammarpartAllSuperordinate.begin();
+  std::map<GrammarPart, GrammarPart *>::const_iterator c_iter =  
+    m_allSuperordinateGrammarParts2pointerToThem.begin ();
+  fastestSignedDataType superOrdinateGrammarPartIndex = 0;
+  while( c_iter != //m_stdset_grammarpartAllSuperordinate.end() 
+    m_allSuperordinateGrammarParts2pointerToThem.end() )
+  {
+    const GrammarPart * p_grammarPart = c_iter->second;
+    LOGN_DEBUG("superordinate grammar part # " << superOrdinateGrammarPartIndex 
+      << ":" << p_grammarPart /*<< " " << c_iter->second */)
+    ++ c_iter;
+    ++ superOrdinateGrammarPartIndex;
+  }
+#endif
+//  m_p_userinterface->
   return bRuleApplied ;
 }
 
@@ -880,6 +941,8 @@ void ParseByRise::InsertIntoOutmostTokenIndexMaps(
   DWORD dwRightMostTokenIndexOfRule
   )
 {
+  LOGN_DEBUG("begin " << p_grammarpart << " " << dwLeftMostTokenIndexOfRule
+    << " " << dwRightMostTokenIndexOfRule )
   //The map with the leftmost indexes can be used for translation:
   //  1. iterate over all GrammarPart beginning at index i
   //  2. use the GrammarPart that starts at index i and covers the most tokens,
@@ -1045,10 +1108,12 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
         //Do not store 1 and the same grammar part more than once in
         // -the container "leftmost token index -> grammar part"
         // -the container "rightmost token index -> grammar part"
-        if( m_stdset_grammarpartAllSuperordinate.find(
+        if( //m_stdset_grammarpartAllSuperordinate.find(
+           m_allSuperordinateGrammarParts2pointerToThem.find (
 //          grammarpartSuperordinate
           * p_grammarpartSuperordinate) ==
-            m_stdset_grammarpartAllSuperordinate.end()
+            //m_stdset_grammarpartAllSuperordinate.end()
+            m_allSuperordinateGrammarParts2pointerToThem.end()
             )
         {
 //          std::pair<c_iter_mmap_dw2p_grammarpart,c_iter_mmap_dw2p_grammarpart>
@@ -1136,10 +1201,8 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
 //          if( bMemorizeInsertion //->lefmost token index map
 //              )
           {
-            m_stdset_grammarpartAllSuperordinate.insert(
-              //grammarpartSuperordinate
-              * p_grammarpartSuperordinate
-              ) ;
+            InsertIntoSuperordinateGrammarPartContainer(p_grammarpartSuperordinate);
+            
             m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.
               insert(
               std::pair< WORD, GrammarPart *>
@@ -1182,7 +1245,7 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
 //    ++ dwMapIndex ;
 #endif
   }
-  DEBUG_COUTN("InsertSuperordinateGrammarPart end")
+  LOGN_DEBUG("return " << bReplaced)
   return bReplaced ;
 }
 

@@ -8,10 +8,12 @@
  *  indirectly included from this header file: ~ "undefined asctime", ... */
 #include <InputOutput/XML/OutputXMLindented_inl.hpp> //OutputXMLindented(...)
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
+#include <Controller/multithread/GetCurrentThreadNumber.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
 #include <data_structures/ByteArray.hpp>
 #include <data_structures/UTF8string.hpp>
+#include <preprocessor_macros/logging_preprocessor_macros.h> //
 //GenerateXMLtreeFromParseTree(...)
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
 //#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
@@ -126,6 +128,7 @@ TranslationControllerBase::TranslationControllerBase()
 #endif  //#ifndef TEST_MINI_XML
   m_configurationHandler(*this)
 {
+  GrammarPart::s_p_parseByRise = & m_parsebyrise;
 #ifndef TEST_MINI_XML
   VocabularyAndTranslation::s_p_translationControllerBase = this;
 #endif
@@ -552,7 +555,8 @@ void TranslationControllerBase::Translate(
   //A vector of sentences that begin at the same token index
   // (sentences that begin at the same token index:
   // vector of sentences that each contains a vector of words).
-  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+  //std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+  TranslationResult &
     r_stdvec_stdvec_stdvecTranslationAndGrammarPart
 //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    r_stdvec_stdvecTranslationAndConsecutiveID

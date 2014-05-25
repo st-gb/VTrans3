@@ -68,6 +68,7 @@ public:
   bool m_bAssignedAsChild;
   BYTE m_byPersonIndex ;
   static const uint32_t unconnected = 0;
+  static ParseByRise * s_p_parseByRise;
   //The region indexes are important for applying grammar rules:
   // 0     1      2     3  4     <-indexes of tokens
   //The vacuum cleaner is big.
@@ -105,6 +106,7 @@ public:
   std::string m_stdstrTranslation ;
 
   GrammarPart * DuplicateSubTree(const ParseByRise & ) const;
+  std::string GetName() const;
   GrammarPart * PossiblyDuplicateSubTree(const ParseByRise & );
   void SetLeftChild(GrammarPart & r_grammarpart) ;
 
@@ -149,10 +151,11 @@ public:
 
   //Define a < operator in order to insert into a container like std::set.
   bool operator < (const GrammarPart & ) const ;
+  /** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */
+  friend std::ostream & operator << (std::ostream & os, const GrammarPart &);
 
 //  inline
   void SetGrammarPartID(WORD wGrammarPartID ) ;
-
 };
 
 #endif /* GRAMMARPART_HPP_ */

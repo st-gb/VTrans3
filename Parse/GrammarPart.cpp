@@ -6,12 +6,16 @@
  */
 #include "GrammarPart.hpp"
 #include <Attributes/EnglishWord.hpp> //class EnglishWord's enum
+#include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 #include "DuplicateParseTree.hpp" //class ParseTreeTraverser::DuplicateParseTree
 
 #ifndef MAXWORD
   #define MAXWORD 65535
 #endif
+
+/** Static variable definitons. */
+ParseByRise * GrammarPart::s_p_parseByRise;
 
   void GrammarPart::SetLeftChild(GrammarPart & r_grammarpart)
   {
@@ -67,6 +71,11 @@ GrammarPart * GrammarPart::DuplicateSubTree(const ParseByRise & pbr) const
       (const GrammarPart *) this, (ParseByRise &) pbr);
   parseTreeDuplicater./*Traverse()*/ProcessLeavesOfParseTree();
   return parseTreeDuplicater.m_p_rootOfDuplicatedSubTree;
+}
+
+std::string GrammarPart::GetName() const
+{
+  return s_p_parseByRise->GetGrammarPartName(m_wGrammarPartID);
 }
 
 GrammarPart * GrammarPart::PossiblyDuplicateSubTree(const ParseByRise & pbr)
@@ -180,18 +189,51 @@ void GrammarPart::SetGrammarPartID(WORD wGrammarPartID )
   m_wGrammarPartID = wGrammarPartID ;
 }
 
-//Serves for the purpose that an applied grammar rule should not be added more
-//than once.
+/** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */
+std::ostream & operator << (std::ostream & std_ostream,
+    const GrammarPart & grammarPart)
+{
+  std_ostream << "address: " << & grammarPart << " ID:" << grammarPart.m_wGrammarPartID << " "
+    << grammarPart.GetName() 
+    << " " << grammarPart.m_dwLeftmostIndex << ":"
+    << grammarPart.m_dwRightmostIndex
+    << " left child:" << grammarPart.mp_grammarpartLeftChild
+    << " right child:" << grammarPart.mp_grammarpartRightChild
+          
+//    << GrammarPart::s_p_parseByRise->GetName(grammarPart.m_wGrammarPartID)
+    ;
+  return std_ostream;
+}
+
+/** This method
+ *  - is called by sorting containers of the standard template library (e.g. std::map)
+ *  - serves for the following purposes:
+ *  1. that an applied grammar rule should not be added more
+*     than once in an _associative_ Standard Template Library (STL) container.
+*     -> IF
+*         (_this_ object < parameter object) == false (-> _this_ object >= parameter object )
+*         AND
+*         (parameter object < _this_ object) == false (-> parameter object >= _this_ object)
+*        THEN
+*        (_this_ object >= parameter object) AND (parameter object >= _this_ object)
+*        -> _this_ object == parameter object
+*          -> do NOT insert into an _associative_ STL container
+*   2. for the position (i.e. sorting) an object of this class in
+*     a Standard Template Library (STL) container.
+*
+* @return true if this object is less than (->should be in position before) the
+*   parameter object.
+* */
 //std::set::find(grammarpartToFind) return valid iterator
 // if grammarpartInSet < grammarpartToFind == false
 // and grammarpartToFind < grammarpartInSet == false
 bool GrammarPart::operator < (const GrammarPart & cr_gpCompare ) const
 {
   bool bLess = false ;
-//  if( m_wGrammarPartID < cr_gpCompare.m_wGrammarPartID )
-//    bLess = true ;
-//  else
-//  {
+  if( m_wGrammarPartID < cr_gpCompare.m_wGrammarPartID )
+    bLess = true ;
+  else
+  {
 //    if( m_wGrammarPartID == cr_gpCompare.m_wGrammarPartID )
 //      if( m_dwLeftmostIndex < cr_gpCompare.m_dwLeftmostIndex )
 //        bLess = true ;
@@ -223,7 +265,6 @@ bool GrammarPart::operator < (const GrammarPart & cr_gpCompare ) const
 //              }
 //          }
 //      }
-//  }
 
   //This if for finding out whether a rules was applied yet during resolving
   //of all rules: this is the case if the left (if only 1 child) or both children
@@ -245,6 +286,7 @@ bool GrammarPart::operator < (const GrammarPart & cr_gpCompare ) const
 //      m_dwRightmostIndex < cr_gpCompare.m_dwRightmostIndex
 //      )
 //    bLess = true ;
-
+  }
+  //LOGN_DEBUG( * this << " is less than " << cr_gpCompare << " ? " << bLess)
   return bLess ;
 }

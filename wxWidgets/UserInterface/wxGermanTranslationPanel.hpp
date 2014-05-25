@@ -53,7 +53,7 @@ class wxGermanTranslationPanel
     m_p_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex;
 
   wxWindowID m_wxwindowidCurrent;
-  wxBitmap m_wxbitmapForMemoryDC;
+  wxBitmap m_wxbitmapForMemoryDC, * m_p_wxbitmapForMemoryDC;
   wxMemoryDC m_wxmemorydc;
 public:
   wxGermanTranslationPanel();
@@ -67,6 +67,7 @@ public:
         wxTAB_TRAVERSAL | wxNO_BORDER | wxNO_FULL_REPAINT_ON_RESIZE
         )
     , m_wxwindowidCurrent(0)
+    , m_p_wxbitmapForMemoryDC(NULL)
   {
   }
   void AddChoice(

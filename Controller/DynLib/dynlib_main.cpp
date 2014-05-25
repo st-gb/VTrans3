@@ -75,10 +75,10 @@ EXPORT BYTE
     return TranslationControllerBaseClass::InitFunction::creatingLogFileFailed;
   }
   LOGN_INFO("compile time:" << __DATE__ << " " << __TIME__ )
+#endif
   std::string std_strCurrentWorkingDir;
   OperatingSystem::GetCurrentWorkingDirA_inl(std_strCurrentWorkingDir);
   LOGN_INFO("current dir is:\"" << std_strCurrentWorkingDir << "\"")
-#endif
   //Create on heap because of g_logger access that causes a crash when the log
   //file has not been opened yet?!
   g_p_translationcontrollerbase = new TranslationControllerBase();

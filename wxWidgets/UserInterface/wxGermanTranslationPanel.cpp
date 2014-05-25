@@ -8,6 +8,7 @@
 
 #include <wx/choice.h>
 #include <wx/dc.h> //class wxDC
+#include <wx/dcbuffer.h> //class wxBufferedPaintDC
 #include <wx/dcclient.h> //for class wxPaintDC
 #include <map> //class std::multimap
 #include <set> //class std::set
@@ -31,6 +32,7 @@ END_EVENT_TABLE()
 using namespace wxWidgets;
 
 wxGermanTranslationPanel::wxGermanTranslationPanel()
+    : m_p_wxbitmapForMemoryDC(NULL)
 {
 //  wxChoice * p_wxchoice = new wxChoice(
 //    this, //wxWindow *    parent,
@@ -53,29 +55,49 @@ void wxGermanTranslationPanel::Create()
   m_wxrectClient = GetClientRect();
   LOGN_DEBUG("width:" << m_wxrectClient.width << " height:" <<
     m_wxrectClient.height)
+    const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
+      m_wxrectClient.width, m_wxrectClient.height, -1);
   /** Only works with local wxMemoryDC object, not with member variable. */
-  wxMemoryDC wxmemorydc;
+  wxMemoryDC wxmemorydc(m_wxbitmapForMemoryDC);
   /** http://docs.wxwidgets.org/trunk/classwx_memory_d_c.html#a93d218796ba9359eb4aec2ae46a813e6:
   * "Use the wxDC::IsOk() member to test whether the constructor was successful
   * in creating a usable device context. Don't forget to select a bitmap into
   * the DC before drawing on it."  */
-  if( wxmemorydc.IsOk() )
+  if( wxmemorydc.IsOk() //&& m_wxrectClient.GetWidth() > 0 &&
+      //m_wxrectClient.GetHeight() > 0
+      )
   {
-    const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
-      m_wxrectClient.width, m_wxrectClient.height);
+//    const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
+//      m_wxrectClient.width, m_wxrectClient.height, -1);
     if( creationSucceeded )
     {
 //      LOGN_DEBUG("before SelectObject")
 //      m_wxmemorydc.SelectObject(wxNullBitmap);
       LOGN_DEBUG("before SelectObject")
-      wxmemorydc.SelectObject( m_wxbitmapForMemoryDC);
-      LOGN_DEBUG("before FloodFill")
+//        if( m_p_wxbitmapForMemoryDC )
+//          delete m_p_wxbitmapForMemoryDC ;
+//      m_p_wxbitmapForMemoryDC = new wxBitmap(
+//        m_wxrectClient.width,
+//        m_wxrectClient.height,
+//        //http://docs.wxwidgets.org/stable/wx_wxbitmap.html#wxbitmapctor:
+//        //"A depth of -1 indicates the depth of the current screen or visual."
+//        -1) ;
+
+//      wxmemorydc.SelectObject( m_wxbitmapForMemoryDC);
+//      m_wxmemorydc.SelectObject( //m_wxbitmapForMemoryDC
+//        * m_p_wxbitmapForMemoryDC );
+//      LOGN_DEBUG("before FloodFill")
       wxmemorydc.FloodFill(0,0, * wxWHITE,
         //* wxBLACK,
         wxFLOOD_BORDER //: the area to be flooded is bounded by the given colour.
         );
     //  m_wxbitmapForMemoryDC.S
       DrawTranslationAndCreateChoices(wxmemorydc);
+      
+      /** http://www.informit.com/articles/article.aspx?p=405047 :
+       *  "When you have finished with the device context, you should call 
+       *  SelectObject with wxNullBitmap to remove the association." */
+      wxmemorydc.SelectObject(wxNullBitmap);
     }
     else
       LOGN_ERROR("creation of bitmap for memory DC failed")
@@ -735,7 +757,7 @@ void wxGermanTranslationPanel::SelectConnectedListEntries(
 
 void wxGermanTranslationPanel::DrawMemoryDCbitmap(wxPaintDC & r_wxpaintdc)
 {
-  wxRect wxrectClient = GetClientRect();
+//  wxRect wxrectClient = GetClientRect();
 
 //  //http://docs.wxwidgets.org/stable/wx_wxmemorydc.html:
 //  r_wxpaintdc.Blit(
@@ -756,22 +778,44 @@ void wxGermanTranslationPanel::OnEraseBackground(wxEraseEvent & event)
   //Do nothing (else the choices are overdrawn by the default erase procedure?!)
 }
 
+/** http://www.informit.com/articles/article.aspx?p=405047 :
+ *  "Paint events are generated when user interaction causes regions to need 
+ *  repainting, but they can also be generated as a result of wxWindow::Refresh 
+ *  or wxWindow::RefreshRect calls."
+ *  WARNING: controls MUST NOT be created inside this function, else creation 
+ *  leads to a redraw which in turn leads to a paint event (->endless loop) */
 void wxGermanTranslationPanel::OnPaint(wxPaintEvent & event)
 {
+  LOGN_DEBUG("begin")
+  /** http://www.informit.com/articles/article.aspx?p=405047 :
+   *  "If you define a paint event handler, you must always create a wxPaintDC 
+   * object, even if you don't use it." */
   wxPaintDC wxpaintdc(this);
+  //http://www.informit.com/articles/article.aspx?p=405047
+//  wxBufferedPaintDC dc(this);
   //  DrawTranslationFromAllParseTrees(wxpaintdc);
-  //  wxpaintdc.DrawBitmap(m_wxmemorydc.GetAsBitmap(), wxrectClient.width,
-  //      wxrectClient.height);
+//  wxpaintdc.DrawBitmap(m_wxmemorydc.GetAsBitmap(), wxrectClient.width,
+//    wxrectClient.height);
+//  wxpaintdc.DrawBitmap(m_wxbitmapForMemoryDC, wxrectClient.width,
+//    wxrectClient.height);
 //  DrawTranslationAndCreateChoices(wxpaintdc);
-
+  
+  /** Shifts the device origin so we don't have to worry
+  * about the current scroll position ourselves */
+//  PrepareDC(dc);
+  
   DrawMemoryDCbitmap(wxpaintdc);
+//  DrawTranslationAndCreateChoices(dc);
+  LOGN_DEBUG("end")
 }
 
 void wxGermanTranslationPanel::OnSize(wxSizeEvent & event)
 {
+  LOGN_DEBUG("begin")
   Create();
-  Refresh();
+//  Refresh();
 //  //wxWindowBase/ "wx/window.h":
 //  // "repaint all invalid areas of the window immediately"
 //  Update();
+  LOGN_DEBUG("end")
 }

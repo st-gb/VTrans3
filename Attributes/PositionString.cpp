@@ -7,6 +7,8 @@
 #include "PositionString.hpp" //class PositionStringVector
 #include <iostream> //class std::ostream
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
+// SUPPRESS_UNUSED_VARIABLE_WARNING(...)
+#include <compiler/GCC/suppress_unused_variable.h>
 
   const char * const PositionStringVector::s_comparisonResultString [] = {
     "not set", "fullMatchOfCompareVector", "match", "lower", "greater", "tooFewTokens"

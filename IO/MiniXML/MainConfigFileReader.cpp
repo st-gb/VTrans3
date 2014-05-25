@@ -41,12 +41,18 @@ namespace MiniXML
         {
           unsigned dwValue;
           ConvertStdStringToTypename(dwValue, std::string(strColour) );
+          try
+          {
           MainConfigFileReader::s_p_translationController->m_nodetrie_ui32GrammarPartName2colour.
             insert_inline(
             (BYTE *) strGrammarPartName,
             ::strlen(strGrammarPartName ),
             dwValue
             );
+        }catch( const NS_NodeTrie::RootNodeNotInitalizedException & e)
+        {
+          LOGN_ERROR("NS_NodeTrie::RootNodeNotInitalizedException")
+        }
         }
       }
     }

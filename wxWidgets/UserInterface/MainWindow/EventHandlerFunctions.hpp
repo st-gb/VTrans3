@@ -9,6 +9,9 @@
 #define	EVENTHANDLERFUNCTIONS_HPP
 
     void OnAddGrammarRules(wxCommandEvent & wxcmd);
+    void OnChar( wxKeyEvent & e);
+    void OnDecreaseParseTreePanelFontSize(wxCommandEvent & wxcmd);
+    void OnIncreaseParseTreePanelFontSize(wxCommandEvent & wxcmd);
     void OnShowGrammarPartMemoryAddress(wxCommandEvent & wxcmd);
     void OnShowTranslatedWord(wxCommandEvent & wxcmd);
     void OnAddTransformationRules(wxCommandEvent & wxcmd);
@@ -18,6 +21,7 @@
     void OnDrawParseTreeButton(wxCommandEvent & wxcmd);
     void OnInfoButton(wxCommandEvent & wxcmd);
     void OnLoadDictionaryButton(wxCommandEvent & wxcmd);
+    void OnUpdateAfterTranslation(wxCommandEvent &);
     void OnReInitGrammarRulesButton(wxCommandEvent & wxcmd);
     void OnRemoveGrammarRules(wxCommandEvent & wxcmd);
     void OnRemoveTransformationRules(wxCommandEvent & wxcmd);

@@ -48,14 +48,17 @@ namespace wxWidgets
     mp_wxmenubar = new wxMenuBar() ;
     wxMenu * p_wxmenu ;
     p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
-    p_wxmenu->Append( ID_Translate, wxT("translate") );
+    m_p_wxMeniItemTranslate = p_wxmenu->Append( ID_Translate, wxT("translate") );
     p_wxmenu->Append( ID_Settings, wxT("settings...") );
     mp_wxmenubar->Append( p_wxmenu , wxT("&action")) ;
 
     p_wxmenu = new wxMenu();
     p_wxmenu->Append( ID_LookupWord, wxT("&lookup word") );
     p_wxmenu->Append( ID_ShowDictionaryStatistics,  wxT("&statistics") );
-    m_p_wxMeniItemUnloadDictionary = p_wxmenu->Append( ID_UnloadDictionary, wxT("&unload") );
+    
+    m_p_wxMeniItemUnloadDictionary = p_wxmenu->Append( ID_UnloadDictionary, 
+      wxT("&unload") );
+    
     mp_wxmenubar->Append( p_wxmenu , wxT("&dictionary")) ;
 
     p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
@@ -63,6 +66,8 @@ namespace wxWidgets
       wxT("show memory address of grammar part ") );
     p_wxmenu->AppendCheckItem(ID_ShowGrammarTranslatedWord,
       wxT("show translated word") );
+    p_wxmenu->Append( ID_DecreaseFontSize, wxT("&decrease parse tree panel's font size") );
+    p_wxmenu->Append( ID_IncreaseFontSize, wxT("&increase parse tree panel's font size") );
     mp_wxmenubar->Append( p_wxmenu , wxT("&view")) ;
 
     SetMenuBar( mp_wxmenubar );
@@ -85,6 +90,11 @@ namespace wxWidgets
       );
   }
 
+  void MainFrame::DisableDoTranslateControls()
+  {
+     m_p_wxMeniItemTranslate->SetText( wxT("stop translation") );
+  }
+  
   void MainFrame::SetDictionaryFilePath(const wxString & wxstrDictionaryFilePath)
   {
     m_p_wxMeniItemUnloadDictionary->SetText( wxT("Unload ") +
@@ -101,7 +111,7 @@ namespace wxWidgets
     :
     wxFrame(
       (wxFrame *) NULL,
-      wxID_ANY,
+      /*wxID_ANY*/ s_windowID,
       cr_wxstrTitle,
       cr_wxpointPos,
       cr_wxsize

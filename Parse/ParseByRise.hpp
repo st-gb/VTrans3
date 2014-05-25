@@ -150,6 +150,7 @@ public:
   //-Elements _must_ be objects (->not pointers) for "GrammarPart::operator <"
   //  in std::set::find( ...) ?!
   std::set<GrammarPart> m_stdset_grammarpartAllSuperordinate ;
+  std::map<GrammarPart, GrammarPart *> m_allSuperordinateGrammarParts2pointerToThem ;
 
   //serves as a break condition so that is known that no more
   WORD m_wBiggestNumberOfTokensForAppliedGrammarRule ;
@@ -278,6 +279,8 @@ public:
 //  ParseByRise( I_UserInterface & r_userinterface );
   ParseByRise( TranslationControllerBase & r_translationcontrollerbase );
 //  ParseByRise(const ParseByRise& orig);
+  /*bool*/ GrammarPart * InsertIntoSuperordinateGrammarPartContainer(
+    GrammarPart * p_grammarPartToInsert);
   bool InsertIfGrammarRuleAppliesTo(
     //Maintaining 2 maps with both leftnost and rightmost indexes should be faster
     //when searching for neighboured grammar parts:

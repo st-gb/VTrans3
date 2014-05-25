@@ -90,6 +90,8 @@
 ////#define EVENT_HANDLER_CLASS_NAME wxCONCAT(EVENT_HANDLER_CLASS_NAMESPACE,EVENT_HANDLER_CLASS_NAME_NON_SCOPED) /*wxTextInputDlg*/
 //#define EVENT_HANDLER_CLASS_NAME wxWidgets::MainWindowBase /*wxTextInputDlg*/
 
+unsigned wxWidgets::MainWindowBase::s_windowID = 3;
+
 namespace wxWidgets
 {
 MainWindowBase::MainWindowBase(wxTopLevelWindow * p_mainwindow)
@@ -461,6 +463,9 @@ void EVENT_HANDLER_CLASS_NAME::AddResolve1ParseLevelButton( wxSizer * p_sizer )
 //    , //wxEXPAND |
 //      wxBOTTOM
 //    , 2 );
+  AddBitmapButtonAndTooltip(
+    ID_Resolve1ParseLevel, resolve_1parse_level24x24_xpm, 
+    wxT("resolve 1 parse level")/*, p_sizer*/);
 }
 
 void EVENT_HANDLER_CLASS_NAME::AddResolveSuperClassesButton( wxSizer * p_sizer )

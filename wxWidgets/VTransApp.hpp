@@ -102,9 +102,16 @@ namespace wxWidgets
     inline int ShowMessage(const wxString &,
       const fastestUnsignedDataType flags = wxTextControlDialog::OK_Button);
     void EndTimer();
+    void UpdateAfterTranslation();
     void StartTimer();
     void SetDictionaryFilePath(const wxString & wxstr );
+    void SetStatus(
+      enum VTrans::StatusCode statusCode,
+    //  const std::string & str
+      const char * const pch
+      );
     void OnMessage(wxCommandEvent &);
+    void OnSetStatus(wxCommandEvent &);
   private:
     DECLARE_EVENT_TABLE();
   };
@@ -115,7 +122,8 @@ namespace wxWidgets
 DECLARE_APP(wxWidgets::VTransApp)
 
 BEGIN_DECLARE_EVENT_TYPES()
-  DECLARE_LOCAL_EVENT_TYPE(MessageEvent, wxNewEventType())
+  DECLARE_LOCAL_EVENT_TYPE(MessageEvent, wxNewEventType() )
+  DECLARE_LOCAL_EVENT_TYPE(SetStatusEvent, wxNewEventType() )
 END_DECLARE_EVENT_TYPES()
 
 #endif	/* _VTRANSAPP_HPP */

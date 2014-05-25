@@ -1,11 +1,15 @@
+"the small men walk"
+"they like the car"
+"likes the car" -> "mag das Auto"
+"trusts the car" -> "vertraut dem Auto"
 umlauts in English source text
 if 4 points and unknown words inbetween: too many (14) translation possibilities are shown
 the cars drive->crash
 the vacuum cleaner transmit
 I and the sheep transmit me and the sheep
 I and the sheep transmit
-the sheep transmits  <- muss als "das Schaf �bertr�gt" �bersetzt werden.
-the sheep transmit  <- muss als "die Schafe �bertragen" �bersetzt werden.
+the sheep transmits  <- muss als "das Schaf überträgt" übersetzt werden.
+the sheep transmit  <- muss als "die Schafe übertragen" übersetzt werden.
 he and the vacuum cleaners transmit
 the sheep and  <- gramm-Regel wurde f�lschlicherweise mehrfach angewendet
 the sheep trust the boy and the boys <- ob statt "dem Junge" "dem Jungen" und "den Jungen" nicht zu "den Jungen>>n<<"

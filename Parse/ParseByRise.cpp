@@ -119,10 +119,12 @@ void ParseByRise::ClearAllGrammarStuff()
 void ParseByRise::ClearParseTree()
 {
   const fastestUnsignedDataType numSuperOrdinateGrammarParts =
-    m_stdset_grammarpartAllSuperordinate.size();
+    //m_stdset_grammarpartAllSuperordinate.size();
+    m_allSuperordinateGrammarParts2pointerToThem.size();
   LOGN_DEBUG("# of superordinate grammar parts: "
     << numSuperOrdinateGrammarParts )
-  m_stdset_grammarpartAllSuperordinate.clear() ;
+  //m_stdset_grammarpartAllSuperordinate.clear() ;
+  m_allSuperordinateGrammarParts2pointerToThem.clear();
   m_wBiggestNumberOfTokensForAppliedGrammarRule = 0 ;
 //   m_stdmultimap_dwRightmostIndex2grammarpart.clear() ;
 //   m_stdmultimap_dwLeftmostIndex2grammarpart.clear() ;
@@ -1177,7 +1179,8 @@ void ParseByRise::Message(const std::wstring & cr_stdwstr )
 
 void ParseByRise::RemoveParseTree(GrammarPart * p_grammarpartRootNode)
 {
-  m_stdset_grammarpartAllSuperordinate.erase( * p_grammarpartRootNode);
+  //m_stdset_grammarpartAllSuperordinate.erase( * p_grammarpartRootNode);
+  m_allSuperordinateGrammarParts2pointerToThem.erase (* p_grammarpartRootNode);
 //   m_stdmultimap_dwRightmostIndex2grammarpart.clear() ;
 //   m_stdmultimap_dwLeftmostIndex2grammarpart.clear() ;
 

@@ -13,9 +13,12 @@
 #include "DrawParseTreeTraverser.hpp" //class DrawParseTreeTraverser
 //SUPPRESS_UNUSED_VARIABLE_WARNING
 #include <compiler/GCC/suppress_unused_variable.h>
+
 #include <wx/dc.h> //class wxDC
 #include <wx/dcmemory.h> //class wxMemoryDC
 #include <wx/dcclient.h> //for class wxPaintDC
+#include <wx/settings.h> //wxSystemSettings::GetFont
+
 #include <Parse/ParseByRise.hpp> //for class GrammarPart
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 //getwxString(...)
@@ -34,6 +37,9 @@
   //"wx/msw/winundef.h" immediately after it. "
   #include "wx/msw/winundef.h"
 #endif //#ifdef _WIN32 //32 and 64 bit Windows
+
+/** 10 pixels is a good minimum. */
+#define MINIMUM_FONT_HEIGHT_IN_PIXELS -10
 
 /** for wxWidgets::GetwxString_Inline */
 using namespace wxWidgets;
@@ -72,10 +78,23 @@ wxParseTreePanel::wxParseTreePanel(
       size,
       style ,
       name )
+  , m_pointSizeOfFont(10)
   , m_p_wxbitmapBuffer(NULL)
 {
 //  Connect(wxEVT_PAINT, wxPaintEventHandler(wxParseTreePanel::OnPaint));
   mp_parsebyrise = NULL ;
+  const wxFont & font = /*r_wxdc.GetFont();*/
+    /** http://docs.wxwidgets.org/trunk/classwx_font.html:
+    * "You can retrieve the current system font settings with wxSystemSettings." */
+    wxSystemSettings::GetFont(
+      /** "System font.
+      * By default, the system uses the system font to draw menus, dialog box
+      * controls, and text." */
+      //TODO the point size for wxSYS_SYSTEM_FONT is too big (12).
+      //->Either try using another value of enum wxSystemFont
+      //or subtract a value from the point size (e.g. 4)
+      wxSYS_SYSTEM_FONT);
+  m_pointSizeOfFont = font.GetPointSize();
 }
 
 //wxParseTreePanel::wxParseTreePanel( wxWindow* parent )
@@ -199,6 +218,22 @@ void wxParseTreePanel::DrawGrammarPartNameAndPossiblyToken(
   }
 }
 
+void wxParseTreePanel::DecreaseFontSizeBy1Point()
+{
+//  wxFont wxfont = p_wxdc->GetFont();
+//  wxfont.SetPointSize( 8 ) ;
+  -- m_pointSizeOfFont;
+  /** http://docs.wxwidgets.org/trunk/classwx_window.html :
+   * "Causes this window, and all of its children recursively (except under 
+   *  wxGTK1 where this is not implemented), to be repainted.
+   * 
+   * Note that repainting doesn't happen immediately but only during the next 
+   * event loop iteration, if you need to update the window immediately you 
+   * should use Update() instead." */
+  Refresh();
+//  p_wxdc->SetFont( wxfont) ;
+}
+
 void wxParseTreePanel::DrawGrammarPartChildren(
   GrammarPart * p_grammarpart ,
   wxDC & r_wxdc
@@ -283,9 +318,12 @@ void wxParseTreePanel::DrawGrammarPartParentToChildLine(
     wChildHorizTextCenter , m_wParseLevel * 20 + 10 ) ;
 }
 
-void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise )
+/** May be called from outside of this class. */
+void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise
+  /*wxDC & r_wxdc*/)
 {
   LOGN_DEBUG("begin--r_parsebyrise:" << & r_parsebyrise)
+  mp_parsebyrise = & r_parsebyrise ;
 
 //  if( m_p_wxbitmapBuffer != NULL )
 //    delete m_p_wxbitmapBuffer;
@@ -296,12 +334,18 @@ void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise )
 
 //  m_wParseLevel = 0 ;
 //  m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
-  mp_parsebyrise = & r_parsebyrise ;
-  //Clears the device context using the current background brush.
-  //(else black background?)
+  
+  /** Create the dc object locally, see
+  * see http://docs.wxwidgets.org/trunk/classwx_memory_d_c.html */
+//  wxMemoryDC wxmemorydc;
+//  wxmemorydc.SelectObject(m_wxbitmapBuffer);
+
+  /** Clears the device context using the current background brush.
+  * (else black background?) */
   m_wxmemorydc.Clear();
-  DrawParseTreeBeginningFromLeaves(//wxpaintdc
-    m_wxmemorydc) ;
+  
+//  DrawParseTreeBeginningFromLeaves(//wxpaintdc
+//    /*m_wxmemorydc*/ wxmemorydc /*r_wxdc*/ );
   //Force a repaint.
   Refresh() ;
   LOGN_DEBUG("end")
@@ -706,6 +750,18 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     wxDC & r_wxdc )
 {
   LOGN_DEBUG("begin")
+  wxFont font = r_wxdc.GetFont ();
+  font.SetPointSize (m_pointSizeOfFont);
+  /** The font sizes are negative: the lower the bigger the sizes.*/
+  wxSize fontSizeInPixels = font.GetPixelSize();
+  int fontHeightInPixels = fontSizeInPixels.GetHeight();
+  /** Font height is less than abs(MINIMUM_FONT_HEIGHT_IN_PIXELS) pixels. */
+  if( fontHeightInPixels > MINIMUM_FONT_HEIGHT_IN_PIXELS )
+  {
+    fontSizeInPixels.SetHeight(MINIMUM_FONT_HEIGHT_IN_PIXELS);
+    font.SetPixelSize(fontSizeInPixels);
+  }
+  r_wxdc.SetFont(font);
 //  DWORD dwNumberOfAlreadyDrawnItems = 0 ;
   DWORD dwLeftMostTokenIndex = 0 ;
   GrammarPart * p_grammarpart ;
@@ -1115,16 +1171,21 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
   wxPaintDC wxpaintdc(this);
   LOGN_DEBUG("mp_parsebyrise:" << mp_parsebyrise)
 //  PrepareDC(wxpaintdc);
+  const wxSize & clientSize = GetClientSize();
   if( mp_parsebyrise )
   {
-    wxSize sz = GetClientSize();
 //    DrawParseTreeBeginningFromRoots(wxpaintdc) ;
 //    DrawParseTreeBeginningFromLeaves(//wxpaintdc
 //      wxmemorydc) ;
-//    wxpaintdc.DrawBitmap( * m_p_wxbitmapBuffer, sz.x, sz.y );
-    wxpaintdc.Blit(0, 0, sz.x , sz.y,
-      //mp_wxbufferedpaintdcStatic
-      & m_wxmemorydc , 0, 0 );
+//    wxpaintdc.DrawBitmap( /* * m_p_wxbitmapBuffer */
+//      m_wxbitmapBuffer, clientSize.x, clientSize.y );
+    DrawParseTreeBeginningFromLeaves( wxpaintdc
+      /*m_wxmemorydc*/ //wxmemorydc /*r_wxdc*/ 
+      );
+
+//    wxpaintdc.Blit(0, 0, sz.x , sz.y,
+//      //mp_wxbufferedpaintdcStatic
+//      & m_wxmemorydc , 0, 0 );
 
 //    while( citer != r_stdmultimap_dwLeftmostIndex2grammarpart.end() )
 //    {
@@ -1143,22 +1204,28 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
   }
   else
   {
-    wxpaintdc.DrawLine(wxPoint(10,10),wxPoint(199,100)) ;
+    wxpaintdc.DrawLine(wxPoint(10,10), /*wxPoint(199,100)*/ 
+      wxPoint(clientSize.x, clientSize.y) ) ;
     wxpaintdc.SetBackground(*wxBLUE_BRUSH);
   }
 }
 
 void wxParseTreePanel::OnSize(wxSizeEvent & evt)
 {
-  if( m_p_wxbitmapBuffer != NULL )
-    delete m_p_wxbitmapBuffer;
-  m_p_wxbitmapBuffer = new wxBitmap( evt.m_size.x, evt.m_size.y );
+//  if( m_p_wxbitmapBuffer != NULL )
+//    delete m_p_wxbitmapBuffer;
+  
+  const wxSize & newSize = evt.m_size;
+//  m_p_wxbitmapBuffer = new wxBitmap( newSize.x, newSize.y );
+  
+  m_wxbitmapBuffer.SetSize(newSize.x, newSize.y);
+  
 //  wxMemoryDC wxmemorydc( * m_p_wxbitmapBuffer);
-  m_wxmemorydc.SelectObject( * m_p_wxbitmapBuffer);
+//  m_wxmemorydc.SelectObject( /* *m_p_wxbitmapBuffer*/ m_wxbitmapBuffer);
 
   if( mp_parsebyrise )
   {
-    DrawParseTree( * mp_parsebyrise);
+    DrawParseTree( *mp_parsebyrise /* wxmemorydc*/ );
   }
   m_wxsizeClientRect = evt.GetSize();
 }

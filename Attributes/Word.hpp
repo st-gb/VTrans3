@@ -1,7 +1,7 @@
 #if !defined (WORD_H_INCLUDED)
 	    #define WORD_H_INCLUDED
 
-#include <Controller/string_type.hpp>//for typedef VTrans::string_type
+#include <Controller/string_type.hpp> /** for typedef VTrans::string_type */
 #include <tchar.h> //for TCHAR
 
 //#ifdef _WINDOWS

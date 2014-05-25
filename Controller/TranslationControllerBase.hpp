@@ -8,7 +8,8 @@
 #ifndef TRANSLATIONCONTROLLERBASE_HPP_
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
-#include <Attributes/TranslationAndGrammarPart.hpp>
+#include <Attributes/TranslationAndGrammarPart.hpp> //class TranslationAndGrammarPart
+#include <Attributes/TranslationResult.hpp> //class TranslationResult
 #include <Controller/dictionary_type.hpp> //typedef dictionary_type
 #include <Controller/DictReaderAndVocAccess/dictReaderAndVocAccess_type.hpp>
 #include "TranslateControllerBaseReturnCodes.h" //enum Init_return_codes
@@ -67,6 +68,9 @@ namespace VTrans
   enum StatusCode {not_set, lookUpWordInDictBeginningFromTokenIndex,
 	translationRules, transformParseTree, generateXMLtreeFromParseTree
     };
+  const char * const g_statusMessages [] = { "not set", 
+    "lookUpWordInDictBeginningFromTokenIndex", "translationRules", 
+    "transformParseTree", "generateXMLtreeFromParseTree"};
   class CurrentStatus
   {
     private:
@@ -162,8 +166,8 @@ public:
   {
 
   }
-
-  void SetStatus(enum VTrans::StatusCode, /*const std::string & str*/
+  /** (Sub class) implementation may set title of a window to the status passed. */
+  virtual void SetStatus(enum VTrans::StatusCode, /*const std::string & str*/
     const char * const);
   enum VTrans::StatusCode GetStatus( /*const std::string & str*/
     std::string &, struct tm &);
@@ -210,7 +214,8 @@ public:
     //A vector of sentences that begin at the same token index
     // (sentences that begin at the same token index:
     // vector of sentences that each contains a vector of words).
-    std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+    //std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+    TranslationResult &
       r_stdvec_stdvec_stdvecTranslationAndGrammarPart
     ) ;
 #endif //#ifndef TEST_MINI_XML

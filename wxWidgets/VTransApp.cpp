@@ -62,9 +62,11 @@ TranslationControllerBase * g_p_translationcontrollerbase = NULL ;
 IMPLEMENT_APP(VTransApp)
 
 DEFINE_LOCAL_EVENT_TYPE(MessageEvent)
+DEFINE_LOCAL_EVENT_TYPE(SetStatusEvent)
 
 BEGIN_EVENT_TABLE( VTransApp, wxApp )
   EVT_COMMAND(wxID_ANY, MessageEvent, VTransApp::OnMessage)
+  EVT_COMMAND(wxID_ANY, SetStatusEvent, VTransApp::OnSetStatus)
 END_EVENT_TABLE()
 
 VTransApp::VTransApp()
@@ -351,6 +353,16 @@ void VTransApp::OnMessage(wxCommandEvent & event)
   ShowMessage(wxstr);
 }
 
+/** Called after posting a SetStatusEvent. SetStatusEvent is posted to call
+ *  SetStatus in the GUI thread. */
+void VTransApp::OnSetStatus(wxCommandEvent & event)
+{
+  const wxString & wxstr = event.GetString();
+  
+  const enum VTrans::StatusCode statusCode = (enum VTrans::StatusCode) event.GetInt();
+  SetStatus(statusCode, wxWidgets::GetStdString(wxstr).c_str() );
+}
+
 bool VTransApp::GetProgramIconFromFile(wxIcon & r_wxicon )
 {
   bool bLoadFileRetVal =
@@ -493,6 +505,38 @@ inline int VTransApp::ShowMessage(
   return retVal;
 }
 
+void VTransApp::SetStatus(
+  enum VTrans::StatusCode statusCode,
+//  const std::string & str
+  const char * const pchStatusMessage
+  )
+{
+  LOGN_DEBUG("begin--status code:" << statusCode << " " << pchStatusMessage)
+//  m_critSecStatus.Enter();
+//  m_currentStatus.Set(statusCode, /*str*/ pch);
+  const unsigned currentThreadNumber = OperatingSystem::GetCurrentThreadNumber();
+  if( currentThreadNumber == m_GUIthreadID )
+  {
+    const char * const messageFromStatusCode = VTrans::g_statusMessages[statusCode];
+    m_p_mainWindow->SetTitle(wxWidgets::getwxString( messageFromStatusCode ) + 
+      wxWidgets::getwxString(pchStatusMessage) );
+//  m_critSecStatus.Leave();
+  }
+  else
+  {
+    wxCommandEvent wxcommand_event(SetStatusEvent);
+
+    wxcommand_event.SetString( GetwxString_Inline(pchStatusMessage));
+    wxcommand_event.SetInt(statusCode);
+  //    AsyncMessage(cr_stdstr);
+  //    QueueEvent  (       wxEvent *       event   );
+    //FIXME: http://docs.wxwidgets.org/trunk/classwx_evt_handler.html#a0737c6d2cbcd5ded4b1ecdd53ed0def3
+    //"[...] can't be used to post events from worker threads for the event
+    //objects with wxString fields (i.e. in practice most of them) [...]"
+    AddPendingEvent(wxcommand_event);
+  }
+}
+
 void VTransApp::ShowInvalidVocabularyFileFormatMessage(
   const VTrans::string_type & strWordFile,
   DWORD dwOffsetOfBeginOfEntry,
@@ -530,4 +574,9 @@ void VTransApp::SetDictionaryFilePath(const wxString & wxstr )
 void VTransApp::StartTimer()
 {
   m_p_mainWindow->StartTimer();
+}
+
+void VTransApp::UpdateAfterTranslation()
+{
+  m_p_mainWindow->UpdateAfterTranslation();
 }

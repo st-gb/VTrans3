@@ -42,11 +42,12 @@ DrawParseTreeTraverser::DrawParseTreeTraverser(
   , m_wParseLevelCountedFromRoot(0)
   , mp_wxdc ( p_wxdc )
 {
-  // TODO Auto-generated constructor stub
-  wxFont wxfont = p_wxdc->GetFont() ;
-  wxfont.SetPointSize( 8 ) ;
-  p_wxdc->SetFont( wxfont) ;
-  m_stringHeigth = p_wxdc->GetTextExtent(wxT("H")).GetWidth();
+//  wxFont wxfont = p_wxdc->GetFont() ;
+//  wxfont.SetPointSize( 8 ) ;
+//  p_wxdc->SetFont( wxfont) ;
+  m_stringHeigth = p_wxdc->GetTextExtent(wxT("H")).
+    //TODO should be height?
+    GetWidth();
 }
 
 DrawParseTreeTraverser::~DrawParseTreeTraverser()
@@ -167,6 +168,10 @@ void DrawParseTreeTraverser::LeaveFound()
   m_wxcolor.Set( GetwxString_Inline(
     ::wxGetApp().m_GUIattributes.m_std_strGrammarPartIDcolor) );
   mp_wxdc->SetTextForeground(m_wxcolor);
+#ifdef _DEBUG
+  const wxFont & font = mp_wxdc->GetFont(); 
+  const int fontPointSize = font.GetPointSize(); 
+#endif
   mp_wxdc->DrawText( wxstrGermanTranslation , //wXcoord
     m_currentParseTreeLeftEndInPixels + wxsizeSourceTextTokens.x,
     //0

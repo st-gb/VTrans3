@@ -11,6 +11,7 @@
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <Attributes/TranslationAndConsecutiveID.hpp>
 #include <Attributes/TranslationResult.hpp> //class WordCompound
+#include <Controller/thread_type.hpp> //typedef VTrans::thread_type
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 
 //#include <Xerces/SAX2GrammarRuleHandler.hpp>
@@ -21,6 +22,10 @@
 #include <Controller/GetErrorMessageFromLastErrorCode.hpp>
 #include <Controller/Logger/LogFileAccessException.hpp>
 
+/** For multi-threaded translation (e.g. translation in a non-GUI thread). */
+#include <multi_threaded_translation/TranslateThreadProc.hpp>
+#include <multi_threaded_translation/TranslateParameters.hpp>
+
 #include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
 #include <wxWidgets/UserInterface/UserInterface.hpp>
 #include <wxWidgets/UserInterface/wxParseTreePanel.hpp>
@@ -30,6 +35,7 @@
 #include <wxWidgets/UserInterface/ParseRules/ShowParseRulesDialog.hpp>
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
 #include "VocabularyInMainMem/VocablesForWord.hpp"
+#include <Translate/TranslateParseByRiseTree.hpp>
 
 #define EVENT_HANDLER_BASE_CLASS_NAME wxFrame /*MainWindowBase*/ /*wxTopLevelWindowBase wxDialog*/
 #define EVENT_HANDLER_CLASS_NAME_NON_SCOPED MainWindowBase /*MainFrame*/ /*wxTextInputDlg*/
@@ -53,6 +59,10 @@
 //#define wxStaticCastEvent(type, val) wx_static_cast(type, (& EVENT_HANDLER_BASE_CLASS_NAME) val)
 typedef void (wxEvtHandler::*wxEventFunction)(wxEvent&);
 
+/** This event is intended to be posted after translation in a non-GUI thread
+ *  for updating the view in GUI thread. */
+DEFINE_LOCAL_EVENT_TYPE(UpdateAfterTranslationEvent)
+
 //  EVT_BUTTON( ID_AddGrammarRules , (EVENT_HANDLER_BASE_CLASS_NAME) ( EVENT_HANDLER_CLASS_NAME::)OnAddGrammarRules )
 
 /** see http://docs.wxwidgets.org/trunk/classwx_tool_bar.html:
@@ -61,12 +71,19 @@ typedef void (wxEvtHandler::*wxEventFunction)(wxEvent&);
 #define BUTTON_EVENT_TYPE EVT_MENU /*EVT_BUTTON*/
 
 BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
+  EVT_COMMAND(wxID_ANY, UpdateAfterTranslationEvent, 
+    EVENT_HANDLER_CLASS_NAME::OnUpdateAfterTranslation)
+  //TODO http://www.wxwidgets.org/docs/faqgtk.htm#charinframe
+  // "Why does my simple program using EVT_CHAR not work?"
+  EVT_CHAR( EVENT_HANDLER_CLASS_NAME::OnChar)
   EVT_TIMER( ID_Timer, EVENT_HANDLER_CLASS_NAME::OnTimerEvent)
   BUTTON_EVENT_TYPE( ID_AddGrammarRules , EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules )
   BUTTON_EVENT_TYPE( ID_ShowGrammarPartMemoryAddress,
     EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress)
   BUTTON_EVENT_TYPE( ID_ShowGrammarTranslatedWord,
     EVENT_HANDLER_CLASS_NAME::OnShowTranslatedWord)
+  BUTTON_EVENT_TYPE( ID_DecreaseFontSize, EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize )
+  BUTTON_EVENT_TYPE( ID_IncreaseFontSize, EVENT_HANDLER_CLASS_NAME::OnIncreaseParseTreePanelFontSize )
   BUTTON_EVENT_TYPE( ID_AddTransformationRules ,
     EVENT_HANDLER_CLASS_NAME::OnAddTransformationRules )
   BUTTON_EVENT_TYPE( ID_AddTranslationRules , EVENT_HANDLER_CLASS_NAME::OnAddTranslationRules )
@@ -117,6 +134,24 @@ void EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules( wxCommandEvent & wxcmd )
 //    wxstrTitle,
 //    ::wxGetCwd()
 //    );
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnChar( wxKeyEvent & e)
+{
+    if( e.GetKeyCode() == WXK_ESCAPE )
+    {
+        m_translationcontrollerbase.Stop();
+    }
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize( wxCommandEvent & wxcmd )
+{
+  mp_wxparsetreepanel->DecreaseFontSizeBy1Point();
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnIncreaseParseTreePanelFontSize( wxCommandEvent & wxcmd )
+{
+ 
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress( wxCommandEvent & wxcmd )
@@ -200,10 +235,11 @@ DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionaryAndSendCloseEvent(void 
   UnloadDictionary(p_v);
   EVENT_HANDLER_CLASS_NAME & event_handler = *(EVENT_HANDLER_CLASS_NAME *) p_v;
 //  EVENT_HANDLER_CLASS_NAME * p_event_handler = (EVENT_HANDLER_CLASS_NAME *) p_v;
-  wxCloseEvent wxcloseEvent;
+  wxCloseEvent wxcloseEvent(wxEVT_CLOSE_WINDOW, wxWidgets::MainWindowBase::s_windowID);
   //Add the close event for destroying the window
 //  /*::wxGetApp().*/event_handler.GetEventHandler()->AddPendingEvent(wxcloseEvent);
-  ::wxPostEvent(event_handler.GetEventHandler(), wxcloseEvent);
+  //::wxPostEvent(event_handler.GetEventHandler(), wxcloseEvent);
+  event_handler.AddPendingEvent(wxcloseEvent);
   return 0;
 }
 
@@ -421,16 +457,30 @@ void EVENT_HANDLER_CLASS_NAME::OnResolve1ParseLevelButton( wxCommandEvent & wxcm
 {
   std::string stdstrWholeInputText ;
   GetEntireInputText(stdstrWholeInputText) ;
+  if( m_std_strWholeInputText == "" || 
+     m_std_strWholeInputText != stdstrWholeInputText )
+  {
+    m_parsebyrise.m_wParseLevel = 0;
+    m_std_strWholeInputText = stdstrWholeInputText;
+  }
   if( m_parsebyrise.m_wParseLevel ==
     //fully resolved or not begun yet.
     0 )
   {
+    m_translationcontrollerbase.ResetVocabularyInMainMemToFundamentalWordsOnly();
     m_parsebyrise.ClearParseTree() ;
     m_parsebyrise.CreateInitialGrammarParts ( stdstrWholeInputText ) ;
   }
   else
   {
-    m_parsebyrise.ResolveGrammarRules() ;
+    ++ m_parsebyrise.m_dwMapIndex ;
+    bool grammarRuleApplied = m_parsebyrise.ResolveGrammarRules();
+    
+    bool bReplacedGrammarPartIDsBySuperordinate = m_parsebyrise.
+        ReplaceGrammarPartIDsBySuperordinate();
+    
+    if( ! (grammarRuleApplied || bReplacedGrammarPartIDsBySuperordinate) )
+      m_parsebyrise.m_wParseLevel = 0;
   }
   OnShowTokenIndex2GrammarPartButton(wxcmd) ;
   mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
@@ -608,86 +658,125 @@ void EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton( wxCommandEvent & wxcmd )
   m_p_logEntriesDialog->Show();
 }
 
+void EVENT_HANDLER_CLASS_NAME::OnUpdateAfterTranslation(wxCommandEvent &)
+{
+  UpdateAfterTranslation();
+}
+
+/** This method should only be called from within the GUI thread because GUI 
+ *  controls are accessed. */
+void EVENT_HANDLER_CLASS_NAME::UpdateAfterTranslation()
+{
+  const DWORD currentThreadNumber = OperatingSystem::GetCurrentThreadNumber();
+  if( currentThreadNumber == ::wxGetApp().//GetGUIthreadNumber() 
+    m_GUIthreadID )
+  {
+    const fastestUnsignedDataType numParseTrees = ::wxGetApp().
+      GetNumberOfParseTrees(//stdvec_stdvec_stdvecTranslationAndGrammarPart
+      m_translationResult);
+    SetTitle( wxString::Format( wxT("%u parse trees"), numParseTrees) );
+
+  //  std::string stdstrAllPossibilities = GetAllTranslationPossibilites(
+  //    stdvec_stdstrWholeTransl,
+  //    stdvec_stdvecTranslationAndGrammarPart ) ;
+
+  //  mp_textctrlGermanText->SetValue(stdstrAllPossibilities ) ;
+    m_p_wxgermantranslationpanel->Set(//stdvec_stdvecTranslationAndGrammarPart
+      /* stdvec_stdvec_stdvecTranslationAndGrammarPart */ m_translationResult);
+    m_p_wxgermantranslationpanel->Create();
+    //force redraw
+    m_p_wxgermantranslationpanel->Refresh();
+
+  //  wxHTMLfileOutput wxhtml_file_output(
+  ////    stdvec_stdvecTranslationAndConsecutiveID
+  //    stdvec_stdvecTranslationAndGrammarPart
+  //    ) ;
+  //  wxhtml_file_output.writeFile( //stdvec_stdstrWholeTransl ,
+  ////    stdvec_stdvecTranslationAndConsecutiveID ,
+  //    stdvec_stdvecTranslationAndGrammarPart ,
+  //    wxT("trans.html") ) ;
+
+  //  mp_textctrlGermanText->SetValue( stdstrWholeTransl ) ;
+    mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
+    //You can also trigger this call by calling Refresh()/Update()
+    //m_panel1->Refresh() ;
+  //  }
+  //  catch(/*const*/ LogFileAccessException & lfae)
+  //  {
+  ////    std::string std_strErrorMessage = ::GetErrorMesageFromErrorCodeA(
+  ////      lfae.m_errorCode);
+  ////    wxString wxstrMessage;
+  ////    switch(lfae.m_action)
+  ////    {
+  ////    case LogFileAccessException::deleteLogFile:
+  ////      wxstrMessage = wxT("deleting file failed");
+  ////      break;
+  ////    }
+  ////    wxstrMessage += wxT(":");
+  ////    const wxString & wxstr = wxWidgets::getwxString( std_strErrorMessage);
+  ////    wxstrMessage += wxstr;
+  //    const std::string std_strErrorMessage = lfae.GetErrorMessage();
+  //    const wxString wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
+  //    wxGetApp().ShowMessage(wxstrMessage);
+  //    throw lfae;
+  //  }
+  }
+  else
+  {
+    wxCommandEvent wxcommand_event(UpdateAfterTranslationEvent);
+
+    //wxcommand_event.SetString(GetwxString_Inline(cr_stdstr));
+  //    AsyncMessage(cr_stdstr);
+  //    QueueEvent  (       wxEvent *       event   );
+    //FIXME: http://docs.wxwidgets.org/trunk/classwx_evt_handler.html#a0737c6d2cbcd5ded4b1ecdd53ed0def3
+    //"[...] can't be used to post events from worker threads for the event
+    //objects with wxString fields (i.e. in practice most of them) [...]"
+    AddPendingEvent(wxcommand_event);
+  }
+}
+
 void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
 {
   LOGN_DEBUG("begin")
-//  try
-//  {
-  std::string stdstrWholeInputText ;
-  GetEntireInputText(stdstrWholeInputText) ;
-//  AxSpeech axspeech ;
-//  axspeech.Say( stdstrWholeInputText ) ;
+  if( m_translateThread.IsRunning() )
+  {
+    m_translationcontrollerbase.Stop();
+    wxMessageBox( wxT("already tranlating") );
+  }
+  else
+  {
+  //  try
+  //  {
+    std::string stdstrWholeInputText ;
+    GetEntireInputText(stdstrWholeInputText) ;
+  //  AxSpeech axspeech ;
+  //  axspeech.Say( stdstrWholeInputText ) ;
 
-//  std::string stdstrWholeTransl ;
-  std::vector<std::string> stdvec_stdstrWholeTransl ;
-//  std::vector<std::vector<TranslationAndGrammarPart> >
-//    stdvec_stdvecTranslationAndGrammarPart ;
-  /** A vector of sentences that begin at the same token index
-  * (sentences that begin at the same token index:
-  * vector of sentences that each contains a vector of words). */
-  //TODO exchange "std::vector<ele>" by a class that is derived from std::vector
-  std::vector <std::vector <std::vector <TranslationAndGrammarPart>
-    /* WordCompound */ > >
-    stdvec_stdvec_stdvecTranslationAndGrammarPart;
+  //  std::string stdstrWholeTransl ;
 
-//  std::vector<std::vector<TranslationAndConsecutiveID> >
-//    stdvec_stdvecTranslationAndConsecutiveID ;
+  //  std::vector<std::vector<TranslationAndConsecutiveID> >
+  //    stdvec_stdvecTranslationAndConsecutiveID ;
 
-  ::wxGetApp().Translate(
-    stdstrWholeInputText ,
-    stdvec_stdstrWholeTransl ,
-//    stdvec_stdvecTranslationAndGrammarPart
-    stdvec_stdvec_stdvecTranslationAndGrammarPart
-    ) ;
+    bool translateAsync = true;
+    /** Prevent multiple translation threads. */
+    DisableDoTranslateControls();
 
-  const fastestUnsignedDataType numParseTrees = ::wxGetApp().
-    GetNumberOfParseTrees(stdvec_stdvec_stdvecTranslationAndGrammarPart);
-  SetTitle( wxString::Format(wxT("%u parse trees"), numParseTrees) );
-
-//  std::string stdstrAllPossibilities = GetAllTranslationPossibilites(
-//    stdvec_stdstrWholeTransl,
-//    stdvec_stdvecTranslationAndGrammarPart ) ;
-
-//  mp_textctrlGermanText->SetValue(stdstrAllPossibilities ) ;
-  m_p_wxgermantranslationpanel->Set(//stdvec_stdvecTranslationAndGrammarPart
-      stdvec_stdvec_stdvecTranslationAndGrammarPart);
-  m_p_wxgermantranslationpanel->Create();
-  //force redraw
-  m_p_wxgermantranslationpanel->Refresh();
-
-//  wxHTMLfileOutput wxhtml_file_output(
-////    stdvec_stdvecTranslationAndConsecutiveID
-//    stdvec_stdvecTranslationAndGrammarPart
-//    ) ;
-//  wxhtml_file_output.writeFile( //stdvec_stdstrWholeTransl ,
-////    stdvec_stdvecTranslationAndConsecutiveID ,
-//    stdvec_stdvecTranslationAndGrammarPart ,
-//    wxT("trans.html") ) ;
-
-//  mp_textctrlGermanText->SetValue( stdstrWholeTransl ) ;
-  mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
-  //You can also trigger this call by calling Refresh()/Update()
-  //m_panel1->Refresh() ;
-//  }
-//  catch(/*const*/ LogFileAccessException & lfae)
-//  {
-////    std::string std_strErrorMessage = ::GetErrorMesageFromErrorCodeA(
-////      lfae.m_errorCode);
-////    wxString wxstrMessage;
-////    switch(lfae.m_action)
-////    {
-////    case LogFileAccessException::deleteLogFile:
-////      wxstrMessage = wxT("deleting file failed");
-////      break;
-////    }
-////    wxstrMessage += wxT(":");
-////    const wxString & wxstr = wxWidgets::getwxString( std_strErrorMessage);
-////    wxstrMessage += wxstr;
-//    const std::string std_strErrorMessage = lfae.GetErrorMessage();
-//    const wxString wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
-//    wxGetApp().ShowMessage(wxstrMessage);
-//    throw lfae;
-//  }
+    VTrans::multiThreadedTranslation::TranslateParameters * p_tranlParams = new 
+      VTrans::multiThreadedTranslation::TranslateParameters(
+      stdstrWholeInputText,
+      //g_p_translationcontrollerbase,
+      & m_translationcontrollerbase,
+      & m_translationResult,
+      m_translationcontrollerbase
+      );
+    if( translateAsync )
+    {
+      m_translateThread.start(
+        VTrans::TranslateThreadProc, p_tranlParams, "Translate");
+    }
+    else
+      VTrans::TranslateThreadProc(p_tranlParams);
+  }
   LOGN_DEBUG("end")
 }
 

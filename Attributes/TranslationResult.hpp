@@ -22,4 +22,14 @@ public:
   ~WordCompound();
 };
 
+/** A vector of sentences that begin at the same token index
+* (sentences that begin at the same token index:
+* vector of sentences that each contains a vector of words). */
+//TODO exchange "std::vector<ele>" by a class that is derived from std::vector
+class TranslationResult
+  : public std::vector <std::vector <std::vector <TranslationAndGrammarPart> > >
+{
+  
+};
+
 #endif /* TRANSLATIONRESULT_HPP_ */

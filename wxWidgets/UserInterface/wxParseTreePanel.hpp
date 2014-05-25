@@ -31,6 +31,7 @@
 #include <windef.h> //for WORD
 ////class DrawGrammarPartAttributes
 //#include <Attributes/DrawGrammarPartAttributes.hpp>
+#include <fastest_data_type.h> //typedef fastestUnsignedDataType
 
 //Forward declarations (faster than #include)
 class DrawGrammarPartAttributes ;
@@ -42,10 +43,12 @@ class wxDC ;
 class wxParseTreePanel
   : public wxPanel
 {
+  fastestUnsignedDataType m_pointSizeOfFont;
     WORD m_wParseLevel ;
     wxSize m_wxsizeClientRect;
     ParseByRise * mp_parsebyrise ;
     wxBitmap * m_p_wxbitmapBuffer;
+    wxBitmap m_wxbitmapBuffer;
     wxMemoryDC m_wxmemorydc;
     std::map<WORD,DWORD>
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
@@ -69,6 +72,8 @@ public:
     ) ;
 //	wxParseTreePanel(wxWindow* parent ) ;
 	virtual ~wxParseTreePanel();
+  
+  void DecreaseFontSizeBy1Point();
 	void DrawGrammarPartChildren( GrammarPart * p_pg ,
 	  //Use base class wxDC, so subclasses of it can be used as actual parameters.
 	  //This allows e.g. to use either a wxMemoryDC (-> no flicker) or a
@@ -123,7 +128,8 @@ public:
 	  WORD wParseLevel ,
 	  GrammarPart * p_grammarpart
 	  ) ;
-	void DrawParseTree( ParseByRise & r_parsebyrise ) ;
+	void DrawParseTree( ParseByRise & r_parsebyrise
+            /*wxDC & r_wxdc*/) ;
   void DrawParseTreeBeginningFromLeaves(
     //Use base class wxDC, so subclasses of it can be used as actual parameters.
     //This allows e.g. to use either a wxMemoryDC (-> no flicker) or a

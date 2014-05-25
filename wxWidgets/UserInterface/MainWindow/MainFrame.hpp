@@ -28,6 +28,7 @@ namespace wxWidgets
     //using wxPanel::Bind"
     wxMenuBar * mp_wxmenubar ;
     wxToolBar * mp_wxtoolbar ;
+    wxMenuItem * m_p_wxMeniItemTranslate;
     wxMenuItem * m_p_wxMeniItemUnloadDictionary;
     void AddMenuBar() ;
     wxToolBarToolBase * AddBitmapButtonAndTooltip(
@@ -52,7 +53,9 @@ namespace wxWidgets
     virtual
     ~MainFrame();
 
+    void DisableDoTranslateControls();
     void SetDictionaryFilePath(const wxString & wxstr);
+    void UpdateAfterTranslation();
     #include "EventHandlerFunctions.hpp"
   };
 

@@ -51,6 +51,8 @@ namespace DictionaryReader
       if( s_nodetrieWordKind.size() == 0 )
       {
     //    Build();
+        try
+        {
         //Wortart: adj, adv, vi=verb intrans. vr=verb reflexiv.
         std::string wordKind = "adj";
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
@@ -76,6 +78,10 @@ namespace DictionaryReader
         wordKind = "vt"; //="Verb Transitive"
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::transitiveVerb);
+        }catch( const NS_NodeTrie::RootNodeNotInitalizedException & e)
+        {
+          LOGN_ERROR("NS_NodeTrie::RootNodeNotInitalizedException")
+        }
       }
     }
 
