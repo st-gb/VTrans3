@@ -64,7 +64,7 @@ namespace wxWidgets
     p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
     p_wxmenu->AppendCheckItem(ID_ShowGrammarPartMemoryAddress,
       wxT("show memory address of grammar part ") );
-    p_wxmenu->AppendCheckItem(ID_ShowGrammarTranslatedWord,
+    p_wxmenu->AppendCheckItem(ID_ShowTranslatedWord,
       wxT("show translated word") );
     p_wxmenu->Append( ID_DecreaseFontSize, wxT("&decrease parse tree panel's font size") );
     p_wxmenu->Append( ID_IncreaseFontSize, wxT("&increase parse tree panel's font size") );

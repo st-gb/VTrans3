@@ -220,6 +220,14 @@ std::ostream & operator << (std::ostream & std_ostream,
 *          -> do NOT insert into an _associative_ STL container
 *   2. for the position (i.e. sorting) an object of this class in
 *     a Standard Template Library (STL) container.
+ *  3. STL container::find() calls this method with cr_gpCompare as the object
+ *    to look for:
+ *    example: find(e):
+ *    set[2]=c < e ->true -> use higher map index
+ *    -> set[3]='e' < e -> false (<=> e>=e )
+ *    -> e < set[3]=e -> false (<=> set[3]=e==e )
+ *    0 1 2 3 4 <- set index
+ *    a b c e g <- set value
 *
 * @return true if this object is less than (->should be in position before) the
 *   parameter object.
@@ -229,10 +237,22 @@ std::ostream & operator << (std::ostream & std_ostream,
 // and grammarpartToFind < grammarpartInSet == false
 bool GrammarPart::operator < (const GrammarPart & cr_gpCompare ) const
 {
+ /**     this grammar part ID < other grammar part ID?
+  *              /           \
+  *       YES:less    NO: this grammar part ID == other grammar part ID?
+  *                              |
+  *         YES: address of this LEFT child < address of other LEFT child?
+  *          /                     \
+  *   YES:less   NO: address of this LEFT child == address of other LEFT child?
+  *                               |
+  *       YES: address of this RIGHT Child < address of other RIGHT child?
+  *                 /
+  *           YES: less
+  */
   bool bLess = false ;
   if( m_wGrammarPartID < cr_gpCompare.m_wGrammarPartID )
     bLess = true ;
-  else
+  else if(m_wGrammarPartID == cr_gpCompare.m_wGrammarPartID)
   {
 //    if( m_wGrammarPartID == cr_gpCompare.m_wGrammarPartID )
 //      if( m_dwLeftmostIndex < cr_gpCompare.m_dwLeftmostIndex )
@@ -273,10 +293,10 @@ bool GrammarPart::operator < (const GrammarPart & cr_gpCompare ) const
     bLess = true ;
   else
     if( mp_grammarpartLeftChild == cr_gpCompare.mp_grammarpartLeftChild )
-//          GrammarPart * mp_grammarpartParent ;
+////          GrammarPart * mp_grammarpartParent ;
       if ( //may be NULL!
-        mp_grammarpartRightChild &&
-        cr_gpCompare.mp_grammarpartRightChild &&
+////        mp_grammarpartRightChild &&
+////        cr_gpCompare.mp_grammarpartRightChild &&
         mp_grammarpartRightChild <
         cr_gpCompare.mp_grammarpartRightChild )
       bLess = true ;
@@ -287,6 +307,6 @@ bool GrammarPart::operator < (const GrammarPart & cr_gpCompare ) const
 //      )
 //    bLess = true ;
   }
-  //LOGN_DEBUG( * this << " is less than " << cr_gpCompare << " ? " << bLess)
+  LOGN_DEBUG( * this << " is less than " << cr_gpCompare << " ? " << bLess)
   return bLess ;
 }

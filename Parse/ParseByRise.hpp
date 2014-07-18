@@ -14,6 +14,7 @@
 #include <set> //class std::set
 #include <Attributes/Token.h> //class PositionStringVector
 #include "GrammarPart.hpp" //class GrammarPart
+#include <fastest_data_type.h> // typedef fastestUnsignedDataType
 
 //Forward declarations (faster than #include)
 class LetterNode;
@@ -257,6 +258,14 @@ public:
     DWORD dwTokenIndex, DWORD dwTokenIndexRightMost);
   void InsertGrammarRulesFor3rdPersonSingular() ;
   void InsertGrammarPartID2NameMappingForWordClasses() ;
+  void InsertIntoOverallLeftmostAndRightmostTokenIndexContainers(
+    const std::multimap<DWORD, GrammarPart* > & std_multimap_dwLeftmostIndex2p_grammarpart,
+    const std::multimap<DWORD, GrammarPart* > & std_multimap_dwRightmostIndex2p_grammarpart
+    );
+  void InsertIntoLeftmostAndRightmostTokenIndexContainersFor1ParseLevel(
+    const fastestUnsignedDataType leftMostTokenIndex,
+    const fastestUnsignedDataType rightMostTokenIndex,
+    const GrammarPart * const p_grammarPart);
   inline void InsertIntoOutmostTokenIndexMaps(
     GrammarPart * p_grammarpart,
     DWORD dwLeftMostTokenIndexOfRule,
@@ -302,6 +311,7 @@ public:
 //    , std::multimap<DWORD, GrammarPart>::iterator iterRightGrammarPart
 //    , WORD wGrammarPartIDOfRule
 //    ) ;
+  void OutputSuperordinateGrammarParts();
   bool InsertSuperordinateGrammarPart(
 //    std::multimap<DWORD, GrammarPart> & mm_idx2grammarpt
     std::multimap<DWORD, GrammarPart *> & mm_idx2grammarpt
@@ -318,6 +328,7 @@ public:
     GrammarPart * p_grammarpartRightChild
     );
   void Message(const std::wstring & cr_stdwstr ) ;
+  bool Resolve1ParseLevel();
   BYTE ResolveGrammarRules(
     //Maintaining 2 maps with both leftnost and rightmost indexes should be faster
     //when searching for neighboured grammar parts:

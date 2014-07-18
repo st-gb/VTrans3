@@ -9,6 +9,7 @@
 #define READMAINCONFIGFILE_HPP_
 
 #include <string> //class std::string
+#include <IO/configuration/MainConfigFileReaderBase.hpp>
 
 class TranslationControllerBase;
 
@@ -17,10 +18,12 @@ namespace VTrans3 {
 namespace MiniXML
 {
   class MainConfigFileReader
+    : public MainConfigFileReaderBase
   {
   public:
     static TranslationControllerBase * s_p_translationController;
-    MainConfigFileReader(TranslationControllerBase & r_translationController);
+    MainConfigFileReader(TranslationControllerBase & r_translationController,
+      ConfigurationHandler_type & configurationReader);
     virtual
     ~MainConfigFileReader();
     bool ProcessXML(const std::string & cr_stdstrFilePath);

@@ -17,7 +17,9 @@ namespace MiniXML
   TranslationControllerBase * MainConfigFileReader::s_p_translationController;
 
   MainConfigFileReader::MainConfigFileReader(
-      TranslationControllerBase & r_translationController )
+      TranslationControllerBase & r_translationController,
+    ConfigurationHandler_type & configurationReader)
+    : MainConfigFileReaderBase(configurationReader)
   {
     s_p_translationController = & r_translationController;
   }
@@ -29,76 +31,6 @@ namespace MiniXML
 
   namespace MainConfigFile
   {
-#ifndef TEST_MINI_XML
-    void HandleGrammartPartColourXMLelement(
-        mxml_node_t * node)
-    {
-      const char * const strGrammarPartName = mxmlElementGetAttr(node, "name");
-      if( strGrammarPartName != NULL )
-      {
-        const char * const strColour = mxmlElementGetAttr(node, "colour");
-        if( strColour != NULL )
-        {
-          unsigned dwValue;
-          ConvertStdStringToTypename(dwValue, std::string(strColour) );
-          try
-          {
-          MainConfigFileReader::s_p_translationController->m_nodetrie_ui32GrammarPartName2colour.
-            insert_inline(
-            (BYTE *) strGrammarPartName,
-            ::strlen(strGrammarPartName ),
-            dwValue
-            );
-        }catch( const NS_NodeTrie::RootNodeNotInitalizedException & e)
-        {
-          LOGN_ERROR("NS_NodeTrie::RootNodeNotInitalizedException")
-        }
-        }
-      }
-    }
-
-    void HandleReadGrammarRuleFileXMLelement( mxml_node_t * node )
-    {
-      const char * const strGrammarRuleFilePath =
-        mxmlElementGetAttr(node, "path");
-      if( strGrammarRuleFilePath != NULL )
-      {
-        LOGN_DEBUG("grammar rule file path:" << strGrammarRuleFilePath)
-//            strVocabularyFilePath
-        MainConfigFileReader::s_p_translationController->ReadGrammarRuleFile(
-          strGrammarRuleFilePath);
-      }
-    }
-
-    void HandleReadTranslationRuleFileXMLelement( mxml_node_t * node )
-    {
-      const char * const strGrammarRuleFilePath =
-        mxmlElementGetAttr(node, "path");
-      if( strGrammarRuleFilePath != NULL )
-      {
-        LOGN_DEBUG("translation rule file path:" << strGrammarRuleFilePath)
-//            strVocabularyFilePath
-        MainConfigFileReader::s_p_translationController->ReadTranslationRuleFile(
-          strGrammarRuleFilePath);
-      }
-    }
-
-    void HandleReadVocabularyAttributeDefinitionFileXMLelement(
-        mxml_node_t * node )
-    {
-      const char * const strVocabularyAttributeDefinitionFilePath =
-        mxmlElementGetAttr(node, "path");
-      if( strVocabularyAttributeDefinitionFilePath != NULL )
-      {
-        LOGN_DEBUG("vocabulary_attribute_definition file path:"
-          << strVocabularyAttributeDefinitionFilePath)
-//            strVocabularyFilePath
-        MainConfigFileReader::s_p_translationController->ReadVocAttributeDefinitionFile(
-          strVocabularyAttributeDefinitionFilePath);
-      }
-    }
-#endif //#ifndef TEST_MINI_XML
-
     /** from mxml-2.7/doc/mxml.html#LOAD_CALLBACKS */
     mxml_type_t loadFileCallBackFunction(mxml_node_t *node)
     {
@@ -124,18 +56,19 @@ namespace MiniXML
     }
 
     /** see http://www.msweet.org/documentation/project3/Mini-XML.html#4_7 */
-    void sax_cb(
+    void sax_callback(
       mxml_node_t * node,
       mxml_sax_event_t event,
       void * data
       )
     {
 //      LOGN_DEBUG("begin--node:" << node )
+     MainConfigFileReader & mainConfigFileReader = * (MainConfigFileReader *) data;
 //      std::cout << "begin--node:" << node << std::endl;
       const char * xmlElementName = mxmlGetElement(node);
       if( xmlElementName == NULL )
     	  LOGN_DEBUG("element name:NULL")
-	  else
+      else
       {
     	  LOGN_DEBUG("element name:" << xmlElementName)
 //      std::cout << "element nameXX:" << xmlElementName << std::endl;
@@ -149,54 +82,20 @@ namespace MiniXML
 //      }
       if (event == MXML_SAX_ELEMENT_OPEN)
       {
-#ifdef COMPILE_AS_EXECUTABLE
-        if( ::strcmp(xmlElementName, "grammar_part") == 0 )
-        {
-          HandleGrammartPartColourXMLelement(node);
-        }
-        //TODO implement in base class of "MainConfigFileReader" or
-        // MiniXML-specific/ enable this feature
-//        else if( m_strElementName == "drawing" )
-//          HandleGUI_XMLelement(cr_xercesc_attributes);
-        else
-#endif
-        if( ::strcmp(xmlElementName, "grammar_rule_file") == 0 )
-        {
-          HandleReadGrammarRuleFileXMLelement( node ) ;
-        }
-//         else if( m_strElementName == "transformation_rule_file" )
-//         {
-//           HandleReadTransformationRuleFileXMLelement( cr_xercesc_attributes ) ;
-//         }
-         else if( ::strcmp(xmlElementName, "translation_rule_file") == 0 )
-         {
-           HandleReadTranslationRuleFileXMLelement( node) ;
-             int i = 0;
-         }
-         else if( ::strcmp(xmlElementName, "vocabulary_attribute_definition_file") == 0 )
-         {
-           HandleReadVocabularyAttributeDefinitionFileXMLelement(
-             node ) ;
-         }
-        else if( ::strcmp(xmlElementName, "vocabulary_file") == 0 )
-        {
-          const char * const strVocabularyFilePath =
-            mxmlElementGetAttr(node, "path");
-          LOGN_DEBUG("Dict file path address:" << (void*) strVocabularyFilePath)
-          if( strVocabularyFilePath != NULL )
-          {
-            LOGN_DEBUG("Dict file path:" << strVocabularyFilePath)
-//            strVocabularyFilePath
-            MainConfigFileReader::s_p_translationController->
-              /*m_configurationHandler.*/m_stdstrVocabularyFilePath =
-              strVocabularyFilePath;
-          }
-        }
-      }
+//#ifdef COMPILE_AS_EXECUTABLE
+//        //TODO implement in base class of "MainConfigFileReader" or
+//        // MiniXML-specific/ enable this feature
+////        else if( m_strElementName == "drawing" )
+////          HandleGUI_XMLelement(cr_xercesc_attributes);
+//        else
 //#endif
+//      }
+////#endif
+      mainConfigFileReader.openingXMLelement(xmlElementName, node);
     }
     }
-  }
+    }
+  } //namespace MainConfigFile
 
   bool MainConfigFileReader::ProcessXML(const std::string & cr_stdstrFilePath)
   {
@@ -213,8 +112,10 @@ namespace MiniXML
         /** Callback function or MXML_NO_CALLBACK */
         MXML_NO_CALLBACK,
   //      MiniXML::MainConfigFile::loadFileCallBackFunction,
-        MiniXML::MainConfigFile::sax_cb, //SAX callback or MXML_NO_CALLBACK
-        NULL //sax_data
+        MiniXML::MainConfigFile::sax_callback, //SAX callback or MXML_NO_CALLBACK
+        /** Is passed by MiniXML framework to the SAX callback function as 3rd 
+         *  parameter. */
+        this //NULL //sax_data
         );
 //      //First node or NULL if the file could not be read.
 //      if( mxml_node_tLoadFileRes != NULL )

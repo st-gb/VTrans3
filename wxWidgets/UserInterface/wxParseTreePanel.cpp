@@ -36,6 +36,7 @@
   //The fix is to either not include <windows.h> at all or include
   //"wx/msw/winundef.h" immediately after it. "
   #include "wx/msw/winundef.h"
+#include "wxWidgets/VTransApp.hpp"
 #endif //#ifdef _WIN32 //32 and 64 bit Windows
 
 /** 10 pixels is a good minimum. */
@@ -78,7 +79,7 @@ wxParseTreePanel::wxParseTreePanel(
       size,
       style ,
       name )
-  , m_pointSizeOfFont(10)
+  , m_pointSizeOfFont(wxGetApp ().m_GUIattributes.m_fontSizeInPoint)
   , m_p_wxbitmapBuffer(NULL)
 {
 //  Connect(wxEVT_PAINT, wxPaintEventHandler(wxParseTreePanel::OnPaint));
@@ -94,7 +95,8 @@ wxParseTreePanel::wxParseTreePanel(
       //->Either try using another value of enum wxSystemFont
       //or subtract a value from the point size (e.g. 4)
       wxSYS_SYSTEM_FONT);
-  m_pointSizeOfFont = font.GetPointSize();
+//  m_pointSizeOfFont = //font.GetPointSize();
+//    wxGetApp ().m_GUIattributes.m_fontSizeInPoint;
 }
 
 //wxParseTreePanel::wxParseTreePanel( wxWindow* parent )
@@ -750,18 +752,23 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     wxDC & r_wxdc )
 {
   LOGN_DEBUG("begin")
-  wxFont font = r_wxdc.GetFont ();
-  font.SetPointSize (m_pointSizeOfFont);
-  /** The font sizes are negative: the lower the bigger the sizes.*/
-  wxSize fontSizeInPixels = font.GetPixelSize();
-  int fontHeightInPixels = fontSizeInPixels.GetHeight();
-  /** Font height is less than abs(MINIMUM_FONT_HEIGHT_IN_PIXELS) pixels. */
-  if( fontHeightInPixels > MINIMUM_FONT_HEIGHT_IN_PIXELS )
-  {
-    fontSizeInPixels.SetHeight(MINIMUM_FONT_HEIGHT_IN_PIXELS);
-    font.SetPixelSize(fontSizeInPixels);
-  }
-  r_wxdc.SetFont(font);
+    
+//  wxFont font = r_wxdc.GetFont ();
+//  font.SetPointSize (m_pointSizeOfFont);
+//  /** The font sizes are negative: the lower the bigger the sizes.*/
+//  wxSize fontSizeInPixels = font.GetPixelSize();
+//  int fontHeightInPixels = fontSizeInPixels.GetHeight();
+//  /** Font height is less than abs(MINIMUM_FONT_HEIGHT_IN_PIXELS) pixels. */
+//  if( fontHeightInPixels > MINIMUM_FONT_HEIGHT_IN_PIXELS )
+//  {
+//    fontSizeInPixels.SetHeight(MINIMUM_FONT_HEIGHT_IN_PIXELS);
+//    font.SetPixelSize(fontSizeInPixels);
+//  }
+//  r_wxdc.SetFont(font);
+  
+  if( m_pointSizeOfFont < wxGetApp ().m_GUIattributes.m_minFontSizeInPoint)
+    m_pointSizeOfFont = wxGetApp ().m_GUIattributes.m_minFontSizeInPoint;
+  
 //  DWORD dwNumberOfAlreadyDrawnItems = 0 ;
   DWORD dwLeftMostTokenIndex = 0 ;
   GrammarPart * p_grammarpart ;

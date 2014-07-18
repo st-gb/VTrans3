@@ -80,7 +80,7 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   BUTTON_EVENT_TYPE( ID_AddGrammarRules , EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules )
   BUTTON_EVENT_TYPE( ID_ShowGrammarPartMemoryAddress,
     EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress)
-  BUTTON_EVENT_TYPE( ID_ShowGrammarTranslatedWord,
+  BUTTON_EVENT_TYPE( ID_ShowTranslatedWord,
     EVENT_HANDLER_CLASS_NAME::OnShowTranslatedWord)
   BUTTON_EVENT_TYPE( ID_DecreaseFontSize, EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize )
   BUTTON_EVENT_TYPE( ID_IncreaseFontSize, EVENT_HANDLER_CLASS_NAME::OnIncreaseParseTreePanelFontSize )
@@ -480,7 +480,11 @@ void EVENT_HANDLER_CLASS_NAME::OnResolve1ParseLevelButton( wxCommandEvent & wxcm
         ReplaceGrammarPartIDsBySuperordinate();
     
     if( ! (grammarRuleApplied || bReplacedGrammarPartIDsBySuperordinate) )
-      m_parsebyrise.m_wParseLevel = 0;
+    {
+      //m_parsebyrise.m_wParseLevel = 0;
+      wxMessageBox(wxT("no futher resolution of parse levels possible.\n"
+        "Change the input text in order to start from the beginning again") );
+    }
   }
   OnShowTokenIndex2GrammarPartButton(wxcmd) ;
   mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;

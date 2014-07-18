@@ -139,7 +139,7 @@ namespace MiniXML
     const std::string & cr_stdstrFilePath )
   {
 	LOGN_DEBUG("begin")
-    MiniXML::MainConfigFileReader mainConfigFileReader(m_translationController);
+    MiniXML::MainConfigFileReader mainConfigFileReader(m_translationController, *this);
     mxmlSetErrorCallback(error_callback);
     return mainConfigFileReader.ProcessXML(cr_stdstrFilePath);
   }

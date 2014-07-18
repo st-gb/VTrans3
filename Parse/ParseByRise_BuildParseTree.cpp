@@ -369,6 +369,12 @@ void ParseByRise::CreateParseTree(const std::string & cr_stdstrWholeInputText)
 
   DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
   ResolveGrammarRulesForAllParseLevels() ;
+//  bool atLeast1Resolved;
+//  do
+//  {
+//    atLeast1Resolved = Resolve1ParseLevel();
+//  }while(atLeast1Resolved);
+    
   //TODO idea: before further processing: delete all parse tree that
   //are identical after removing the superordinate grammar rules:
 
@@ -482,6 +488,32 @@ void ParseByRise::GetRuleNames(
   SUPPRESS_UNUSED_VARIABLE_WARNING(i)
 }
 
+void ParseByRise::OutputSuperordinateGrammarParts()
+{
+  #ifdef _DEBUG
+  const int numSuperordinateGPs = //m_stdset_grammarpartAllSuperordinate.size();
+    m_allSuperordinateGrammarParts2pointerToThem.size();
+  std::ostringstream std_oss;
+  std_oss << "# superordinate grammar parts: " << numSuperordinateGPs;
+  m_r_translationcontrollerbase.SetStatus(VTrans::not_set, std_oss.str().c_str() );
+  
+  //std::set<GrammarPart>::const_iterator c_iter = 
+  //  m_stdset_grammarpartAllSuperordinate.begin();
+  std::map<GrammarPart, GrammarPart *>::const_iterator c_iter =  
+    m_allSuperordinateGrammarParts2pointerToThem.begin ();
+  fastestSignedDataType superOrdinateGrammarPartIndex = 0;
+  while( c_iter != //m_stdset_grammarpartAllSuperordinate.end() 
+    m_allSuperordinateGrammarParts2pointerToThem.end() )
+  {
+    const GrammarPart * p_grammarPart = c_iter->second;
+    LOGN_DEBUG("superordinate grammar part # " << superOrdinateGrammarPartIndex 
+      << ":" << p_grammarPart << " " << * p_grammarPart )
+    ++ c_iter;
+    ++ superOrdinateGrammarPartIndex;
+  }
+#endif
+}
+
 /** For different translations:
  *  e.g. for "the tiny car" :
  *               \/    /
@@ -536,17 +568,23 @@ bool ParseByRise::PossiblyDuplicateSubTrees(
 //    << " into container for all superordinate grammar parts")
   LOGN_DEBUG("inserting " << p_grammarPartToInsert 
     << " " << * p_grammarPartToInsert
-    << " with new subtree into container for all superordinate grammar parts")
+    << " with into container for all superordinate grammar parts")
   /** In order to not to add it again to the list of ALL grammar parts.*/
 #ifdef _DEBUG
   //std::pair<std::set<GrammarPart>::iterator,bool> pair_ =
-  std::pair<std::map<GrammarPart, GrammarPart *>::iterator,bool> pair_ =
+  std::pair<std::map<GrammarPart, GrammarPart *>::iterator, bool> pair_ =
 #endif
   //m_stdset_grammarpartAllSuperordinate.insert(
 //          //grammarpart
 //          * p_grammarpartParent ) ;
     m_allSuperordinateGrammarParts2pointerToThem.insert( std::make_pair(
       * p_grammarPartToInsert, p_grammarPartToInsert) );
+  
+  LOGN_DEBUG("inserted into container? : " 
+    << (pair_.second == true ? "yes" : "false") )
+  LOGN_DEBUG("superordinate grammar parts after inserting into container:")
+  OutputSuperordinateGrammarParts();
+
   //"false if the set already contained an element whose key had an
   //equivalent value in the ordering"
   if( /*valueAlreadyContained =*/  pair_.second == false )
@@ -900,28 +938,6 @@ bool ParseByRise:://GrammarRuleAppliesTo(
     }
 #endif
   }
-#ifdef _DEBUG
-  const int numSuperordinateGPs = //m_stdset_grammarpartAllSuperordinate.size();
-    m_allSuperordinateGrammarParts2pointerToThem.size();
-  std::ostringstream std_oss;
-  std_oss << "# superordinate grammar parts: " << numSuperordinateGPs;
-  m_r_translationcontrollerbase.SetStatus(VTrans::not_set, std_oss.str().c_str() );
-  
-  //std::set<GrammarPart>::const_iterator c_iter = 
-  //  m_stdset_grammarpartAllSuperordinate.begin();
-  std::map<GrammarPart, GrammarPart *>::const_iterator c_iter =  
-    m_allSuperordinateGrammarParts2pointerToThem.begin ();
-  fastestSignedDataType superOrdinateGrammarPartIndex = 0;
-  while( c_iter != //m_stdset_grammarpartAllSuperordinate.end() 
-    m_allSuperordinateGrammarParts2pointerToThem.end() )
-  {
-    const GrammarPart * p_grammarPart = c_iter->second;
-    LOGN_DEBUG("superordinate grammar part # " << superOrdinateGrammarPartIndex 
-      << ":" << p_grammarPart /*<< " " << c_iter->second */)
-    ++ c_iter;
-    ++ superOrdinateGrammarPartIndex;
-  }
-#endif
 //  m_p_userinterface->
   return bRuleApplied ;
 }
@@ -951,31 +967,92 @@ void ParseByRise::InsertIntoOutmostTokenIndexMaps(
   //m_stdmultimap_dwLeftmostIndex2grammarpart.insert(
   //m_iter_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart->second.
 //        mp_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate->
-  m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.
-    insert(
-//          std::pair<DWORD, GrammarPart> (
-    std::pair<DWORD, GrammarPart *> (
-    //iterLeftGrammarPart->first
-    //wLeftGrammarPartIDForRule
-    dwLeftMostTokenIndexOfRule
-    , //grammarpart
+    
+  InsertIntoLeftmostAndRightmostTokenIndexContainersFor1ParseLevel(
+    dwLeftMostTokenIndexOfRule,
+    dwRightMostTokenIndexOfRule,
     p_grammarpart
-    )
-  ) ;
+    );
   //m_stdmultimap_dwRightmostIndex2grammarpart.insert(
   //m_iter_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart->second.
 //        mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate->
+}
+
+void OutputIndex2GrammpartMultiMap(
+  const std::multimap<DWORD, GrammarPart* > & std_multimap_dwIndex2p_grammarpart,
+  const char const * p_ch)
+{
+  std::ostringstream std_oss;
+  //m_r_translationcontrollerbase.SetStatus(VTrans::not_set, std_oss.str().c_str() );
+  
+  //std::set<GrammarPart>::const_iterator c_iter = 
+  //  m_stdset_grammarpartAllSuperordinate.begin();
+  const int numGrammarParts = //m_stdset_grammarpartAllSuperordinate.size();
+    std_multimap_dwIndex2p_grammarpart.size();
+  std::multimap<DWORD, GrammarPart *>::const_iterator c_iter =  
+    std_multimap_dwIndex2p_grammarpart.begin ();
+  fastestSignedDataType superOrdinateGrammarPartIndex = 0;
+  LOGN_DEBUG("# " << p_ch << " grammar parts: " << numGrammarParts)
+  while( c_iter != //m_stdset_grammarpartAllSuperordinate.end() 
+    std_multimap_dwIndex2p_grammarpart.end() )
+  {
+    const GrammarPart * p_grammarPart = c_iter->second;
+    LOGN_DEBUG( p_ch << " grammar part # " << superOrdinateGrammarPartIndex
+      << ":" << p_grammarPart << " " << * p_grammarPart )
+    ++ c_iter;
+    ++ superOrdinateGrammarPartIndex;
+  }
+}
+
+void ParseByRise::InsertIntoOverallLeftmostAndRightmostTokenIndexContainers(
+  const std::multimap<DWORD, GrammarPart* > & std_multimap_dwLeftmostIndex2p_grammarpart,
+  const std::multimap<DWORD, GrammarPart* > & std_multimap_dwRightmostIndex2p_grammarpart
+  )
+{
+ LOGN_DEBUG("begin")
+  m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
+    std_multimap_dwLeftmostIndex2p_grammarpart.begin() ,
+    std_multimap_dwLeftmostIndex2p_grammarpart.end()
+    ) ;
+  m_stdmultimap_dwRightmostIndex2p_grammarpart.insert(
+    std_multimap_dwRightmostIndex2p_grammarpart.begin() ,
+    std_multimap_dwRightmostIndex2p_grammarpart.end()
+    ) ;
+
+  #ifdef _DEBUG
+  OutputIndex2GrammpartMultiMap(m_stdmultimap_dwLeftmostIndex2p_grammarpart,
+    "overall LEFT");
+  OutputIndex2GrammpartMultiMap(m_stdmultimap_dwRightmostIndex2p_grammarpart,
+    "overall RIGHT");
+  #endif
+  LOGN_DEBUG("end")
+}
+
+void ParseByRise::InsertIntoLeftmostAndRightmostTokenIndexContainersFor1ParseLevel(
+  const fastestUnsignedDataType leftMostTokenIndex,
+  const fastestUnsignedDataType rightMostTokenIndex,
+  const GrammarPart * const p_grammarPart
+  )
+{
+  m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.
+    insert(
+    std::pair< WORD, GrammarPart *>
+    (
+      //Leftmost token index of the child grammar part.
+      leftMostTokenIndex,
+      (GrammarPart *) p_grammarPart
+    )
+    ) ;
   m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel.
     insert(
-//          std::pair<DWORD, GrammarPart> (
-    std::pair<DWORD, GrammarPart *> (
-    //iterRightGrammarPart->first
-    //wRightGrammarPartIDForRule
-    dwRightMostTokenIndexOfRule
-    , //grammarpart
-    p_grammarpart
+    std::pair< WORD, GrammarPart *>
+    (
+//                iter_mm_token_idx2p_grammarpt->first ,
+      rightMostTokenIndex,
+//                & grammarpartSuperordinate
+      (GrammarPart *) p_grammarPart
     )
-  ) ;
+    ) ;
 }
 
 bool ParseByRise::InsertSuperordinateGrammarPart(
@@ -984,6 +1061,7 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
   , bool bMemorizeInsertion
   )
 {
+  LOGN_DEBUG("begin" )
   bool bReplaced = false ;
 //  DWORD dwMapIndex = 0 ;
 #ifdef _DEBUG
@@ -1105,16 +1183,33 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
         SUPPRESS_UNUSED_VARIABLE_WARNING(wIndex)
 //    #pragma GCC diagnostic pop
   #endif
+
+      LOGN_DEBUG("current superordinate grammar part container content:")
+      OutputSuperordinateGrammarParts();
+        const GrammarPart & grammarPartSuperordinate = * p_grammarpartSuperordinate;
+        std::map<GrammarPart, GrammarPart *>::const_iterator c_iter =
+          m_allSuperordinateGrammarParts2pointerToThem.find (
+  //          grammarpartSuperordinate
+          grammarPartSuperordinate);        
+        /*const*/ bool grammarPartDoesNotExistInContainter = c_iter ==
+          //m_stdset_grammarpartAllSuperordinate.end()
+          m_allSuperordinateGrammarParts2pointerToThem.end();
+      LOGN_DEBUG("grammar part " << grammarPartSuperordinate 
+        << " does not exist in superordinate container? " << 
+        (grammarPartDoesNotExistInContainter ? "yes" : "no") )
+      
+//      grammarPartDoesNotExistInContainter =
+//        InsertIntoSuperordinateGrammarPartContainer(p_grammarpartSuperordinate) 
+//        == NULL;
+      
+      LOGN_DEBUG("grammar part does not exist in superordinate container? " << 
+        (grammarPartDoesNotExistInContainter ? "yes" : "no") )
+
         //Do not store 1 and the same grammar part more than once in
         // -the container "leftmost token index -> grammar part"
         // -the container "rightmost token index -> grammar part"
         if( //m_stdset_grammarpartAllSuperordinate.find(
-           m_allSuperordinateGrammarParts2pointerToThem.find (
-//          grammarpartSuperordinate
-          * p_grammarpartSuperordinate) ==
-            //m_stdset_grammarpartAllSuperordinate.end()
-            m_allSuperordinateGrammarParts2pointerToThem.end()
-            )
+          grammarPartDoesNotExistInContainter )
         {
 //          std::pair<c_iter_mmap_dw2p_grammarpart,c_iter_mmap_dw2p_grammarpart>
 //            stdpair_iter =
@@ -1202,32 +1297,15 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
 //              )
           {
             InsertIntoSuperordinateGrammarPartContainer(p_grammarpartSuperordinate);
-            
-            m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.
-              insert(
-              std::pair< WORD, GrammarPart *>
-              (
-                //Leftmost token index of the child grammar part.
-                iter_mm_token_idx2p_grammarpt->first ,
-                //& grammarpartSuperordinate
-                p_grammarpartSuperordinate
-              )
-              ) ;
           }
 //          else
           {
-            m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel.
-              insert(
-              std::pair< WORD, GrammarPart *>
-              (
-//                iter_mm_token_idx2p_grammarpt->first ,
-                p_grammarpartSuperordinate->mp_grammarpartLeftChild->
-                            m_dwRightmostIndex ,
-//                & grammarpartSuperordinate
-                p_grammarpartSuperordinate
-              )
-              ) ;
           }
+          InsertIntoLeftmostAndRightmostTokenIndexContainersFor1ParseLevel(
+            iter_mm_token_idx2p_grammarpt->first,
+            p_grammarpartSuperordinate->mp_grammarpartLeftChild->
+              m_dwRightmostIndex,
+            p_grammarpartSuperordinate);
           bReplaced = true ;
         }
         else
@@ -1280,6 +1358,7 @@ void ParseByRise::PossiblyCreateNewLeaves(
 
 bool ParseByRise::ReplaceGrammarPartIDsBySuperordinate()
 {
+  LOGN_DEBUG("begin")
   bool bReplacedGrammarPartIDsBySuperordinate = false ;
   m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.clear() ;
   m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel.clear() ;
@@ -1295,16 +1374,24 @@ bool ParseByRise::ReplaceGrammarPartIDsBySuperordinate()
     m_stdmultimap_dwLeftmostIndex2p_grammarpart , true ) ;
   if( bReplacedGrammarPartIDsBySuperordinate )
   {
-    m_stdmultimap_dwRightmostIndex2p_grammarpart.insert(
-      m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel.begin() ,
-      m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel.end()
-      ) ;
-    m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
-      m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.begin() ,
-      m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.end()
-      ) ;
+    LOGN_DEBUG("inserting whole map of superordinate into other map " )
+    InsertIntoOverallLeftmostAndRightmostTokenIndexContainers(
+      m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel,
+      m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel                              
+      );
   }
+  LOGN_DEBUG("return " << bReplacedGrammarPartIDsBySuperordinate )
   return bReplacedGrammarPartIDsBySuperordinate ;
+}
+
+bool ParseByRise::Resolve1ParseLevel()
+{
+  ++ m_dwMapIndex ;
+  bool grammarRuleApplied = ResolveGrammarRules();
+
+  bool bReplacedGrammarPartIDsBySuperordinate = 
+    ReplaceGrammarPartIDsBySuperordinate();
+  return (grammarRuleApplied || bReplacedGrammarPartIDsBySuperordinate);
 }
 
 //Minimizes, e.g. "article + noun" = "def_article_noun"
@@ -1470,19 +1557,14 @@ BYTE ParseByRise::ResolveGrammarRules(
   }
   if( byGrammarRuleApplied )
   {
-    m_stdmultimap_dwRightmostIndex2p_grammarpart.insert(
-      m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel.begin() ,
-      m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel.end()
-      ) ;
+    InsertIntoOverallLeftmostAndRightmostTokenIndexContainers(
+      m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel,
+      m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel);
   //    //parsebyrise.
   //    m_stdmultimap_dwLeftmostIndex2grammarpart.insert(
   //      stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.begin( ),
   //      stdmultimap_dwLeftmostIndex2grammarpartSuperordinate.end( )
   //      );
-    m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
-      m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.begin() ,
-      m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.end()
-      ) ;
   }
   ++ m_wParseLevel ;
   return byGrammarRuleApplied ;

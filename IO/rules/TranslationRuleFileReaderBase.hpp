@@ -12,7 +12,8 @@
 #include <Translate/ConditionsAndTranslation.hpp>
 #include <string> //class std::string
 //#include <IO/MiniXMLconfigReader.hpp> //base class VTrans3::MiniXML::MiniXMLconfigReader
-#include <Controller/ConfigurationHandler_type.hpp>
+/** For "typedef attributeType", "typedef ConfigurationHandler_type" */
+#include <Controller/ConfigurationHandler_type.hpp> 
 #include <stdint.h> //uint32_t
 
 #define TRANSLATION_RULE_XML_ELEMENT_ANSI "translation_rule"

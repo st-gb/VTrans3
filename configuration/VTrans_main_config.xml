@@ -4,6 +4,10 @@
  <!-- prefix with "0x" for hex numbers-->
  <grammar_part name="singular_noun" colour="0xFF0000"/>
  <grammar_part name="plural_noun" colour="0x0000FF"/>
+ <!-- "<natural number>pix" : size in pixels  
+      "<natural number>pt" : size in unit "point" -->
+ <parse_tree_panel font_size="9pt"/>
+ <parse_tree_panel minimum_font_size="4pt"/>
  <!-- "<natural number>pix": pixels  -->
  <main_window width="600pix" height="500pix"/>
 
