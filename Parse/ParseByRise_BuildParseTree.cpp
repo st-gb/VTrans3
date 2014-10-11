@@ -980,7 +980,7 @@ void ParseByRise::InsertIntoOutmostTokenIndexMaps(
 
 void OutputIndex2GrammpartMultiMap(
   const std::multimap<DWORD, GrammarPart* > & std_multimap_dwIndex2p_grammarpart,
-  const char const * p_ch)
+  const char  * const p_ch)
 {
   std::ostringstream std_oss;
   //m_r_translationcontrollerbase.SetStatus(VTrans::not_set, std_oss.str().c_str() );

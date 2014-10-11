@@ -55,6 +55,10 @@
 //ENable warning
 #pragma GCC diagnostic warning "-Wwrite-strings"
 
+/** For multi-threaded translation (e.g. translation in a non-GUI thread). */
+#include <multi_threaded_translation/TranslateThreadProc.hpp>
+#include <multi_threaded_translation/TranslateParameters.hpp>
+
 //GetStdString(...)
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <wxWidgets/UserInterface/wxGermanTranslationPanel.hpp>
@@ -89,6 +93,10 @@
 //#define EVENT_HANDLER_CLASS_NAMESPACE "wxWidgets::"
 ////#define EVENT_HANDLER_CLASS_NAME wxCONCAT(EVENT_HANDLER_CLASS_NAMESPACE,EVENT_HANDLER_CLASS_NAME_NON_SCOPED) /*wxTextInputDlg*/
 //#define EVENT_HANDLER_CLASS_NAME wxWidgets::MainWindowBase /*wxTextInputDlg*/
+
+//BEGIN_EVENT_TABLE( wxWidgets::MainWindowBase, wxFrame)
+//  EVT_TEXT(inputText, MainWindowBase::OnTextChanges)
+//END_EVENT_TABLE
 
 unsigned wxWidgets::MainWindowBase::s_windowID = 3;
 
@@ -151,11 +159,11 @@ void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
     //this
 //    mp_wxsplitterwindow
     m_panelSplitterTop
-    , wxID_ANY, 
+    , /*wxID_ANY*/ ID_InputText, 
     wxEmptyString,
     wxDefaultPosition,
     wxDefaultSize,
-    wxHSCROLL|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB
+    wxHSCROLL | wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_PROCESS_TAB
     );
 //  mp_textctrlGermanText = new wxTextCtrl(
 //    //this
@@ -511,6 +519,41 @@ void EVENT_HANDLER_CLASS_NAME::GetEntireInputText(std::string & r_stdstrInputTex
   r_stdstrInputText = //std::string( wxstringWholeInputText.c_str() ) ;
     GetStdString(wxstringWholeInputText);
 //  return stdstrInputText ;
+}
+
+void EVENT_HANDLER_CLASS_NAME::Translate()
+{
+  //  try
+  //  {
+    std::string stdstrWholeInputText ;
+    GetEntireInputText(stdstrWholeInputText) ;
+  //  AxSpeech axspeech ;
+  //  axspeech.Say( stdstrWholeInputText ) ;
+
+  //  std::string stdstrWholeTransl ;
+
+  //  std::vector<std::vector<TranslationAndConsecutiveID> >
+  //    stdvec_stdvecTranslationAndConsecutiveID ;
+
+    bool translateAsync = true;
+    /** Prevent multiple translation threads. */
+    DisableDoTranslateControls();
+
+    VTrans::multiThreadedTranslation::TranslateParameters * p_tranlParams = new 
+      VTrans::multiThreadedTranslation::TranslateParameters(
+      stdstrWholeInputText,
+      //g_p_translationcontrollerbase,
+      & m_translationcontrollerbase,
+      & m_translationResult,
+      m_translationcontrollerbase
+      );
+    if( translateAsync )
+    {
+      m_translateThread.start(
+        VTrans::TranslateThreadProc, p_tranlParams, "Translate");
+    }
+    else
+      VTrans::TranslateThreadProc(p_tranlParams);
 }
 
 //DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)

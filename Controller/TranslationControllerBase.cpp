@@ -176,6 +176,14 @@ TranslationControllerBase::~TranslationControllerBase()
   LOGN_DEBUG("end")
 }
 
+bool TranslationControllerBase::IsGUIthread()
+{
+  const DWORD currentThreadNumber = OperatingSystem::GetCurrentThreadNumber();
+  if( currentThreadNumber == m_GUIthreadID )
+    return true;
+  return false;
+}
+
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 {
   LOGN_DEBUG("begin")
@@ -471,6 +479,7 @@ void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
 
 void TranslationControllerBase::Stop()
 {
+  //TODO check if volatile is sufficient or better use atomic function Compare and swap
   m_vbContinue = false;
 }
 

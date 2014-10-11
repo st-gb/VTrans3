@@ -74,6 +74,7 @@ public:
 	virtual ~wxParseTreePanel();
   
   void DecreaseFontSizeBy1Point();
+  void IncreaseFontSizeBy1Point();
 	void DrawGrammarPartChildren( GrammarPart * p_pg ,
 	  //Use base class wxDC, so subclasses of it can be used as actual parameters.
 	  //This allows e.g. to use either a wxMemoryDC (-> no flicker) or a
@@ -135,6 +136,7 @@ public:
     //This allows e.g. to use either a wxMemoryDC (-> no flicker) or a
     //wxPaintDC (original DC for OnPaint(), may flicker ).
     wxDC & r_wxdc ) ;
+  void DrawParseTreeBeginningFromLeavesWithClientDC();
 	void DrawParseTreeBeginningFromRoots(
     //Use base class wxDC, so subclasses of it can be used as actual parameters.
     //This allows e.g. to use either a wxMemoryDC (-> no flicker) or a
@@ -162,8 +164,11 @@ public:
     //wxSize & wxsizeText
     wxString & wxstr
     ) ;
+  void OnContextMenu(wxContextMenuEvent & evt);
 	void OnPaint(wxPaintEvent & event) ;
 	void OnSize(wxSizeEvent & evt);
+  void OnPopupClick(wxCommandEvent & evt);
+  void OnContextMenuMouseButtonDown(wxMouseEvent & evt);
 	DECLARE_EVENT_TABLE()
 };
 

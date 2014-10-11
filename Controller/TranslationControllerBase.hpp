@@ -115,6 +115,7 @@ protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
 public:
+  long double m_translationDurationInSeconds;
   std::string m_std_strCurrentConfigfile;
   volatile bool m_vbContinue;
 #ifndef TEST_MINI_XML
@@ -164,6 +165,7 @@ public:
     );
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
+  bool IsGUIthread();
   BYTE Init(const std::string & cr_stdstrFilePath) ;
   virtual void LoadingVocabularyFileFailed(
     const std::string & cr_stdstrFilePath) {} // = 0;

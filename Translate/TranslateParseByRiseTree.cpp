@@ -900,7 +900,7 @@ void TranslateParseByRiseTree::Translate(
   //A vector of sentences that begin at the same token index
   // (sentences that begin at the same token index:
   // vector of sentences that each contains a vector of words).
-  , std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+  , TranslationResult &
     r_stdvec_stdvec_stdvecTranslationAndGrammarPart
 //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    r_stdvec_stdvecTranslationAndConsecutiveID
@@ -908,6 +908,8 @@ void TranslateParseByRiseTree::Translate(
 {
   LOGN_DEBUG(//"TranslateParseByRiseTree::Translate(...) "
     "begin")
+  /** May not be empty from previous translations. */
+  r_stdvec_stdvec_stdvecTranslationAndGrammarPart.clear ();
 //  BYTE byPersonIndex ;
   ProcessParseTree(
 //    r_parsebyrise,

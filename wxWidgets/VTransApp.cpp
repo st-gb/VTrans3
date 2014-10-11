@@ -12,6 +12,8 @@
 #include <wx/icon.h> //class wxIcon
 #include <wx/textctrl.h> //class wxTextCtrl
 
+#include <data_structures/Trie/NodeTrie/exceptions.hpp> //NotInContainerException
+
 /** IGNORE_WRITE_STRINGS_WARNING, ENABLE_WRITE_STRINGS_WARNING */
 #include <compiler/GCC/enable_disable_write_strings_warning.h>
 IGNORE_WRITE_STRINGS_WARNING
@@ -81,6 +83,7 @@ VTransApp::VTransApp()
   m_p_mainWindow(NULL)//,
   //,m_wxiconVTrans( VT_icon_xpm )
 {
+  LogLevel::CreateLogLevelStringToNumberMapping();
   g_p_translationcontrollerbase = this;
   m_parsebyrise.SetUserInterface( this ) ;
 }
@@ -282,6 +285,13 @@ void VTransApp::HandleEvent(
     /** Following code is from "wxAppConsole::HandleEvent(...) */
     // by default, simply call the handler
     (handler->*func)(event);
+  } //TODO idea: all exceptions from on super exception class with "GetErrorMessageA"
+  catch(const NS_NodeTrie::NotInContainerException & e)
+  {
+    const std::string std_strErrorMessage = e.GetErrorMessageA();
+    const wxString & wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
+    ( (VTransApp *) this)->ShowMessage(//wxT("HandleEvent--LogFileAccessException")
+      wxstrMessage /*wxT("NS_NodeTrie::NotInContainerException")*/ );    
   }
   catch(const LogFileAccessException & lfae)
   {
@@ -493,7 +503,7 @@ inline int VTransApp::ShowMessage(
   /** Show wxTextControlDialog because so the message can be copied. */
   wxTextControlDialog wxtextcontroldialog(
     wxstrMessage,
-    wxT(""),
+    wxT("VTrans"), //TODO maybe replace by TranslationControllerBase::appName
     flags
     );
 

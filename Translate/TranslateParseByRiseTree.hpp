@@ -14,6 +14,7 @@
 #include <windef.h> //DWORD
 //#include "SyntaxTreePath.hpp"
 #include "ConditionsAndTranslation.hpp" //class ConditionsAndTranslation
+#include <Attributes/TranslationResult.hpp> //class TranslationResult
 //#include "TranslationRule.hpp"
 
 //use  a power of 2 in order to enable all values at the same time
@@ -174,7 +175,7 @@ public:
     //A vector of sentences that begin at the same token index
     // (sentences that begin at the same token index:
     // vector of sentences that each contains a vector of words).
-    , std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
+    , TranslationResult &
       r_stdvec_stdvec_stdvecTranslationAndGrammarPart
 //    , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //      r_stdvec_stdvecTranslationAndConsecutiveID

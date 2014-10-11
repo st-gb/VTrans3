@@ -20,6 +20,7 @@
     void OnClose(wxCloseEvent & wxcmd);
     void OnDrawParseTreeButton(wxCommandEvent & wxcmd);
     void OnInfoButton(wxCommandEvent & wxcmd);
+    void OnInputTextChanges(wxCommandEvent & event);
     void OnLoadDictionaryButton(wxCommandEvent & wxcmd);
     void OnUpdateAfterTranslation(wxCommandEvent &);
     void OnReInitGrammarRulesButton(wxCommandEvent & wxcmd);

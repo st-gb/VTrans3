@@ -103,6 +103,7 @@ namespace wxWidgets
       //specified here."
       m_wxtimer.SetOwner(/*this*/ m_p_mainwindow, ID_Timer) ;
     }
+    void Translate();
   protected:
     VTrans::thread_type m_unloadDictAndCloseWindowThread;
     wxBoxSizer * p_boxsizerOuter;

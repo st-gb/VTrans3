@@ -561,6 +561,7 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
   wxCoord & wxcoordY
   )
 {
+  DEBUGN("begin")
   bool bConnectedControl = false;
   const char * p_chTranslation = NULL;
   uint32_t ui32ConcatenationID = 0;
@@ -589,15 +590,20 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
     ui32ConcatenationID = //c_iter_std_set_translationandconcatenationid->
       c_iter_std_set_grammarpartpointerandconcatenationid->
       m_ui32ConcatenationID;
+#ifdef _DEBUG
+    const GrammarPartPointerAndConcatenationID * p = 
+      & (* c_iter_std_set_grammarpartpointerandconcatenationid);
+#endif
     if( ui32ConcatenationID != 65535 )
     {
       wxwindowid = ++ m_wxwindowidCurrent;
       bConnectedControl = true;
     }
+    const GrammarPart * const p_gp = c_iter_std_set_grammarpartpointerandconcatenationid->
+      m_p_grammarpartToken;
     p_chTranslation = //c_iter_std_set_translationandconcatenationid->
 //      m_std_strTranslation.c_str();
-      c_iter_std_set_grammarpartpointerandconcatenationid->
-      m_p_grammarpartToken->m_stdstrTranslation.c_str();
+      p_gp->m_stdstrTranslation.c_str();
     const wxString wxstrGermanTranslation = //GetwxString_Inline( p_chTranslation);
       //wxString::FromAscii(p_chTranslation);
     /** @see http://de.wikipedia.org/wiki/ISO_8859-1 */
@@ -653,6 +659,7 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
         wxcoordYBottom);
     wxcoordX += r_wxdc.GetTextExtent( wxT(" ") ).x;
   }
+ DEBUGN("end")
 }
 
 //see http://docs.wxwidgets.org/2.9.2/classwx_choice.html:

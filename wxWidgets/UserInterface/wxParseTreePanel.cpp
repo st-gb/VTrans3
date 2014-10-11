@@ -18,6 +18,7 @@
 #include <wx/dcmemory.h> //class wxMemoryDC
 #include <wx/dcclient.h> //for class wxPaintDC
 #include <wx/settings.h> //wxSystemSettings::GetFont
+#include <wx/menu.h> //class wxMenu
 
 #include <Parse/ParseByRise.hpp> //for class GrammarPart
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
@@ -39,6 +40,9 @@
 #include "wxWidgets/VTransApp.hpp"
 #endif //#ifdef _WIN32 //32 and 64 bit Windows
 
+enum eventIDs { showTranslatedWord, showGrammarPartAddress, decreaseFontSize,
+  increaseFontSize, bufferDisplay };
+
 /** 10 pixels is a good minimum. */
 #define MINIMUM_FONT_HEIGHT_IN_PIXELS -10
 
@@ -48,6 +52,10 @@ using namespace wxWidgets;
 BEGIN_EVENT_TABLE(wxParseTreePanel, wxPanel)
   EVT_PAINT  (wxParseTreePanel::OnPaint)
   EVT_SIZE  (wxParseTreePanel::OnSize)
+  /** The mouse button that shows the context menu by default. (if swapped, 
+   * e.g. in system settings, then it might be the left button) */
+  EVT_RIGHT_DOWN(wxParseTreePanel::OnContextMenuMouseButtonDown)
+  EVT_CONTEXT_MENU(wxParseTreePanel::OnContextMenu)
 END_EVENT_TABLE()
 
 //wxParseTreePanel::wxParseTreePanel() {
@@ -222,9 +230,49 @@ void wxParseTreePanel::DrawGrammarPartNameAndPossiblyToken(
 
 void wxParseTreePanel::DecreaseFontSizeBy1Point()
 {
+  const fastestUnsignedDataType currentPointSizeOfFont = m_pointSizeOfFont;
+  if( m_pointSizeOfFont < wxGetApp ().m_GUIattributes.m_minFontSizeInPoint)
+    m_pointSizeOfFont = wxGetApp ().m_GUIattributes.m_minFontSizeInPoint;
+  else
+    -- m_pointSizeOfFont;
+  /** If the font size changed. */
+  if( currentPointSizeOfFont != m_pointSizeOfFont )
+  {
+  //  wxFont wxfont = p_wxdc->GetFont();
+  //  wxfont.SetPointSize( 8 ) ;  
+    DrawParseTreeBeginningFromLeavesWithClientDC();
+
+    /** http://docs.wxwidgets.org/trunk/classwx_window.html :
+     * "Causes this window, and all of its children recursively (except under 
+     *  wxGTK1 where this is not implemented), to be repainted.
+     * 
+     * Note that repainting doesn't happen immediately but only during the next 
+     * event loop iteration, if you need to update the window immediately you 
+     * should use Update() instead." */
+    Refresh();
+    //Update();
+  //  p_wxdc->SetFont( wxfont) ;
+   }
+}
+
+void wxParseTreePanel::DrawParseTreeBeginningFromLeavesWithClientDC()
+{
+  /** http://docs.wxwidgets.org/trunk/classwx_client_d_c.html
+   * 
+   * A wxClientDC must be constructed if an application wishes to paint on the client area of a window from outside an EVT_PAINT() handler.
+    This should normally be constructed as a temporary stack object; don't store a wxClientDC object.
+    To draw on a window from within an EVT_PAINT() handler, construct a wxPaintDC object instead.
+   */
+  wxClientDC dc(this);
+  DrawParseTreeBeginningFromLeaves(dc);
+}
+
+void wxParseTreePanel::IncreaseFontSizeBy1Point()
+{
 //  wxFont wxfont = p_wxdc->GetFont();
 //  wxfont.SetPointSize( 8 ) ;
-  -- m_pointSizeOfFont;
+  ++ m_pointSizeOfFont;
+      
   /** http://docs.wxwidgets.org/trunk/classwx_window.html :
    * "Causes this window, and all of its children recursively (except under 
    *  wxGTK1 where this is not implemented), to be repainted.
@@ -233,8 +281,22 @@ void wxParseTreePanel::DecreaseFontSizeBy1Point()
    * event loop iteration, if you need to update the window immediately you 
    * should use Update() instead." */
   Refresh();
+  //Update();
 //  p_wxdc->SetFont( wxfont) ;
 }
+
+//void wxParseTreePanel::IncreaseFontHeightBy1Pixel()
+//{
+//    /** The font sizes are negative: the lower the bigger the sizes.*/
+//  wxSize fontSizeInPixels = font.GetPixelSize();
+//  int fontHeightInPixels = fontSizeInPixels.GetHeight();
+//  /** Font height is less than abs(MINIMUM_FONT_HEIGHT_IN_PIXELS) pixels. */
+//  if( fontHeightInPixels > MINIMUM_FONT_HEIGHT_IN_PIXELS )
+//  {
+//    fontSizeInPixels.SetHeight(MINIMUM_FONT_HEIGHT_IN_PIXELS);
+//    font.SetPixelSize(fontSizeInPixels);
+//  }
+//}
 
 void wxParseTreePanel::DrawGrammarPartChildren(
   GrammarPart * p_grammarpart ,
@@ -348,7 +410,7 @@ void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise
   
 //  DrawParseTreeBeginningFromLeaves(//wxpaintdc
 //    /*m_wxmemorydc*/ wxmemorydc /*r_wxdc*/ );
-  //Force a repaint.
+  /** Put an EVT_PAINT event to to event queue./ force a repaint. */
   Refresh() ;
   LOGN_DEBUG("end")
 }
@@ -752,22 +814,12 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     wxDC & r_wxdc )
 {
   LOGN_DEBUG("begin")
-    
-//  wxFont font = r_wxdc.GetFont ();
-//  font.SetPointSize (m_pointSizeOfFont);
-//  /** The font sizes are negative: the lower the bigger the sizes.*/
-//  wxSize fontSizeInPixels = font.GetPixelSize();
-//  int fontHeightInPixels = fontSizeInPixels.GetHeight();
-//  /** Font height is less than abs(MINIMUM_FONT_HEIGHT_IN_PIXELS) pixels. */
-//  if( fontHeightInPixels > MINIMUM_FONT_HEIGHT_IN_PIXELS )
-//  {
-//    fontSizeInPixels.SetHeight(MINIMUM_FONT_HEIGHT_IN_PIXELS);
-//    font.SetPixelSize(fontSizeInPixels);
-//  }
-//  r_wxdc.SetFont(font);
   
   if( m_pointSizeOfFont < wxGetApp ().m_GUIattributes.m_minFontSizeInPoint)
     m_pointSizeOfFont = wxGetApp ().m_GUIattributes.m_minFontSizeInPoint;
+  wxFont font = r_wxdc.GetFont ();
+  font.SetPointSize (m_pointSizeOfFont);
+  r_wxdc.SetFont(font);
   
 //  DWORD dwNumberOfAlreadyDrawnItems = 0 ;
   DWORD dwLeftMostTokenIndex = 0 ;
@@ -1174,8 +1226,23 @@ wxSize wxParseTreePanel::GetSourceTextTokenExtent(
 
 void wxParseTreePanel::OnPaint(wxPaintEvent & event)
 {
+  /** http://docs.wxwidgets.org/trunk/classwx_paint_d_c.html 
+   * "A wxPaintDC must be constructed if an application wishes to paint on the 
+   * client area of a window from within an EVT_PAINT() event handler. "
+   * 
+   * This should normally be constructed as a temporary stack object; don't 
+   * store a wxPaintDC object. If you have an EVT_PAINT() handler, you must 
+   * create a wxPaintDC object within it even if you don't actually use it.
+   */
+  wxPaintDC /*wxClientDC*/ wxpaintdc(this);
+#ifdef _DEBUG
+  const bool bPaintDCisOK = wxpaintdc.IsOk();
+  const wxFont & font = wxpaintdc.GetFont();
+  const bool fontIsOK = font.IsOk();
 
-  wxPaintDC wxpaintdc(this);
+  LOGN_DEBUG("wxPaintDC is OK:" << bPaintDCisOK << "font OK: " << fontIsOK )
+//  const int fontPointSize = font.GetPointSize(); 
+#endif  
   LOGN_DEBUG("mp_parsebyrise:" << mp_parsebyrise)
 //  PrepareDC(wxpaintdc);
   const wxSize & clientSize = GetClientSize();
@@ -1217,6 +1284,11 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
   }
 }
 
+void wxParseTreePanel::OnContextMenu(wxContextMenuEvent & evt)
+{
+  int i = 0;
+}
+
 void wxParseTreePanel::OnSize(wxSizeEvent & evt)
 {
 //  if( m_p_wxbitmapBuffer != NULL )
@@ -1236,3 +1308,47 @@ void wxParseTreePanel::OnSize(wxSizeEvent & evt)
   }
   m_wxsizeClientRect = evt.GetSize();
 }
+
+/** Adapted from http://wiki.wxwidgets.org/WxMenu#PopUp-menus */
+void wxParseTreePanel::OnPopupClick(wxCommandEvent & evt)
+{
+// 	void * data = static_cast<wxMenu *>(evt.GetEventObject())->GetClientData();
+ 	switch( evt.GetId() ) {
+ 		case showTranslatedWord:
+      ::wxGetApp().m_GUIattributes.m_bShowTranslation = evt.IsChecked();
+      DrawParseTree(::wxGetApp().m_parsebyrise) ;
+ 			break;
+ 		case showGrammarPartAddress:
+      ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress = evt.IsChecked();
+       DrawParseTree(::wxGetApp().m_parsebyrise) ;
+ 			break;
+ 		case decreaseFontSize:
+      DecreaseFontSizeBy1Point();
+ 			break;
+ 		case increaseFontSize:
+      IncreaseFontSizeBy1Point();
+ 			break;
+   default:
+    break;
+ 	}
+}
+
+/** Adapted from http://wiki.wxwidgets.org/WxMenu#PopUp-menus */
+void wxParseTreePanel::OnContextMenuMouseButtonDown(wxMouseEvent & evt)
+{
+ 	//void *data = reinterpret_cast<void *>(evt.GetItem().GetData());
+ 	wxMenu mnu;
+// 	mnu.SetClientData( data );
+  wxMenuItem * item;
+ 	item = mnu.AppendCheckItem(showTranslatedWord /*ID_SOMETHING*/, wxT("show translated word") );
+  item->Check(::wxGetApp().m_GUIattributes.m_bShowTranslation);
+ 	item = mnu.AppendCheckItem(showGrammarPartAddress, 
+    wxT("show memory address") );
+  item->Check(::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress);
+ 	mnu.Append(decreaseFontSize, wxT("decrease font size") );
+ 	mnu.Append(increaseFontSize, wxT("increase font size") );
+ 	mnu.AppendRadioItem(bufferDisplay , wxT("buffer drawing") );
+ 	mnu.Connect(wxEVT_COMMAND_MENU_SELECTED, 
+    (wxObjectEventFunction) & wxParseTreePanel::OnPopupClick, NULL, this);
+ 	PopupMenu(&mnu);
+ }

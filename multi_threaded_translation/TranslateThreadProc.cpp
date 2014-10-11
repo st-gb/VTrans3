@@ -4,6 +4,9 @@
 
 #include <Controller/TranslationControllerBase.hpp>
 #include <UserInterface/I_UserInterface.hpp>
+//#include <OperatingSystem/time/GetCurrentTime.hpp>
+//OperatingSystem::GetTimeCountInSeconds()
+#include <Controller/time/GetTickCount.hpp>
 
 namespace VTrans
 {
@@ -18,14 +21,9 @@ namespace VTrans
         std::vector<std::string> stdvec_stdstrWholeTransl ;
       //  std::vector<std::vector<TranslationAndGrammarPart> >
       //    stdvec_stdvecTranslationAndGrammarPart ;
-        /** A vector of sentences that begin at the same token index
-        * (sentences that begin at the same token index:
-        * vector of sentences that each contains a vector of words). */
-        //TODO exchange "std::vector<ele>" by a class that is derived from std::vector
-//        std::vector <std::vector <std::vector <TranslationAndGrammarPart>
-//          /* WordCompound */ > >
-//          stdvec_stdvec_stdvecTranslationAndGrammarPart;
         
+        long double timeCountInSecondsBegin;
+        OperatingSystem::GetTimeCountInSeconds(timeCountInSecondsBegin);
         p_translateParameters->m_p_translationControllerBase->Translate(
           p_translateParameters->m_std_strWholeInputText ,
           stdvec_stdstrWholeTransl ,
@@ -34,9 +32,19 @@ namespace VTrans
           * p_translateParameters->m_p_translationResult
           );
         
-        p_translateParameters->//p_translationControllerBase
-          m_p_i_userInterface->
-          UpdateAfterTranslation();
+        if( p_translateParameters->m_p_translationControllerBase->m_vbContinue )
+        {
+          long double timeCountInSeconds;
+          OperatingSystem::GetTimeCountInSeconds(timeCountInSeconds);
+          p_translateParameters->m_p_translationControllerBase->
+            m_translationDurationInSeconds = timeCountInSeconds -
+            timeCountInSecondsBegin;
+          p_translateParameters->//p_translationControllerBase
+            m_p_i_userInterface->
+            UpdateAfterTranslation();
+        }
+        else
+          p_translateParameters->m_p_translationControllerBase->m_vbContinue = true;
 
         /** Should have been allocated on heap before. */
         delete p_translateParameters;

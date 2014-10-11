@@ -66,8 +66,11 @@ namespace wxWidgets
       wxT("show memory address of grammar part ") );
     p_wxmenu->AppendCheckItem(ID_ShowTranslatedWord,
       wxT("show translated word") );
-    p_wxmenu->Append( ID_DecreaseFontSize, wxT("&decrease parse tree panel's font size") );
-    p_wxmenu->Append( ID_IncreaseFontSize, wxT("&increase parse tree panel's font size") );
+    /** http://docs.wxwidgets.org/trunk/classwx_menu_item.html#a742aa5bb0d3faa020e7b3bd66e336499 : 
+     * "Optionally you can specify also an accelerator string appending a tab 
+     * character \t followed by a valid key combination (e.g. CTRL+V)." */
+    p_wxmenu->Append( ID_DecreaseFontSize, wxT("&decrease parse tree panel's font size\tCTRL+-") );
+    p_wxmenu->Append( ID_IncreaseFontSize, wxT("&increase parse tree panel's font size\tCTRL++") );
     mp_wxmenubar->Append( p_wxmenu , wxT("&view")) ;
 
     SetMenuBar( mp_wxmenubar );

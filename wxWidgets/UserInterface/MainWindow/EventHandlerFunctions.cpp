@@ -73,6 +73,7 @@ DEFINE_LOCAL_EVENT_TYPE(UpdateAfterTranslationEvent)
 BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   EVT_COMMAND(wxID_ANY, UpdateAfterTranslationEvent, 
     EVENT_HANDLER_CLASS_NAME::OnUpdateAfterTranslation)
+  EVT_TEXT(ID_InputText, EVENT_HANDLER_CLASS_NAME::OnInputTextChanges)
   //TODO http://www.wxwidgets.org/docs/faqgtk.htm#charinframe
   // "Why does my simple program using EVT_CHAR not work?"
   EVT_CHAR( EVENT_HANDLER_CLASS_NAME::OnChar)
@@ -147,11 +148,15 @@ void EVENT_HANDLER_CLASS_NAME::OnChar( wxKeyEvent & e)
 void EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize( wxCommandEvent & wxcmd )
 {
   mp_wxparsetreepanel->DecreaseFontSizeBy1Point();
+//  p_wxmenu->Append( ID_DecreaseFontSize, wxT("&decrease parse tree panel's font size\tCTRL+-") );
+  //TODO
+//  SetFontSize(mp_wxparsetreepanel->GetFontSizeInPoint() );
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnIncreaseParseTreePanelFontSize( wxCommandEvent & wxcmd )
 {
- 
+  mp_wxparsetreepanel->IncreaseFontSizeBy1Point();
+  //mp_wxparsetreepanel->IncreaseFontHeightBy1Pixel();
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress( wxCommandEvent & wxcmd )
@@ -366,6 +371,21 @@ void EVENT_HANDLER_CLASS_NAME::OnInfoButton( wxCommandEvent & wxcmd )
 
   wxTextControlDialog wxd(wxstr);
   wxd.ShowModal();
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnInputTextChanges(wxCommandEvent & event)
+{
+  if( /*::wxGetApp::InstantTranslation*/ 1 )
+  {
+//    PossiblyStopTranslation();
+    if( m_translateThread.IsRunning() )
+    {
+      m_translationcontrollerbase.Stop();
+      m_translateThread.WaitForTermination();
+//      wxMessageBox( wxT("already translating") );
+    }
+    Translate();
+  }
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryButton( wxCommandEvent & wxcmd )
@@ -671,14 +691,13 @@ void EVENT_HANDLER_CLASS_NAME::OnUpdateAfterTranslation(wxCommandEvent &)
  *  controls are accessed. */
 void EVENT_HANDLER_CLASS_NAME::UpdateAfterTranslation()
 {
-  const DWORD currentThreadNumber = OperatingSystem::GetCurrentThreadNumber();
-  if( currentThreadNumber == ::wxGetApp().//GetGUIthreadNumber() 
-    m_GUIthreadID )
+  if( ::wxGetApp().IsGUIthread()/*GetGUIthreadNumber()*/ )
   {
     const fastestUnsignedDataType numParseTrees = ::wxGetApp().
       GetNumberOfParseTrees(//stdvec_stdvec_stdvecTranslationAndGrammarPart
       m_translationResult);
-    SetTitle( wxString::Format( wxT("%u parse trees"), numParseTrees) );
+    SetTitle( wxString::Format( wxT("%u parse trees;translation in %f s"), numParseTrees, 
+      (double) m_translationcontrollerbase.m_translationDurationInSeconds) );
 
   //  std::string stdstrAllPossibilities = GetAllTranslationPossibilites(
   //    stdvec_stdstrWholeTransl,
@@ -688,7 +707,7 @@ void EVENT_HANDLER_CLASS_NAME::UpdateAfterTranslation()
     m_p_wxgermantranslationpanel->Set(//stdvec_stdvecTranslationAndGrammarPart
       /* stdvec_stdvec_stdvecTranslationAndGrammarPart */ m_translationResult);
     m_p_wxgermantranslationpanel->Create();
-    //force redraw
+    /** Force redraw : sends EVT_PAINT */
     m_p_wxgermantranslationpanel->Refresh();
 
   //  wxHTMLfileOutput wxhtml_file_output(
@@ -707,18 +726,6 @@ void EVENT_HANDLER_CLASS_NAME::UpdateAfterTranslation()
   //  }
   //  catch(/*const*/ LogFileAccessException & lfae)
   //  {
-  ////    std::string std_strErrorMessage = ::GetErrorMesageFromErrorCodeA(
-  ////      lfae.m_errorCode);
-  ////    wxString wxstrMessage;
-  ////    switch(lfae.m_action)
-  ////    {
-  ////    case LogFileAccessException::deleteLogFile:
-  ////      wxstrMessage = wxT("deleting file failed");
-  ////      break;
-  ////    }
-  ////    wxstrMessage += wxT(":");
-  ////    const wxString & wxstr = wxWidgets::getwxString( std_strErrorMessage);
-  ////    wxstrMessage += wxstr;
   //    const std::string std_strErrorMessage = lfae.GetErrorMessage();
   //    const wxString wxstrMessage = wxWidgets::getwxString(std_strErrorMessage);
   //    wxGetApp().ShowMessage(wxstrMessage);
@@ -745,41 +752,11 @@ void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
   if( m_translateThread.IsRunning() )
   {
     m_translationcontrollerbase.Stop();
-    wxMessageBox( wxT("already tranlating") );
+    wxMessageBox( wxT("already translating") );
   }
   else
   {
-  //  try
-  //  {
-    std::string stdstrWholeInputText ;
-    GetEntireInputText(stdstrWholeInputText) ;
-  //  AxSpeech axspeech ;
-  //  axspeech.Say( stdstrWholeInputText ) ;
-
-  //  std::string stdstrWholeTransl ;
-
-  //  std::vector<std::vector<TranslationAndConsecutiveID> >
-  //    stdvec_stdvecTranslationAndConsecutiveID ;
-
-    bool translateAsync = true;
-    /** Prevent multiple translation threads. */
-    DisableDoTranslateControls();
-
-    VTrans::multiThreadedTranslation::TranslateParameters * p_tranlParams = new 
-      VTrans::multiThreadedTranslation::TranslateParameters(
-      stdstrWholeInputText,
-      //g_p_translationcontrollerbase,
-      & m_translationcontrollerbase,
-      & m_translationResult,
-      m_translationcontrollerbase
-      );
-    if( translateAsync )
-    {
-      m_translateThread.start(
-        VTrans::TranslateThreadProc, p_tranlParams, "Translate");
-    }
-    else
-      VTrans::TranslateThreadProc(p_tranlParams);
+    Translate();
   }
   LOGN_DEBUG("end")
 }

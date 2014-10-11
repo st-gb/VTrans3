@@ -37,6 +37,7 @@ enum user_interface_control_actions
   ID_TruncateLogFile,
   ID_Info,
   ID_Timer,
+  ID_InputText,
   ID_ShowGrammarPartMemoryAddress ,
   ID_ShowTranslatedWord,
   ID_DecreaseFontSize,
