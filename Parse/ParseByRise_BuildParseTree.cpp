@@ -234,8 +234,7 @@ void ParseByRise::PossiblySumUp(
       rightTokenIndex,
       iterFirstUnknownWord->second->m_wGrammarPartID);
 
-    gp->m_stdstrTranslation = GetBetweenAsStdString(
-      m_psv,
+    gp->m_stdstrTranslation = m_psv.GetBetweenAsStdString(
       leftTokenIndex,
       rightTokenIndex);
 
@@ -1725,7 +1724,7 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
   )
 {
   #ifdef _DEBUG
-//  std::string std_str = GetBetweenAsStdString( psv, dwTokenIndex,
+//  std::string std_str = psv.GetBetweenAsStdString( dwTokenIndex,
 //    dwTokenIndexRightMost);
 //  DEBUG_COUT( "word found in dictionary: " << std_str << "\n" )
   #endif
@@ -1913,10 +1912,11 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
       dwTokenIndex, //dwTokenIndexRightMost
       dwTokenIndexRightMostUnknownToken) ;
     p_grammarPart->SetGrammarPartID( EnglishWord::UnknownWord ) ;
-    p_grammarPart->m_stdstrTranslation = GetBetweenAsStdString(
-      c_r_positionStringVector, dwTokenIndex,
+    p_grammarPart->m_stdstrTranslation = c_r_positionStringVector.
+      GetBetweenAsStdString(
+      dwTokenIndex,
         //dwTokenIndexRightMost
-        dwTokenIndexRightMostUnknownToken);
+      dwTokenIndexRightMostUnknownToken);
     m_stdmultimap_dwLeftmostIndex2p_grammarpart.insert(
       std::pair<WORD, GrammarPart *>
         ( dwTokenIndex, p_grammarPart )

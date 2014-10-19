@@ -52,18 +52,28 @@ class GUIattributes
 public:
   bool m_bShowGrammarPartAddress ;
   bool m_bShowTranslation ;
+  fastestUnsignedDataType m_concatenationIDcolour;
   fastestUnsignedDataType m_fontSizeInPoint;
   fastestUnsignedDataType m_minFontSizeInPoint;
   std::string m_std_strGrammarPartIDcolor;
+  std::string m_std_strConcatenationIDcolor;
   std::string m_std_strGrammarPartMemoryAddressColor;
+  
   GUIattributes()
     : m_bShowGrammarPartAddress( true /*false*/ )
       , m_bShowTranslation(false)
       , m_std_strGrammarPartIDcolor("#FF0000")
+      , m_std_strConcatenationIDcolor("#0000FF")
       , m_std_strGrammarPartMemoryAddressColor("#FF0000")
       , m_fontSizeInPoint(8)
       , m_minFontSizeInPoint(5)
+      , m_concatenationIDcolour(255)
   {}
+  
+  void SetConcatenationIDcolour(DWORD dw)
+  {
+    m_concatenationIDcolour = dw;
+  }
   
   void SetPointSizeOfParseTreePanel(const fastestUnsignedDataType fontSizeInPoint) {
     m_fontSizeInPoint = fontSizeInPoint;
@@ -165,7 +175,7 @@ public:
     );
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
-  bool IsGUIthread();
+  bool IsGUIthread(); //TODO rename to "CurrentThreadIsGUIthread"
   BYTE Init(const std::string & cr_stdstrFilePath) ;
   virtual void LoadingVocabularyFileFailed(
     const std::string & cr_stdstrFilePath) {} // = 0;

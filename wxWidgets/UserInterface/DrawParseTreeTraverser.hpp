@@ -9,7 +9,8 @@
 #define DRAWPARSETREETRAVERSER_H_
 
 //class DrawGrammarPartAttributes
-#include <Attributes/DrawGrammarPartAttributes.hpp>
+#include "DrawGrammarPartAttributes.hpp"
+#include <Attributes/GrammarPartLocationWithinWindow.hpp>
 //base class ParseTreeTraverser::DirectingLeavesMultipleIterTraverser
 #include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <map> //class std::map
@@ -39,12 +40,18 @@ public:
     );
   virtual
   ~DrawParseTreeTraverser();
-  std::map<GrammarPart *,DrawGrammarPartAttributes>
+  std::map<GrammarPart *,GrammarPartLocationWithinWindow>
     m_stdmap_p_grammarpart2HorizCenter;
 
-  void DrawGrammarPartAtts(
-    const wxString & wxstrGrammarPartName,
-    const wxString & wxstrGrammarPartMemoryAddress,
+  inline fastestUnsignedDataType DrawTextAndAddXpos(
+    const wxString & wxstr,
+    fastestUnsignedDataType leftEndInPixels, 
+    const fastestUnsignedDataType stringHeightInPixels,
+    const bool doDraw = true,
+    const wxColor & wxcolor = *wxBLACK
+    );
+  fastestUnsignedDataType DrawGrammarPartAtts(
+    const DrawGrammarPartAttributes & drawGrammarPartAttributes,
     /*const*/ fastestUnsignedDataType leftEndInPixels,
     const fastestUnsignedDataType stringHeight);
   wxSize GetGrammarPartNameExtent(
@@ -52,8 +59,9 @@ public:
     wxDC & r_wxdc ,
     GrammarPart * p_pg ,
     //wxSize & wxsizeText
-    wxString & wxstr,
-    wxString & wxstrGrammarPartMemoryAddress
+//    wxString & wxstr,
+//    wxString & wxstrGrammarPartMemoryAddress
+    DrawGrammarPartAttributes & drawGrammarPartAttributes
     ) ;
   wxSize GetSourceTextTokenExtent(
       wxDC & r_wxdc ,
@@ -61,6 +69,7 @@ public:
   //    wxSize & wxsizeText
       wxString & wxstr
       ) ;
+  fastestUnsignedDataType GetWidthInPixels(const wxString & wxstr) const;
   void BeforeBeginAtRoot() ;
 //  {
 //    //Important. else pathes with previous node(s) (->too long) are created.
@@ -68,6 +77,7 @@ public:
 ////    m_stdvec_p_grammarpartPath.clear() ;
 //  }
   void CurrentNodeIsLastAddedRightChild() ;
+  fastestUnsignedDataType DrawRectangle(const fastestUnsignedDataType widthOfLeafInPixels);
   void LeaveFound() ;
   void ParseTreePathAdded() ;
 //    void RightChildAdded(WORD wCurrentParseTreeLevel) ;
@@ -77,10 +87,10 @@ private:
   void
   DrawLineFromRightChildToParent(
     fastestUnsignedDataType & middleBetweenLeftAndRightChild,
-    std::map<GrammarPart*, DrawGrammarPartAttributes>::iterator& iterLeft,
-    std::map<GrammarPart*, DrawGrammarPartAttributes>::iterator& iterRight,
+    std::map<GrammarPart*, GrammarPartLocationWithinWindow>::iterator& iterLeft,
+    std::map<GrammarPart*, GrammarPartLocationWithinWindow>::iterator& iterRight,
     fastestUnsignedDataType & childY,
-    DrawGrammarPartAttributes* p_dgpaRight,
+    GrammarPartLocationWithinWindow* p_dgpaRight,
 //    wxSize& wxsizeString,
     fastestUnsignedDataType & thisY);
 };

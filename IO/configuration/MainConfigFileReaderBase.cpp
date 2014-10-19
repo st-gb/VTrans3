@@ -9,7 +9,7 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 #include <Controller/character_string/ConvertStdStringToTypename.hpp>
 #include <Controller/TranslationControllerBase.hpp> //class TranslationControllerBase
-
+#include <C_standard_library/string_compare_return_codes.h>
 
 MainConfigFileReaderBase::MainConfigFileReaderBase (
   ConfigurationHandler_type & configurationReader)
@@ -148,18 +148,31 @@ void MainConfigFileReaderBase::openingXMLelement(
 //        }
 //      }
 #ifdef COMPILE_AS_EXECUTABLE
-      if( ::strcmp(xmlElementName, "grammar_part") == 0 )
+      if( ::strcmp(xmlElementName, "grammar_part") == 
+         C_standard_library::strcmp::stringsAreEqual )
       {
         HandleGrammartPartColourXMLelement(xmlElement);
       }
-      else if( ::strcmp(xmlElementName, "main_window") == 0 )
+      else if( ::strcmp(xmlElementName, "main_window") == 
+              C_standard_library::strcmp::stringsAreEqual )
       {
         
       }
-      else if( ::strcmp(xmlElementName, "parse_tree_panel") == 0 )
+      else if( ::strcmp(xmlElementName, "parse_tree_panel") == 
+              C_standard_library::strcmp::stringsAreEqual )
       {
         std::string std_strFontSizeXMLattributeValue;
         
+        std::string & strConcatenationIDcolor =
+          m_r_configurationReader.m_translationController.m_GUIattributes.
+          m_std_strConcatenationIDcolor;
+        m_r_configurationReader.GetAttributeValue(xmlElement, 
+          strConcatenationIDcolor, "concatenation_id_color");
+        unsigned dwValue;
+        if( ConvertStdStringToTypename(dwValue, strConcatenationIDcolor ) )
+          m_r_configurationReader.m_translationController.m_GUIattributes.
+            SetConcatenationIDcolour(dwValue);
+
         m_r_configurationReader.GetAttributeValue(xmlElement, 
           std_strFontSizeXMLattributeValue, "font_size");
         fastestUnsignedDataType fontSizeInPoint = GetFontSizeInPoint(
@@ -181,7 +194,8 @@ void MainConfigFileReaderBase::openingXMLelement(
 //          HandleGUI_XMLelement(cr_xercesc_attributes);
       else
 #endif
-      if( ::strcmp(xmlElementName, "grammar_rule_file") == 0 )
+      if( ::strcmp(xmlElementName, "grammar_rule_file") == 
+         C_standard_library::strcmp::stringsAreEqual )
       {
         HandleReadGrammarRuleFileXMLelement( xmlElement ) ;
       }
@@ -189,16 +203,19 @@ void MainConfigFileReaderBase::openingXMLelement(
 //         {
 //           HandleReadTransformationRuleFileXMLelement( cr_xercesc_attributes ) ;
 //         }
-      else if( ::strcmp(xmlElementName, "translation_rule_file") == 0 )
+      else if( ::strcmp(xmlElementName, "translation_rule_file") == 
+              C_standard_library::strcmp::stringsAreEqual )
       {
         HandleReadTranslationRuleFileXMLelement( xmlElement) ;
           int i = 0;
       }
-      else if( ::strcmp(xmlElementName, "vocabulary_attribute_definition_file") == 0 )
+      else if( ::strcmp(xmlElementName, "vocabulary_attribute_definition_file")
+               == C_standard_library::strcmp::stringsAreEqual )
       {
         HandleReadVocabularyAttributeDefinitionFileXMLelement(xmlElement ) ;
       }
-     else if( ::strcmp(xmlElementName, "vocabulary_file") == 0 )
+     else if( ::strcmp(xmlElementName, "vocabulary_file") == 
+             C_standard_library::strcmp::stringsAreEqual )
      {
        std::string std_strVocabularyFilePath;
        m_r_configurationReader.GetAttributeValue(xmlElement, 

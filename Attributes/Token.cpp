@@ -214,31 +214,6 @@ VTrans_string_typeVector GetBetween(
 //	return retCStrVec;
 //}
 
-//TODO make as member function of class PositionStringVector
-std::string GetBetweenAsStdString(
-  const PositionStringVector & rc_pstrv
-  ,int first
-  ,int last )
-{
-  std::string stdstr ;
-  const PositionStringVector pstrv = //GetBetween(rc_pstrv,first,last) ;
-    rc_pstrv.GetBetween(first,last);
-//    last = pstrv.size() ;
-  PositionStringVector::const_iterator c_iter = pstrv.begin() ;
-  if( c_iter != pstrv.end() )
-  {
-    stdstr += c_iter->m_Str ;
-    ++ c_iter ;
-  }
-  while( c_iter != pstrv.end() )
-//    for( first = 0 ; first < last ; ++ first )
-  {
-    stdstr += " " + c_iter->m_Str ;
-    ++ c_iter ;
-  }
-  return stdstr ;
-}
-
 //VTrans_string_typeVector GetCStringVector(CString str)
 //{
 //	//TRACE("GetCStringVector ANFANG\n");

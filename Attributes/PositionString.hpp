@@ -87,6 +87,7 @@
     PositionStringVector GetBetween(
 //      const PositionStringVector & sv,
       const int first, const int last ) const;
+    std::string GetBetweenAsStdString(const int first, const int last) const;
   };
 
 

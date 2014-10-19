@@ -34,7 +34,7 @@
 #include <fastest_data_type.h> //typedef fastestUnsignedDataType
 
 //Forward declarations (faster than #include)
-class DrawGrammarPartAttributes ;
+class GrammarPartLocationWithinWindow ;
 class GrammarPart ;
 class ParseByRise ;
 class wxBitmap;
@@ -55,7 +55,7 @@ class wxParseTreePanel
     std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2wCenter ;
     std::vector<GrammarPart *> m_stdvecNodesToProcess ;
     //std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2HorizCenter;
-    std::map<GrammarPart *,DrawGrammarPartAttributes>
+    std::map<GrammarPart *,GrammarPartLocationWithinWindow>
       m_stdmap_p_grammarpart2HorizCenter;
 public:
 //	wxParseTreePanel();

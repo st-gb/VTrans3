@@ -99,6 +99,7 @@ public:
   VocabularyAndTranslation * m_pvocabularyandtranslation ;
   //Additionally use numbers corresponding to the rule name because they can
   //be compared faster than strings.
+  //TODO make as unsigned data type for performance
   WORD m_wGrammarPartID ;
   //for listboxes in GUI->same selection for multiple listboxes.
   WORD m_wConsecutiveID ;

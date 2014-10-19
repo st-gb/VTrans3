@@ -14,6 +14,7 @@
 #include <wx/font.h> //class wxFont
 
 #include "DrawParseTreeTraverser.hpp"
+#include "DrawGrammarPartAttributes.hpp"
 //#include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
@@ -67,37 +68,89 @@ void DrawParseTreeTraverser::CurrentNodeIsLastAddedRightChild()
 
 }
 
+/** @return with of drawn text in pixels */
+inline fastestUnsignedDataType DrawParseTreeTraverser::DrawTextAndAddXpos(
+  const wxString & wxstr,
+  fastestUnsignedDataType leftEndInPixels, 
+  const fastestUnsignedDataType stringHeightInPixels,
+  const bool doDraw,
+  const wxColor & col
+  )
+{
+  fastestUnsignedDataType textWidthInPixels = 0;
+  if( doDraw )
+  {
+    mp_wxdc->SetTextForeground( col );
+    mp_wxdc->DrawText(
+      wxstr, //wXcoord,
+      leftEndInPixels ,
+      stringHeightInPixels
+      ) ;
+    textWidthInPixels = GetWidthInPixels(wxstr);
+  }
+  return textWidthInPixels;
+}
+
 /** @brief draws
  *  (-grammar part id)
  *  -grammar part name
  *  (-memory address)
  *  */
-inline void DrawParseTreeTraverser::DrawGrammarPartAtts(
-  const wxString & wxstrGrammarPartName,
-  const wxString & wxstrGrammarPartMemoryAddress,
+inline fastestUnsignedDataType DrawParseTreeTraverser::DrawGrammarPartAtts(
+  const DrawGrammarPartAttributes & drawGrammarPartAttributes,
   /*const*/ fastestUnsignedDataType leftEndInPixels,
   const fastestUnsignedDataType stringHeightInPixels
   )
 {
-  mp_wxdc->DrawText(
-    wxstrGrammarPartName , //wXcoord,
-    leftEndInPixels ,
-    stringHeightInPixels
-    ) ;
+  const wxString & wxstrGrammarPartName = drawGrammarPartAttributes.m_wxstrGrammarPartName;
+  const wxString & wxstrGrammarPartMemoryAddress = drawGrammarPartAttributes.m_wxstrGrammarPartMemoryAddress;
+  const wxString & wxstrGrammarPartID = drawGrammarPartAttributes.m_wxstrGrammarPartID;
+  const wxString & wxstrConcatenationID = drawGrammarPartAttributes.m_wxstrConcatenationID;
+  
+  const GUIattributes & gUIattributes = ::wxGetApp().m_GUIattributes;
+  
+  fastestUnsignedDataType textWidthInPixels = 0;
+  
+  textWidthInPixels += DrawTextAndAddXpos(wxstrGrammarPartID, leftEndInPixels, stringHeightInPixels);
+  textWidthInPixels += DrawTextAndAddXpos(wxstrGrammarPartName, 
+    leftEndInPixels + textWidthInPixels, stringHeightInPixels);
+  textWidthInPixels += DrawTextAndAddXpos(
+    wxstrConcatenationID, 
+    leftEndInPixels + textWidthInPixels,
+    stringHeightInPixels, true, 
+    wxColour( //gUIattributes.m_concatenationIDcolour)
+      GetwxString_Inline(gUIattributes.m_std_strConcatenationIDcolor))
+    );
+  
   if( ! wxstrGrammarPartMemoryAddress.IsEmpty() )
   {
-    leftEndInPixels += mp_wxdc->GetTextExtent(wxstrGrammarPartName).GetWidth();
-    m_wxcolor.Set( GetwxString_Inline(
-      ::wxGetApp().m_GUIattributes.m_std_strGrammarPartIDcolor) );
-    mp_wxdc->SetTextForeground(m_wxcolor);
-    mp_wxdc->DrawText(
-      wxstrGrammarPartMemoryAddress , //wXcoord,
-      leftEndInPixels ,
-      stringHeightInPixels
-      ) ;
-    m_wxcolor.Set( wxT("#000000") );
-    mp_wxdc->SetTextForeground(m_wxcolor);
+    textWidthInPixels += DrawTextAndAddXpos(
+      wxstrGrammarPartMemoryAddress, leftEndInPixels + textWidthInPixels, 
+      stringHeightInPixels, true, wxColour( GetwxString_Inline(
+      gUIattributes.m_std_strGrammarPartIDcolor)) 
+      );
   }
+  m_wxcolor.Set( wxT("#000000") );
+  mp_wxdc->SetTextForeground(m_wxcolor);
+  return textWidthInPixels;
+}
+
+fastestUnsignedDataType DrawParseTreeTraverser::DrawRectangle(
+  const fastestUnsignedDataType widthOfLeafInPixels)
+{
+  const fastestUnsignedDataType yCoord = //So the it is drawn below the previous alternative parse tree.
+    /*wxsizeString.GetHeight()*/ m_stringHeigth *
+    //Was increased before by "BeforeBeginAtRoot".
+    (m_wParseLevelCountedFromRoot - 1);
+
+  wxPen wxpenDraw(* wxBLUE//int width = 1, int style = wxSOLID
+    );
+  mp_wxdc->SetPen( wxpenDraw);
+  mp_wxdc->DrawRectangle(m_currentParseTreeLeftEndInPixels, yCoord,
+    widthOfLeafInPixels, /*wxsizeString.GetHeight()*/ m_stringHeigth );
+
+  mp_wxdc->SetPen( * wxBLACK_PEN);
+  return yCoord;
 }
 
 /** @brief a leave is a token? */
@@ -109,8 +162,8 @@ void DrawParseTreeTraverser::LeaveFound()
       ;
   fastestSignedDataType textWidthInPixels ;
   wxSize wxsizeString, wxsizeSourceTextTokens, wxsizeGermanTranslation;
-  wxString wxstrGrammarPartName ;
-  wxString wxstrGrammarPartMemoryAddress ;
+//  wxString wxstrGrammarPartName ;
+//  wxString wxstrGrammarPartMemoryAddress ;
 
   GrammarPart * p_grammarpart = m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart ;
@@ -119,9 +172,12 @@ void DrawParseTreeTraverser::LeaveFound()
   LOGN_DEBUG(//"DrawParseTreeTraverser::LeaveFound()--" <<
     std_strGrammarPartName )
   wxString wxstrSourceTextTokens ;
+  
+  DrawGrammarPartAttributes drawGrammarPartAttributes;
 //      wxString wxstrGrammarPartName(r_stdstrGrammarPartName) ;
   wxsizeString = GetGrammarPartNameExtent( * mp_wxdc, p_grammarpart,
-    wxstrGrammarPartName, wxstrGrammarPartMemoryAddress ) ;
+    drawGrammarPartAttributes ) ;
+  
   textWidthInPixels = wxsizeString.GetWidth() ;
 
   wxsizeSourceTextTokens = GetSourceTextTokenExtent( * mp_wxdc, p_grammarpart,
@@ -137,6 +193,14 @@ void DrawParseTreeTraverser::LeaveFound()
   }
   wxsizeString = wxsizeSourceTextTokens + wxsizeGermanTranslation;
 
+  textWidthInPixels = DrawGrammarPartAtts(
+    drawGrammarPartAttributes,
+    m_currentParseTreeLeftEndInPixels,
+    /*wxsizeString.GetHeight()*/ m_stringHeigth
+    //So the it is drawn below the previous alternative parse tree.
+    * (m_wParseLevelCountedFromRoot)
+    );
+  
   if ( wxsizeString.GetWidth() > textWidthInPixels )
     textWidthInPixels = wxsizeString.GetWidth() ;
 
@@ -147,31 +211,16 @@ void DrawParseTreeTraverser::LeaveFound()
 //  textWidthInPixels += wxsizeString.GetWidth() ;
 //  wxstrGrammarPartName = wxstrGrammarPartID + wxstrGrammarPartName ;
 
-//          DrawGrammarPartToken( p_grammarpart, wxpaintdc
-//              , wHorizTextCenter ) ;
-//          DrawGrammarPartName( p_grammarpart, wxpaintdc
-//              , wHorizTextCenter ) ;
-
-  int yCoord = //So the it is drawn below the previous alternative parse tree.
-    /*wxsizeString.GetHeight()*/ m_stringHeigth *
-    //Was increased before by "BeforeBeginAtRoot".
-    (m_wParseLevelCountedFromRoot - 1);
-
-  wxPen wxpenDraw(* wxBLUE//int width = 1, int style = wxSOLID
-    );
-  mp_wxdc->SetPen( wxpenDraw);
-  mp_wxdc->DrawRectangle(m_currentParseTreeLeftEndInPixels, yCoord,
-    textWidthInPixels, /*wxsizeString.GetHeight()*/ m_stringHeigth );
-
-  mp_wxdc->SetPen( * wxBLACK_PEN);
+  const fastestUnsignedDataType yCoord = DrawRectangle(textWidthInPixels);
 
   m_wxcolor.Set( GetwxString_Inline(
     ::wxGetApp().m_GUIattributes.m_std_strGrammarPartIDcolor) );
   mp_wxdc->SetTextForeground(m_wxcolor);
 #ifdef _DEBUG
-  const wxFont & font = mp_wxdc->GetFont(); 
-  const int fontPointSize = font.GetPointSize(); 
+  const wxFont & font = mp_wxdc->GetFont();
+  //const int fontPointSize = font.GetPointSize(); 
 #endif
+  
   mp_wxdc->DrawText( wxstrGermanTranslation , //wXcoord
     m_currentParseTreeLeftEndInPixels + wxsizeSourceTextTokens.x,
     //0
@@ -186,22 +235,14 @@ void DrawParseTreeTraverser::LeaveFound()
     //0
     yCoord
     ) ;
+  
 //  int yCoordBelow = yCoord + wxsizeString.GetHeight();
 //  mp_wxdc->DrawLine(m_currentParseTreeLeftEndInPixels, yCoordBelow,
 //    m_currentParseTreeLeftEndInPixels + textWidthInPixels, yCoordBelow );
 //  wxstrGrammarPartName += wxString::Format( "%u",
 //    p_grammarpart->m_byPersonIndex ) ;
 
-  DrawGrammarPartAtts(
-    wxstrGrammarPartName,
-    wxstrGrammarPartMemoryAddress,
-    m_currentParseTreeLeftEndInPixels,
-    /*wxsizeString.GetHeight()*/ m_stringHeigth
-    //So the it is drawn below the previous alternative parse tree.
-    * (m_wParseLevelCountedFromRoot)
-    );
-
-  DrawGrammarPartAttributes draw_grammar_part_attributes(
+  GrammarPartLocationWithinWindow grammarPartLocationWithinWindow(
       //wXcoord + textWidthInPixels / 2 ,
     m_currentParseTreeLeftEndInPixels + textWidthInPixels / 2 ,
       //m_wParseLevel
@@ -212,10 +253,11 @@ void DrawParseTreeTraverser::LeaveFound()
   m_stdmap_p_grammarpart2HorizCenter.insert(
     //std::pair<GrammarPart *,WORD>
 //          (p_grammarpart, wXcoord + wWidth / 2 )
-    std::pair<GrammarPart *,DrawGrammarPartAttributes>
+    std::pair<GrammarPart *,GrammarPartLocationWithinWindow>
     ( p_grammarpart ,
-        draw_grammar_part_attributes )
+        grammarPartLocationWithinWindow )
     ) ;
+  //m_currentParseTreeLeftEndInPixels += textWidthInPixels;
 }
 
 void DrawParseTreeTraverser::ParseTreePathAdded()
@@ -229,8 +271,9 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   wxDC & r_wxdc ,
   GrammarPart * p_grammarpart ,
   //wxSize & wxsizeText
-  wxString & wxstrGrammarPartName,
-  wxString & wxstrGrammarPartMemoryAddress
+//  wxString & wxstrGrammarPartName,
+//  wxString & wxstrGrammarPartMemoryAddress
+  DrawGrammarPartAttributes & drawGrammarPartAttributes
   )
 {
   bool bShowGrammarPartAddressInHex = true ;
@@ -238,28 +281,32 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
     //m_stdstrGrammarPartName ;
     mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID ) ;
   //if( m_bShowGrammarPartID )
-  wxString wxstrGrammarPartID = wxString::Format( wxT("%u_") ,
+  drawGrammarPartAttributes.m_wxstrGrammarPartID = wxString::Format( wxT("%u_") ,
     p_grammarpart->m_wGrammarPartID ) ;
-  wxstrGrammarPartName = wxstrGrammarPartID + //wxString( r_stdstrGrammarPartName ) ;
+  drawGrammarPartAttributes.m_wxstrGrammarPartName = //wxString( r_stdstrGrammarPartName ) ;
     GetwxString_Inline(r_stdstrGrammarPartName);
+  
   if( ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress )
   {
     //hex. addresses are easier to compare with values in debugger mode.
     if( bShowGrammarPartAddressInHex )
-      wxstrGrammarPartMemoryAddress = wxString::Format( wxT("%lx") ,
+      drawGrammarPartAttributes.m_wxstrGrammarPartMemoryAddress = wxString::Format( wxT("%lx") ,
         (DWORD) p_grammarpart ) ;
     else
-      wxstrGrammarPartMemoryAddress = wxString::Format( wxT("%lu") ,
+      drawGrammarPartAttributes.m_wxstrGrammarPartMemoryAddress = wxString::Format( wxT("%lu") ,
         (DWORD) p_grammarpart ) ;
-
+    //drawGrammarPartAttributes.
   }
-  wxstrGrammarPartName += wxString::Format( wxT("%u"),
-    p_grammarpart->m_byPersonIndex ) ;
-
-  wxSize wxsizeText = r_wxdc.GetTextExtent( wxstrGrammarPartName );
+//  wxstrGrammarPartName += wxString::Format( wxT("%u"),
+//    p_grammarpart->m_byPersonIndex ) ;
+  
+  drawGrammarPartAttributes.m_wxstrConcatenationID = wxString::Format( wxT("%u"),
+    p_grammarpart->m_ui32ConcatenationID);
+    
+  wxSize wxsizeText = r_wxdc.GetTextExtent( drawGrammarPartAttributes.m_wxstrGrammarPartName );
   m_stringHeigth = wxsizeText.GetHeight();
   const int overallWidth = wxsizeText.GetWidth() +
-    r_wxdc.GetTextExtent(wxstrGrammarPartMemoryAddress).GetWidth();
+    r_wxdc.GetTextExtent(drawGrammarPartAttributes.m_wxstrGrammarPartMemoryAddress).GetWidth();
   wxsizeText.SetWidth( overallWidth);
   return wxsizeText ;
 }
@@ -272,8 +319,8 @@ wxSize DrawParseTreeTraverser::GetSourceTextTokenExtent(
     )
 {
   const std::string & r_stdstrTokens = //citer->second.
-     GetBetweenAsStdString(
-     mp_parsebyrise->m_psv, p_pg->m_dwLeftmostIndex,
+     mp_parsebyrise->m_psv.GetBetweenAsStdString(
+     p_pg->m_dwLeftmostIndex,
      p_pg->m_dwRightmostIndex ) ;
   wxstr = //wxString(r_stdstrTokens) ;
     GetwxString_Inline(r_stdstrTokens);
@@ -284,13 +331,19 @@ wxSize DrawParseTreeTraverser::GetSourceTextTokenExtent(
   return wxsizeText ;
 }
 
+fastestUnsignedDataType DrawParseTreeTraverser::GetWidthInPixels(const wxString & wxstr) const
+{
+  const fastestUnsignedDataType widthInPixels = mp_wxdc->GetTextExtent(wxstr).GetWidth();
+  return widthInPixels;
+}
+
 //    void RightChildAdded(WORD wCurrentParseTreeLevel) ;
 inline void DrawParseTreeTraverser::DrawLineFromRightChildToParent(
   fastestUnsignedDataType & middleBetweenLeftAndRightChild,
-  std::map<GrammarPart*, DrawGrammarPartAttributes>::iterator & iterLeft,
-  std::map<GrammarPart*, DrawGrammarPartAttributes>::iterator & iterRight,
+  std::map<GrammarPart*, GrammarPartLocationWithinWindow>::iterator & iterLeft,
+  std::map<GrammarPart*, GrammarPartLocationWithinWindow>::iterator & iterRight,
   fastestUnsignedDataType & childY,
-  DrawGrammarPartAttributes * p_dgpaRight,
+  GrammarPartLocationWithinWindow * p_dgpaRight,
 //  wxSize& wxsizeString,
   fastestUnsignedDataType & thisY
   )
@@ -313,10 +366,10 @@ void DrawParseTreeTraverser::UnprocessedHighestLevelNodeFound()
   //Must NOT be declared as const because it is used in std::map::erase() later
 //  std::map<GrammarPart *,WORD>::iterator iterLeft ;
 //  std::map<GrammarPart *,WORD>::iterator iterRight ;
-  DrawGrammarPartAttributes * p_dgpaLeft ;
-  DrawGrammarPartAttributes * p_dgpaRight ;
-  std::map<GrammarPart *,DrawGrammarPartAttributes>::iterator iterLeft ;
-  std::map<GrammarPart *,DrawGrammarPartAttributes>::iterator iterRight ;
+  GrammarPartLocationWithinWindow * p_dgpaLeft ;
+  GrammarPartLocationWithinWindow * p_dgpaRight ;
+  std::map<GrammarPart *,GrammarPartLocationWithinWindow>::iterator iterLeft ;
+  std::map<GrammarPart *,GrammarPartLocationWithinWindow>::iterator iterRight ;
 //  WORD wStringWidthLeftChild ;
 //  WORD wXcoord = 0 ;
   fastestUnsignedDataType middleBetweenLeftAndRightChild ;
@@ -325,8 +378,6 @@ void DrawParseTreeTraverser::UnprocessedHighestLevelNodeFound()
 //  WORD wHorizCenterInPixelsOfLeftChild ;
 //  WORD wHorizCenterInPixelsOfRightChild ;
   wxSize wxsizeString ;
-  wxString wxstrGrammarPartName ;
-  wxString wxstrGrammarPartMemoryAddress;
 
   GrammarPart * p_grammarpart = m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart ;
@@ -337,11 +388,11 @@ void DrawParseTreeTraverser::UnprocessedHighestLevelNodeFound()
 
   p_dgpaLeft = & iterLeft->second ;
   p_dgpaRight = & iterRight->second ;
+  DrawGrammarPartAttributes drawGrammarPartAttributes;
   wxsizeString = GetGrammarPartNameExtent(
     * mp_wxdc,
     p_grammarpart,
-    wxstrGrammarPartName,
-    wxstrGrammarPartMemoryAddress
+    drawGrammarPartAttributes
     ) ;
   if( p_grammarpart->
       mp_grammarpartRightChild
@@ -360,7 +411,7 @@ void DrawParseTreeTraverser::UnprocessedHighestLevelNodeFound()
       ( wxsizeString.GetWidth() / 2 ) ;
   if( leftTextEndInPixels > 65000 )
     leftTextEndInPixels = 0 ;
-  DEBUG_COUTN("wxstrGrammarPartName:" << wxstrGrammarPartName.c_str()
+  DEBUGN("wxstrGrammarPartName:" << drawGrammarPartAttributes.m_wxstrGrammarPartName.c_str()
     << " m_wParseLevelCountedFromRoot:" << m_wParseLevelCountedFromRoot
     << " m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel:"
     << m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel
@@ -370,8 +421,7 @@ void DrawParseTreeTraverser::UnprocessedHighestLevelNodeFound()
 //    p_grammarpart->m_byPersonIndex ) ;
 
   DrawGrammarPartAtts(
-    wxstrGrammarPartName ,
-    wxstrGrammarPartMemoryAddress,
+    drawGrammarPartAttributes,
     leftTextEndInPixels ,
     //m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel *
     m_wParseLevelCountedFromRoot * /*wxsizeString.GetHeight()*/ m_stringHeigth
@@ -398,7 +448,7 @@ void DrawParseTreeTraverser::UnprocessedHighestLevelNodeFound()
       mp_grammarpartRightChild
     )
     m_stdmap_p_grammarpart2HorizCenter.erase(iterRight) ;
-  DrawGrammarPartAttributes draw_grammar_part_attributes(
+  GrammarPartLocationWithinWindow draw_grammar_part_attributes(
       middleBetweenLeftAndRightChild ,
       //m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel
       m_wParseLevelCountedFromRoot
@@ -406,7 +456,7 @@ void DrawParseTreeTraverser::UnprocessedHighestLevelNodeFound()
   m_stdmap_p_grammarpart2HorizCenter.insert(
 //        std::pair<GrammarPart*,WORD>
 //        (p_grammarpart,middleBetweenLeftAndRightChild)
-    std::pair<GrammarPart*,DrawGrammarPartAttributes>
+    std::pair<GrammarPart*,GrammarPartLocationWithinWindow>
     (p_grammarpart,draw_grammar_part_attributes)
     ) ;
 }

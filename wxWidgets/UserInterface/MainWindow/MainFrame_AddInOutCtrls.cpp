@@ -10,6 +10,7 @@
 
   void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputControls()
   {
+//    LOGN_DEBUG("begin")
     mp_wxsplitterwindow = new wxSplitterWindow( /*(wxFrame *)*/ // (EVENT_HANDLER_CLASS_NAME *) this
       m_p_mainwindow
        , wxID_ANY ) ;
