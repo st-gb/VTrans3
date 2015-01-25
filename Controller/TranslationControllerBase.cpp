@@ -477,6 +477,7 @@ void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
     << stdstrConfigFilesRootFullDirectoryPath << "\"")
 }
 
+/** Is called from another / the (graphical) UI thread. */
 void TranslationControllerBase::Stop()
 {
   //TODO check if volatile is sufficient or better use atomic function Compare and swap
@@ -521,10 +522,20 @@ void TranslationControllerBase::Settings(
 {
   if( strcmp(cp_chName, "logging") == 0)
   {
-    if( strcmp(cp_chValue, "disable") == 0 )
-      g_logger.SetLogLevel("warning");
-    else if( strcmp(cp_chValue, "enable") == 0 )
-      g_logger.SetLogLevel("debug");
+    std::string logLevel;
+    try
+    {
+      if( strcmp(cp_chValue, "disable") == 0 )
+        logLevel = "warning";
+      else if( strcmp(cp_chValue, "enable") == 0 )
+        logLevel = "debug";
+      if( ! logLevel.empty() )
+        g_logger.SetLogLevel(logLevel);
+    }
+    catch(NS_NodeTrie::NotInContainerException & e)
+    {
+      LOGN_ERROR("log level " << logLevel << " to set is not contained in node trie.")
+    }
   }
 }
 

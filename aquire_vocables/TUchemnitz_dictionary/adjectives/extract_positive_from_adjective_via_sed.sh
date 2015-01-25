@@ -13,6 +13,13 @@
 # "\3": after wordkind, e.g. a preposition: "schädlich {adj} (für)" -> "schädlich (für)"
 sed '/.*::.*{adj}.*/!d;/.*{adj}.*/ s/\([^|]*\).*::\([^{]*\){adj} \([^|]*\).*/\1::\2\3{positive}/g'
 
+#1st replacement: 
+#2nd replacement: remove space chars before "(":  "like (poles)::" -> "like(poles)::"
+# 
+#sed '{
+#	/.*::.*{adj}.*/!d;/.*{adj}.*/ s/\([^|]*\).*::\([^{]*\){adj} \([^|]*\).*/\1::\2\3{positive}/g
+#    s/[ ]*(/{/g
+#	}'
 #http://stackoverflow.com/questions/5410757/sed-delete-a-line-containing-a-specific-string
 #sed '/{adj}/!d'
 #sed '/.*::.*{adj}.*/!d'

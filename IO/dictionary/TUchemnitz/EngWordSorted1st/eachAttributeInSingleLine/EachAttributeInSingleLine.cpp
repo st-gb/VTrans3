@@ -336,7 +336,7 @@
   //      int i = m_englishDictionary.get();
         int i = ReadByte();
   //      streamIsGood = m_englishDictionary.good();
-        streamIsGood = i > -1;
+        streamIsGood = i > 0;
         while( streamIsGood /*&& ! breakWhile*/ )
         {
           if( ! afterRoundOpeningBracket && ! afterSquaredOpeningBracket &&
@@ -456,7 +456,7 @@
   //        i = m_englishDictionary.get();
           i = ReadByte();
   //        streamIsGood = m_englishDictionary.good();
-          streamIsGood = i > -1;
+          streamIsGood = i > 0;
   //        psvDictFile.clear();
   //        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
         } //while loop for current voc data

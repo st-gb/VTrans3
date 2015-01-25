@@ -5,6 +5,7 @@
  *      Author: Stefan
  */
 #include <Attributes/TranslationAndGrammarPart.hpp>
+#include <Attributes/TranslationResult.hpp> //class TranslationResult
 #include <Controller/character_string/stdstring_format.hpp>//to_stdstring(...)
 #include <Controller/Logger/Logger.hpp> //class Logger
 #include <Controller/GetErrorMessageFromLastErrorCode.hpp>
@@ -23,6 +24,33 @@
 //TranslationControllerBase g_translationcontrollerbase;
 TranslationControllerBase * g_p_translationcontrollerbase = NULL ;
 
+//http://tldp.org/HOWTO/Program-Library-HOWTO/miscellaneous.html#INIT-AND-CLEANUP
+//Libraries should export initialization and cleanup routines using the gcc
+// __attribute__((constructor)) and
+// __attribute__((destructor)) function attributes.
+// See the gcc info pages for information on these.
+//Constructor routines are executed before dlopen returns (or before main() is
+// started if the library is loaded at load time).
+//Destructor routines are executed before dlclose returns (or after exit() or
+// completion of main() if the library is loaded at load time).
+// The C prototypes for these functions are:
+//
+//  void __attribute__ ((constructor)) my_init(void);
+//  void __attribute__ ((destructor)) my_fini(void);
+//
+//Shared libraries must not be compiled with the gcc arguments
+//``-nostartfiles'' or ``-nostdlib''. If those arguments are used, the constructor/destructor routines will not be executed (unless special measures are taken).
+
+void __attribute__ ((constructor)) my_init(void)
+{
+//  LogLevel::CreateLogLevelStringToNumberMapping();
+}
+
+//int main(void)
+//{
+//  LogLevel::CreateLogLevelStringToNumberMapping();
+//}
+
 EXPORT void Stop()
 {
   g_p_translationcontrollerbase->Stop();
@@ -39,6 +67,11 @@ EXPORT void FreeMemory()
   LOGN("end")
 }
 
+void __attribute__ ((destructor)) my_fini(void)
+{
+  FreeMemory();
+}
+
 /**
  * @return: result of initialization: 0=success, else error.
  */
@@ -50,6 +83,7 @@ EXPORT BYTE
   const char * const p_chConfigFilesRootPath
   )
 {
+//  LogLevel::CreateLogLevelStringToNumberMapping();
   //g_logger.SetFormatter(new CSS::LogFormatter::Log4jFormatter(& g_logger) );
 //  LOG_LOGGER_NAME_THREAD_UNSAFE(g_logger, "Init--begin")
   LOGN("begin")
@@ -188,12 +222,13 @@ EXPORT /*char * */ void TranslateAsXML(const char * p_chEnglishText//,
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
   std::vector<std::string> stdvec_stdstrWholeTransl;
-  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
-    stdvec_stdvecTranslationAndGrammarPart;
+//  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
+//    stdvec_stdvecTranslationAndGrammarPart;
+  TranslationResult translationResult;
   g_p_translationcontrollerbase->Translate(
     stdstrWholeInputText,
     stdvec_stdstrWholeTransl,
-    stdvec_stdvecTranslationAndGrammarPart
+    /*stdvec_stdvecTranslationAndGrammarPart*/ translationResult
     );
 
   stdstrAllPossibilities = "";
@@ -234,12 +269,13 @@ EXPORT char * Translate(const char * p_chEnglishText)
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
   std::vector<std::string> stdvec_stdstrWholeTransl;
-  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
-    stdvec_stdvecTranslationAndGrammarPart;
+//  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
+//    stdvec_stdvecTranslationAndGrammarPart;
+  TranslationResult translationResult;
   g_p_translationcontrollerbase->Translate(
     stdstrWholeInputText,
     stdvec_stdstrWholeTransl,
-    stdvec_stdvecTranslationAndGrammarPart
+    /*stdvec_stdvecTranslationAndGrammarPart*/ translationResult
     );
   for( std::vector< std::string> ::const_iterator
       c_iter_stdvec_stdstr =

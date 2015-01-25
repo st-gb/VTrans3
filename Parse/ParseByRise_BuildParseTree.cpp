@@ -569,16 +569,16 @@ bool ParseByRise::PossiblyDuplicateSubTrees(
     << " " << * p_grammarPartToInsert
     << " with into container for all superordinate grammar parts")
   /** In order to not to add it again to the list of ALL grammar parts.*/
-#ifdef _DEBUG
+//#ifdef _DEBUG
   //std::pair<std::set<GrammarPart>::iterator,bool> pair_ =
   std::pair<std::map<GrammarPart, GrammarPart *>::iterator, bool> pair_ =
-#endif
+//#endif
   //m_stdset_grammarpartAllSuperordinate.insert(
 //          //grammarpart
 //          * p_grammarpartParent ) ;
     m_allSuperordinateGrammarParts2pointerToThem.insert( std::make_pair(
       * p_grammarPartToInsert, p_grammarPartToInsert) );
-  
+
   LOGN_DEBUG("inserted into container? : " 
     << (pair_.second == true ? "yes" : "false") )
   LOGN_DEBUG("superordinate grammar parts after inserting into container:")

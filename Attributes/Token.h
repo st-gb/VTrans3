@@ -64,10 +64,10 @@
     const PositionStringVector & pcstrv
     ,int first
     ,int last );
-  std::string GetBetweenAsStdString(
-    const PositionStringVector & rc_pstrv
-    ,int first
-    ,int last ) ;
+//  std::string GetBetweenAsStdString(
+//    const PositionStringVector & rc_pstrv
+//    ,int first
+//    ,int last ) ;
   VTrans_string_typeVector		GetCStringVector( VTrans::string_type str);
   VTrans_string_typeVector		GetCStringVector2( const VTrans::string_type & str);
   std::vector<VTrans_string_typeVector>	GetCStringVectorVector(

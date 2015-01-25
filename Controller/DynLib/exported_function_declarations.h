@@ -16,6 +16,11 @@ typedef unsigned char
   const char * cp_chMainConfigFilePath,
   const char * const p_chConfigFilesRootPath
   );
+typedef void
+  ( * Settings_type)(
+  const char * name,
+  const char * p_chValue
+  );
 typedef char * ( * Translate_type)(const char * p_chEnglishText);
 typedef void ( * FreeMemory_type)();
 

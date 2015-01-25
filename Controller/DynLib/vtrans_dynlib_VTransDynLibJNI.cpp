@@ -38,8 +38,25 @@
   #define JNI_ENV_POINTER(x) x,
 #endif
 
-/*
- * Class:     vtrans_dynlib_VTransDynLibJNI
+//http://developer.android.com/training/articles/perf-jni.html#native_libraries
+jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+    JNIEnv* env;
+    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        return -1;
+    }
+    /** Create the log level mapping here because it should be created before
+     *  the "Settings" can be called (because Settings can be called with
+     *  parameters "logging" and "disable". */
+    LogLevel::CreateLogLevelStringToNumberMapping();
+
+    // Get jclass with env->FindClass.
+    // Register methods with env->RegisterNatives.
+
+    return JNI_VERSION_1_2;
+}
+
+/* Class:     vtrans_dynlib_VTransDynLibJNI
  * Method:    Init
  * Signature: (Ljava/lang/String;)B
  */

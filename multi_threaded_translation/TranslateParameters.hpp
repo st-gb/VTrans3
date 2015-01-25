@@ -26,6 +26,7 @@ namespace VTrans
       std::string m_std_strWholeInputText;
       TranslationControllerBase * m_p_translationControllerBase;
       I_UserInterface * m_p_i_userInterface;
+      long double m_translationDurationInSeconds;
       TranslationResult * m_p_translationResult;
       
       /** @param i_userInterface : pass as reference, else the pointer is falsely 
