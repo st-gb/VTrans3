@@ -7,6 +7,7 @@
 
 #include <VocabularyInMainMem/TUchemnitzEngWordSorted1st/BinarySearchInDictFile.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h>
+#include <UserInterface/I_UserInterface.hpp>
 
 namespace VTrans3
 {
@@ -70,6 +71,35 @@ namespace VTrans3
         const fastestUnsignedDataType tempMapSize = m_charStringStdMapTemp.
           GetNumberOfEnglishWords();
         return mapSize + tempMapSize;
+      }
+
+      void BinarySearchInDictFile::GetCollectDictionaryStatisticsStatus(
+        fastestUnsignedDataType & currentItemNo)
+      {
+        m_p_dictReader->GetCollectDictionaryStatisticsStatus(currentItemNo);
+      }
+      
+      void BinarySearchInDictFile::GetStatistics(
+//        fastestUnsignedDataType * Representations,
+//        const fastestUnsignedDataType numArrayEles
+        std::map<enum EnglishWord::English_word_class, unsigned> &
+          englishWordClass2CounterMap
+        )
+      {
+        const fastestUnsignedDataType fileSizeInBytes = 
+          m_p_dictReader->GetFileSizeInBytes();
+//
+//        char wordKind [9];
+//        int numWordKindChars = 3;        
+//        s_nodetrieWordKind.contains_inline((BYTE*) ((wordKind)),
+//                numWordKindChars /*- 1*/, true);
+
+        m_p_dictReader->GetStatistics(//Representations, numArrayEles
+          englishWordClass2CounterMap);
+        
+//        fastestUnsignedDataType fileSizeInBytes, numberOfBytesCurrentlyProcessed;
+//        mp_userinterface->UpdateDictionaryStatistics(fileSizeInBytes, 
+//          numberOfBytesCurrentlyProcessed);
       }
 
       /** For inserting fundamental words like "the" etc. */

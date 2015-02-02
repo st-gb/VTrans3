@@ -53,7 +53,12 @@ namespace VTrans3
         void clear();
         fastestUnsignedDataType GetNumberOfAllocatedBytes() { return 0; }
         unsigned GetNumberOfEnglishWords();
-        void GetStatistics(fastestUnsignedDataType*) {}
+        void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType & currentItemNo);
+        void GetStatistics(//fastestUnsignedDataType *, 
+          //const fastestUnsignedDataType numArrayEles
+          std::map<enum EnglishWord::English_word_class, unsigned> &
+            englishWordClass2CounterMap
+          );
         /** For inserting fundamental words like "the" etc. */
 //        VocabularyAndTranslation*
         IVocabularyInMainMem::voc_container_type * Insert(const char*,

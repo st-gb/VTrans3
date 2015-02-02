@@ -56,6 +56,8 @@ namespace DictionaryReader
       class BinarySearchInDictFile
         : public DictionaryReader::DictionaryReaderBase
       {
+        std::map<enum EnglishWord::English_word_class, unsigned> * 
+          m_p_englishWordClass2CounterMap;
   //      typedef void (TUchemnitzDictionaryReader::*insertVocable
   //          )(//char *
   //    //    const std::string &
@@ -138,6 +140,8 @@ namespace DictionaryReader
           );
         I_File::CloseError close() { return m_dictFile.Close(); }
         bool open(const std::string & std_str);
+        fastestUnsignedDataType GetFileSizeInBytes() const 
+          { return m_fileSizeInBytes; }
         void read();
         int ReadByte();
         bool SeekFilePointerPosition(const fastestUnsignedDataType byteOffset);
@@ -152,6 +156,16 @@ namespace DictionaryReader
           DWORD & r_dwTokenIndex//,
   //        const fastestUnsignedDataType endTokenIndex
           );
+        void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType & itemNo)
+        {
+          itemNo = GetCurrentFilePointerPosition();
+        }
+        void GetStatistics(
+//          fastestUnsignedDataType * Representations,
+//          const fastestUnsignedDataType numArrayEles
+          std::map<enum EnglishWord::English_word_class, unsigned> &
+            englishWordClass2CounterMap
+        );
         fastestUnsignedDataType GetByteOffsetOfVocDataBegin(bool &);
       };
     }

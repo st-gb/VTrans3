@@ -187,20 +187,6 @@ bool TranslationControllerBase::IsGUIthread()
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 {
   LOGN_DEBUG("begin")
-//  TransformationRule transformationrule ;
-//  transformationrule.m_stdstrParseTreePathWhereToInsert = "clauseWith1Obj.obj" ;
-//  transformationrule.m_bInsertLeftChild = false ;
-////  m_stdmap_stdstrTransformationRule2transformationrule.insert(
-////    std::make_pair( "clauseWith1Obj.*.adverb" , transformationrule
-////      )
-////    ) ;
-//  std::string stdstr = "clauseWith1Obj.*.adverb" ;
-//  m_stdmap_syntaxtreepath2transformationrule.insert(
-//    std::make_pair(
-//      SyntaxTreePath( stdstr , & m_parsebyrise ) ,
-//      transformationrule
-//      )
-//    ) ;
   VocabularyAndTranslation::s_p_userinterface = this;
   SyntaxTreePath::sp_userinterface = this ;
 #ifndef TEST_MINI_XML
@@ -233,24 +219,9 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
       SetCurrentDirToOriginalCurrentWorkingDir();
 #endif
 
-  //    OneLinePerWordPair::s_p_lettertree = & s_dictionary ;
 //      TUchemnitzDictionaryReader::s_p_vocinmainmem = & s_dictionary ;
 
 //      DictionaryReader dictReader;
-  //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
-  //          m_stdstrVocabularyFilePath
-  //        )
-  //      )
-  //    {
-  //      //Return true to continue to run the (main loop of ) this program.
-  ////        return true ;
-  //    }
-  //    else
-  //    {
-  //      LoadingVocabularyFileFailed(m_stdstrVocabularyFilePath);
-  //      return TranslationControllerBaseClass::InitFunction::
-  //        loadingVocabularyFileFailed;
-  //    }
       CreateAndShowMainWindow() ;
   #ifdef COMPILE_AS_EXECUTABLE
   #else
@@ -292,11 +263,46 @@ enum VTrans::StatusCode TranslationControllerBase::GetStatus( /*const std::strin
   VTrans::StatusCode statusCode;
 
   m_critSecStatus.Enter();
-  m_currentStatus.GetItem(str);
-  statusCode = m_currentStatus.GetCode();
-  m_currentStatus.GetTime(time);
-  m_critSecStatus.Leave();
+  if( str == "dictionaryStatistics" )
+  {
 
+  }
+  else
+  {
+    m_currentStatus.GetItem(str);
+    statusCode = m_currentStatus.GetCode();
+    m_currentStatus.GetTime(time);
+  }
+  m_critSecStatus.Leave();
+  LOGN_DEBUG("return status code:" << statusCode << " " << str)
+  return statusCode;
+}
+
+unsigned TranslationControllerBase::GetStatus2( /*const std::string & str*/
+  const std::string & str, struct tm & time, ByteArray & byteArray
+  //void * pData
+  )
+{
+  LOGN_DEBUG("begin")
+  VTrans::StatusCode statusCode;
+
+  if( str == "dictionaryStatistics" )
+  {
+    const unsigned sizeInBytes = sizeof(m_collectDictionaryStatisticsStatus);
+    unsigned char * bytes = new unsigned char[sizeInBytes];
+    m_critSecStatus.Enter();
+    memcpy(bytes, & m_collectDictionaryStatisticsStatus, sizeInBytes);
+    m_critSecStatus.Leave();
+    byteArray.add(bytes, sizeInBytes);
+  }
+  else
+  {
+    m_critSecStatus.Enter();
+//    m_currentStatus.GetItem(str);
+    statusCode = m_currentStatus.GetCode();
+    m_currentStatus.GetTime(time);
+    m_critSecStatus.Leave();
+  }
   LOGN_DEBUG("return status code:" << statusCode << " " << str)
   return statusCode;
 }

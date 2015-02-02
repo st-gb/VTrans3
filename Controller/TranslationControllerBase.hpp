@@ -34,8 +34,9 @@
 #include <string> //class std::string
 #include <vector> //class std::vector
 
-//Forward declarations:
+/**Forward declarations: */
 class SAX2GrammarRuleHandler ;
+class ByteArray;
 class SAX2TranslationRuleHandler ;
 namespace Xerces
 {
@@ -194,6 +195,9 @@ public:
     const char * const);
   enum VTrans::StatusCode GetStatus( /*const std::string & str*/
     std::string &, struct tm &);
+  unsigned GetStatus2( /*const std::string & str*/
+    const std::string & str, struct tm & time, ByteArray & byteArray
+    /*void * pData*/);
 
   virtual void ShowInvalidVocabularyFileFormatMessage(
     const VTrans::string_type & strWordFile,

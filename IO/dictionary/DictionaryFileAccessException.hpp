@@ -17,7 +17,7 @@ class DictionaryFileAccessException
   : public FileAccessException
 {
 public:
-  enum action { seek, read, getFileSize, getCurrentFilePointerPosition};
+  enum action { seek, read, getFileSize, getCurrentFilePointerPosition, extractWordType};
   /** The action that causeed the error. */
   enum action m_action;
   uint64_t m_seekOffset;
@@ -54,6 +54,10 @@ public:
       break;
     case read:
       std_strErrorMessage = "reading";
+      break;
+      //array to small to store chars between '{' and '}' (word type)
+    case extractWordType:
+      std_strErrorMessage = "extracting word type at byte offset " + convertToStdString(m_seekOffset);
       break;
     default:
       std_strErrorMessage = "other action regarding";

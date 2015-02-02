@@ -590,3 +590,12 @@ void VTransApp::UpdateAfterTranslation()
 {
   m_p_mainWindow->UpdateAfterTranslation();
 }
+
+void VTransApp::UpdateDictionaryStatistics(
+  const fastestUnsignedDataType fileSizeInBytes,
+  const fastestUnsignedDataType numberOfBytesCurrentlyProcessed)
+{
+//  m_collectDictionaryStatisticsStatus.SetNumberOfBytesCurrentlyProcessed(
+//    numberOfBytesCurrentlyProcessed);
+//   m_p_dictionaryStatisticsWindow->;
+}

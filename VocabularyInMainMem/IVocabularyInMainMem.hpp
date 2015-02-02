@@ -4,11 +4,14 @@
 
 #include <string>
 #include <windef.h> //for BYTE etc.
+#include <map> //class std::map
 #include <set> //class std::set
 #include <Attributes/EnglishWord.hpp> //class EnglishAuxiliaryVerb etc.
 #include <Attributes/GermanWord.hpp> //class GermanAuxiliaryVerb etc.
 #include <Attributes/PositionString.hpp> //class PositionString
 #include <Attributes/Word.hpp>
+#include <Attributes/CollectDictStatsThreadFuncParams.h>
+#include "Controller/thread_type.hpp"
 
 #include "VocabularyAndTranslation.hpp" //class VocabularyAndTranslation
 #include <IO/dictionary/DictionaryReaderBase.hpp> //class DictionaryReaderBase
@@ -79,8 +82,13 @@ class GermanWord;
   virtual fastestUnsignedDataType GetNumberOfAllocatedBytes() = 0;
 //  virtual fastestUnsignedDataType GetNumberOfNouns() = 0;
 //  virtual fastestUnsignedDataType GetNumberOfVerbs() = 0;
+  virtual void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType & currentItemNo) { };
   virtual void GetStatistics(
-      fastestUnsignedDataType wordClass[] ) = 0;
+//    fastestUnsignedDataType wordClass[], 
+//    const fastestUnsignedDataType numArrayEles
+    std::map<enum EnglishWord::English_word_class, unsigned> &
+      englishWordClass2CounterMap
+    ) = 0;
   unsigned GetNumberOfEnglishWords() { return m_numberOfEnglishWords; }
 //  void createMapping();
     //Make methods pure virtual ("virtual [...] = 0" ) to avoid
@@ -94,6 +102,7 @@ class GermanWord;
     DWORD & r_dwTokenIndex
     ) = 0;
 
+  I_UserInterface * GetUserInterface() { return mp_userinterface; }
 //    virtual std::string GetGermanPlural() = 0 ;
 //    virtual WORD GetNumberOfNouns() = 0 ;
 //    virtual BYTE IsSingular() = 0 ;
@@ -199,5 +208,9 @@ class GermanWord;
     {
       m_p_dictionaryReader = p_dictionaryReader;
     }
+    
+    void GetStatisticsInSeparateThread(
+      /*const*/ CollectDictStatsThreadFuncParams & collectDictStatsThreadFuncParams,
+      VTrans::thread_type & thread);
   };
 #endif

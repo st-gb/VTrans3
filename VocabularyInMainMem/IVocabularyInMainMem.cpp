@@ -4,6 +4,7 @@
 #endif
 
 #include "IVocabularyInMainMem.hpp"
+#include "Controller/thread_type.hpp"
 #include <Attributes/Word.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG
 
@@ -184,4 +185,26 @@ void IVocabularyInMainMem::OutputVocs(const voc_container_type * p_voc_container
   if(p_voc_container)
     OutputVocs(* p_voc_container);
 //  LOGN_DEBUG("end")
+}
+
+DWORD THREAD_FUNCTION_CALLING_CONVENTION CollectDictStatsThreadFunc(void * p_v)
+{
+  CollectDictStatsThreadFuncParams * p_collectDictStatsThreadFuncParams = 
+    (CollectDictStatsThreadFuncParams *) p_v;
+  if( p_collectDictStatsThreadFuncParams)
+  {
+    IVocabularyInMainMem * pVocabularyInMainMem = 
+      p_collectDictStatsThreadFuncParams->pIVocabularyInMainMem;
+    pVocabularyInMainMem->GetStatistics(
+      p_collectDictStatsThreadFuncParams->englishWordClass2CounterMap);
+  }
+}
+
+void IVocabularyInMainMem::GetStatisticsInSeparateThread(
+  /*const*/ CollectDictStatsThreadFuncParams & collectDictStatsThreadFuncParams,
+  VTrans::thread_type & thread)
+{
+//  VTrans::thread_type thread;
+  collectDictStatsThreadFuncParams.pIVocabularyInMainMem = this;
+  thread.start(CollectDictStatsThreadFunc, & collectDictStatsThreadFuncParams);
 }

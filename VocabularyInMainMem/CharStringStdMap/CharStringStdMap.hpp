@@ -56,7 +56,11 @@ public:
 //   );
   fastestUnsignedDataType GetNumberOfAllocatedBytes();
   //TODO implement
-  void GetStatistics(fastestUnsignedDataType [] ) { }
+  void GetStatistics(//fastestUnsignedDataType [], 
+//    const fastestUnsignedDataType numArrayEles
+    std::map<enum EnglishWord::English_word_class, unsigned> &
+      englishWordClass2CounterMap
+    ) { }
   unsigned GetNumberOfEnglishWords() { return m_charStringMap.size(); }
   void Insert(EnglishWord&, GermanWord&, VocabularyAndTranslation*) { };
   //VocabularyAndTranslation * /*void * */

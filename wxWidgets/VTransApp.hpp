@@ -26,6 +26,8 @@
 //class wxTextControlDialog
 #include <wxWidgets/UserInterface/wxTextControlDialog.hpp>
 
+#include "UserInterface/DictionaryStatisticsWindow.hpp"
+
 //#include "UserInterface/MainWindow/MainWindowBase.hpp"
 
 //Forward declarations.
@@ -40,6 +42,7 @@ namespace VTrans
   class ShowTranslationRulesDialog;
 }
 class TranslationRule;
+class DictionaryStatisticsWindow;
 namespace wxWidgets
 {
   class MainFrame;
@@ -59,6 +62,7 @@ namespace wxWidgets
     bool m_atLeast1MessageToShow;
 //    condition_type;
     nativeCriticalSection_type m_critSecShowMessage;
+    DictionaryStatisticsWindow * m_p_dictionaryStatisticsWindow;
     wxIcon m_wxiconVTrans;
     VTrans::ShowTranslationRulesDialog * m_p_showtranslationrulesdialog;
   //  static LetterTree s_lettertree ;
@@ -102,6 +106,9 @@ namespace wxWidgets
     inline int ShowMessage(const wxString &,
       const fastestUnsignedDataType flags = wxTextControlDialog::OK_Button);
     void EndTimer();
+    void EndedGetDictStats() {
+      m_p_dictionaryStatisticsWindow->EndedGetDictStats();
+    };
     void UpdateAfterTranslation();
     void StartTimer();
     void SetDictionaryFilePath(const wxString & wxstr );
@@ -112,6 +119,11 @@ namespace wxWidgets
       );
     void OnMessage(wxCommandEvent &);
     void OnSetStatus(wxCommandEvent &);
+    /** Called by the dictionary access class to inform the UI (because it may 
+     * take some seconds) about the current progress. */
+    void UpdateDictionaryStatistics(
+      const fastestUnsignedDataType fileSizeInBytes,
+      const fastestUnsignedDataType numberOfBytesCurrentlyProcessed);
   private:
     DECLARE_EVENT_TABLE();
   };

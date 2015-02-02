@@ -6,6 +6,7 @@
  */
 
 #include "BinarySearchInDictFile.hpp"
+#include "UserInterface/I_UserInterface.hpp"
 #include <Controller/character_string/ISO_8859_1.hpp>
 #include <InputOutput/GetCharInACSIIcodePage850.hpp>
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>//class IVocabularyInMainMem
@@ -13,9 +14,11 @@
 #include <IO/dictionary/TUchemnitz/TUchemnitzDictSeparatorChars.h>
 #include <limits.h> //UINT_MAX
 #include <ctype.h> //::isdigit(...), isalpha(int)
+#include <stdexcept>      // std::out_of_range
 #include <vector> //class std::vector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 #include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF
+#include <hardware/CPU/atomic/atomicIncrement.h>
 #include <FileSystem/File/File.hpp> //class I_File
 #include <IO/dictionary/DictionaryFileAccessException.hpp>
 #include <IO/dictionary/OpenDictFileException.hpp>//class OpenDictFileException
@@ -155,6 +158,58 @@ namespace DictionaryReader
     //          i = m_englishDictionary.get();
     //        }
 
+    inline enum EnglishWord::English_word_class 
+      getEnglishWordClassFromTUchemnitzDictWordClass(
+      const enum TUchemnitzDictionary::wordKinds wordKind, 
+      VocabularyAndTranslation *& p_vocabularyandtranslation)
+    {
+      enum EnglishWord::English_word_class word_class = EnglishWord::beyond_last_entry;
+      GCC_DIAG_OFF(switch)
+      switch(wordKind)
+      {
+//      case TUchemnitzDictionary::reflexiveVerb:
+//        word_class = EnglishWord::ref
+      case TUchemnitzDictionary::intransitiveVerb:
+        /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+        word_class = EnglishWord::main_verb_allows_0object_infinitive;
+        break;
+      case TUchemnitzDictionary::transitiveVerb:
+        /** http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29:
+        * " sowohl Subjekt als auch ein Objekt benötigen, damit ein Satz, der
+        * mit diesem Verb gebildet wird, grammatisch ist." */
+        word_class = EnglishWord::main_verb_allows_1object_infinitive;
+        break;
+      case TUchemnitzDictionary::adv:
+        word_class = EnglishWord::adverb;
+        break;
+      case TUchemnitzDictionary::adj:
+        word_class = EnglishWord::adjective;
+        /** =NULL means: The next time a VocabularyAndTranslation should be
+         *   created. (multiple singular nouns may appear in a row->create
+         *   a VocabularyAndTranslation for each noun. */
+        p_vocabularyandtranslation = NULL;
+        break;
+      case TUchemnitzDictionary::femNoun:
+      case TUchemnitzDictionary::mascNoun:
+      case TUchemnitzDictionary::neutralNoun:
+        /** Must add as singular, else applying grammar rule fails. */
+        word_class = EnglishWord::singular;
+        /** =NULL means: The next time a VocabularyAndTranslation should be
+         *   created. (multiple singular nouns may appear in a row->create
+         *   a VocabularyAndTranslation for each noun. */
+        p_vocabularyandtranslation = NULL;
+        break;
+      case TUchemnitzDictionary::pluralNoun:
+//        word_class = EnglishWord::noun;
+        /** =NULL means: The next time a VocabularyAndTranslation should be
+         *   created.*/
+        p_vocabularyandtranslation = NULL;
+        word_class = EnglishWord::plural_noun;
+        break;
+      }
+      GCC_DIAG_ON(switch)
+      return word_class;
+    }
 //    VocabularyAndTranslation *
     IVocabularyInMainMem::voc_container_type * BinarySearchInDictFile::AddVocable(
       const std::vector<std::string> & englishVocableWords,
@@ -171,6 +226,7 @@ namespace DictionaryReader
       const int sz = englishVocableWords.size();
 #endif
       enum EnglishWord::English_word_class word_class = EnglishWord::beyond_last_entry;
+//      word_class = getEnglishWordClassFromTUchemnitzDictWordClass(wordKind);
       GCC_DIAG_OFF(switch)
       switch(wordKind)
       {
@@ -540,6 +596,90 @@ namespace DictionaryReader
       return currOffset;
     }
 
+    void BinarySearchInDictFile::GetStatistics(
+//        fastestUnsignedDataType * representations,
+//        const fastestUnsignedDataType numArrayEles
+      std::map<enum EnglishWord::English_word_class, unsigned> &
+        englishWordClass2CounterMap
+      )
+    {
+     m_p_englishWordClass2CounterMap = & englishWordClass2CounterMap;
+      SeekFilePointerPosition(0);
+      char wordType[100];
+      fastestUnsignedDataType numWordKindChars = 0;
+
+      I_File::file_pointer_type fileOffset;
+      int currentFileByte;
+      bool afterOpeningCurlyBrace = false;
+      VocabularyAndTranslation * pVocabularyAndTranslation = NULL;
+      do
+      {
+        currentFileByte = ReadByte();
+        switch(currentFileByte)
+        {
+         case '{':
+          afterOpeningCurlyBrace = true;
+          numWordKindChars = 0;
+          break;
+         case '}':
+          if( afterOpeningCurlyBrace )
+          {
+            wordType[numWordKindChars] = '\0';
+            NodeTrieNode<enum TUchemnitzDictionary::wordKinds> * p_ntn =
+            s_nodetrieWordKind.contains_inline( (BYTE *) (wordType),
+                numWordKindChars /*- 1*/, true);
+            if( p_ntn )
+            {
+              const enum EnglishWord::English_word_class word_class = 
+                getEnglishWordClassFromTUchemnitzDictWordClass(p_ntn->m_member, 
+                pVocabularyAndTranslation);
+//              std::map<enum EnglishWord::English_word_class, unsigned>::const_iterator 
+//                c_iter = englishWordClass2CounterMap.find(word_class);
+//              if( c_iter != englishWordClass2CounterMap.end() )
+//              {
+//               }
+              try
+              {
+                unsigned & counter = englishWordClass2CounterMap.at (word_class);
+                atomicIncrement( (LONG *) & counter);
+#ifdef _DEBUG
+                unsigned & counter2 = englishWordClass2CounterMap.at (word_class);
+                int i = counter;
+                i += 0;
+#endif
+              }catch(const std::out_of_range & e) //thrown by std::map::at(...)
+              {
+              }
+            }
+            afterOpeningCurlyBrace = false;
+          }
+          break;
+         default:
+           if( afterOpeningCurlyBrace )
+           {
+             if(numWordKindChars > 99 )
+              {
+                const char * const filePath = m_dictFile.GetFilePathA().c_str();
+                fileOffset = m_dictFile.GetCurrentFilePointerPosition();
+                std::ostringstream oss;
+                oss << "in file " << filePath << ": for \'{\' char at offset "
+                  << (fileOffset - numWordKindChars) << 
+                  " there is no closing \'}\' after " << numWordKindChars << 
+                  " chars";
+                m_p_vocaccess->GetUserInterface()->Message(oss.str() );
+//               throw DictionaryFileAccessException( 
+//                  DictionaryFileAccessException::extractWordType, 0, filePath, 
+//                  fileOffset );
+                afterOpeningCurlyBrace = false;
+              }
+             wordType[numWordKindChars ++] = currentFileByte;
+           }
+        }
+        fileOffset = m_dictFile.GetCurrentFilePointerPosition();
+      }while( fileOffset < m_fileSizeInBytes );
+      m_p_vocaccess->GetUserInterface()->EndedGetDictStats();
+    }
+  
     /** e.g. "schoolbook; textbook; educational book | schoolbooks; textbooks; educational books :: Lehrbuch {n} | Lehrbücher {pl} "
      * */
     IVocabularyInMainMem::voc_container_type *
@@ -1157,7 +1297,7 @@ namespace DictionaryReader
       {
         if( ::isalpha(i) ||
             /** e.g. "fork-lift" */
-            i == '-' )
+            i == '-' || i == '\'' /** e.g. dog's breakfast */ )
         {
           word[charIndex ++] = i;
         }
@@ -1302,7 +1442,8 @@ namespace DictionaryReader
       std::set<fastestUnsignedDataType> & byteOffsetsOfVocData
       )
     {
-      LOGN_DEBUG("# token: " << numToken)
+      LOGN_DEBUG("psvStringToSearch:" << psvStringToSearch << "# token: " 
+        << numToken << "r_dwTokenIndex:" << r_dwTokenIndex)
 //      IVocabularyInMainMem::voc_container_type * p_voc_container = NULL;
       if( psvStringToSearch.size() > 0 )
       {
@@ -1328,6 +1469,7 @@ namespace DictionaryReader
 //        bool streamIsGood = m_englishDictionary.good();
         //TODO error handling on seek failure.
         bool streamIsGood = SeekFilePointerPosition(byteOffset);
+        LOGN_DEBUG("streamIsGood:" << streamIsGood)
         while( streamIsGood)
         {
   //        BytePosAndNextChar * p_BytePosAndNextChar;

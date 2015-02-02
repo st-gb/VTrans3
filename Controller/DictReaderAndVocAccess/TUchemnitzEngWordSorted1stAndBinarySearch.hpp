@@ -25,6 +25,7 @@ namespace VTrans3
     TUchemnitzEngWordSorted1stAndBinarySearch();
     virtual
     ~TUchemnitzEngWordSorted1stAndBinarySearch();
+    
     IVocabularyInMainMem & GetVocAccess() { return m_vocAccess; }
     bool loadDictionary(const std::string & );
     IVocabularyInMainMem::voc_container_type * lookUpEnglishWord(

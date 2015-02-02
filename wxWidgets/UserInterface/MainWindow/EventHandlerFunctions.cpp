@@ -28,6 +28,7 @@
 
 #include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
 #include <wxWidgets/UserInterface/UserInterface.hpp>
+#include <wxWidgets/UserInterface/DictionaryStatisticsWindow.hpp>
 #include <wxWidgets/UserInterface/wxParseTreePanel.hpp>
 #include <wxWidgets/UserInterface/wxGermanTranslationPanel.hpp>
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
@@ -328,17 +329,22 @@ void EVENT_HANDLER_CLASS_NAME::OnSettings(wxCommandEvent & wxcmd )
 
 void EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics(wxCommandEvent & wxcmd )
 {
-  fastestUnsignedDataType numWordClassReps[EnglishWord::beyond_last_entry];
-  VTransApp & vt = ::wxGetApp();
-  vt.s_dictReaderAndVocAccess.m_vocAccess.GetStatistics(numWordClassReps);
+//  const fastestUnsignedDataType numArrayEles = EnglishWord::beyond_last_entry;
+//  fastestUnsignedDataType numberOfWordClassRepresentations[numArrayEles];
+//  VTransApp & vt = ::wxGetApp();
+//  vt.s_dictReaderAndVocAccess.m_vocAccess.GetStatistics(
+//    numberOfWordClassRepresentations, numArrayEles);
 
-  wxString wxstr = wxString::Format(
-    wxT("# English words:%lu\n"
-        "# nouns:%lu\n")
-    , numWordClassReps[EnglishWord::noun]
-   );
-  wxTextControlDialog wxd(wxstr);
-  wxd.ShowModal();
+//  wxString wxstr = wxString::Format(
+//    wxT("# English words:%lu\n"
+//        "# nouns:%lu\n")
+//    , numberOfWordClassRepresentations[EnglishWord::noun]
+//   );
+//  wxTextControlDialog wxd(wxstr);
+//  wxd.ShowModal();
+  DictionaryStatisticsWindow * p_dictionaryStatisticsWindow = new DictionaryStatisticsWindow();
+  p_dictionaryStatisticsWindow->Show();
+  p_dictionaryStatisticsWindow->GetStatistics();
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnInfoButton( wxCommandEvent & wxcmd )

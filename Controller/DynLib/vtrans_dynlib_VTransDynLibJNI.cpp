@@ -292,6 +292,76 @@ JNIEXPORT void JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Stop
   LOGN_DEBUG("end")
 }
 
+inline jmethodID GetAppendMethodID(jobject jobjItem)
+{
+  //from http://www.javaworld.com/article/2077554/learn-java/java-tip-54--returning-data-in-reference-arguments-via-jni.html
+
+  // Obtain the Java StringBuffer class handle that corresponds to the
+  // Java StringBuffer object handle.
+  jclazz = p_jni_env->GetObjectClass (jobjItem);
+  LOGN_DEBUG("calling GetMethodID")
+  // "Obtain the method ID for the StringBuffer append method which takes
+  // a StringBuffer object reference argument and returns a String object
+  // reference."
+  jmethodID methodID = p_jni_env->GetMethodID (
+    jclazz,
+    "append",
+    "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+  // If this method does not exist then return.
+  if (methodID == 0)
+  {
+    LOGN_ERROR("Java method ID is 0")
+    return -2;
+  }
+  return jmethodID;
+}
+
+/*
+ * Class:     vtrans_dynlib_VTransDynLibJNI
+ * Method:    FreeMemory
+ * Signature: ()V
+ */
+JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_GetStatus2
+  (JNIEnv * p_jni_env, //jobject
+    jclass jclazz,
+    jstring statusItem,
+    jobjectArray jobjArray)
+{
+  LOGN("begin")
+  std::string item;
+  struct tm time;
+  ByteArray byteArray(256);
+  BYTE byStatusCode = GetStatus2(statusItem, byteArray);
+  const unsigned numBytes = byteArray.GetCapacity();
+
+  //http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html
+  jbyteArray xmlBytes = NewByteArray(p_jni_env, numBytes /** jsize length*/);
+  SetObjectArrayElement(p_jni_env, jobjArray,
+      0 /*jsize index*/, xmlBytes /*jobject value*/);
+
+  jmethodID stringBufferAppendMethodID = GetAppendMethodID();
+  LOGN_DEBUG("calling NewStringUTF")
+  // "Create a new Java String object and populate it with the environment
+  // variable value.  Obtain a handle to this object."
+  jstring jstrItem = p_jni_env->NewStringUTF( (const char *) item.c_str() );
+  LOGN_DEBUG("calling CallObjectMethod")
+  /** Call the StringBuffer object's append method passing the handle to
+  * the new Java String object. */
+  p_jni_env->CallObjectMethod (jobjItem, stringBufferAppendMethodID, jstrItem);
+  /**If not called then SIGSEV? if this method is called to often? */
+  p_jni_env->DeleteLocalRef(jstrItem);
+
+  std::ostringstream oss;
+  oss << time.tm_hour << time.tm_min << time.tm_sec;
+  //TODO create java.util.Date object from struct tm rather than using a jstring
+  const char * pch = oss.str().c_str();
+//  jstrTime = JNI_ENV_ACCESS(p_jni_env)->NewStringUTF(
+//        JNI_ENV_POINTER(p_jni_env)
+//        pch );
+  LOGN("return " << (fastestUnsignedDataType) byStatusCode )
+  return byStatusCode;
+}
+
 /*
  * Class:     vtrans_dynlib_VTransDynLibJNI
  * Method:    FreeMemory
@@ -312,32 +382,15 @@ JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_GetStatus
 //	  JNI_ENV_POINTER(p_jni_env)
 //	  item.c_str() );
 
-  //from http://www.javaworld.com/article/2077554/learn-java/java-tip-54--returning-data-in-reference-arguments-via-jni.html
-
-  // Obtain the Java StringBuffer class handle that corresponds to the
-  // Java StringBuffer object handle.
-  jclazz = p_jni_env->GetObjectClass (jobjItem);
-  LOGN_DEBUG("calling GetMethodID")
-  // Obtain the method ID for the StringBuffer append method which takes
-  // a StringBuffer object reference argument and returns a String object
-  // reference.
-  jmethodID methodID = p_jni_env->GetMethodID (jclazz,
-	"append",
-    "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
-  // If this method does not exist then return.
-  if (methodID == 0)
-  {
-	  LOGN_ERROR("Java method ID is 0")
-	 return -2;
-  }
+  jmethodID stringBufferAppendMethodID = GetAppendMethodID();
   LOGN_DEBUG("calling NewStringUTF")
-  // Create a new Java String object and populate it with the environment
-  // variable value.  Obtain a handle to this object.
+  // "Create a new Java String object and populate it with the environment
+  // variable value.  Obtain a handle to this object."
   jstring jstrItem = p_jni_env->NewStringUTF( (const char *) item.c_str() );
   LOGN_DEBUG("calling CallObjectMethod")
   /** Call the StringBuffer object's append method passing the handle to
   * the new Java String object. */
-  p_jni_env->CallObjectMethod (jobjItem, methodID, jstrItem);
+  p_jni_env->CallObjectMethod (jobjItem, stringBufferAppendMethodID, jstrItem);
   /**If not called then SIGSEV? if this method is called to often? */
   p_jni_env->DeleteLocalRef(jstrItem);
 
