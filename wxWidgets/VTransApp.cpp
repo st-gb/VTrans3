@@ -152,6 +152,11 @@ void VTransApp::CreateAndShowMainWindow()
   LOGN_DEBUG("end")
 }
 
+void VTransApp::DisableDictAccessingActions()
+{
+  m_p_mainWindow->EnableDictAccessingActions(false);
+}
+
 void VTransApp::Message( const std::string & cr_stdstr /*, unsigned threadID*/ )
 {
   /** Avoid putting to much "show message" events/ showing too much messages at

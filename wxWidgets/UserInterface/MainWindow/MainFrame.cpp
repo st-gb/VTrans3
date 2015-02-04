@@ -46,20 +46,23 @@ namespace wxWidgets
   void MainFrame::AddMenuBar()
   {
     mp_wxmenubar = new wxMenuBar() ;
-    wxMenu * p_wxmenu ;
-    p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
-    m_p_wxMeniItemTranslate = p_wxmenu->Append( ID_Translate, wxT("translate") );
-    p_wxmenu->Append( ID_Settings, wxT("settings...") );
-    mp_wxmenubar->Append( p_wxmenu , wxT("&action")) ;
+    wxMenu * p_wxmenu = new wxMenu() ;
+    wxMenuItem * p_wxmenuitem;
+    m_p_wxmenuAction = new wxMenu( /*wxT("translate")*/ ) ;
+    m_p_wxMenuItemTranslate = m_p_wxmenuAction->Append( ID_Translate, wxT("translate") );
+    m_p_wxmenuAction->Append( ID_Settings, wxT("settings...") );
+    mp_wxmenubar->Append( m_p_wxmenuAction , wxT("&action")) ;
 
-    p_wxmenu = new wxMenu();
-    p_wxmenu->Append( ID_LookupWord, wxT("&lookup word") );
-    p_wxmenu->Append( ID_ShowDictionaryStatistics,  wxT("&statistics") );
+    p_wxmenuDictionary = new wxMenu();
+    p_wxmenuitem = p_wxmenuDictionary->Append( ID_LookupWord, wxT("&lookup word") );
+    m_dictionaryRelatedMenuItems.push_back(p_wxmenuitem);
+    m_dictionaryRelatedMenuItems.push_back(p_wxmenuDictionary->Append( 
+      ID_ShowDictionaryStatistics,  wxT("&statistics") ) );
+    m_p_wxMenuItemUnloadDictionary = p_wxmenuDictionary->Append(
+      ID_UnloadDictionary, wxT("&unload") );
+    m_dictionaryRelatedMenuItems.push_back(m_p_wxMenuItemUnloadDictionary);
     
-    m_p_wxMeniItemUnloadDictionary = p_wxmenu->Append( ID_UnloadDictionary, 
-      wxT("&unload") );
-    
-    mp_wxmenubar->Append( p_wxmenu , wxT("&dictionary")) ;
+    mp_wxmenubar->Append( p_wxmenuDictionary , wxT("&dictionary")) ;
 
     p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
     p_wxmenu->AppendCheckItem(ID_ShowGrammarPartMemoryAddress,
@@ -69,8 +72,10 @@ namespace wxWidgets
     /** http://docs.wxwidgets.org/trunk/classwx_menu_item.html#a742aa5bb0d3faa020e7b3bd66e336499 : 
      * "Optionally you can specify also an accelerator string appending a tab 
      * character \t followed by a valid key combination (e.g. CTRL+V)." */
-    p_wxmenu->Append( ID_DecreaseFontSize, wxT("&decrease parse tree panel's font size\tCTRL+-") );
-    p_wxmenu->Append( ID_IncreaseFontSize, wxT("&increase parse tree panel's font size\tCTRL++") );
+    p_wxmenu->Append( ID_DecreaseFontSize, 
+      wxT("&decrease parse tree panel's font size\tCTRL+-") );
+    p_wxmenu->Append( ID_IncreaseFontSize, 
+      wxT("&increase parse tree panel's font size\tCTRL++") );
     mp_wxmenubar->Append( p_wxmenu , wxT("&view")) ;
 
     SetMenuBar( mp_wxmenubar );
@@ -95,12 +100,32 @@ namespace wxWidgets
 
   void MainFrame::DisableDoTranslateControls()
   {
-     m_p_wxMeniItemTranslate->SetText( wxT("stop translation") );
+     m_p_wxMenuItemTranslate->SetText( wxT("stop translation") );
   }
   
+  void MainFrame::EnableDictAccessingActions(const bool enable)
+  {
+    wxString helpText;
+    if( ! enable )
+      helpText = wxT("disabled because currently collecting dictionary statistics");
+    std::vector<wxMenuItem *>::const_iterator c_iter = m_dictionaryRelatedMenuItems.begin();
+    while( c_iter != m_dictionaryRelatedMenuItems.end() )
+    {
+      (* c_iter)->SetHelp(helpText);
+      ++ c_iter;
+    }
+    //TODO disable "translate" button, disable text events
+    //EVT_TEXT(ID_InputText, 
+    m_p_wxmenuAction->Enable(ID_Translate, enable);
+    p_wxmenuDictionary->Enable(ID_LookupWord, enable);
+//      p_wxmenuDictionary->GetSetHelp(helpText);
+    p_wxmenuDictionary->Enable(ID_UnloadDictionary, enable);
+    p_wxmenuDictionary->Enable(ID_ShowDictionaryStatistics, enable);
+  }
+
   void MainFrame::SetDictionaryFilePath(const wxString & wxstrDictionaryFilePath)
   {
-    m_p_wxMeniItemUnloadDictionary->SetText( wxT("Unload ") +
+    m_p_wxMenuItemUnloadDictionary->SetText( wxT("Unload ") +
       wxstrDictionaryFilePath);
     m_p_wxToolBarToolBaseLoadDictionary->SetShortHelp(
       wxT("(re-)load dictionary ") + wxstrDictionaryFilePath);
@@ -140,6 +165,7 @@ namespace wxWidgets
     mp_wxsplitterwindow = new wxSplitterWindow( //NULL
       (wxFrame *) this, wxID_ANY ) ;
     AddInputAndOutputPanels();
+    CreateStatusBar();
     AddMenuBar() ;
     //from wxWidgets' toolbar sample:
     mp_wxtoolbar = //new wxToolBar(

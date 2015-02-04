@@ -76,6 +76,7 @@ namespace wxWidgets
     virtual ~VTransApp();
 
     void CreateAndShowMainWindow() ;
+    void DisableDictAccessingActions();
     bool GetProgramIconFromFile(wxIcon & r_wxicon );
     void GetSourceText(std::string & std_string);
     bool HandleCommandLineArgs() ;

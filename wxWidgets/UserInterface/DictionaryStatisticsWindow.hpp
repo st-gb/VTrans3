@@ -59,6 +59,7 @@ public:
     /*, wxSizer * p_wxxsizer*/);
   void BuildGUI();
   void OnClose(wxCloseEvent & wxcmd);
+  void OnEndedGetDictStats(wxCommandEvent &);
   void EndedGetDictStats();
   void GetStatistics();
   void OnTimerEvent(wxTimerEvent & e);
@@ -66,6 +67,10 @@ public:
 //private:
   DECLARE_EVENT_TABLE()
 };
+
+BEGIN_DECLARE_EVENT_TYPES()
+  DECLARE_LOCAL_EVENT_TYPE(EndedGetDictStatsEvent, wxNewEventType())
+END_DECLARE_EVENT_TYPES()
 
 #endif	/* DICTIONARYSTATISTICSWINDOW_HPP */
 

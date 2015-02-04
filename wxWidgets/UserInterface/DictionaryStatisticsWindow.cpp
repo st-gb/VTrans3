@@ -7,6 +7,7 @@
 
 #include "DictionaryStatisticsWindow.hpp"
 #include "Windows/multithread/Thread.hpp"
+#include "MainWindow/MainFrame.hpp"
 #include <wx/stattext.h> //class wxStaticText
 #include <wx/sizer.h> //class wxBoxSizer
 #include <wxWidgets/VTransApp.hpp>
@@ -18,7 +19,13 @@
 std::string DictionaryStatisticsWindow::s_getStatusString = "DictionaryStatistics";
 extern TranslationControllerBase * g_p_translationcontrollerbase;
 
+/** This event is intended to be posted after getting dict stats in a non-GUI 
+ *  thread for ending the timer in GUI thread. */
+DEFINE_LOCAL_EVENT_TYPE(EndedGetDictStatsEvent)
+
 BEGIN_EVENT_TABLE(DictionaryStatisticsWindow, wxDialog)
+  EVT_COMMAND(wxID_ANY, EndedGetDictStatsEvent, 
+    DictionaryStatisticsWindow::OnEndedGetDictStats)
   EVT_CLOSE( DictionaryStatisticsWindow::OnClose)
   EVT_TIMER( ID_Timer, DictionaryStatisticsWindow::OnTimerEvent)
 END_EVENT_TABLE()
@@ -39,6 +46,13 @@ DictionaryStatisticsWindow::DictionaryStatisticsWindow ()
 DictionaryStatisticsWindow::DictionaryStatisticsWindow (const DictionaryStatisticsWindow& orig) { }
 
 DictionaryStatisticsWindow::~DictionaryStatisticsWindow () { }
+
+void DictionaryStatisticsWindow::OnEndedGetDictStats(wxCommandEvent & event)
+{
+  m_wxtimer.Stop();
+  ::wxGetApp().m_p_mainWindow->EnableDictAccessingActions(true);
+  UpdateUI();
+}
 
 void DictionaryStatisticsWindow::OnTimerEvent(wxTimerEvent & e)
 {
@@ -160,6 +174,12 @@ void DictionaryStatisticsWindow::EndedGetDictStats()
 {
 //  m_wxtimer.Stop();
 // UpdateUIAsync();
+  wxCommandEvent wxcommand_event(EndedGetDictStatsEvent);
+  //    QueueEvent  (       wxEvent *       event   );
+  //FIXME: http://docs.wxwidgets.org/trunk/classwx_evt_handler.html#a0737c6d2cbcd5ded4b1ecdd53ed0def3
+  //"[...] can't be used to post events from worker threads for the event
+  //objects with wxString fields (i.e. in practice most of them) [...]"
+  AddPendingEvent(wxcommand_event);
 }
 
 void DictionaryStatisticsWindow::GetStatistics()

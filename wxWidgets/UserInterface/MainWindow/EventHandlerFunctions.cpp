@@ -345,6 +345,9 @@ void EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics(wxCommandEvent & wxcmd
   DictionaryStatisticsWindow * p_dictionaryStatisticsWindow = new DictionaryStatisticsWindow();
   p_dictionaryStatisticsWindow->Show();
   p_dictionaryStatisticsWindow->GetStatistics();
+  wxGetApp().m_p_dictionaryStatisticsWindow = p_dictionaryStatisticsWindow;
+//  ShowStatistics();
+  wxGetApp().DisableDictAccessingActions();
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnInfoButton( wxCommandEvent & wxcmd )

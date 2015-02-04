@@ -13,7 +13,8 @@
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include "MainWindowBase.hpp"
 
-//Forward declarations (faster than #include)
+/** Forward declarations (faster than #include) */
+class wxMenu;
 class wxMenuBar ;
 class wxParseTreePanel ;
 class wxSplitterWindow ;
@@ -27,9 +28,12 @@ namespace wxWidgets
   {
     //using wxPanel::Bind"
     wxMenuBar * mp_wxmenubar ;
+    std::vector<wxMenuItem *> m_dictionaryRelatedMenuItems;
+    wxMenu * p_wxmenuDictionary;
+    wxMenu * m_p_wxmenuAction;
     wxToolBar * mp_wxtoolbar ;
-    wxMenuItem * m_p_wxMeniItemTranslate;
-    wxMenuItem * m_p_wxMeniItemUnloadDictionary;
+    wxMenuItem * m_p_wxMenuItemTranslate;
+    wxMenuItem * m_p_wxMenuItemUnloadDictionary;
     void AddMenuBar() ;
     wxToolBarToolBase * AddBitmapButtonAndTooltip(
       enum user_interface_control_actions itemID, 
@@ -54,6 +58,7 @@ namespace wxWidgets
     ~MainFrame();
 
     void DisableDoTranslateControls();
+    void EnableDictAccessingActions(const bool enable);
     void SetDictionaryFilePath(const wxString & wxstr);
     void UpdateAfterTranslation();
     #include "EventHandlerFunctions.hpp"
