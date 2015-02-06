@@ -34,6 +34,7 @@
 
 //#include <wx/string.h> //for class wxString
 #include <wx/splitter.h> //class wxSplitterWindow
+#include <wx/event.h> //EVT_MENU
 
 namespace wxWidgets
 {
@@ -106,14 +107,30 @@ namespace wxWidgets
   void MainFrame::EnableDictAccessingActions(const bool enable)
   {
     wxString helpText;
-    if( ! enable )
+    if( enable )
+      Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+        , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
+    else
+    {
       helpText = wxT("disabled because currently collecting dictionary statistics");
+//      Disconnect (wxEVT_COMMAND_MENU_SELECTED, //wxEventType eventType, 
+//        wxWidgets::MainFrame::OnTranslateButton //wxObjectEventFunction function
+//        //, wxObject *userData=NULL, wxEvtHandler *eventSink=NULL
+//        );
+//      Disconnect (ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+//        );
+      Disconnect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+        , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
+    }
     std::vector<wxMenuItem *>::const_iterator c_iter = m_dictionaryRelatedMenuItems.begin();
     while( c_iter != m_dictionaryRelatedMenuItems.end() )
     {
       (* c_iter)->SetHelp(helpText);
       ++ c_iter;
     }
+    mp_wxtoolbar->EnableTool(ID_Translate, enable);
+    mp_wxtoolbar->EnableTool(ID_LoadDictionary, enable);
+    //ID_AddTranslationRules , 
     //TODO disable "translate" button, disable text events
     //EVT_TEXT(ID_InputText, 
     m_p_wxmenuAction->Enable(ID_Translate, enable);
@@ -165,6 +182,8 @@ namespace wxWidgets
     mp_wxsplitterwindow = new wxSplitterWindow( //NULL
       (wxFrame *) this, wxID_ANY ) ;
     AddInputAndOutputPanels();
+    Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+      , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
     CreateStatusBar();
     AddMenuBar() ;
     //from wxWidgets' toolbar sample:

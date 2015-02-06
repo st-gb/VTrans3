@@ -74,7 +74,7 @@ DEFINE_LOCAL_EVENT_TYPE(UpdateAfterTranslationEvent)
 BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   EVT_COMMAND(wxID_ANY, UpdateAfterTranslationEvent, 
     EVENT_HANDLER_CLASS_NAME::OnUpdateAfterTranslation)
-  EVT_TEXT(ID_InputText, EVENT_HANDLER_CLASS_NAME::OnInputTextChanges)
+  //EVT_TEXT(ID_InputText, EVENT_HANDLER_CLASS_NAME::OnInputTextChanges)
   //TODO http://www.wxwidgets.org/docs/faqgtk.htm#charinframe
   // "Why does my simple program using EVT_CHAR not work?"
   EVT_CHAR( EVENT_HANDLER_CLASS_NAME::OnChar)
@@ -342,12 +342,20 @@ void EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics(wxCommandEvent & wxcmd
 //   );
 //  wxTextControlDialog wxd(wxstr);
 //  wxd.ShowModal();
-  DictionaryStatisticsWindow * p_dictionaryStatisticsWindow = new DictionaryStatisticsWindow();
-  p_dictionaryStatisticsWindow->Show();
-  p_dictionaryStatisticsWindow->GetStatistics();
-  wxGetApp().m_p_dictionaryStatisticsWindow = p_dictionaryStatisticsWindow;
-//  ShowStatistics();
-  wxGetApp().DisableDictAccessingActions();
+  if( m_translateThread.IsRunning() )
+  {
+    wxMessageBox(wxT("can't collect dict stats because currently using "
+      "dictionary while translating") );
+  }
+  else
+  {
+    DictionaryStatisticsWindow * p_dictionaryStatisticsWindow = new DictionaryStatisticsWindow();
+    p_dictionaryStatisticsWindow->Show();
+    p_dictionaryStatisticsWindow->GetStatistics();
+    wxGetApp().m_p_dictionaryStatisticsWindow = p_dictionaryStatisticsWindow;
+  //  ShowStatistics();
+    wxGetApp().DisableDictAccessingActions();
+  }
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnInfoButton( wxCommandEvent & wxcmd )
