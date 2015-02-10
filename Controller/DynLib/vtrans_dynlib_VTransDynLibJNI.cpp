@@ -130,7 +130,7 @@ extern "C" jbyte /*JNICALL*/ Java_vtrans_dynlib_VTransDynLibJNI_Init
 
 #ifndef TEST_MINI_XML
 
-void ReleaseArrayMemory(void * const array)
+void ReleaseArrayMemory(char * const array)
 {
   #ifdef __cplusplus
     delete [] array;
@@ -208,7 +208,7 @@ JNIEXPORT jstring JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Translate
     * "Strings that you pass to NewStringUTF() need to be valid Modified UTF-8." */
     /*ar_chTranslation*/ /*(const char *) byteArray.GetArray()*/
     ar_chTranslation);
-  ReleaseArrayMemory((void *) ar_chTranslation);
+  ReleaseArrayMemory(/*(void *)*/ ar_chTranslation);
   LOGN("end")
   return jstr;
 }
@@ -292,13 +292,14 @@ JNIEXPORT void JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Stop
   LOGN_DEBUG("end")
 }
 
-inline jmethodID GetAppendMethodID(jobject jobjItem)
+inline jmethodID GetAppendMethodID(JNIEnv * p_jni_env,
+    jobject jobjItem)
 {
   //from http://www.javaworld.com/article/2077554/learn-java/java-tip-54--returning-data-in-reference-arguments-via-jni.html
 
   // Obtain the Java StringBuffer class handle that corresponds to the
   // Java StringBuffer object handle.
-  jclazz = p_jni_env->GetObjectClass (jobjItem);
+  jclass jclazz = p_jni_env->GetObjectClass (jobjItem);
   LOGN_DEBUG("calling GetMethodID")
   // "Obtain the method ID for the StringBuffer append method which takes
   // a StringBuffer object reference argument and returns a String object
@@ -311,9 +312,9 @@ inline jmethodID GetAppendMethodID(jobject jobjItem)
   if (methodID == 0)
   {
     LOGN_ERROR("Java method ID is 0")
-    return -2;
+    //return -2;
   }
-  return jmethodID;
+  return methodID;
 }
 
 /*
@@ -331,15 +332,19 @@ JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_GetStatus2
   std::string item;
   struct tm time;
   ByteArray byteArray(256);
-  BYTE byStatusCode = GetStatus2(statusItem, byteArray);
+  BYTE byStatusCode = GetStatus2(item, time, byteArray);
   const unsigned numBytes = byteArray.GetCapacity();
 
   //http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html
-  jbyteArray xmlBytes = NewByteArray(p_jni_env, numBytes /** jsize length*/);
-  SetObjectArrayElement(p_jni_env, jobjArray,
+  jbyteArray xmlBytes = p_jni_env->NewByteArray(numBytes /** jsize length*/);
+  p_jni_env->SetObjectArrayElement(jobjArray,
       0 /*jsize index*/, xmlBytes /*jobject value*/);
+  p_jni_env->SetByteArrayRegion(xmlBytes, 0, numBytes, (const jbyte * )
+    byteArray.GetArray() );
+  jobject jobjItem = p_jni_env->GetObjectArrayElement(/*JNIEnv *env,*/
+    jobjArray /*jobjectArray array*/, 1 /*jsize index*/);
 
-  jmethodID stringBufferAppendMethodID = GetAppendMethodID();
+  jmethodID stringBufferAppendMethodID = GetAppendMethodID(p_jni_env, jobjItem);
   LOGN_DEBUG("calling NewStringUTF")
   // "Create a new Java String object and populate it with the environment
   // variable value.  Obtain a handle to this object."
@@ -382,7 +387,7 @@ JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_GetStatus
 //	  JNI_ENV_POINTER(p_jni_env)
 //	  item.c_str() );
 
-  jmethodID stringBufferAppendMethodID = GetAppendMethodID();
+  jmethodID stringBufferAppendMethodID = GetAppendMethodID(p_jni_env, jobjItem);
   LOGN_DEBUG("calling NewStringUTF")
   // "Create a new Java String object and populate it with the environment
   // variable value.  Obtain a handle to this object."

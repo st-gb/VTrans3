@@ -1,0 +1,4 @@
+1. transform German->English to English->German
+2. extract all lines with a specific attribute (e.g. all plural nouns)
+3. extract the specific attribute from the lines that contain this specific 
+   attribute and write each pair of English and German translation of the attribute to a new line

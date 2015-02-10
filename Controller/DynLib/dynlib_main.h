@@ -36,6 +36,8 @@ EXPORT BYTE
  *   message may be shown in different languages
  */
 EXPORT BYTE GetStatus(std::string & item, struct tm & time);
+EXPORT BYTE GetStatus2( /*const std::string & str*/
+  const std::string & str, struct tm & time, ByteArray & byteArray);
 EXPORT void Settings(const char * cp_chName, const char * cp_chValue);
 /**
  * @return: translated text as 0-terminated character array.

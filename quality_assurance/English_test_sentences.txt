@@ -1,0 +1,28 @@
+"s is a software developer"
+"Ömer Karahan walks" : Zeichen, die sich nicht im Wörterbuch befinden, testen
+"the cat" -> crash
+"the small men walk"
+"they like the car"
+"likes the car" -> "mag das Auto"
+"trusts the car" -> "vertraut dem Auto"
+umlauts in English source text
+if 4 points and unknown words inbetween: too many (14) translation possibilities are shown
+the cars drive->crash
+the vacuum cleaner transmit
+I and the sheep transmit me and the sheep
+I and the sheep transmit
+the sheep transmits  <- muss als "das Schaf überträgt" übersetzt werden.
+the sheep transmit  <- muss als "die Schafe übertragen" übersetzt werden.
+he and the vacuum cleaners transmit
+the sheep and  <- gramm-Regel wurde f�lschlicherweise mehrfach angewendet
+the sheep trust the boy and the boys <- ob statt "dem Junge" "dem Jungen" und "den Jungen" nicht zu "den Jungen>>n<<"
+the sheep trust the vacuum cleaner
+
+the boy still trusts the  boys
+the car the boy he loves loves works (relative clauses)
+the car the car he loves loves works (das Auto, dass das Auto, dass er liebt, liebt, arbeitet)
+
+the car you have loved (transformation rule: "have" <-> "loved" test)
+the car he loves works
+
+the fire still burns

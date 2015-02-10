@@ -32,7 +32,13 @@ namespace VTrans3
         m_charStringStdMap.clear();
         LOGN_DEBUG("before emptying the temporary words map")
         m_charStringStdMapTemp.clear();
-        m_p_dictReader->close();
+        const I_File::CloseError closeResult = m_p_dictReader->close();
+        if( closeResult == I_File::closingFileFailed )
+          LOGN_ERROR("closing dict file \"" << m_p_dictReader->GetFilePath() 
+            << "\" failed.")
+        else
+          LOGN_DEBUG("closing dict file \"" << m_p_dictReader->GetFilePath() 
+            << "\" succeeded.")
       }
       /*virtual void * */ std::set<VocabularyAndTranslation *> *
         BinarySearchInDictFile::find(

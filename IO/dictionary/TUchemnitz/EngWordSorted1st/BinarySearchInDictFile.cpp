@@ -640,10 +640,13 @@ namespace DictionaryReader
 //               }
               try
               {
-                unsigned & counter = englishWordClass2CounterMap.at (word_class);
-                atomicIncrement( (LONG *) & counter);
+                unsigned & counter =
+                  /** "[]" Because Android NDK compiler claims: no
+                   * std::map::at()" */
+                  englishWordClass2CounterMap[word_class];
+                atomicIncrement( (long *) & counter);
 #ifdef _DEBUG
-                unsigned & counter2 = englishWordClass2CounterMap.at (word_class);
+                unsigned & counter2 = englishWordClass2CounterMap.at(word_class);
                 int i = counter;
                 i += 0;
 #endif

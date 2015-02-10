@@ -254,6 +254,12 @@ EXPORT BYTE GetStatus(std::string & item, struct tm & time)
   return g_p_translationcontrollerbase->GetStatus(item, time);
 }
 
+EXPORT BYTE GetStatus2( /*const std::string & str*/
+  const std::string & str, struct tm & time, ByteArray & byteArray)
+{
+  return g_p_translationcontrollerbase->GetStatus2(str, time, byteArray);
+}
+
 EXPORT void Settings(const char * cp_chName, const char * cp_chValue)
 {
   g_p_translationcontrollerbase->Settings(cp_chName, cp_chValue);
