@@ -82,6 +82,8 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   BUTTON_EVENT_TYPE( ID_AddGrammarRules , EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules )
   BUTTON_EVENT_TYPE( ID_ShowGrammarPartMemoryAddress,
     EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress)
+  BUTTON_EVENT_TYPE( ID_LogLevel_Warning, EVENT_HANDLER_CLASS_NAME::OnLogLevel)
+  BUTTON_EVENT_TYPE( ID_LogLevel_Debug, EVENT_HANDLER_CLASS_NAME::OnLogLevel)
   BUTTON_EVENT_TYPE( ID_ShowTranslatedWord,
     EVENT_HANDLER_CLASS_NAME::OnShowTranslatedWord)
   BUTTON_EVENT_TYPE( ID_DecreaseFontSize, EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize )
@@ -152,6 +154,19 @@ void EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize( wxCommandEvent 
 //  p_wxmenu->Append( ID_DecreaseFontSize, wxT("&decrease parse tree panel's font size\tCTRL+-") );
   //TODO
 //  SetFontSize(mp_wxparsetreepanel->GetFontSizeInPoint() );
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnLogLevel( wxCommandEvent & wxcmd )
+{
+  switch( wxcmd.GetId() )
+  {
+   case ID_LogLevel_Debug :
+     g_logger.SetLogLevel("debug");
+     break;
+   case ID_LogLevel_Warning :
+     g_logger.SetLogLevel("warning");
+     break;
+  }
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnIncreaseParseTreePanelFontSize( wxCommandEvent & wxcmd )

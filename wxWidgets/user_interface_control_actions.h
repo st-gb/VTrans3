@@ -41,7 +41,9 @@ enum user_interface_control_actions
   ID_ShowGrammarPartMemoryAddress ,
   ID_ShowTranslatedWord,
   ID_DecreaseFontSize,
-  ID_IncreaseFontSize
+  ID_IncreaseFontSize,
+  ID_LogLevel_Warning,
+  ID_LogLevel_Debug
 };
 
 

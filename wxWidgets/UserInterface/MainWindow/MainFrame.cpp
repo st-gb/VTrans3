@@ -44,10 +44,36 @@ namespace wxWidgets
 //    EVT_MENU_HIGHLIGHT( ID_Translate , MainFrame::OnTranslateButton)
 //  END_EVENT_TABLE()
 
+  inline void AddViewMenu(wxMenuBar * p_wxmenubar)
+  {
+    wxMenu * p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
+    p_wxmenu->AppendCheckItem(ID_ShowGrammarPartMemoryAddress,
+      wxT("show memory address of grammar part ") );
+    p_wxmenu->AppendCheckItem(ID_ShowTranslatedWord,
+      wxT("show translated word") );
+    /** http://docs.wxwidgets.org/trunk/classwx_menu_item.html#a742aa5bb0d3faa020e7b3bd66e336499 : 
+     * "Optionally you can specify also an accelerator string appending a tab 
+     * character \t followed by a valid key combination (e.g. CTRL+V)." */
+    p_wxmenu->Append( ID_DecreaseFontSize, 
+      wxT("&decrease parse tree panel's font size\tCTRL+-") );
+    p_wxmenu->Append( ID_IncreaseFontSize, 
+      wxT("&increase parse tree panel's font size\tCTRL++") );
+    p_wxmenubar->Append( p_wxmenu , wxT("&view")) ;
+  }
+  
+  inline void AddLoggingMenu(wxMenuBar * p_wxmenubar)
+  {
+    wxMenu * p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
+    p_wxmenu->AppendRadioItem (ID_LogLevel_Debug, wxT("debug") );
+    p_wxmenu->AppendRadioItem (ID_LogLevel_Warning, wxT("warning") );
+    p_wxmenubar->Append( p_wxmenu , wxT("&log level")) ;
+  }
+  
   void MainFrame::AddMenuBar()
   {
     mp_wxmenubar = new wxMenuBar() ;
     wxMenu * p_wxmenu = new wxMenu() ;
+    
     wxMenuItem * p_wxmenuitem;
     m_p_wxmenuAction = new wxMenu( /*wxT("translate")*/ ) ;
     m_p_wxMenuItemTranslate = m_p_wxmenuAction->Append( ID_Translate, wxT("translate") );
@@ -65,19 +91,8 @@ namespace wxWidgets
     
     mp_wxmenubar->Append( p_wxmenuDictionary , wxT("&dictionary")) ;
 
-    p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
-    p_wxmenu->AppendCheckItem(ID_ShowGrammarPartMemoryAddress,
-      wxT("show memory address of grammar part ") );
-    p_wxmenu->AppendCheckItem(ID_ShowTranslatedWord,
-      wxT("show translated word") );
-    /** http://docs.wxwidgets.org/trunk/classwx_menu_item.html#a742aa5bb0d3faa020e7b3bd66e336499 : 
-     * "Optionally you can specify also an accelerator string appending a tab 
-     * character \t followed by a valid key combination (e.g. CTRL+V)." */
-    p_wxmenu->Append( ID_DecreaseFontSize, 
-      wxT("&decrease parse tree panel's font size\tCTRL+-") );
-    p_wxmenu->Append( ID_IncreaseFontSize, 
-      wxT("&increase parse tree panel's font size\tCTRL++") );
-    mp_wxmenubar->Append( p_wxmenu , wxT("&view")) ;
+    AddViewMenu(mp_wxmenubar);
+    AddLoggingMenu(mp_wxmenubar);
 
     SetMenuBar( mp_wxmenubar );
   }

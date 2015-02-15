@@ -11,6 +11,7 @@
     void OnAddGrammarRules(wxCommandEvent & wxcmd);
     void OnChar( wxKeyEvent & e);
     void OnDecreaseParseTreePanelFontSize(wxCommandEvent & wxcmd);
+    void OnLogLevel(wxCommandEvent & wxcmd);
     void OnIncreaseParseTreePanelFontSize(wxCommandEvent & wxcmd);
     void OnShowGrammarPartMemoryAddress(wxCommandEvent & wxcmd);
     void OnShowTranslatedWord(wxCommandEvent & wxcmd);

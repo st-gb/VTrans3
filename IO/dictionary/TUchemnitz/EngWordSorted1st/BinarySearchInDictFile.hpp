@@ -145,6 +145,10 @@ namespace DictionaryReader
         void read();
         int ReadByte();
         bool SeekFilePointerPosition(const fastestUnsignedDataType byteOffset);
+        inline bool GetByteOffsetOfFirstVocable(
+          fastestUnsignedDataType & byteOffsetOfVocable,
+          bool & endSearchForCompareStringInCurrentVocData
+          );
         /** @return 1 or multiple vocabulary pairs */
         void findEnglishWord(
           const PositionStringVector & psv,

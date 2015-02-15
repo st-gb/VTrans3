@@ -138,6 +138,9 @@ void VTransApp::CreateAndShowMainWindow()
     (/*(wxFrame *)*/ m_p_mainWindow)->Show(true);
     //m_p_mainWindow->SetEventHandler( (wxWidgets::MainWindowBase*) m_p_mainWindow);
   //       p_mainframe->Show() ;
+    const wxString wxstrVocabularyFilePath = wxWidgets::GetwxString_Inline(
+      m_stdstrVocabularyFilePath);
+    SetDictionaryFilePath(wxstrVocabularyFilePath);    
     InsertIntoVocabularyIntoMemory_Async(
       m_p_mainWindow, //wxWindow * p_wxwindowParent,
       //const std::string & std_strFilePath
