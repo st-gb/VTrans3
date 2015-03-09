@@ -11,7 +11,8 @@
 #include <compiler/GCC/suppress_unused_variable.h>
 
   const char * const PositionStringVector::s_comparisonResultString [] = {
-    "not set", "fullMatchOfCompareVector", "match", "lower", "greater", "tooFewTokens"
+    "not set", "fullMatchOfCompareVector", "match", "lower", "greater", "tooFewTokens",
+    "prefixMatch"
   };
 
 //  inline void OutputAndIncrement(PositionStringVector::const_iterator & c_iter,

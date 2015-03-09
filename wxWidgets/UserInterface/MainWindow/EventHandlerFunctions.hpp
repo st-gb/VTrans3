@@ -40,6 +40,7 @@
     void OnShowDictionaryStatistics(wxCommandEvent & wxcmd);
     void OnTimerEvent(wxTimerEvent &event);
     void OnTranslateButton(wxCommandEvent & wxcmd);
+    void OnTranslateOnTextChanges(wxCommandEvent & wxcmd);
     void OnTruncateLogFileButton( wxCommandEvent & wxcmd );
     void OnUnloadDictionary( wxCommandEvent & wxcmd );
     void UnloadDictionaryShowingStatus();

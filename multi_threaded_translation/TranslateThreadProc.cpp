@@ -3,6 +3,7 @@
 #include "TranslateThreadProc.hpp"
 
 #include <Controller/TranslationControllerBase.hpp>
+#include <FileSystem/File/FileException.hpp>
 #include <UserInterface/I_UserInterface.hpp>
 //#include <OperatingSystem/time/GetCurrentTime.hpp>
 //OperatingSystem::GetTimeCountInSeconds()
@@ -12,12 +13,15 @@ namespace VTrans
 {
     THREAD_FUNCTION_CALLING_CONVENTION DWORD TranslateThreadProc(void * p_vThreadParams)
     {
+     LOGN_DEBUG("begin")
       VTrans::multiThreadedTranslation::TranslateParameters * 
         p_translateParameters =
         (VTrans::multiThreadedTranslation::TranslateParameters * ) 
         p_vThreadParams;
       if( p_translateParameters )
       {
+        try
+        {
         std::vector<std::string> stdvec_stdstrWholeTransl ;
       //  std::vector<std::vector<TranslationAndGrammarPart> >
       //    stdvec_stdvecTranslationAndGrammarPart ;
@@ -49,5 +53,19 @@ namespace VTrans
         /** Should have been allocated on heap before. */
         delete p_translateParameters;
       }
+      catch(const FileException & fe)
+      {
+        LOGN_ERROR("file exception occurred")
+        p_translateParameters->//p_translationControllerBase
+          m_p_i_userInterface->Message("file exception occurred while translating");
+      }
+      catch(...)
+      {
+        LOGN_ERROR("exception occurred")
+        p_translateParameters->//p_translationControllerBase
+          m_p_i_userInterface->Message("unknown exception occurred while translating");
+      }
+      }
+     LOGN_DEBUG("end")
     }
 }

@@ -69,6 +69,17 @@ namespace wxWidgets
     p_wxmenubar->Append( p_wxmenu , wxT("&log level")) ;
   }
   
+  inline void AddSettingsMenu(wxMenuBar * p_wxmenubar)
+  {
+    wxMenu * p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
+    p_wxmenu->AppendCheckItem(ID_Translate_On_Text_Changes, 
+      wxT("translate on text changes") );
+    
+    p_wxmenu->Check(ID_Translate_On_Text_Changes, 
+      ::wxGetApp().m_GUIattributes.m_translateOnTextChanges);
+    p_wxmenubar->Append( p_wxmenu , wxT("&settings")) ;
+  }
+  
   void MainFrame::AddMenuBar()
   {
     mp_wxmenubar = new wxMenuBar() ;
@@ -92,6 +103,7 @@ namespace wxWidgets
     mp_wxmenubar->Append( p_wxmenuDictionary , wxT("&dictionary")) ;
 
     AddViewMenu(mp_wxmenubar);
+    AddSettingsMenu(mp_wxmenubar);
     AddLoggingMenu(mp_wxmenubar);
 
     SetMenuBar( mp_wxmenubar );
@@ -122,20 +134,23 @@ namespace wxWidgets
   void MainFrame::EnableDictAccessingActions(const bool enable)
   {
     wxString helpText;
-    if( enable )
+    if( enable && ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
       Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
         , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
     else
     {
-      helpText = wxT("disabled because currently collecting dictionary statistics");
-//      Disconnect (wxEVT_COMMAND_MENU_SELECTED, //wxEventType eventType, 
-//        wxWidgets::MainFrame::OnTranslateButton //wxObjectEventFunction function
-//        //, wxObject *userData=NULL, wxEvtHandler *eventSink=NULL
-//        );
-//      Disconnect (ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
-//        );
-      Disconnect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
-        , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
+      if( ! ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
+      {
+        helpText = wxT("disabled because currently collecting dictionary statistics");
+  //      Disconnect (wxEVT_COMMAND_MENU_SELECTED, //wxEventType eventType, 
+  //        wxWidgets::MainFrame::OnTranslateButton //wxObjectEventFunction function
+  //        //, wxObject *userData=NULL, wxEvtHandler *eventSink=NULL
+  //        );
+  //      Disconnect (ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+  //        );
+        Disconnect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+          , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
+      }
     }
     std::vector<wxMenuItem *>::const_iterator c_iter = m_dictionaryRelatedMenuItems.begin();
     while( c_iter != m_dictionaryRelatedMenuItems.end() )
@@ -197,8 +212,11 @@ namespace wxWidgets
     mp_wxsplitterwindow = new wxSplitterWindow( //NULL
       (wxFrame *) this, wxID_ANY ) ;
     AddInputAndOutputPanels();
-    Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
-      , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
+    if( ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
+    {
+      Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+        , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
+    }
     CreateStatusBar();
     AddMenuBar() ;
     //from wxWidgets' toolbar sample:

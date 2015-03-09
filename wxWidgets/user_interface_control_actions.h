@@ -43,7 +43,8 @@ enum user_interface_control_actions
   ID_DecreaseFontSize,
   ID_IncreaseFontSize,
   ID_LogLevel_Warning,
-  ID_LogLevel_Debug
+  ID_LogLevel_Debug,
+  ID_Translate_On_Text_Changes
 };
 
 

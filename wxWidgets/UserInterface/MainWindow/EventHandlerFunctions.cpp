@@ -82,6 +82,10 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   BUTTON_EVENT_TYPE( ID_AddGrammarRules , EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules )
   BUTTON_EVENT_TYPE( ID_ShowGrammarPartMemoryAddress,
     EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress)
+  BUTTON_EVENT_TYPE( ID_Translate_On_Text_Changes,
+    EVENT_HANDLER_CLASS_NAME::OnTranslateOnTextChanges)
+  /** see http://stackoverflow.com/questions/27911915/updating-wxwidgets-radio-item-dynamically
+   * for radio items several IDs are mapped to an event function. */
   BUTTON_EVENT_TYPE( ID_LogLevel_Warning, EVENT_HANDLER_CLASS_NAME::OnLogLevel)
   BUTTON_EVENT_TYPE( ID_LogLevel_Debug, EVENT_HANDLER_CLASS_NAME::OnLogLevel)
   BUTTON_EVENT_TYPE( ID_ShowTranslatedWord,
@@ -709,7 +713,7 @@ void EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton( wxCommandEvent & wxcmd )
 {
   g_logger.TruncateOutputSizeToZero();
 //  LogEntriesDialog dlg;
-  m_p_logEntriesDialog = new LogEntriesDialog(g_logger);
+  m_p_logEntriesDialog = new LogEntriesDialog(g_logger, wxGetApp().m_GUIthreadID);
 //  m_logEntriesDialog.Show();
   m_p_logEntriesDialog->Show();
 }
@@ -791,6 +795,17 @@ void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
     Translate();
   }
   LOGN_DEBUG("end")
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnTranslateOnTextChanges( wxCommandEvent & wxcmd )
+{
+  ::wxGetApp().m_GUIattributes.m_translateOnTextChanges = wxcmd.IsChecked();
+  if( ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
+    Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+    , wxTextEventHandler(EVENT_HANDLER_CLASS_NAME::OnInputTextChanges) );
+  else
+    Disconnect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
+      , wxTextEventHandler(EVENT_HANDLER_CLASS_NAME::OnInputTextChanges) );
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnUnloadDictionary( wxCommandEvent & wxcmd )

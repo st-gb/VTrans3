@@ -53,6 +53,7 @@ class GUIattributes
 public:
   bool m_bShowGrammarPartAddress ;
   bool m_bShowTranslation ;
+  bool m_translateOnTextChanges;
   fastestUnsignedDataType m_concatenationIDcolour;
   fastestUnsignedDataType m_fontSizeInPoint;
   fastestUnsignedDataType m_minFontSizeInPoint;
@@ -63,6 +64,7 @@ public:
   GUIattributes()
     : m_bShowGrammarPartAddress( true /*false*/ )
       , m_bShowTranslation(false)
+      , m_translateOnTextChanges(false)
       , m_std_strGrammarPartIDcolor("#FF0000")
       , m_std_strConcatenationIDcolor("#0000FF")
       , m_std_strGrammarPartMemoryAddressColor("#FF0000")

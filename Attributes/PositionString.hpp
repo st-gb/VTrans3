@@ -35,7 +35,7 @@
   {
   public:
 //    PositionStringVector(const VTrans::string_type & str);
-    enum cmp { notSet, fullMatchOf2nd, match, lower, greater,
+    enum cmp { notSet = 0, fullMatchOf2nd, match, lower, greater,
       tooFewTokensInComparisonVector, prefixMatch };
     static const char * const s_comparisonResultString [];
     /** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */

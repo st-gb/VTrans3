@@ -11,10 +11,12 @@
 //::GetErrorMessageFromLastErrorCode()
 #include <Controller/GetErrorMessageFromLastErrorCode.hpp>
 #include <Controller/character_string/convertFromAndToStdString.hpp>
-#include <IO/FileAccessException.hpp>
+//#include <IO/FileAccessException.hpp>
+#include <FileSystem/File/FileException.hpp> //class FileException
 
 class DictionaryFileAccessException
-  : public FileAccessException
+  : public //FileAccessException
+  FileException
 {
 public:
   enum action { seek, read, getFileSize, getCurrentFilePointerPosition, extractWordType};
@@ -22,22 +24,29 @@ public:
   enum action m_action;
   uint64_t m_seekOffset;
 
-//  DictionaryFileAccessException();
-  virtual
-  ~DictionaryFileAccessException() { };
+  DictionaryFileAccessException() { }
+  
+  DictionaryFileAccessException(const FileException & fe, const enum action action ) 
+    : FileException(fe)
+    , m_action(action)
+   { }
 
   DictionaryFileAccessException(
     const enum action action,
-    const DWORD operatinSystemErrorCode,
+    const DWORD operatingSystemErrorCode,
     const char * const filePath,
     uint64_t seekOffset = 0)
+    : FileException(filePath)
   {
     m_action = action;
-    m_operatingSystemErrorCode = operatinSystemErrorCode;
-    m_filePath = filePath;
+    m_operatingSystemErrorCode = operatingSystemErrorCode;
+//    m_filePath = GetStdWstring(filePath);
     m_seekOffset = seekOffset;
   }
 
+  virtual
+  ~DictionaryFileAccessException() { };
+  
   inline const std::string GetErrorMessageA() const
   {
     std::string std_strErrorMessage;
@@ -63,7 +72,7 @@ public:
       std_strErrorMessage = "other action regarding";
       break;
    }
-    const std::string std_strAbsoluteLogFilePath = GetAbsoluteFilePathA();
+    const std::string std_strAbsoluteLogFilePath = /*GetAbsoluteFilePathA();*/
 
     std_strErrorMessage += " dictionary file \"" + std_strAbsoluteLogFilePath + "\" failed:";
     const std::string std_strErrorMessageFromErrorCode =

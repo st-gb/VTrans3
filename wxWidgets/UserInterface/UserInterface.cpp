@@ -15,8 +15,10 @@
 // need because it includes almost all "standard" wxWidgets headers)
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
+#include "MainWindow/wxTextInputDlg.hpp"
 #endif
 #include <wx/filedlg.h> //wxFD_OPEN / wxOPEN
+#include <wx/file.h> //wxFile
 #include <wx/msgdlg.h>
 
 //class TranslationControllerBase
@@ -170,6 +172,19 @@ namespace wxWidgets
     const wxString & wxstrVocabularyDirPath,
     const wxString & wxstrVocabularyFileName)
   {
+    wxString wxstrFullPath;
+#ifdef _DEBUG
+    //wxTextInputDlg wxtextInputDlg();
+    const wxString c_wxstrDictionaryFilePath = ::wxGetTextFromUser(
+      wxT("enter a dictionary file path:") );
+    if( wxFile::Exists(c_wxstrDictionaryFilePath.c_str() ) )
+      wxstrFullPath = c_wxstrDictionaryFilePath;
+    else
+      wxMessageBox(wxT("dictionary file \"") + c_wxstrDictionaryFilePath + 
+        wxT("\" does not exist"));
+#else
+   /** if showing a file dialog while debugging in NetBeans:
+    * "GDB has unexpectedly stopped with return 1" -> program exit */
     wxFileDialog wxfiledialog(
       p_wxwindowParent
       , wxT("Choose a dictionary file")
@@ -182,11 +197,15 @@ namespace wxWidgets
       ) ;
     if( wxfiledialog.ShowModal() == wxID_OK )
     {
-      const wxString wxstrFullPath = wxfiledialog.
+      wxstrFullPath = wxfiledialog.
         //http://docs.wxwidgets.org/2.8/wx_wxfiledialog.html
         // #wxfiledialoggetpath:
         // "Returns the full path (directory and filename) of the selected file."
         GetPath() ;
+    }
+#endif
+    if( ! wxstrFullPath.IsEmpty() )
+    {
       wxGetApp().SetDictionaryFilePath(wxstrFullPath);
       /** Save in variable that lives longer than the new thread */
       ::wxGetApp().m_std_strLastSelectedDictFilePath = GetStdString( wxstrFullPath ) ;

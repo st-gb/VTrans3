@@ -83,6 +83,7 @@ VTransApp::VTransApp()
   m_p_mainWindow(NULL)//,
   //,m_wxiconVTrans( VT_icon_xpm )
 {
+  I_Thread::SetCurrentThreadName("main/GUI");
   LogLevel::CreateLogLevelStringToNumberMapping();
   g_p_translationcontrollerbase = this;
   m_parsebyrise.SetUserInterface( this ) ;
