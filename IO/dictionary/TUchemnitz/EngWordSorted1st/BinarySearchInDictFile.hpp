@@ -149,6 +149,12 @@ namespace DictionaryReader
           fastestUnsignedDataType & byteOffsetOfVocable,
           bool & endSearchForCompareStringInCurrentVocData
           );
+        fastestUnsignedDataType GetByteOffsetOfFirstMatchingWord(
+          const PositionStringVector & psvStringToSearch,
+          DWORD & r_dwTokenIndex,
+          const fastestUnsignedDataType numToken,
+          fastestUnsignedDataType closestBeforeNonMatchOffset,
+          fastestUnsignedDataType byteOffsetOfVocable);
         /** @return 1 or multiple vocabulary pairs */
         void findEnglishWord(
           const PositionStringVector & psv,
@@ -170,7 +176,7 @@ namespace DictionaryReader
           std::map<enum EnglishWord::English_word_class, unsigned> &
             englishWordClass2CounterMap
         );
-        fastestUnsignedDataType GetByteOffsetOfVocDataBegin(bool &);
+        fastestUnsignedDataType GetByteOffsetOfNextVocDataBegin(bool &);
       };
     }
   }

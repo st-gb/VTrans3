@@ -80,20 +80,18 @@ namespace MiniXML
 //            int i = 0;
 //        }
 //      }
-      if (event == MXML_SAX_ELEMENT_OPEN)
-      {
+        if (event == MXML_SAX_ELEMENT_OPEN)
+        {
 //#ifdef COMPILE_AS_EXECUTABLE
-//        //TODO implement in base class of "MainConfigFileReader" or
-//        // MiniXML-specific/ enable this feature
 ////        else if( m_strElementName == "drawing" )
 ////          HandleGUI_XMLelement(cr_xercesc_attributes);
 //        else
 //#endif
 //      }
 ////#endif
-      mainConfigFileReader.openingXMLelement(xmlElementName, node);
-    }
-    }
+          mainConfigFileReader.openingXMLelement(xmlElementName, node);
+        }
+      }
     }
   } //namespace MainConfigFile
 

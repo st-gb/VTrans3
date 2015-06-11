@@ -176,7 +176,7 @@ TranslationControllerBase::~TranslationControllerBase()
   LOGN_DEBUG("end")
 }
 
-bool TranslationControllerBase::IsGUIthread()
+bool TranslationControllerBase::CurrentThreadIsGUIthread()
 {
   const DWORD currentThreadNumber = OperatingSystem::GetCurrentThreadNumber();
   if( currentThreadNumber == m_GUIthreadID )
@@ -452,6 +452,20 @@ fastestUnsignedDataType TranslationControllerBase::GetNumberOfParseTrees(
   return numParseTrees;
 }
 
+inline void SetCurrentDirViaPlatformSTL(
+  const std::string & c_r_stdstrConfigFilesRootPath)
+{
+  //  platformstl::current_directory cwd; (//char_type const *dir
+  //    stdstrConfigFilesRootFullDirectoryPath.c_str() );
+
+  //  char buffer[MAX_PATH];
+  //  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
+  //  m_std_strOriginalCurrWorkDir = std::string(buffer);
+  //  platformstl::filesystem_traits<char>::set_current_directory(
+  //    stdstrConfigFilesRootFullDirectoryPath.c_str());
+  //  cwd.
+}
+
 void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
   const std::string & c_r_stdstrConfigFilesRootPath)
 {
@@ -459,26 +473,17 @@ void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
     //stdstrMainConfigFilePath.substr( 0, wIndexOfLastSlashOrBackSlash);
     c_r_stdstrConfigFilesRootPath;
 
-//  //TODO implement for Linux
   LOGN("Before setting current directory to \"" //main config file's full path"
     << stdstrConfigFilesRootFullDirectoryPath << "\"")
   //::SetCurrentDirectory(stdstrMainConfigFileFullDirectoryPath.c_str()
 //  SetCurrentDirectory( (const char *) stdstrConfigFilesRootFullDirectoryPath.
 //      c_str()
 //    );
-//  platformstl::current_directory cwd; (//char_type const *dir
-//    stdstrConfigFilesRootFullDirectoryPath.c_str() );
 //#ifdef /*__ANDROID__*/ __unix__
   //::_chdir(dir);
   OperatingSystem::SetCurrentWorkingDirA_inl(c_r_stdstrConfigFilesRootPath.c_str() );
 //#else
-//  char buffer[MAX_PATH];
-//  platformstl::filesystem_traits<char>::get_current_directory(buffer, MAX_PATH);
-//  m_std_strOriginalCurrWorkDir = std::string(buffer);
-//  platformstl::filesystem_traits<char>::set_current_directory(
-//    stdstrConfigFilesRootFullDirectoryPath.c_str());
 //#endif
-//  cwd.
   LOGN("After setting current directory to \"" //main config file's full path"
     << stdstrConfigFilesRootFullDirectoryPath << "\"")
 }

@@ -40,6 +40,7 @@
     static const char * const s_comparisonResultString [];
     /** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */
     friend std::ostream & operator << (std::ostream& os, const PositionStringVector &);
+    void BuildTokenVector(const std::string & stdstrText);
     enum cmp Compare(const char * const p_ch) const
     {
       const_iterator c_iter = begin();

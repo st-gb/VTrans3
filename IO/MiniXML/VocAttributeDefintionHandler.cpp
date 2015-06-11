@@ -27,6 +27,22 @@ namespace VTrans3
       // TODO Auto-generated destructor stub
     }
 
+    template <typename typenameConvertFromString> inline void
+      ConvertToTypename(
+        typenameConvertFromString & r_typename_convert_from_string,
+        const std::string & strAttributeName)
+    {
+      if( ConvertStdStringToTypename(r_typename_convert_from_string,
+          strAttributeName) == NS_ConvertStdStringToTypename::failed )
+      {
+        std::ostringstream stdoss;
+        stdoss << "Converting \"" << strAttributeName << "\" (to a number) failed";
+        //TODO line and column number in message
+        MiniXML::MiniXMLconfigReader::s_p_translationController->Message(
+          stdoss.str() );
+      }
+    }
+
     namespace VocAttributeDefintionFile
     {
       /** see http://www.msweet.org/documentation/project3/Mini-XML.html#4_7 */
@@ -76,17 +92,11 @@ namespace VTrans3
 
             const char * const strAttributeIndex =
               mxmlElementGetAttr(node, "attribute_index");
-            if( ConvertStdStringToTypename(wAttributeIndex,
-                strAttributeIndex) == NS_ConvertStdStringToTypename::failed )
-              //TODO message
-              MiniXML::MiniXMLconfigReader::s_p_translationController->Message("");
+            ConvertToTypename(wAttributeIndex, strAttributeIndex);
 
             const char * const strAttributeLength =
               mxmlElementGetAttr(node, "attribute_length");
-            if( ConvertStdStringToTypename(wAttributeLength,
-                strAttributeLength) == NS_ConvertStdStringToTypename::failed )
-              //TODO message
-              MiniXML::MiniXMLconfigReader::s_p_translationController->Message("");
+            ConvertToTypename(wAttributeLength, strAttributeLength);
 
             if( strcmp(strLanguage , "German") == 0 )
               wLanguage = AttributeTypeAndPosAndSize::German ;

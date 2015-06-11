@@ -23,85 +23,6 @@
 //class TranslationControllerBase;
 //LetterTree TranslationControllerBase::s_dictionary;
 
-inline bool isStringTokenDelimiter(char ch)
-{
-  switch( //* pch
-      ch )
-  {
-    case '\t':
-    case ' ':
-    case '\0':
-    case '.':
-    case '?':
-    case '!':
-      return true ;
-  }
-  return false ;
-}
-
-//TODO possibly move to class PositionStringVector
-void BuildTokenVector(
-  const std::string & stdstrText
-//  , PositionstdstringVector & psv
-  , PositionStringVector & psv
-  )
-{
-  bool bDoLoop = true ;
-  const char * pch ;
-  //stdstrText.find()
-  pch = stdstrText.c_str() ;
-  std::string stdstrToken ;
-  WORD wEndOfTokenIndex = MAXWORD ;
-  WORD wBeginOfTokenIndex = //MAXWORD ;
-    0 ;
-  WORD wCharIndex = 0 ;
-//  //while not "\0"
-//  while( *pch )
-  do
-  {
-    if( isStringTokenDelimiter( * pch ) )
-    {
-      //If unset.
-      if( wEndOfTokenIndex == MAXWORD )
-      {
-        wEndOfTokenIndex = wCharIndex ;
-        stdstrToken = stdstrText.substr(
-            wBeginOfTokenIndex,wEndOfTokenIndex-wBeginOfTokenIndex) ;
-        psv.push_back(
-//            Positionstdstring( stdstrToken ,
-          PositionString( stdstrToken ,
-            wBeginOfTokenIndex,wBeginOfTokenIndex)
-          ) ;
-        //std::cout << ""
-      }
-      if( * pch == '\0' )
-         bDoLoop = false ;
-      //Always setting the value is ~ as fast to first compare
-      //( if( "wBeginOfTokenIndex == MAXWORD" ) )
-      wBeginOfTokenIndex = MAXWORD ;
-//        break;
-//      default:
-    }
-    else
-    {
-//        if( bBeginOfNewToken )
-//          bBeginOfNewToken = false
-//        else
-//          bBeginOfNewToken = true ;
-      //If unset.
-      if( wBeginOfTokenIndex == MAXWORD )
-        wBeginOfTokenIndex = wCharIndex ;
-      //Always setting the value is ~ as fast to first compare
-      //( if( "wEndOfTokenIndex == MAXWORD" ) )
-      wEndOfTokenIndex = MAXWORD ;
-    }
-    //if( bBeginOfNewToken )
-    ++ pch ;
-    ++ wCharIndex ;
-  }
-  while( bDoLoop ) ;
-}
-
 //Creates the leafs of possible parse trees ausgehend from the source text.
 // Leaves are word classes, e.g. nouns.
 // If a grammar rule applies later then these leaves can make up a parse trees:
@@ -120,7 +41,8 @@ void ParseByRise::CreateInitialGrammarParts ( const std::string &
 //  std::map<DWORD, GrammarPart> stdmapwLeftmostIndex2grammarpart ;
 //  std::map<DWORD, GrammarPart> stdmapwRightmostIndex2grammarpart ;
 
-  BuildTokenVector(cr_stdstrText,m_psv) ;
+//  BuildTokenVector(cr_stdstrText,m_psv) ;
+  m_psv.BuildTokenVector(cr_stdstrText);
 #ifdef _DEBUG
   DWORD dwSize ;
 #endif
@@ -709,7 +631,6 @@ bool ParseByRise:://GrammarRuleAppliesTo(
         << " right token index:" << dwRightMostTokenIndexOfRule
         )
 
-      //TODO create on heap and only add pointer to it.
       //GrammarPart grammarpart( //iterLeftGrammarPart->first, //wGrammarPartIDOfRule
       GrammarPart * p_grammarpartParent = new GrammarPart(
         //wLeftGrammarPartIDForRule

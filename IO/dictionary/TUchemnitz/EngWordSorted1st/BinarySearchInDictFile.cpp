@@ -7,7 +7,7 @@
 
 #include "BinarySearchInDictFile.hpp"
 #include "UserInterface/I_UserInterface.hpp"
-#include "IO/dictionary/DictionaryFileReadException.hpp"
+#include <FileSystem/File/FileReadException.hpp>
 #include <Controller/character_string/ISO_8859_1.hpp>
 #include <Controller/character_string/stdtstr.hpp>
 #include <InputOutput/GetCharInACSIIcodePage850.hpp>
@@ -557,37 +557,22 @@ namespace DictionaryReader
 
     int BinarySearchInDictFile::ReadByte()
     {
-      const int readByteReturnValue = m_dictFile.ReadByte();
-      if( //readByteReturnValue == -1 || readByteReturnValue == 
-         //I_File::readLessThanIntended
-         readByteReturnValue != I_File::successfullyRead
-         )
+     int readByteReturnValue;
+      try
       {
-        if( readByteReturnValue == I_File::endOfFileReached )
-        {
-          std::tstring std_tstrDictFilePath = GetStdTstring_Inline(
-            m_dictFile.GetFilePathA() );
-          throw EndOfFileException(std_tstrDictFilePath.c_str () );
-        }
-        const DWORD lastOSerrorCode = OperatingSystem::GetLastErrorCode();
-        const char * const filePath = m_dictFile.GetFilePathA().c_str();
-//        DictionaryFileAccessException dictionaryFileAccessException(
-//          DictionaryFileAccessException::read,
+        readByteReturnValue = m_dictFile.ReadByte();
+      }
+      catch( const FileReadException & fileReadException ) {
+        /** Re-throw a DictionaryFileAccessException to indicate that the 
+         *  exception was caused while accessing a _dictionary_ file. */
+        DictionaryFileAccessException dictionaryFileAccessException(
+          fileReadException,
+          DictionaryFileAccessException::read
 //          lastOSerrorCode,
-////            m_dictFile.
+//            m_dictFile.
 //          filePath
-//          );
-        DictionaryFileReadException dictionaryFileReadException(
-          (enum I_File::ReadResult) readByteReturnValue,
-          lastOSerrorCode,
-          filePath
           );
-        const std::string errorMessage = /*dictionaryFileAccessException*/
-          dictionaryFileReadException.GetErrorMessageA();
-        LOGN_ERROR(//"error seeking file pointer to offset " << byteOffset
-          errorMessage
-          );
-        throw /*dictionaryFileAccessException*/ dictionaryFileReadException;
+        throw dictionaryFileAccessException;
       }
       return readByteReturnValue;
     }
@@ -729,14 +714,16 @@ namespace DictionaryReader
         GetCurrentFilePointerPosition();
 #endif
 //      m_englishDictionary.seekg(offset, std::ios_base::beg);
-      //TODO error handling on seek failure.
+      /** SeekFilePointerPosition Should throw an error on failure. */
+      //TODO handle exceptions?
       bool streamIsGood = SeekFilePointerPosition(offset);
       LOGN_DEBUG("after seeking to offset " << offset)
       int i;
 //      i = m_englishDictionary.get();
+      /** ReadByte Should throw an error on failure. */
       i = ReadByte();
 //      bool streamIsGood = m_englishDictionary.good();
-      streamIsGood = i > -1;
+//      streamIsGood = i > -1;
       bool breakWhile = false;
       char word[100];
       int prevChar = 0;
@@ -1209,6 +1196,17 @@ namespace DictionaryReader
       )
     {
       LOGN_DEBUG("begin")
+      fastestUnsignedDataType byteOffsetOfVocable = 0;
+      bool endSearchForCompareStringInCurrentVocData;
+      if( c_closestBeforeNonMatchOffset == 0)
+      {
+        //TODO
+        LOGN_WARNING("c_closestBeforeNonMatchOffset is 0->may read up to <size of dict> bytes")
+      }
+      else
+        byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(
+          endSearchForCompareStringInCurrentVocData);
+
 //      p_voc_container = extractVocable(byteOffsetOfVocable, p_vocandtransl);
 //      m_englishDictionary.seekg(c_closestBeforeNonMatchOffset, std::ios_base::beg);
       //TODO error handling on seek failure.
@@ -1218,17 +1216,11 @@ namespace DictionaryReader
       fastestUnsignedDataType currOffset = GetCurrentFilePointerPosition();
 #endif
       fastestUnsignedDataType closestBeforeNonMatchOffset;
-      fastestUnsignedDataType byteOffsetOfVocable;
-      bool endSearchForCompareStringInCurrentVocData;
       PositionStringVector::cmp comp = PositionStringVector::lower;
 //      fastestUnsignedDataType closestBeforeNonMatchOffset;
       do
       {
-        byteOffsetOfVocable = GetByteOffsetOfVocDataBegin(
-          endSearchForCompareStringInCurrentVocData);
-        if( byteOffsetOfVocable == UINT_MAX )
-          LOGN_ERROR("byte offset of voc data begin not found")
-        else
+//        else
         {
           LOGN_DEBUG("seeking to byte offset " << byteOffsetOfVocable)
 //          m_englishDictionary.seekg(byteOffsetOfVocable, std::ios_base::beg);
@@ -1251,11 +1243,18 @@ namespace DictionaryReader
             byteOffsetsOfVocData.insert(byteOffsetOfVocable);
           }
         }
+        byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(
+          endSearchForCompareStringInCurrentVocData);
+        if( byteOffsetOfVocable == UINT_MAX )
+        {
+          LOGN_ERROR("byte offset of voc data begin not found")
+          break;
+        }
       }while(comp == PositionStringVector::match || comp == PositionStringVector::greater );
       LOGN_DEBUG("end")
     }
 
-    fastestUnsignedDataType BinarySearchInDictFile::GetByteOffsetOfVocDataBegin(
+    fastestUnsignedDataType BinarySearchInDictFile::GetByteOffsetOfNextVocDataBegin(
         bool & endSearchForCompareStringInCurrentVocData)
     {
       LOGN_DEBUG("begin")
@@ -1264,9 +1263,11 @@ namespace DictionaryReader
       int i = ReadByte();
       char ch;
 //      bool streamIsGood = m_englishDictionary.good();
-      bool streamIsGood = i == I_File::successfullyRead;
+//      bool streamIsGood = i == I_File::successfullyRead;
       while(//i != std::ios_base::eof
-          streamIsGood )
+//          streamIsGood 
+          true
+          )
       {
         ch = i;
         if(ch == 0xA /*'\n'*/ )
@@ -1280,7 +1281,7 @@ namespace DictionaryReader
 //        i = m_englishDictionary.get();
         i = ReadByte();
 //        streamIsGood = m_englishDictionary.good();
-        streamIsGood = i == I_File::successfullyRead;
+//        streamIsGood = i == I_File::successfullyRead;
       }
       LOGN_DEBUG("return " << byteOffsetOfVocable)
       return byteOffsetOfVocable;
@@ -1443,7 +1444,8 @@ namespace DictionaryReader
 //        psvDictFile.clear();
 //        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
       } //while loop for current voc data
-      LOGN_DEBUG("return " << comp)
+      LOGN_DEBUG("return " << comp << " (" << 
+        PositionStringVector::s_comparisonResultString[comp] << ")")
       return comp;
     }
 
@@ -1481,7 +1483,7 @@ namespace DictionaryReader
     {
       try
       {
-        byteOffsetOfVocable = GetByteOffsetOfVocDataBegin(
+        byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(
           endSearchForCompareStringInCurrentVocData);
       }catch( const EndOfFileException & e )
       {
@@ -1492,6 +1494,65 @@ namespace DictionaryReader
           byteOffsetOfVocable = 0;
         }
       }
+    }
+    
+    //TODO find 1st matching vocable in binary search
+    //e.g.:2 dictionary entries: "car ............... car ......."
+    // found: 2nd entry with "car"
+    // no search in itnerval "[0...begin of 2nd car["
+    fastestUnsignedDataType BinarySearchInDictFile::
+      GetByteOffsetOfFirstMatchingWord(
+        const PositionStringVector & psvStringToSearch,
+        DWORD & r_dwTokenIndex,
+        const fastestUnsignedDataType numToken,
+        fastestUnsignedDataType closestBeforeNonMatchOffset,
+        fastestUnsignedDataType byteOffsetOfVocable
+      )
+    {
+      LOGN_DEBUG("begin")
+      fastestUnsignedDataType byteOffsetOfFirstMatchingWord = 0;
+      
+      fastestUnsignedDataType lowerBound = closestBeforeNonMatchOffset,
+        higherBound = byteOffsetOfVocable;
+
+      bool endSearchForCompareStringInCurrentVocData;
+      fastestUnsignedDataType byteOffsetOfCurrentVocable;
+      fastestUnsignedDataType byteOffsetOfNextVocDataBegin = 0;
+      do
+      {      
+        byteOffsetOfCurrentVocable = lowerBound + (higherBound - lowerBound) / 2;
+        SeekFilePointerPosition(byteOffsetOfCurrentVocable);
+
+        byteOffsetOfNextVocDataBegin = GetByteOffsetOfNextVocDataBegin(
+          endSearchForCompareStringInCurrentVocData);
+        SeekFilePointerPosition(byteOffsetOfNextVocDataBegin);
+
+        PositionStringVector::cmp comp = ContainsEnglishWord(
+          psvStringToSearch,
+  //            psvDictFile,
+          r_dwTokenIndex,
+          numToken,
+  //                byteOffsetsOfVocData,
+          closestBeforeNonMatchOffset
+          );
+        if( comp == PositionStringVector::match )
+        {
+          LOGN_DEBUG("setting higher bound to " << byteOffsetOfCurrentVocable)
+          //byteOffsetOfFirstMatchingWord = byteOffsetOfCurrentVocable;
+          higherBound = byteOffsetOfCurrentVocable /*byteOffsetOfVocable*/;
+//          byteOffsetOfCurrentVocable = lowerBound + (higherBound - lowerBound) / 2;
+        }
+        /** String to search is lexicgraphically after CURRENT vocable in dict file. */
+        else if( comp == PositionStringVector::greater )
+        {
+          LOGN_DEBUG("setting lower bound to " << byteOffsetOfCurrentVocable)
+          lowerBound = //GetByteOffsetOfNextVocDataBegin(
+            //endSearchForCompareStringInCurrentVocData);
+            byteOffsetOfCurrentVocable;
+//          byteOffsetOfCurrentVocable = lowerBound + (higherBound - lowerBound) / 2;
+        }
+      }while(higherBound > lowerBound);
+      LOGN_DEBUG("end")
     }
     
     /** @brief indirectly called when */
@@ -1531,8 +1592,12 @@ namespace DictionaryReader
         bool streamIsGood = SeekFilePointerPosition(byteOffset);
         bool atLeast1VocDataBeginFound = false;
         
-        streamIsGood = GetByteOffsetOfFirstVocable(byteOffsetOfVocable,
-                                    endSearchForCompareStringInCurrentVocData);
+//        streamIsGood = GetByteOffsetOfFirstVocable(
+//          byteOffsetOfVocable,
+//          endSearchForCompareStringInCurrentVocData);
+//        SeekFilePointerPosition(0);
+//        byteOffsetOfVocable = 0;
+
 //        if( ! streamIsGood )
 //          return;
         LOGN_DEBUG("streamIsGood:" << streamIsGood)
@@ -1542,8 +1607,6 @@ namespace DictionaryReader
           bool newLine = false;
           bool englishGermanSeperatorCharOccurred = false;
 
-//          byteOffsetOfVocable = GetByteOffsetOfVocDataBegin(
-//            endSearchForCompareStringInCurrentVocData);
 //          //EOF or read error.
 //          if( byteOffsetOfVocable == UINT_MAX )
 //          {
@@ -1561,6 +1624,8 @@ namespace DictionaryReader
           fastestUnsignedDataType closestBeforeNonMatchOffset = 0;
           try
           {
+            byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(
+              endSearchForCompareStringInCurrentVocData);
             PositionStringVector::cmp comp = ContainsEnglishWord(
               psvStringToSearch,
   //            psvDictFile,
@@ -1571,6 +1636,19 @@ namespace DictionaryReader
               );
             if( comp == PositionStringVector::match )
             {
+              /** Either found matching at first attempt or binary search
+               *  was always backwards (directing file begin). */
+              if( closestBeforeNonMatchOffset == 0)
+              {
+                //1st matching vocable in range:[0...byteOffsetOfVocable]
+                //byteOffsetOfVocable;
+                GetByteOffsetOfFirstMatchingWord(
+                  psvStringToSearch,
+                  r_dwTokenIndex,
+                  numToken,
+                  0,
+                  byteOffsetOfVocable);
+              }
               AddAllOffsetsOfMatchingWords(
                 closestBeforeNonMatchOffset,
                 psvStringToSearch,
@@ -1597,22 +1675,21 @@ namespace DictionaryReader
                 closestBeforeNonMatchOffset,
                 breakWhile);
               LOGN_DEBUG("seeking to dict file offset " << byteOffset)
-              //TODO catch seek error
-  //            m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
               //TODO error handling on seek failure.
+              /** Throws DictionaryFileAccessException on seek failure. */
               streamIsGood = SeekFilePointerPosition(byteOffset);
            }
             if( breakWhile )
               break;
-            byteOffsetOfVocable = GetByteOffsetOfVocDataBegin(
-              endSearchForCompareStringInCurrentVocData);
+//            byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(
+//              endSearchForCompareStringInCurrentVocData);
             streamIsGood = byteOffsetOfVocable != UINT_MAX;
           }
           catch(const EndOfFileException & e)
           {
             break;
           }
-          catch(DictionaryFileReadException & e)
+          catch(FileReadException & e)
           {
             if( e.GetResult() == I_File::endOfFileReached )
               break;

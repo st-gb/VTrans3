@@ -43,6 +43,85 @@
     return std_ostream;
   }
 
+  inline bool isStringTokenDelimiter(const char ch)
+  {
+    switch( //* pch
+        ch )
+    {
+      case '\t':
+      case ' ':
+      case '\0':
+      case '.':
+      case '?':
+      case '!':
+        return true ;
+    }
+    return false ;
+  }
+
+  //TODO possibly move to class PositionStringVector
+  void PositionStringVector::BuildTokenVector(
+    const std::string & stdstrText
+  //  , PositionstdstringVector & psv
+//    , PositionStringVector & psv
+    )
+  {
+    bool bDoLoop = true ;
+    const char * pch ;
+    //stdstrText.find()
+    pch = stdstrText.c_str() ;
+    std::string stdstrToken ;
+    fastestUnsignedDataType wEndOfTokenIndex = UINT_MAX ;
+    fastestUnsignedDataType wBeginOfTokenIndex = //MAXWORD ;
+      0 ;
+    fastestUnsignedDataType wCharIndex = 0 ;
+  //  //while not "\0"
+  //  while( *pch )
+    do
+    {
+      if( isStringTokenDelimiter( * pch ) )
+      {
+        //If unset.
+        if( wEndOfTokenIndex == UINT_MAX )
+        {
+          wEndOfTokenIndex = wCharIndex ;
+          stdstrToken = stdstrText.substr(
+              wBeginOfTokenIndex,wEndOfTokenIndex-wBeginOfTokenIndex) ;
+          push_back(
+  //            Positionstdstring( stdstrToken ,
+            PositionString( stdstrToken ,
+              wBeginOfTokenIndex,wBeginOfTokenIndex)
+            ) ;
+          //std::cout << ""
+        }
+        if( * pch == '\0' )
+           bDoLoop = false ;
+        //Always setting the value is ~ as fast to first compare
+        //( if( "wBeginOfTokenIndex == MAXWORD" ) )
+        wBeginOfTokenIndex = UINT_MAX ;
+  //        break;
+  //      default:
+      }
+      else
+      {
+  //        if( bBeginOfNewToken )
+  //          bBeginOfNewToken = false
+  //        else
+  //          bBeginOfNewToken = true ;
+        //If unset.
+        if( wBeginOfTokenIndex == UINT_MAX )
+          wBeginOfTokenIndex = wCharIndex ;
+        //Always setting the value is ~ as fast to first compare
+        //( if( "wEndOfTokenIndex == MAXWORD" ) )
+        wEndOfTokenIndex = UINT_MAX ;
+      }
+      //if( bBeginOfNewToken )
+      ++ pch ;
+      ++ wCharIndex ;
+    }
+    while( bDoLoop ) ;
+  }
+
   /** @return greater: if token inside _this_ object would appear after
    *   @see psvCompare in a dictionary. */
   enum PositionStringVector::cmp PositionStringVector::Compare(

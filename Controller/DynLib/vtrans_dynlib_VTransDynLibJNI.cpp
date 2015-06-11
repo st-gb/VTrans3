@@ -317,30 +317,26 @@ inline jmethodID GetAppendMethodID(JNIEnv * p_jni_env,
   return methodID;
 }
 
-/*
- * Class:     vtrans_dynlib_VTransDynLibJNI
- * Method:    FreeMemory
- * Signature: ()V
- */
-JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_GetStatus2
-  (JNIEnv * p_jni_env, //jobject
-    jclass jclazz,
-    jstring statusItem,
-    jobjectArray jobjArray)
+inline void addByteArray(
+  JNIEnv * p_jni_env,
+  ByteArray & byteArray,
+  jobjectArray & jobjArray )
 {
-  LOGN("begin")
-  std::string item;
-  struct tm time;
-  ByteArray byteArray(256);
-  BYTE byStatusCode = GetStatus2(item, time, byteArray);
   const unsigned numBytes = byteArray.GetCapacity();
-
   //http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html
   jbyteArray xmlBytes = p_jni_env->NewByteArray(numBytes /** jsize length*/);
   p_jni_env->SetObjectArrayElement(jobjArray,
       0 /*jsize index*/, xmlBytes /*jobject value*/);
+  /** Copy elements from byteArray to xmlBytes */
   p_jni_env->SetByteArrayRegion(xmlBytes, 0, numBytes, (const jbyte * )
     byteArray.GetArray() );
+}
+
+inline void setString(
+  JNIEnv * p_jni_env,
+  jobjectArray & jobjArray,
+  std::string & std_strItem)
+{
   jobject jobjItem = p_jni_env->GetObjectArrayElement(/*JNIEnv *env,*/
     jobjArray /*jobjectArray array*/, 1 /*jsize index*/);
 
@@ -348,18 +344,41 @@ JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_GetStatus2
   LOGN_DEBUG("calling NewStringUTF")
   // "Create a new Java String object and populate it with the environment
   // variable value.  Obtain a handle to this object."
-  jstring jstrItem = p_jni_env->NewStringUTF( (const char *) item.c_str() );
+  jstring jstrItem = p_jni_env->NewStringUTF( (const char *) std_strItem.c_str() );
   LOGN_DEBUG("calling CallObjectMethod")
   /** Call the StringBuffer object's append method passing the handle to
   * the new Java String object. */
   p_jni_env->CallObjectMethod (jobjItem, stringBufferAppendMethodID, jstrItem);
   /**If not called then SIGSEV? if this method is called to often? */
   p_jni_env->DeleteLocalRef(jstrItem);
+}
 
+/*
+ * Class:     vtrans_dynlib_VTransDynLibJNI
+ * Method:
+ * Signature: ()V
+ */
+JNIEXPORT jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_GetStatus2
+  (JNIEnv * p_jni_env, //jobject
+    jclass jclazz,
+    jstring statusItem,
+    jobjectArray jobjArray /** contains */ )
+{
+  LOGN("begin")
+  std::string std_strItem;
+  struct tm time;
+  ByteArray byteArray(256);
+  BYTE byStatusCode = GetStatus2(std_strItem, time, byteArray);
+
+  addByteArray(p_jni_env, byteArray, jobjArray);
+  setString(p_jni_env, jobjArray, std_strItem);
+
+#ifdef _DEBUG
   std::ostringstream oss;
   oss << time.tm_hour << time.tm_min << time.tm_sec;
-  //TODO create java.util.Date object from struct tm rather than using a jstring
+  //TO DO create java.util.Date object from struct tm rather than using a jstring
   const char * pch = oss.str().c_str();
+#endif
 //  jstrTime = JNI_ENV_ACCESS(p_jni_env)->NewStringUTF(
 //        JNI_ENV_POINTER(p_jni_env)
 //        pch );

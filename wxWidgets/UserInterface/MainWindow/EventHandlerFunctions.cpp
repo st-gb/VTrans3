@@ -727,7 +727,7 @@ void EVENT_HANDLER_CLASS_NAME::OnUpdateAfterTranslation(wxCommandEvent &)
  *  controls are accessed. */
 void EVENT_HANDLER_CLASS_NAME::UpdateAfterTranslation()
 {
-  if( ::wxGetApp().IsGUIthread()/*GetGUIthreadNumber()*/ )
+  if( ::wxGetApp().CurrentThreadIsGUIthread()/*GetGUIthreadNumber()*/ )
   {
     const fastestUnsignedDataType numParseTrees = ::wxGetApp().
       GetNumberOfParseTrees(//stdvec_stdvec_stdvecTranslationAndGrammarPart
