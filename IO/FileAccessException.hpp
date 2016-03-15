@@ -11,6 +11,8 @@
 #include <FileSystem/IsRelativePath.hpp> //bool FileSystem::IsRelativePath(...)
 #include <FileSystem/GetCurrentWorkingDir.hpp> //GetCurrentWorkingDir(...)
 
+typedef unsigned DWORD;
+
 class FileAccessException
 {
 protected:
@@ -31,7 +33,7 @@ public:
 #ifdef _WIN32
       Windows::GetCurrentWorkingDirA_inl(std_strCurrentDirectory);
 #else
-      /*OperatingSystem*/Linux::GetCurrentWorkingDirA_inl(std_strCurrentDirectory);
+      /*OperatingSystem*/Linux_::GetCurrentWorkingDirA_inl(std_strCurrentDirectory);
 #endif
       std_strAbsoluteLogFilePath += std_strCurrentDirectory += m_filePath;
       return std_strAbsoluteLogFilePath;

@@ -8,7 +8,9 @@
 #ifndef SAX2MAINCONFIGHANDLER_HPP_
 #define SAX2MAINCONFIGHANDLER_HPP_
 
-#include <IO/ConfigurationReader.hpp> //class VTrans3::ConfigurationReader
+//#include <IO/ConfigurationReader.hpp> //class VTrans3::ConfigurationReader
+#include <IO/configuration/MainConfigFileReaderBase.hpp>
+
 //class "XERCES_CPP_NAMESPACE::Attributes"
 #include <xercesc/sax2/Attributes.hpp>
 //class "XERCES_CPP_NAMESPACE::DefaultHandler
@@ -30,7 +32,8 @@ namespace Xerces
   class SAX2MainConfigHandler
     :
     public XERCES_CPP_NAMESPACE::DefaultHandler,
-    VTrans3::ConfigurationReader
+//    VTrans3::ConfigurationReader
+	MainConfigFileReaderBase
   {
   public:
 //    TranslateParseByRiseTree & mr_translateparsebyrisetree ;

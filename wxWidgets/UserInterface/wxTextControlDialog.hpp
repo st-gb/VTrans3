@@ -13,6 +13,7 @@
 #include <wx/textctrl.h> //wxTextCtrl, wxTE_READONLY
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
+#include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 
 class wxTextControlDialog
   : public wxDialog

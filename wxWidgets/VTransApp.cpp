@@ -161,6 +161,7 @@ void VTransApp::DisableDictAccessingActions()
   m_p_mainWindow->EnableDictAccessingActions(false);
 }
 
+/** Ensures showing GUI messages in the UI thread. */
 void VTransApp::Message( const std::string & cr_stdstr /*, unsigned threadID*/ )
 {
   /** Avoid putting to much "show message" events/ showing too much messages at
@@ -333,15 +334,13 @@ void VTransApp::LoadingVocabularyFileFailed(
 //    if( ! wxEndsWithPathSeparator(wxstrCwd) )
     wxstrFilePath = wxstrCwd + wxFILE_SEP_PATH + wxstrFilePath;
   }
-  ::wxMessageBox(
-      wxString::Format( wxT("Error loading vocabulary file \"%s\""
-      "\n:\%s\" ")
-      //"->exiting"
-      ,
-      wxstrFilePath.c_str(),
-      wxstrErrorMessage.c_str()
-      )
-    ) ;
+
+  std::ostringstream oss;
+  oss << "Error loading vocabulary file \"" << wxWidgets::GetStdString(wxstrFilePath)
+    << "\"\n:" << wxWidgets::GetStdString(wxstrErrorMessage);
+  /** Must call the "Message" function because ouput to GUI needs to be done in
+   * User Interface thread. */
+  Message(oss.str().c_str() );
 }
 
 //http://docs.wxwidgets.org/stable/wx_wxappoverview.html:

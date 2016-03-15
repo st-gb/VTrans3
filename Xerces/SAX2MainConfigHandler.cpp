@@ -275,11 +275,11 @@ namespace Xerces
         if( XercesAttributesHelper::GetAttributeValue(
           cr_xercesc_attributes,
           "path",
-          m_stdstrVocabularyFilePath)
+		  m_r_translationcontrollerbase.m_stdstrVocabularyFilePath)
           )
         {
           LOGN_DEBUG("got vocabulary_file path: " << //stdstrFilePath
-            m_stdstrVocabularyFilePath )
+			  m_r_translationcontrollerbase.m_stdstrVocabularyFilePath )
 //        if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
 //             stdstrFilePath )
 //          )

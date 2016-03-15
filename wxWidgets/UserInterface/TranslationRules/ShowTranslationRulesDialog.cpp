@@ -26,6 +26,7 @@
 #include <wxWidgets/Controller/character_string/wxStringHelper.hpp>
 #include <map> //class std::map
 #include "TranslationRulesListCtrl.hpp"
+#include <wx/sizer.h> //class wxBoxSizer
 
 /** for wxWidgets::GetwxString_Inline */
 using namespace wxWidgets;

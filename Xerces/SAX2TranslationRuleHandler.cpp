@@ -289,6 +289,15 @@ void SAX2TranslationRuleHandler::HandleTranslationRuleElementName(
   }
 }
 
+void SAX2TranslationRuleHandler::Process(const std::string & filePath)
+{
+  m_std_strFilePath = filePath;
+  unsigned char ch = ::ReadViaSAX2(
+    filePath.c_str(), //const char * const cpc_chXMLfilePath ,
+    this //XERCES_CPP_NAMESPACE::ContentHandler * const pc_contenthandler
+    );
+}
+
 void SAX2TranslationRuleHandler::setDocumentLocator(
   const XERCES_CPP_NAMESPACE::Locator * const cpc_locator )
 {

@@ -18,9 +18,9 @@
 #include <wxWidgets/UserInterface/ShowRulesDialogBase.hpp>
 
 #include <wx/clipbrd.h> //wxTheClipboard
+#include <wx/dataobj.h> //wxTextDataObject
 #include <wx/filefn.h> //::wxGetCwd()
 #include <wx/menu.h> //class wxMenu
-
 
 /** for wxWidgets::GetwxString_Inline */
 using namespace wxWidgets;

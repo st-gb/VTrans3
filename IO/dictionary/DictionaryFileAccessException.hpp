@@ -13,6 +13,7 @@
 #include <Controller/character_string/convertFromAndToStdString.hpp>
 //#include <IO/FileAccessException.hpp>
 #include <FileSystem/File/FileException.hpp> //class FileException
+#include <stdint.h> //uint64_t
 
 class DictionaryFileAccessException
   : public //FileAccessException
@@ -76,7 +77,7 @@ public:
 
     std_strErrorMessage += " dictionary file \"" + std_strAbsoluteLogFilePath + "\" failed:";
     const std::string std_strErrorMessageFromErrorCode =
-      ::GetErrorMessageFromErrorCodeA(m_operatingSystemErrorCode);
+      OperatingSystem::GetErrorMessageFromErrorCodeA(m_operatingSystemErrorCode);
     std_strErrorMessage += std_strErrorMessageFromErrorCode;
     return std_strErrorMessage;
   }

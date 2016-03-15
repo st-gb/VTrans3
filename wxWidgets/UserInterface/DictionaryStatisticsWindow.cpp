@@ -6,7 +6,8 @@
  */
 
 #include "DictionaryStatisticsWindow.hpp"
-#include "Windows/multithread/Thread.hpp"
+///** typedef nativeThread_type  */
+//#include <multithread/nativeThreadType.hpp>
 #include "MainWindow/MainFrame.hpp"
 #include <wx/stattext.h> //class wxStaticText
 #include <wx/sizer.h> //class wxBoxSizer

@@ -115,13 +115,17 @@ namespace DictionaryReader
           DictionaryFileAccessException dictionaryFileAccessException(
             DictionaryFileAccessException::getFileSize, lastError,
             std_strDictFilePath.c_str() );
+  	      LOGN_ERROR("error getting dictionary file size->throwing an exception")
           throw dictionaryFileAccessException;
         }
 //        m_englishDictionary.seekg(0, std::ios_base::beg);
 //        m_dictFile.Seek(0);
       }
       else //Or throw enum I_File::OpenError openError
+      {
+	    LOGN_ERROR("error loading dictionary->throwing an exception")
         throw VTrans3::OpenDictFileException(openError);
+      }
       return dictFileIsOpen;
     }
 

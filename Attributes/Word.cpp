@@ -1,4 +1,6 @@
-#include "StdAfx.h"
+#ifdef _MSC_VER // MC compiler
+  #include "StdAfx.h"
+#endif
 #include "Word.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordNode.hpp"
 #include "VocabularyInMainMem/DoublyLinkedList/WordList.hpp"

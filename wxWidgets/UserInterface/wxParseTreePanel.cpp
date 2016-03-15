@@ -37,8 +37,8 @@
   //The fix is to either not include <windows.h> at all or include
   //"wx/msw/winundef.h" immediately after it. "
   #include "wx/msw/winundef.h"
-#include "wxWidgets/VTransApp.hpp"
 #endif //#ifdef _WIN32 //32 and 64 bit Windows
+#include "wxWidgets/VTransApp.hpp"
 
 enum eventIDs { showTranslatedWord, showGrammarPartAddress, decreaseFontSize,
   increaseFontSize, bufferDisplay };
@@ -1298,7 +1298,9 @@ void wxParseTreePanel::OnSize(wxSizeEvent & evt)
   const wxSize & newSize = evt.m_size;
 //  m_p_wxbitmapBuffer = new wxBitmap( newSize.x, newSize.y );
   
-  m_wxbitmapBuffer.SetSize(newSize.x, newSize.y);
+//  m_wxbitmapBuffer.SetSize(newSize.x, newSize.y);
+  m_wxbitmapBuffer.SetHeight(newSize.y);
+  m_wxbitmapBuffer.SetWidth(newSize.x);
   
 //  wxMemoryDC wxmemorydc( * m_p_wxbitmapBuffer);
 //  m_wxmemorydc.SelectObject( /* *m_p_wxbitmapBuffer*/ m_wxbitmapBuffer);

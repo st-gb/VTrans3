@@ -52,6 +52,7 @@ public:
       const XMLCh * const cpc_xmlchQualifiedName);
     inline void HandleTranslationRuleElementName(
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes);
+    void Process(const std::string & filePath);
     void setDocumentLocator(
       const XERCES_CPP_NAMESPACE::Locator * const cpc_locator);
     void startElement(

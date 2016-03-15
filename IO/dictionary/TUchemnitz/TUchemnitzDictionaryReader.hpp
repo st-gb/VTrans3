@@ -108,7 +108,7 @@ public:
       m_dictFile.close();
     }
     m_dictFile.open(filePath);
-    std::string str = ::GetErrorMessageFromLastErrorCodeA();
+    std::string str = OperatingSystem::GetErrorMessageFromLastErrorCodeA();
     return m_dictFile.is_open();
   }
 
