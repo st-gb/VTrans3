@@ -336,7 +336,8 @@
   //      int i = m_englishDictionary.get();
         int i = ReadByte();
   //      streamIsGood = m_englishDictionary.good();
-        streamIsGood = i > 0;
+        //TODO check is only necessary if NOT using exceptions.
+        streamIsGood = i < 256 /** return codes start*/;
         while( streamIsGood /*&& ! breakWhile*/ )
         {
           if( ! afterRoundOpeningBracket && ! afterSquaredOpeningBracket &&
@@ -429,7 +430,7 @@
   //                breakWhile);
                 comp = psvStringToSearch.Compare(psvDictFile, r_dwTokenIndex,
                   numTokenForStringToSearch);
-                LOGN_DEBUG("return value of comparison: " << PositionStringVector:://GetResultAsString(comp)
+                LOGN_DEBUG("result of comparison: " << PositionStringVector:://GetResultAsString(comp)
                   s_comparisonResultString[comp] )
     //                comp = psvStringToSearch.Compare(/*word*/ psvDictFile, r_dwTokenIndex);
               if( comp == PositionStringVector::match)
@@ -460,7 +461,8 @@
   //        psvDictFile.clear();
   //        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
         } //while loop for current voc data
-        LOGN_DEBUG("return " << comp)
+        LOGN_DEBUG("return " << comp << "(\"" << PositionStringVector::
+		  s_comparisonResultString[comp] << "\")" )
         return comp;
       }
     }

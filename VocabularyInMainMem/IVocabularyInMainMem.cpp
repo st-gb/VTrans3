@@ -6,7 +6,11 @@
 #include "IVocabularyInMainMem.hpp"
 #include "Controller/thread_type.hpp"
 #include <Attributes/Word.hpp>
+#include <IO/dictionary/DictionaryFileAccessException.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG
+#include <Controller/TranslationControllerBase.hpp>
+
+extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 //IVocabularyInMainMem::s_arstdstrPersonalPronoun = {"hh", "j"} ;
 //
@@ -189,14 +193,20 @@ void IVocabularyInMainMem::OutputVocs(const voc_container_type * p_voc_container
 
 DWORD THREAD_FUNCTION_CALLING_CONVENTION CollectDictStatsThreadFunc(void * p_v)
 {
-  CollectDictStatsThreadFuncParams * p_collectDictStatsThreadFuncParams = 
-    (CollectDictStatsThreadFuncParams *) p_v;
-  if( p_collectDictStatsThreadFuncParams)
+  I_Thread::SetCurrentThreadName("CollectDictStats");
+  try
   {
-    IVocabularyInMainMem * pVocabularyInMainMem = 
-      p_collectDictStatsThreadFuncParams->pIVocabularyInMainMem;
-    pVocabularyInMainMem->GetStatistics(
-      p_collectDictStatsThreadFuncParams->englishWordClass2CounterMap);
+	  CollectDictStatsThreadFuncParams * p_collectDictStatsThreadFuncParams =
+		(CollectDictStatsThreadFuncParams *) p_v;
+	  if( p_collectDictStatsThreadFuncParams)
+	  {
+		IVocabularyInMainMem * pVocabularyInMainMem =
+		  p_collectDictStatsThreadFuncParams->pIVocabularyInMainMem;
+		pVocabularyInMainMem->GetStatistics(
+		  p_collectDictStatsThreadFuncParams->englishWordClass2CounterMap);
+	  }
+  }catch(DictionaryFileAccessException & dictionaryFileAccessException ) {
+    g_p_translationcontrollerbase->Message(dictionaryFileAccessException.GetErrorMessageA() );
   }
 }
 

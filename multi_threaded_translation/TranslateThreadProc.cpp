@@ -4,6 +4,7 @@
 
 #include <Controller/TranslationControllerBase.hpp>
 #include <FileSystem/File/FileException.hpp>
+#include <IO/dictionary/DictionaryFileAccessException.hpp>
 #include <UserInterface/I_UserInterface.hpp>
 //#include <OperatingSystem/time/GetCurrentTime.hpp>
 //OperatingSystem::GetTimeCountInSeconds()
@@ -13,6 +14,7 @@ namespace VTrans
 {
     THREAD_FUNCTION_CALLING_CONVENTION DWORD TranslateThreadProc(void * p_vThreadParams)
     {
+    	I_Thread::SetCurrentThreadName("Translate");
      LOGN_DEBUG("begin")
       VTrans::multiThreadedTranslation::TranslateParameters * 
         p_translateParameters =
@@ -53,6 +55,11 @@ namespace VTrans
         /** Should have been allocated on heap before. */
         delete p_translateParameters;
       }
+        catch(const DictionaryFileAccessException & dictionaryFileAccessException)
+        {
+          p_translateParameters->//p_translationControllerBase
+            m_p_i_userInterface->Message(dictionaryFileAccessException.GetErrorMessageA());
+        }
       catch(const FileException & fe)
       {
         LOGN_ERROR("file exception occurred")

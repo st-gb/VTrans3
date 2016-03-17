@@ -159,7 +159,8 @@ namespace wxWidgets
 //        TUchemnitzDictionaryReader tcdr(::wxGetApp(), & ::wxGetApp().s_dictionary);
     ::wxGetApp().StartTimer();
     VTrans::thread_type thread;
-    thread.start(LoadDictionary_ThreadFunc, (void *) std_strFilePath.c_str() );
+    thread.start(LoadDictionary_ThreadFunc, (void *) std_strFilePath.c_str(),
+	  "LoadDictionary");
 //        TUchemnitzDictionaryReader::extractVocables( std_strFilePath.c_str());
 //        if( ::wxMessageBox( wxT("loading vocs"), wxT(""), wxOK | wxCANCEL) ==
 //            wxID_CANCEL )

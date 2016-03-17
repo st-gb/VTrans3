@@ -535,6 +535,9 @@ void EVENT_HANDLER_CLASS_NAME::Translate()
   //  std::vector<std::vector<TranslationAndConsecutiveID> >
   //    stdvec_stdvecTranslationAndConsecutiveID ;
 
+  /** Avoid translating if there is no input text. */
+  if( ! stdstrWholeInputText.empty() )
+  {
     bool translateAsync = true;
     /** Prevent multiple translation threads. */
     DisableDoTranslateControls();
@@ -554,6 +557,7 @@ void EVENT_HANDLER_CLASS_NAME::Translate()
     }
     else
       VTrans::TranslateThreadProc(p_tranlParams);
+  }
 }
 
 //DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)

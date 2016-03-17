@@ -21,6 +21,7 @@
 #include <IO/dictionary/TUchemnitz/TUchemnitzDictionary.hpp>
 //#include <FileSystem/File/File.hpp>
 #include <FileSystem/File/native_File_type.hpp> //typedef native_File_type
+#include <limits.h> //UINT_MAX
 
 /** Forward decl. */
 //class IVocabularyInMainMem;
@@ -176,7 +177,10 @@ namespace DictionaryReader
           std::map<enum EnglishWord::English_word_class, unsigned> &
             englishWordClass2CounterMap
         );
-        fastestUnsignedDataType GetByteOffsetOfNextVocDataBegin(bool &);
+        fastestUnsignedDataType GetByteOffsetOfNextVocDataBegin(bool &,
+          /** Default value "UINT_MAX" leads to retrieve the current file
+           *  pointer position. */
+          fastestUnsignedDataType currentFileOffset = UINT_MAX);
       };
     }
   }
