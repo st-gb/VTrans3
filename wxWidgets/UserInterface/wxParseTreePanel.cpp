@@ -407,6 +407,8 @@ void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise
 
   /** Clears the device context using the current background brush.
   * (else black background?) */
+  //TODO "../src/gtk/dcclient.cpp(1843): assert "Ok()" failed in Clear(): invalid window dc "
+  //when called from "UpdateAfterTranslation()"
   m_wxmemorydc.Clear();
   
 //  DrawParseTreeBeginningFromLeaves(//wxpaintdc

@@ -561,7 +561,7 @@ namespace DictionaryReader
 
     int BinarySearchInDictFile::ReadByte()
     {
-     int readByteReturnValue;
+      int readByteReturnValue;
       try
       {
         readByteReturnValue = m_dictFile.ReadByte();
@@ -580,6 +580,30 @@ namespace DictionaryReader
       }
       return readByteReturnValue;
     }
+
+    I_File::ReadResult BinarySearchInDictFile::ReadByteBuffer(
+      uint8_t buffer [],
+      fastestUnsignedDataType numBytes)
+    {
+      I_File::ReadResult readResult;
+	    readResult = m_dictFile.Read(buffer, numBytes);
+	    if( readResult != I_File::successfullyRead )
+      {
+	      if( readResult != I_File::readLessThanIntended )
+        {
+          FileReadException fileReadException(readResult, errno,
+            m_dictFile.GetFilePathA().c_str() );
+          /** Throw a DictionaryFileAccessException to indicate that the
+           *  exception was caused while accessing a _dictionary_ file. */
+          DictionaryFileAccessException dictionaryFileAccessException(
+            fileReadException,
+            DictionaryFileAccessException::read
+            );
+          throw dictionaryFileAccessException;
+        }
+      }
+      return readResult;
+		}
 
     int BinarySearchInDictFile::GetCurrentFilePointerPosition()
     {
@@ -1272,44 +1296,56 @@ namespace DictionaryReader
 		fastestUnsignedDataType currentFileOffsetOrig )
     {
       LOGN_DEBUG("begin")
-#ifdef DEBUG
-      fastestUnsignedDataType byteOffsetOfVocable = UINT_MAX;
-#endif
+//#ifdef DEBUG
+//      fastestUnsignedDataType byteOffsetOfVocable = UINT_MAX;
+//#endif
       fastestUnsignedDataType currentFileOffset = currentFileOffsetOrig;
 //      int i = m_englishDictionary.get();
 //      fastestUnsignedDataType numBytesRead = 0;
-      int i = ReadByte();
-      ++ currentFileOffset;
-//      char ch;
-//      bool streamIsGood = m_englishDictionary.good();
-//      bool streamIsGood = i == I_File::successfullyRead;
-      while(//i != std::ios_base::eof
-//          streamIsGood 
-        //true
-        i != 0xA /* <> '\n'*/
-        )
+      /** http://stackoverflow.com/questions/13225014/why-fgetc-too-slow
+       *  -> do not use ReadByte() but read multiple bytes at once. */
+//      int i = ReadByte();
+
+      /** Because reading a buffer is only done once this value als indicates
+       *  the maximum line length in bytes. */
+      const fastestUnsignedDataType numBytesToRead =
+        512;
+      uint8_t buffer[numBytesToRead];
+      fastestUnsignedDataType numBytesRead = numBytesToRead;
+      /** Read more bytes at once to speed up translation. */
+      enum I_File::ReadResult fileReadResult = ReadByteBuffer(buffer, numBytesRead);
+      if( fileReadResult == I_File::successfullyRead ||
+          fileReadResult == I_File::readLessThanIntended )
       {
-//        i = m_englishDictionary.get();
-        i = ReadByte();
-//        ++ numBytesRead;
-        ++ currentFileOffset;
-//        streamIsGood = m_englishDictionary.good();
-//        streamIsGood = i == I_File::successfullyRead;
+        bool endOfLineCharFound = false;
+        for( fastestUnsignedDataType bufferOffset = 0 ;
+            bufferOffset < numBytesRead ; ++ bufferOffset )
+        {
+          if( buffer[bufferOffset] == 0xA /* <> '\n'*/ )
+          {
+            currentFileOffset += bufferOffset + 1;
+            m_dictFile.SeekFilePointerPosition(currentFileOffset);
+            endOfLineCharFound = true;
+            break;
+          }
+        }
+        if( endOfLineCharFound )
+        {
+//  #ifdef DEBUG
+//        byteOffsetOfVocable = GetCurrentFilePointerPosition();
+//        if( currentFileOffsetOrig == UINT_MAX )
+//          currentFileOffset = byteOffsetOfVocable;
+//  #else
+        if( currentFileOffsetOrig == UINT_MAX )
+          currentFileOffset = GetCurrentFilePointerPosition();
+//  #endif
+        LOGN_DEBUG("offset of voc data begin:" << currentFileOffset)
+        endSearchForCompareStringInCurrentVocData = false;
+        }
+        else //if( ! endOfLineCharFound )
+          currentFileOffset += numBytesRead;
       }
-      if( i == 0xA /*'\n'*/ )
-      {
-#ifdef DEBUG
-  		byteOffsetOfVocable = GetCurrentFilePointerPosition();
-  		if( currentFileOffsetOrig == UINT_MAX )
-  			currentFileOffset = byteOffsetOfVocable;
-#else
-  		if( currentFileOffsetOrig == UINT_MAX )
-  			currentFileOffset = GetCurrentFilePointerPosition();
-#endif
-  		LOGN_DEBUG("offset of voc data begin:" << byteOffsetOfVocable)
-  		endSearchForCompareStringInCurrentVocData = false;
-      }
-      LOGN_DEBUG("return " << byteOffsetOfVocable)
+      LOGN_DEBUG("return " << currentFileOffset)
       return /*byteOffsetOfVocable*/ currentFileOffset;
     }
 

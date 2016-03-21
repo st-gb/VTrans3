@@ -145,6 +145,9 @@ namespace DictionaryReader
           { return m_fileSizeInBytes; }
         void read();
         int ReadByte();
+        I_File::ReadResult ReadByteBuffer(
+          uint8_t buffer [],
+          const fastestUnsignedDataType numBytes);
         bool SeekFilePointerPosition(const fastestUnsignedDataType byteOffset);
         inline bool GetByteOffsetOfFirstVocable(
           fastestUnsignedDataType & byteOffsetOfVocable,
