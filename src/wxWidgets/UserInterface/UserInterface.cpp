@@ -35,6 +35,7 @@
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
 #include <string> //class std::string
 #include <IO/dictionary/OpenDictFileException.hpp>
+#include <hardware/CPU/atomic/AtomicExchange.h>
 
 //extern LetterTree g_lettertree ;
 
@@ -128,6 +129,8 @@ namespace wxWidgets
           std_strDictFilePath.c_str() );//extractVocables( dictFilePath);
 //        if( ! b )
 //          ::wxGetApp().LoadingVocabularyFileFailed(std_strDictFilePath);
+        AtomicExchange( (long *) & wxGetApp().m_dictionarySuccessfullyLoaded, true); 
+        //::wxGetApp().LoadingDictionaryFileSucceeded();
         ::wxGetApp().EndTimer();
       }
       //TODO Maybe simply catch an "enum I_File::OpenError" value ?

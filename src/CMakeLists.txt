@@ -6,6 +6,9 @@ project (VTrans)
 set(COMMON_SOURCECODE_ROOT_PATH /home/sg/SourceCodeManagement/common_sourcecode)
 set(WXWIDGETS_SOURCECODE_ROOT_PATH )
 set(VTRANS3_ROOT_PATH ${PROJECT_SOURCE_DIR} )
+#see http://accountingplusplus.blogspot.de/2010/12/cmake-wxwidgets.html :
+#Set wxWidgets_USE_DEBUG to "ON" to link against WxWidgets debug libraries.
+set( wxWidgets_USE_DEBUG ON)
 
 #set(<variable> <value>  ... <valueN>)
 set( INCLUDE_DIRS 
@@ -20,6 +23,7 @@ message("include directories: ${INCLUDE_DIRS}")
 
 message("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 message("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
+message("wxWidgets_USE_DEBUG: ${wxWidgets_USE_DEBUG}")
 
 set( CXX_DEFINITIONS
   -DCOMPILE_LOGGER_MULTITHREAD_SAFE

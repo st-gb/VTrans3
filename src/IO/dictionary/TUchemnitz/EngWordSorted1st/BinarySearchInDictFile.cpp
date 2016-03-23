@@ -708,7 +708,8 @@ namespace DictionaryReader
 //                  fileOffset );
                 afterOpeningCurlyBrace = false;
               }
-             wordType[numWordKindChars ++] = currentFileByte;
+             else
+               wordType[numWordKindChars ++] = currentFileByte;
            }
         }
         fileOffset = m_dictFile.GetCurrentFilePointerPosition();

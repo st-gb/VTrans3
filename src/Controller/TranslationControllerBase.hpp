@@ -158,6 +158,7 @@ public:
 #endif //#ifndef TEST_MINI_XML
   std::string m_std_strMainConfigFilePath;
   GUIattributes m_GUIattributes;
+  bool m_dictionarySuccessfullyLoaded;
 
   TranslationControllerBase();
   virtual

@@ -126,7 +126,8 @@ TranslationControllerBase::TranslationControllerBase()
     , * this
     ),
 #endif  //#ifndef TEST_MINI_XML
-  m_configurationHandler(*this)
+  m_configurationHandler(*this),
+  m_dictionarySuccessfullyLoaded(false)
 {
   GrammarPart::s_p_parseByRise = & m_parsebyrise;
 #ifndef TEST_MINI_XML

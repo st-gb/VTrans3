@@ -119,6 +119,7 @@ namespace wxWidgets
       const char * const pch
       );
     void OnMessage(wxCommandEvent &);
+    void OnLoadingDictFileFailed(wxCommandEvent &);
     void OnSetStatus(wxCommandEvent &);
     /** Called by the dictionary access class to inform the UI (because it may 
      * take some seconds) about the current progress. */
