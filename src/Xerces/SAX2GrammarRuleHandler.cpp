@@ -4,6 +4,7 @@
 
   //If not included: compiler error "C1010".
   #include "SAX2GrammarRuleHandler.hpp"
+  #include <Controller/TranslationControllerBase.hpp>
   //for GetStdWstring(const std::string & )
   #include <Controller/character_string/stdtstr.hpp>
   //for convertToStdString(...)
@@ -23,17 +24,19 @@
   #include <iostream>
 //  #include "../global.h"
 	using namespace std;
-	
+  
+	extern TranslationControllerBase * g_p_translationcontrollerbase;
+
 	//#define MB_CUR_MAX 1 
 	
-	//With Xerces < Version 2.8:
-	//  Add "XML_LIBRARY" to "Preprocessor Definitions" to compile with Xerces
-	// statically (else many "LNK2001" and "LNK2019" and linker errors).
-	//with Xerces 3.0: "XERCES_STATIC_LIBRARY"
-	//And: Add "Advapi32.lib" as additional dependancy for the linker.
-	//zu Linker->Bibliothek ignorieren hinzufgen:"LIBCMT.lib", sonst:
-	// "LIBCMT.lib(_ctype.obj) : error LNK2005: _isspace ist bereits in
-	// MSVCRT.lib(MSVCR80.dll) definiert."
+	/** With Xerces < Version 2.8:
+	*  Add "XML_LIBRARY" to "Preprocessor Definitions" to compile with Xerces
+	*  statically (else in MSVC many "LNK2001" and "LNK2019" and linker errors).
+	* with Xerces 3.0: "XERCES_STATIC_LIBRARY"
+	* And: Add "Advapi32.lib" as additional dependancy for the linker.
+	* zu Linker->Bibliothek ignorieren hinzufgen:"LIBCMT.lib", sonst:
+	* "LIBCMT.lib(_ctype.obj) : error LNK2005: _isspace ist bereits in
+	* MSVCRT.lib(MSVCR80.dll) definiert." */
 	
 	//XERCES_CPP_NAMESPACE_USE //to NOT need to prefix the xerces classes with the "xerces::"
 	
@@ -137,6 +140,11 @@
               )
           )
         {
+#ifdef COMPILE_AS_EXECUTABLE
+          g_p_translationcontrollerbase->m_std_map_grammarRuleName2filepath.
+            insert(std::make_pair(std::string(stdstrSuperordinate),
+            g_p_translationcontrollerbase->m_std_strCurrentConfigfile) );
+#endif
           if(
               XercesAttributesHelper::getValue(
                 cr_xercesc_attributes ,

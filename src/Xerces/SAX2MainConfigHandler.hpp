@@ -27,8 +27,8 @@
 class TranslateParseByRiseTree ;
 class TranslationControllerBase ;
 
-namespace Xerces
-{
+//namespace Xerces
+//{
   class SAX2MainConfigHandler
     :
     public XERCES_CPP_NAMESPACE::DefaultHandler,
@@ -39,9 +39,18 @@ namespace Xerces
 //    TranslateParseByRiseTree & mr_translateparsebyrisetree ;
     TranslateParseByRiseTree * mp_translateparsebyrisetree ;
     TranslationControllerBase & m_r_translationcontrollerbase ;
-    SAX2GrammarRuleHandler m_sax2grammarrulehandler ;
-    SAX2TranslationRuleHandler m_sax2translationrulehandler;
-    SAX2TransformationRuleHandler m_sax2transformationrulehandler ;
+//    SAX2GrammarRuleHandler m_sax2grammarrulehandler ;
+//    SAX2TranslationRuleHandler m_sax2translationrulehandler;
+    Xerces::SAX2TransformationRuleHandler m_sax2transformationrulehandler ;
+    
+    SAX2MainConfigHandler(
+//      TranslateParseByRiseTree & r_translateparsebyrisetree
+      TranslationControllerBase & r_translationcontrollerbase,
+      ConfigurationHandler_type & configurationReader
+      );
+    virtual
+    ~SAX2MainConfigHandler();
+    
     std::string m_strElementName ;
     inline void HandleGrammartPartColourXMLelement(
       const XERCES_CPP_NAMESPACE::Attributes & c_r_xercesc_attributes);
@@ -59,12 +68,6 @@ namespace Xerces
       XERCES_CPP_NAMESPACE::DefaultHandler & r_xerces_defaulthandler ,
       const std::string & cr_stdstrFilePath
       ) ;
-    SAX2MainConfigHandler(
-//      TranslateParseByRiseTree & r_translateparsebyrisetree
-      TranslationControllerBase & r_translationcontrollerbase
-      );
-    virtual
-    ~SAX2MainConfigHandler();
     void startElement(
       const XMLCh * const cpc_xmlchURI,
       const XMLCh * const cpc_xmlchLocalName,
@@ -72,6 +75,6 @@ namespace Xerces
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes
       ) ;
   };
-}
+//}
 
 #endif /* SAX2MAINCONFIGHANDLER_HPP_ */

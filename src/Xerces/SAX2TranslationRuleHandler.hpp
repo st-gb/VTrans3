@@ -44,7 +44,8 @@ public:
     SAX2TranslationRuleHandler(
       TranslateParseByRiseTree & ,
       ParseByRise & ,
-      I_UserInterface & r_userinterface);
+      I_UserInterface & r_userinterface
+      , ConfigurationHandler_type & configurationReader);
     virtual ~SAX2TranslationRuleHandler();
     void endElement(
       const XMLCh * const cpc_xmlchURI,

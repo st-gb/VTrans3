@@ -16,6 +16,7 @@
 #include <Xerces/SAX2TranslationRuleHandler.hpp>
 #include <Xerces/XercesAttributesHelper.hpp>//ConvertXercesAttributesValue(...)
 #include <Xerces/XercesString.hpp> //Xerces::ToStdString(const XMLCh * )
+#include <Xerces/ReadViaSAX2.hpp>
 
 #include <xercesc/sax/Locator.hpp> //class XERCES_CPP_NAMESPACE::Locator
 #include <xercesc/sax2/Attributes.hpp>//class  XERCES_CPP_NAMESPACE::Attributes
@@ -23,18 +24,25 @@
 #include <xercesc/util/XMLString.hpp>
 
 #include <string.h> //for wcscmp (const wchar_t*, const wchar_t*);
-#include <string> //class std::string
+#include <string>
 
+//#include "wxWidgets/UserInterface/UserInterface.hpp" //class std::string
+#include <Translate/TranslationRule.hpp>//class TranslationRule
+
+extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 SAX2TranslationRuleHandler::SAX2TranslationRuleHandler(
   TranslateParseByRiseTree & r_translateparsebyrise ,
   ParseByRise & r_parsebyrise
   , I_UserInterface & r_userinterface
+  , ConfigurationHandler_type & configurationReader
   )
   : VTrans3::TranslationRuleFileReaderBase(
     r_translateparsebyrise
     , r_parsebyrise
-    , r_userinterface)
+    , r_userinterface
+    , configurationReader,
+    g_p_translationcontrollerbase )
 {
 
 }
@@ -80,7 +88,7 @@ void SAX2TranslationRuleHandler::endElement(
   }
 }
 
-template <typename XMLelementType>
+/*template <typename XMLelementType>
   bool SAX2TranslationRuleHandler::GetAttributeValue(
     XMLelementType & xmlElement,
     const char * const attributeName,
@@ -93,7 +101,7 @@ template <typename XMLelementType>
     std_strXMLattributeValue
     );
 //  return std_strXMLattributeValue;
-}
+}*/
 
 void SAX2TranslationRuleHandler::GetAttributeNameOrTranslationString(
   const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes)
@@ -351,13 +359,14 @@ void SAX2TranslationRuleHandler::startElement
       //wcscmp(...) does not work with wide chars unlike 2 byte (e.g. 4 byte).
 //     ! wcscmp ( cpc_xmlchLocalName , L"condition" )
      //Compare 4 byte wide chars under Linux, 2 byte wide chars under Windows.
-     ! Xerces::ansi_or_wchar_string_compare(
+      ! Xerces::ansi_or_wchar_string_compare(
          cpc_xmlchLocalName ,
          ANSI_OR_WCHAR("condition")
          )
     )
   {
-    HandleConditionXMLelement(cr_xercesc_attributes);
+    //HandleConditionXMLelement(cr_xercesc_attributes);
+    HandleBeginOfConditionXMLelement( (XERCES_CPP_NAMESPACE::Attributes &) cr_xercesc_attributes);
   }
 }
 

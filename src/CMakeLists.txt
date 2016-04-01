@@ -41,6 +41,16 @@ add_subdirectory(wxWidgets
 add_subdirectory(./IO
   #EXCLUDE_FROM_ALL
   )
+if( ANDROID_NDK )
+else( ANDROID_NDK )
+  add_subdirectory(Xerces
+  #EXCLUDE_FROM_ALL
+  )
+  set(SOURCE_FILE_PATHS
+    ${SOURCE_FILE_PATHS}
+    ${XERCES_SOURCE_FILES}
+  )
+endif ( ANDROID_NDK )
 
 #include_directories("${PROJECT_BINARY_DIR}")
 

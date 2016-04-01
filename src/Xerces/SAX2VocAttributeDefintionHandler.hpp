@@ -12,12 +12,16 @@
 //Base class XERCES_CPP_NAMESPACE::DefaultHandler
 #include <xercesc/sax2/DefaultHandler.hpp>
 
-//Forward declarations.
+/** Forward declarations.*/
 class I_UserInterface ;
 class TranslateParseByRiseTree ;
-
-namespace Xerces
+namespace XERCES_CPP_NAMESPACE
 {
+  class Locator;
+}
+
+//namespace Xerces
+//{
   class SAX2VocAttributeDefinitionHandler
   : public XERCES_CPP_NAMESPACE::DefaultHandler
   {
@@ -42,6 +46,6 @@ namespace Xerces
       const XERCES_CPP_NAMESPACE::Attributes & cr_xercesc_attributes
     );
   };
-}
+//}
 
 #endif /* SAX2VOCATTRIBUTEDEFINTIONHANDLER_HPP_ */

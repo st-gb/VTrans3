@@ -197,11 +197,38 @@ void VTransApp::Message(const std::string & cr_stdstr /*, unsigned threadID*/) {
 
 void VTransApp::Message(const std::wstring & cr_std_wstr) {
   //  ::wxMessageBox( getwxString( cr_stdwstr) ) ;
-  wxString wxstrMessage = ::getwxString(cr_std_wstr);
+  //wxString wxstrMessage = ::getwxString(cr_std_wstr);
+  //wxTextControlDialog wxtextcontroldialog(wxstrMessage);
+  //wxtextcontroldialog.ShowModal();
+  
+    const DWORD dwCurrentThreadNumer = OperatingSystem::GetCurrentThreadNumber();
+    if (dwCurrentThreadNumer == m_GUIthreadID) {
+      wxString wxstrMessage = ::getwxString(cr_std_wstr);
+      ShowMessage(wxstrMessage);
+    } else {
+      /** Pauses here if a dialog is currently being shown modally until it is
+       * closed. */
+      /** Avoid putting to much "show message" events/ showing too much messages at
+       * once: else if this message is called very often then a lot of message
+       * queue entries would be inserted-> a lot of dialogs are shown. */
+      m_critSecShowMessage.Enter();
+      //TODO Multiple "show message dialog" messages are added before a dialog
+      //is shown.
+      //      if( m_atLeast1MessageToShow )
+      //        //Waits until dialog is closed.
+      //        m_conditionShowMessage.Wait();
+      //Another than GUI thread->put into message queue to avoid program crash.
+      wxCommandEvent wxcommand_event(MessageEvent);
 
-  wxTextControlDialog wxtextcontroldialog(
-          wxstrMessage);
-  wxtextcontroldialog.ShowModal();
+      wxcommand_event.SetString(::getwxString(cr_std_wstr));
+      //    AsyncMessage(cr_stdstr);
+      //    QueueEvent  (       wxEvent *       event   );
+      //FIXME: http://docs.wxwidgets.org/trunk/classwx_evt_handler.html#a0737c6d2cbcd5ded4b1ecdd53ed0def3
+      //"[...] can't be used to post events from worker threads for the event
+      //objects with wxString fields (i.e. in practice most of them) [...]"
+      AddPendingEvent(wxcommand_event);
+      m_critSecShowMessage.Leave();
+    }  
 }
 
 //void VTransApp::DictionaryFileLine(unsigned ui)

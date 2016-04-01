@@ -10,6 +10,7 @@
 //#include <multithread/nativeThreadType.hpp>
 #include "MainWindow/MainFrame.hpp"
 #include <wx/stattext.h> //class wxStaticText
+#include <wx/textctrl.h> //class wxTextCtrl
 #include <wx/sizer.h> //class wxBoxSizer
 #include <wxWidgets/VTransApp.hpp>
 #include <wx/timer.h> //EVT_TIMER
@@ -85,13 +86,15 @@ void DictionaryStatisticsWindow::UpdateUI()
       r_englishWordClass2CounterMap = m_collectDictStatsThreadFuncParams.
       englishWordClass2CounterMap;
 
-    wxStaticText * m_p_wxCurrentStaticText = NULL;
+    wxTextCtrl * m_p_wxCurrentStaticText = NULL;
     while( c_iter != m_englishWordCountVector.end() )
     {
       const EnglishWordCount & r_englishWordCount = *c_iter;
       unsigned & ui = r_englishWordClass2CounterMap.at(r_englishWordCount.m_English_word_class);
       m_p_wxCurrentStaticText = r_englishWordCount.m_p_wxStaticText;
-      m_p_wxCurrentStaticText->SetLabel(wxString::Format(wxT("%u"), ui));
+      //m_p_wxCurrentStaticText->SetEditable(/*bool editable*/ true);
+      m_p_wxCurrentStaticText->ChangeValue(wxString::Format(wxT("%u"), ui));
+      //m_p_wxCurrentStaticText->SetEditable(/*bool editable*/ false);
       ++ c_iter;
     }
   }
@@ -112,35 +115,39 @@ void DictionaryStatisticsWindow::AddStaticText(
 {
   wxStaticText * p_wxStaticText = new wxStaticText(this, wxID_ANY, wxT("# ") + 
     wxstr + wxT(":") );
-  wxStaticText * p_wxStaticTextCounter = new wxStaticText(this, wxID_ANY, wxT("xxxxx") );
+  wxTextCtrl * p_wxTextCtrlCounter = new wxTextCtrl(this, wxID_ANY, 
+    wxT("xxxxx"), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
   
-  EnglishWordCount englishWordCount(p_wxStaticTextCounter, English_word_class );
+  EnglishWordCount englishWordCount(p_wxTextCtrlCounter, English_word_class );
   std::map<enum EnglishWord::English_word_class, unsigned> &
     r_englishWordClass2CounterMap = m_collectDictStatsThreadFuncParams.
     englishWordClass2CounterMap;
   r_englishWordClass2CounterMap.insert(std::make_pair(English_word_class, 0) );
   m_englishWordCountVector.push_back( englishWordCount);
   
-  m_p_boxsizerLeftColumn->Add(
+  wxBoxSizer * m_p_boxsizerColumns = new wxBoxSizer( wxHORIZONTAL);
+  m_p_boxsizerColumns->Add(
     p_wxStaticText,
     1,
-    wxEXPAND | wxALL
-    , 5
+    wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL 
+    , 0
     );
-  m_p_boxsizerRightColumn->Add(
-    p_wxStaticTextCounter,
+  m_p_boxsizerColumns->Add(
+    p_wxTextCtrlCounter,
     1,
-    wxEXPAND | wxALL
-    , 5
+    wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL 
+    , 0
     );
+  m_p_boxsizerRows->Add(m_p_boxsizerColumns );
 }
 
 void DictionaryStatisticsWindow::BuildGUI()
 {
    wxBoxSizer * p_boxsizer = new wxBoxSizer( wxHORIZONTAL );
    SetSizer(p_boxsizer);
-   m_p_boxsizerLeftColumn = new wxBoxSizer( wxVERTICAL );
-   m_p_boxsizerRightColumn = new wxBoxSizer( wxVERTICAL );
+   //m_p_boxsizerLeftColumn = new wxBoxSizer( wxVERTICAL );
+   //m_p_boxsizerRightColumn = new wxBoxSizer( wxVERTICAL );
+   m_p_boxsizerRows = new wxBoxSizer( wxVERTICAL );
    
    AddStaticText(wxT("singular"), EnglishWord::singular);
    AddStaticText(wxT("plural"), EnglishWord::plural_noun);
@@ -167,8 +174,9 @@ void DictionaryStatisticsWindow::BuildGUI()
 //    wxEXPAND | wxALL
 //    , 5
 //    );
-   p_boxsizer->Add(m_p_boxsizerLeftColumn);
-   p_boxsizer->Add(m_p_boxsizerRightColumn);
+   //p_boxsizer->Add(m_p_boxsizerLeftColumn);
+   //p_boxsizer->Add(m_p_boxsizerRightColumn);
+   p_boxsizer->Add(m_p_boxsizerRows);
 }
 
 void DictionaryStatisticsWindow::EndedGetDictStats()

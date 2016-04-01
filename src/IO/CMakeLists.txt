@@ -1,12 +1,18 @@
 
+if( ANDROID_NDK )
 add_subdirectory(MiniXML
   #EXCLUDE_FROM_ALL
   )
+else ( ANDROID_NDK )
+  set( CXX_DEFINITIONS
+    ${CXX_DEFINITIONS}
+    -DCOMPILE_AS_EXECUTABLE
+  )
+endif( ANDROID_NDK )
 
 set( CONFIGURATION_READER_SOURCE_FILES
   #${MINI_XML_SOURCE_FILES}
   ${CONFIGURATION_READER_SOURCE_FILES}
-  ${VTRANS3_ROOT_PATH}/IO/MiniXMLconfigReader.cpp
   ${VTRANS3_ROOT_PATH}/IO/configuration/MainConfigFileReaderBase.cpp
   ${VTRANS3_ROOT_PATH}/IO/rules/TranslationRuleFileReaderBase.cpp
 	${VTRANS3_ROOT_PATH}/IO/GenerateXMLtreeFromParseTree.cpp

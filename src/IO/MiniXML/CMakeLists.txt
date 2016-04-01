@@ -1,5 +1,6 @@
 
 set(MINI_XML_SOURCE_FILES
+  ${VTRANS3_ROOT_PATH}/IO/MiniXML/MiniXMLconfigReader.cpp
   ${VTRANS3_ROOT_PATH}/IO/MiniXML/GrammarRuleFileReader.cpp
 	${VTRANS3_ROOT_PATH}/IO/MiniXML/MainConfigFileReader.cpp
 	${VTRANS3_ROOT_PATH}/IO/MiniXML/TranslationRuleFileReader.cpp

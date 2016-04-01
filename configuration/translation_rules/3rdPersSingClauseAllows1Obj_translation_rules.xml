@@ -14,7 +14,7 @@
     syntax_tree_path="*.3rdPersSingClause.MainVerbProgressive1Obj"
     attribute_name="GerMainVerb1Obj3rdPersSingPres" 
   />
-  <!-- e.g. "he loves the car." -> ...liebt DAS Auto  sächliches Nomen -->
+  <!-- e.g. "he loves the car." -> ...liebt DAS Auto  saechliches Nomen -->
   <translation_rule 
     syntax_tree_path="clauseWith1Obj.obj.*.definite_article_singular.definite_article"
     translation="das">

@@ -14,18 +14,19 @@
 #include "Controller/thread_type.hpp"
 #include <vector> //class std::vector
 
-class wxStaticText;
+class wxTextCtrl;
 class wxBoxSizer;
 
 class EnglishWordCount
 {
 public:
-  wxStaticText * m_p_wxStaticText;
+  wxTextCtrl * m_p_wxStaticText;
   enum EnglishWord::English_word_class m_English_word_class;
-  EnglishWordCount(wxStaticText * p_wxStaticText, enum EnglishWord::English_word_class
-    English_word_class)
+  EnglishWordCount(
+    wxTextCtrl * p_wxTextCtrl, 
+    enum EnglishWord::English_word_class English_word_class)
   {
-    m_p_wxStaticText = p_wxStaticText;
+    m_p_wxStaticText = p_wxTextCtrl;
     m_English_word_class = English_word_class;
   }
 };
@@ -39,6 +40,7 @@ class DictionaryStatisticsWindow
   VTrans::thread_type m_getStatisticsThread;
 //  wxStaticText * m_p_singularNounStaticText;
 //  wxStaticText * m_p_pluralNounStaticText;
+  wxBoxSizer * m_p_boxsizerRows;
   wxBoxSizer * m_p_boxsizerLeftColumn;
   wxBoxSizer * m_p_boxsizerRightColumn;
   CollectDictStatsThreadFuncParams m_collectDictStatsThreadFuncParams;

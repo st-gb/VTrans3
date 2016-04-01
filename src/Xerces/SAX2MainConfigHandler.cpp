@@ -21,33 +21,37 @@
 #include <Xerces/XercesAttributesHelper.hpp> //class XercesAttributesHelper
 #include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 
-namespace Xerces
-{
+//namespace Xerces
+//{
   SAX2MainConfigHandler::SAX2MainConfigHandler(
     //for SAX2TranslationRuleHandler c'tor
 //    TranslateParseByRiseTree & r_translateparsebyrisetree
-    TranslationControllerBase & r_translationcontrollerbase
+    TranslationControllerBase & r_translationcontrollerbase,
+    ConfigurationHandler_type & configurationReader
     )
     :
 //    mr_translateparsebyrisetree( r_translateparsebyrisetree ) ,
     mp_translateparsebyrisetree( //& r_translateparsebyrisetree
       & r_translationcontrollerbase.m_translateparsebyrisetree ) ,
     m_r_translationcontrollerbase( r_translationcontrollerbase ) ,
-    m_sax2grammarrulehandler ( r_translationcontrollerbase.m_parsebyrise ) ,
-    m_sax2transformationrulehandler( r_translationcontrollerbase ) ,
+    MainConfigFileReaderBase(configurationReader),
+//    m_sax2grammarrulehandler ( r_translationcontrollerbase.m_parsebyrise ) ,
+    m_sax2transformationrulehandler( r_translationcontrollerbase )
+          
     //Must create on heap, else the callback functions like "startElement"
     //aren't called?!
   //  SAX2TranslationRuleHandler * p_sax2grammarrulehandler = new
   //    SAX2TranslationRuleHandler( * this, * mp_parsebyrise ,
     // mr_i_userinterface ) ;
-    m_sax2translationrulehandler (
-//      mr_translateparsebyrisetree ,
-      * mp_translateparsebyrisetree ,
-      //* mr_translateparsebyrisetree.mp_parsebyrise ,
-      * mp_translateparsebyrisetree->mp_parsebyrise ,
-      //mr_translateparsebyrisetree.mr_i_userinterface
-      mp_translateparsebyrisetree->mr_i_userinterface
-      )
+          
+//    m_sax2translationrulehandler (
+////      mr_translateparsebyrisetree ,
+//      * mp_translateparsebyrisetree ,
+//      //* mr_translateparsebyrisetree.mp_parsebyrise ,
+//      * mp_translateparsebyrisetree->mp_parsebyrise ,
+//      //mr_translateparsebyrisetree.mr_i_userinterface
+//      mp_translateparsebyrisetree->mr_i_userinterface
+//      )
   {
     InitializeXerces() ;
   }
@@ -296,4 +300,4 @@ namespace Xerces
       XERCES_CPP_NAMESPACE::XMLString::release( & pchXMLelementName );
     }
   }
-}
+//}

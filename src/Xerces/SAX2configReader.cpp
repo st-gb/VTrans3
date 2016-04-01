@@ -7,25 +7,36 @@
 
 #include "SAX2configReader.hpp"
 #include <UserInterface/I_UserInterface.hpp>
+#include <Controller/TranslationControllerBase.hpp>
+#include "SAX2MainConfigHandler.hpp"
+#include "SAX2GrammarRuleHandler.hpp"
+#include "SAX2TranslationRuleHandler.hpp"
+#include "SAX2VocAttributeDefintionHandler.hpp"
+#include <Xerces/XercesAttributesHelper.hpp>//ConvertXercesAttributesValue(...)
 
 #include <Xerces/ReadXMLfile.hpp> //ReadXMLfile_Inline(...)
+
+extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 namespace Apache
 {
   namespace Xerces
   {
-
     SAX2configReader::SAX2configReader(
 //      I_UserInterface & ui
         TranslationControllerBase & translationController
       )
       : //m_userInterface(ui)
-      m_translationController(translationController),
-    m_sax2translationrulehandler(
+        VTrans3::ConfigurationReader<XERCES_CPP_NAMESPACE::Attributes>( & translationController),
+      m_translationController(translationController)//,
+    /*m_sax2translationrulehandler(
       translationController.m_translateparsebyrisetree,//  TranslateParseByRiseTree & ,
       translationController.m_parsebyrise,// ParseByRise & ,
       translationController //I_UserInterface & r_userinterface
-      )
+      ),
+    m_sax2grammarrulehandler(translationController.m_parsebyrise),
+    m_sax2vocattributedefinitionhandler(translationController.m_translateparsebyrisetree, 
+      translationController)*/
     {
 
     }
@@ -34,17 +45,32 @@ namespace Apache
     {
       // TODO Auto-generated destructor stub
     }
+    
+    bool SAX2configReader::GetAttributeValue(
+      /*XMLelementType & xmlElement,*/
+      XERCES_CPP_NAMESPACE::Attributes & attribute,
+      std::string & std_strXMLattributeValue, 
+      const char * const attributeName)
+    {
+      return XercesAttributesHelper::getValue(
+        attribute,
+        std_strXMLattributeValue,
+        attributeName
+        );
+    }
 
     void SAX2configReader::ReadGrammarRuleFile(
         const std::string & cr_stdstrFilePath )
     {
-      //  SAX2GrammarRuleHandler sax2grammarrulehandler(*this) ;
+      SAX2GrammarRuleHandler sax2grammarrulehandler(m_translationController.m_parsebyrise) ;
       //  ReadViaSAX2("grammar_rules.xml", & sax2grammarrulehandler ) ;
       //Must create on heap, else the callback functions like "startElement" aren't
       //called?!
       //  SAX2GrammarRuleHandler * p_sax2grammarrulehandler = new
       //    SAX2GrammarRuleHandler( * this ) ;
     //  SAX2GrammarRuleHandler sax2grammarrulehandler( * this ) ;
+
+      g_p_translationcontrollerbase->m_std_strCurrentConfigfile = cr_stdstrFilePath;
 
       std::wstring stdwstrErrorMessage ;
       // <> 0 = error
@@ -54,7 +80,7 @@ namespace Apache
           cr_stdstrFilePath.c_str() ,
         //    p_sax2grammarrulehandler ,
     //      & sax2grammarrulehandler ,
-          & m_sax2grammarrulehandler ,
+          & sax2grammarrulehandler ,
           stdwstrErrorMessage
           )
         )
@@ -68,7 +94,7 @@ namespace Apache
       //    mr_userinterface.Message( stdwstrErrorMessage ) ;
       //      Message( stdwstrErrorMessage ) ;
     //    mp_translateparsebyrisetree->mr_i_userinterface.Message(
-        m_userInterface.Message(stdwstrErrorMessage ) ;
+        m_translationController.Message(stdwstrErrorMessage ) ;
       }
     }
 
@@ -76,10 +102,10 @@ namespace Apache
       const std::string & cr_stdstrFilePath )
     {
       std::wstring stdwstrErrorMessage ;
-      Xerces::SAX2MainConfigHandler sax2mainconfighandler(
+      /*Xerces::*/SAX2MainConfigHandler sax2mainconfighandler(
         //m_translateparsebyrisetree
         //* this
-        m_translationController
+        m_translationController, *this
         ) ;
       if( //ReadViaSAX2InitAndTermXerces(
           Apache::Xerces::ReadXMLfile_Inline(
@@ -89,14 +115,15 @@ namespace Apache
           )
         )
       {
-        m_translationController.Message("Failed to read main config file" + cr_stdstrFilePath ) ;
+        m_translationController.Message(L"Failed to read main config file\n:" + //cr_stdstrFilePath 
+          stdwstrErrorMessage) ;
         return false;
       }
       else
       {
         LOGN("successfully read main config file " << cr_stdstrFilePath )
-        m_stdstrVocabularyFilePath = sax2mainconfighandler.
-          m_stdstrVocabularyFilePath ;
+//        m_stdstrVocabularyFilePath = sax2mainconfighandler.
+//          m_stdstrVocabularyFilePath ;
       }
       return true;
     }
@@ -106,13 +133,20 @@ namespace Apache
       LOGN(//"TranslationControllerBase::ReadTranslationRuleFile( "
         "\"" << cr_stdstrFilePath << "\")" )
       std::wstring stdwstrErrorMessage ;
+      SAX2TranslationRuleHandler sax2translationRuleHandler(
+        m_translationController.m_translateparsebyrisetree, //TranslateParseByRiseTree & ,
+        m_translationController.m_parsebyrise, //ParseByRise & ,
+        m_translationController //I_UserInterface & r_userinterface);
+        , *this
+        );
+      sax2translationRuleHandler.m_std_strFilePath = cr_stdstrFilePath;
       // <> 0 = error
       if( //ReadViaSAX2InitAndTermXerces(
           ! Apache::Xerces::ReadXMLfileInitAndTermXerces_Inline(
           //"translation_rules.xml",
-          cr_stdstrFilePath.c_str() ,
+          cr_stdstrFilePath/*.c_str()*/ ,
       //    p_sax2grammarrulehandler ,
-          & m_sax2translationrulehandler ,
+          & sax2translationRuleHandler ,
           stdwstrErrorMessage
           )
         )
@@ -134,13 +168,16 @@ namespace Apache
     {
       LOGN( "\"" << cr_stdstrFilePath << "\")" )
       std::wstring stdwstrErrorMessage ;
+      SAX2VocAttributeDefinitionHandler sax2VocAttributeDefintionHandler(
+        m_translationController.m_translateparsebyrisetree,
+        m_translationController);
       // <> 0 = error
       if( //ReadViaSAX2InitAndTermXerces(
           ! Apache::Xerces::ReadXMLfileInitAndTermXerces_Inline(
           //"translation_rules.xml",
           cr_stdstrFilePath.c_str() ,
       //    p_sax2grammarrulehandler ,
-          & m_sax2vocattributedefinitionhandler ,
+          & sax2VocAttributeDefintionHandler ,
           stdwstrErrorMessage
           )
         )
@@ -153,7 +190,7 @@ namespace Apache
       {
         LOGN_ERROR("Failed to read translation rule file \"" << cr_stdstrFilePath
           << "\"" )
-        m_userInterface.Message(stdwstrErrorMessage ) ;
+        m_translationController.Message(stdwstrErrorMessage ) ;
       }
     }
   } /* namespace Xerces */

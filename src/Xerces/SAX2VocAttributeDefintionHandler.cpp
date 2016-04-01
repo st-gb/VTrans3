@@ -16,8 +16,8 @@
 #include <xercesc/sax/Locator.hpp>//class XERCES_CPP_NAMESPACE::Locator
 #include <xercesc/util/Xerces_autoconf_config.hpp> // XMLFileLoc
 
-namespace Xerces
-{
+//namespace Xerces
+//{
 
   SAX2VocAttributeDefinitionHandler::SAX2VocAttributeDefinitionHandler(
     TranslateParseByRiseTree & cr_translateparsebyrisetree ,
@@ -187,4 +187,4 @@ namespace Xerces
       XERCES_CPP_NAMESPACE::XMLString::release( & pchXMLelementName);
     }
   }
-}
+//}

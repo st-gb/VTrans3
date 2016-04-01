@@ -71,6 +71,36 @@ namespace VTrans
     // TODO Auto-generated destructor stub
   }
 
+  wxString GetRelativeFilePath(const TranslationRule * c_p_translationrule)
+  {
+    std::map<TranslationRule *, std::string>::const_iterator
+      c_iterTranslRule2filePath =
+      wxGetApp().m_std_map_p_translationrule2filepath.find(
+      (TranslationRule *) c_p_translationrule);
+    if( c_iterTranslRule2filePath !=
+      wxGetApp().m_std_map_p_translationrule2filepath.end() )
+    {
+//      wxString filePath = //(c_iterTranslRule2filePath->second.c_str() );
+//        GetwxString_Inline(c_iterTranslRule2filePath->second);
+//      return filePath.Right(filePath.length() - currWorkDirLen);
+      
+      const std::string & std_strTranslationRuleFilePath =
+        c_iterTranslRule2filePath->second.c_str();
+
+      const int lastSlashIndex = std_strTranslationRuleFilePath.rfind('/');
+      const std::string std_strTranslationRuleFileName =
+        std_strTranslationRuleFilePath.substr(lastSlashIndex + 1);
+
+      const wxString translationRuleFileName//(c_iterTranslRule2filePath->second.c_str() );
+        = GetwxString_Inline( /*std_strGrammarRuleFilePath*/
+          std_strTranslationRuleFileName );
+      return translationRuleFileName;
+    }
+    //else
+    //  break;
+    return wxT("/");
+  }
+  
   /** Get text if NO filter is applied.*/
   wxString TranslationRulesListCtrl::GetItemText_noFilter(long item,
     long column) const
@@ -100,19 +130,7 @@ namespace VTrans
           case SyntaxTreePath:
             return wxstrSyntaxTreePath;
           case FilePath:
-            std::map<TranslationRule *, std::string>::const_iterator
-              c_iterTranslRule2filePath =
-              wxGetApp().m_std_map_p_translationrule2filepath.find(
-              (TranslationRule *) c_p_translationrule);
-            if( c_iterTranslRule2filePath !=
-              wxGetApp().m_std_map_p_translationrule2filepath.end() )
-            {
-              wxString filePath = //(c_iterTranslRule2filePath->second.c_str() );
-                GetwxString_Inline(c_iterTranslRule2filePath->second);
-              return filePath.Right(filePath.length() - currWorkDirLen);
-            }
-            else
-              break;
+            return GetRelativeFilePath(c_p_translationrule);
         }
       }
       ++ c_iterTranslationRule;
