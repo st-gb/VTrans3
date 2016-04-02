@@ -141,9 +141,14 @@
           )
         {
 #ifdef COMPILE_AS_EXECUTABLE
+          std::ostringstream oss;
+          oss << g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+            << " line:" << m_pc_locator->getLineNumber()
+            << " col:" << m_pc_locator->getColumnNumber();
           g_p_translationcontrollerbase->m_std_map_grammarRuleName2filepath.
             insert(std::make_pair(std::string(stdstrSuperordinate),
-            g_p_translationcontrollerbase->m_std_strCurrentConfigfile) );
+            /*g_p_translationcontrollerbase->m_std_strCurrentConfigfile*/
+            oss.str() ) );
 #endif
           if(
               XercesAttributesHelper::getValue(

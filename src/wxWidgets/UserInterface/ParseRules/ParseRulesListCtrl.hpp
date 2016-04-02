@@ -16,14 +16,21 @@ namespace wxWidgets
   class ParseRulesListCtrl
     : public wxWidgets::RulesListCtrl
   {
-    enum ColumnIDs { ParseRuleName = 0, FilePath};
-  public:
+    enum ColumnIDs { leftChild = 0, ParseRuleName, FilePath};
+    enum ContextMenuItemIDs{ ID_CopyRuleFilePathToClipBoard };
+    int m_itemIndexOfContextMenu;
+ public:
     ParseRulesListCtrl(wxWindow * parent, int ID);
     virtual
     ~ParseRulesListCtrl();
 
+    unsigned GetNumberOfParseRules() const;
+    void OnRightClick(wxListEvent & event);
+    void OnCopyRuleFilePathToClipBoard(wxCommandEvent & cmdevt);
     wxString OnGetItemText(long item, long column) const;
     wxString GetItemText_noFilter(long int, long int) const;
+    
+    DECLARE_EVENT_TABLE()
   };
 
 } /* namespace wxWidgets */

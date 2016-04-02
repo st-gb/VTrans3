@@ -89,6 +89,8 @@ namespace wxWidgets
     m_p_wxmenuAction = new wxMenu( /*wxT("translate")*/ ) ;
     m_p_wxMenuItemTranslate = m_p_wxmenuAction->Append( ID_Translate, wxT("translate") );
     m_p_wxmenuAction->Append( ID_Settings, wxT("settings...") );
+    m_p_wxmenuAction->Append( ID_AddGrammarRules, wxT("add grammar rules") );
+    m_p_wxmenuAction->Append( ID_RemoveGrammarRules, wxT("remove all grammar rules") );
     mp_wxmenubar->Append( m_p_wxmenuAction , wxT("&action")) ;
 
     p_wxmenuDictionary = new wxMenu();

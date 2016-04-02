@@ -142,6 +142,21 @@ void EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules( wxCommandEvent & wxcmd )
 //    wxstrTitle,
 //    ::wxGetCwd()
 //    );
+  
+  wxArrayString wxarraystringPaths;
+  ShowMultipleFileSelectionDialog(
+    wxT("grammar rule file"), //const wxString & cr_wxstrTitle ,
+    wxarraystringPaths ,
+    NULL, //wxWindow * p_wxwindow,
+    ::wxGetCwd() //const wxString & c_r_wxInitialDirForFileSelecion
+    );
+  wxArrayString::const_iterator c_iter = wxarraystringPaths.begin();
+  while( c_iter != wxarraystringPaths.end() )
+  {
+    std::string str = wxWidgets::GetStdString(*c_iter);
+    ::wxGetApp().m_configurationHandler.ReadGrammarRuleFile(str);    
+    ++ c_iter;
+  }
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnChar( wxKeyEvent & e)

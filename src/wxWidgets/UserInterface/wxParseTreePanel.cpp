@@ -409,7 +409,7 @@ void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise
   * (else black background?) */
   //TODO "../src/gtk/dcclient.cpp(1843): assert "Ok()" failed in Clear(): invalid window dc "
   //when called from "UpdateAfterTranslation()"
-  m_wxmemorydc.Clear();
+  //m_wxmemorydc.Clear();
   
 //  DrawParseTreeBeginningFromLeaves(//wxpaintdc
 //    /*m_wxmemorydc*/ wxmemorydc /*r_wxdc*/ );
@@ -1235,8 +1235,7 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
    * 
    * This should normally be constructed as a temporary stack object; don't 
    * store a wxPaintDC object. If you have an EVT_PAINT() handler, you must 
-   * create a wxPaintDC object within it even if you don't actually use it.
-   */
+   * create a wxPaintDC object within it even if you don't actually use it. */
   wxPaintDC /*wxClientDC*/ wxpaintdc(this);
 #ifdef _DEBUG
   const bool bPaintDCisOK = wxpaintdc.IsOk();

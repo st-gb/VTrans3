@@ -24,6 +24,10 @@ namespace wxWidgets
 //       const wxString& name = wxDialogNameStr
       )
   {
+    //wxString str = GetTitle();
+    SetTitle( wxString::Format(wxT("%u parse rules"), 
+      ( (ParseRulesListCtrl*)m_p_rulesListCtrl)->GetNumberOfParseRules() )
+      );
     Create(choices, arraySize);
   }
 
