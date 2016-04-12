@@ -15,6 +15,7 @@
 #include <compiler/GCC/suppress_unused_variable.h>
 
 #include <wx/dc.h> //class wxDC
+#include <wx/dcbuffer.h> //wxAutoBufferedPaintDC
 #include <wx/dcmemory.h> //class wxMemoryDC
 #include <wx/dcclient.h> //for class wxPaintDC
 #include <wx/settings.h> //wxSystemSettings::GetFont
@@ -1251,10 +1252,19 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
   if( mp_parsebyrise )
   {
 //    DrawParseTreeBeginningFromRoots(wxpaintdc) ;
-//    DrawParseTreeBeginningFromLeaves(//wxpaintdc
-//      wxmemorydc) ;
-//    wxpaintdc.DrawBitmap( /* * m_p_wxbitmapBuffer */
-//      m_wxbitmapBuffer, clientSize.x, clientSize.y );
+    const bool isDoubleBuffered = IsDoubleBuffered();
+    if( ! isDoubleBuffered && ::wxGetApp().m_GUIattributes.m_doubleBufferParseTreePanel )
+    {
+//      m_p_wxbitmapBuffer = new wxBitmap(clientSize.x, clientSize.y);
+//      m_wxmemorydc.SelectObject(* m_p_wxbitmapBuffer);
+//      DrawParseTreeBeginningFromLeaves(//wxpaintdc
+//        m_wxmemorydc) ;
+//      wxpaintdc.DrawBitmap( * m_p_wxbitmapBuffer
+//        /*m_wxbitmapBuffer*/, clientSize.x, clientSize.y );
+      wxAutoBufferedPaintDC wxAutoBufferedPaintDC(this);
+      DrawParseTreeBeginningFromLeaves(wxAutoBufferedPaintDC);
+    }
+    else
     DrawParseTreeBeginningFromLeaves( wxpaintdc
       /*m_wxmemorydc*/ //wxmemorydc /*r_wxdc*/ 
       );

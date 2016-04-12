@@ -5,10 +5,12 @@
  *      Author: sg
  */
 #include <Attributes/PositionString.hpp> //class PositionStringVector
+#include <Controller/TranslationControllerBase.hpp>
 
 void findVocablePerformance_test()
 {
-
+  TranslationControllerBase translationControllerBase;
+  
 //  PositionStringVector positionStringVector;
 //  positionStringVector.BuildTokenVector("vacuum cleaner");
 

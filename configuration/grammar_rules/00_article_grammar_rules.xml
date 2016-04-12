@@ -1,11 +1,13 @@
 <grammar_rules>
 
-  <!-- E. g. "the man" -->
+  <!-- E. g. "the" "man" -->
   <grammar_rule left_child="definite_article" right_child="singular_noun" superordinate="definite_article_singular"/>
-  <!-- E. g. "the good" -->
+  <!-- E. g. "the" "good" -->
   <grammar_rule left_child="definite_article" right_child="positive" superordinate="definiteArticle_Positive"/>
-  <!-- E. g. "the good man" -->
+  <!-- E. g. "the good" "man" -->
   <grammar_rule left_child="definiteArticle_Positive" right_child="singular_noun" superordinate="definiteArticle_Positive_SingNoun"/>
+  <!-- E. g. "the good" "churches" -->
+  <grammar_rule left_child="definiteArticle_Positive" right_child="plural_noun" superordinate="definiteArticle_Positive_PlurNoun"/>
   
   <grammar_rule left_child="definite_article" right_child="plural_noun" superordinate="definite_article_plural"/>
   

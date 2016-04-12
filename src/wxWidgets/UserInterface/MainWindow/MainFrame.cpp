@@ -74,9 +74,12 @@ namespace wxWidgets
     wxMenu * p_wxmenu = new wxMenu( /*wxT("translate")*/ ) ;
     p_wxmenu->AppendCheckItem(ID_Translate_On_Text_Changes, 
       wxT("translate on text changes") );
-    
     p_wxmenu->Check(ID_Translate_On_Text_Changes, 
       ::wxGetApp().m_GUIattributes.m_translateOnTextChanges);
+    //p_wxmenubar->Append( p_wxmenu , wxT("&settings")) ;
+
+    p_wxmenu->AppendCheckItem(ID_Double_Buffer_ParseTreePanel, 
+      wxT("double buffer parse tree panel") );    
     p_wxmenubar->Append( p_wxmenu , wxT("&settings")) ;
   }
   

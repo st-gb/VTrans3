@@ -52,6 +52,7 @@ class GUIattributes
 {
 public:
   bool m_bShowGrammarPartAddress ;
+  bool m_doubleBufferParseTreePanel;
   bool m_bShowTranslation ;
   bool m_translateOnTextChanges;
   fastestUnsignedDataType m_concatenationIDcolour;
@@ -63,6 +64,7 @@ public:
   
   GUIattributes()
     : m_bShowGrammarPartAddress( true /*false*/ )
+      , m_doubleBufferParseTreePanel(false)
       , m_bShowTranslation(false)
       , m_translateOnTextChanges(false)
       , m_std_strGrammarPartIDcolor("#FF0000")

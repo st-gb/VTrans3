@@ -1,0 +1,31 @@
+http://stackoverflow.com/questions/19207721/build-android-ndk-project-with-cmake
+
+
+    Instead of using android-cmake, you should use the fork from taka-no-me.
+    Then use Apk.cmake from pixellight. Copy also [AndroidManifest.xml.in, LoadLibraries.java.in, strings.xml.in] from this repo.
+    Have a CMakeLists.txt like this :
+
+    cmake_minimum_required(VERSION 2.8.3)
+     
+    project(testBuilder)
+     
+    include("Apk.cmake" REQUIRED)
+     
+    include_directories(${ANDROID_NDK}/sources/android/native_app_glue)
+     
+    set(TEST_SRC
+        ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
+        src/Main.cpp
+    )
+     
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -ffor-scope -fno-rtti -fno-exceptions -pipe -ffunction-sections -fdata-sections -ffast-math -Wnon-virtual-dtor -Wreorder -Wsign-promo -fvisibility=hidden -fvisibility-inlines-hidden -Wstrict-null-sentinel -Os -funroll-all-loops -fpeel-loops -ftree-vectorize")
+    set(LINKER_FLAGS "${LINKER_FLAGS} -Wl,--as-needed -Wl,--gc-sections -Wl,--no-undefined -Wl,--strip-all -Wl,-rpath-link=${ANDROID_NDK_SYSROOT}/usr/lib/ -L${ANDROID_NDK_SYSROOT}/usr/lib/")
+     
+    add_library(test SHARED ${TEST_SRC})
+     
+    target_link_libraries(test log android)
+    set_target_properties(test PROPERTIES COMPILE_DEFINITIONS "ANDROID")
+     
+    set(APP_SHARED_LIBRARIES ${LIBRARY_OUTPUT_PATH}/libtest.so)
+     
+    android_create_apk(test "${CMAKE_BINARY_DIR}/apk" "${APP_SHARED_LIBRARIES}" ""

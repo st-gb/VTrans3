@@ -748,10 +748,8 @@ namespace DictionaryReader
       bool streamIsGood = SeekFilePointerPosition(offset);
       LOGN_DEBUG("after seeking to offset " << offset)
       int i;
-//      i = m_englishDictionary.get();
       /** ReadByte Should throw an error on failure. */
       i = ReadByte();
-//      bool streamIsGood = m_englishDictionary.good();
 //      streamIsGood = i > -1;
       bool breakWhile = false;
       char word[100];

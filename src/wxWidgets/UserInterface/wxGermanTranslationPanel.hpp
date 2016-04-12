@@ -11,6 +11,7 @@
 #include <wx/panel.h> //base class wxPanel
 #include <wx/bitmap.h> //class wxBitmap
 #include <wx/dcmemory.h> //class wxMemoryDC
+//#include <wx/defs.h> //class wxMemoryDC
 
 //class GrammarPartPointerAndConcatenationID
 #include <Attributes/GrammarPartPointerAndConcatenationID.hpp>
@@ -54,6 +55,10 @@ class wxGermanTranslationPanel
 
   wxWindowID m_wxwindowidCurrent;
   wxBitmap m_wxbitmapForMemoryDC, * m_p_wxbitmapForMemoryDC;
+  /** http://docs.wxwidgets.org/trunk/classwx_client_d_c.html :
+   * A wxClientDC must be constructed if an application wishes to paint on the 
+   * client area of a window from outside an EVT_PAINT() handler. */
+  wxClientDC m_wxclientdc;
   wxMemoryDC m_wxmemorydc;
 public:
   wxGermanTranslationPanel();
@@ -68,7 +73,11 @@ public:
         )
     , m_wxwindowidCurrent(0)
     , m_p_wxbitmapForMemoryDC(NULL)
+    , m_wxclientdc(this)
   {
+    /** see http://docs.wxwidgets.org/trunk/classwx_auto_buffered_paint_d_c.html: 
+     * For wxAutoBufferedPaintDC. */
+    //SetBackgroundStyle(wxBG_STYLE_PAINT);
   }
   void AddChoice(
     wxWindowID wxwindowid,

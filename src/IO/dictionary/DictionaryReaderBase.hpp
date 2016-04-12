@@ -10,7 +10,31 @@
 
 #include <fastest_data_type.h> //typedef fastestUnsignedDataType
 #include <string>
-//
+#include <Controller/character_string/ISO_8859_1.hpp>
+#include <stdint.h> //uint8_t
+
+inline bool isValidEnglishWordCharacter(uint8_t character)
+{
+  if( character > 0x60 /** "a" */ && character < 0x7A /** "z" */ || 
+      character == '-' /** e.g. "fork-lift" */ )
+    return true;
+  return false;
+}
+
+inline bool isValidGermanWordCharacter(uint8_t character)
+{
+  if( character > 'A' && character < 'Z' || 
+      character > 0x60 /** "a" */ && character < 0x7A /** "z" */ || 
+      character == ISO_8859_1::ae || character == ISO_8859_1::Ae ||
+      character == ISO_8859_1::oe || character == ISO_8859_1::Oe ||
+      character == ISO_8859_1::ue || character == ISO_8859_1::Ue ||
+      character == ISO_8859_1::sz /** "ß" */ ||
+      character == '-' /** e.g. "fork-lift" */ )
+    return true;
+  return false;
+}
+
+/** Forward declaration. */
 class IVocabularyInMainMem;
 
 namespace DictionaryReader

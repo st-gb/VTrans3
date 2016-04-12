@@ -1,0 +1,3 @@
+#see https://git-scm.com/docs/gitignore
+#ignore CMake-generated files
+src/CMakeFiles/**

@@ -9,7 +9,9 @@
 #include <Controller/character_string/convertFromAndToStdString.hpp>
 //#include <Translate/ConditionsAndTranslation.hpp>
 #ifdef COMPILE_AS_EXECUTABLE
-  #include <wxWidgets/VTransApp.hpp> //wxGetApp()
+  //#include <wxWidgets/VTransApp.hpp> //wxGetApp()
+  #include <Translate/TranslateParseByRiseTree.hpp> //
+  #include <UserInterface/I_UserInterface.hpp> //
 #endif //#ifdef COMPILE_AS_EXECUTABLE
 
 /** header file for this SAX2TranslationRuleHandler class */

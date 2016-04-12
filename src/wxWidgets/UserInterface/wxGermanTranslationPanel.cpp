@@ -25,7 +25,7 @@
 BEGIN_EVENT_TABLE(wxGermanTranslationPanel, wxPanel)
   EVT_PAINT(wxGermanTranslationPanel::OnPaint)
   EVT_SIZE( wxGermanTranslationPanel::OnSize)
-  EVT_ERASE_BACKGROUND(wxGermanTranslationPanel::OnEraseBackground)
+  //EVT_ERASE_BACKGROUND(wxGermanTranslationPanel::OnEraseBackground)
 END_EVENT_TABLE()
 
 /** for wxWidgets::GetwxString_Inline */
@@ -53,57 +53,68 @@ void wxGermanTranslationPanel::Create()
 {
   LOGN_DEBUG("begin")
   m_wxrectClient = GetClientRect();
-  LOGN_DEBUG("width:" << m_wxrectClient.width << " height:" <<
-    m_wxrectClient.height)
-    const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
-      m_wxrectClient.width, m_wxrectClient.height, -1);
-  /** Only works with local wxMemoryDC object, not with member variable. */
-  wxMemoryDC wxmemorydc(m_wxbitmapForMemoryDC);
-  /** http://docs.wxwidgets.org/trunk/classwx_memory_d_c.html#a93d218796ba9359eb4aec2ae46a813e6:
-  * "Use the wxDC::IsOk() member to test whether the constructor was successful
-  * in creating a usable device context. Don't forget to select a bitmap into
-  * the DC before drawing on it."  */
-  if( wxmemorydc.IsOk() //&& m_wxrectClient.GetWidth() > 0 &&
-      //m_wxrectClient.GetHeight() > 0
-      )
+  if( IsDoubleBuffered() )
   {
-//    const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
-//      m_wxrectClient.width, m_wxrectClient.height, -1);
-    if( creationSucceeded )
-    {
-//      LOGN_DEBUG("before SelectObject")
-//      m_wxmemorydc.SelectObject(wxNullBitmap);
-      LOGN_DEBUG("before SelectObject")
-//        if( m_p_wxbitmapForMemoryDC )
-//          delete m_p_wxbitmapForMemoryDC ;
-//      m_p_wxbitmapForMemoryDC = new wxBitmap(
-//        m_wxrectClient.width,
-//        m_wxrectClient.height,
-//        //http://docs.wxwidgets.org/stable/wx_wxbitmap.html#wxbitmapctor:
-//        //"A depth of -1 indicates the depth of the current screen or visual."
-//        -1) ;
-
-//      wxmemorydc.SelectObject( m_wxbitmapForMemoryDC);
-//      m_wxmemorydc.SelectObject( //m_wxbitmapForMemoryDC
-//        * m_p_wxbitmapForMemoryDC );
-//      LOGN_DEBUG("before FloodFill")
-      wxmemorydc.FloodFill(0,0, * wxWHITE,
-        //* wxBLACK,
-        wxFLOOD_BORDER //: the area to be flooded is bounded by the given colour.
-        );
-    //  m_wxbitmapForMemoryDC.S
-      DrawTranslationAndCreateChoices(wxmemorydc);
-      
-      /** http://www.informit.com/articles/article.aspx?p=405047 :
-       *  "When you have finished with the device context, you should call 
-       *  SelectObject with wxNullBitmap to remove the association." */
-      wxmemorydc.SelectObject(wxNullBitmap);
-    }
-    else
-      LOGN_ERROR("creation of bitmap for memory DC failed")
+    //m_wxclientdc.Set
+    wxClientDC clientdc(this);
+    DrawTranslationAndCreateChoices(clientdc);
   }
   else
-    LOGN_ERROR("memory DC is not OK")
+  {
+    LOGN_DEBUG("width:" << m_wxrectClient.width << " height:" <<
+      m_wxrectClient.height)
+    const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
+      m_wxrectClient.width, m_wxrectClient.height, -1);
+    /** Only works with local wxMemoryDC object, not with member variable. */
+    wxMemoryDC wxmemorydc(m_wxbitmapForMemoryDC);
+    /** http://docs.wxwidgets.org/trunk/classwx_memory_d_c.html#a93d218796ba9359eb4aec2ae46a813e6:
+    * "Use the wxDC::IsOk() member to test whether the constructor was successful
+    * in creating a usable device context. Don't forget to select a bitmap into
+    * the DC before drawing on it."  */
+    if( wxmemorydc.IsOk() //&& m_wxrectClient.GetWidth() > 0 &&
+        //m_wxrectClient.GetHeight() > 0
+        )
+    {
+  //    const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
+  //      m_wxrectClient.width, m_wxrectClient.height, -1);
+      if( creationSucceeded )
+      {
+  //      LOGN_DEBUG("before SelectObject")
+  //      m_wxmemorydc.SelectObject(wxNullBitmap);
+        LOGN_DEBUG("before SelectObject")
+  //        if( m_p_wxbitmapForMemoryDC )
+  //          delete m_p_wxbitmapForMemoryDC ;
+  //      m_p_wxbitmapForMemoryDC = new wxBitmap(
+  //        m_wxrectClient.width,
+  //        m_wxrectClient.height,
+  //        //http://docs.wxwidgets.org/stable/wx_wxbitmap.html#wxbitmapctor:
+  //        //"A depth of -1 indicates the depth of the current screen or visual."
+  //        -1) ;
+
+  //      wxmemorydc.SelectObject( m_wxbitmapForMemoryDC);
+  //      m_wxmemorydc.SelectObject( //m_wxbitmapForMemoryDC
+  //        * m_p_wxbitmapForMemoryDC );
+  //      LOGN_DEBUG("before FloodFill")
+        wxmemorydc.FloodFill(0,0, * wxWHITE,
+          //* wxBLACK,
+          wxFLOOD_BORDER //: the area to be flooded is bounded by the given colour.
+          );
+      //  m_wxbitmapForMemoryDC.S
+        DrawTranslationAndCreateChoices(wxmemorydc);
+        //wxClientDC dc(this);
+        //dc.Blit(0, 0, m_wxrectClient.width, m_wxrectClient.height, & wxmemorydc, 0, 0);
+
+        /** http://www.informit.com/articles/article.aspx?p=405047 :
+         *  "When you have finished with the device context, you should call 
+         *  SelectObject with wxNullBitmap to remove the association." */
+        wxmemorydc.SelectObject(wxNullBitmap);
+      }
+      else
+        LOGN_ERROR("creation of bitmap for memory DC failed")
+    }
+    else
+      LOGN_ERROR("memory DC is not OK")
+  }
   LOGN_DEBUG("end")
 }
 
@@ -461,7 +472,7 @@ void UnderlineGrammarParts(
   wxDC & r_wxdc,
   wxCoord wxcoordXBeginOfToken,
   wxCoord wxcoordXEndOfToken,
-//  wxCoord wxcoordY
+  wxCoord wxcoordY,
   wxCoord wxcoordYBottom
   )
 {
@@ -477,14 +488,15 @@ void UnderlineGrammarParts(
   //        std_set_wxcolour.begin();
   std::set<uint32_t>::const_iterator c_iter_std_set_ui32 =
     std_set_ui32Colour.begin();
-  wxPen wxpenDraw(* wxGREEN//int width = 1, int style = wxSOLID
+  wxPen wxpenDraw(* wxGREEN, 2 /*int width = 1, int style = wxSOLID */
     );
   while( //c_iter_std_set_wxcolour != std_set_wxcolour.end()
       c_iter_std_set_ui32 != std_set_ui32Colour.end()
       )
   {
+    wxColour colour( * c_iter_std_set_ui32);
     wxpenDraw.SetColour( //* c_iter_std_set_wxcolour
-      wxColour( * c_iter_std_set_ui32) );
+      colour );
     r_wxdc.SetPen(wxpenDraw);
     r_wxdc.DrawLine(
       wxcoordXBeginOfToken, //wxcoordYBeginOfToken
@@ -494,6 +506,22 @@ void UnderlineGrammarParts(
       //wxcoordY + 20
       wxcoordYBottom
       );
+    /*r_wxdc.DrawRoundedRectangle(
+      wxcoordXBeginOfToken, //wxcoordYBeginOfToken
+      //wxcoordY + 20
+      wxcoordY,
+      wxcoordXEndOfToken,
+      //wxcoordY + 20
+      wxcoordYBottom,
+      7.0
+      );*/
+     //wxBrush wxbrush(colour);
+     //r_wxdc.SetBrush( /* *wxBLUE_BRUSH*/ wxbrush);
+     /** fill with colour until colour */
+     /*r_wxdc.FloodFill( wxcoordXBeginOfToken + (wxcoordXEndOfToken - wxcoordXBeginOfToken)/2, 
+        wxcoordYBottom - 6, colour, wxFLOOD_BORDER);*/
+     //bool b = r_wxdc.FloodFill( 300, 30, wxColour(0,0,0), wxFLOOD_SURFACE );
+
 //    wxcoordY += 5;
     wxcoordYBottom += 2;
 
@@ -644,6 +672,10 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
       const wxChar * c_p_wxch = wxarraystringTranslation[0].c_str();
       SUPPRESS_UNUSED_VARIABLE_WARNING(c_p_wxch)
 #endif
+      /*UnderlineGrammarParts(std_set_grammarpartpointerandconcatenationid,
+        r_wxdc, wxcoordXBeginOfToken, wxcoordX, //wxcoordY
+        wxcoordY, wxcoordYBottom );*/
+
       r_wxdc.DrawText( //c_r_wxarraystringTranslation[0]
         wxarraystringTranslation[0], wxcoordX
         , //0
@@ -653,10 +685,9 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
       wxcoordX += wxsizeText.x;
       wxcoordYBottom = wxcoordY + wxsizeText.y;
     }
-
     UnderlineGrammarParts(std_set_grammarpartpointerandconcatenationid,
-        r_wxdc, wxcoordXBeginOfToken, wxcoordX, //wxcoordY
-        wxcoordYBottom);
+      r_wxdc, wxcoordXBeginOfToken, wxcoordX, //wxcoordY
+      wxcoordY, wxcoordYBottom );
     wxcoordX += r_wxdc.GetTextExtent( wxT(" ") ).x;
   }
  DEBUGN("end")
@@ -798,6 +829,8 @@ void wxGermanTranslationPanel::OnPaint(wxPaintEvent & event)
    *  "If you define a paint event handler, you must always create a wxPaintDC 
    * object, even if you don't use it." */
   wxPaintDC wxpaintdc(this);
+  //wxAutoBufferedPaintDC wxAutoBufferedPaintDC(this);
+
   //http://www.informit.com/articles/article.aspx?p=405047
 //  wxBufferedPaintDC dc(this);
   //  DrawTranslationFromAllParseTrees(wxpaintdc);
@@ -811,7 +844,12 @@ void wxGermanTranslationPanel::OnPaint(wxPaintEvent & event)
   * about the current scroll position ourselves */
 //  PrepareDC(dc);
   
-  DrawMemoryDCbitmap(wxpaintdc);
+  if( IsDoubleBuffered() )
+    //wxpaintdc.Blit(0,0, m_wxrectClient.width, m_wxrectClient.height, 
+    //  & m_wxclientdc, 0, 0);
+    ;
+  else
+    DrawMemoryDCbitmap(wxpaintdc /*wxAutoBufferedPaintDC*/);
 //  DrawTranslationAndCreateChoices(dc);
   LOGN_DEBUG("end")
 }

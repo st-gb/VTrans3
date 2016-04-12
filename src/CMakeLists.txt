@@ -6,6 +6,7 @@ project (VTrans)
 set(COMMON_SOURCECODE_ROOT_PATH /home/sg/SourceCodeManagement/common_sourcecode)
 set(WXWIDGETS_SOURCECODE_ROOT_PATH )
 set(VTRANS3_ROOT_PATH ${PROJECT_SOURCE_DIR} )
+
 #see http://accountingplusplus.blogspot.de/2010/12/cmake-wxwidgets.html :
 #Set wxWidgets_USE_DEBUG to "ON" to link against WxWidgets debug libraries.
 set( wxWidgets_USE_DEBUG ON)
@@ -21,6 +22,13 @@ set( INCLUDE_DIRS
 )
 message("include directories: ${INCLUDE_DIRS}")
 
+#set(PROJECT_BINARY_DIR /home/sg/SourceCodeManagement/VTrans3/build)
+#http://stackoverflow.com/questions/6594796/how-do-i-make-cmake-output-into-a-bin-dir
+#set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/../build)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "../bin/")
+#set(CMAKE_CURRENT_BINARY_DIRECTORY /home/sg/SourceCodeManagement/VTrans3/bin)
+
 message("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 message("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
 message("wxWidgets_USE_DEBUG: ${wxWidgets_USE_DEBUG}")
@@ -34,10 +42,13 @@ set( CXX_DEFINITIONS
   -DUNICODE
 )
 
+set(WXWIDGETS ON)
+if( DEFINED WXWIDGETS )
 #https://cmake.org/cmake/help/v3.0/command/add_subdirectory.html
 add_subdirectory(wxWidgets 
   #EXCLUDE_FROM_ALL
   )
+endif ( DEFINED WXWIDGETS )
 add_subdirectory(./IO
   #EXCLUDE_FROM_ALL
   )
@@ -165,17 +176,23 @@ add_definitions(${CXX_DEFINITIONS})
 
 #target_link_libraries(${LIBRARIES})
 
+if(DEFINED WXWIDGETS)
 #https://wiki.wxwidgets.org/CMake
 set(wxWidgets_CONFIGURATION mswud)
 SET(wxWidgets_USE_LIBS core base adv)
 find_package(wxWidgets COMPONENTS core base adv REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-message("wxWidgets:: ${wxWidgets_LIBRARIES}")
+message("wxWidgets_LIBRARIES ${wxWidgets_LIBRARIES}")
+endif (DEFINED WXWIDGETS)
 
 add_executable(VTrans ${SOURCE_FILE_PATHS})
+
+if(DEFINED WXWIDGETS)
 #https://wiki.wxwidgets.org/CMake
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
+endif (DEFINED WXWIDGETS)
+
 target_link_libraries(VTrans ${LIBRARIES})
 message (STATUS "wxWidgets type: ${wxWidgets_CONFIGURATION}")
 

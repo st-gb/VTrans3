@@ -318,12 +318,12 @@
   //      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
         fastestUnsignedDataType currOffset = GetCurrentFilePointerPosition();
     #endif
-        bool streamIsGood;
+        //bool streamIsGood;
         PositionStringVector psvDictFile;
         bool breakWhile = false;
         bool afterRoundOpeningBracket = false;
         bool afterSquaredOpeningBracket = false;
-        char word[100];
+        char englishWord[100];
         fastestUnsignedDataType charIndex = 0;
         bool endSearchForCompareStringInCurrentVocData = false;
         fastestUnsignedDataType tokenIndex = 0;
@@ -333,26 +333,31 @@
          *  PositionStringVector::s_comparisonResultString */
         PositionStringVector::cmp comp = PositionStringVector::notSet;
 
-  //      int i = m_englishDictionary.get();
-        int i = ReadByte();
-  //      streamIsGood = m_englishDictionary.good();
+        //int i = ReadByte();
+        uint8_t buffer[200];
+        ReadByteBuffer(buffer /*(uint8_t *) englishWord*/, 100);
+        fastestUnsignedDataType bufferIndex = 0;
+        
+        char byte;
         //TODO check is only necessary if NOT using exceptions.
-        streamIsGood = i < 256 /** return codes start*/;
-        while( streamIsGood /*&& ! breakWhile*/ )
+        //streamIsGood = i < 256 /** return codes start*/;
+        while( bufferIndex < 100 /*streamIsGood*/ /*&& ! breakWhile*/ )
         {
+          byte = buffer[bufferIndex];
           if( ! afterRoundOpeningBracket && ! afterSquaredOpeningBracket &&
-              ( ::isalpha(i) ||
-              /** e.g. "fork-lift" */
-              i == '-' ) )
+              isValidEnglishWordCharacter(byte )
+            )
           {
-            word[charIndex ++] = i;
+            englishWord[charIndex ++] = byte;
+            //charIndex++;
           }
           else
           {
             /** Only for outputting the character that caused the call to
              * HandleEndOfWord(...) */
-            word[charIndex] = i;
-            switch( i )
+            //word[charIndex] = i;
+            englishWord[charIndex] = byte;
+            switch( /*i*/ byte /*buffer[bufferIndex]*/ )
             {
               case ' ' :
               {
@@ -360,8 +365,9 @@
   //              currOffset = m_englishDictionary.tellg();
                 currOffset = GetCurrentFilePointerPosition();
     #endif
-                LOGN_DEBUG("space reached--word is: \"" << word << "\"")
-                HandleEndOfToken(word, charIndex, psvDictFile, tokenIndex);
+                //englishWord[charIndex] = 0;
+                LOGN_DEBUG("space reached--word is: \"" << englishWord << "\"")
+                HandleEndOfToken(englishWord, charIndex, psvDictFile, tokenIndex);
                 ++ tokenIndex;
     //                  endSearchForCompareStringInCurrentVocData =
     //                    CompareVectors(
@@ -388,24 +394,24 @@
               case ENGLISH_GERMAN_SEPERATOR_CHAR :
                 endSearchForCompareStringInCurrentVocData = true;
     //                  compareVectors = true;
-                HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
+                HandleEndOfWord(englishWord, charIndex, psvDictFile, tokenIndex, compareVectors);
                 break;
               /** e.g. "captive bolt pistol(slaughter house)" : do not consider
                *   words inside brackets. */
               case '(' : // e.g. "bank of(gas) cylinders"
                 afterRoundOpeningBracket = true;
-                HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
+                HandleEndOfWord(englishWord, charIndex, psvDictFile, tokenIndex, compareVectors);
                 break;
               case '[' : // e.g. "losings [Am.]"
     //                  compareVectors = true;
                 afterSquaredOpeningBracket = true;
                 endSearchForCompareStringInCurrentVocData = true;
-                HandleEndOfWord(word, charIndex, psvDictFile, tokenIndex, compareVectors);
+                HandleEndOfWord(englishWord, charIndex, psvDictFile, tokenIndex, compareVectors);
                 break;
               case ')' : // e.g. "bank of(gas) cylinders"
                 afterRoundOpeningBracket = false;
                 break;
-              case ']' :
+              case ']' : /** e.g. "losings [Am.]" */
                 afterSquaredOpeningBracket = false;
                 break;
     //              else
@@ -454,12 +460,10 @@
     //            } //while()
           if( breakWhile || endSearchForCompareStringInCurrentVocData)
             break;
-  //        i = m_englishDictionary.get();
-          i = ReadByte();
-  //        streamIsGood = m_englishDictionary.good();
-          streamIsGood = i > 0;
+          //i = ReadByte();
+          //streamIsGood = i > 0;
   //        psvDictFile.clear();
-  //        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
+          bufferIndex ++;
         } //while loop for current voc data
         LOGN_DEBUG("return " << comp << "(\"" << PositionStringVector::
 		  s_comparisonResultString[comp] << "\")" )

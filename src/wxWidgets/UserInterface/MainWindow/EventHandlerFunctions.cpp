@@ -84,6 +84,8 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
     EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress)
   BUTTON_EVENT_TYPE( ID_Translate_On_Text_Changes,
     EVENT_HANDLER_CLASS_NAME::OnTranslateOnTextChanges)
+  BUTTON_EVENT_TYPE( ID_Double_Buffer_ParseTreePanel,
+    EVENT_HANDLER_CLASS_NAME::OnDoubleBufferParseTreePanel)        
   /** see http://stackoverflow.com/questions/27911915/updating-wxwidgets-radio-item-dynamically
    * for radio items several IDs are mapped to an event function. */
   BUTTON_EVENT_TYPE( ID_LogLevel_Warning, EVENT_HANDLER_CLASS_NAME::OnLogLevel)
@@ -173,6 +175,11 @@ void EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize( wxCommandEvent 
 //  p_wxmenu->Append( ID_DecreaseFontSize, wxT("&decrease parse tree panel's font size\tCTRL+-") );
   //TODO
 //  SetFontSize(mp_wxparsetreepanel->GetFontSizeInPoint() );
+}
+
+void EVENT_HANDLER_CLASS_NAME::OnDoubleBufferParseTreePanel( wxCommandEvent & wxcmd )
+{
+  ::wxGetApp().m_GUIattributes.m_doubleBufferParseTreePanel = wxcmd.IsChecked();
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnLogLevel( wxCommandEvent & wxcmd )
