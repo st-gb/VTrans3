@@ -11,10 +11,10 @@ set(MINI_XML_SOURCE_FILES
 
 set( CONFIGURATION_READER_SOURCE_FILES
   ${MINI_XML_SOURCE_FILES}
-  PARENT_SCOPE
+  PARENT_SCOPE #to propagate changes to file that included THIS file
 )
 
 set( LIBRARIES
   mxml
-  PARENT_SCOPE
+  PARENT_SCOPE #to propagate changes to file that included THIS file
 )

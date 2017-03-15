@@ -11,10 +11,10 @@
 #include <data_structures/Trie/NodeTrie/NodeTrie.hpp>
 #include <Attributes/EnglishWord.hpp> //class EnglishWord
 #include <set> //class std::set
-#include <fastest_data_type.h> //typedef fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 #include "../DictionaryReaderBase.hpp" //class DictionaryReaderBase
 #include <fstream>
-#include <Controller/GetErrorMessageFromLastErrorCode.hpp>
+#include <OperatingSystem/GetErrorMessageFromLastErrorCode.hpp>
 #include <string> //class std::string
 
 #define INDEX_OF_LAST_SMALL_LETTER_IN_ASCII 128

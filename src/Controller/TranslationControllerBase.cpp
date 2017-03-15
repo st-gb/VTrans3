@@ -8,7 +8,7 @@
  *  indirectly included from this header file: ~ "undefined asctime", ... */
 #include <InputOutput/XML/OutputXMLindented_inl.hpp> //OutputXMLindented(...)
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
-#include <Controller/multithread/GetCurrentThreadNumber.hpp>
+#include <OperatingSystem/multithread/GetCurrentThreadNumber.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
 #include <data_structures/ByteArray.hpp>

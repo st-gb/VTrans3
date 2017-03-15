@@ -32,7 +32,9 @@ END_EVENT_TABLE()
 using namespace wxWidgets;
 
 wxGermanTranslationPanel::wxGermanTranslationPanel()
-    : m_p_wxbitmapForMemoryDC(NULL)
+  : m_p_wxbitmapForMemoryDC(NULL)
+  , m_wxclientdc(this)
+
 {
 //  wxChoice * p_wxchoice = new wxChoice(
 //    this, //wxWindow *    parent,

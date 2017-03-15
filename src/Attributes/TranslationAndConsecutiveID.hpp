@@ -8,7 +8,7 @@
 #ifndef TRANSLATIONANDCONSECUTIVEID_HPP
 #define	TRANSLATIONANDCONSECUTIVEID_HPP
 
-#include <fastest_data_type.h> //typedef fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 
 typedef unsigned short WORD ;
 

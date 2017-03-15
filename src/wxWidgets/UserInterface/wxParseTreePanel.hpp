@@ -31,7 +31,7 @@
 #include <windef.h> //for WORD
 ////class DrawGrammarPartAttributes
 //#include <Attributes/DrawGrammarPartAttributes.hpp>
-#include <fastest_data_type.h> //typedef fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 
 //Forward declarations (faster than #include)
 class GrammarPartLocationWithinWindow ;

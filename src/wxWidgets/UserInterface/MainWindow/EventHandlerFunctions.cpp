@@ -19,7 +19,7 @@
 //#include <Xerces/SAX2TranslationRuleHandler.hpp>
 //#include <Xerces/SAX2VocAttributeDefintionHandler.hpp>
 #include <Controller/ConfigurationHandler_type.hpp>
-#include <Controller/GetErrorMessageFromLastErrorCode.hpp>
+#include <OperatingSystem/GetErrorMessageFromLastErrorCode.hpp>
 #include <Controller/Logger/LogFileAccessException.hpp>
 
 /** For multi-threaded translation (e.g. translation in a non-GUI thread). */
@@ -280,13 +280,16 @@ DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)
 DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionaryAndSendCloseEvent(void * p_v)
 {
   UnloadDictionary(p_v);
-  EVENT_HANDLER_CLASS_NAME & event_handler = *(EVENT_HANDLER_CLASS_NAME *) p_v;
+  EVENT_HANDLER_CLASS_NAME & mainWindow = *(EVENT_HANDLER_CLASS_NAME *) p_v;
 //  EVENT_HANDLER_CLASS_NAME * p_event_handler = (EVENT_HANDLER_CLASS_NAME *) p_v;
   wxCloseEvent wxcloseEvent(wxEVT_CLOSE_WINDOW, wxWidgets::MainWindowBase::s_windowID);
-  //Add the close event for destroying the window
-//  /*::wxGetApp().*/event_handler.GetEventHandler()->AddPendingEvent(wxcloseEvent);
-  //::wxPostEvent(event_handler.GetEventHandler(), wxcloseEvent);
-  event_handler.AddPendingEvent(wxcloseEvent);
+  /** Add the close event to the event queue for destroying the window */  
+  /** http://docs.wxwidgets.org/3.1.0/classwx_window.html#a5ebdbd87c28644149a07f1742996df96 :
+   * "See ProcessEvent() for more info about why you shouldn't use this 
+   *  function and the reason for making this function protected in wxWindow."*/
+  /*::wxGetApp().*/mainWindow.GetEventHandler()->AddPendingEvent(wxcloseEvent);
+  //::wxPostEvent(mainWindow.GetEventHandler(), wxcloseEvent);
+//  mainWindow.GetEventHandler()->QueueEvent(& wxcloseEvent);
   return 0;
 }
 

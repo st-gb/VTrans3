@@ -133,6 +133,7 @@ namespace wxWidgets
 
   void MainFrame::DisableDoTranslateControls()
   {
+    //TODO SetText is deprecated in wx >= 3.0 ?!
      m_p_wxMenuItemTranslate->SetText( wxT("stop translation") );
   }
   
@@ -177,6 +178,7 @@ namespace wxWidgets
 
   void MainFrame::SetDictionaryFilePath(const wxString & wxstrDictionaryFilePath)
   {
+    //TODO SetText is deprecated in wx >= 3.0 ?!
     m_p_wxMenuItemUnloadDictionary->SetText( wxT("Unload ") +
       wxstrDictionaryFilePath);
     m_p_wxToolBarToolBaseLoadDictionary->SetShortHelp(

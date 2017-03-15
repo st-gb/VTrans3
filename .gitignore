@@ -1,3 +1,10 @@
 #see https://git-scm.com/docs/gitignore
 #ignore CMake-generated files
-src/CMakeFiles/**
+**/CMakeFiles/**
+*/nbproject/**
+build/**
+**/cmake_install.cmake
+**/compile_commands.json
+**/Makefile
+**/*~
+**/CMakeCache.txt

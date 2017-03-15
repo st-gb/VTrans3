@@ -3,24 +3,39 @@
 cmake_minimum_required (VERSION 2.6)
 project (VTrans)
 
-set(COMMON_SOURCECODE_ROOT_PATH /home/sg/SourceCodeManagement/common_sourcecode)
-set(WXWIDGETS_SOURCECODE_ROOT_PATH )
+if( NOT DEFINED COMMON_SOURCECODE_ROOT_PATH )
+  #By default "common_sourcecode" lies/lays 1 level above VTrans3/src
+  set(COMMON_SOURCECODE_ROOT_PATH ${PROJECT_SOURCE_DIR}/../../common_sourcecode)
+endif( NOT DEFINED COMMON_SOURCECODE_ROOT_PATH )
 set(VTRANS3_ROOT_PATH ${PROJECT_SOURCE_DIR} )
 
-#see http://accountingplusplus.blogspot.de/2010/12/cmake-wxwidgets.html :
-#Set wxWidgets_USE_DEBUG to "ON" to link against WxWidgets debug libraries.
-set( wxWidgets_USE_DEBUG ON)
+#from http://stackoverflow.com/questions/12896988/passing-the-argument-to-cmake-via-command-prompt
+# on command line: "-DEXE_TYPE:STRING=GUI"
+SET(EXE_TYPE "wxGUI" CACHE STRING "Some user-specified option")
+message("EXE_TYPE: ${EXE_TYPE}")
+
+if( ${EXE_TYPE} STREQUAL "wxGUI")
+ #see http://accountingplusplus.blogspot.de/2010/12/cmake-wxwidgets.html :
+ #Set wxWidgets_USE_DEBUG to "ON" to link against WxWidgets debug libraries.
+ set( wxWidgets_USE_DEBUG ON)
+
+  set(WXWIDGETS ON)
+  if( DEFINED WXWIDGETS )
+  #https://cmake.org/cmake/help/v3.0/command/add_subdirectory.html
+  add_subdirectory(wxWidgets 
+    #EXCLUDE_FROM_ALL
+    )
+  endif ( DEFINED WXWIDGETS )
+  message("wxWidgets_USE_DEBUG: ${wxWidgets_USE_DEBUG}")
+endif( ${EXE_TYPE} STREQUAL "wxGUI")
 
 #set(<variable> <value>  ... <valueN>)
 set( INCLUDE_DIRS 
+  ${INCLUDE_DIRS}
   ${COMMON_SOURCECODE_ROOT_PATH}
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/MSVC_adaption
-  /usr/lib/i386-linux-gnu/wx/include/gtk2-unicode-debug-2.8
-  /media/sg/devel/devel/MiniXML/mxml-2.8
   ${PROJECT_SOURCE_DIR}
-  /usr/include/wx-2.8
 )
-message("include directories: ${INCLUDE_DIRS}")
 
 #set(PROJECT_BINARY_DIR /home/sg/SourceCodeManagement/VTrans3/build)
 #http://stackoverflow.com/questions/6594796/how-do-i-make-cmake-output-into-a-bin-dir
@@ -31,7 +46,6 @@ message("include directories: ${INCLUDE_DIRS}")
 
 message("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 message("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
-message("wxWidgets_USE_DEBUG: ${wxWidgets_USE_DEBUG}")
 
 set( CXX_DEFINITIONS
   -DCOMPILE_LOGGER_MULTITHREAD_SAFE
@@ -42,13 +56,6 @@ set( CXX_DEFINITIONS
   -DUNICODE
 )
 
-set(WXWIDGETS ON)
-if( DEFINED WXWIDGETS )
-#https://cmake.org/cmake/help/v3.0/command/add_subdirectory.html
-add_subdirectory(wxWidgets 
-  #EXCLUDE_FROM_ALL
-  )
-endif ( DEFINED WXWIDGETS )
 add_subdirectory(./IO
   #EXCLUDE_FROM_ALL
   )
@@ -100,9 +107,9 @@ if (UNIX)
   )
   set( BASIC_TRANSLATION_SOURCE_FILES
     ${BASIC_TRANSLATION_SOURCE_FILES}
-    ${COMMON_SOURCECODE_ROOT_PATH}/Linux/multithread/pthreadBasedI_Thread.cpp
-  	${COMMON_SOURCECODE_ROOT_PATH}/Linux/EnglishMessageFromErrorCode/EnglishMessageFromErrorCode.cpp
-	  ${COMMON_SOURCECODE_ROOT_PATH}/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.cpp
+    ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/POSIX/multithread/pthreadBasedI_Thread.cpp
+    ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/Linux/EnglishMessageFromErrorCode/EnglishMessageFromErrorCode.cpp
+    ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.cpp
   )
 endif (UNIX)
 
@@ -122,7 +129,7 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/OutputHandler/StdOfStreamLogWriter.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/data_structures/Trie/byteTrie/ByteTrie.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/data_structures/Trie/byteTrie/Trie.cpp
-	${COMMON_SOURCECODE_ROOT_PATH}/multithread/I_Thread.cpp
+	${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/multithread/I_Thread.cpp
 	${VTRANS3_ROOT_PATH}/IO/dictionary/DictionaryReaderBase.cpp
 	${VTRANS3_ROOT_PATH}/IO/dictionary/OpenDictFileException.cpp
 	${VTRANS3_ROOT_PATH}/Controller/DictReaderAndVocAccess/TUchemnitzEngWordSorted1stAndBinarySearch.cpp
@@ -183,14 +190,15 @@ SET(wxWidgets_USE_LIBS core base adv)
 find_package(wxWidgets COMPONENTS core base adv REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-message("wxWidgets_LIBRARIES ${wxWidgets_LIBRARIES}")
+message("wxWidgets_LIBRARIES:${wxWidgets_LIBRARIES}")
 endif (DEFINED WXWIDGETS)
 
+message("include directories:${INCLUDE_DIRS}")
 add_executable(VTrans ${SOURCE_FILE_PATHS})
 
 if(DEFINED WXWIDGETS)
-#https://wiki.wxwidgets.org/CMake
-target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
+  #https://wiki.wxwidgets.org/CMake
+  target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 endif (DEFINED WXWIDGETS)
 
 target_link_libraries(VTrans ${LIBRARIES})

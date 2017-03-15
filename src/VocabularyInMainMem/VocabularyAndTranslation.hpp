@@ -10,7 +10,7 @@
   //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
   #include <IO/dictionary/word_class_characters.h>
 #include <Attributes/EnglishWord.hpp> //EnglishWord::English_word_class
-#include <fastest_data_type.h> //fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> //fastestUnsignedDataType
 
   #define BIT_POSITION_FOR_TRANSLATION_TYPE 2
 

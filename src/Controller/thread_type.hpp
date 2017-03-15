@@ -12,7 +12,7 @@
   #include <Windows/multithread/Thread.hpp>
   typedef Windows_API::Thread thread_type;
 #elif defined(__linux__)
-  #include <Linux/multithread/pthreadBasedI_Thread.hpp>
+  #include <OperatingSystem/POSIX/multithread/pthreadBasedI_Thread.hpp>
 //  using namespace Linux;
 //  typedef pthreadBasedI_Thread thread_type;
 #else
@@ -25,8 +25,8 @@ namespace VTrans {
 #ifdef _WIN32
   typedef Windows_API::Thread thread_type;
 #elif defined(__linux__)
-  using namespace Linux;
-  typedef pthreadBasedI_Thread thread_type;
+//  using namespace POSIX;
+  typedef POSIX::pthreadBasedI_Thread thread_type;
 #else
   typedef wxThreadBasedI_Thread thread_type;
 #endif

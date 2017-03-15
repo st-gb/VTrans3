@@ -17,7 +17,7 @@
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TransformationRule.hpp> //class TransformationRule
-#include <Controller/multithread/nativeCriticalSectionType.hpp>
+#include <OperatingSystem/multithread/nativeCriticalSectionType.hpp>
 #include <OperatingSystem/time/GetCurrentTime.hpp>
 #ifndef TEST_MINI_XML
 //class TranslateParseByRiseTree
@@ -27,7 +27,7 @@
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 //#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include "ConfigurationHandler_type.hpp"
-#include <fastest_data_type.h>
+#include <hardware/CPU/fastest_data_type.h>//fastestUnsignedDataType
 
 #include <map> //class std::map
 #include <stdint.h> //for uint32_t

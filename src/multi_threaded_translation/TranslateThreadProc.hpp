@@ -8,7 +8,7 @@
 #ifndef TRANSLATETHREADPROC_HPP
 #define	TRANSLATETHREADPROC_HPP
 
-#include <Controller/multithread/thread_function_calling_convention.h>
+#include <OperatingSystem/multithread/thread_function_calling_convention.h>
 typedef unsigned long DWORD ;
 
 namespace VTrans

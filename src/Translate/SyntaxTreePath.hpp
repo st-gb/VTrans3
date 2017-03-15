@@ -12,7 +12,7 @@
 #include <vector> //class std::vector
 //#include <rest.h> //DEBUG_COUT(...)
 #include <windef.h> //for BYTE
-#include <fastest_data_type.h> //typedef fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 //#include <exception>//class std::exception
 
 class GetGrammarPartIDexception

@@ -8,7 +8,7 @@
 #ifndef DICTIONARYREADERBASE_HPP_
 #define DICTIONARYREADERBASE_HPP_
 
-#include <fastest_data_type.h> //typedef fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 #include <string>
 #include <Controller/character_string/ISO_8859_1.hpp>
 #include <stdint.h> //uint8_t

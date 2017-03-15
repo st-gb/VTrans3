@@ -16,7 +16,7 @@
 #include <map> //class std::map
 //#include <wx/dc.h>
 #include <wx/gdicmn.h> //class wxSize
-#include <fastest_data_type.h> //typedef fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 
 //Forward declarations
 class GrammarPart ;

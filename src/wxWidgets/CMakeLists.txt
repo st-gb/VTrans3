@@ -24,14 +24,23 @@ set(SOURCE_FILE_PATHS
 	${COMMON_SOURCECODE_ROOT_PATH}/wxWidgets/Controller/character_string/wxStringHelper.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/wxWidgets/UserInterface/LogEntries/LogEntriesDialog.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/wxWidgets/UserInterface/LogEntries/LogEntriesListCtrl.cpp
-  PARENT_SCOPE
+  PARENT_SCOPE #To propagate changes to file that included THIS file
 )
+
+if( NOT DEFINED WXWIDGETS_SETUP_H_PATH )
+  message("warning: WXWIDGETS_SETUP_H_PATH is NOT defined->compiling will fail"
+   "on Linux it may be like: /usr/lib/i386-linux-gnu/wx/include/gtk2-unicode-debug-2.8")
+endif( NOT DEFINED WXWIDGETS_SETUP_H_PATH )
+if( NOT DEFINED WXWIDGETS_INCLUDE_DIR )
+  message("warning: WXWIDGETS_INCLUDE_DIR is NOT defined->compiling will fail"
+   "on Linux it may be like: /usr/include/wx-2.8")
+endif( NOT DEFINED WXWIDGETS_INCLUDE_DIR )
 
 set(INCLUDE_DIRS
   ${INCLUDE_DIRS}
-  #/usr/lib/i386-linux-gnu/wx/include/gtk2-unicode-debug-2.8
-  /usr/include/wx-2.8
-  PARENT_SCOPE
+  ${WXWIDGETS_SETUP_H_PATH}
+  ${WXWIDGETS_INCLUDE_DIR}
+  PARENT_SCOPE #To propagate changes to file that included THIS file
 )
 
 #include_directories( ${INCLUDE_DIRS} )
@@ -44,7 +53,7 @@ set(INCLUDE_DIRS
 set( LIBRARIES
   ${LIBRARIES}
   ${wxWidgets_USE_FILE}
-  PARENT_SCOPE
+  PARENT_SCOPE #To propagate changes to file that included THIS file
 )
 
 if (WIN32)
@@ -52,7 +61,7 @@ if (WIN32)
   set(CXX_DEFINITIONS
     ${CXX_DEFINITIONS}
     -D__WXMSW__
-    PARENT_SCOPE
+    PARENT_SCOPE #To propagate changes to file that included THIS file
   )
 endif (WIN32)
 
@@ -61,14 +70,7 @@ if (UNIX)
   set(CXX_DEFINITIONS
     ${CXX_DEFINITIONS}
     -D__WXGTK__
-    PARENT_SCOPE
-  )
-  set( LIBRARIES
-    ${LIBRARIES}
-    #libwx_gtk2ud_core-2.8.a
-    #wx_baseud-2.8
-    #wx_gtk2ud_adv-2.8
-    PARENT_SCOPE
+    PARENT_SCOPE #To propagate changes to file that included THIS file
   )
 endif (UNIX)
 

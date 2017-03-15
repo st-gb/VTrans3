@@ -13,7 +13,7 @@
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <map> //class std::multimap
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
-#include <fastest_data_type.h> //typedef fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 
 extern TranslationControllerBase * g_p_translationcontrollerbase;
 

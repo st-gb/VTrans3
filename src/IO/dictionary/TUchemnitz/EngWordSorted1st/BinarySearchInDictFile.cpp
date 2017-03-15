@@ -25,7 +25,7 @@
 #include <FileSystem/File/EndOfFileException.hpp> //class EndOfFileException
 #include <IO/dictionary/DictionaryFileAccessException.hpp>
 #include <IO/dictionary/OpenDictFileException.hpp>//class OpenDictFileException
-#include <Controller/GetLastErrorCode.hpp>
+#include <OperatingSystem/GetLastErrorCode.hpp>
 
 #define INDEX_OF_LAST_SMALL_LETTER_IN_ASCII 128
 

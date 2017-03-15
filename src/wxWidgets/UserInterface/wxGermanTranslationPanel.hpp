@@ -11,6 +11,7 @@
 #include <wx/panel.h> //base class wxPanel
 #include <wx/bitmap.h> //class wxBitmap
 #include <wx/dcmemory.h> //class wxMemoryDC
+#include <wx/dcclient.h> //class wxClientDC
 //#include <wx/defs.h> //class wxMemoryDC
 
 //class GrammarPartPointerAndConcatenationID

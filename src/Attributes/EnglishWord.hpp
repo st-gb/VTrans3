@@ -10,7 +10,7 @@
 
 #include "IterableWords.hpp"
 #include "Word.hpp"
-#include <fastest_data_type.h> /** typedef fastestUnsignedDataType */
+#include <hardware/CPU/fastest_data_type.h>/**typedef fastestUnsignedDataType*/
 
 class EnglishWord:
   public Word,

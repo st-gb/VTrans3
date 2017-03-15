@@ -9,7 +9,7 @@
 #define DICTIONARYFILEACCESSEXCEPTION_HPP_
 
 //::GetErrorMessageFromLastErrorCode()
-#include <Controller/GetErrorMessageFromLastErrorCode.hpp>
+#include <OperatingSystem/GetErrorMessageFromLastErrorCode.hpp>
 #include <Controller/character_string/convertFromAndToStdString.hpp>
 //#include <IO/FileAccessException.hpp>
 #include <FileSystem/File/FileException.hpp> //class FileException

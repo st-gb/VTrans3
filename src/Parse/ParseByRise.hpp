@@ -14,7 +14,7 @@
 #include <set> //class std::set
 #include <Attributes/Token.h> //class PositionStringVector
 #include "GrammarPart.hpp" //class GrammarPart
-#include <fastest_data_type.h> // typedef fastestUnsignedDataType
+#include <hardware/CPU/fastest_data_type.h> // typedef fastestUnsignedDataType
 
 //Forward declarations (faster than #include)
 class LetterNode;

@@ -2,7 +2,7 @@
 
 #include <string> //for class std::string
 #include <Controller/string_type.hpp> //for typedef VTrans::string_type
-#include <fastest_data_type.h>
+#include <hardware/CPU/fastest_data_type.h>//typedef fastestUnsignedDataType
 #include <hardware/CPU/atomic/AtomicExchange.h>
 
 //typedef unsigned long DWORD;
