@@ -128,15 +128,15 @@ void DictionaryStatisticsWindow::AddStaticText(
   wxBoxSizer * m_p_boxsizerColumns = new wxBoxSizer( wxHORIZONTAL);
   m_p_boxsizerColumns->Add(
     p_wxStaticText,
-    1,
-    wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL 
-    , 0
+    0, //1, //stretchable in sizer's orientation
+    wxALIGN_CENTER //wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL 
+    , 1 //border width in pixels
     );
   m_p_boxsizerColumns->Add(
     p_wxTextCtrlCounter,
     1,
     wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL 
-    , 0
+    , 0 //border width in pixels
     );
   m_p_boxsizerRows->Add(m_p_boxsizerColumns );
 }

@@ -23,7 +23,11 @@
 #include <FileSystem/File/native_File_type.hpp> //typedef native_File_type
 #include <limits.h> //UINT_MAX
 
-/** Forward decl. */
+/** Minimal 6 characters are needed for an entry: <English word>::<German word>
+ *  2 characters for "::", 2 characters for each English and German word.*/
+#define NUM_MIN_CHARS_PER_VOC_ENTRY 6
+
+/** Forward declaration(s) */
 //class IVocabularyInMainMem;
 class VocabularyAndTranslation;
 

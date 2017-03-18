@@ -42,7 +42,7 @@
     void OnTimerEvent(wxTimerEvent &event);
     void OnTranslateButton(wxCommandEvent & wxcmd);
     void OnTranslateOnTextChanges(wxCommandEvent & wxcmd);
-    void OnTruncateLogFileButton( wxCommandEvent & wxcmd );
+    void OnShowLogEntriesDialog( wxCommandEvent & wxcmd );
     void OnUnloadDictionary( wxCommandEvent & wxcmd );
     void UnloadDictionaryShowingStatus();
     void UnloadDictionaryShowingStatusAndSendCloseEvent();

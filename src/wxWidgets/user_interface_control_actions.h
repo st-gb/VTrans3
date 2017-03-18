@@ -34,7 +34,7 @@ enum user_interface_control_actions
   ID_LookupWord ,
   ID_ShowDictionaryStatistics,
   ID_UnloadDictionary,
-  ID_TruncateLogFile,
+  ID_ShowLogEntriesDialog,
   ID_Info,
   ID_Timer,
   ID_InputText,

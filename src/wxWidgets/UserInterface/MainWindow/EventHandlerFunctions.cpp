@@ -103,7 +103,7 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   BUTTON_EVENT_TYPE( ID_LookupWord , EVENT_HANDLER_CLASS_NAME::OnLookupWord)
   BUTTON_EVENT_TYPE( ID_ShowDictionaryStatistics , EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics)
   BUTTON_EVENT_TYPE( ID_UnloadDictionary , EVENT_HANDLER_CLASS_NAME::OnUnloadDictionary)
-  BUTTON_EVENT_TYPE( ID_TruncateLogFile, EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton)
+  BUTTON_EVENT_TYPE( ID_ShowLogEntriesDialog, EVENT_HANDLER_CLASS_NAME::OnShowLogEntriesDialog)
   BUTTON_EVENT_TYPE( ID_LoadDictionary , EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryButton)
   BUTTON_EVENT_TYPE( ID_ShowTokenIndex2GrammarPart, EVENT_HANDLER_CLASS_NAME::
     OnShowTokenIndex2GrammarPartButton)
@@ -699,27 +699,31 @@ void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
   OperatingSystem::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
 //#endif
   const uint64_t ns = endTimeCountInNanoSeconds - beginTimeCountInNanoSeconds;
-  long double seconds = ( (long double) ns)/1000000000.0;
+  double seconds = ( (double) ns)/1000000000.0;
   /** http://forums.wxwidgets.org/viewtopic.php?f=23&t=35759 :
    *  "Print long double" */
   wxString wxstrLookUpTime = wxString::Format(
-    wxT(" lookup took %lu ns=%Lfus=%Lfms=%Lfs"),
-    ns,
-    ( (long double) ns)/1000.0,
-    ( (long double) ns)/1000000.0,
-    seconds );
+    //wxT(" lookup took %lu ns"),//=%fus=%fms=%fs"),
+    wxT("lookup took %f s"),
+    //ns//,
+//    ( (double) ns)/1000.0,
+//    ( (double) ns)/1000000.0,
+    seconds
+          );
   if( p_voc_container )
   {
     ::wxMessageBox(
-      wxString::Format( wxT("# English words with name %s: %u"),
+      wxString::Format( wxT("# English words with name %s: %u\n%s"),
         /*std_strEnglishWord.c_str()*/ wxstrEnglishWord.c_str(),
-        p_voc_container->size()) + wxstrLookUpTime
-      );
+        p_voc_container->size(), 
+        wxstrLookUpTime.c_str()
+      ) );
   }
   else
     ::wxMessageBox(
-      wxString::Format( wxT("# English words with name %s: 0"),
-        wxstrEnglishWord.c_str()) + wxstrLookUpTime
+      wxString::Format( wxT("# English words with name %s: 0\n%s"),
+        wxstrEnglishWord.c_str(),
+        wxstrLookUpTime.c_str() )
       );
 }
 
@@ -734,7 +738,7 @@ void EVENT_HANDLER_CLASS_NAME::OnTimerEvent(wxTimerEvent &event)
 //  SetTitle( wxString::Format(wxT("%f"), TUchemnitzDictionaryReader::m_numBytesRead ) );
 }
 
-void EVENT_HANDLER_CLASS_NAME::OnTruncateLogFileButton( wxCommandEvent & wxcmd )
+void EVENT_HANDLER_CLASS_NAME::OnShowLogEntriesDialog( wxCommandEvent & wxcmd )
 {
   g_logger.TruncateOutputSizeToZero();
 //  LogEntriesDialog dlg;

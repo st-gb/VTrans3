@@ -29,7 +29,7 @@ namespace VTrans
 {
 
   BEGIN_EVENT_TABLE(TranslationRulesListCtrl, wxListCtrl)
-  //http://stackoverflow.com/questions/14487102/wxwidgets-contextmenu-popup
+  /**http://stackoverflow.com/questions/14487102/wxwidgets-contextmenu-popup */
 //    EVT_CONTEXT_MENU(
   EVT_LIST_ITEM_RIGHT_CLICK(
     ShowRulesDialogBase::rulesList,
@@ -285,8 +285,8 @@ namespace VTrans
 
   void TranslationRulesListCtrl::OnRightClick(wxListEvent & event)
   {
-    //from http://stackoverflow.com/questions/14487102/wxwidgets-contextmenu-popup
-    // Show popupmenu at position
+    /**from http://stackoverflow.com/questions/14487102/wxwidgets-contextmenu-popup
+    // Show popupmenu at position */
     wxMenu menu(wxT("Test"));
     //TODO implement copying to clipboard
     const int col = event.GetColumn();

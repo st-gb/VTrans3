@@ -1568,6 +1568,10 @@ namespace DictionaryReader
     //e.g.:2 dictionary entries: "car ............... car ......."
     // found: 2nd entry with "car"
     // no search in itnerval "[0...begin of 2nd car["
+    /** @brief if a matching word was found:
+     * Multiple vocabulary entries for the same word may exist: "
+        "e.g. 1 for verb \"to work\" and 1 for noun \"the work\". "
+        "We may not be at the 1st one. So get this now. */
     fastestUnsignedDataType BinarySearchInDictFile::
       GetByteOffsetOfFirstMatchingWord(
         const PositionStringVector & psvStringToSearch,
@@ -1578,7 +1582,10 @@ namespace DictionaryReader
       )
     {
       LOGN_DEBUG("begin--closest offset smaller than offset of string match:" <<
-		  closestBeforeNonMatchOffset)
+        closestBeforeNonMatchOffset)
+      LOGN_DEBUG("Multiple vocabulary entries for the same word may exist: "
+        "e.g. 1 for verb \"to work\" and 1 for noun \"the work\". "
+        "We may not be at the 1st one. So get this now.")
       fastestUnsignedDataType byteOffsetOfFirstMatchingWord = byteOffsetOfVocable;
       
       fastestUnsignedDataType lowerBound = closestBeforeNonMatchOffset,
@@ -1590,6 +1597,8 @@ namespace DictionaryReader
       do
       {      
         byteOffsetOfCurrentVocable = lowerBound + (higherBound - lowerBound) / 2;
+        LOGN_DEBUG("lower bound:" << lowerBound << " higher bound:"  
+          << higherBound << "->seeking to " << byteOffsetOfCurrentVocable)
         SeekFilePointerPosition(byteOffsetOfCurrentVocable);
 
         byteOffsetOfNextVocDataBegin = GetByteOffsetOfNextVocDataBegin(
@@ -1626,8 +1635,9 @@ namespace DictionaryReader
         {
           higherBound = byteOffsetOfCurrentVocable;
         }
-      }while(higherBound > lowerBound + 6 /** Minimal 6 characters are needed for an entry: English_word::German:word */);
-      LOGN_DEBUG("end")
+      }while(higherBound > lowerBound + NUM_MIN_CHARS_PER_VOC_ENTRY );
+      LOGN_DEBUG("end--higherBound <= lowerBound + 6--return " 
+        << byteOffsetOfFirstMatchingWord)
       return /*byteOffsetOfNextVocDataBegin*/ byteOffsetOfFirstMatchingWord;
     }
     
@@ -1712,6 +1722,9 @@ namespace DictionaryReader
               );
             if( comp == PositionStringVector::match )
             {
+//              LOGN_DEBUG("We have a match->but multiple vocabulary entries for "
+//                "the same word may exist: e.g. 1 for verb \"to work\" and 1 for noun "
+//                "\"the work\". We may not be at the 1st one. So get this now.")
               /** Either found matching at first attempt or binary search
                *  was always backwards (directing file begin).
                *  case 1: in current search no word in dictionary < than word to search read.

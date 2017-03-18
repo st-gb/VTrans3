@@ -48,7 +48,7 @@
 #include <bitmaps/show_translation_rules24x24.xpm>
 #include <bitmaps/show_parse_rules24x24.xpm>
 #include <bitmaps/translate_bitmap.xpm> //for array translate_bitmap_xpm
-#include <bitmaps/truncate_log_file.xpm> //for array truncate_log_file_xpm
+#include <bitmaps/log_entries.xpm> //for array log_entries_xpm
 #include <bitmaps/VT_icon.xpm> // array "VT_icon_xpm"
 ////see //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 //#pragma GCC diagnostic pop
@@ -503,8 +503,8 @@ void EVENT_HANDLER_CLASS_NAME::AddTranslateButton( wxSizer * p_sizer )
 
 void EVENT_HANDLER_CLASS_NAME::AddTruncateLogFileButton( wxSizer * p_sizer )
 {
-  AddBitmapButtonAndTooltip(ID_TruncateLogFile, truncate_log_file_xpm, 
-    wxT("truncate log file to size 0")/*, p_sizer*/);
+  AddBitmapButtonAndTooltip(ID_ShowLogEntriesDialog, log_entries_xpm, 
+    wxT("show log entries dialog")/*, p_sizer*/);
 }
 
 void EVENT_HANDLER_CLASS_NAME::GetEntireInputText(std::string & r_stdstrInputText)

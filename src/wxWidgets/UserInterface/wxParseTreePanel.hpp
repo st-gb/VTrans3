@@ -164,6 +164,8 @@ public:
     //wxSize & wxsizeText
     wxString & wxstr
     ) ;
+  void RedrawImmediately();
+  inline void RedrawViaEventLoop();
   void OnContextMenu(wxContextMenuEvent & evt);
 	void OnPaint(wxPaintEvent & event) ;
 	void OnSize(wxSizeEvent & evt);

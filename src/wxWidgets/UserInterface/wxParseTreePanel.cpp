@@ -230,6 +230,26 @@ void wxParseTreePanel::DrawGrammarPartNameAndPossiblyToken(
   }
 }
 
+void wxParseTreePanel::RedrawImmediately()
+{
+//    ClearBackground();
+  DrawParseTreeBeginningFromLeavesWithClientDC();
+  /** http://docs.wxwidgets.org/trunk/classwx_window.html#abaf28f1a075fd1b10f761a8febe597ec */
+  Update(); //paints over the old area (doesn't erase background).
+}
+
+void wxParseTreePanel::RedrawViaEventLoop()
+{
+  /** http://docs.wxwidgets.org/trunk/classwx_window.html :
+   * "Causes this window, and all of its children recursively (except under 
+   *  wxGTK1 where this is not implemented), to be repainted.
+   * 
+   * Note that repainting doesn't happen immediately but only during the next 
+   * event loop iteration, if you need to update the window immediately you 
+   * should use Update() instead." */
+  Refresh();//Causes/inserts a EVT_PAINT into the event queue.
+}
+
 void wxParseTreePanel::DecreaseFontSizeBy1Point()
 {
   const fastestUnsignedDataType currentPointSizeOfFont = m_pointSizeOfFont;
@@ -241,18 +261,9 @@ void wxParseTreePanel::DecreaseFontSizeBy1Point()
   if( currentPointSizeOfFont != m_pointSizeOfFont )
   {
   //  wxFont wxfont = p_wxdc->GetFont();
-  //  wxfont.SetPointSize( 8 ) ;  
-    DrawParseTreeBeginningFromLeavesWithClientDC();
-
-    /** http://docs.wxwidgets.org/trunk/classwx_window.html :
-     * "Causes this window, and all of its children recursively (except under 
-     *  wxGTK1 where this is not implemented), to be repainted.
-     * 
-     * Note that repainting doesn't happen immediately but only during the next 
-     * event loop iteration, if you need to update the window immediately you 
-     * should use Update() instead." */
-    Refresh();
-    //Update();
+  //  wxfont.SetPointSize( 8 );
+//    RedrawViaEventLoop();
+    RedrawImmediately();
   //  p_wxdc->SetFont( wxfont) ;
    }
 }
@@ -260,12 +271,15 @@ void wxParseTreePanel::DecreaseFontSizeBy1Point()
 void wxParseTreePanel::DrawParseTreeBeginningFromLeavesWithClientDC()
 {
   /** http://docs.wxwidgets.org/trunk/classwx_client_d_c.html
-   * 
-   * A wxClientDC must be constructed if an application wishes to paint on the client area of a window from outside an EVT_PAINT() handler.
-    This should normally be constructed as a temporary stack object; don't store a wxClientDC object.
-    To draw on a window from within an EVT_PAINT() handler, construct a wxPaintDC object instead.
+   * "A wxClientDC must be constructed if an application wishes to paint on 
+   * the client area of a window from outside an EVT_PAINT() handler.
+   * This should normally be constructed as a temporary stack object; don't 
+   * store a wxClientDC object.
+   * To draw on a window from within an EVT_PAINT() handler, construct a 
+   * wxPaintDC object instead."
    */
   wxClientDC dc(this);
+  dc.Clear(); //clears the background.
   DrawParseTreeBeginningFromLeaves(dc);
 }
 
@@ -274,16 +288,8 @@ void wxParseTreePanel::IncreaseFontSizeBy1Point()
 //  wxFont wxfont = p_wxdc->GetFont();
 //  wxfont.SetPointSize( 8 ) ;
   ++ m_pointSizeOfFont;
-      
-  /** http://docs.wxwidgets.org/trunk/classwx_window.html :
-   * "Causes this window, and all of its children recursively (except under 
-   *  wxGTK1 where this is not implemented), to be repainted.
-   * 
-   * Note that repainting doesn't happen immediately but only during the next 
-   * event loop iteration, if you need to update the window immediately you 
-   * should use Update() instead." */
-  Refresh();
-  //Update();
+//  RedrawViaEventLoop();
+  RedrawImmediately();
 //  p_wxdc->SetFont( wxfont) ;
 }
 
@@ -818,7 +824,10 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     wxDC & r_wxdc )
 {
   LOGN_DEBUG("begin")
-  
+  if( ! mp_parsebyrise ) {
+    LOGN_DEBUG("pointer to data is NULL->ending")
+    return;
+  }
   if( m_pointSizeOfFont < wxGetApp ().m_GUIattributes.m_minFontSizeInPoint)
     m_pointSizeOfFont = wxGetApp ().m_GUIattributes.m_minFontSizeInPoint;
   wxFont font = r_wxdc.GetFont ();
@@ -831,11 +840,11 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
 //  int y = 10 ;
 //  typedef std::multimap<DWORD, GrammarPart > stdmmap_token_index2grammarpart ;
   typedef std::multimap<DWORD, GrammarPart *> stdmmap_token_index2grammarpart ;
-  stdmmap_token_index2grammarpart::const_iterator citer ;
-  stdmmap_token_index2grammarpart &
-    r_stdmultimap_dwLeftmostIndex2grammarpart = mp_parsebyrise->
-    //m_stdmultimap_dwLeftmostIndex2grammarpart ;
-    m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
+//  stdmmap_token_index2grammarpart::const_iterator citer ;
+//  stdmmap_token_index2grammarpart &
+//    r_stdmultimap_dwLeftmostIndex2grammarpart = mp_parsebyrise->
+//    //m_stdmultimap_dwLeftmostIndex2grammarpart ;
+//    m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
 #ifdef _DEBUG
 //  r_stdmultimap_dwLeftmostIndex2grammarpart.size();
 #endif
@@ -843,7 +852,8 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
   m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
   m_wParseLevel = 0 ;
   m_stdvecNodesToProcess.clear() ;
-  citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
+//  citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
+  
   //A text (especially the longer the more probable) may contain more than 1
   //contigous parse tree: e.g. if only parse rule
   //"definite article + noun" = def_article_noun, text "the man the woman":

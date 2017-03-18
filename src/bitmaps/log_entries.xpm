@@ -1,5 +1,5 @@
 /* XPM */
-static char * truncate_log_file_xpm[] = {
+static char * log_entries_xpm[] = {
 "28 28 79 1",
 " 	c None",
 ".	c #FFFFFF",
