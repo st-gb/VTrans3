@@ -716,32 +716,42 @@ VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
   return "";
 }
 
-std::ostream & operator << (std::ostream & os, const VocabularyAndTranslation & obj)
+std::ostream & operator << (std::ostream & std_ostream, 
+    const VocabularyAndTranslation & vocabularyAndTranslation)
 {
   EnglishWord::English_word_class word_class = EnglishWord::
-    MapGrammarPartIDtoWordClass(obj.m_englishWordClass);
-  os << "grammar part ID:" << obj.m_englishWordClass << "-> word class:"
-    << word_class << " " << obj.GetWordClassAsString() << " Ger:";
-  VocabularyAndTranslation::ArraySizes sz;
-  obj.GetNumberOfArrayElements(sz);
-  if( obj.m_arstrGermanWord)
+    MapGrammarPartIDtoWordClass(vocabularyAndTranslation.m_englishWordClass);
+  std_ostream << "grammar part ID:" << vocabularyAndTranslation.m_englishWordClass << "->word class:"
+    << word_class << " " << vocabularyAndTranslation.GetWordClassAsString() << " Ger:";
+  VocabularyAndTranslation::ArraySizes arraySizes;
+  vocabularyAndTranslation.GetNumberOfArrayElements(arraySizes);
+  if( vocabularyAndTranslation.m_arstrGermanWord && 
+      arraySizes.m_byArraySizeForGermanWord > 0 )
   {
-    for(fastestUnsignedDataType index = 0; index < sz.m_byArraySizeForGermanWord;
-      ++ index )
+    std_ostream << "(";
+    /** Ouput German (destination language) word attributes. */
+    for(fastestUnsignedDataType attributeIndex = 0; attributeIndex < 
+        arraySizes.m_byArraySizeForGermanWord; ++ attributeIndex )
     {
-      os << "(" << index << ";" << obj.m_arstrGermanWord[index] << "|";
+      if( vocabularyAndTranslation.m_arstrGermanWord[attributeIndex] )
+        std_ostream << attributeIndex << ":" << 
+        vocabularyAndTranslation.m_arstrGermanWord[attributeIndex] << "|";
+      else
+        std_ostream << attributeIndex << ":|";
+    }
+    std_ostream << ")"; 
+  }
+  std_ostream << " Eng:";
+  if( vocabularyAndTranslation.m_arstrEnglishWord)
+  {
+    for(fastestUnsignedDataType index = 0; index < 
+      arraySizes.m_byArraySizeForEnglishWord; ++ index )
+    {
+      std_ostream << "(" << index << ";" << vocabularyAndTranslation.
+        m_arstrEnglishWord[index] << "|";
     }
   }
-  os << " Eng:";
-  if( obj.m_arstrEnglishWord)
-  {
-    for(fastestUnsignedDataType index = 0; index < sz.m_byArraySizeForEnglishWord;
-      ++ index )
-    {
-      os << "(" << index << ";" << obj.m_arstrEnglishWord[index] << "|";
-    }
-  }
-  return os;
+  return std_ostream;
 }
 
 //BYTE * diff(const char * const word, const fastestUnsignedDataType stringLen)

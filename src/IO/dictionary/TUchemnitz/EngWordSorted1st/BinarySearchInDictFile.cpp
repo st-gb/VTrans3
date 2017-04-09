@@ -583,7 +583,7 @@ namespace DictionaryReader
 
     I_File::ReadResult BinarySearchInDictFile::ReadByteBuffer(
       uint8_t buffer [],
-      fastestUnsignedDataType numBytes)
+      fastestUnsignedDataType & numBytes)
     {
       I_File::ReadResult readResult;
 	    readResult = m_dictFile.Read(buffer, numBytes);
@@ -1224,7 +1224,8 @@ namespace DictionaryReader
       std::set<fastestUnsignedDataType> & byteOffsetsOfVocData
       )
     {
-      LOGN_DEBUG("begin")
+      LOGN_DEBUG("begin--byte offs. of 1st match voc:" 
+        << byteOffsetOfFirstMatchingVocable)
       fastestUnsignedDataType byteOffsetOfVocable = 0;
       bool endSearchForCompareStringInCurrentVocData;
 //      if( c_closestBeforeNonMatchOffset == 0)
@@ -1256,10 +1257,12 @@ namespace DictionaryReader
 //      fastestUnsignedDataType closestBeforeNonMatchOffset;
       do
       {
+        streamIsGood = SeekFilePointerPosition(byteOffsetOfVocable);
           byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(
             endSearchForCompareStringInCurrentVocData, byteOffsetOfVocable);
 //        else
         {
+          /** The file pointer may be beyond the next voc data offset->seek */
           LOGN_DEBUG("seeking to byte offset " << byteOffsetOfVocable)
 //          m_englishDictionary.seekg(byteOffsetOfVocable, std::ios_base::beg);
           //TODO error handling on seek failure.
@@ -1279,6 +1282,8 @@ namespace DictionaryReader
             LOGN_DEBUG("adding " << byteOffsetOfVocable
               << " to voc data byte offset vector")
             byteOffsetsOfVocData.insert(byteOffsetOfVocable);
+            /** Start from next. */
+            byteOffsetOfVocable += 1;
           }
         }
         if( byteOffsetOfVocable == UINT_MAX )
@@ -1291,10 +1296,14 @@ namespace DictionaryReader
     }
 
     fastestUnsignedDataType BinarySearchInDictFile::GetByteOffsetOfNextVocDataBegin(
-        bool & endSearchForCompareStringInCurrentVocData,
-		fastestUnsignedDataType currentFileOffsetOrig )
+      bool & endSearchForCompareStringInCurrentVocData,
+      fastestUnsignedDataType currentFileOffsetOrig )
     {
-      LOGN_DEBUG("begin")
+      /** Save to get the current file pointer: expensive but safe to to do
+       *  because it's unknown if currentFileOffsetOrig really represents the
+       *  current file pos. */
+      currentFileOffsetOrig = GetCurrentFilePointerPosition();
+      LOGN_DEBUG("begin--start from byte offset " << currentFileOffsetOrig)
 //#ifdef DEBUG
 //      fastestUnsignedDataType byteOffsetOfVocable = UINT_MAX;
 //#endif
@@ -1305,7 +1314,7 @@ namespace DictionaryReader
        *  -> do not use ReadByte() but read multiple bytes at once. */
 //      int i = ReadByte();
 
-      /** Because reading a buffer is only done once this value als indicates
+      /** Because reading a buffer is only done once this value also indicates
        *  the maximum line length in bytes. */
       const fastestUnsignedDataType numBytesToRead =
         512;
@@ -1314,6 +1323,7 @@ namespace DictionaryReader
       /** Read more bytes at once to speed up translation. */
       enum I_File::ReadResult fileReadResult = ReadByteBuffer(buffer, numBytesRead);
       if( fileReadResult == I_File::successfullyRead ||
+          /** End of file reached? */
           fileReadResult == I_File::readLessThanIntended )
       {
         bool endOfLineCharFound = false;
@@ -1323,7 +1333,7 @@ namespace DictionaryReader
           if( buffer[bufferOffset] == 0xA /* <> '\n'*/ )
           {
             currentFileOffset += bufferOffset + 1;
-            m_dictFile.SeekFilePointerPosition(currentFileOffset);
+//            m_dictFile.SeekFilePointerPosition(currentFileOffset);
             endOfLineCharFound = true;
             break;
           }
@@ -1712,6 +1722,7 @@ namespace DictionaryReader
           {
             byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(
               endSearchForCompareStringInCurrentVocData, byteOffset);
+            SeekFilePointerPosition(byteOffsetOfVocable);
             PositionStringVector::cmp comp = ContainsEnglishWord(
               psvStringToSearch,
   //            psvDictFile,

@@ -151,7 +151,7 @@ namespace DictionaryReader
         int ReadByte();
         I_File::ReadResult ReadByteBuffer(
           uint8_t buffer [],
-          const fastestUnsignedDataType numBytes);
+          fastestUnsignedDataType & numBytes);
         bool SeekFilePointerPosition(const fastestUnsignedDataType byteOffset);
         inline bool GetByteOffsetOfFirstVocable(
           fastestUnsignedDataType & byteOffsetOfVocable,

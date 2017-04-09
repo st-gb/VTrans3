@@ -51,6 +51,7 @@ namespace VTrans3
           m_charStringStdMap.find(psv, r_dwTokenIndex);
         if( p_voc_container )
         {
+          LOGN_SUCCESS("word found in fundamental words map")
     //      VocablesForWord::voc_container_type * p_voc_container =
     //        m_CharStringStdMap.find(psv, r_dwTokenIndex);
     //      if( p_voc_container)
@@ -63,7 +64,10 @@ namespace VTrans3
         {
           p_voc_container = m_charStringStdMapTemp.find(psv, r_dwTokenIndex);
           if( p_voc_container )
+          {
+            LOGN_SUCCESS("word found in temporary words map")
             return p_voc_container;
+          }
           else
      //        m_dictReader.findEnglishWord(psv, r_dwTokenIndex);
             return m_p_dictReader->findEnglishWord(psv, r_dwTokenIndex);

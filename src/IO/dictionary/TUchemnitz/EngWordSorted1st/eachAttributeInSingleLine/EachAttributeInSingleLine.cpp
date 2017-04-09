@@ -334,14 +334,15 @@
         PositionStringVector::cmp comp = PositionStringVector::notSet;
 
         //int i = ReadByte();
-        uint8_t buffer[200];
-        ReadByteBuffer(buffer /*(uint8_t *) englishWord*/, 100);
+        fastestUnsignedDataType numBytes = 200;
+        uint8_t buffer[numBytes];
+        ReadByteBuffer(buffer /*(uint8_t *) englishWord*/, numBytes);
         fastestUnsignedDataType bufferIndex = 0;
         
         char byte;
         //TODO check is only necessary if NOT using exceptions.
         //streamIsGood = i < 256 /** return codes start*/;
-        while( bufferIndex < 100 /*streamIsGood*/ /*&& ! breakWhile*/ )
+        while( bufferIndex < numBytes /*streamIsGood*/ /*&& ! breakWhile*/ )
         {
           byte = buffer[bufferIndex];
           if( ! afterRoundOpeningBracket && ! afterSquaredOpeningBracket &&

@@ -185,7 +185,7 @@ void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
     1,
     wxEXPAND |
     wxALL
-    , 5
+    , 1 //border/margin in pixel
     );
 //  p_flexgridsizerSplitterTop->Add(
   p_boxsizerSplitterTop->Add(
