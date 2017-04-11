@@ -1,7 +1,9 @@
 #from https://cmake.org/cmake-tutorial/
-
 cmake_minimum_required (VERSION 2.6)
 project (VTrans)
+#from https://cmake.org/Wiki/CMake/Testing_With_CTest
+#enable_testing()
+
 
 if( NOT DEFINED COMMON_SOURCECODE_ROOT_PATH )
   #By default "common_sourcecode" lies/lays 1 level above VTrans3/src

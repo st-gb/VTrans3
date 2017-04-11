@@ -26,6 +26,11 @@ namespace VTrans3
         LOGN_DEBUG("end")
       }
 
+      void BinarySearchInDictFile::clearTemporaryEntries() {
+        LOGN_DEBUG("before emptying the temporary words map")
+        m_charStringStdMapTemp.clear();
+      }
+      
       void BinarySearchInDictFile::clear()
       {
         LOGN_DEBUG("before emptying the fundamental words map")
@@ -40,6 +45,7 @@ namespace VTrans3
           LOGN_DEBUG("closing dict file \"" << m_p_dictReader->GetFilePath() 
             << "\" succeeded.")
       }
+      
       /*virtual void * */ std::set<VocabularyAndTranslation *> *
         BinarySearchInDictFile::find(
         const PositionStringVector & psv,

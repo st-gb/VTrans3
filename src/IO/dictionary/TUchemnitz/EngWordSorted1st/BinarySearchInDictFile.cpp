@@ -493,32 +493,34 @@ namespace DictionaryReader
 #endif
       std::map<unsigned, VocabularyAndTranslation *>::const_iterator
         c_iterPipeIndex2VocAndTranslPtr = voc_containerVocsCreated.begin();
-      std::vector< std::vector <std::string> >::const_iterator c_iterGerman =
-        germanVocables.begin();
+      std::vector< std::vector <std::string> >::const_iterator 
+        c_iterGermanVocable = germanVocables.begin();
       std::vector<std::string>::const_iterator c_iterGermanWord;
-      while( c_iterGerman != germanVocables.end() && c_iterPipeIndex2VocAndTranslPtr !=
-          voc_containerVocsCreated.end() )
+      while( c_iterGermanVocable != germanVocables.end() && 
+        c_iterPipeIndex2VocAndTranslPtr != voc_containerVocsCreated.end() )
       {
-        const std::vector<std::string> & r_ = ( * c_iterGerman);
-        c_iterGermanWord = r_.begin();
-        VocabularyAndTranslation * p_vocAndTransl = c_iterPipeIndex2VocAndTranslPtr->second;
-        const int index = c_iterPipeIndex2VocAndTranslPtr->first;
+        const std::vector<std::string> & r_GermanWords = ( * c_iterGermanVocable);
+        c_iterGermanWord = r_GermanWords.begin();
+        VocabularyAndTranslation * p_vocAndTransl = 
+          c_iterPipeIndex2VocAndTranslPtr->second;
+        const int pipeIndex = c_iterPipeIndex2VocAndTranslPtr->first;
 
         EnglishWord::English_word_class engWordClass = EnglishWord::
             MapGrammarPartIDtoWordClass(p_vocAndTransl->m_englishWordClass);
-        if( p_vocAndTransl && /*p_vocAndTransl->m_englishWordClass*/ engWordClass <= EnglishWord::adjective )
+        if( p_vocAndTransl && /*p_vocAndTransl->m_englishWordClass*/ 
+            engWordClass <= EnglishWord::adjective )
         {
           const VocabularyAndTranslation::ArraySizes & arraySizes =
             VocabularyAndTranslation::s_arraysizes[engWordClass];
           fastestUnsignedDataType germanWordIndex = 0;
-          while(c_iterGermanWord != r_.end() )
+          while(c_iterGermanWord != r_GermanWords.end() )
           {
             if( germanWordIndex < arraySizes.m_byArraySizeForGermanWord )
             {
               const std::string & germanWord = * c_iterGermanWord;
               LOGN_DEBUG("setting German word \"" << germanWord
                 << "\" for index " << germanWordIndex
-                << " for pipe index " << index
+                << " for pipe index " << pipeIndex
                 << " ,vocl&transl ptr " << p_vocAndTransl)
               p_vocAndTransl->SetGermanWord(germanWord.c_str(),
                   germanWord.length(), germanWordIndex);
@@ -528,7 +530,7 @@ namespace DictionaryReader
           }
         }
         ++ c_iterPipeIndex2VocAndTranslPtr;
-        ++ c_iterGerman;
+        ++ c_iterGermanVocable;
       }
       LOGN_DEBUG("end")
     }

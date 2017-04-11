@@ -1,9 +1,6 @@
-/* 
- * File:   VTransApp.cpp
+/** File:   VTransApp.cpp
  * Author: Stefan
- * 
- * Created on 20. Februar 2010, 14:02
- */
+ * Created on 20. Februar 2010, 14:02  */
 
 #include "VTransApp.hpp"
 
@@ -11,6 +8,7 @@
 #include <wx/dialog.h> //class wxDialog
 #include <wx/icon.h> //class wxIcon
 #include <wx/textctrl.h> //class wxTextCtrl
+#include <OperatingSystem/POSIX/file_exists.hpp>
 
 #include <data_structures/Trie/NodeTrie/exceptions.hpp> //NotInContainerException
 
@@ -395,13 +393,17 @@ void VTransApp::OnSetStatus(wxCommandEvent & event) {
 }
 
 bool VTransApp::GetProgramIconFromFile(wxIcon & r_wxicon) {
-  bool bLoadFileRetVal =
-          //http://docs.wxwidgets.org/stable/wx_wxicon.html:
-          //"true if the operation succeeded, false otherwise."
-          r_wxicon.LoadFile(
-          //http://docs.wxwidgets.org/trunk/classwx_bitmap.html:
-          //"wxMSW supports BMP and ICO files, BMP and ICO resources;
-          // wxGTK supports XPM files;"
+  bool bLoadFileRetVal = false;
+  /** Avoid message box "Failed to load image from file "VTrans.xpm"" */
+  if( FileExists("VTrans.xpm") )
+  {
+    bLoadFileRetVal =
+    /** http://docs.wxwidgets.org/stable/wx_wxicon.html:
+    * "true if the operation succeeded, false otherwise." */
+    r_wxicon.LoadFile(
+    //http://docs.wxwidgets.org/trunk/classwx_bitmap.html:
+    //"wxMSW supports BMP and ICO files, BMP and ICO resources;
+    // wxGTK supports XPM files;"
 #ifdef _WIN32
           //Use wxT() macro to enable to compile with both unicode and ANSI.
           wxT("VTrans.ico"),
@@ -419,12 +421,13 @@ bool VTransApp::GetProgramIconFromFile(wxIcon & r_wxicon) {
           );
   LOGN("loading icon from file " << (bLoadFileRetVal ?
           " succeeded" : "failed"))
+  }
   return bLoadFileRetVal;
 }
 
 bool VTransApp::OnInit() {
   //  wxIcon wxicon;
-  if (!GetProgramIconFromFile(m_wxiconVTrans)) {
+  if ( ! GetProgramIconFromFile(m_wxiconVTrans)) {
     m_wxiconVTrans = wxIcon(VT_icon_xpm);
   }
   std::string stdstrLogFilePath = "VTrans_log.txt";

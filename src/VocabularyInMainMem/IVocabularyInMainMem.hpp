@@ -67,9 +67,9 @@ class GermanWord;
 
   fastestUnsignedDataType m_maxTokenToConsider;
   IVocabularyInMainMem() ;
-  //Define virtual constructor to avoid g++ warning in subclasses like
-  //"`class EngNounsLetterTree' has virtual functions but non-virtual
-  //destructor"
+  /** Define virtual constructor to avoid g++ warning in subclasses like
+   *`class EngNounsLetterTree' has virtual functions but non-virtual
+   * destructor" */
   virtual ~IVocabularyInMainMem() {}
 
   virtual void AddVocabularyAttributes(
@@ -77,6 +77,8 @@ class GermanWord;
     void * p_v) = 0;
   /** Delete all dictionary entries. */
   virtual void clear() = 0;
+  /** E.g. for freeing temporary entries read from dictionary file. */
+  virtual void clearTemporaryEntries(){};
   virtual unsigned GetNumberOfVocPairs() { return m_numberOfVocPairs; }
   void DecreaseNumberOfVocPairs() { -- m_numberOfVocPairs; }
   virtual fastestUnsignedDataType GetNumberOfAllocatedBytes() = 0;

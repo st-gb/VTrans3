@@ -1,10 +1,20 @@
-/*
- * GermanWord.cpp
- *
+/** GermanWord.cpp
  *  Created on: 31.07.2011
- *      Author: Stefan
- */
+ *      Author: Stefan */
 #include "GermanWord.hpp"
+
+/** https://de.wikipedia.org/wiki/Germanisches_schwaches_Verb :
+*  "Die schwachen Verben sind in den heutigen germanischen Sprachen weitaus 
+ *  zahlreicher als die starken. Im Gegensatz zu letzteren sind sie außerdem 
+ * noch produktiv, d. h. für Neubildungen geeignet.*/
+
+/** see https://de.wikipedia.org/wiki/Regelm%C3%A4%C3%9Figes_Verb
+* "Die Anzahl der regelmäßigen Verben übertrifft diejenige der unregelmäßigen 
+* deutlich. Neubildungen gehen fast immer als regelmäßige Verben in die 
+* deutsche Sprache ein (vgl. surfen, bomben, telefonieren, röntgen usw.). 
+* Trotz ihrer quantitativen Überlegenheit sind sie in Texten seltener 
+* anzutreffen als starke Verben, denn gerade viele der häufig gebrauchten 
+* Verben sind stark." */
 
 /** Definitions of static variables. */
 const char * const GermanVerb::presentPersonEndings [] = {

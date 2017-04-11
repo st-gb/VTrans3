@@ -230,20 +230,21 @@
   #endif
         std::map<unsigned, VocabularyAndTranslation *>::const_iterator
           c_iterPipeIndex2VocAndTranslPtr = voc_containerVocsCreated.begin();
-        std::vector< std::vector <std::string> >::const_iterator c_iterGerman =
+        std::vector< std::vector <std::string> >::const_iterator c_iterGermanVocable =
           germanVocables.begin();
         std::vector<std::string>::const_iterator c_iterGermanWord;
-        while( c_iterGerman != germanVocables.end() && c_iterPipeIndex2VocAndTranslPtr !=
-            voc_containerVocsCreated.end() )
+        while( c_iterGermanVocable != germanVocables.end() && 
+          c_iterPipeIndex2VocAndTranslPtr != voc_containerVocsCreated.end() )
         {
-          const std::vector<std::string> & r_currentVocableWords = ( * c_iterGerman);
+          const std::vector<std::string> & r_currentVocableWords = 
+            ( * c_iterGermanVocable);
 //#ifdef _DEBUG
           const int numGermanWords = r_currentVocableWords.size();
 //#endif
           c_iterGermanWord = r_currentVocableWords.begin();
           VocabularyAndTranslation * p_vocAndTransl =
             c_iterPipeIndex2VocAndTranslPtr->second;
-          const int index = c_iterPipeIndex2VocAndTranslPtr->first;
+          const int pipeIndex = c_iterPipeIndex2VocAndTranslPtr->first;
 
           EnglishWord::English_word_class engWordClass = EnglishWord::
             MapGrammarPartIDtoWordClass(p_vocAndTransl->m_englishWordClass);
@@ -262,12 +263,15 @@
                 const std::string & germanWord = * c_iterGermanWord;
                 LOGN_DEBUG("setting German word \"" << germanWord
                   << "\" for index " << germanWordIndex
-                  << " for pipe index " << index
+                  << " for pipe index " << pipeIndex
                   << " ,vocl&transl ptr " << p_vocAndTransl)
+      //fixed? if e.g. verb has words "moegen" and "mag": then "mag" overwrites "moegen" here.
                 p_vocAndTransl->SetGermanWord(
                     germanWord.c_str(),
                     germanWord.length(),
-                    germanWordIndex);
+                    //germanWordIndex
+                    attributeIndexInsideDictFile
+                    );
 //                ++ germanWordIndex;
 //                if(
 //                    ( p_vocAndTransl->m_englishWordClass ==
@@ -294,7 +298,7 @@
             }
           }
           ++ c_iterPipeIndex2VocAndTranslPtr;
-          ++ c_iterGerman;
+          ++ c_iterGermanVocable;
         }
         LOGN_DEBUG("end")
       }

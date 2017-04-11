@@ -640,7 +640,9 @@ void TranslationControllerBase::Translate(
     r_stdvec_stdvec_stdvecTranslationAndGrammarPart
 //    stdvec_stdvecTranslationAndConsecutiveID
     ) ;
-
+  /** If not clearing and translating different words multiple times or long
+    * texts then the main memory may get exhausted. */
+  s_dictReaderAndVocAccess.GetVocAccess().clearTemporaryEntries();
 //  std::string std_strXML;
   if(! m_vbContinue)
     return;

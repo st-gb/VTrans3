@@ -305,14 +305,50 @@ public:
 //    if( )
 //  }
 
+  static std::string GetPastParticipleForRegularVerb(
+    const std::string & wortStamm)
+  {
+    /** see https://de.wikipedia.org/wiki/Regelm%C3%A4%C3%9Figes_Verb#Regelm.C3.A4.C3.9Fige_Verben_im_Deutschen
+    * If a verb is prepended with a preposition like "ab". "auf", "aus":
+    * an infix  {-ge-} is put inbetween and ends with the past particple of the
+    * verb:
+    * -e.g. for "aussehen"-> aus-geseheN ("geseheN").
+    * -e.g. for "aufzeichnen"->aufgezeichneT ("gezeichneT")
+    * So a separate file with sorted German prepostions would be necessary in 
+    * order to create the past participle fast enough: 
+    *  the dictionary file contains all words (ca.100 000) that would all have 
+    *  to be processed->unfeasable. */
+    //if startsWithPrepostion(wortStamm) )
+   
+    /** If a verb is prepended with a prefix like "ent" then no "ge" is 
+     *  prepended: entscheiden->entschieden.
+     *  (No "ge" also holds for "marschieren" although no prefix.)
+     *  So a separate file with sorted German prefixes would be necessary in 
+     *  order to create the past participle fast enough: 
+     *  the dictionary file contains all words (ca.100 000) that would all have 
+     *  to be processed->unfeasable. */
+    //if(startsWithPrefix(wortStamm) )
+    
+    /** else prepend a "ge" */
+    //else
+  }
+  
+  static std::string GetPastParticiple()
+  {
+    
+  }
+  
   //TODO umlauts: e.g. "laufen" -> du "lÄufst" ("a"->"ä")
   /** @brief Get simple present finite verb form for a person index from a
    *   word stem.
    *  @param person_index: e.g. 2nd person plural */
+  //TODO 3rd pers. sing present of "lieben" gets "liebest"
   static std::string GetPresentFiniteForm(
     const std::string & wortStamm,
     const enum person_indices person_index)
   {
+    //TODO: "gern haben" -> "habe gern"
+    // in general: "gut finden" -> "finde gut"
 //    if( wortStamm.substr(wortStamm.length() - 1, 1) == "h" )
     const char lastChar = *(wortStamm.c_str() + wortStamm.length() - 1);
     switch( lastChar )

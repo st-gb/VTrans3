@@ -51,6 +51,7 @@ namespace VTrans3
             ) {} ;
         void AddVocabularyAttributes(EnglishWord::English_word_class, void*) {};
         void clear();
+        void clearTemporaryEntries();
         fastestUnsignedDataType GetNumberOfAllocatedBytes() { return 0; }
         unsigned GetNumberOfEnglishWords();
         void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType & currentItemNo);
