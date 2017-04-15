@@ -415,31 +415,23 @@ std::string TranslationControllerBase::GetCurrentWorkingDir()
 }
 
 fastestUnsignedDataType TranslationControllerBase::GetNumberOfParseTrees(
-  /** A vector of sentences that begin at the same token index
-  * (sentences that begin at the same token index:
-  * vector of sentences that each contains a vector of words). */
-  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
-    stdvec_stdvec_stdvecTranslationAndGrammarPart
-  )
+  TranslationResult & translationResult )
 {
   fastestUnsignedDataType numParseTrees = 0;
-  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > >::
-    const_iterator c_iterBeginTokenIndexOfParseTree =
-    stdvec_stdvec_stdvecTranslationAndGrammarPart.begin();
+  TranslationResult::const_iterator c_iterBeginTokenIndexOfParseTree =
+    translationResult.begin();
 //    for(fastestUnsignedDataType beginTokenIndexOfParseTree = 0;
 //      beginTokenIndexOfParseTree <
 //      stdvec_stdvec_stdvecTranslationAndGrammarPart.size() ;
 //      ++ beginTokenIndexOfParseTree )
-  while( c_iterBeginTokenIndexOfParseTree !=
-    stdvec_stdvec_stdvecTranslationAndGrammarPart.end() )
+  while( c_iterBeginTokenIndexOfParseTree != translationResult.end() )
   {
-    std::vector <std::vector <TranslationAndGrammarPart> >::const_iterator
+    WordCompoundsAtSameTokenIndex::const_iterator
       c_iterParseTreeAtSameTokenIndex = c_iterBeginTokenIndexOfParseTree->begin();
     while( c_iterParseTreeAtSameTokenIndex !=
         c_iterBeginTokenIndexOfParseTree->end() )
     {
-      std::vector <TranslationAndGrammarPart>::const_iterator
-        c_iterTranslationAndGrammarPart =
+      WordCompound::const_iterator c_iterTranslationAndGrammarPart =
         c_iterParseTreeAtSameTokenIndex->begin();
       while( c_iterTranslationAndGrammarPart != c_iterParseTreeAtSameTokenIndex->end() )
       {
@@ -581,15 +573,7 @@ void TranslationControllerBase::Translate(
 //  ParseByRise & r_parsebyrise ,
   const std::string & cr_stdstrWholeInputText ,
   std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
-
-//  std::vector<std::vector<TranslationAndGrammarPart> > &
-//    r_stdvec_stdvecTranslationAndGrammarPart
-  //A vector of sentences that begin at the same token index
-  // (sentences that begin at the same token index:
-  // vector of sentences that each contains a vector of words).
-  //std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
-  TranslationResult &
-    r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+  TranslationResult & r_translationResult
 //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   )
@@ -598,7 +582,16 @@ void TranslationControllerBase::Translate(
       "begin")
 //  OperatingSystem::GetCurrentTimeInNanoSeconds();
 //    OperatingSystem::GetTimeCountInNanoSeconds();
-  TimeCountInNanosec_type timeCountInNanoSeconds;
+  TimeCountInNanosec_type 
+    timeCountInNanoSecondsBeforeParseTreeGen, 
+    timeCountInNanoSecondsAfterParseTreeGen, 
+    timeCountInNanoSecondsParseTreeGen,
+    timeCountInNanoSecondsBeforeTransforParseTree, 
+    timeCountInNanoSecondsAfterTransforParseTree,
+    timeCountInNanoSecondsTransformParseTree,
+    timeCountInNanoSecondsBeforeTranslRules,
+    timeCountInNanoSecondsAfterTranslRules,
+    timeCountInNanoSecondsApplyTranslRules;
 //#ifdef WIN32
 //  Windows::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
 //#else
@@ -606,12 +599,15 @@ void TranslationControllerBase::Translate(
   ResetVocabularyInMainMemToFundamentalWordsOnly();
 
 //#ifndef __ANDROID__
-  OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSeconds);
+  OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeParseTreeGen);
 //#endif
 //#endif
   if(! m_vbContinue)
     return;
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
+  OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterParseTreeGen);
+  timeCountInNanoSecondsParseTreeGen = timeCountInNanoSecondsAfterParseTreeGen -
+    timeCountInNanoSecondsBeforeParseTreeGen;
 
   std::string std_strIndentedXML = GetParseTreeAsIndentedXML(
     m_parsebyrise);
@@ -621,7 +617,13 @@ void TranslationControllerBase::Translate(
 
   if(! m_vbContinue)
   	return;
+  OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTransforParseTree);
   Transform() ;
+  OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterTransforParseTree);
+  timeCountInNanoSecondsTransformParseTree = 
+    timeCountInNanoSecondsAfterTransforParseTree - 
+    timeCountInNanoSecondsBeforeTransforParseTree;
+  
 //  TranslateParseByRiseTree translateParseByRiseTree(
 //    m_parsebyrise
 //    , ::wxGetApp()
@@ -633,13 +635,17 @@ void TranslationControllerBase::Translate(
 
   if(! m_vbContinue)
   	return;
+  OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTranslRules);
   translateParseByRiseTree.Translate(
     m_parsebyrise,
-    r_stdvec_stdstrWholeTransl ,
-//    r_stdvec_stdvecTranslationAndGrammarPart
-    r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+    r_stdvec_stdstrWholeTransl,
+    r_translationResult
 //    stdvec_stdvecTranslationAndConsecutiveID
     ) ;
+  OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterTranslRules);
+  timeCountInNanoSecondsApplyTranslRules = 
+    timeCountInNanoSecondsAfterTranslRules - timeCountInNanoSecondsBeforeTranslRules;
+  
   /** If not clearing and translating different words multiple times or long
     * texts then the main memory may get exhausted. */
   s_dictReaderAndVocAccess.GetVocAccess().clearTemporaryEntries();

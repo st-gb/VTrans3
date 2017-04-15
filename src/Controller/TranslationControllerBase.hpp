@@ -8,7 +8,6 @@
 #ifndef TRANSLATIONCONTROLLERBASE_HPP_
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
-#include <Attributes/TranslationAndGrammarPart.hpp> //class TranslationAndGrammarPart
 #include <Attributes/TranslationResult.hpp> //class TranslationResult
 #include <Controller/dictionary_type.hpp> //typedef dictionary_type
 #include <Controller/DictReaderAndVocAccess/dictReaderAndVocAccess_type.hpp>
@@ -173,12 +172,7 @@ public:
   std::string GetCurrentWorkingDir();
 
   fastestUnsignedDataType GetNumberOfParseTrees(
-    /** A vector of sentences that begin at the same token index
-    * (sentences that begin at the same token index:
-    * vector of sentences that each contains a vector of words). */
-    std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
-      stdvec_stdvec_stdvecTranslationAndGrammarPart
-    );
+    TranslationResult & translationResult);
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
   bool CurrentThreadIsGUIthread();
@@ -241,14 +235,7 @@ public:
   void Translate(
     const std::string & cr_stdstrWholeInputText ,
     std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
-//    std::vector<std::vector<TranslationAndGrammarPart> > &
-//      r_stdvec_stdvecTranslationAndGrammarPart
-    //A vector of sentences that begin at the same token index
-    // (sentences that begin at the same token index:
-    // vector of sentences that each contains a vector of words).
-    //std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
-    TranslationResult &
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+    TranslationResult & translationResult
     ) ;
 #endif //#ifndef TEST_MINI_XML
 //  virtual void StartTimer();

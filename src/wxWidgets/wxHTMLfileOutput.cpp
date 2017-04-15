@@ -1,9 +1,6 @@
-/*
- * wxHTMLfileOutput.cpp
- *
+/** wxHTMLfileOutput.cpp
  *  Created on: Jun 2, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
@@ -31,13 +28,11 @@ using namespace wxWidgets;
 wxHTMLfileOutput::wxHTMLfileOutput(
 //  const std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    cr_stdvec_stdvecTranslationAndConsecutiveID
-    const std::vector<std::vector<TranslationAndGrammarPart> > &
-      cr_stdvec_stdvecTranslationAndGrammarPart
+    const WordCompoundsAtSameTokenIndex & cr_wordCompoundsAtSameTokenIndex
  )
 // : mcr_stdvec_stdvecTranslationAndConsecutiveID (
 //   cr_stdvec_stdvecTranslationAndConsecutiveID)
-: mcr_stdvec_stdvecTranslationAndGrammarPart(
-  cr_stdvec_stdvecTranslationAndGrammarPart)
+  : mcr_wordCompoundsAtSameTokenIndex(cr_wordCompoundsAtSameTokenIndex)
 {
 
 }
@@ -56,12 +51,12 @@ void wxHTMLfileOutput::GetTokenIndicesForConsecutiveID(
   for( std::vector<std::vector<TranslationAndGrammarPart> >::
       const_iterator c_iter_vec_vecTransl_n_Cons =
 //      mcr_stdvec_stdvecTranslationAndConsecutiveID.begin()
-      mcr_stdvec_stdvecTranslationAndGrammarPart.begin()
+      mcr_wordCompoundsAtSameTokenIndex.begin()
 //      , wTranslationPossibilityIndex = 0
       ;
       c_iter_vec_vecTransl_n_Cons !=
 //        mcr_stdvec_stdvecTranslationAndConsecutiveID.end() ;
-      mcr_stdvec_stdvecTranslationAndGrammarPart.end() ;
+      mcr_wordCompoundsAtSameTokenIndex.end() ;
       ++ c_iter_vec_vecTransl_n_Cons , ++ wTranslationPossibilityIndex )
   {
     wTokenIndex = 0 ;
@@ -90,8 +85,7 @@ void wxHTMLfileOutput::GetTokenIndicesForConsecutiveID(
 void wxHTMLfileOutput::writeFile(
 //  const std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    cr_stdvec_stdvecTranslationAndConsecutiveID
-  const std::vector<std::vector<TranslationAndGrammarPart> > &
-    cr_stdvec_stdvecTranslationAndGrammarPart
+  const WordCompoundsAtSameTokenIndex & cr_wordCompoundsAtSameTokenIndex
   , wxString wxstrFile
   )
 {
@@ -144,16 +138,16 @@ void wxHTMLfileOutput::writeFile(
 //    std::vector<TranslationAndConsecutiveID>::const_iterator ar_c_iter_vec [
 //      cr_stdvec_stdvecTranslationAndConsecutiveID.size() ] ;
     std::vector<TranslationAndGrammarPart>::const_iterator ar_c_iter_vec [
-      cr_stdvec_stdvecTranslationAndGrammarPart.size() ] ;
+      cr_wordCompoundsAtSameTokenIndex.size() ] ;
     //loop for every possibility.
 //    for( std::vector<std::vector<TranslationAndConsecutiveID> >::
     for( std::vector<std::vector<TranslationAndGrammarPart> >::
         const_iterator c_iter_vec_vecTransl_n_Cons =
 //        cr_stdvec_stdvecTranslationAndConsecutiveID.begin() ;
-        cr_stdvec_stdvecTranslationAndGrammarPart.begin() ;
+        cr_wordCompoundsAtSameTokenIndex.begin() ;
         c_iter_vec_vecTransl_n_Cons !=
 //          cr_stdvec_stdvecTranslationAndConsecutiveID.end() ;
-        cr_stdvec_stdvecTranslationAndGrammarPart.end() ;
+        cr_wordCompoundsAtSameTokenIndex.end() ;
         ++ c_iter_vec_vecTransl_n_Cons , ++ wIndex )
     {
       ar_c_iter_vec[wIndex] = c_iter_vec_vecTransl_n_Cons->begin() ;
@@ -175,12 +169,12 @@ void wxHTMLfileOutput::writeFile(
       for( std::vector<std::vector<TranslationAndGrammarPart> >::
           const_iterator c_iter_vec_vecTransl_n_Cons =
 //          cr_stdvec_stdvecTranslationAndConsecutiveID.begin()
-          cr_stdvec_stdvecTranslationAndGrammarPart.begin()
+          cr_wordCompoundsAtSameTokenIndex.begin()
 //          , wTranslationPossibilityIndex = 0
           ;
           c_iter_vec_vecTransl_n_Cons !=
 //            cr_stdvec_stdvecTranslationAndConsecutiveID.end() ;
-          cr_stdvec_stdvecTranslationAndGrammarPart.end() ;
+          cr_wordCompoundsAtSameTokenIndex.end() ;
           ++ c_iter_vec_vecTransl_n_Cons , ++ wTranslationPossibilityIndex )
       {
         if( ar_c_iter_vec[wTranslationPossibilityIndex] !=

@@ -155,8 +155,7 @@ EXPORT BYTE
 //  stdstrAllPossibilities += "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
 //    "<sentences>";
 //  //Loop for all sentenceS beginning at the same token index.
-//  for( std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
-//      ::const_iterator
+//  for( TranslationResult::const_iterator
 //      c_iter_stdvec_stdvec_translationandgrammarpartSentenceAtSameTokenIndex =
 //      stdvec_stdvecTranslationAndGrammarPart.begin() ;
 //      c_iter_stdvec_stdvec_translationandgrammarpartSentenceAtSameTokenIndex !=
@@ -166,8 +165,7 @@ EXPORT BYTE
 //  {
 //    stdstrAllPossibilities += "<sentence>";
 //    //Loop for each word vector of sentence beginn.
-//    for( std::vector <std::vector <TranslationAndGrammarPart> >::
-//        const_iterator
+//    for( WordCompoundsAtSameTokenIndex::const_iterator
 //        c_iter_stdvec_WordAtSameTokenIndex =
 //        c_iter_stdvec_stdvec_translationandgrammarpartSentenceAtSameTokenIndex->begin() ;
 //        c_iter_stdvec_WordAtSameTokenIndex !=
@@ -176,8 +174,7 @@ EXPORT BYTE
 //        )
 //    {
 //      //Loop for each word beginning at the same .
-//      for( std::vector <TranslationAndGrammarPart> ::
-//          const_iterator
+//      for( WordCompound::const_iterator
 //          c_iter_stdvec_Word =
 //            c_iter_stdvec_WordAtSameTokenIndex->begin() ;
 //          c_iter_stdvec_Word !=
@@ -222,13 +219,11 @@ EXPORT /*char * */ void TranslateAsXML(const char * p_chEnglishText//,
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
   std::vector<std::string> stdvec_stdstrWholeTransl;
-//  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
-//    stdvec_stdvecTranslationAndGrammarPart;
   TranslationResult translationResult;
   g_p_translationcontrollerbase->Translate(
     stdstrWholeInputText,
     stdvec_stdstrWholeTransl,
-    /*stdvec_stdvecTranslationAndGrammarPart*/ translationResult
+    translationResult
     );
 
   stdstrAllPossibilities = "";
@@ -275,8 +270,6 @@ EXPORT char * Translate(const char * p_chEnglishText)
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
   std::vector<std::string> stdvec_stdstrWholeTransl;
-//  std::vector< std::vector <std::vector <TranslationAndGrammarPart> > >
-//    stdvec_stdvecTranslationAndGrammarPart;
   TranslationResult translationResult;
   g_p_translationcontrollerbase->Translate(
     stdstrWholeInputText,

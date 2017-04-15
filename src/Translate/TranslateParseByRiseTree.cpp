@@ -792,14 +792,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
 //  , std::string & stdstrWholeTransl
   //,
   std::vector<std::string> & r_stdvec_stdstrWholeTransl
-//  //A vector of sentences that each contains a vector of words.
-//  , std::vector<std::vector<TranslationAndGrammarPart> > &
-//    r_stdvec_stdvecTranslationAndGrammarPart
-  //A vector of sentences that begin at the same token index
-  // (sentences that begin at the same token index:
-  // vector of sentences that each contains a vector of words).
-  , std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
-    r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+  , TranslationResult & r_translationResult
 //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   , ProcessParseTree_type pfnProcessParseTree
@@ -808,7 +801,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
   ParseByRise * p_parsebyrise = //& r_parsebyrise ;
     mp_parsebyrise;
   //  std::string stdstrWholeTransl ;
-  std::string stdstrTranslation ;
+//  std::string stdstrTranslation ;
   std::vector<GrammarPart *>
     stdvec_p_grammarpartCoveringMostTokensAtTokenIndex ;
   LOGN_DEBUG( "begin" )
@@ -850,9 +843,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
   #endif //#ifdef _DEBUG
   //      WORD wConsecutiveID = 0 ;
 
-      //A vector of sentences that each contains a vector of words.
-      std::vector<std::vector<TranslationAndGrammarPart> >
-        stdvec_stdvecTranslationAndGrammarPart;
+      WordCompoundsAtSameTokenIndex wordCompoundsAtSameTokenIndex;
       //Loop over all parse trees beginning at token index
       //"dwLeftMostTokenIndex".
       for( std::vector<GrammarPart *>::const_iterator
@@ -866,11 +857,11 @@ void TranslateParseByRiseTree::ProcessParseTree(
         //( * this->pfnProcessParseTree)
         (this->* pfnProcessParseTree)(
           * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
-          stdvec_stdvecTranslationAndGrammarPart);
+          wordCompoundsAtSameTokenIndex);
       } //loop for all parse trees beginning at same token index
 
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart.push_back(
-        stdvec_stdvecTranslationAndGrammarPart);
+      r_translationResult.push_back(
+        wordCompoundsAtSameTokenIndex);
 
       if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
         dwLeftMostTokenIndex = 0;
@@ -893,15 +884,7 @@ void TranslateParseByRiseTree::Translate(
   ParseByRise & r_parsebyrise
 //  , std::string & stdstrWholeTransl
   , std::vector<std::string> & r_stdvec_stdstrWholeTransl
-
-//  //A vector of sentences that each contains a vector of words.
-//  , std::vector<std::vector<TranslationAndGrammarPart> > &
-//    r_stdvec_stdvecTranslationAndGrammarPart
-  //A vector of sentences that begin at the same token index
-  // (sentences that begin at the same token index:
-  // vector of sentences that each contains a vector of words).
-  , TranslationResult &
-    r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+  , TranslationResult & r_translationResult
 //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   )
@@ -909,13 +892,13 @@ void TranslateParseByRiseTree::Translate(
   LOGN_DEBUG(//"TranslateParseByRiseTree::Translate(...) "
     "begin")
   /** May not be empty from previous translations. */
-  r_stdvec_stdvec_stdvecTranslationAndGrammarPart.clear ();
+  r_translationResult.clear ();
 //  BYTE byPersonIndex ;
   ProcessParseTree(
 //    r_parsebyrise,
     r_stdvec_stdstrWholeTransl,
-    r_stdvec_stdvec_stdvecTranslationAndGrammarPart,
-    //(TranslateParseTree)()//r_stdvec_stdvec_stdvecTranslationAndGrammarPart)
+    r_translationResult,
+    //(TranslateParseTree)()//r_translationResult)
     //syntax ( "& >>class name<<::>>method name<<" from
     //see http://stackoverflow.com/questions/4832275/c-typedef-member-function-signature-syntax
     & TranslateParseByRiseTree::TranslateParseTree
@@ -928,9 +911,7 @@ void TranslateParseByRiseTree::Translate(
 #ifdef COMPILE_AS_EXECUTABLE //only needed in GUI
 void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
   GrammarPart * p_grammarpart
-  //A vector of sentences that each contains a vector of words.
-  , std::vector<std::vector<TranslationAndGrammarPart> > &
-    r_stdvec_stdvecTranslationAndGrammarPart
+  , WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
   )
 {
   ParseTreeTraverser::TestIfTranslationRuleApplies
@@ -949,10 +930,8 @@ void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
 void TranslateParseByRiseTree::TranslateParseTree(
 //  std::vector<GrammarPart *>::const_iterator
 //    c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-  GrammarPart * p_grammarpart
-  //A vector of sentences that each contains a vector of words.
-  , std::vector<std::vector<TranslationAndGrammarPart> > &
-    r_stdvec_stdvecTranslationAndGrammarPart
+  GrammarPart * p_grammarpart,
+  WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
   )
 {
 #ifdef _DEBUG
@@ -998,7 +977,7 @@ void TranslateParseByRiseTree::TranslateParseTree(
 //  r_stdvec_stdstrWholeTransl.push_back( //translatetreetraverser.
 //    translated_treetraverser.
 //    m_std_strWholeTranslation) ;
-  r_stdvec_stdvecTranslationAndGrammarPart.push_back(
+  r_wordCompoundsAtSameTokenIndex.push_back(
     //      r_stdvec_stdvecTranslationAndConsecutiveID.push_back(
     //          translatetreetraverser.m_stdvecTranslationAndGrammarPart
     translated_treetraverser.m_std_vector_translationandgrammarpart

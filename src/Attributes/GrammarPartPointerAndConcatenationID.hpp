@@ -14,6 +14,9 @@
 class GrammarPartPointerAndConcatenationID
 {
 public:
+  //TODO maybe exchange integer type to fastestUnsignedDataType for performance reasons
+  /** all IDs with this value should not be connected. */
+  static const uint32_t s_defaultConcatenationID = 0;
   const GrammarPart * m_p_grammarpartToken;
   uint32_t m_ui32ConcatenationID;
 

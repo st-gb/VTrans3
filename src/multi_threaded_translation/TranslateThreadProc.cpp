@@ -25,26 +25,22 @@ namespace VTrans
         try
         {
         std::vector<std::string> stdvec_stdstrWholeTransl ;
-      //  std::vector<std::vector<TranslationAndGrammarPart> >
-      //    stdvec_stdvecTranslationAndGrammarPart ;
         
-        long double timeCountInSecondsBegin;
-        OperatingSystem::GetTimeCountInSeconds(timeCountInSecondsBegin);
+        long double timeCountInSecondsBeforeTranslation;
+        OperatingSystem::GetTimeCountInSeconds(timeCountInSecondsBeforeTranslation);
         p_translateParameters->m_p_translationControllerBase->Translate(
           p_translateParameters->m_std_strWholeInputText ,
           stdvec_stdstrWholeTransl ,
-        //    stdvec_stdvecTranslationAndGrammarPart
-          //stdvec_stdvec_stdvecTranslationAndGrammarPart
           * p_translateParameters->m_p_translationResult
           );
         
         if( p_translateParameters->m_p_translationControllerBase->m_vbContinue )
         {
-          long double timeCountInSeconds;
-          OperatingSystem::GetTimeCountInSeconds(timeCountInSeconds);
+          long double timeCountInSecondsAfterTranslation;
+          OperatingSystem::GetTimeCountInSeconds(timeCountInSecondsAfterTranslation);
           p_translateParameters->m_p_translationControllerBase->
-            m_translationDurationInSeconds = timeCountInSeconds -
-            timeCountInSecondsBegin;
+            m_translationDurationInSeconds = timeCountInSecondsAfterTranslation -
+            timeCountInSecondsBeforeTranslation;
           p_translateParameters->//p_translationControllerBase
             m_p_i_userInterface->
             UpdateAfterTranslation();

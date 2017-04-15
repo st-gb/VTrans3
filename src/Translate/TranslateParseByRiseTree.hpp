@@ -1,9 +1,6 @@
-/*
- * TranslateParseByRiseTree.h
- *
+/** TranslateParseByRiseTree.h
  *  Created on: 25.02.2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #ifndef TRANSLATEPARSEBYRISETREE_H_
 #define TRANSLATEPARSEBYRISETREE_H_
@@ -14,7 +11,8 @@
 #include <windef.h> //DWORD
 //#include "SyntaxTreePath.hpp"
 #include "ConditionsAndTranslation.hpp" //class ConditionsAndTranslation
-#include <Attributes/TranslationResult.hpp> //class TranslationResult
+/** class TranslationResult, typedef WordCompoundsAtSameTokenIndex */
+#include <Attributes/TranslationResult.hpp>
 //#include "TranslationRule.hpp"
 
 //use  a power of 2 in order to enable all values at the same time
@@ -26,14 +24,14 @@
 #define SECOND_PERSON_PLURAL 16 //2^4 = 16
 #define THIRD_PERSON_PLURAL 32 //2^5 = 32
 
-//Forward declarations
+/** Forward declarations (faster than to include header file) */
 class AttributeTypeAndPosAndSize ;
 class GrammarPart ;
 class I_UserInterface ;
 class ParseByRise ;
-class TranslationAndGrammarPart ;
 class TranslationAndConsecutiveID ;
 class TranslationRule ;
+//class TranslationResult;
 
 //Translates the parse tree of type "ParseByRise"
 class TranslateParseByRiseTree
@@ -146,21 +144,13 @@ public:
 //    TranslateParseByRiseTree *,
   //  std::vector<GrammarPart *>::const_iterator
   //    c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-    GrammarPart *
-    , std::vector<std::vector<TranslationAndGrammarPart> > &
-      r_stdvec_stdvecTranslationAndGrammarPart
+    GrammarPart *,
+    WordCompoundsAtSameTokenIndex &
     ) ;
 
   void ProcessParseTree(
     std::vector<std::string> & r_stdvec_stdstrWholeTransl
-  //  //A vector of sentences that each contains a vector of words.
-  //  , std::vector<std::vector<TranslationAndGrammarPart> > &
-  //    r_stdvec_stdvecTranslationAndGrammarPart
-    //A vector of sentences that begin at the same token index
-    // (sentences that begin at the same token index:
-    // vector of sentences that each contains a vector of words).
-    , std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+    , TranslationResult & r_translationResult
   //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
   //    r_stdvec_stdvecTranslationAndConsecutiveID
     , ProcessParseTree_type pfnProcessParseTree
@@ -169,14 +159,7 @@ public:
   void Translate( ParseByRise & r_parsebyrise
 //    , std::string & stdstrWholeTransl
     , std::vector<std::string> & r_stdvec_stdstrWholeTransl
-//    //The outer vector is for the different translation possibilities ;
-//    , std::vector<std::vector<TranslationAndGrammarPart> > &
-//      r_stdvec_stdvecTranslationAndGrammarPart
-    //A vector of sentences that begin at the same token index
-    // (sentences that begin at the same token index:
-    // vector of sentences that each contains a vector of words).
-    , TranslationResult &
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart
+    , TranslationResult & r_translationResult
 //    , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //      r_stdvec_stdvecTranslationAndConsecutiveID
     ) ;
@@ -184,19 +167,15 @@ public:
   void TestIfTranslationRuleApplies(
     //    std::vector<GrammarPart *>::const_iterator
     //      c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-    GrammarPart * p_grammarpart
-    //A vector of sentences that each contains a vector of words.
-    , std::vector<std::vector<TranslationAndGrammarPart> > &
-      r_stdvec_stdvecTranslationAndGrammarPart
+    GrammarPart * p_grammarpart,
+    WordCompoundsAtSameTokenIndex &
     );
 #endif //#ifdef COMPILE_AS_EXECUTABLE
   void TranslateParseTree(
 //    std::vector<GrammarPart *>::const_iterator
 //      c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-    GrammarPart * p_grammarpart
-    //A vector of sentences that each contains a vector of words.
-    , std::vector<std::vector<TranslationAndGrammarPart> > &
-      r_stdvec_stdvecTranslationAndGrammarPart
+    GrammarPart * p_grammarpart,
+    WordCompoundsAtSameTokenIndex &
     );
   bool TranslationRuleApplies(
     std::string & r_stdstrTranslation

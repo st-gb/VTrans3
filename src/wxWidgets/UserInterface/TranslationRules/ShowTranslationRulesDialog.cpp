@@ -120,14 +120,7 @@ namespace VTrans
     wxGetApp().GetSourceText( stdstrWholeInputText) ;
     wxGetApp().m_parsebyrise.CreateParseTree(stdstrWholeInputText);
     std::vector<std::string> r_stdvec_stdstrWholeTransl;
-  //  //A vector of sentences that each contains a vector of words.
-  //  , std::vector<std::vector<TranslationAndGrammarPart> > &
-  //    r_stdvec_stdvecTranslationAndGrammarPart
-    //A vector of sentences that begin at the same token index
-    // (sentences that begin at the same token index:
-    // vector of sentences that each contains a vector of words).
-    std::vector <std::vector <std::vector <TranslationAndGrammarPart> > >
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart;
+    TranslationResult r_translationResult;
     wxGetApp().m_translateparsebyrisetree.m_bTranslationRuleApplies = false;
 
     wxGetApp().m_p_showtranslationrulesdialog = this;
@@ -136,7 +129,7 @@ namespace VTrans
     wxGetApp().m_translateparsebyrisetree.ProcessParseTree(
   //    r_parsebyrise,
       r_stdvec_stdstrWholeTransl,
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart,
+      r_translationResult,
       //(TranslateParseTree)()//r_stdvec_stdvec_stdvecTranslationAndGrammarPart)
       //syntax ( "& >>class name<<::>>method name<<" from
       //see http://stackoverflow.com/questions/4832275/c-typedef-member-function-signature-syntax

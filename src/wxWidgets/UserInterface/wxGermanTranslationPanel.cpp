@@ -49,24 +49,38 @@ wxGermanTranslationPanel::wxGermanTranslationPanel()
 //    );
 //  p_wxchoice->Get
 //  Add()
+ 
+  /** http://docs.wxwidgets.org/trunk/classwx_auto_buffered_paint_d_c.html : 
+  *  "Just use this class instead of wxPaintDC and make sure 
+  * wxWindow::SetBackgroundStyle() is called with wxBG_STYLE_PAINT somewhere 
+  * in the class initialization code, and that's all you have to do to (mostly) 
+  * avoid flicker.*/
+//  SetBackgroundStyle(wxBG_STYLE_PAINT);
+//  SetBackgroundColour(*wxWHITE);
 }
 
+/** Called by translation thread and OnSize. */
 void wxGermanTranslationPanel::Create()
 {
   LOGN_DEBUG("begin")
   m_wxrectClient = GetClientRect();
-  if( IsDoubleBuffered() )
-  {
-    //m_wxclientdc.Set
-    wxClientDC clientdc(this);
-    DrawTranslationAndCreateChoices(clientdc);
-  }
-  else
+//  if( IsDoubleBuffered() )
+//  {
+//    //m_wxclientdc.Set
+//    wxClientDC clientdc(this);
+//    DrawTranslationAndCreateChoices(clientdc);
+//  }
+//  else
+  
+  /** Avoid wxwidgets DEBUG message: 
+   *  "assert "width >= 1 && height >= 1" failed in wxDoFloodFill(): 
+   * In FloodFill, dc.GetSize routine failed, method not supported by this DC"*/
+  if( m_wxrectClient.GetWidth() > 0 && m_wxrectClient.GetHeight() > 0 )
   {
     LOGN_DEBUG("width:" << m_wxrectClient.width << " height:" <<
       m_wxrectClient.height)
     const bool creationSucceeded = m_wxbitmapForMemoryDC.Create(
-      m_wxrectClient.width, m_wxrectClient.height, -1);
+      m_wxrectClient.width, m_wxrectClient.height, wxBITMAP_SCREEN_DEPTH);
     /** Only works with local wxMemoryDC object, not with member variable. */
     wxMemoryDC wxmemorydc(m_wxbitmapForMemoryDC);
     /** http://docs.wxwidgets.org/trunk/classwx_memory_d_c.html#a93d218796ba9359eb4aec2ae46a813e6:
@@ -121,8 +135,7 @@ void wxGermanTranslationPanel::Create()
 }
 
 void GetTokenIndex2TranslationAndConcatenationID(
-  const std::vector<std::vector<TranslationAndGrammarPart> > &
-    r_std_vector_stdvecTranslationAndGrammarPart,
+  const WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex,
 //  std::multimap<unsigned, TranslationAndConcatenationID> &
 //    std_map_uiTokenIndex2translationandconcatenationid
   std::multimap<unsigned, GrammarPartPointerAndConcatenationID> &
@@ -130,17 +143,16 @@ void GetTokenIndex2TranslationAndConcatenationID(
   )
 {
   unsigned uiTokenIndex = 0;
-  std::vector<std::vector<TranslationAndGrammarPart> >::const_iterator c_iter =
+  WordCompoundsAtSameTokenIndex::const_iterator c_iterWordCompound =
     //m_std_vector_stdvecTranslationAndGrammarPart.begin();
-    r_std_vector_stdvecTranslationAndGrammarPart.begin();
-  while( c_iter != //m_std_vector_stdvecTranslationAndGrammarPart.end()
-      r_std_vector_stdvecTranslationAndGrammarPart.end()
+    r_wordCompoundsAtSameTokenIndex.begin();
+  while( c_iterWordCompound != //m_std_vector_stdvecTranslationAndGrammarPart.end()
+      r_wordCompoundsAtSameTokenIndex.end()
       )
   {
-    std::vector<TranslationAndGrammarPart>::const_iterator
-      c_iterInner = c_iter->begin();
+    WordCompound::const_iterator c_iterWord = c_iterWordCompound->begin();
     uiTokenIndex = 0;
-    while( c_iterInner != c_iter->end() )
+    while( c_iterWord != c_iterWordCompound->end() )
     {
 //        std_map_ui2std_str.insert(
 //          std::make_pair(
@@ -161,31 +173,37 @@ void GetTokenIndex2TranslationAndConcatenationID(
           std::make_pair(
             uiTokenIndex,
             GrammarPartPointerAndConcatenationID(
-              c_iterInner->mp_grammarpart,
-              c_iterInner->mp_grammarpart->m_ui32ConcatenationID
+              c_iterWord->mp_grammarpart,
+              c_iterWord->mp_grammarpart->m_ui32ConcatenationID
               )
             )
           );
       ++ uiTokenIndex;
-      ++ c_iterInner;
+      ++ c_iterWord;
     }
-    ++ c_iter;
+    ++ c_iterWordCompound;
   }
 }
 
 void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
 //  * c_iterAllSentencesAtSameTokenIndex
-  const std::vector<std::vector<TranslationAndGrammarPart> > &
-     std_vector_stdvecTranslationAndGrammarPart,
+  const WordCompoundsAtSameTokenIndex & wordCompoundsAtSameTokenIndex,
    wxDC & r_wxdc,
    wxCoord & wxcoordX,
    wxCoord & wxcoordY
   )
 {
   LOGN_DEBUG("begin")
+  //TODO? connects false "geht|spukt" with "das|der" "Auto|Wagen" in
+  //  "das|der" "Auto|Wagen" "geht|spukt"
+  //A choice may only be connected to another choice if:
+  //-they influence each other: so an article influences a noun
+  // this is determined by _translation_ rules?! : these specify whether
+  //  an article in bound to a noun or not:
+  //  the car   -> "das Auto" "der Pkw"
+  //  \ /
+  // defArt_Noun
   unsigned uiTokenIndex = 0;
-//  std::vector<std::vector<TranslationAndGrammarPart> >
-//     std_vector_stdvecTranslationAndGrammarPart;
 
 //  std::multimap<unsigned, TranslationAndConcatenationID>
 //    std_map_uiTokenIndex2translationandconcatenationid;
@@ -194,7 +212,7 @@ void wxGermanTranslationPanel::DrawParseTreesAtSameTokenIndex(
 
   GetTokenIndex2TranslationAndConcatenationID(
 //    * c_iterAllSentencesAtSameTokenIndex,
-    std_vector_stdvecTranslationAndGrammarPart,
+    wordCompoundsAtSameTokenIndex,
 //    std_map_uiTokenIndex2translationandconcatenationid
     std_multimap_uiTokenIndex2grammarpartpointerandconcatenationid
     );
@@ -314,21 +332,21 @@ void wxGermanTranslationPanel::DrawParseTreesFromLeaves(wxDC & r_wxdc)
   LOGN_DEBUG("begin")
   wxCoord wxcoordX = 0;
   wxCoord wxcoordY = 0;
-  std::vector<std::vector<std::vector<TranslationAndGrammarPart> > >
-    ::const_iterator c_iterAllSentencesAtSameTokenIndex =
-    m_stdvec_stdvec_stdvecTranslationAndGrammarPart.begin();
+  TranslationResult::const_iterator c_iterWordCompoundsAtSameTokenIndex =
+    m_translationResult.begin();
 
-  while(c_iterAllSentencesAtSameTokenIndex !=
-    m_stdvec_stdvec_stdvecTranslationAndGrammarPart.end()
+  while(c_iterWordCompoundsAtSameTokenIndex != m_translationResult.end()
     )
   {
-    DrawParseTreesAtSameTokenIndex(* c_iterAllSentencesAtSameTokenIndex
+    DrawParseTreesAtSameTokenIndex(* c_iterWordCompoundsAtSameTokenIndex
       , r_wxdc, wxcoordX, wxcoordY);
-    ++ c_iterAllSentencesAtSameTokenIndex;
+    ++ c_iterWordCompoundsAtSameTokenIndex;
   }
   LOGN_DEBUG("end")
 }
 
+/** This method must NOT be called from EVT_PAINT because controls are created 
+  * that create an EVT_PAINT itself -> endless EVT_PAINT loop. */
 void wxGermanTranslationPanel::DrawTranslationAndCreateChoices(wxDC & r_wxdc)
 {
   LOGN_DEBUG("begin")
@@ -379,7 +397,7 @@ void wxGermanTranslationPanel::DrawTranslationFromAllParseTrees(wxDC & r_wxdc)
 //  int x = 0;
 //  wxCoord wxcoordY = 0;
 
-//  std::vector<std::vector<TranslationAndGrammarPart> >::const_iterator c_iter =
+//  WordCompoundAtSameTokenIndex::const_iterator c_iter =
 //    m_std_vector_stdvecTranslationAndGrammarPart.begin();
 //  while( c_iter != m_std_vector_stdvecTranslationAndGrammarPart.end() )
 //  {
@@ -568,6 +586,8 @@ void wxGermanTranslationPanel::AddChoice(
   wxcoordYBottom = wxcoordY + wxsizeChoiceControl.GetHeight() + 2;
   if( bConnectedControl )
   {
+//    LOGN_DEBUG("created choice " << p_wxchoice << " with elements:" 
+//      << wxarraystringTranslation << "concatenation ID:" << ui32ConcatenationID )
     Connect( wxwindowid, wxEVT_COMMAND_CHOICE_SELECTED,
       wxCommandEventHandler(
         wxGermanTranslationPanel::SelectConnectedListEntries) );
@@ -624,7 +644,8 @@ void wxGermanTranslationPanel::PossiblyAddChoice(
     const GrammarPartPointerAndConcatenationID * p = 
       & (* c_iter_std_set_grammarpartpointerandconcatenationid);
 #endif
-    if( ui32ConcatenationID != 65535 )
+    if( ui32ConcatenationID != /*65535*/ 
+        GrammarPartPointerAndConcatenationID::s_defaultConcatenationID )
     {
       wxwindowid = ++ m_wxwindowidCurrent;
       bConnectedControl = true;
@@ -818,12 +839,14 @@ void wxGermanTranslationPanel::OnEraseBackground(wxEraseEvent & event)
   //Do nothing (else the choices are overdrawn by the default erase procedure?!)
 }
 
-/** http://www.informit.com/articles/article.aspx?p=405047 :
+/** @brief : http://www.informit.com/articles/article.aspx?p=405047 :
  *  "Paint events are generated when user interaction causes regions to need 
  *  repainting, but they can also be generated as a result of wxWindow::Refresh 
  *  or wxWindow::RefreshRect calls."
+ * 
  *  WARNING: controls MUST NOT be created inside this function, else creation 
  *  leads to a redraw which in turn leads to a paint event (->endless loop) */
+//https://wiki.wxwidgets.org/Drawing_on_a_panel_with_a_DC
 void wxGermanTranslationPanel::OnPaint(wxPaintEvent & event)
 {
   LOGN_DEBUG("begin")
@@ -831,7 +854,19 @@ void wxGermanTranslationPanel::OnPaint(wxPaintEvent & event)
    *  "If you define a paint event handler, you must always create a wxPaintDC 
    * object, even if you don't use it." */
   wxPaintDC wxpaintdc(this);
-  //wxAutoBufferedPaintDC wxAutoBufferedPaintDC(this);
+  /** http://docs.wxwidgets.org/trunk/classwx_auto_buffered_paint_d_c.html : 
+   *  "This wxDC derivative can be used inside of an EVT_PAINT() event handler 
+   *  to achieve double-buffered drawing.
+   *  Just use this class instead of wxPaintDC and make sure 
+   *  wxWindow::SetBackgroundStyle() is called with wxBG_STYLE_PAINT somewhere 
+   *  in the class initialization code, and that's all you have to do to 
+   *  (mostly) avoid flicker.
+   *  "The difference between wxBufferedPaintDC and this class is that this 
+   *  class won't double-buffer on platforms which have native double-buffering 
+   *  already, avoiding any unnecessary buffering to avoid flicker." */
+//  wxAutoBufferedPaintDC wxAutoBufferedPaintDC(this);
+  
+//  SetBackgroundColour(*wxWHITE);
 
   //http://www.informit.com/articles/article.aspx?p=405047
 //  wxBufferedPaintDC dc(this);
@@ -846,13 +881,13 @@ void wxGermanTranslationPanel::OnPaint(wxPaintEvent & event)
   * about the current scroll position ourselves */
 //  PrepareDC(dc);
   
-  if( IsDoubleBuffered() )
-    //wxpaintdc.Blit(0,0, m_wxrectClient.width, m_wxrectClient.height, 
-    //  & m_wxclientdc, 0, 0);
-    ;
-  else
+//  if( IsDoubleBuffered() )
+//    //wxpaintdc.Blit(0,0, m_wxrectClient.width, m_wxrectClient.height, 
+//    //  & m_wxclientdc, 0, 0);
+//  else
     DrawMemoryDCbitmap(wxpaintdc /*wxAutoBufferedPaintDC*/);
-//  DrawTranslationAndCreateChoices(dc);
+//  DrawTranslationAndCreateChoices(wxpaintdc);
+//  DrawTranslationAndCreateChoices(wxAutoBufferedPaintDC);
   LOGN_DEBUG("end")
 }
 

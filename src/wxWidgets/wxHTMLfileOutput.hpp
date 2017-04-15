@@ -1,9 +1,6 @@
-/*
- * wxHTMLfileOutput.h
- *
+/** wxHTMLfileOutput.h
  *  Created on: Jun 2, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan  */
 
 #ifndef WXHTMLFILEOUTPUT_H_
 #define WXHTMLFILEOUTPUT_H_
@@ -12,6 +9,7 @@
 #include <vector>//class std::vector
 #include <string>//class std::string
 #include <windef.h> //WORD
+#include <Attributes/TranslationResult.hpp> //WordCompoundsAtSameTokenIndex
 
 class TranslationAndConsecutiveID ;
 class TranslationAndGrammarPart ;
@@ -20,14 +18,13 @@ class wxHTMLfileOutput
 {
 //  const std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    mcr_stdvec_stdvecTranslationAndConsecutiveID ;
-  const std::vector<std::vector<TranslationAndGrammarPart> > &
-    mcr_stdvec_stdvecTranslationAndGrammarPart ;
+  //TODO doesn't it need to be of type "TranslationResult"?
+  const WordCompoundsAtSameTokenIndex & mcr_wordCompoundsAtSameTokenIndex ;
 public:
   wxHTMLfileOutput(
 //    const std::vector<std::vector<TranslationAndConsecutiveID> > &
 //      cr_stdvec_stdvecTranslationAndConsecutiveID
-    const std::vector<std::vector<TranslationAndGrammarPart> > &
-      cr_stdvec_stdvecTranslationAndGrammarPart
+    const WordCompoundsAtSameTokenIndex &
     );
   virtual
   ~wxHTMLfileOutput();
@@ -40,8 +37,7 @@ public:
   void writeFile(
 //    const std::vector<std::vector<TranslationAndConsecutiveID> > &
 //      cr_stdvec_stdvecTranslationAndConsecutiveID
-    const std::vector<std::vector<TranslationAndGrammarPart> > &
-      cr_stdvec_stdvecTranslationAndGrammarPart
+    const WordCompoundsAtSameTokenIndex &
     , wxString wxstrFile
   ) ;
 

@@ -19,6 +19,7 @@
 //#include <wx/textctrl.h>
 #include <wxWidgets/UserInterface/MainWindow/MainWindowBase.hpp>
 #include <wxWidgets/VTransApp.hpp> //wxGetApp()
+#include <Attributes/TranslationResult.hpp>//WordCompoundsAtSameTokenIndex
 
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 //#include <wxWidgets/wxParseTreePanel.hpp> //class wxParseTreePanel
@@ -62,8 +63,9 @@ public:
     ~wxTextInputDlg();
     std::string GetAllTranslationPossibilites(
       const std::vector<std::string> & stdvec_stdstrWholeTransl,
-      const std::vector<std::vector<TranslationAndGrammarPart> > &
-        stdvec_stdvecTranslationAndGrammarPart);
+      //TODO doesn't it have to be class TranslationResult?
+      const WordCompoundsAtSameTokenIndex &
+      );
     bool Show(bool show)
     {
       wxDialog::Show(show);

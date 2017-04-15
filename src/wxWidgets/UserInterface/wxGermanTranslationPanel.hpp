@@ -1,9 +1,6 @@
-/*
- * wxGermanTranslationPanel.hpp
- *
+/** wxGermanTranslationPanel.hpp
  *  Created on: 12.08.2011
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #ifndef WXGERMANTRANSLATIONPANEL_HPP_
 #define WXGERMANTRANSLATIONPANEL_HPP_
@@ -18,15 +15,16 @@
 #include <Attributes/GrammarPartPointerAndConcatenationID.hpp>
 ////class TranslationAndConcatenationID
 //#include <Attributes/TranslationAndConcatenationID.hpp>
-//class TranslationAndGrammarPart
-#include <Attributes/TranslationAndGrammarPart.hpp>
+/** class TranslationResult, typedef WordCompoundsAtSameTokenIndex */
+#include <Attributes/TranslationResult.hpp>
 
 #include <map> //class std::multimap
 #include <set> //class std::set
 #include <vector> //class std::vector
 
-//forward decl.
+/** forward declarations */
 class wxChoice;
+//class TranslationResult;
 
 //see http://wiki.wxwidgets.org/Painting_your_custom_control
 class wxGermanTranslationPanel
@@ -43,13 +41,7 @@ class wxGermanTranslationPanel
   //a conc. ID may be connect to 2 or more choices.
   std::multimap<uint32_t,wxChoice *>
     m_std_multimap_ui32ConcatenationID2p_wxchoice;
-//  std::vector<std::vector<TranslationAndGrammarPart> >
-//    m_std_vector_stdvecTranslationAndGrammarPart;
-  //A vector of sentences that begin at the same token index
-  // (sentences that begin at the same token index:
-  // vector of sentences that each contains a vector of words).
-  std::vector <std::vector <std::vector <TranslationAndGrammarPart> > >
-    m_stdvec_stdvec_stdvecTranslationAndGrammarPart;
+  TranslationResult m_translationResult;
 
   std::vector<std::vector<GrammarPart *> > *
     m_p_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex;
@@ -92,8 +84,7 @@ public:
   void Create();
   void DrawParseTreesAtSameTokenIndex(
   //  * c_iterAllSentencesAtSameTokenIndex
-    const std::vector<std::vector<TranslationAndGrammarPart> > &
-       std_vector_stdvecTranslationAndGrammarPart,
+    const WordCompoundsAtSameTokenIndex &,
      wxDC & r_wxdc,
      wxCoord & wxcoordX,
      wxCoord & wxcoordY
@@ -113,20 +104,9 @@ public:
     wxCoord & wxcoordY
     );
   void SelectConnectedListEntries(wxCommandEvent & event);
-  void Set(
-//    const std::vector<std::vector<TranslationAndGrammarPart> >
-//      & c_r_std_vector_stdvecTranslationAndGrammarPart
-    //A vector of sentences that begin at the same token index
-    // (sentences that begin at the same token index:
-    // vector of sentences that each contains a vector of words).
-    std::vector <std::vector <std::vector <TranslationAndGrammarPart> > > &
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart
-    )
+  void Set( TranslationResult & translationResult )
   {
-//    m_std_vector_stdvecTranslationAndGrammarPart =
-//      c_r_std_vector_stdvecTranslationAndGrammarPart;
-    m_stdvec_stdvec_stdvecTranslationAndGrammarPart =
-      r_stdvec_stdvec_stdvecTranslationAndGrammarPart;
+    m_translationResult = translationResult;
   }
   void OnEraseBackground(wxEraseEvent & event);
   void OnPaint(wxPaintEvent & event) ;
