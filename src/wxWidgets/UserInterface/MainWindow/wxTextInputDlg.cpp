@@ -125,7 +125,7 @@ wxTextInputDlg::wxTextInputDlg(
 //    mp_wxhtmlwindow->SetRelatedStatusBar(0);
 //    mp_wxhtmlwindow->Show(true) ;
 //  }
-  mp_wxsplitterwindow = new wxSplitterWindow( (wxDialog *) this, wxID_ANY ) ;
+  mp_wxsplitterwindowOutmost = new wxSplitterWindow( (wxDialog *) this, wxID_ANY ) ;
   AddInputAndOutputPanels();
   AddToolButtons() ;
 }
@@ -137,7 +137,7 @@ wxTextInputDlg::~wxTextInputDlg()
 
 std::string wxTextInputDlg::GetAllTranslationPossibilites(
   const std::vector<std::string> & stdvec_stdstrWholeTransl ,
-  const std::vector<std::vector<TranslationAndGrammarPart> > &
+  const WordCompoundsAtSameTokenIndex &
     stdvec_stdvecTranslationAndGrammarPart
   )
 {

@@ -216,7 +216,7 @@ namespace wxWidgets
     wxIcon wxiconThisDialog( /*VT_icon_xpm*/ wxGetApp().m_wxiconVTrans ) ;
     ( (wxFrame*) this)->SetIcon( wxiconThisDialog ) ;
 //    AddInputAndOutputControls();
-    mp_wxsplitterwindow = new wxSplitterWindow( //NULL
+    mp_wxsplitterwindowOutmost = new wxSplitterWindow( //NULL
       (wxFrame *) this, wxID_ANY ) ;
     AddInputAndOutputPanels();
     if( ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
@@ -248,9 +248,9 @@ namespace wxWidgets
 
     AddToolButtons();
     //SetToolBar( mp_wxtoolbar ) ;
-    //http://docs.wxwidgets.org/2.8/wx_wxtoolbar.html#wxtoolbaraddtool:
-    // "after adding the buttons to the toolbar, must call Realize() to reflect
-    // the changes"
+    /** http://docs.wxwidgets.org/2.8/wx_wxtoolbar.html#wxtoolbaraddtool:
+    * "after adding the buttons to the toolbar, must call Realize() to reflect
+    * the changes" */
     mp_wxtoolbar->Realize();
   }
 

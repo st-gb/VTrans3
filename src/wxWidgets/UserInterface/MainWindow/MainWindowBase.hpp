@@ -85,6 +85,8 @@ namespace wxWidgets
 //    void AddSettingsButton( wxSizer * p_sizer );
     void AddTruncateLogFileButton( wxSizer * p_sizer ) ;
     void AddReInitializeGrammarButton(wxSizer * p_wxsizer);
+    inline void CreateEnglishTextCtrl(wxWindow * parentWindow);
+    inline void ConfigureOutmostSplitterWindow();
     void GetEntireInputText(std::string & r_stdstrInputText);
     void EndTimer()
     {
@@ -110,7 +112,7 @@ namespace wxWidgets
     wxTextCtrl * mp_textctrlEnglishText;
     wxGermanTranslationPanel * m_p_wxgermantranslationpanel;
     wxParseTreePanel * mp_wxparsetreepanel;
-    wxSplitterWindow * mp_wxsplitterwindow;
+    wxSplitterWindow * mp_wxsplitterwindowOutmost;
     virtual wxToolBarToolBase * AddBitmapButtonAndTooltip(
       enum user_interface_control_actions itemID, 
       const char * const XPMbitmapData [],

@@ -1240,44 +1240,50 @@ wxSize wxParseTreePanel::GetSourceTextTokenExtent(
 
 void wxParseTreePanel::OnPaint(wxPaintEvent & event)
 {
-  /** http://docs.wxwidgets.org/trunk/classwx_paint_d_c.html 
-   * "A wxPaintDC must be constructed if an application wishes to paint on the 
-   * client area of a window from within an EVT_PAINT() event handler. "
-   * 
-   * This should normally be constructed as a temporary stack object; don't 
-   * store a wxPaintDC object. If you have an EVT_PAINT() handler, you must 
-   * create a wxPaintDC object within it even if you don't actually use it. */
-  wxPaintDC /*wxClientDC*/ wxpaintdc(this);
-#ifdef _DEBUG
-  const bool bPaintDCisOK = wxpaintdc.IsOk();
-  const wxFont & font = wxpaintdc.GetFont();
-  const bool fontIsOK = font.IsOk();
-
-  LOGN_DEBUG("wxPaintDC is OK:" << bPaintDCisOK << "font OK: " << fontIsOK )
-//  const int fontPointSize = font.GetPointSize(); 
-#endif  
   LOGN_DEBUG("mp_parsebyrise:" << mp_parsebyrise)
 //  PrepareDC(wxpaintdc);
   const wxSize & clientSize = GetClientSize();
   if( mp_parsebyrise )
   {
 //    DrawParseTreeBeginningFromRoots(wxpaintdc) ;
+    /** http://docs.wxwidgets.org/trunk/classwx_window.html#a9d1be1bbb625ebf87ad4ad47e49a0194 
+     * "Returns true if the window contents is double-buffered by the system, 
+     * i.e. if any drawing done on the window is really done on a temporary 
+     * backing surface and transferred to the screen all at once later." */
     const bool isDoubleBuffered = IsDoubleBuffered();
-    if( ! isDoubleBuffered && ::wxGetApp().m_GUIattributes.m_doubleBufferParseTreePanel )
+    if( ::wxGetApp().m_GUIattributes.m_doubleBufferParseTreePanel )
     {
+      wxAutoBufferedPaintDC wxAutoBufferedPaintDC(this);
+      DrawParseTreeBeginningFromLeaves( wxAutoBufferedPaintDC
+        /*m_wxmemorydc*/ //wxmemorydc /*r_wxdc*/ 
+        );
+    }      
+    else
+    {
+      /** http://docs.wxwidgets.org/trunk/classwx_paint_d_c.html 
+       * "A wxPaintDC must be constructed if an application wishes to paint on the 
+       * client area of a window from within an EVT_PAINT() event handler. "
+       * 
+       * This should normally be constructed as a temporary stack object; don't 
+       * store a wxPaintDC object. If you have an EVT_PAINT() handler, you must 
+       * create a wxPaintDC object within it even if you don't actually use it. */
+      wxPaintDC /*wxClientDC*/ wxpaintdc(this);
+    #ifdef _DEBUG
+      const bool bPaintDCisOK = wxpaintdc.IsOk();
+      const wxFont & font = wxpaintdc.GetFont();
+      const bool fontIsOK = font.IsOk();
+
+      LOGN_DEBUG("wxPaintDC is OK:" << bPaintDCisOK << "font OK: " << fontIsOK )
+    //  const int fontPointSize = font.GetPointSize(); 
+    #endif  
 //      m_p_wxbitmapBuffer = new wxBitmap(clientSize.x, clientSize.y);
 //      m_wxmemorydc.SelectObject(* m_p_wxbitmapBuffer);
 //      DrawParseTreeBeginningFromLeaves(//wxpaintdc
 //        m_wxmemorydc) ;
 //      wxpaintdc.DrawBitmap( * m_p_wxbitmapBuffer
 //        /*m_wxbitmapBuffer*/, clientSize.x, clientSize.y );
-      wxAutoBufferedPaintDC wxAutoBufferedPaintDC(this);
-      DrawParseTreeBeginningFromLeaves(wxAutoBufferedPaintDC);
+      DrawParseTreeBeginningFromLeaves(/*wxAutoBufferedPaintDC*/ wxpaintdc);
     }
-    else
-    DrawParseTreeBeginningFromLeaves( wxpaintdc
-      /*m_wxmemorydc*/ //wxmemorydc /*r_wxdc*/ 
-      );
 
 //    wxpaintdc.Blit(0, 0, sz.x , sz.y,
 //      //mp_wxbufferedpaintdcStatic
@@ -1300,6 +1306,7 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
   }
   else
   {
+    wxPaintDC /*wxClientDC*/ wxpaintdc(this);
     wxpaintdc.DrawLine(wxPoint(10,10), /*wxPoint(199,100)*/ 
       wxPoint(clientSize.x, clientSize.y) ) ;
     wxpaintdc.SetBackground(*wxBLUE_BRUSH);

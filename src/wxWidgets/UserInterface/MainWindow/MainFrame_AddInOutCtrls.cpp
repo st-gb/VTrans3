@@ -11,7 +11,7 @@
   void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputControls()
   {
 //    LOGN_DEBUG("begin")
-    mp_wxsplitterwindow = new wxSplitterWindow( /*(wxFrame *)*/ // (EVENT_HANDLER_CLASS_NAME *) this
+    mp_wxsplitterwindowOutmost = new wxSplitterWindow( /*(wxFrame *)*/ // (EVENT_HANDLER_CLASS_NAME *) this
       m_p_mainwindow
        , wxID_ANY ) ;
   //  mp_wxpanelTop = new wxPanel( mp_wxsplitterwindow ) ;
@@ -20,7 +20,7 @@
       wxParseTreePanel(
       //new wxParseTreePanel(
       //this
-      mp_wxsplitterwindow
+      mp_wxsplitterwindowOutmost
       //(wxFrame*) mp_wxsplitterwindow
       , wxID_ANY
       , wxDefaultPosition
@@ -31,7 +31,7 @@
     wxPanel * m_panelSplitterTop = new wxPanel(
       //parent window
       //this
-      mp_wxsplitterwindow
+      mp_wxsplitterwindowOutmost
   //    , wxID_ANY,
   //    wxDefaultPosition,
   //    wxDefaultSize,
@@ -104,7 +104,7 @@
 
   //  gSizer3->Add( m_textCtrl7, 1, wxALL|wxEXPAND, 5 );
 
-    mp_wxsplitterwindow->SplitHorizontally(
+    mp_wxsplitterwindowOutmost->SplitHorizontally(
       m_panelSplitterTop
   //    mp_textctrlEnglishText
       , mp_wxparsetreepanel
@@ -119,7 +119,7 @@
     //gSizer3->Add( p_wxbutton, 0 , wxALL, 5 );
     //p_gridsizerOuter->Add(
     p_boxsizerOuter->Add(
-      mp_wxsplitterwindow
+      mp_wxsplitterwindowOutmost
       //m_textCtrl7
       //p_wxbutton
       , 1

@@ -119,52 +119,22 @@ MainWindowBase::~MainWindowBase() {
 
 #define EVENT_HANDLER_CLASS_NAME wxWidgets::MainWindowBase
 
-void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
+void EVENT_HANDLER_CLASS_NAME::CreateEnglishTextCtrl(wxWindow * parentWindow)
 {
-  LOGN_DEBUG("begin")
-//  mp_wxpanelTop = new wxPanel( mp_wxsplitterwindow ) ;
-
-  mp_wxparsetreepanel = new /*wxPanel(*/ wxParseTreePanel(
-    //this
-    mp_wxsplitterwindow
-    //(wxFrame*) mp_wxsplitterwindow
-    , wxID_ANY
-    , wxDefaultPosition
-    , wxDefaultSize,
-    wxTAB_TRAVERSAL
-    );
-
-	wxPanel * m_panelSplitterTop = new wxPanel(
-    //parent window
-    /*this*/ mp_wxsplitterwindow
-//    , wxID_ANY,
-//    wxDefaultPosition,
-//    wxDefaultSize,
-//    wxTAB_TRAVERSAL
-    );
-
-  //wxGridBagSizer * p_gridbagsizerSplitterTop = new wxGridBagSizer( ) ;
-   wxFlexGridSizer * p_flexgridsizerSplitterTop = new wxFlexGridSizer( 0 ) ;
-  p_flexgridsizerSplitterTop->SetFlexibleDirection( wxVERTICAL ) ;
-  wxBoxSizer * p_boxsizerSplitterTop = new wxBoxSizer( //wxHORIZONTAL
-    wxVERTICAL ) ;
-
-  m_panelSplitterTop->SetSizer(
-    //p_gridbagsizerSplitterTop
-//    p_flexgridsizerSplitterTop
-    p_boxsizerSplitterTop
-    ) ;
-
 	mp_textctrlEnglishText = new wxTextCtrl(
     //this
 //    mp_wxsplitterwindow
-    m_panelSplitterTop
+    parentWindow
     , /*wxID_ANY*/ ID_InputText, 
     wxEmptyString,
     wxDefaultPosition,
     wxDefaultSize,
     wxHSCROLL | wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_PROCESS_TAB
     );
+  mp_textctrlEnglishText->SetToolTip(wxT("enter English text to translate to German here"));
+}
+//void EVENT_HANDLER_CLASS_NAME::CreateGermanTextCtrl(wxWindow * parentWindow)
+//{
 //  mp_textctrlGermanText = new wxTextCtrl(
 //    //this
 ////    mp_wxsplitterwindow
@@ -175,26 +145,89 @@ void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
 //    wxDefaultSize,
 //    wxHSCROLL | wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_PROCESS_TAB
 //    );
+//}
+
+void EVENT_HANDLER_CLASS_NAME::ConfigureOutmostSplitterWindow()
+{
+  /*** from http://docs.wxwidgets.org/3.0/overview_splitterwindow.html
+   *   set a minimum pane size to prevent unsplitting (the "sash" disappears)
+   *   (The "sash" is the line that enables the tiling of 2 GUI components) */
+  mp_wxsplitterwindowOutmost->SetMinimumPaneSize(20);
+  /** https://wiki.wxwidgets.org/WxSplitterWindow : 
+   * " If you'd like to control how the change in size is distributed between 
+   *  the two windows, use the SetSashGravity() function."
+   *  " Values in between indicate that the change in size should be 
+   *  distributed between both child windows (a value of 0.5 distributes the 
+   * size evenly)." */
+  mp_wxsplitterwindowOutmost->SetSashGravity(0.5);
+  /** Set the colour to red to highlight the sash (the line that enables the 
+   *  tiling of 2 GUI components) */
+  mp_wxsplitterwindowOutmost->SetBackgroundColour(*wxRED);
+}
+
+void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
+{
+  LOGN_DEBUG("begin")
+//  mp_wxpanelTop = new wxPanel( mp_wxsplitterwindow ) ;
+  ConfigureOutmostSplitterWindow();
+  
+//  wxBoxSizer * p_boxsizerOutmostSplitter = new wxBoxSizer( //wxHORIZONTAL
+//    wxVERTICAL ) ;
+//  mp_wxsplitterwindowOutmost->SetSizer(p_boxsizerOutmostSplitter);
+  
+  mp_wxparsetreepanel = new /*wxPanel(*/ wxParseTreePanel(
+    //this
+    mp_wxsplitterwindowOutmost /** parent window */
+    //(wxFrame*) mp_wxsplitterwindow
+    , wxID_ANY /** wxWindowID */
+    , wxDefaultPosition
+    , wxDefaultSize,
+    wxTAB_TRAVERSAL
+    );
+	wxPanel * m_panelSplitterTop = new wxPanel(
+    /*this*/ mp_wxsplitterwindowOutmost /** parent window */
+//    , wxID_ANY,
+//    wxDefaultPosition,
+//    wxDefaultSize,
+//    wxTAB_TRAVERSAL
+    );
+
+  //wxGridBagSizer * p_gridbagsizerSplitterTop = new wxGridBagSizer( ) ;
+//   wxFlexGridSizer * p_flexgridsizerSplitterTop = new wxFlexGridSizer( 0 ) ;
+//  p_flexgridsizerSplitterTop->SetFlexibleDirection( wxVERTICAL ) ;
+  
+  wxBoxSizer * p_boxsizerSplitterTop = new wxBoxSizer( //wxHORIZONTAL
+    wxVERTICAL ) ;
+
+  m_panelSplitterTop->SetSizer(
+    //p_gridbagsizerSplitterTop
+//    p_flexgridsizerSplitterTop
+    p_boxsizerSplitterTop
+    ) ;
+
+  CreateEnglishTextCtrl(m_panelSplitterTop);
+  
   m_p_wxgermantranslationpanel = new wxGermanTranslationPanel(
       m_panelSplitterTop);
 
   //p_gridbagsizerSplitterTop->Add( m_textCtrl7, 1, wxEXPAND | wxALL, 5 );
 //  p_flexgridsizerSplitterTop->Add(
+  
   p_boxsizerSplitterTop->Add(
     mp_textctrlEnglishText,
-    1,
+    1,//proportion
     wxEXPAND |
     wxALL
-    , 1 //border/margin in pixel
+    , 0 //border/margin in pixel
     );
 //  p_flexgridsizerSplitterTop->Add(
   p_boxsizerSplitterTop->Add(
 //    mp_textctrlGermanText,
     m_p_wxgermantranslationpanel,
-    1,
+    1,//proportion
     wxEXPAND |
     wxALL
-    , 5
+    , 0 //border/margin in pixel
     );
 
 //  p_flexgridsizerSplitterTop->Add(
@@ -214,10 +247,10 @@ void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
 	
 //	gSizer3->Add( m_textCtrl7, 1, wxALL|wxEXPAND, 5 );
 
-  mp_wxsplitterwindow->SplitHorizontally(
-    m_panelSplitterTop
+  mp_wxsplitterwindowOutmost->SplitHorizontally(
+    m_panelSplitterTop /** The top pane. */ 
 //    mp_textctrlEnglishText
-    , mp_wxparsetreepanel
+    , mp_wxparsetreepanel /** The bottom pane. */
     ) ;
 //  mp_wxsplitterwindow->SplitHorizontally(
 //    //m_panelSplitterTop
@@ -229,7 +262,7 @@ void EVENT_HANDLER_CLASS_NAME::AddInputAndOutputPanels()
   //gSizer3->Add( p_wxbutton, 0 , wxALL, 5 );
 	//p_gridsizerOuter->Add(
   p_boxsizerOuter->Add(
-    mp_wxsplitterwindow
+    mp_wxsplitterwindowOutmost
     //m_textCtrl7
     //p_wxbutton
     , 1
