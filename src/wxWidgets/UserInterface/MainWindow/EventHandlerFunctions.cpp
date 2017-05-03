@@ -29,6 +29,7 @@
 #include <wxWidgets/UserInterface/TranslationRules/ShowTranslationRulesDialog.hpp>
 #include <wxWidgets/UserInterface/UserInterface.hpp>
 #include <wxWidgets/UserInterface/DictionaryStatisticsWindow.hpp>
+#include <wxWidgets/UserInterface/SettingsDialog.hpp> //class SettingsDialog
 #include <wxWidgets/UserInterface/wxParseTreePanel.hpp>
 #include <wxWidgets/UserInterface/wxGermanTranslationPanel.hpp>
 #include <wxWidgets/VTransApp.hpp> //::wxGetApp()
@@ -324,9 +325,12 @@ void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatusAndSendCloseEvent()
    *  else this program may crash? (if thread.start(...) or functions called
    *  from it accesses member variables of the thread object) */
 //  VTrans::thread_type thread;
-  /*thread*/ m_unloadDictAndCloseWindowThread.start(
-    UnloadDictionaryAndSendCloseEvent, /*& wxCond NULL*/ this );
-
+  if( /*thread*/ m_unloadDictAndCloseWindowThread.start(
+    UnloadDictionaryAndSendCloseEvent, /*& wxCond NULL*/ this ) > 0 )
+  {
+     wxGetApp().Message("failed to start unload dictionary thread->doing it synchronously.");
+     UnloadDictionaryAndSendCloseEvent(this);
+  }
 //  wxCloseEvent wxcloseEvent;
 //  /** Add the close event for destroying the window */
 //  /*::wxGetApp().*/AddPendingEvent(wxcloseEvent);
@@ -362,13 +366,15 @@ void EVENT_HANDLER_CLASS_NAME::OnDrawParseTreeButton(wxCommandEvent & wxcmd )
 
 void EVENT_HANDLER_CLASS_NAME::OnSettings(wxCommandEvent & wxcmd )
 {
-  wxString wxstrName = ::wxGetTextFromUser(
-    wxT("enter a settings name:") );
-  wxString wxstrValue = ::wxGetTextFromUser(
-    wxT("enter a settings value:") );
-  ::wxGetApp().Settings(
-    wxWidgets::GetStdString(wxstrName).c_str(),
-    wxWidgets::GetStdString(wxstrValue).c_str() );
+//  wxString wxstrName = ::wxGetTextFromUser(
+//    wxT("enter a settings name:") );
+//  wxString wxstrValue = ::wxGetTextFromUser(
+//    wxT("enter a settings value:") );
+//  ::wxGetApp().Settings(
+//    wxWidgets::GetStdString(wxstrName).c_str(),
+//    wxWidgets::GetStdString(wxstrValue).c_str() );
+  SettingsDialog * p_settingsDialog = new SettingsDialog();
+    p_settingsDialog->Show();
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnShowDictionaryStatistics(wxCommandEvent & wxcmd )

@@ -29,6 +29,8 @@
   //SetCurrentDirectory(...)
   #include <FileSystem/GetCurrentWorkingDir.hpp>
   #include <FileSystem/SetCurrentWorkingDir.hpp>
+
+#include "Controller/character_string/ConvertStdStringToTypename.hpp"
 //#else
 //  //platformstl::filesystem_traits<char>::set_current_directory(...)
 //  #include <platformstl/filesystem/current_directory.hpp>
@@ -40,9 +42,11 @@
   #define MAX_PATH 2000
 #endif
 
-//Static variables need also to be defined in 1 source file.
+/** Static variables need also to be defined in 1 source file. */
 I_UserInterface * SyntaxTreePath::sp_userinterface ;
 I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
+fastestUnsignedDataType TranslationControllerBase::s_numParallelTranslationThreads = 1;
+TranslationControllerBase::settingsName2ValueAndFunction_type TranslationControllerBase::s_settingsName2valueAndFunction;
 //LetterTree VTransApp::s_dictionary ;
 ///*LetterTree*/dictionary_type TranslationControllerBase::s_dictionary
   //(::wxGetApp(), NULL)
@@ -113,6 +117,43 @@ void MakePastParticiple(std::string & //r_std_strWordStem
 //}
 //#endif
 
+void SetLogLevel(const char * const value)
+{
+  std::string logLevel;
+  try
+  {
+    if( strcmp(value, "disable") == 0 )
+      logLevel = "warning";
+    else if( strcmp(value, "enable") == 0 )
+      logLevel = "debug";
+    if( ! logLevel.empty() )
+      g_logger.SetLogLevel(logLevel);
+  }
+  catch(NS_NodeTrie::NotInContainerException & e)
+  {
+    LOGN_ERROR("log level " << logLevel << " to set is not contained in node trie.")
+  }
+}
+
+void SetNumTranslationThreads(const char * const value)
+{
+  fastestUnsignedDataType numParallelTranslationThreads;
+  if( ConvertCharStringToTypename(numParallelTranslationThreads, value) )
+    TranslationControllerBase::s_numParallelTranslationThreads = 
+      numParallelTranslationThreads;
+}
+
+void AddSettingsName2ValueAndFunctionMapping()
+{
+  ValuesAndFunction valuesAndFunction = {"disable\tenable", & SetLogLevel};
+  TranslationControllerBase::s_settingsName2valueAndFunction.insert(
+    std::make_pair("logging", valuesAndFunction) );
+
+  ValuesAndFunction valuesAndFunction2 = {"", & SetNumTranslationThreads };
+  TranslationControllerBase::s_settingsName2valueAndFunction.insert(
+    std::make_pair("#translThreads", valuesAndFunction2) );
+}
+
 TranslationControllerBase::TranslationControllerBase()
   :
   m_vbContinue(true),
@@ -143,6 +184,7 @@ TranslationControllerBase::TranslationControllerBase()
 //  m_nodetrie_ui32GrammarPartName2colour.Create(256);
 //  OneLinePerWordPair::s_p_userinterface = this;
 
+  
   ConditionsAndTranslation::s_p_translationControllerBase = this;
 #ifndef TEST_MINI_XML
   std::string std_str = "makeFemale";
@@ -164,6 +206,7 @@ TranslationControllerBase::TranslationControllerBase()
   ConditionsAndTranslation::s_std_mapFunctionName2Function.insert(
     std::make_pair(std_str, & MakePastParticiple) );
 #endif //#ifndef TEST_MINI_XML
+  AddSettingsName2ValueAndFunctionMapping();
 }
 
 TranslationControllerBase::~TranslationControllerBase()
@@ -499,6 +542,8 @@ void TranslationControllerBase::Transform()
   	  );
   DWORD dwLeftMostTokenIndex = 0 ;
   std::vector<GrammarPart *> stdvec_p_grammarpartRootNode ;
+  //TODO only processes the 1st parse tree(s) covering the most tokens -> 
+  //  use "ProcessParseTrree() instead?!
   m_parsebyrise.GetGrammarPartCoveringMostTokens(
     dwLeftMostTokenIndex ,
     stdvec_p_grammarpartRootNode
@@ -523,23 +568,12 @@ void TranslationControllerBase::Transform()
 /** @brief Pass settings from a dynamic library etc. */
 void TranslationControllerBase::Settings(
   const char * cp_chName, const char * cp_chValue)
-{
-  if( strcmp(cp_chName, "logging") == 0)
+{  
+  settingsName2ValueAndFunction_type::const_iterator c_iter = 
+    s_settingsName2valueAndFunction.find(cp_chName);
+  if( c_iter != s_settingsName2valueAndFunction.end() )
   {
-    std::string logLevel;
-    try
-    {
-      if( strcmp(cp_chValue, "disable") == 0 )
-        logLevel = "warning";
-      else if( strcmp(cp_chValue, "enable") == 0 )
-        logLevel = "debug";
-      if( ! logLevel.empty() )
-        g_logger.SetLogLevel(logLevel);
-    }
-    catch(NS_NodeTrie::NotInContainerException & e)
-    {
-      LOGN_ERROR("log level " << logLevel << " to set is not contained in node trie.")
-    }
+    c_iter->second.p_function( (const char * const) cp_chValue);
   }
 }
 

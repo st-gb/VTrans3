@@ -9,6 +9,7 @@ set(SOURCE_FILE_PATHS
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/DrawParseTreeTraverser.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/RulesListCtrl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/ShowRulesDialogBase.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/SettingsDialog.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/UserInterface.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/wxGermanTranslationPanel.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/wxParseTreePanel.cpp

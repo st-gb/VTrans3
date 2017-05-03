@@ -140,6 +140,7 @@ set(BASIC_TRANSLATION_SOURCE_FILES
   ${PROJECT_SOURCE_DIR}/Controller/TranslationControllerBase.cpp
   ${VTRANS3_ROOT_PATH}/IO/UnknownGrammarPartNameException.cpp
   ${VTRANS3_ROOT_PATH}/multi_threaded_translation/TranslateThreadProc.cpp
+  ${VTRANS3_ROOT_PATH}/multi_threaded_translation/native_threads.cpp
   ${PROJECT_SOURCE_DIR}/Parse/DirectingLeavesInSingleIterationTraverser.cpp
   ${PROJECT_SOURCE_DIR}/Parse/DirectingLeavesMultipleIterTraverser.cpp
   ${PROJECT_SOURCE_DIR}/Parse/DuplicateParseTree.cpp

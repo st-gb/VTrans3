@@ -119,6 +119,12 @@ namespace VTrans
   };
 }
 
+struct ValuesAndFunction
+{
+  char * values;
+  void ( * p_function) (const char * const );
+};
+
 /** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
 class TranslationControllerBase
   : public I_UserInterface
@@ -142,6 +148,9 @@ public:
   ConfigurationHandler_type m_configurationHandler;
   fastestUnsignedDataType m_GUIthreadID;
 //  static dictionary_type s_dictionary ;
+  typedef std::map<std::string, ValuesAndFunction> settingsName2ValueAndFunction_type;
+  static settingsName2ValueAndFunction_type s_settingsName2valueAndFunction;
+  static fastestUnsignedDataType s_numParallelTranslationThreads;
 #ifndef TEST_MINI_XML
   /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
 #endif //TEST_MINI_XML

@@ -23,6 +23,7 @@
 #include <Translate/TranslatedTreeTraverser.hpp>
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
+#include <multi_threaded_translation/nativeThreads.hpp>
 
 //#include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
 ////class SAX2TranslationRuleHandler
@@ -823,6 +824,11 @@ void TranslateParseByRiseTree::ProcessParseTree(
       m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
     //Reset to initial before each translation.
     m_ui32ConcatenationID = 1;
+    fastestUnsignedDataType numThreadsRunning = 0;
+    //TODO to get the # of CPU cores: https://developer.android.com/ndk/guides/cpu-features.html
+    //get # CPU cores avail. to this process: http://stackoverflow.com/questions/4586405/get-number-of-cpus-in-linux-using-c
+    fastestUnsignedDataType numCPUcoresAvailable = g_p_translationcontrollerbase->s_numParallelTranslationThreads;
+    VTrans3::MultiThreadedTranslation multiThreadedTranslation(numCPUcoresAvailable);
     do
     {
       //Before each draw in order to begin at x position "0".
@@ -844,8 +850,12 @@ void TranslateParseByRiseTree::ProcessParseTree(
   //      WORD wConsecutiveID = 0 ;
 
       WordCompoundsAtSameTokenIndex wordCompoundsAtSameTokenIndex;
-      //Loop over all parse trees beginning at token index
-      //"dwLeftMostTokenIndex".
+      /** Loop over all parse trees beginning at token index
+      *  "dwLeftMostTokenIndex". 
+      *  Often these parse trees here have the same structure but different 
+      *  words (->synonyms): "the man works."-> "der Mann|Mensch arbeitet" */
+      //TODO this loop could be parallelized with OpenMP? but no with respect
+      // to other parse trees that begin at other token indices?
       for( std::vector<GrammarPart *>::const_iterator
           c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex =
           stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin() ;
@@ -855,9 +865,19 @@ void TranslateParseByRiseTree::ProcessParseTree(
          )
       {
         //( * this->pfnProcessParseTree)
-        (this->* pfnProcessParseTree)(
-          * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
-          wordCompoundsAtSameTokenIndex);
+        //single-threaded version:
+//          (this->* pfnProcessParseTree)(
+//            * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+//            wordCompoundsAtSameTokenIndex);
+        //TOOD parallelize (OpenMP, POSIX, ...)
+//        if( numThreadsRunning >= numCPUcoresAvailable )
+//          multiThreadedTranslation.WaitForThreadBecomingIdle();
+          multiThreadedTranslation.execute(
+            pfnProcessParseTree, 
+            this, 
+            * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+            /*wordCompoundsAtSameTokenIndex*/);
+        
       } //loop for all parse trees beginning at same token index
 
       r_translationResult.push_back(
@@ -874,7 +894,13 @@ void TranslateParseByRiseTree::ProcessParseTree(
         << dwLeftMostTokenIndex )
     }
     while( dwLeftMostTokenIndex );
+    //Sync, else the main translation thread may delete pointers while other 
+    // translation threads access them.
+    //TOOD this sync could be moved to the latemost code point to let the threads
+    // run as long as possible
+    multiThreadedTranslation.EnsureAllThreadsEnded();
   }//if( p_parsebyrise )
+  LOGN_DEBUG("end")
 }
 
 //Getting the "person index":
