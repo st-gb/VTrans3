@@ -767,8 +767,18 @@ void EVENT_HANDLER_CLASS_NAME::UpdateAfterTranslation()
     const fastestUnsignedDataType numParseTrees = ::wxGetApp().
       GetNumberOfParseTrees(//stdvec_stdvec_stdvecTranslationAndGrammarPart
       m_translationResult);
-    SetTitle( wxString::Format( wxT("%u parse trees;translation in %f s"), numParseTrees, 
-      (double) m_translationcontrollerbase.m_translationDurationInSeconds) );
+    
+    NumThreadsAndTimeDuration * p_numThreadsAndTimeDuration = 
+      m_translationcontrollerbase.m_numThreadsAndTimeDuration;
+    SetTitle( wxString::Format( wxT("%u parse trees;translation in %fs "
+      "(build parse trees:1thread in %fs)" 
+      "(apply transl.rules:%dthreads in %fs)"), 
+      numParseTrees, 
+      (double) m_translationcontrollerbase.m_translationDurationInSeconds,
+      p_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds,
+      p_numThreadsAndTimeDuration[applyTranslRules].numThreads,
+      p_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds)
+      );
 
   //  std::string stdstrAllPossibilities = GetAllTranslationPossibilites(
   //    stdvec_stdstrWholeTransl,

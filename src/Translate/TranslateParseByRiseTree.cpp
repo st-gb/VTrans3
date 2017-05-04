@@ -824,11 +824,14 @@ void TranslateParseByRiseTree::ProcessParseTree(
       m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
     //Reset to initial before each translation.
     m_ui32ConcatenationID = 1;
+#define PARALLELIZE_TRANSLATION
+#ifdef PARALLELIZE_TRANSLATION
     fastestUnsignedDataType numThreadsRunning = 0;
     //TODO to get the # of CPU cores: https://developer.android.com/ndk/guides/cpu-features.html
     //get # CPU cores avail. to this process: http://stackoverflow.com/questions/4586405/get-number-of-cpus-in-linux-using-c
     fastestUnsignedDataType numCPUcoresAvailable = g_p_translationcontrollerbase->s_numParallelTranslationThreads;
     VTrans3::MultiThreadedTranslation multiThreadedTranslation(numCPUcoresAvailable);
+#endif
     do
     {
       //Before each draw in order to begin at x position "0".
@@ -864,11 +867,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
           ++ c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
          )
       {
-        //( * this->pfnProcessParseTree)
-        //single-threaded version:
-//          (this->* pfnProcessParseTree)(
-//            * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
-//            wordCompoundsAtSameTokenIndex);
+#ifdef PARALLELIZE_TRANSLATION
         //TOOD parallelize (OpenMP, POSIX, ...)
 //        if( numThreadsRunning >= numCPUcoresAvailable )
 //          multiThreadedTranslation.WaitForThreadBecomingIdle();
@@ -877,7 +876,13 @@ void TranslateParseByRiseTree::ProcessParseTree(
             this, 
             * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
             /*wordCompoundsAtSameTokenIndex*/);
-        
+#else
+        //( * this->pfnProcessParseTree)
+        //single-threaded version:
+          (this->* pfnProcessParseTree)(
+            * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+            wordCompoundsAtSameTokenIndex);
+#endif        
       } //loop for all parse trees beginning at same token index
 
       r_translationResult.push_back(
@@ -894,11 +899,13 @@ void TranslateParseByRiseTree::ProcessParseTree(
         << dwLeftMostTokenIndex )
     }
     while( dwLeftMostTokenIndex );
+#ifdef PARALLELIZE_TRANSLATION
     //Sync, else the main translation thread may delete pointers while other 
     // translation threads access them.
     //TOOD this sync could be moved to the latemost code point to let the threads
     // run as long as possible
     multiThreadedTranslation.EnsureAllThreadsEnded();
+#endif
   }//if( p_parsebyrise )
   LOGN_DEBUG("end")
 }

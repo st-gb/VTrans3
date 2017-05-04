@@ -125,6 +125,14 @@ struct ValuesAndFunction
   void ( * p_function) (const char * const );
 };
 
+struct NumThreadsAndTimeDuration
+{
+  fastestUnsignedDataType numThreads;
+  float timeDurationInSeconds;
+};
+
+enum {buildParseTrees = 0, transform, applyTranslRules, beyondLastValue};
+
 /** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
 class TranslationControllerBase
   : public I_UserInterface
@@ -136,6 +144,9 @@ protected:
     CurrWorkDirProgArgIndex};
 public:
   long double m_translationDurationInSeconds;
+//  float m_applyTranslationRulesInSeconds;
+  NumThreadsAndTimeDuration m_numThreadsAndTimeDuration[3];
+  
   std::string m_std_strCurrentConfigfile;
   volatile bool m_vbContinue;
 #ifndef TEST_MINI_XML

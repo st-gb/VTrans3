@@ -528,6 +528,7 @@ void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
 void TranslationControllerBase::Stop()
 {
   //TODO check if volatile is sufficient or better use atomic function Compare and swap
+  //TODO is all memory freed when the translation is cancelled?
   m_vbContinue = false;
 }
 
@@ -642,7 +643,9 @@ void TranslationControllerBase::Translate(
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterParseTreeGen);
   timeCountInNanoSecondsParseTreeGen = timeCountInNanoSecondsAfterParseTreeGen -
     timeCountInNanoSecondsBeforeParseTreeGen;
-
+  m_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds = (double) 
+    timeCountInNanoSecondsParseTreeGen / 1000000000.0d;
+  
   std::string std_strIndentedXML = GetParseTreeAsIndentedXML(
     m_parsebyrise);
   LOGN("parse tree as indented XML:\n" << std_strIndentedXML)
@@ -679,6 +682,9 @@ void TranslationControllerBase::Translate(
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterTranslRules);
   timeCountInNanoSecondsApplyTranslRules = 
     timeCountInNanoSecondsAfterTranslRules - timeCountInNanoSecondsBeforeTranslRules;
+  m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds = (double) 
+    timeCountInNanoSecondsApplyTranslRules / 1000000000.0d;
+  m_numThreadsAndTimeDuration[applyTranslRules].numThreads = s_numParallelTranslationThreads;
   
   /** If not clearing and translating different words multiple times or long
     * texts then the main memory may get exhausted. */
