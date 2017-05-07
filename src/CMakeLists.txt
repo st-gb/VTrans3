@@ -16,6 +16,9 @@ set(VTRANS3_ROOT_PATH ${PROJECT_SOURCE_DIR} )
 SET(EXE_TYPE "wxGUI" CACHE STRING "Some user-specified option")
 message("EXE_TYPE: ${EXE_TYPE}")
 
+message("CXX flags: ${CMAKE_CXX_FLAGS}")
+message("CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+
 if( ${EXE_TYPE} STREQUAL "wxGUI")
  #see http://accountingplusplus.blogspot.de/2010/12/cmake-wxwidgets.html :
  #Set wxWidgets_USE_DEBUG to "ON" to link against WxWidgets debug libraries.
@@ -110,6 +113,7 @@ if (UNIX)
   set( BASIC_TRANSLATION_SOURCE_FILES
     ${BASIC_TRANSLATION_SOURCE_FILES}
     ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/POSIX/multithread/pthreadBasedI_Thread.cpp
+    ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/POSIX/multithread/Event.cpp
     ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/Linux/EnglishMessageFromErrorCode/EnglishMessageFromErrorCode.cpp
     ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.cpp
   )

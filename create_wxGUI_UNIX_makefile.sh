@@ -16,12 +16,15 @@ if [ $# -ge $NUM_ARGS_NEEDED ]; then
   WXWIDGETS_INCLUDE_DIR=$1
   WXWIDGETS_SETUP_H_PATH=$2
 
+# "-pg" option for "gprof" profiling
+
 cmake -G "Unix Makefiles" \
 -DCMAKE_BUILD_TYPE=Debug \
 -DCMAKE_C_COMPILER=${C_COMPILER} \
 -DCMAKE_CXX_COMPILER=${CPP_COMPILER} \
--DCMAKE_C_FLAGS_DEBUG="-g3 -gdwarf-2" \
--DCMAKE_CXX_FLAGS_DEBUG="-g3 -gdwarf-2" \
+-DCMAKE_C_FLAGS_DEBUG="-g3 -gdwarf-2 -pg" \
+-DCMAKE_CXX_FLAGS="-pg" \
+-DCMAKE_CXX_FLAGS_DEBUG="-g3 -gdwarf-2 -pg" \
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 . \
 -DEXE_TYPE:STRING=wxGUI \

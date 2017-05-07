@@ -139,8 +139,12 @@ void SetNumTranslationThreads(const char * const value)
 {
   fastestUnsignedDataType numParallelTranslationThreads;
   if( ConvertCharStringToTypename(numParallelTranslationThreads, value) )
+  {
     TranslationControllerBase::s_numParallelTranslationThreads = 
       numParallelTranslationThreads;
+    //TODO set # in this object
+//    m_multiThreadedTranslation.
+  }
 }
 
 void AddSettingsName2ValueAndFunctionMapping()
@@ -156,6 +160,7 @@ void AddSettingsName2ValueAndFunctionMapping()
 
 TranslationControllerBase::TranslationControllerBase()
   :
+  m_multiThreadedTranslation(8),
   m_vbContinue(true),
 #ifndef TEST_MINI_XML
   m_parsebyrise( * this ) ,
@@ -231,6 +236,10 @@ bool TranslationControllerBase::CurrentThreadIsGUIthread()
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 {
   LOGN_DEBUG("begin")
+#ifdef PARALLELIZE_TRANSLATION
+  m_numThreadsAndTimeDuration[applyTranslRules].numThreads = m_multiThreadedTranslation.GetNumberOfThreads();
+  m_multiThreadedTranslation.CreateAndStartThreads();
+#endif
   VocabularyAndTranslation::s_p_userinterface = this;
   SyntaxTreePath::sp_userinterface = this ;
 #ifndef TEST_MINI_XML
@@ -592,7 +601,7 @@ void TranslationControllerBase::ResetVocabularyInMainMemToFundamentalWordsOnly()
 std::string GetParseTreeAsIndentedXML(const ParseByRise & parsebyrise)
 {
   std::string std_strXML, std_strIntendedXML;
-  ByteArray byteArray;
+  ByteArray byteArray; //crashes in parallel translation version in constructor
   IO::GenerateXMLtreeFromParseTree( (ParseByRise *) & parsebyrise, /*std_strXML*/ byteArray);
   const BYTE * const byteArrayBegin = byteArray.GetArray();
   const fastestUnsignedDataType byteArraySize = byteArray.GetSize();
@@ -684,7 +693,6 @@ void TranslationControllerBase::Translate(
     timeCountInNanoSecondsAfterTranslRules - timeCountInNanoSecondsBeforeTranslRules;
   m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds = (double) 
     timeCountInNanoSecondsApplyTranslRules / 1000000000.0d;
-  m_numThreadsAndTimeDuration[applyTranslRules].numThreads = s_numParallelTranslationThreads;
   
   /** If not clearing and translating different words multiple times or long
     * texts then the main memory may get exhausted. */

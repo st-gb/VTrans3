@@ -824,14 +824,6 @@ void TranslateParseByRiseTree::ProcessParseTree(
       m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
     //Reset to initial before each translation.
     m_ui32ConcatenationID = 1;
-#define PARALLELIZE_TRANSLATION
-#ifdef PARALLELIZE_TRANSLATION
-    fastestUnsignedDataType numThreadsRunning = 0;
-    //TODO to get the # of CPU cores: https://developer.android.com/ndk/guides/cpu-features.html
-    //get # CPU cores avail. to this process: http://stackoverflow.com/questions/4586405/get-number-of-cpus-in-linux-using-c
-    fastestUnsignedDataType numCPUcoresAvailable = g_p_translationcontrollerbase->s_numParallelTranslationThreads;
-    VTrans3::MultiThreadedTranslation multiThreadedTranslation(numCPUcoresAvailable);
-#endif
     do
     {
       //Before each draw in order to begin at x position "0".
@@ -852,7 +844,9 @@ void TranslateParseByRiseTree::ProcessParseTree(
   #endif //#ifdef _DEBUG
   //      WORD wConsecutiveID = 0 ;
 
+      //TODO necessary?
       WordCompoundsAtSameTokenIndex wordCompoundsAtSameTokenIndex;
+      
       /** Loop over all parse trees beginning at token index
       *  "dwLeftMostTokenIndex". 
       *  Often these parse trees here have the same structure but different 
@@ -867,11 +861,11 @@ void TranslateParseByRiseTree::ProcessParseTree(
           ++ c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
          )
       {
-#ifdef PARALLELIZE_TRANSLATION
+#ifdef PARALLELIZE_TRANSLATION_
         //TOOD parallelize (OpenMP, POSIX, ...)
 //        if( numThreadsRunning >= numCPUcoresAvailable )
 //          multiThreadedTranslation.WaitForThreadBecomingIdle();
-          multiThreadedTranslation.execute(
+          g_p_translationcontrollerbase->m_multiThreadedTranslation.execute(
             pfnProcessParseTree, 
             this, 
             * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
@@ -884,9 +878,10 @@ void TranslateParseByRiseTree::ProcessParseTree(
             wordCompoundsAtSameTokenIndex);
 #endif        
       } //loop for all parse trees beginning at same token index
-
-      r_translationResult.push_back(
-        wordCompoundsAtSameTokenIndex);
+      
+      //TODO Is TranslationResult needed at all?
+//      r_translationResult.push_back(
+//        wordCompoundsAtSameTokenIndex);
 
       if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
         dwLeftMostTokenIndex = 0;
@@ -904,7 +899,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
     // translation threads access them.
     //TOOD this sync could be moved to the latemost code point to let the threads
     // run as long as possible
-    multiThreadedTranslation.EnsureAllThreadsEnded();
+    g_p_translationcontrollerbase->m_multiThreadedTranslation.EnsureAllThreadsEnded();
 #endif
   }//if( p_parsebyrise )
   LOGN_DEBUG("end")
@@ -963,14 +958,14 @@ void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
 void TranslateParseByRiseTree::TranslateParseTree(
 //  std::vector<GrammarPart *>::const_iterator
 //    c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-  GrammarPart * p_grammarpart,
+  GrammarPart * p_grammarpartRootNode,
   WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
   )
 {
 #ifdef _DEBUG
   DWORD dw =
 //    (* c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex)->
-    p_grammarpart->
+    p_grammarpartRootNode->
     m_dwRightmostIndex;
 #endif //#ifdef _DEBUG
   //    if( p_grammarpart )
@@ -980,7 +975,7 @@ void TranslateParseByRiseTree::TranslateParseTree(
   ParseTreeTraverser::DoTranslateTreeTraverser translatetreetraverser(
     //        p_grammarpart
 //    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-    p_grammarpart
+    p_grammarpartRootNode
     , * mp_parsebyrise
     , * this
     );
@@ -998,7 +993,7 @@ void TranslateParseByRiseTree::TranslateParseTree(
   //So get all leaves from left to right for the whole tree.
   ParseTreeTraverser::TranslatedTreeTraverser translated_treetraverser(
 //    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
-    p_grammarpart,
+    p_grammarpartRootNode,
     mp_parsebyrise
     );
   translated_treetraverser.Traverse();
@@ -1010,12 +1005,14 @@ void TranslateParseByRiseTree::TranslateParseTree(
 //  r_stdvec_stdstrWholeTransl.push_back( //translatetreetraverser.
 //    translated_treetraverser.
 //    m_std_strWholeTranslation) ;
-  r_wordCompoundsAtSameTokenIndex.push_back(
-    //      r_stdvec_stdvecTranslationAndConsecutiveID.push_back(
-    //          translatetreetraverser.m_stdvecTranslationAndGrammarPart
-    translated_treetraverser.m_std_vector_translationandgrammarpart
-    //        m_stdvec_translation_and_consecutive_id
-    ) ;
+  
+  //TODO this access may caus trouble if the parameter is shared across threads
+//  r_wordCompoundsAtSameTokenIndex.push_back(
+//    //      r_stdvec_stdvecTranslationAndConsecutiveID.push_back(
+//    //          translatetreetraverser.m_stdvecTranslationAndGrammarPart
+//    translated_treetraverser.m_std_vector_translationandgrammarpart
+//    //        m_stdvec_translation_and_consecutive_id
+//    ) ;
 
   //There may be multiple _identical_ concatenated translations:
   //"the fan"

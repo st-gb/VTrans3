@@ -17,6 +17,7 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TransformationRule.hpp> //class TransformationRule
 #include <OperatingSystem/multithread/nativeCriticalSectionType.hpp>
+#include <multi_threaded_translation/nativeThreads.hpp>
 #include <OperatingSystem/time/GetCurrentTime.hpp>
 #ifndef TEST_MINI_XML
 //class TranslateParseByRiseTree
@@ -146,6 +147,15 @@ public:
   long double m_translationDurationInSeconds;
 //  float m_applyTranslationRulesInSeconds;
   NumThreadsAndTimeDuration m_numThreadsAndTimeDuration[3];
+
+#define PARALLELIZE_TRANSLATION
+#ifdef PARALLELIZE_TRANSLATION
+//    fastestUnsignedDataType numThreadsRunning = 0;
+    //TODO to get the # of CPU cores: https://developer.android.com/ndk/guides/cpu-features.html
+    //get # CPU cores avail. to this process: http://stackoverflow.com/questions/4586405/get-number-of-cpus-in-linux-using-c
+//    fastestUnsignedDataType numCPUcoresAvailable = g_p_translationcontrollerbase->s_numParallelTranslationThreads;
+  VTrans3::MultiThreadedTranslation m_multiThreadedTranslation;
+#endif
   
   std::string m_std_strCurrentConfigfile;
   volatile bool m_vbContinue;
