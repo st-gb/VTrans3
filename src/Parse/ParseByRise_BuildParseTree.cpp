@@ -284,6 +284,10 @@ void ParseByRise::SummarizeUnknownWords()
 void ParseByRise::CreateParseTree(const std::string & cr_stdstrWholeInputText)
 {
   ClearParseTree() ;
+  //TODO: resolve contractions https://en.wikipedia.org/wiki/Contraction_(grammar)#English
+  // (and abbreviations) first: "they’ll" -> they will
+  //  "he’d" -> "he had", "he would"
+  //TODO clitics (genitive "'s" ), slang forms like "gonna"
   CreateInitialGrammarParts ( cr_stdstrWholeInputText ) ;
 
   SummarizeUnknownWords();

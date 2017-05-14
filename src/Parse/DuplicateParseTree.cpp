@@ -24,13 +24,14 @@ namespace ParseTreeTraverser
        r_parsebyrise
        )
   {
+    //TODO memory leak acc. to valgrind
     m_p_rootOfDuplicatedSubTree = new GrammarPart( * p_grammarpartStartNode);
     m_p_currentParent = m_p_rootOfDuplicatedSubTree;
   }
 
   DuplicateParseTree::~DuplicateParseTree()
   {
-    // TODO Auto-generated destructor stub
+//    delete m_p_rootOfDuplicatedSubTree;
   }
 
 //  void DuplicateParseTree::ParseTreePathAdded()

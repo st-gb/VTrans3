@@ -1,8 +1,27 @@
 
-#see http://stackoverflow.com/questions/8934295/add-source-in-a-subdirectory-to-a-cmake-project
+ #see http://accountingplusplus.blogspot.de/2010/12/cmake-wxwidgets.html :
+ #Set wxWidgets_USE_DEBUG to "ON" to link against WxWidgets debug libraries.
+ set( wxWidgets_USE_DEBUG ON
+  PARENT_SCOPE #To propagate changes to file that included THIS file
+  )
+ set(WXWIDGETS ON 
+    PARENT_SCOPE #To propagate changes to file that included THIS file
+  )
+message("wxWidgets_USE_DEBUG: ${wxWidgets_USE_DEBUG}")
 
+set( CXX_DEFINITIONS
+  ${CXX_DEFINITIONS}
+  -DCOMPILE_AS_GUI
+# Must not use "PARENT_SCOPE" HERE, else this definition and the one at the end
+#  of this file are not both propagated to the file that includes this file
+#  (reason for this is unknown)
+#  PARENT_SCOPE #To propagate changes to file that included THIS file
+  )
+
+#see http://stackoverflow.com/questions/8934295/add-source-in-a-subdirectory-to-a-cmake-project
 set(SOURCE_FILE_PATHS
   ${SOURCE_FILE_PATHS}
+	${VTRANS3_ROOT_PATH}/Translate/TestIfTranslationRuleApplies.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/VTransApp.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/DictionaryStatisticsWindow.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/DrawGrammarPartAttributes.cpp

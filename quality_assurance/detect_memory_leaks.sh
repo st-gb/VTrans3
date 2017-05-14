@@ -4,4 +4,7 @@
 
 # "Reachable blocks (those to which a pointer was found) are not shown.
 # To see them, rerun with: --leak-check=full --show-leak-kinds=all"
-valgrind --leak-check=yes --show-possibly-lost=no --leak-check=full ./src/VTrans
+echo 1st param: $1
+
+#valgrind --leak-check=yes --show-possibly-lost=no --leak-check=full ./src/VTrans_console $1
+valgrind --leak-check=yes --leak-check=full --show-leak-kinds=all ./src/VTrans_console $1

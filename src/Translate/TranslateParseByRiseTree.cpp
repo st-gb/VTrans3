@@ -806,7 +806,8 @@ void TranslateParseByRiseTree::ProcessParseTree(
   std::vector<GrammarPart *>
     stdvec_p_grammarpartCoveringMostTokensAtTokenIndex ;
   LOGN_DEBUG( "begin" )
-  m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.clear();
+  //TODO useful?
+//  m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.clear();
   if( p_parsebyrise )
   {
     DWORD dwLeftMostTokenIndex = 0 ;
@@ -836,9 +837,9 @@ void TranslateParseByRiseTree::ProcessParseTree(
           dwLeftMostTokenIndex ,
           stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
           ) ;
-
-      m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.
-        push_back(stdvec_p_grammarpartCoveringMostTokensAtTokenIndex);
+      //TODO useful?
+//      m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.
+//        push_back(stdvec_p_grammarpartCoveringMostTokensAtTokenIndex);
   #ifdef _DEBUG
       WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
   #endif //#ifdef _DEBUG
@@ -851,7 +852,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
       *  "dwLeftMostTokenIndex". 
       *  Often these parse trees here have the same structure but different 
       *  words (->synonyms): "the man works."-> "der Mann|Mensch arbeitet" */
-      //TODO this loop could be parallelized with OpenMP? but no with respect
+      //TODO this loop could be parallelized with OpenMP? but with no respect
       // to other parse trees that begin at other token indices?
       for( std::vector<GrammarPart *>::const_iterator
           c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex =
@@ -861,15 +862,21 @@ void TranslateParseByRiseTree::ProcessParseTree(
           ++ c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
          )
       {
-#ifdef PARALLELIZE_TRANSLATION_
+#ifdef PARALLELIZE_TRANSLATION
+        if( g_p_translationcontrollerbase->m_multiThreadedTranslation.GetNumberOfThreads() > 0)
         //TOOD parallelize (OpenMP, POSIX, ...)
 //        if( numThreadsRunning >= numCPUcoresAvailable )
 //          multiThreadedTranslation.WaitForThreadBecomingIdle();
           g_p_translationcontrollerbase->m_multiThreadedTranslation.execute(
             pfnProcessParseTree, 
+            //& TranslateParseByRiseTree::DummyTranslateParseTree,
             this, 
             * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
             /*wordCompoundsAtSameTokenIndex*/);
+        else
+          (this->* pfnProcessParseTree)(
+            * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+            wordCompoundsAtSameTokenIndex);
 #else
         //( * this->pfnProcessParseTree)
         //single-threaded version:
@@ -895,11 +902,12 @@ void TranslateParseByRiseTree::ProcessParseTree(
     }
     while( dwLeftMostTokenIndex );
 #ifdef PARALLELIZE_TRANSLATION
-    //Sync, else the main translation thread may delete pointers while other 
-    // translation threads access them.
-    //TOOD this sync could be moved to the latemost code point to let the threads
-    // run as long as possible
-    g_p_translationcontrollerbase->m_multiThreadedTranslation.EnsureAllThreadsEnded();
+    if( g_p_translationcontrollerbase->m_multiThreadedTranslation.GetNumberOfThreads() > 0)
+      /** Sync, else the main translation thread may delete pointers while other 
+      * translation threads access them. */
+      //TOOD this sync could be moved to the latemost code point to let the threads
+      // run as long as possible
+      g_p_translationcontrollerbase->m_multiThreadedTranslation.EnsureAllThreadsFinishedJob();
 #endif
   }//if( p_parsebyrise )
   LOGN_DEBUG("end")
@@ -936,7 +944,7 @@ void TranslateParseByRiseTree::Translate(
     "end")
 }
 
-#ifdef COMPILE_AS_EXECUTABLE //only needed in GUI
+#ifdef COMPILE_AS_GUI //only needed in GUI
 void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
   GrammarPart * p_grammarpart
   , WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
@@ -954,6 +962,27 @@ void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
     m_bTranslationRuleApplies = true;
 }
 #endif //#ifdef COMPILE_AS_EXECUTABLE
+
+/** Dummy function/method in order to see how parallel translation executes.*/
+void TranslateParseByRiseTree::DummyTranslateParseTree(
+  GrammarPart * p_grammarpartRootNode,
+  WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
+  )
+{
+  /** Time needed for applying translation rule for the 4 biggest parse trees
+    of "the man works" is 8 ms for a Core i7 at ?? GHz */
+//  usleep(8000); //non-busy sleep in microseconds 
+//  usleep(4000000);
+  const int arraysize = 500000;
+  int * i = new int[arraysize];
+  int index = 23;
+  for(int j = 1; j < arraysize; j++)
+  {
+    index = index %j;
+    i[j] = index;
+  }
+  delete [] i;
+}
 
 void TranslateParseByRiseTree::TranslateParseTree(
 //  std::vector<GrammarPart *>::const_iterator
@@ -1202,6 +1231,7 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   return bAtLeast1TranslationRuleApplies;
 }
 
+//TODO may change member data->may cause crashes in parallel translation
 bool TranslateParseByRiseTree::TranslationRuleApplies(
   std::string & r_stdstrTranslation ,
   BYTE & r_byPersonIndex

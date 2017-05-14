@@ -5,7 +5,7 @@
  *      Author: mr.sys
  */
 
-#include <IO/MiniXMLconfigReader.hpp>
+#include <IO/MiniXML/MiniXMLconfigReader.hpp>
 #include <mxml.h>
 #include <Controller/character_string/ConvertStdStringToTypename.hpp>
 #include <IO/MiniXML/MainConfigFileReader.hpp>
@@ -76,10 +76,11 @@ namespace MiniXML
     )
   {
     bool fileOpenSucceeded = false;
-    FILE * fp = fopen(cr_stdstrFilePath/*.c_str()*/, "r");
-    if( fp == NULL)
+    FILE * p_file = fopen(cr_stdstrFilePath/*.c_str()*/, "r");
+    if( p_file == NULL)
     {
       std::string cwd = s_p_translationController->GetCurrentWorkingDir();
+    //TODO output/show  error message
       s_p_translationController->Message("Failed to open file "
         + cwd + cr_stdstrFilePath);
     }
@@ -91,7 +92,7 @@ namespace MiniXML
       mxml_node_t * mxml_node_tLoadFileRes = ::mxmlSAXLoadFile(
         //see http://www.msweet.org/documentation/project3/Mini-XML.pdf
         NULL, //& rootXMLnode,
-        fp,
+        p_file,
         /** Callback function or MXML_NO_CALLBACK */
         MXML_NO_CALLBACK,
   //      MiniXML::MainConfigFile::loadFileCallBackFunction,
@@ -100,7 +101,8 @@ namespace MiniXML
         );
 //      //First node or NULL if the file could not be read.
 //      if( mxml_node_tLoadFileRes != NULL )
-        fileOpenSucceeded = true;
+      fileOpenSucceeded = true;
+      fclose(p_file); /** Release memory (if not: memory leak?!) */
     }
     return fileOpenSucceeded;
   }

@@ -31,6 +31,7 @@
   #include <FileSystem/SetCurrentWorkingDir.hpp>
 
 #include "Controller/character_string/ConvertStdStringToTypename.hpp"
+#include "multi_threaded_translation/nativeThreads.hpp"
 //#else
 //  //platformstl::filesystem_traits<char>::set_current_directory(...)
 //  #include <platformstl/filesystem/current_directory.hpp>
@@ -47,6 +48,8 @@ I_UserInterface * SyntaxTreePath::sp_userinterface ;
 I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 fastestUnsignedDataType TranslationControllerBase::s_numParallelTranslationThreads = 1;
 TranslationControllerBase::settingsName2ValueAndFunction_type TranslationControllerBase::s_settingsName2valueAndFunction;
+
+extern TranslationControllerBase * g_p_translationcontrollerbase;
 //LetterTree VTransApp::s_dictionary ;
 ///*LetterTree*/dictionary_type TranslationControllerBase::s_dictionary
   //(::wxGetApp(), NULL)
@@ -143,17 +146,20 @@ void SetNumTranslationThreads(const char * const value)
     TranslationControllerBase::s_numParallelTranslationThreads = 
       numParallelTranslationThreads;
     //TODO set # in this object
-//    m_multiThreadedTranslation.
+    g_p_translationcontrollerbase->m_multiThreadedTranslation.
+      SetNumberOfThreads(numParallelTranslationThreads);
+    g_p_translationcontrollerbase->m_numThreadsAndTimeDuration[
+      applyTranslRules].numThreads = numParallelTranslationThreads;
   }
 }
 
 void AddSettingsName2ValueAndFunctionMapping()
 {
-  ValuesAndFunction valuesAndFunction = {"disable\tenable", & SetLogLevel};
+  ValuesAndFunction valuesAndFunction = { (char *) "disable\tenable", & SetLogLevel};
   TranslationControllerBase::s_settingsName2valueAndFunction.insert(
     std::make_pair("logging", valuesAndFunction) );
 
-  ValuesAndFunction valuesAndFunction2 = {"", & SetNumTranslationThreads };
+  ValuesAndFunction valuesAndFunction2 = { (char *) "", & SetNumTranslationThreads };
   TranslationControllerBase::s_settingsName2valueAndFunction.insert(
     std::make_pair("#translThreads", valuesAndFunction2) );
 }
@@ -233,14 +239,18 @@ bool TranslationControllerBase::CurrentThreadIsGUIthread()
   return false;
 }
 
-BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
+BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFilePath)
 {
   LOGN_DEBUG("begin")
+//TODO : uncomment?
+//  if(cr_stdstrMainConfigFilePath.empty() )
+//    std_strMainConfigFilePath = "configuration/VTrans_main_config.xml";
 #ifdef PARALLELIZE_TRANSLATION
   m_numThreadsAndTimeDuration[applyTranslRules].numThreads = m_multiThreadedTranslation.GetNumberOfThreads();
   m_multiThreadedTranslation.CreateAndStartThreads();
 #endif
   VocabularyAndTranslation::s_p_userinterface = this;
+  /** Needed for SyntaxTreePath::CreateGrammarPartIDArray(...).*/
   SyntaxTreePath::sp_userinterface = this ;
 #ifndef TEST_MINI_XML
   IVocabularyInMainMem & r_VocAccess = s_dictReaderAndVocAccess.GetVocAccess();
@@ -250,14 +260,14 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrFilePath)
 
   bool readMainConfigFileSucceeded = true;
 //#ifndef __ANDROID__
-  readMainConfigFileSucceeded = ReadMainConfigFile(cr_stdstrFilePath);
+  readMainConfigFileSucceeded = ReadMainConfigFile(cr_stdstrMainConfigFilePath);
 //#endif
   if( readMainConfigFileSucceeded )
   {
 #ifdef TEST_MINI_XML
   return 4;
 #else
-    m_std_strMainConfigFilePath = cr_stdstrFilePath;
+    m_std_strMainConfigFilePath = cr_stdstrMainConfigFilePath;
     if( /*m_configurationHandler.*/m_stdstrVocabularyFilePath.empty() )
     {
       Message( "error: The vocabulary file path is empty") ;
@@ -372,6 +382,32 @@ void TranslationControllerBase::SetStatus(
   m_critSecStatus.Leave();
 }
 
+void TranslationControllerBase::TranslateAsXML(const char * p_chEnglishText, ByteArray & byteArray)
+{
+  g_p_translationcontrollerbase->m_vbContinue = true;
+  char * ar_chTranslation;
+  std::string stdstrWholeInputText(p_chEnglishText);
+  std::string stdstrAllPossibilities ;
+  std::vector<std::string> stdvec_stdstrWholeTransl;
+  TranslationResult translationResult;
+  Translate(
+    stdstrWholeInputText,
+    stdvec_stdstrWholeTransl,
+    translationResult
+    );
+
+  stdstrAllPossibilities = "";
+  IO::GenerateXMLtreeFromParseTree( & m_parsebyrise,
+    /*stdstrAllPossibilities*/ byteArray);
+//  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
+//  if( ar_chTranslation )
+//  {
+//    memcpy(ar_chTranslation, stdstrAllPossibilities.c_str(),
+//      stdstrAllPossibilities.length() );
+//    ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
+//  }
+}
+  
 #ifndef TEST_MINI_XML
 void TranslationControllerBase::ReadGrammarRuleFile(
   //SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
@@ -702,7 +738,7 @@ void TranslationControllerBase::Translate(
     return;
   std_strIndentedXML = GetParseTreeAsIndentedXML(
     m_parsebyrise);
-  LOGN("translation as indented XML:" << std_strIndentedXML)
+//  LOGN("translation as indented XML:" << std_strIndentedXML)
 
 //  LOGN( /*FULL_FUNC_NAME <<*/ "generated XML data:" << std_strXML)
   LOGN(//"TranslationControllerBase::Translate(...) "

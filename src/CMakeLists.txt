@@ -4,7 +4,6 @@ project (VTrans)
 #from https://cmake.org/Wiki/CMake/Testing_With_CTest
 #enable_testing()
 
-
 if( NOT DEFINED COMMON_SOURCECODE_ROOT_PATH )
   #By default "common_sourcecode" lies/lays 1 level above VTrans3/src
   set(COMMON_SOURCECODE_ROOT_PATH ${PROJECT_SOURCE_DIR}/../../common_sourcecode)
@@ -20,19 +19,18 @@ message("CXX flags: ${CMAKE_CXX_FLAGS}")
 message("CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
 
 if( ${EXE_TYPE} STREQUAL "wxGUI")
- #see http://accountingplusplus.blogspot.de/2010/12/cmake-wxwidgets.html :
- #Set wxWidgets_USE_DEBUG to "ON" to link against WxWidgets debug libraries.
- set( wxWidgets_USE_DEBUG ON)
-
-  set(WXWIDGETS ON)
-  if( DEFINED WXWIDGETS )
   #https://cmake.org/cmake/help/v3.0/command/add_subdirectory.html
   add_subdirectory(wxWidgets 
     #EXCLUDE_FROM_ALL
     )
-  endif ( DEFINED WXWIDGETS )
-  message("wxWidgets_USE_DEBUG: ${wxWidgets_USE_DEBUG}")
+  #message("CXX_DEFINITIONS after wxWidgets/CMAKELists.txt: ${CXX_DEFINITIONS}")
 endif( ${EXE_TYPE} STREQUAL "wxGUI")
+
+if( ${EXE_TYPE} STREQUAL "console")
+  set(SOURCE_FILE_PATHS
+    ${PROJECT_SOURCE_DIR}/Controller/ConsoleTranslationController.cpp
+  )
+endif( ${EXE_TYPE} STREQUAL "console")
 
 #set(<variable> <value>  ... <valueN>)
 set( INCLUDE_DIRS 
@@ -53,6 +51,7 @@ message("PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 message("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
 
 set( CXX_DEFINITIONS
+  ${CXX_DEFINITIONS}
   -DCOMPILE_LOGGER_MULTITHREAD_SAFE
   #-D__WXDEBUG__
   -DUSE_OWN_LOGGER
@@ -66,9 +65,9 @@ add_subdirectory(./IO
   )
 if( ANDROID_NDK )
 else( ANDROID_NDK )
-  add_subdirectory(Xerces
+  #add_subdirectory(Xerces
   #EXCLUDE_FROM_ALL
-  )
+  #)
   set(SOURCE_FILE_PATHS
     ${SOURCE_FILE_PATHS}
     ${XERCES_SOURCE_FILES}
@@ -160,7 +159,6 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${VTRANS3_ROOT_PATH}/Translate/SetSameConsecutiveIDforLeaves.cpp
 	${VTRANS3_ROOT_PATH}/Translate/SummarizePersonIndex.cpp
 	${VTRANS3_ROOT_PATH}/Translate/SyntaxTreePath.cpp
-	${VTRANS3_ROOT_PATH}/Translate/TestIfTranslationRuleApplies.cpp
 	${VTRANS3_ROOT_PATH}/Translate/TransformationRule.cpp
 	${VTRANS3_ROOT_PATH}/Translate/TransformTreeTraverser.cpp
 	${VTRANS3_ROOT_PATH}/Translate/TranslatedTreeTraverser.cpp
@@ -191,25 +189,38 @@ add_definitions(${CXX_DEFINITIONS})
 #target_link_libraries(${LIBRARIES})
 
 if(DEFINED WXWIDGETS)
-#https://wiki.wxwidgets.org/CMake
-set(wxWidgets_CONFIGURATION mswud)
-SET(wxWidgets_USE_LIBS core base adv)
-find_package(wxWidgets COMPONENTS core base adv REQUIRED)
-include(${wxWidgets_USE_FILE})
-
-message("wxWidgets_LIBRARIES:${wxWidgets_LIBRARIES}")
+  #https://wiki.wxwidgets.org/CMake
+  set(wxWidgets_CONFIGURATION mswud) #TODO wrong type
+  SET(wxWidgets_USE_LIBS core base adv)
+  find_package(wxWidgets COMPONENTS core base adv REQUIRED)
+  include(${wxWidgets_USE_FILE})
+  message("wxWidgets_LIBRARIES:${wxWidgets_LIBRARIES}")
 endif (DEFINED WXWIDGETS)
 
 message("include directories:${INCLUDE_DIRS}")
-add_executable(VTrans ${SOURCE_FILE_PATHS})
+
+if( ${EXE_TYPE} STREQUAL "wxGUI")
+  set(EXE_NAME wx${PROJECT_NAME}_GUI)
+endif( ${EXE_TYPE} STREQUAL "wxGUI" )
+
+if( ${EXE_TYPE} STREQUAL "console")
+  set(EXE_NAME ${PROJECT_NAME}_console)
+endif( ${EXE_TYPE} STREQUAL "console" )
+
+message("CXX_DEFINITIONS for compiling:${CXX_DEFINITIONS}")
+#Compiles all files in ${SOURCE_FILE_PATHS} ?!
+add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
 
 if(DEFINED WXWIDGETS)
   #https://wiki.wxwidgets.org/CMake
-  target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
+  message ("should link wxWidgets libraries ${wxWidgets_LIBRARIES} to executable")
+  #This line is necessary, else linker errors: undefined reference to "wx..."
+  target_link_libraries(${EXE_NAME} ${wxWidgets_LIBRARIES})
+  #message ("wxWidgets type: ${wxWidgets_CONFIGURATION}")
 endif (DEFINED WXWIDGETS)
 
-target_link_libraries(VTrans ${LIBRARIES})
-message (STATUS "wxWidgets type: ${wxWidgets_CONFIGURATION}")
+message ("should link libraries \"${LIBRARIES}\" to executable")
+target_link_libraries(${EXE_NAME} ${LIBRARIES})
 
 #target_link_libraries (VTrans3 wxWidgets)
 

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 #include "nativeThreads.hpp"
 #include "Controller/TranslationControllerBase.hpp"
 #include <unistd.h> //usleep(...)
@@ -16,25 +11,74 @@ static long int s_indexOfEndingThread;
 
 namespace VTrans3 {
   
+  MultiThreadedTranslation::MultiThreadedTranslation()
+    : m_numThreads(0)
+    , killAllThreads(0)
+  {
+    
+  }
+  
   MultiThreadedTranslation::MultiThreadedTranslation(fastestUnsignedDataType number)
     : m_numThreads(number)
+    , killAllThreads(0)
   {
-    threads = new nativeThread_type[number];
-    threadStates = new long int[number];
-    memset( threadStates, idle, sizeof(long int) * number );
-    
+    if( m_numThreads )
+    {
+      AllocateAndInitializeResources();
+//    CreateAndStartThreads();
+    }
+  }
+
+  void MultiThreadedTranslation::AllocateAndInitializeResources()
+  {
     pthread_cond_init(& m_pthread_cond_t, NULL);
     pthread_cond_init(& m_pthread_cond_tFinishingThreads, NULL);
     pthread_mutex_init(& m_pthread_mutex_t, NULL);
+      
+    threads = new nativeThread_type[m_numThreads];
+    threadStates = new long int[m_numThreads];
+    memset( threadStates, idle, sizeof(long int) * m_numThreads );
     
-//    CreateAndStartThreads();
+    m_pthread_cond_tNewJobOrEndAllThreads = new pthread_cond_t[m_numThreads];
+    for(int i = 0; i < m_numThreads; i++)
+      pthread_cond_init(& m_pthread_cond_tNewJobOrEndAllThreads[i], NULL);
+    killAllThreads = 0;
   }
+  
+  void MultiThreadedTranslation::WaitForTerminationOfAllThreads()
+  {
+    for(fastestUnsignedDataType threadIndex = 0; threadIndex < m_numThreads ;
+         threadIndex ++)
+    {
+      threads[threadIndex].WaitForTermination();
+    }
+  }
+  
+  void MultiThreadedTranslation::DeleteAllThreadsAndThreadStates()
+  {
+    if( m_numThreads )
+    {
+      EnsureAllThreadsFinishedJob();
+      BroadcastThreadEndToAllThreads();
+      WaitForTerminationOfAllThreads();
+      
+      pthread_cond_destroy(& m_pthread_cond_t);
+      pthread_cond_destroy(& m_pthread_cond_tFinishingThreads);
+      pthread_mutex_destroy(& m_pthread_mutex_t);
+      
+      delete [] threads;
+      delete [] threadStates;
+      for(int i = 0; i < m_numThreads; i++)
+        pthread_cond_destroy(& m_pthread_cond_tNewJobOrEndAllThreads[i]);
+      delete [] m_pthread_cond_tNewJobOrEndAllThreads;
+    }
+  }
+  
   MultiThreadedTranslation::~MultiThreadedTranslation() {
-    delete [] threads;
-    delete [] threadStates;
-    pthread_cond_destroy(& m_pthread_cond_t);
-    pthread_cond_destroy(& m_pthread_cond_tFinishingThreads);
-    pthread_mutex_destroy(& m_pthread_mutex_t);
+    if( m_numThreads )
+    {
+      DeleteAllThreadsAndThreadStates();
+    }
   }
   
   void MultiThreadedTranslation::WaitForThreadBecomingIdle()
@@ -54,7 +98,7 @@ namespace VTrans3 {
       << " for " << strMessage;
     if( threadNumber > -1 )
       oss << " for thread #" << threadNumber; 
-    LOGN_DEBUG(oss.str() )
+    LOGN_INFO(oss.str() )
     //TODO: use pthread_mutex_trylock instead?
     //pthread_mutex_t.__data.__owner is thread ID of owner
     //pthread_mutex_t.__data.__lock is lock state
@@ -64,7 +108,7 @@ namespace VTrans3 {
       << & m_pthread_mutex_t << " for " << strMessage;
     if( threadNumber > -1 )
       oss2 << " for thread #" << threadNumber;
-    LOGN_DEBUG( oss2.str() )
+    LOGN_INFO( oss2.str() )
     if( returnValue != 0 )
       returnValue++;
   }
@@ -91,16 +135,38 @@ namespace VTrans3 {
       (char *) "signalling this thread finished work");
   }
 
+  void MultiThreadedTranslation::Broadcast(
+    const char * message, 
+    pthread_cond_t * p_pthread_cond_t,
+    int threadIndex)
+  {
+    LOGN_DEBUG("Before broadcasting " << message << " for thread #" << 
+      threadIndex )
+    //pthread_cond_signal increases the lock count (__data.__lock) of mutex by 1
+    int returnValue = pthread_cond_broadcast(p_pthread_cond_t);
+    LOGN_DEBUG("After broadcasting " << message << " for thread #" << threadIndex)
+    if( returnValue != 0 )
+      returnValue++;
+  }
+  
+  void MultiThreadedTranslation::SetNumberOfThreads(fastestUnsignedDataType num)
+  {
+    DeleteAllThreadsAndThreadStates();
+    m_numThreads = num;
+    AllocateAndInitializeResources();
+//    CreateAndStartThreads();
+  }
+  
   void MultiThreadedTranslation::Signal(
     const char * message, 
     pthread_cond_t * p_pthread_cond_t,
     int threadIndex)
   {
-    LOGN_DEBUG("Before signalling " << message << " for thread #" << 
+    LOGN_INFO("Before signalling " << message << " for thread #" << 
       threadIndex )
     //pthread_cond_signal increases the lock count (__data.__lock) of mutex by 1
     int returnValue = pthread_cond_signal(p_pthread_cond_t);
-    LOGN_DEBUG("After signalling " << message << " for thread #" << threadIndex)
+    LOGN_INFO("After signalling " << message << " for thread #" << threadIndex)
     if( returnValue != 0 )
       returnValue++;
   }
@@ -127,8 +193,26 @@ namespace VTrans3 {
     /** https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.bpxbd00/ptcwait.htm :
      * It must be called with mutex locked by the calling thread, or undefined behavior will result. */
 //    LockCriticalSection( message, threadIndex );
-    WaitForSignal("new job/thread end", & m_pthread_cond_t, threadIndex);
-    AtomicExchange( & threadStates[threadIndex], newJob);
+//    WaitForSignal("new job/thread end", & m_pthread_cond_t, threadIndex);
+    WaitForSignal("new job/thread end", & m_pthread_cond_tNewJobOrEndAllThreads[threadIndex], threadIndex);
+    if( ! killAllThreads )
+    {
+//      LOGN_INFO("pointer to New Job:" << (void *) newJob )
+      ProcessParseTreeParams * p_processParseTreeParams = 
+        (ProcessParseTreeParams *) /*newJob*/ threadStates[threadIndex];
+      LOGN_INFO("New Job:" <<  (void *) p_processParseTreeParams
+        << " grammar part:" << p_processParseTreeParams->p_GrammarPart << " "
+        << p_processParseTreeParams->p_translateParseByRiseTree << " "
+        << "function pointer:" << (void *) p_processParseTreeParams->processParseTreeFunction )
+    }
+//    assert()
+    //TODO is the new thread state visible for the dispatcher thread?
+    //->TU Berlin, "parallel programming" , lecture 10
+    // http://stackoverflow.com/questions/6319146/c11-introduced-a-standardized-memory-model-what-does-it-mean-and-how-is-it-g
+//    AtomicExchange( & threadStates[threadIndex], newJob);
+    
+//     InterlockedExchangePointer();
+            
     /** mutex is locked by pthread_cond_wait(...) before returning:
      *  /** https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.bpxbd00/ptcwait.htm :
      * "The pthread_cond_wait() function 
@@ -166,10 +250,18 @@ namespace VTrans3 {
       {
         ProcessParseTreeParams * p_processParseTreeParams = 
           (ProcessParseTreeParams *) threadStates[threadIndex];
+        //TODO assertion failed once(in version with 1 new job signal for all threads?!)
+//        assert( p_processParseTreeParams->processParseTreeFunction == 
+//          & TranslateParseByRiseTree::DummyTranslateParseTree ); 
+        LOGN_INFO("before executing worker function")
+        //TODO crashed here (in version with 1 new job signal for all threads?!): 
+        // p_processParseTreeParams was 0?!: 
+        //  "Access not within mapped region at address 0x0"
         (p_processParseTreeParams->p_translateParseByRiseTree->*
           p_processParseTreeParams->processParseTreeFunction)(
           p_processParseTreeParams->p_GrammarPart, 
           wordCompoundsAtSameTokenIndex);
+        LOGN_INFO("after executing worker function")
 
   //      p_parallelParams->p_threadAssignCritSec->Enter();
   //      p_parallelParams->p_threadAllocEvent->Broadcast();
@@ -181,13 +273,15 @@ namespace VTrans3 {
          *  -this/a "thread finfishes" signal event or the . */
         LockForSignallingThisThreadFinishedWork(p_multiThreadedTranslation);
 
-        LOGN_DEBUG("freeing memory" << threadStates[threadIndex])
+        LOGN_INFO("freeing memory for address:" << (void *) p_processParseTreeParams)
+//        std::cout << "freeing memory" << threadStates[threadIndex] << std::endl;
         /** Has been dynamically allocated in "execute(...)" */
 //        memory_barrier();
-        //TODO crashes here (SIGABRT) if running
+        //TODO crashes here (in version with 1 new job signal for all threads?!)
+        // (SIGABRT) if running
         // -without being halted by breakpoints
         // -without logging
-        delete (ProcessParseTreeParams *) threadStates[threadIndex];
+        delete p_processParseTreeParams;
         AtomicExchange(& threadStates[threadIndex], MultiThreadedTranslation::idle);
 
         AtomicExchange(& s_indexOfEndingThread, threadIndex);
@@ -196,7 +290,7 @@ namespace VTrans3 {
         //threads signalising their end.
         p_multiThreadedTranslation->SignalThisThreadFinishedWork();
         if( p_multiThreadedTranslation->killAllThreads )
-          p_multiThreadedTranslation->UnlockCriticalSection( "sd", threadIndex);
+          p_multiThreadedTranslation->UnlockCriticalSection("end execThreadFunction", threadIndex);
         else
           p_multiThreadedTranslation->WaitForNewJobOrThreadEndSignal(threadIndex);      
 
@@ -210,14 +304,33 @@ namespace VTrans3 {
    *  pthread_create(...) this function should be called from a separate thread */
   void MultiThreadedTranslation::CreateAndStartThreads()
   {
+//#define SET_AFF_MASK
+#ifdef SET_AFF_MASK
+    cpu_set_t cpuset;
+    int numCPUcores = 8;
+#endif //#ifdef SET_AFF_MASK
     for(fastestUnsignedDataType threadIndex = 0; threadIndex < m_numThreads;
         threadIndex ++ )
     {
+#ifdef SET_AFF_MASK
+      CPU_ZERO(&cpuset);
+//      CPU_SET( numCPUcores / (threadIndex + 1) - 1, &cpuset);
+      CPU_SET( threadIndex, &cpuset);
+#endif //#ifdef SET_AFF_MASK
+      
       ParallelParams * p_parallelParams = new ParallelParams{ threadIndex, this };
       LOGN_DEBUG("Starting new thread at thread index " << threadIndex)
       int startRet = threads[threadIndex].start(execThreadFunction, p_parallelParams 
         //, ("parTransl#" + convertToStdString(index)).c_str() 
         );
+#ifdef SET_AFF_MASK
+      pthread_t threadHandle = * (pthread_t *) threads[threadIndex].GetThreadHandle();
+//      if( m_numThreads < numCPUcores )
+      // http://man7.org/linux/man-pages/man3/pthread_setaffinity_np.3.html
+//      int s = pthread_setaffinity_np( threadHandle, sizeof(cpu_set_t), &cpuset);
+//      if (s != 0)
+//        LOGN_ERROR("CPUsez");
+#endif //#ifdef SET_AFF_MASK
       if( startRet > 0 )
         g_p_translationcontrollerbase->Message("Starting a translation thread failed:"
           + OperatingSystem::GetErrorMessageFromErrorCodeA(startRet) );
@@ -234,10 +347,22 @@ namespace VTrans3 {
 //    }
 //  }
   
+  void MultiThreadedTranslation::BroadcastThreadEndToAllThreads()
+  {
+    char * message = "kill all threads";
+    AtomicExchange( & killAllThreads, 1);
+    LockCriticalSection(message);
+//    Broadcast(message, & m_pthread_cond_t, -1);
+    for(int i = 0; i < m_numThreads; i++)
+      Signal(message, & m_pthread_cond_tNewJobOrEndAllThreads[i]);
+
+    UnlockCriticalSection(message);
+  }
+  
   /** Waits for all threads to terminate. This function may be executed at the
    *  latest possible point (before the data structures that are used by the 
    *  threads are destroyed. */
-  void MultiThreadedTranslation::EnsureAllThreadsEnded()
+  void MultiThreadedTranslation::EnsureAllThreadsFinishedJob()
   {
 //    AtomicExchange( & killAllThreads, 1);
 //    for( fastestUnsignedDataType index = 0; index < m_numThreads; index++)
@@ -245,7 +370,7 @@ namespace VTrans3 {
 //      //threads[index].WaitForTermination(); //TODO SIGSEV here
 //      Signal("end threads")
 //    }
-    
+    LOGN_INFO("begin")
     LockCriticalSection("all threads finished");
 //    AtomicExchange( & killAllThreads, 1);
     fastestUnsignedDataType numRunningThreadsAvailable = 0;
@@ -259,6 +384,65 @@ namespace VTrans3 {
     }
     while( numRunningThreadsAvailable --)
     {
+      LOGN_INFO("numRunningThreadsAvailable:" << numRunningThreadsAvailable + 1)
+      //TODO sometimes was in wait state after the last worker thread signalled his
+      // end-> did not receive the signal (->non-deterministic/race condition?)
+      // this may be due to this fact that pthread_cond_wait(...) :
+      // -releases the mutex before waiting before putting itself into wait mode
+      // -then the worker threads may get the lock and 
+      /* Log1:
+  2017-05-14 13:04:41,777 INFO [Thread-16187] VTrans3::MultiThreadedTranslation EnsureAllThreadsFinishedJob begin
+  2017-05-14 13:04:41,777 INFO [Thread-16187] VTrans3::MultiThreadedTranslation EnsureAllThreadsFinishedJob numRunningThreadsAvailable:2
+  2017-05-14 13:04:41,777 INFO [Thread-16187] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0xbfe7aa70 for finishing thread to signal for thread #-1
+  [...]
+  2017-05-14 13:04:41,800 INFO [parTransl#0-16188] VTrans3 execThreadFunction after executing worker function
+  2017-05-14 13:04:41,800 INFO [parTransl#0-16188] VTrans3 execThreadFunction freeing memory for address:0x9d68a50
+  2017-05-14 13:04:41,800 INFO [parTransl#0-16188] VTrans3::MultiThreadedTranslation Signal Before signalling this thread finished work for thread #-1
+  2017-05-14 13:04:41,800 INFO [parTransl#1-16189] VTrans3 execThreadFunction after executing worker function
+  2017-05-14 13:04:41,800 INFO [parTransl#0-16188] VTrans3::MultiThreadedTranslation Signal After signalling this thread finished work for thread #-1
+  2017-05-14 13:04:41,800 INFO [parTransl#0-16188] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0x9d5f220 for new job/thread end for thread #0
+  2017-05-14 13:04:41,800 INFO [parTransl#1-16189] VTrans3 execThreadFunction freeing memory for address:0x9d67cc0
+  2017-05-14 13:04:41,800 INFO [parTransl#1-16189] VTrans3::MultiThreadedTranslation Signal Before signalling this thread finished work for thread #-1
+  2017-05-14 13:04:41,800 INFO [parTransl#1-16189] VTrans3::MultiThreadedTranslation Signal After signalling this thread finished work for thread #-1
+  2017-05-14 13:04:41,800 INFO [parTransl#1-16189] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0x9d5f250 for new job/thread end for thread #1
+  2017-05-14 13:04:41,800 INFO [Thread-16187] VTrans3::MultiThreadedTranslation WaitForSignal after waiting for condition 0xbfe7aa70 for finishing thread to signal for thread #-1 return value:0
+  2017-05-14 13:04:41,800 INFO [Thread-16187] VTrans3::MultiThreadedTranslation EnsureAllThreadsFinishedJob numRunningThreadsAvailable:1
+  2017-05-14 13:04:41,800 INFO [Thread-16187] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0xbfe7aa70 for finishing thread to signal for thread #-1       *  
+       * 
+       * log:
+2017-05-14 13:14:18,713 INFO [Thread-16649] VTrans3::MultiThreadedTranslation EnsureAllThreadsFinishedJob begin
+2017-05-14 13:14:18,713 INFO [Thread-16649] VTrans3::MultiThreadedTranslation LockCriticalSection Before locking critical section 0xbfa75e44 for all threads finished
+2017-05-14 13:14:18,713 INFO [Thread-16649] VTrans3::MultiThreadedTranslation LockCriticalSection After locking critical section 0xbfa75e44 for all threads finished
+2017-05-14 13:14:18,713 INFO [Thread-16649] VTrans3::MultiThreadedTranslation EnsureAllThreadsFinishedJob numRunningThreadsAvailable:2
+2017-05-14 13:14:18,713 INFO [Thread-16649] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0xbfa75e90 for finishing thread to signal for thread #-1
+       * [...]
+2017-05-14 13:14:18,734 INFO [parTransl#1-16651] VTrans3::MultiThreadedTranslation LockCriticalSection Before locking critical section 0xbfa75e44 for signalling this thread finished work
+       * [...]
+2017-05-14 13:14:18,734 INFO [parTransl#0-16650] VTrans3::MultiThreadedTranslation LockCriticalSection Before locking critical section 0xbfa75e44 for signalling this thread finished work
+2017-05-14 13:14:18,734 INFO [parTransl#1-16651] VTrans3::MultiThreadedTranslation LockCriticalSection After locking critical section 0xbfa75e44 for signalling this thread finished work
+[...]
+2017-05-14 13:14:18,734 INFO [parTransl#1-16651] VTrans3::MultiThreadedTranslation Signal Before signalling this thread finished work for thread #-1
+2017-05-14 13:14:18,734 INFO [parTransl#1-16651] VTrans3::MultiThreadedTranslation Signal After signalling this thread finished work for thread #-1
+2017-05-14 13:14:18,734 INFO [parTransl#1-16651] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0x9d4b250 for new job/thread end for thread #1
+2017-05-14 13:14:18,734 INFO [parTransl#0-16650] VTrans3::MultiThreadedTranslation LockCriticalSection After locking critical section 0xbfa75e44 for signalling this thread finished work
+[...]
+2017-05-14 13:14:18,734 INFO [parTransl#0-16650] VTrans3::MultiThreadedTranslation Signal Before signalling this thread finished work for thread #-1
+2017-05-14 13:14:18,735 INFO [parTransl#0-16650] VTrans3::MultiThreadedTranslation Signal After signalling this thread finished work for thread #-1
+2017-05-14 13:14:18,735 INFO [parTransl#0-16650] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0x9d4b220 for new job/thread end for thread #0
+2017-05-14 13:14:18,735 INFO [Thread-16649] VTrans3::MultiThreadedTranslation WaitForSignal after waiting for condition 0xbfa75e90 for finishing thread to signal for thread #-1 return value:0
+2017-05-14 13:14:18,735 INFO [Thread-16649] VTrans3::MultiThreadedTranslation EnsureAllThreadsFinishedJob numRunningThreadsAvailable:1
+2017-05-14 13:14:18,735 INFO [Thread-16649] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0xbfa75e90 for finishing thread to signal for thread #-1   
+       *  
+       * another log:
+        2017-05-14 12:53:21,868 INFO [Thread-16059] VTrans3::MultiThreadedTranslation EnsureAllThreadsFinishedJob numRunningThreadsAvailable:2
+        2017-05-14 12:53:21,868 INFO [Thread-16059] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0xbfa62bb0 for finishing thread to signal for thread #-1
+       * [...]
+        2017-05-14 12:53:21,874 INFO [parTransl#6-16066] VTrans3::MultiThreadedTranslation Signal Before signalling this thread finished work for thread #-1
+        2017-05-14 12:53:21,874 INFO [parTransl#6-16066] VTrans3::MultiThreadedTranslation Signal After signalling this thread finished work for thread #-1
+        2017-05-14 12:53:21,874 INFO [parTransl#6-16066] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0x8a4c3e8 for new job/thread end for thread #6
+        2017-05-14 12:53:21,874 INFO [Thread-16059] VTrans3::MultiThreadedTranslation WaitForSignal after waiting for condition 0xbfa62bb0 for finishing thread to signal for thread #-1 return value:0
+        2017-05-14 12:53:21,874 INFO [Thread-16059] VTrans3::MultiThreadedTranslation EnsureAllThreadsFinishedJob numRunningThreadsAvailable:1
+        2017-05-14 12:53:21,875 INFO [Thread-16059] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0xbfa62bb0 for finishing thread to signal for thread #-1 */
       WaitForEndingThreadToSignal();
       /** Let other threads signal */
 //      UnlockCriticalSection( (char *) "all threads finished");
@@ -268,23 +452,24 @@ namespace VTrans3 {
     UnlockCriticalSection( (char *) "all threads finished");
     //TODO all changes of all threads need to be updated in main translation 
     // thread?! -> i.e. memory barrier?? 
-  }
+     LOGN_INFO("end")
+ }
   
   void MultiThreadedTranslation::WaitForSignal(
     const char * const strMessage,
     pthread_cond_t * p_condition,
     int threadIndex)
   {    
-    LOGN_DEBUG("Before waiting for condition " << & m_pthread_cond_t 
+    LOGN_INFO("Before waiting for condition " << p_condition 
       << " for " << strMessage << " for thread #" << threadIndex)
     /** https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.bpxbd00/ptcwait.htm :
       * "The pthread_cond_wait() function 
      *  releases this mutex 
      *  before suspending the thread and obtains it again before returning." */
     int returnValue = pthread_cond_wait( p_condition, & m_pthread_mutex_t);
-    /** Returns here after "pthread_cond_signal", mutex unlock  in "MultiThreadedTranslation::execute" */
+    /** Returns here after "pthread_cond_signal" & mutex unlock  in "MultiThreadedTranslation::execute" */
     //crashed here with SIGSEV.
-    LOGN_DEBUG("after waiting for condition " << & m_pthread_cond_t << " for "
+    LOGN_INFO("after waiting for condition " << p_condition << " for "
       << strMessage << " for thread #" << threadIndex << " return value:" << returnValue )
     if( returnValue != 0 )
       returnValue = errno;
@@ -361,11 +546,30 @@ namespace VTrans3 {
     char * message = (char*) "send \"new job\" signal";
 //    Should be already lock inside "execute"
 //    LockCriticalSection( message );
-//    AtomicExchange( & threadStates[threadIndex], 
-//      (long int) p_processParseTreeParams);
-    AtomicExchange( & newJob, (long int) p_processParseTreeParams);
+//    AtomicExchange( & newJob, (long int) p_processParseTreeParams);
+    AtomicExchange( & threadStates[threadIndex], 
+      (long int) p_processParseTreeParams);
     
-    Signal(message, & m_pthread_cond_t);
+//    TranslateParseByRiseTree & translateParseByRiseTree = * p_processParseTreeParams->p_translateParseByRiseTree;
+    TranslateParseByRiseTree::ProcessParseTree_type processParseTreeFunction =
+      p_processParseTreeParams->processParseTreeFunction;
+    LOGN_INFO("New Job:" << (void *) p_processParseTreeParams 
+      << " grammar part:" << p_processParseTreeParams->p_GrammarPart << " "
+      << p_processParseTreeParams->p_translateParseByRiseTree
+      //http://stackoverflow.com/questions/2402579/function-pointer-to-member-function
+      << " function pointer:" << (void *) processParseTreeFunction
+      << "thread index" << threadIndex)
+//    Signal(message, & m_pthread_cond_t);
+    Signal(message, & m_pthread_cond_tNewJobOrEndAllThreads[threadIndex]);
+    
+    //TODO when run with helgrind and 1 condition variable _for all threads_?: 
+    //  EnsureAllThreadsFinishedJob() from 
+    //  "TranslateParseByRiseTree::ProcessParseTree" followed after unlocking
+    //  before any WaitForNewJobOrThreadEndSignal -> SIGSEGV
+    //  4 jobs were signal, but only 1 got
+    //TDDO when run with helgrind and 1 condition variable _for all threads_?: sent 3 jobs before the 1st 
+    //  "WaitForNewJobOrThreadEndSignal" printed out the job-> 2 jobs got lost,
+    //  3 threads got the same (the 3rd) job assigned
     UnlockCriticalSection( message);
   }
 
@@ -411,7 +615,7 @@ namespace VTrans3 {
         //Creating a thread takes too long (ca. 6 ms).
 //        WaitForTerminationOfEndingThread(threads[s_indexOfEndingThread]);
 //        StartNewThread(processParseTreeParams, s_indexOfEndingThread);
-        AssignNewJobToThread(p_processParseTreeParams, -1);
+        AssignNewJobToThread(p_processParseTreeParams, s_indexOfEndingThread);
 //        noNonRunningThreadAvailable = false;
       }
 //      Broadcast("end all threads");

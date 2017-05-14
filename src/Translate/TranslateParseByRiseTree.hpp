@@ -44,7 +44,7 @@ class TranslateParseByRiseTree
     m_stdmap_stdstrTranslationArrayName2vec_stdstrArrayElements ;
   std::vector<GrammarPart *> m_stdvecNodesToProcess ;
 public:
-  bool m_bTranslationRuleApplies;
+  bool m_bTranslationRuleApplies; //Only used by ShowTranslationRulesDialog
   I_UserInterface & mr_i_userinterface ;
   ParseByRise * mp_parsebyrise ;
 private:
@@ -54,8 +54,8 @@ private:
   //Example: at first it starts at "clause" . Then "clause.subject"
   // "clause.subject.def_article_noun" -> "clause.subject.def_article_noun.noun".
   //the rule applies to the subtree "subject.def_article_noun.noun"
-  std::vector<WORD> m_stdvec_wCurrentGrammarPartPath ;
-  std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
+//  std::vector<WORD> m_stdvec_wCurrentGrammarPartPath ;
+//  std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
 public:
   //e.g. define std::string "Eng_singular",
   // AttributeTypeAndPosAndSize ( string, 0 ,1 )
@@ -83,8 +83,10 @@ public:
     TranslationRule,ConditionsAndTranslation>
     m_stdmap_translationrule2ConditionsAndTranslation ;
 
-  std::vector<std::vector<GrammarPart *> >
-    m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex;
+  /** tree root node covering most tokens, beginning from lowest leftmost 
+   * token  index*/
+//  std::vector<std::vector<GrammarPart *> >
+//    m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex;
 public:
   void AddVocAndTranslDefinition(
     //e.g. "noun.German.plural"
@@ -171,6 +173,10 @@ public:
     WordCompoundsAtSameTokenIndex &
     );
 #endif //#ifdef COMPILE_AS_EXECUTABLE
+  void DummyTranslateParseTree( /** This method exists for testing purposes.*/
+    GrammarPart * p_grammarpartRootNode,
+    WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
+    );
   void TranslateParseTree(
 //    std::vector<GrammarPart *>::const_iterator
 //      c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex

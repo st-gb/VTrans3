@@ -6,7 +6,7 @@
  */
 
 #include <IO/MiniXML/TranslationRuleFileReader.hpp>
-#include <IO/MiniXMLconfigReader.hpp> //MiniXMLconfigReader::ReadFile(...)
+#include <IO/MiniXML/MiniXMLconfigReader.hpp> //MiniXMLconfigReader::ReadFile(...)
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>

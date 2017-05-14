@@ -142,6 +142,8 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                   LOGN_DEBUG( //FULL_FUNC_NAME << "--"
                     "attribute refers to the German "
                     "language" )
+                  //TODO m_arbyAttribute (begin of array) has value 0x5->SIGSEV
+                  //when doing parallel translation
                   const BYTE * c_arbyAttribute = p_grammarpartLeaf->
                     m_pvocabularyandtranslation->m_arbyAttribute;
                   if(c_arbyAttribute)
@@ -300,6 +302,7 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
                 {
 //                  LOGN_DEBUG( //FULL_FUNC_NAME << "--"
 //                    "language is German")
+                  //TODO VocabularyAndTranslation pointer was wrong in parallel translation
                   const VocabularyAndTranslation * const
                     p_vocabularyandtranslation =
                     p_grammarpartLeaf->m_pvocabularyandtranslation;

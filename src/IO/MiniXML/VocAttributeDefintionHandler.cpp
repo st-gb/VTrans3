@@ -8,7 +8,7 @@
 #include <IO/MiniXML/VocAttributeDefintionHandler.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/character_string/ConvertStdStringToTypename.hpp>
-#include <IO/MiniXMLconfigReader.hpp> //class MiniXMLconfigReader::s_p_translationController
+#include <IO/MiniXML/MiniXMLconfigReader.hpp> //class MiniXMLconfigReader::s_p_translationController
 
 namespace VTrans3
 {

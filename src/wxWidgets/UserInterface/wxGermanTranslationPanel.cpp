@@ -401,7 +401,7 @@ void wxGermanTranslationPanel::DrawTranslationFromAllParseTrees(wxDC & r_wxdc)
 //    m_std_vector_stdvecTranslationAndGrammarPart.begin();
 //  while( c_iter != m_std_vector_stdvecTranslationAndGrammarPart.end() )
 //  {
-//      std::vector<TranslationAndGrammarPart>::const_iterator
+//      WordCompound::const_iterator
 //        c_iterInner = c_iter->begin();
 //      while( c_iterInner != c_iter->end() )
 //      {

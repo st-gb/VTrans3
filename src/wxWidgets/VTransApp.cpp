@@ -242,16 +242,13 @@ void VTransApp::GetSourceText(std::string & std_string) {
 
 bool VTransApp::HandleCommandLineArgs() {
   WRITE_TO_LOG_FILE_AND_STDOUT_NEWLINE("usage: <this_program> "
-          "<path to main config_file> <path to root directory for all config files>")
-          //  bool bRet = false ;
-          std::string std_strMainConfigFilePath;
+    "<path to main config_file> <path to root directory for all config files>")
+  //  bool bRet = false ;
+  std::string std_strMainConfigFilePath;
   if (argc > MainConfigFilePathProgArgIndex) {
-    //Needed for SyntaxTreePath::CreateGrammarPartIDArray(...).
-    SyntaxTreePath::sp_userinterface = this;
     std_strMainConfigFilePath = //(
-            //"germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
-            GetStdString(wxString(argv[MainConfigFilePathProgArgIndex]));
-    //    g_lettertree.InsertFundamentalWords() ;
+      //"germanNounsFromTUdictInVTransFormatVeryShort.txt") ;
+      GetStdString(wxString(argv[MainConfigFilePathProgArgIndex]));
   } else
     std_strMainConfigFilePath = "configuration/VTrans_main_config.xml";
   //    if( OneLinePerWordPair::LoadWords( //pWordNodeCurrent
@@ -277,12 +274,12 @@ bool VTransApp::HandleCommandLineArgs() {
 
   if (argc > CurrWorkDirProgArgIndex) {
     LOGN_DEBUG("Before setting current directory to \""
-            //main config file's full path"
-            << argv[2] << "\"")
-            ::wxSetWorkingDirectory(argv[CurrWorkDirProgArgIndex]);
+      //main config file's full path"
+      << argv[CurrWorkDirProgArgIndex] << "\"")
+    ::wxSetWorkingDirectory(argv[CurrWorkDirProgArgIndex]);
     LOGN("After setting current directory to \""
-            //main config file's full path"
-            << argv[2] << "\"")
+      //main config file's full path"
+      << argv[CurrWorkDirProgArgIndex] << "\"")
   }
   Init(std_strMainConfigFilePath);
   //  }

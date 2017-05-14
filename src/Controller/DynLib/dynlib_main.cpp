@@ -17,7 +17,7 @@
 #include <preprocessor_macros/export_function_symbols.h>
 //LOGN(...), g_logger
 #include <preprocessor_macros/logging_preprocessor_macros.h>
-#include <IO/GenerateXMLtreeFromParseTree.hpp>
+//#include <IO/GenerateXMLtreeFromParseTree.hpp>
 //#include <InputOutput/XML/OutputXMLindented.hpp>
 
 //Logger g_logger;
@@ -72,16 +72,7 @@ void __attribute__ ((destructor)) my_fini(void)
   FreeMemory();
 }
 
-/**
- * @return: result of initialization: 0=success, else error.
- */
-EXPORT BYTE
-  Init(
-  const char * p_chMainConfigFilePath,
-  //Root path where the rule file pathes contained in the main config file
-  //are appended to.
-  const char * const p_chConfigFilesRootPath
-  )
+int OpenLogFile(const char * const p_chConfigFilesRootPath)
 {
 //  LogLevel::CreateLogLevelStringToNumberMapping();
   //g_logger.SetFormatter(new CSS::LogFormatter::Log4jFormatter(& g_logger) );
@@ -110,6 +101,20 @@ EXPORT BYTE
   }
   LOGN_INFO("compile time:" << __DATE__ << " " << __TIME__ )
 #endif
+}
+
+/** @return: result of initialization: 0=success, else error.  */
+EXPORT BYTE
+  Init(
+  const char * p_chMainConfigFilePath,
+  //Root path where the rule file pathes contained in the main config file
+  //are appended to.
+  const char * const p_chConfigFilesRootPath
+  )
+{
+  int i = OpenLogFile(p_chConfigFilesRootPath);
+  if( i == TranslationControllerBaseClass::InitFunction::creatingLogFileFailed)
+    return i;
   std::string std_strCurrentWorkingDir;
   OperatingSystem::GetCurrentWorkingDirA_inl(std_strCurrentWorkingDir);
   LOGN_INFO("current dir is:\"" << std_strCurrentWorkingDir << "\"")
@@ -214,28 +219,7 @@ EXPORT /*char * */ void TranslateAsXML(const char * p_chEnglishText//,
 {
   LOGN(/*"::TranslateAsXML(...)"*/ "begin")
 //  ByteArray byteArray(512);
-  g_p_translationcontrollerbase->m_vbContinue = true;
-  char * ar_chTranslation;
-  std::string stdstrWholeInputText(p_chEnglishText);
-  std::string stdstrAllPossibilities ;
-  std::vector<std::string> stdvec_stdstrWholeTransl;
-  TranslationResult translationResult;
-  g_p_translationcontrollerbase->Translate(
-    stdstrWholeInputText,
-    stdvec_stdstrWholeTransl,
-    translationResult
-    );
-
-  stdstrAllPossibilities = "";
-  IO::GenerateXMLtreeFromParseTree( & g_p_translationcontrollerbase->m_parsebyrise,
-    /*stdstrAllPossibilities*/ byteArray);
-  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
-  if( ar_chTranslation )
-  {
-    memcpy(ar_chTranslation, stdstrAllPossibilities.c_str(),
-      stdstrAllPossibilities.length() );
-    ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
-  }
+  g_p_translationcontrollerbase->TranslateAsXML(p_chEnglishText, byteArray);
   LOGN("XML as tree: ")
 //  OutputXMLindented( stdstrAllPossibilities.c_str(),
 //    * g_logger.mp_ofstream );

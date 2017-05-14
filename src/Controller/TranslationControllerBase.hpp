@@ -134,6 +134,8 @@ struct NumThreadsAndTimeDuration
 
 enum {buildParseTrees = 0, transform, applyTranslRules, beyondLastValue};
 
+std::string GetParseTreeAsIndentedXML(const ParseByRise & parsebyrise);
+
 /** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
 class TranslationControllerBase
   : public I_UserInterface
@@ -206,7 +208,7 @@ public:
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
   bool CurrentThreadIsGUIthread();
-  BYTE Init(const std::string & cr_stdstrFilePath) ;
+  BYTE Init(const std::string & cr_stdstrMainConfigFilePath) ;
   virtual void LoadingVocabularyFileFailed(
     const std::string & cr_stdstrFilePath) {} // = 0;
   //These virtual methods need to be re-declared (and implemented in
@@ -232,10 +234,10 @@ public:
     const VTrans::string_type & strWordFile,
     DWORD dwOffsetOfBeginOfEntry,
     DWORD dwOffset
-    )// = 0;
-  {
-
-  }
+    )// = 0; 
+    {  }
+  /** used by dyn lib and console application. */
+  void TranslateAsXML(const char * p_chEnglishText, ByteArray & byteArray);
   void ReadGrammarRuleFile(
 //    SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
     const std::string & cr_stdstrFilePath

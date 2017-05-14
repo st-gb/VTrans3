@@ -1,8 +1,11 @@
 
-if( ANDROID_NDK )
+#Use MiniXML for reading XML configuration files because:
+#-I wasn't able to compile Apache Xerces for Android
+#-no reported memory leaks by valgrind (in contrast to Apache Xerces)
 add_subdirectory(MiniXML
   #EXCLUDE_FROM_ALL
   )
+if( ANDROID_NDK )
 else ( ANDROID_NDK )
   set( CXX_DEFINITIONS
     ${CXX_DEFINITIONS}

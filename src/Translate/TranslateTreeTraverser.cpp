@@ -57,7 +57,7 @@ namespace ParseTreeTraverser
   }
 
   //TODO obsolete since the grammar rules determine the person index?
-  // (3rd pers sing must match 3rd pers sing fintie verb form e.g."he workS")
+  // (3rd pers sing must match 3rd pers sing finite verb form e.g."he workS")
   void DoTranslateTreeTraverser::HandlePossibleSubject()
   {
     LOGN_DEBUG("begin")
@@ -231,7 +231,7 @@ namespace ParseTreeTraverser
         p_grammarpart->m_wConsecutiveID = m_wConsecutiveID ++ ;
       }
     }
-    HandlePossibleSubject() ;
+//    HandlePossibleSubject();//not neccessary anymore? (see method documentat.)
   }
 
   void DoTranslateTreeTraverser::ParseTreePathPopped()
@@ -290,7 +290,7 @@ namespace ParseTreeTraverser
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
 #endif
-    HandlePossibleSubject() ;
+//    HandlePossibleSubject();//not neccessary anymore? (see method documentat.)
   }
 
   /** This is needed for _many_ dropdown lists to select the same indices. */

@@ -327,7 +327,7 @@
         bool breakWhile = false;
         bool afterRoundOpeningBracket = false;
         bool afterSquaredOpeningBracket = false;
-        char englishWord[100];
+        char englishWord[100] = ""; /** Initialize, else valgrind error. */
         fastestUnsignedDataType charIndex = 0;
         bool endSearchForCompareStringInCurrentVocData = false;
         fastestUnsignedDataType tokenIndex = 0;

@@ -49,13 +49,18 @@ class MultiThreadedTranslation
 //  nativeEvent_type threadAllocEvent;
   fastestUnsignedDataType m_numThreads;
 public:
+  MultiThreadedTranslation();
   MultiThreadedTranslation(fastestUnsignedDataType );
   ~MultiThreadedTranslation();
   
+  void AllocateAndInitializeResources();
+  void DeleteAllThreadsAndThreadStates();
+  void BroadcastThreadEndToAllThreads();
   void AssignNewJobToThread(ProcessParseTreeParams *, int threadIndex);
   void CreateAndStartThreads();
+  void WaitForTerminationOfAllThreads();
   void WaitForThreadBecomingIdle();
-  void EnsureAllThreadsEnded();
+  void EnsureAllThreadsFinishedJob();
   fastestUnsignedDataType GetNumberOfThreads() { return m_numThreads; }
   void execute(
     TranslateParseByRiseTree::ProcessParseTree_type, 
@@ -72,6 +77,11 @@ public:
     const ProcessParseTreeParams & processParseTreeParams, 
     fastestUnsignedDataType threadIndex);
   void Signal(const char * message, pthread_cond_t *, int threadIndex = -1);
+  void SetNumberOfThreads(fastestUnsignedDataType num);
+  void Broadcast(
+    const char * message, 
+    pthread_cond_t * p_pthread_cond_t,
+    int threadIndex);
   void SignalThisThreadFinishedWork();
   void WaitForEndingThreadToSignal();
   inline void WaitForNewJobOrThreadEndSignal(int threadIndex);
@@ -83,6 +93,7 @@ public:
   long int * threadStates;
   long int killAllThreads;
   pthread_mutex_t m_pthread_mutex_t;
+  pthread_cond_t * m_pthread_cond_tNewJobOrEndAllThreads;
   pthread_cond_t m_pthread_cond_t;
   pthread_cond_t m_pthread_cond_tFinishingThreads;
   long int newJob;
