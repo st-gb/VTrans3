@@ -167,6 +167,7 @@ void AddSettingsName2ValueAndFunctionMapping()
 TranslationControllerBase::TranslationControllerBase()
   :
   m_multiThreadedTranslation(8),
+//  m_boost_threadpool(8),
   m_vbContinue(true),
 #ifndef TEST_MINI_XML
   m_parsebyrise( * this ) ,
@@ -393,7 +394,9 @@ void TranslationControllerBase::TranslateAsXML(const char * p_chEnglishText, Byt
   Translate(
     stdstrWholeInputText,
     stdvec_stdstrWholeTransl,
-    translationResult
+//    translationResult
+    & TranslateParseByRiseTree::TranslateParseTree,
+    1
     );
 
   stdstrAllPossibilities = "";
@@ -407,7 +410,39 @@ void TranslationControllerBase::TranslateAsXML(const char * p_chEnglishText, Byt
 //    ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
 //  }
 }
-  
+
+void TranslationControllerBase::TranslateAsXMLgetAverageTimes(
+  const char * p_chEnglishText, 
+  ByteArray & byteArray,
+  TranslateParseByRiseTree::ProcessParseTree_type pfnProcessParseTree,
+  fastestUnsignedDataType numTimesExecute3rdTranslationStep
+  )
+{
+  g_p_translationcontrollerbase->m_vbContinue = true;
+  char * ar_chTranslation;
+  std::string stdstrWholeInputText(p_chEnglishText);
+  std::string stdstrAllPossibilities ;
+  std::vector<std::string> stdvec_stdstrWholeTransl;
+  TranslationResult translationResult;
+  Translate(
+    stdstrWholeInputText,
+    stdvec_stdstrWholeTransl,
+    pfnProcessParseTree,
+    numTimesExecute3rdTranslationStep
+    );
+
+  stdstrAllPossibilities = "";
+  IO::GenerateXMLtreeFromParseTree( & m_parsebyrise,
+    /*stdstrAllPossibilities*/ byteArray);
+//  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
+//  if( ar_chTranslation )
+//  {
+//    memcpy(ar_chTranslation, stdstrAllPossibilities.c_str(),
+//      stdstrAllPossibilities.length() );
+//    ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
+//  }
+}
+
 #ifndef TEST_MINI_XML
 void TranslationControllerBase::ReadGrammarRuleFile(
   //SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
@@ -652,8 +687,10 @@ std::string GetParseTreeAsIndentedXML(const ParseByRise & parsebyrise)
 void TranslationControllerBase::Translate(
 //  ParseByRise & r_parsebyrise ,
   const std::string & cr_stdstrWholeInputText ,
-  std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
-  TranslationResult & r_translationResult
+  std::vector<std::string> & r_stdvec_stdstrWholeTransl,
+//  TranslationResult & r_translationResult
+  TranslateParseByRiseTree::ProcessParseTree_type pfn_processParseTree,
+  fastestUnsignedDataType numIterations
 //  , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //    r_stdvec_stdvecTranslationAndConsecutiveID
   )
@@ -718,15 +755,31 @@ void TranslationControllerBase::Translate(
   if(! m_vbContinue)
   	return;
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTranslRules);
-  translateParseByRiseTree.Translate(
-    m_parsebyrise,
-    r_stdvec_stdstrWholeTransl,
-    r_translationResult
-//    stdvec_stdvecTranslationAndConsecutiveID
-    ) ;
+  
+  TranslationResult r_translationResult;
+  for( fastestUnsignedDataType applyTranslRuleIndex = 0; 
+    applyTranslRuleIndex < numIterations ; applyTranslRuleIndex ++ )
+  {
+//  translateParseByRiseTree.Translate(
+//    m_parsebyrise,
+//    r_stdvec_stdstrWholeTransl,
+//    r_translationResult
+////    stdvec_stdvecTranslationAndConsecutiveID
+//    ) ;
+    translateParseByRiseTree.ProcessParseTree(
+  //    r_parsebyrise,
+      r_stdvec_stdstrWholeTransl,
+      r_translationResult,
+      //(TranslateParseTree)()//r_translationResult)
+      //syntax ( "& >>class name<<::>>method name<<" from
+      //see http://stackoverflow.com/questions/4832275/c-typedef-member-function-signature-syntax
+      pfn_processParseTree
+      );
+    }  
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterTranslRules);
-  timeCountInNanoSecondsApplyTranslRules = 
+  timeCountInNanoSecondsApplyTranslRules =
     timeCountInNanoSecondsAfterTranslRules - timeCountInNanoSecondsBeforeTranslRules;
+  timeCountInNanoSecondsApplyTranslRules /= (float) numIterations;
   m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds = (double) 
     timeCountInNanoSecondsApplyTranslRules / 1000000000.0d;
   

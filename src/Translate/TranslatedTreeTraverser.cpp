@@ -1,12 +1,15 @@
-/*
- * TranslatedTreeTraverser.cpp
- *
+/** TranslatedTreeTraverser.cpp
  *  Created on: 13.08.2011
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #include "TranslatedTreeTraverser.hpp"
 #include <Parse/GrammarPart.hpp> //class GrammarPart
+
+//TODO just for testing if log statements affect the parallel translation
+#ifdef LOGN_DEBUG
+  #undef LOGN_DEBUG
+  #define LOGN_DEBUG(to_ostream) ; /*empty->do not log*/
+#endif
 
 namespace ParseTreeTraverser
 {

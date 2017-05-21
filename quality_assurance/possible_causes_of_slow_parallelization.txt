@@ -1,0 +1,8 @@
+logging
+(12:51:25) A. pain master: dann semaphore machen alles langsamer
+(12:51:34) A. pain master: der overhead der parallelisierung macht es langsamer
+(12:51:39) mr.systematic@jabber.org/24cf04c2e17433a8: nein
+(12:51:47) A. pain master: und das synchronisieren kann es langsamer machen
+(12:53:43) A. pain master: doch der parallelisiserungsoverhead macht wirklich jede parallelisierung langsamer
+(12:54:40) A. pain master: oder wenn viele Daten hin und her kopiert werden müssen, damit parallelisiert werden kann, das kostet auch zeit
+(13:02:27) A. pain master: mit logging kann man herausfinden, was wie viel zeit kostet

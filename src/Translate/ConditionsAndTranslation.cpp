@@ -17,6 +17,12 @@
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
 
+//TODO just for testing if log statements affect the parallel translation
+#ifdef LOGN_DEBUG
+  #undef LOGN_DEBUG
+  #define LOGN_DEBUG(to_ostream) ; /*empty->do not log*/
+#endif
+
 /** Static variables also need to be defined once. */
 std::map<std::string, pfnTransformString> ConditionsAndTranslation::
   s_std_mapFunctionName2Function;
@@ -176,7 +182,7 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                       grammarpartPath + "\" is not allocated" ;
                     LOGN_ERROR(errorMessage)
                     //TODO show in GUI
-                    s_p_translationControllerBase->Message(errorMessage);
+//                    s_p_translationControllerBase->Message(errorMessage);
                   }
                 }
                 break;

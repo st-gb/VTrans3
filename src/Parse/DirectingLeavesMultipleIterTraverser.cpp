@@ -1,15 +1,18 @@
-/*
- * DirectingLeavesMultipleIterTraverser.cpp
- *
+/** DirectingLeavesMultipleIterTraverser.cpp
  *  Created on: May 6, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 //#include <rest.h> //DEBUG_COUT
+
+//TODO just for testing if log statements affect the parallel translation
+#ifdef LOGN_DEBUG
+  #undef LOGN_DEBUG
+  #define LOGN_DEBUG(to_ostream) ; /*empty->do not log*/
+#endif
 
 namespace ParseTreeTraverser
 {

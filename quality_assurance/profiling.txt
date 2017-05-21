@@ -1,0 +1,28 @@
+From TU Berlin, course "Parallel programming", summer term 2014:
+
+perf list (list event)
+perf record program args→ generates perf.data
+perf report program args : reads perf.data
+assembly code or function name if debug information exist
+order may be different from sourcrcode due to instruction reorders
+perf stat <program args>: print statistics: page faults, 
+instructions/ cycle: pipeline stalls, cache misses
+
+20.06.2014 ab ca. 10:40
+valgrind –tool=callgrind –dump-instr=yes –collect-jumps=yes ./program_name args
+valgrind is a simulation
+zeigt assembler
+kcachegrind als GUI
+
+perf samples (interrupts the program, writes program stack)
+not 100% exact/ correct because the samples may not include functions
+
+gcc compiler optimization:
+O1: doesnt reorder
+O2: inlines code, reorders
+O3: use SIMD instructions, unroll loops
+efficiency of (compiler) optimizations depends on input data
+
+profile-guided optimization (pgo): ca. 2 times faster than O3-optimized code
+basic debug info: -g1 (function names in code) (ca. 10% slower than without debug info)
+gcc -march=native

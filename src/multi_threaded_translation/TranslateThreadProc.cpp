@@ -31,7 +31,9 @@ namespace VTrans
         p_translateParameters->m_p_translationControllerBase->Translate(
           p_translateParameters->m_std_strWholeInputText ,
           stdvec_stdstrWholeTransl ,
-          * p_translateParameters->m_p_translationResult
+//          * p_translateParameters->m_p_translationResult
+          & TranslateParseByRiseTree::TranslateParseTree,
+          1
           );
         
         if( p_translateParameters->m_p_translationControllerBase->m_vbContinue )

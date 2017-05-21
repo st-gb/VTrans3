@@ -8,3 +8,5 @@ build/**
 **/Makefile
 **/*~
 **/CMakeCache.txt
+**/cachegrind.*
+**/callgrind.*

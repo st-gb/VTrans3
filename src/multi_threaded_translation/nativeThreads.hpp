@@ -52,7 +52,13 @@ public:
   MultiThreadedTranslation();
   MultiThreadedTranslation(fastestUnsignedDataType );
   ~MultiThreadedTranslation();
-  
+  /** Needed for ensuring that all threads have finished.
+   *  This variable shpuld only be accessed during the same mutex/critical 
+   *  section being locked. */
+  int m_numThreadsExecJobs;
+  fastestUnsignedDataType m_jobNumber;
+  long double * m_threadTimes;
+  std::map<fastestUnsignedDataType, long double> m_jobNumber2time; 
   void AllocateAndInitializeResources();
   void DeleteAllThreadsAndThreadStates();
   void BroadcastThreadEndToAllThreads();
@@ -84,7 +90,7 @@ public:
     int threadIndex);
   void SignalThisThreadFinishedWork();
   void WaitForEndingThreadToSignal();
-  inline void WaitForNewJobOrThreadEndSignal(int threadIndex);
+  inline fastestUnsignedDataType WaitForNewJobOrThreadEndSignal(int threadIndex);
   inline void WaitForSignal(const char * const strMessage, 
     pthread_cond_t * condition, int threadIndex = -1);
   enum ThreadState { idle = 0, running};

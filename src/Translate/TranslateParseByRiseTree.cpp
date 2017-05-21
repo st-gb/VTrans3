@@ -869,12 +869,13 @@ void TranslateParseByRiseTree::ProcessParseTree(
 //          multiThreadedTranslation.WaitForThreadBecomingIdle();
           g_p_translationcontrollerbase->m_multiThreadedTranslation.execute(
             pfnProcessParseTree, 
-            //& TranslateParseByRiseTree::DummyTranslateParseTree,
+//            & TranslateParseByRiseTree::NonBusySleep,
             this, 
             * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
             /*wordCompoundsAtSameTokenIndex*/);
         else
           (this->* pfnProcessParseTree)(
+//          (this->TranslateParseByRiseTree::DummyTranslateParseTree)(
             * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
             wordCompoundsAtSameTokenIndex);
 #else
@@ -964,6 +965,48 @@ void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
 #endif //#ifdef COMPILE_AS_EXECUTABLE
 
 /** Dummy function/method in order to see how parallel translation executes.*/
+void TranslateParseByRiseTree::NonBusySleep(
+  GrammarPart * p_grammarpartRootNode,
+  WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
+  )
+{
+  /** Time needed for applying translation rule for the 4 biggest parse trees
+    of "the man works" is 8 ms for a Core i7 at ?? GHz */
+  usleep(8000); //non-busy sleep in microseconds 
+}
+
+/** Dummy function/method in order to see how parallel translation executes.*/
+void TranslateParseByRiseTree::ProvokeCacheMisses(
+  GrammarPart * p_grammarpartRootNode,
+  WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
+  )
+{
+  const unsigned L3cacheSizeInB = 6000000;
+  const int arraysize = L3cacheSizeInB * 2;
+  
+  uint8_t * numberArray = new uint8_t[arraysize];
+//  int numberArray[arraysize];
+  int index = 23;
+  int sum = 0;
+  
+  int cacheLineSizeInB = 128;
+  for(int j = 0; j < 8; j++)
+  for(//int arrayIndex = 1; arrayIndex < arraysize; arrayIndex+= cacheLineSize
+        int numIters = arraysize - 1; numIters > 0 ; //numIters --
+      numIters -= cacheLineSizeInB )
+  {
+//    index = index %arrayIndex;
+//    LOGN_DEBUG("sdsds" << j)
+//    i[arrayIndex*10] = index;
+    sum += numberArray[numIters];
+//    index = /*numberArray[index]*/ //rand() 
+//      % arraysize;
+  }
+  LOGN_INFO("sum:" << sum)
+  delete [] numberArray;
+}
+
+/** Dummy function/method in order to see how parallel translation executes.*/
 void TranslateParseByRiseTree::DummyTranslateParseTree(
   GrammarPart * p_grammarpartRootNode,
   WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
@@ -973,13 +1016,14 @@ void TranslateParseByRiseTree::DummyTranslateParseTree(
     of "the man works" is 8 ms for a Core i7 at ?? GHz */
 //  usleep(8000); //non-busy sleep in microseconds 
 //  usleep(4000000);
-  const int arraysize = 500000;
+  const int arraysize = 8000000;
   int * i = new int[arraysize];
   int index = 23;
-  for(int j = 1; j < arraysize; j++)
+  for(int j = 1; j < arraysize / 10; j++)
   {
     index = index %j;
-    i[j] = index;
+    LOGN_DEBUG("sdsds" << j)
+    i[j*10] = index;
   }
   delete [] i;
 }
@@ -1001,7 +1045,7 @@ void TranslateParseByRiseTree::TranslateParseTree(
   //    {
   LOGN_DEBUG( "GetGrammarPartCoveringMostTokens found \n" );
 
-  ParseTreeTraverser::DoTranslateTreeTraverser translatetreetraverser(
+  ParseTreeTraverser::ApplyTranslationRulesTreeTraverser translatetreetraverser(
     //        p_grammarpart
 //    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
     p_grammarpartRootNode
@@ -1014,7 +1058,10 @@ void TranslateParseByRiseTree::TranslateParseTree(
   // only the leaves need to be processed-> set to "false".
   translatetreetraverser.m_bTraverseTree = false ;
 
+  //TODO parallel translation (if function calls overlap in time) is slower 
+  //  than serial because of this call:
   translatetreetraverser.Traverse() ;
+//  usleep(8000);
 
   if( ! g_p_translationcontrollerbase->m_vbContinue )
 	return;
@@ -1112,17 +1159,24 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
   )
 {
   LOGN_DEBUG("(8 params) begin")
+  //TODO parallel translation slowdown occurs in this function: if usleep()
+  // is used instead then execuion is faster
   bool bAtLeast1TranslationRuleApplies = false;
   bool bTranslationRuleSTPmatchesCurrentSTP = false ;
   bTranslationRuleSTPmatchesCurrentSTP = //p_translationrule->Matches(
     p_translationrule->m_syntaxtreepathCompareWithCurrentPath.Matches(
     r_stdvec_wCurrentGrammarPartPath ) ;
+  
+  //TODO if usleep and return is used then parallel translation is ca. n times 
+  // faster (using n threads)
+//  usleep(10);
+//  return false;
   if( bTranslationRuleSTPmatchesCurrentSTP )
   {
-//        DEBUG_COUT
-    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/
-      "the current syntax tree path matches the rule's syntax tree path"
-      << " \"" << std_strTranslationRuleSyntaxTreePath << "\"")
+//    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/
+//      "the current syntax tree path matches the rule's syntax tree path"
+//      << " \"" << std_strTranslationRuleSyntaxTreePath << "\"")
+            
 //        GrammarPart * p_grammarpartClosestToTreeRoot =
 //            r_stdvec_p_grammarpartPath.at(wIndex + wLenghtDiff ) ;
 #ifdef _DEBUG
@@ -1134,9 +1188,16 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
     if( //AllConditionsMatch(
 //            r_cnt ,
 //            r_stdvec_p_grammarpartPath )
+            
+        //TODO
         r_cnt.AllConditionsMatch( r_stdvec_p_grammarpartPath )
+//        0
       )
     {
+      //TODO
+//      usleep(100);
+//      return false;
+      
       std::string stdstrCurrentParseTreePath = GetSyntaxTreePathAsName(
         r_stdvec_wCurrentGrammarPartPath ) ;
       LOGN_DEBUG("All conditions match for STP \"" << stdstrCurrentParseTreePath
@@ -1259,6 +1320,8 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 {
   bool bAtLeast1TranslationRuleApplies = false;
   LOGN_DEBUG("(5 params) begin")
+//  usleep(1000);
+//  return false;
   LOGN_DEBUG("# of translation rule->condition and translation entries:" <<
     m_stdmap_translationrule2ConditionsAndTranslation.size() << "\n")
 //#ifdef _DEBUG

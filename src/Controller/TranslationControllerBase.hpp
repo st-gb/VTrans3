@@ -18,6 +18,7 @@
 #include <Translate/TransformationRule.hpp> //class TransformationRule
 #include <OperatingSystem/multithread/nativeCriticalSectionType.hpp>
 #include <multi_threaded_translation/nativeThreads.hpp>
+//#include <boost/threadpool.hpp> //boost::threadpool
 #include <OperatingSystem/time/GetCurrentTime.hpp>
 #ifndef TEST_MINI_XML
 //class TranslateParseByRiseTree
@@ -157,6 +158,7 @@ public:
     //get # CPU cores avail. to this process: http://stackoverflow.com/questions/4586405/get-number-of-cpus-in-linux-using-c
 //    fastestUnsignedDataType numCPUcoresAvailable = g_p_translationcontrollerbase->s_numParallelTranslationThreads;
   VTrans3::MultiThreadedTranslation m_multiThreadedTranslation;
+//  boost::threadpool::pool m_boost_threadpool;
 #endif
   
   std::string m_std_strCurrentConfigfile;
@@ -238,6 +240,12 @@ public:
     {  }
   /** used by dyn lib and console application. */
   void TranslateAsXML(const char * p_chEnglishText, ByteArray & byteArray);
+  
+  void TranslateAsXMLgetAverageTimes(
+    const char * p_chEnglishText, 
+    ByteArray & byteArray,
+    TranslateParseByRiseTree::ProcessParseTree_type pfnProcessParseTree,
+    fastestUnsignedDataType numIterations);
   void ReadGrammarRuleFile(
 //    SAX2GrammarRuleHandler & r_sax2grammarrulehandler ,
     const std::string & cr_stdstrFilePath
@@ -267,7 +275,9 @@ public:
   void Translate(
     const std::string & cr_stdstrWholeInputText ,
     std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
-    TranslationResult & translationResult
+//    TranslationResult & translationResult
+    TranslateParseByRiseTree::ProcessParseTree_type,
+    fastestUnsignedDataType numIterations
     ) ;
 #endif //#ifndef TEST_MINI_XML
 //  virtual void StartTimer();

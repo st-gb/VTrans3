@@ -173,6 +173,14 @@ public:
     WordCompoundsAtSameTokenIndex &
     );
 #endif //#ifdef COMPILE_AS_EXECUTABLE
+  void NonBusySleep( /** This method exists for testing purposes.*/
+    GrammarPart * p_grammarpartRootNode,
+    WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
+    );
+  void ProvokeCacheMisses( /** This method exists for testing purposes.*/
+    GrammarPart * p_grammarpartRootNode,
+    WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex
+    );
   void DummyTranslateParseTree( /** This method exists for testing purposes.*/
     GrammarPart * p_grammarpartRootNode,
     WordCompoundsAtSameTokenIndex & r_wordCompoundsAtSameTokenIndex

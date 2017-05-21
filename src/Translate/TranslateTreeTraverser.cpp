@@ -1,9 +1,6 @@
-/*
- * DoTranslateTreeTraverser.cpp
- *
+/** DoTranslateTreeTraverser.cpp
  *  Created on: May 17, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN()
 #include <Translate/TranslateTreeTraverser.hpp>
@@ -12,10 +9,16 @@
 //SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <compiler/GCC/suppress_unused_variable.h>
 
+//TODO just for testing if log statements affect the parallel translation
+#ifdef LOGN_DEBUG
+  #undef LOGN_DEBUG
+  #define LOGN_DEBUG(to_ostream) ; /*empty->do not log*/
+#endif
+
 namespace ParseTreeTraverser
 {
 
-  DoTranslateTreeTraverser::DoTranslateTreeTraverser(
+  ApplyTranslationRulesTreeTraverser::ApplyTranslationRulesTreeTraverser(
     const GrammarPart * p_grammarpartStartNode
     , ParseByRise & r_parsebyrise
     , TranslateParseByRiseTree & r_translateparsebyrisetree
@@ -44,12 +47,12 @@ namespace ParseTreeTraverser
       m_wPluralNounGrammarPartID = 65535 ;
   }
 
-  DoTranslateTreeTraverser::~DoTranslateTreeTraverser()
+  ApplyTranslationRulesTreeTraverser::~ApplyTranslationRulesTreeTraverser()
   {
     LOGN_DEBUG(/*"~TranslateTreeTraverser()"*/ "")
   }
 
-  void DoTranslateTreeTraverser::BeforeBeginAtRoot()
+  void ApplyTranslationRulesTreeTraverser::BeforeBeginAtRoot()
   {
     //Important. else pathes with previous node(s) (->too long) are created.
     m_vec_wGrammarPartIDcurrentParsePath.clear() ;
@@ -58,7 +61,7 @@ namespace ParseTreeTraverser
 
   //TODO obsolete since the grammar rules determine the person index?
   // (3rd pers sing must match 3rd pers sing finite verb form e.g."he workS")
-  void DoTranslateTreeTraverser::HandlePossibleSubject()
+  void ApplyTranslationRulesTreeTraverser::HandlePossibleSubject()
   {
     LOGN_DEBUG("begin")
     GrammarPart * p_grammarpart =
@@ -92,10 +95,9 @@ namespace ParseTreeTraverser
     }
   }
 
-  void DoTranslateTreeTraverser::LeaveFound()
+  void ApplyTranslationRulesTreeTraverser::LeaveFound()
   {
-    LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "current parse tree "
-      "path: " << m_r_parsebyrise.GetPathAs_std_string(
+    LOGN_DEBUG( "current parse tree path:" << m_r_parsebyrise.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
     BYTE byPersonIndex ;
@@ -104,6 +106,8 @@ namespace ParseTreeTraverser
     WORD wConsecutiveID = 0;
     //const GrammarPart * p_grammarpart ;
     GrammarPart * p_grammarpartWithConsecutiveID ;
+//    //TODO
+//    usleep(1000);
     if( mr_translateparsebyrisetree.TranslationRuleApplies(
         stdstrTranslation ,
         byPersonIndex ,
@@ -112,6 +116,7 @@ namespace ParseTreeTraverser
 //        wConsecutiveID
         p_grammarpartWithConsecutiveID
         )
+//        0
       )
     {
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
@@ -154,7 +159,7 @@ namespace ParseTreeTraverser
   *    def_noun    <-when arrived here: "the" and "car" were processed-> call
   *     / \           "UnprocessedHighestLevelNodeFound"
   *   the car  <-both were processed yet. */
-  void DoTranslateTreeTraverser::UnprocessedHighestLevelNodeFound()
+  void ApplyTranslationRulesTreeTraverser::UnprocessedHighestLevelNodeFound()
   {
     std::string stdstrTranslation ;
     BYTE byPersonIndex ;
@@ -181,6 +186,8 @@ namespace ParseTreeTraverser
       }
     }
 //    if( m_vec_wGrammarPartIDcurrentParsePath)
+////    TODO
+//    usleep(1000);
     if( mr_translateparsebyrisetree.TranslationRuleApplies(
         stdstrTranslation ,
         byPersonIndex ,
@@ -189,11 +196,11 @@ namespace ParseTreeTraverser
 //        wConsecutiveID
         p_grammarpart
         )
+//        0
       )
     {
       //DEBUG_COUT( "UnprocessedHighestLevelNodeFound--"
-      LOGN_DEBUG(
-        "translation rule applies\n" ) ;
+      LOGN_DEBUG("translation rule applies")
       m_stdstrWholeTranslation += stdstrTranslation + " " ;
       //TODO combine the person indices _until_ the parent is "subject"
       // because:
@@ -206,7 +213,7 @@ namespace ParseTreeTraverser
     }
   }
 
-  void DoTranslateTreeTraverser::ParseTreePathAdded()
+  void ApplyTranslationRulesTreeTraverser::ParseTreePathAdded()
   {
     m_vec_wGrammarPartIDcurrentParsePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent.
@@ -223,6 +230,7 @@ namespace ParseTreeTraverser
           m_vec_wGrammarPartIDcurrentParsePath.back() ;
       std::string stdstr = mp_parsebyrise->GetGrammarPartName(
         wGrammarPartIDcurrentParsePath) ;
+      //TODO does this make sense?
       if( stdstr == "article_singular"
           || stdstr == "definite_article_plural" )
       {
@@ -234,7 +242,7 @@ namespace ParseTreeTraverser
 //    HandlePossibleSubject();//not neccessary anymore? (see method documentat.)
   }
 
-  void DoTranslateTreeTraverser::ParseTreePathPopped()
+  void ApplyTranslationRulesTreeTraverser::ParseTreePathPopped()
   {
     m_stdvector_p_grammarpartCurrentParseTreePath.pop_back() ;
     m_vec_wGrammarPartIDcurrentParsePath.pop_back() ;
@@ -245,7 +253,7 @@ namespace ParseTreeTraverser
       )
   }
 
-  void DoTranslateTreeTraverser::CurrentNodeIsLastAddedRightChild(
+  void ApplyTranslationRulesTreeTraverser::CurrentNodeIsLastAddedRightChild(
     //WORD wCurrentParseTreeLevel
     )
   {
@@ -294,7 +302,7 @@ namespace ParseTreeTraverser
   }
 
   /** This is needed for _many_ dropdown lists to select the same indices. */
-  void DoTranslateTreeTraverser::SetSameConsecutiveIDforLeaves(
+  void ApplyTranslationRulesTreeTraverser::SetSameConsecutiveIDforLeaves(
     const GrammarPart * p_grammarpart)
   {
     ParseTreeTraverser::SetSameConsecutiveIDforLeaves trav(

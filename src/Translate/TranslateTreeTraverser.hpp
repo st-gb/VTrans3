@@ -23,7 +23,7 @@ class TranslateParseByRiseTree ;
 
 namespace ParseTreeTraverser
 {
-  class DoTranslateTreeTraverser
+  class ApplyTranslationRulesTreeTraverser
     : public DirectingLeavesMultipleIterTraverser
   {
     ParseByRise & m_r_parsebyrise ;
@@ -48,13 +48,13 @@ namespace ParseTreeTraverser
       m_stdvec_translation_and_consecutive_id ;
 
     //methods
-    DoTranslateTreeTraverser(
+    ApplyTranslationRulesTreeTraverser(
       const GrammarPart * p_grammarpartStartNode
       , ParseByRise & r_parsebyrise
       , TranslateParseByRiseTree & r_translateparsebyrisetree
       );
     virtual
-      ~DoTranslateTreeTraverser();
+      ~ApplyTranslationRulesTreeTraverser();
     void BeforeBeginAtRoot() ;
     //In order to keep track of the current parse tree path.
     void CurrentNodeIsLastAddedRightChild() ;

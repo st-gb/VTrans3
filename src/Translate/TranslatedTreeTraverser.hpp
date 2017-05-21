@@ -1,9 +1,6 @@
-/*
- * TranslatedTreeTraverser.hpp
- *
+/** TranslatedTreeTraverser.hpp
  *  Created on: 13.08.2011
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #ifndef TRANSLATEDTREETRAVERSER_HPP_
 #define TRANSLATEDTREETRAVERSER_HPP_
@@ -40,7 +37,7 @@ namespace ParseTreeTraverser
     {
       mp_grammarpartStartNode = p_grammarpartStartNode;
     }
-    //Callback function from superclass.
+    /** Override callback function from superclass.*/
     void LeaveFound();
   };
 }

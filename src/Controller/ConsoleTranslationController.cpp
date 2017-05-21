@@ -8,6 +8,9 @@
 #include <IO/dictionary/OpenDictFileException.hpp>
 #include <FileSystem/GetCurrentWorkingDir.hpp>
 
+std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
+  ConsoleTranslationController::s_functionName2function;
+
 ConsoleTranslationController::ConsoleTranslationController() {
 }
 
@@ -28,7 +31,9 @@ void OpenLogFile(const char * const logFilePrefix)
   stdstrLogFilePath += "_log.";
 //  stdstrLogFilePath += logFormat;
   bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 4000,
-    LogLevel::info /*warning*/) ;
+    LogLevel::info /*warning*/
+//    LogLevel::warning
+    ) ;
 #ifdef __linux__
 #ifndef __ANDROID__
 //  g_logger.AddConsoleLogEntryWriter();
@@ -41,6 +46,57 @@ void OpenLogFile(const char * const logFilePrefix)
 //      << GetErrorMessageFromLastErrorCodeA() << std::endl;
 //    return;
   }
+}
+
+void ConsoleTranslationController::Insert(
+  TranslateParseByRiseTree::ProcessParseTree_type pfnProcessParseTree,
+  const char * const str)
+{
+  s_functionName2function.insert(std::make_pair(str, pfnProcessParseTree) );
+  //TODO can't be inserted because of "<" operator needed for std::map's key?
+//  s_function2functionName.insert(std::make_pair(pfnProcessParseTree, 
+//    str) );
+}
+
+void ConsoleTranslationController::CreateMappingBetweenFunctionNameAndFunction()
+{
+  Insert( & TranslateParseByRiseTree::NonBusySleep, "non-busy sleep");
+  Insert( & TranslateParseByRiseTree::ProvokeCacheMisses, "ProvokeCacheMisses");
+  Insert( & TranslateParseByRiseTree::TranslateParseTree, "applyTranslRules");
+  Insert( & TranslateParseByRiseTree::DummyTranslateParseTree, "dummy");  
+}
+
+std::string ConsoleTranslationController::GetFunctionName(
+  TranslateParseByRiseTree::ProcessParseTree_type pfnProcessParseTree)
+{
+  for(std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type>::
+      const_iterator c_iter = s_functionName2function.begin() ; 
+      c_iter != s_functionName2function.end(); c_iter ++
+      )
+  {
+    if( c_iter->second == pfnProcessParseTree )
+      return c_iter->first;
+  }
+  return "?";
+}
+
+void OutputStatistics(ConsoleTranslationController & consoleTranslationController)
+{
+  int numJobs = consoleTranslationController.m_multiThreadedTranslation.m_jobNumber2time.size();
+  std::cout << " # jobs executed:" << numJobs << std::endl;
+  std::map<fastestUnsignedDataType, long double> & jobNumber2time =
+    consoleTranslationController.m_multiThreadedTranslation.m_jobNumber2time;
+  long double averageJob = 0.0d;
+  for( fastestUnsignedDataType threadIndex = 0; threadIndex < numJobs; ++threadIndex )
+  {
+    std::cout << "job #" << threadIndex << " took " << 
+//          consoleTranslationController.m_multiThreadedTranslation.m_threadTimes[threadIndex]
+      jobNumber2time[threadIndex]
+      << " seconds" << std::endl;
+    averageJob += jobNumber2time[threadIndex];
+  }
+  averageJob /= numJobs;
+  std::cout << "average job took " << averageJob << "s" << std::endl;
 }
 
 int main(int argc, char *  argv[])
@@ -58,26 +114,52 @@ int main(int argc, char *  argv[])
       std::cout << std_strCurrentWorkingDir << std::endl;
       
       ConsoleTranslationController consoleTranslationController;
+      TranslateParseByRiseTree::ProcessParseTree_type pfnProcessParseTree =
+        & TranslateParseByRiseTree::ProvokeCacheMisses;
       if( argc > 2 )
       {
         int numThreads;
         ConvertCharStringToTypename(numThreads,argv[2]);
         consoleTranslationController.m_multiThreadedTranslation.
           SetNumberOfThreads(numThreads);
+        if( argc > 3 )
+        {
+          ConsoleTranslationController::CreateMappingBetweenFunctionNameAndFunction();
+          std::map<std::string, TranslateParseByRiseTree::
+            ProcessParseTree_type>::const_iterator c_iter = 
+            ConsoleTranslationController::s_functionName2function.find(argv[3]);
+          if( c_iter != ConsoleTranslationController::s_functionName2function.end() )
+            pfnProcessParseTree = c_iter->second;
+        }
       }
       g_p_translationcontrollerbase = & consoleTranslationController;
       consoleTranslationController.Init("configuration/VTrans_main_config.xml");
       ByteArray byteArray;
-      std::cout << "before Translating \"" << argv[1] << "\",max." << consoleTranslationController.
-        m_multiThreadedTranslation.GetNumberOfThreads() << " threads" << std::endl;
+      fastestUnsignedDataType maxNumThreads = consoleTranslationController.
+        m_multiThreadedTranslation.GetNumberOfThreads();
+      fastestUnsignedDataType num3rdTranslationStepIterations = 10;
+      std::cout << "before Translating \"" << argv[1] << "\",max." 
+        << maxNumThreads << " threads" << std::endl;
       
-      consoleTranslationController.TranslateAsXML(argv[1], byteArray);
+      consoleTranslationController.TranslateAsXMLgetAverageTimes(
+        argv[1], 
+        byteArray, 
+        pfnProcessParseTree,
+        num3rdTranslationStepIterations
+        );
       std::string std_strParseTreeAsIndentedXML = ::GetParseTreeAsIndentedXML(
         consoleTranslationController.m_parsebyrise );
       
-      std::cout << "after translate:" << std_strParseTreeAsIndentedXML << std::endl;
-      std::cout << "apply transl. rules took:" << consoleTranslationController.
+      std::cout << "after translate:" << std_strParseTreeAsIndentedXML
+        << "with max." << maxNumThreads << "threads" << std::endl;
+      std::cout << "after executing:" << ConsoleTranslationController::
+        GetFunctionName(pfnProcessParseTree) << std::endl;
+      std::cout << "average (" << num3rdTranslationStepIterations << "x) apply transl. rules took:" << consoleTranslationController.
         m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds << "s" << std::endl;
+      
+      OutputStatistics(consoleTranslationController);
+      std::cout << "building parse tree took:" << consoleTranslationController.
+        m_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds << "s" << std::endl;
     }catch(VTrans3::OpenDictFileException & odfe )
     {
       std::cout << "dd" << std::endl;
