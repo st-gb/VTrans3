@@ -48,10 +48,12 @@ class MultiThreadedTranslation
 //  nativeCriticalSection_type threadAssignCritSec;
 //  nativeEvent_type threadAllocEvent;
   fastestUnsignedDataType m_numThreads;
+  fastestUnsignedDataType m_allTranslationThreadsCreated;
 public:
   MultiThreadedTranslation();
   MultiThreadedTranslation(fastestUnsignedDataType );
   ~MultiThreadedTranslation();
+  nativeThread_type m_asyncThreadStarterThread;
   /** Needed for ensuring that all threads have finished.
    *  This variable shpuld only be accessed during the same mutex/critical 
    *  section being locked. */
@@ -63,6 +65,7 @@ public:
   void DeleteAllThreadsAndThreadStates();
   void BroadcastThreadEndToAllThreads();
   void AssignNewJobToThread(ProcessParseTreeParams *, int threadIndex);
+  void StartThreadsAsync();
   void CreateAndStartThreads();
   void WaitForTerminationOfAllThreads();
   void WaitForThreadBecomingIdle();

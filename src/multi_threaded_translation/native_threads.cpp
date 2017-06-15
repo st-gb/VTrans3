@@ -73,6 +73,8 @@ namespace VTrans3 {
       pthread_mutex_destroy(& m_pthread_mutex_t);
       
       delete [] threads;
+      //TODO use atomic exchange function here?
+      m_allTranslationThreadsCreated = false;
       delete [] m_threadTimes;
       delete [] threadStates;
       for(int i = 0; i < m_numThreads; i++)
@@ -158,6 +160,7 @@ namespace VTrans3 {
   
   void MultiThreadedTranslation::SetNumberOfThreads(fastestUnsignedDataType num)
   {
+    m_asyncThreadStarterThread.WaitForTermination();
     DeleteAllThreadsAndThreadStates();
     m_numThreads = num;
     AllocateAndInitializeResources();
@@ -292,7 +295,7 @@ namespace VTrans3 {
           d - p_multiThreadedTranslation->m_threadTimes[threadIndex];
         
         p_multiThreadedTranslation->m_jobNumber2time[jobNumber] =
-          d - p_multiThreadedTranslation->m_jobNumber2time[jobNumber]
+          d - p_multiThreadedTranslation->m_jobNumber2time[jobNumber];
 //          0.06d;
 
         LOGN_INFO("freeing memory for address:" << (void *) p_processParseTreeParams)
@@ -323,10 +326,29 @@ namespace VTrans3 {
     }
   }
 
+  /** Idea: creating threads costs ca. 7 ms/thread. So create them in another
+   *  thread in parallel. Therefore use this function start routine. */
+  DWORD AsyncStartThreadsThreadProc(void * p_v)
+  {
+    MultiThreadedTranslation * p_multiThreadedTranslation =
+      (MultiThreadedTranslation *) p_v;
+    if( p_multiThreadedTranslation)
+    {
+      p_multiThreadedTranslation->CreateAndStartThreads();
+    }
+  }
+
+  void MultiThreadedTranslation::StartThreadsAsync()
+  {
+    //TODO must be finished before using the threads in the translation
+    // this can be ensured via m_asyncThreadStarterThread.WaitForTermination();
+    m_asyncThreadStarterThread.start(AsyncStartThreadsThreadProc, this);
+  }
   /** As thread creation costs ca. 7 ms/thread for POSIX threads 
    *  pthread_create(...) this function should be called from a separate thread */
   void MultiThreadedTranslation::CreateAndStartThreads()
   {
+    LOGN_INFO("begin")
 //#define SET_AFF_MASK
 #ifdef SET_AFF_MASK
     cpu_set_t cpuset;
@@ -358,6 +380,8 @@ namespace VTrans3 {
         g_p_translationcontrollerbase->Message("Starting a translation thread failed:"
           + OperatingSystem::GetErrorMessageFromErrorCodeA(startRet) );
     }
+    AtomicExchange( (long int *) & m_allTranslationThreadsCreated, true);
+    LOGN_INFO("end")
   }
   
   

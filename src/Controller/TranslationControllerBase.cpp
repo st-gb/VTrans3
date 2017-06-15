@@ -29,6 +29,7 @@
   //SetCurrentDirectory(...)
   #include <FileSystem/GetCurrentWorkingDir.hpp>
   #include <FileSystem/SetCurrentWorkingDir.hpp>
+#include <OperatingSystem/POSIX/GetNumberOfLogicalCPUcores.h>
 
 #include "Controller/character_string/ConvertStdStringToTypename.hpp"
 #include "multi_threaded_translation/nativeThreads.hpp"
@@ -166,7 +167,7 @@ void AddSettingsName2ValueAndFunctionMapping()
 
 TranslationControllerBase::TranslationControllerBase()
   :
-  m_multiThreadedTranslation(8),
+  m_multiThreadedTranslation( OperatingSystem::GetNumberOfLogicalCPUcores() ),
 //  m_boost_threadpool(8),
   m_vbContinue(true),
 #ifndef TEST_MINI_XML
@@ -182,6 +183,14 @@ TranslationControllerBase::TranslationControllerBase()
   m_configurationHandler(*this),
   m_dictionarySuccessfullyLoaded(false)
 {
+#ifdef PARALLELIZE_TRANSLATION
+  m_numThreadsAndTimeDuration[applyTranslRules].numThreads =
+    m_multiThreadedTranslation.GetNumberOfThreads();
+//  m_multiThreadedTranslation.CreateAndStartThreads();
+//  /** Call this method as early as possible as thread creation may take some
+//   *  (the more threads the more time). */
+//  m_multiThreadedTranslation.StartThreadsAsync();
+#endif
   GrammarPart::s_p_parseByRise = & m_parsebyrise;
 #ifndef TEST_MINI_XML
   VocabularyAndTranslation::s_p_translationControllerBase = this;
@@ -246,10 +255,6 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
 //TODO : uncomment?
 //  if(cr_stdstrMainConfigFilePath.empty() )
 //    std_strMainConfigFilePath = "configuration/VTrans_main_config.xml";
-#ifdef PARALLELIZE_TRANSLATION
-  m_numThreadsAndTimeDuration[applyTranslRules].numThreads = m_multiThreadedTranslation.GetNumberOfThreads();
-  m_multiThreadedTranslation.CreateAndStartThreads();
-#endif
   VocabularyAndTranslation::s_p_userinterface = this;
   /** Needed for SyntaxTreePath::CreateGrammarPartIDArray(...).*/
   SyntaxTreePath::sp_userinterface = this ;
@@ -308,6 +313,7 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
         m_stdstrVocabularyFilePath.c_str() );
       LOGN_INFO( "dictionary file is open:" << (bLoadingDictFileSucceeded ? "yes" : "no") )
       LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
+
       if( ! bLoadingDictFileSucceeded )
         return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
   #endif //#ifndef COMPILE_AS_EXECUTABLE
@@ -317,6 +323,11 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
   }
   else
     return TranslationControllerBaseClass::InitFunction::loadingMainConfigFileFailed;
+  LOGN_INFO("waiting for termination of the thread starter thread.")
+  /** Ensure all threads for multithreaded translation have been created
+   *  before we return. */
+  m_multiThreadedTranslation.m_asyncThreadStarterThread.WaitForTermination();
+  LOGN_INFO("AFTER waiting for termination of the thread starter thread.")
   return TranslationControllerBaseClass::InitFunction::success;
 }
 
@@ -755,7 +766,6 @@ void TranslationControllerBase::Translate(
   if(! m_vbContinue)
   	return;
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTranslRules);
-  
   TranslationResult r_translationResult;
   for( fastestUnsignedDataType applyTranslRuleIndex = 0; 
     applyTranslRuleIndex < numIterations ; applyTranslRuleIndex ++ )

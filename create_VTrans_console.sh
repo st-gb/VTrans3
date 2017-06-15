@@ -8,14 +8,18 @@
 C_COMPILER=/usr/bin/gcc
 CPP_COMPILER=/usr/bin/g++
 
-NUM_ARGS_NEEDED=0
+NUM_ARGS_NEEDED=1
 
 #IDEA: pass as args: <NAME=VALUE>, e.g. COMMON_SOURCECODE_ROOT_PATH=../common_sourcecode
 if [ $# -ge $NUM_ARGS_NEEDED ]; then
+  BUILD_SYSTEM_GENERATOR=$1
+  echo "BUILD_SYSTEM_GENERATOR: $BUILD_SYSTEM_GENERATOR"
 
 # "-pg" (DCMAKE_CXX_FLAGS) option for "gprof" profiling
+
+cd src
 #use "-O3" in DCMAKE_CXX_FLAGS to optimize (for speed)
-cmake -G "Unix Makefiles" \
+cmake -G "$BUILD_SYSTEM_GENERATOR" \
 -DCMAKE_BUILD_TYPE=Debug \
 -DCMAKE_C_COMPILER=${C_COMPILER} \
 -DCMAKE_CXX_COMPILER=${CPP_COMPILER} \
@@ -27,5 +31,7 @@ cmake -G "Unix Makefiles" \
 -DEXE_TYPE:STRING=console 
 else
   echo "ERROR:at least" $NUM_ARGS_NEEDED " args needed:"
+  echo $0 " <build system>"
+  echo " build system: e.g. \"Unix Makefiles\""
 fi
 

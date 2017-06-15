@@ -22,6 +22,7 @@ private:
   
 public:
   static void CreateMappingBetweenFunctionNameAndFunction();
+  static void OutputUsage();
   static std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
     s_functionName2function;
   static std::map<TranslateParseByRiseTree::ProcessParseTree_type, std::string> 
