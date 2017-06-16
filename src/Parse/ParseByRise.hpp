@@ -188,6 +188,9 @@ public:
 
   std::string GetGrammarPartName(WORD wRuleID ) const;
 
+  fastestUnsignedDataType GetNumberOfLargestParseTrees();
+  void GetLargestParseTrees(std::vector<GrammarPart *> &
+    stdvec_p_grammarpartCoveringMostTokensAtTokenIndex);
   std::string GetPathAs_std_string( const std::vector<WORD> & ) ;
   std::string GetPathAs_std_string(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) ;

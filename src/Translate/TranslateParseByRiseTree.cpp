@@ -810,10 +810,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
 //  m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.clear();
   if( p_parsebyrise )
   {
-    DWORD dwLeftMostTokenIndex = 0 ;
-  //    GrammarPart * p_grammarpart ;
-  //    GrammarPart * p_grammarpartChild ;
-    //int y = 10 ;
+    LOGN_DEBUG( "mp_parsebyrise != NULL")
     //  typedef std::multimap<DWORD, GrammarPart >
     //  stdmmap_token_index2grammarpart ;
     typedef std::multimap<DWORD, GrammarPart *>
@@ -825,88 +822,68 @@ void TranslateParseByRiseTree::ProcessParseTree(
       m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
     //Reset to initial before each translation.
     m_ui32ConcatenationID = 1;
-    do
+    std::vector<GrammarPart *> stdvec_p_grammarpartLargestParseTrees;
+//    const fastestUnsignedDataType numberOfLargestParseTrees = p_parsebyrise->
+//      GetNumberOfLargestParseTrees();
+    p_parsebyrise->GetLargestParseTrees(stdvec_p_grammarpartLargestParseTrees);
+#ifdef PARALLELIZE_TRANSLATION
+    const fastestUnsignedDataType numberOfLargestParseTrees =
+      stdvec_p_grammarpartLargestParseTrees.size();
+#endif //#ifdef PARALLELIZE_TRANSLATION
+    //TODO this loop could be parallelized with OpenMP? but with no respect
+    // to other parse trees that begin at other token indices?
+    //TOOD parallelize (OpenMP, POSIX, ...)
+    for( std::vector<GrammarPart *>::const_iterator
+        c_iter_p_grammarpartLargestParseTrees =
+        stdvec_p_grammarpartLargestParseTrees.begin();
+        c_iter_p_grammarpartLargestParseTrees !=
+        stdvec_p_grammarpartLargestParseTrees.end();
+        ++ c_iter_p_grammarpartLargestParseTrees )
     {
       //Before each draw in order to begin at x position "0".
-      m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
-      m_wParseLevel = 0 ;
-      LOGN_DEBUG( "mp_parsebyrise != NULL\n")
-      citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
-      //p_grammarpart =
-        p_parsebyrise->GetGrammarPartCoveringMostTokens(
-          dwLeftMostTokenIndex ,
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
-          ) ;
+//      m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
+//      m_wParseLevel = 0 ;
+//      citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
+
       //TODO useful?
 //      m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.
 //        push_back(stdvec_p_grammarpartCoveringMostTokensAtTokenIndex);
-  #ifdef _DEBUG
-      WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
-  #endif //#ifdef _DEBUG
   //      WORD wConsecutiveID = 0 ;
 
       //TODO necessary?
       WordCompoundsAtSameTokenIndex wordCompoundsAtSameTokenIndex;
       
-      /** Loop over all parse trees beginning at token index
-      *  "dwLeftMostTokenIndex". 
-      *  Often these parse trees here have the same structure but different 
-      *  words (->synonyms): "the man works."-> "der Mann|Mensch arbeitet" */
-      //TODO this loop could be parallelized with OpenMP? but with no respect
-      // to other parse trees that begin at other token indices?
-      for( std::vector<GrammarPart *>::const_iterator
-          c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex =
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin() ;
-          c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex <
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.end() ;
-          ++ c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
-         )
-      {
 #ifdef PARALLELIZE_TRANSLATION
         if( g_p_translationcontrollerbase->m_multiThreadedTranslation.GetNumberOfThreads() > 0)
-        //TOOD parallelize (OpenMP, POSIX, ...)
 //        if( numThreadsRunning >= numCPUcoresAvailable )
 //          multiThreadedTranslation.WaitForThreadBecomingIdle();
           g_p_translationcontrollerbase->m_multiThreadedTranslation.execute(
             pfnProcessParseTree, 
 //            & TranslateParseByRiseTree::NonBusySleep,
             this, 
-            * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
+            * c_iter_p_grammarpartLargestParseTrees
             /*wordCompoundsAtSameTokenIndex*/);
         else
           (this->* pfnProcessParseTree)(
 //          (this->TranslateParseByRiseTree::DummyTranslateParseTree)(
-            * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+            * c_iter_p_grammarpartLargestParseTrees,
             wordCompoundsAtSameTokenIndex);
-#else
+#else /** single-threaded version */
         //( * this->pfnProcessParseTree)
-        //single-threaded version:
           (this->* pfnProcessParseTree)(
-            * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+            * c_iter_p_grammarpartLargestParseTrees,
             wordCompoundsAtSameTokenIndex);
 #endif        
-      } //loop for all parse trees beginning at same token index
       
       //TODO Is TranslationResult needed at all?
 //      r_translationResult.push_back(
 //        wordCompoundsAtSameTokenIndex);
-
-      if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
-        dwLeftMostTokenIndex = 0;
-      else
-        dwLeftMostTokenIndex =
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
-          m_dwRightmostIndex + 1;
-      LOGN_DEBUG( //"TranslateParseByRiseTree::Translate(...)"
-        /*FULL_FUNC_NAME <<*/ "dwLeftMostTokenIndex:"
-        << dwLeftMostTokenIndex )
     }
-    while( dwLeftMostTokenIndex );
 #ifdef PARALLELIZE_TRANSLATION
     if( g_p_translationcontrollerbase->m_multiThreadedTranslation.GetNumberOfThreads() > 0)
       /** Sync, else the main translation thread may delete pointers while other 
       * translation threads access them. */
-      //TOOD this sync could be moved to the latemost code point to let the threads
+      //TODO this sync could be moved to the latemost code point to let the threads
       // run as long as possible
       g_p_translationcontrollerbase->m_multiThreadedTranslation.EnsureAllThreadsFinishedJob();
 #endif

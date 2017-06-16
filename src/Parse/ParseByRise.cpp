@@ -280,6 +280,10 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
   return p_gp ;
 }
 
+/** @param r_stdvec_p_grammarpartCoveringMostTokensATokentIndex :
+ *   all parse trees beginning at token index "dwLeftMostTokenIndex".
+*    Often these parse trees here have the same structure but different
+*    words (->synonyms): "the man works."-> "der Mann|Mensch arbeitet" */
 void ParseByRise::GetGrammarPartCoveringMostTokens(
   DWORD dwLeftmostTokenIndex ,
   //Should be a vector because it may be more then 1 token groups may have
@@ -403,6 +407,58 @@ std::string ParseByRise::GetGrammarPartName(WORD wRuleID ) const
   return std::string(//"?gram pt"
       "*") ;
 }
+
+fastestUnsignedDataType ParseByRise::GetNumberOfLargestParseTrees()
+{
+  fastestUnsignedDataType numberOfLargestParseTrees = 0;
+  DWORD dwLeftMostTokenIndex = 0 ;
+  std::vector<GrammarPart *> stdvec_p_grammarpartCoveringMostTokensAtTokenIndex;
+  do
+  {
+    GetGrammarPartCoveringMostTokens(
+      dwLeftMostTokenIndex ,
+      stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
+      ) ;
+    WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
+    numberOfLargestParseTrees += wSize;
+    if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
+      dwLeftMostTokenIndex = 0;
+    else
+      dwLeftMostTokenIndex =
+        stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
+        m_dwRightmostIndex + 1;
+  }
+  while( dwLeftMostTokenIndex );
+}
+
+void ParseByRise::GetLargestParseTrees(
+  std::vector<GrammarPart *> & r_stdvec_p_grammarpartLargestParseTrees)
+{
+  r_stdvec_p_grammarpartLargestParseTrees.clear();
+  DWORD dwLeftMostTokenIndex = 0 ;
+  std::vector<GrammarPart *> stdvec_p_grammarpartCoveringMostTokensAtTokenIndex;
+  do
+  {
+    GetGrammarPartCoveringMostTokens(
+      dwLeftMostTokenIndex ,
+      stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
+      ) ;
+    WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
+    if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
+      dwLeftMostTokenIndex = 0;
+    else
+      dwLeftMostTokenIndex =
+        stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
+        m_dwRightmostIndex + 1;
+    r_stdvec_p_grammarpartLargestParseTrees.insert(
+      r_stdvec_p_grammarpartLargestParseTrees.end(),
+      stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin(),
+      stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.end());
+    LOGN_DEBUG("dwLeftMostTokenIndex:" << dwLeftMostTokenIndex )
+  }
+  while( dwLeftMostTokenIndex );
+}
+
 
 std::string ParseByRise::GetPathAs_std_string(
   const std::vector<WORD> & r_stdvec_wGrammarPartPath )
