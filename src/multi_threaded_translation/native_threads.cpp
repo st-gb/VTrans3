@@ -221,6 +221,7 @@ namespace VTrans3 {
 //    LockCriticalSection( message, threadIndex );
 //    WaitForSignal("new job/thread end", & m_pthread_cond_t, threadIndex);
     WaitForSignal("new job/thread end", & m_pthread_cond_tNewJobOrEndAllThreads[threadIndex], threadIndex);
+    fastestUnsignedDataType jobNumber;
     if( ! killAllThreads )
     {
 //      LOGN_INFO("pointer to New Job:" << (void *) newJob )
@@ -230,6 +231,9 @@ namespace VTrans3 {
         << " grammar part:" << p_processParseTreeParams->p_GrammarPart << " "
         << p_processParseTreeParams->p_translateParseByRiseTree << " "
         << "function pointer:" << (void *) p_processParseTreeParams->processParseTreeFunction )
+      jobNumber = p_processParseTreeParams->jobNumber;
+  //    OperatingSystem::GetTimeCountInSeconds(m_threadTimes[threadIndex]);
+      OperatingSystem::GetTimeCountInSeconds(m_jobNumber2time[jobNumber]);
     }
 //    assert()
     //TODO is the new thread state visible for the dispatcher thread?
@@ -239,9 +243,6 @@ namespace VTrans3 {
     
 //     InterlockedExchangePointer();
     
-    fastestUnsignedDataType jobNumber = m_jobNumber;
-//    OperatingSystem::GetTimeCountInSeconds(m_threadTimes[threadIndex]);
-    OperatingSystem::GetTimeCountInSeconds(m_jobNumber2time[m_jobNumber]);
     /** mutex is locked by pthread_cond_wait(...) before returning:
      *  /** https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.bpxbd00/ptcwait.htm :
      * "The pthread_cond_wait() function 
@@ -254,6 +255,10 @@ namespace VTrans3 {
   
   //TODO member variables of class "TranslateParseByRiseTree" may be overwritten
   // in parallel translation
+  //TODO runtime error:
+//  *** Error in `src/VTrans_console': corrupted double-linked list: 0xb6900918 ***
+//  Abgebrochen (Speicherabzug geschrieben)
+
   DWORD THREAD_FUNCTION_CALLING_CONVENTION execThreadFunction(void * p)
   {
     ParallelParams * p_parallelParams = (ParallelParams *) p;
@@ -689,7 +694,7 @@ namespace VTrans3 {
   {
     ProcessParseTreeParams * p_processParseTreeParams = new 
       ProcessParseTreeParams{processParseTreeFunction, 
-      p_translateParseByRiseTree, p_GrammarPart };
+      p_translateParseByRiseTree, p_GrammarPart, m_jobNumber };
 //    ParallelParams * p_parallelParams = NULL;
     bool noNonRunningThreadAvailable = true;
 //    do

@@ -40,6 +40,7 @@ namespace VTrans3 {
     TranslateParseByRiseTree::ProcessParseTree_type processParseTreeFunction;
     TranslateParseByRiseTree * p_translateParseByRiseTree;
     GrammarPart * p_GrammarPart;
+    fastestUnsignedDataType jobNumber;
   };
   
 class MultiThreadedTranslation
