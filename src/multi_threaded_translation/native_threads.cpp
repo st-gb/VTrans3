@@ -53,11 +53,14 @@ namespace VTrans3 {
   
   void MultiThreadedTranslation::WaitForTerminationOfAllThreads()
   {
+    LOGN_INFO("begin")
     for(fastestUnsignedDataType threadIndex = 0; threadIndex < m_numThreads ;
          threadIndex ++)
     {
+      LOGN_INFO("waiting for termination of thread # " << threadIndex)
       threads[threadIndex].WaitForTermination();
     }
+    LOGN_INFO("end")
   }
   
   void MultiThreadedTranslation::DeleteAllThreadsAndThreadStates()
@@ -104,7 +107,7 @@ namespace VTrans3 {
   {
     std::ostringstream oss,oss2;
     oss << "Before locking critical section " << & m_pthread_mutex_t 
-      << " for " << strMessage;
+      << ",owner:" << m_pthread_mutex_t.__data.__owner << " for " << strMessage;
     if( threadNumber > -1 )
       oss << " for thread #" << threadNumber; 
     LOGN_INFO(oss.str() )
@@ -113,8 +116,8 @@ namespace VTrans3 {
     //pthread_mutex_t.__data.__lock is lock state
     int returnValue = pthread_mutex_lock(& m_pthread_mutex_t);
     
-    oss2 << "After locking critical section " 
-      << & m_pthread_mutex_t << " for " << strMessage;
+    oss2 << "After locking critical section " << & m_pthread_mutex_t <<
+      ",owner:" << m_pthread_mutex_t.__data.__owner << " for " << strMessage;
     if( threadNumber > -1 )
       oss2 << " for thread #" << threadNumber;
     LOGN_INFO( oss2.str() )
@@ -126,11 +129,11 @@ namespace VTrans3 {
     char * str, 
     int threadNumber /* = -1*/ )
   {
-    LOGN_DEBUG("Before UNlocking critical section " << 
+    LOGN_INFO("Before UNlocking critical section " <<
       & m_pthread_mutex_t << " for \"" << str 
       << "\" for thread #" << threadNumber )
     int returnValue = pthread_mutex_unlock(& m_pthread_mutex_t);
-    LOGN_DEBUG("After UNlocking critical section " 
+    LOGN_INFO("After UNlocking critical section "
       << & m_pthread_mutex_t << " for \"" << str << "\" for thread #" <<
       threadNumber << " return value:" << returnValue)
     if( returnValue != 0 )
@@ -172,11 +175,23 @@ namespace VTrans3 {
     pthread_cond_t * p_pthread_cond_t,
     int threadIndex)
   {
-    LOGN_INFO("Before signalling " << message << " for thread #" << 
-      threadIndex )
+    LOGN_INFO("Before signalling " << message << " for thread #" <<
+      threadIndex << " for condition " << p_pthread_cond_t << ",# waiters:"
+      << p_pthread_cond_t->__data.__nwaiters)
+    /** Ensure the other thread is waiting, else it doesn't get the signal! */
+    if( threadIndex > -1 && ! p_pthread_cond_t->__data.__nwaiters)
+    {
+      LOGN_WARNING("no thread is waiting for the signal")
+      while(! p_pthread_cond_t->__data.__nwaiters)
+        /** memory fence to update "__nwaiters" to from the other thread when
+        * put in waiting mode : necessary at all? */
+        __sync_synchronize();
+//      usleep(1000000);
+    }
     //pthread_cond_signal increases the lock count (__data.__lock) of mutex by 1
     int returnValue = pthread_cond_signal(p_pthread_cond_t);
-    LOGN_INFO("After signalling " << message << " for thread #" << threadIndex)
+    LOGN_INFO("After signalling " << message << " for thread #" << threadIndex
+      << " return value:" << returnValue)
     if( returnValue != 0 )
       returnValue++;
   }
@@ -309,14 +324,31 @@ namespace VTrans3 {
         delete p_processParseTreeParams;
         AtomicExchange(& threadStates[threadIndex], MultiThreadedTranslation::idle);
         p_multiThreadedTranslation->m_numThreadsExecJobs --;
+        LOGN_INFO("after decrementing m_numThreadsExecJobs:" <<
+          p_multiThreadedTranslation->m_numThreadsExecJobs)
+//        AtomicExchange( & p_multiThreadedTranslation->m_numThreadsExecJobs,
+//          p_multiThreadedTranslation->m_numThreadsExecJobs - 1);
 
         AtomicExchange(& s_indexOfEndingThread, threadIndex);
-        //Must use other signal objects than for "wait for new job or end signal", 
-        //else worker threads waiting for a job get signals from worker 
-        //threads signalising their end.
+        /** Must use other signal objects than for "wait for new job or end signal",
+        *  else worker threads waiting for a job get signals from worker
+        *  threads signalising their end. */
         p_multiThreadedTranslation->SignalThisThreadFinishedWork();
+        //This happened (worker thread got signalled before placing itself into
+        // wait mode)
+        // -> does "pthread_cond_signal" unlock a mutex???
+        // because LockCriticalSection in dispatcher thread succeeds after 
+        //  signalling
+//        2017.06.17&nbsp;00:44:38s564ms INFO [parTransl#0-13336] VTrans3::MultiThreadedTranslation Signal After signalling this thread finished work for thread #-1
+//        2017.06.17&nbsp;00:44:38s564ms INFO [Thread-13334] VTrans3::MultiThreadedTranslation LockCriticalSection After locking critical section 0xbfdc25f8 for atomic:check all threads or wait for thread finished work
+//        2017.06.17&nbsp;00:44:38s564ms INFO [Thread-13334] VTrans3::MultiThreadedTranslation AssignNewJobToThread New Job:0x8c148a8 grammar part:0x8c19fb8 0xbfdc298c function pointer:0x80f7430thread index0
+//        2017.06.17&nbsp;00:44:38s564ms INFO [Thread-13334] VTrans3::MultiThreadedTranslation Signal Before signalling send "new job" signal for thread #-1 for condition 0x8bf2098
+//        2017.06.17&nbsp;00:44:38s564ms INFO [Thread-13334] VTrans3::MultiThreadedTranslation Signal After signalling send "new job" signal for thread #-1
+//        2017.06.17&nbsp;00:44:38s565ms INFO [parTransl#1-13337] VTrans3 execThreadFunction before executing worker function
+//        2017.06.17&nbsp;00:44:38s565ms INFO [parTransl#0-13336] VTrans3::MultiThreadedTranslation WaitForSignal Before waiting for condition 0x8bf2098 for new job/thread end for thread #0        p_multiThreadedTranslation->SignalThisThreadFinishedWork();
+
         if( p_multiThreadedTranslation->killAllThreads )
-          p_multiThreadedTranslation->UnlockCriticalSection("end execThreadFunction", threadIndex);
+          p_multiThreadedTranslation->UnlockCriticalSection( (char *) "end execThreadFunction", threadIndex);
         else
           jobNumber = p_multiThreadedTranslation->WaitForNewJobOrThreadEndSignal(threadIndex);      
 
@@ -418,7 +450,7 @@ namespace VTrans3 {
 //      Signal("end threads")
 //    }
     LOGN_INFO("begin")
-    LockCriticalSection("all threads finished");
+    LockCriticalSection( (char *) "all threads finished");
 //    AtomicExchange( & killAllThreads, 1);
     fastestUnsignedDataType numRunningThreadsAvailable = 0;
 //    for( fastestUnsignedDataType threadIndex = 0; threadIndex < m_numThreads; 
@@ -440,7 +472,8 @@ namespace VTrans3 {
      *  locks. */
     while( /*numRunningThreadsAvailable --*/ m_numThreadsExecJobs )
     {
-      LOGN_INFO("numRunningThreadsAvailable:" << numRunningThreadsAvailable + 1)
+//      LOGN_INFO("numRunningThreadsAvailable:" << numRunningThreadsAvailable + 1)
+      LOGN_INFO("# threads executing jobs:" << m_numThreadsExecJobs)
       //TODO sometimes was in wait state after the last worker thread signalled his
       // end-> did not receive the signal (->non-deterministic/race condition?)
       // this may be due to this fact that pthread_cond_wait(...) :
@@ -517,9 +550,12 @@ namespace VTrans3 {
     const char * const strMessage,
     pthread_cond_t * p_condition,
     int threadIndex)
-  {    
+  {
+    pthread_mutex_t * p_pthread_mutex_t = & m_pthread_mutex_t;
     LOGN_INFO("Before waiting for condition " << p_condition 
-      << " for " << strMessage << " for thread #" << threadIndex)
+      << " for " << strMessage << //" for thread #" << threadIndex
+      ",mutex:" << p_pthread_mutex_t << " mutex owner:"
+      << p_pthread_mutex_t->__data.__owner << "(releases the mutex)")
     /** https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.bpxbd00/ptcwait.htm :
       * "The pthread_cond_wait() function 
      *  releases this mutex 
@@ -527,11 +563,13 @@ namespace VTrans3 {
      * WARNING : any other thread waiting to aquire the lock may get it BEFORE
      *  pthread_cond_wait() returns after signalling!
      */
-    int returnValue = pthread_cond_wait( p_condition, & m_pthread_mutex_t);
+    int returnValue = pthread_cond_wait( p_condition, p_pthread_mutex_t);
     /** Returns here after "pthread_cond_signal" & mutex unlock  in "MultiThreadedTranslation::execute" */
     //crashed here with SIGSEV.
     LOGN_INFO("after waiting for condition " << p_condition << " for "
-      << strMessage << " for thread #" << threadIndex << " return value:" << returnValue )
+      << strMessage << //" for thread #" << threadIndex <<
+      ",mutex:" << p_pthread_mutex_t << " return value:" << returnValue
+      << "(mutex is locked)")
     if( returnValue != 0 )
       returnValue = errno;
   }
@@ -619,11 +657,13 @@ namespace VTrans3 {
       << p_processParseTreeParams->p_translateParseByRiseTree
       //http://stackoverflow.com/questions/2402579/function-pointer-to-member-function
       << " function pointer:" << (void *) processParseTreeFunction
-      << "thread index" << threadIndex)
+      << " thread index" << threadIndex)
 //    Signal(message, & m_pthread_cond_t);
-    Signal(message, & m_pthread_cond_tNewJobOrEndAllThreads[threadIndex]);
+    Signal(message, & m_pthread_cond_tNewJobOrEndAllThreads[threadIndex],
+       threadIndex);
     
     m_numThreadsExecJobs ++;
+    LOGN_INFO("m_numThreadsExecJobs:" << m_numThreadsExecJobs)
     m_jobNumber++;
 //    atomicIncrement( (long *) & m_jobNumber);
     
