@@ -19,7 +19,7 @@
 #include <OperatingSystem/multithread/nativeCriticalSectionType.hpp>
 #include <OperatingSystem/multithread/nativeEvent_type.hpp>
 #include <Translate/TranslateParseByRiseTree.hpp>
-
+#include <sys/resource.h> //struct rusage
 
 namespace VTrans3 {
 
@@ -45,7 +45,6 @@ namespace VTrans3 {
   
 class MultiThreadedTranslation
 {
-  nativeThread_type * threads;
 //  nativeCriticalSection_type threadAssignCritSec;
 //  nativeEvent_type threadAllocEvent;
   fastestUnsignedDataType m_numThreads;
@@ -55,6 +54,7 @@ public:
   MultiThreadedTranslation(fastestUnsignedDataType );
   ~MultiThreadedTranslation();
   nativeThread_type m_asyncThreadStarterThread;
+  nativeThread_type * threads;
   /** Needed for ensuring that all threads have finished.
    *  This variable shpuld only be accessed during the same mutex/critical 
    *  section being locked. */
@@ -62,6 +62,9 @@ public:
   fastestUnsignedDataType m_jobNumber;
   long double * m_threadTimes;
   std::map<fastestUnsignedDataType, long double> m_jobNumber2time; 
+  typedef std::map<fastestUnsignedDataType, /*clockid_t*/ struct rusage>
+    jobNumber2CPUtime_type;
+  jobNumber2CPUtime_type m_threadIndex2CPUtime;
   void AllocateAndInitializeResources();
   void DeleteAllThreadsAndThreadStates();
   void BroadcastThreadEndToAllThreads();

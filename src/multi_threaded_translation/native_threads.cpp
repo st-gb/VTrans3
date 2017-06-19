@@ -7,6 +7,7 @@
 #include <hardware/CPU/atomic/AtomicExchange.h>
 #include <hardware/CPU/atomic/memory_barrier.h>
 #include <Controller/time/GetTickCount.hpp>
+//#include <sys/resource.h> //clockid_t
 
 extern TranslationControllerBase * g_p_translationcontrollerbase;
 static long int s_indexOfEndingThread;
@@ -264,6 +265,10 @@ namespace VTrans3 {
     ParallelParams * p_parallelParams = (ParallelParams *) p;
     if( p_parallelParams )
     {
+      //TODO maybe use clockid_t with pthread_getcpuclockid(...) instead of
+      //struct rusage and getrusage(...)
+//      clockid_t clock_id;
+      int returnValue;
       fastestUnsignedDataType threadIndex = p_parallelParams->translThreadID;
       LOGN_DEBUG("transl. index:" << threadIndex)
       /** A thread name can only be set in the thread function under Linux (
@@ -276,6 +281,9 @@ namespace VTrans3 {
       MultiThreadedTranslation * p_multiThreadedTranslation = 
         p_parallelParams->p_MultiThreadedTranslation;
       long int * threadStates = p_multiThreadedTranslation->threadStates;
+      pthread_t * p_thisThread = (pthread_t *) p_multiThreadedTranslation->
+        threads[threadIndex].GetThreadHandle();
+      struct rusage _rusage;
       
       p_multiThreadedTranslation->LockCriticalSection( 
         (char *) "waiting on signal for new job/thread end");
@@ -317,6 +325,16 @@ namespace VTrans3 {
         p_multiThreadedTranslation->m_jobNumber2time[jobNumber] =
           d - p_multiThreadedTranslation->m_jobNumber2time[jobNumber];
 //          0.06d;
+
+        /** from http://man7.org/linux/man-pages/man3/pthread_getcpuclockid.3.html */
+//        returnValue = pthread_getcpuclockid(*p_thisThread, &clock_id);
+        returnValue = getrusage(RUSAGE_THREAD, & _rusage);
+        if( returnValue == 0 )
+        {
+          //from http://man7.org/linux/man-pages/man3/pthread_getcpuclockid.3.html
+          p_multiThreadedTranslation->m_threadIndex2CPUtime[threadIndex] = //clock_id;
+            _rusage;
+        }
 
         LOGN_INFO("freeing memory for address:" << (void *) p_processParseTreeParams)
 //        std::cout << "freeing memory" << threadStates[threadIndex] << std::endl;

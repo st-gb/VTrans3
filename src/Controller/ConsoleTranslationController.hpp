@@ -21,12 +21,16 @@ private:
     const char * const );
   
 public:
+  void OutputStatistics();
   static void CreateMappingBetweenFunctionNameAndFunction();
   static void OutputUsage();
   static std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
     s_functionName2function;
   static std::map<TranslateParseByRiseTree::ProcessParseTree_type, std::string> 
     s_function2functionName;
+  //TODO maybe better use TranslationControllerBase::s_settingsName2ValueAndFunction instead
+  typedef void (/*ConsoleTranslationController::*/*ProcessCommandLineOption_type )();
+  std::map<std::string, ProcessCommandLineOption_type> s_cmdLineOpt2Function;
   static std::string GetFunctionName(
     TranslateParseByRiseTree::ProcessParseTree_type pfnProcessParseTree);
 };

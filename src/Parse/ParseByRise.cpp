@@ -450,6 +450,8 @@ void ParseByRise::GetLargestParseTrees(
       dwLeftMostTokenIndex =
         stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
         m_dwRightmostIndex + 1;
+    //TODO? : There is no information that the parse trees inside the vector to
+    //  insert have the same length after inserting into the other vector.
     r_stdvec_p_grammarpartLargestParseTrees.insert(
       r_stdvec_p_grammarpartLargestParseTrees.end(),
       stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin(),
