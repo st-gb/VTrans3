@@ -22,6 +22,7 @@ namespace VTrans3
       OpenDictFileException(enum I_File::OpenError);
       virtual
       ~OpenDictFileException();
+      std::string GetErrorMessageA();
     };
 
 //  } /* namespace DictionaryReader */

@@ -7,6 +7,7 @@
 
 #include "TranslationControllerBase.hpp"
 #include <map> //class std::map
+#include <Process/CommandLineOption.hpp>
 
 class ConsoleTranslationController
   : public TranslationControllerBase
@@ -24,8 +25,7 @@ public:
   void OutputStatistics();
   static void CreateMappingBetweenFunctionNameAndFunction();
   static void OutputUsage();
-  static std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
-    s_functionName2function;
+  static CommandLineOption/*<char>*/ s_commandLineOptions [] ;
   static std::map<TranslateParseByRiseTree::ProcessParseTree_type, std::string> 
     s_function2functionName;
   //TODO maybe better use TranslationControllerBase::s_settingsName2ValueAndFunction instead

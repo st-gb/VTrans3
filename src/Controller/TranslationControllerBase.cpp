@@ -39,6 +39,9 @@
 //  //#include <unixstl/filesystem/filesystem_traits.hpp>
 //  #include <platformstl/filesystem/filesystem_traits.hpp>
 //#endif
+#ifdef COMPILE_WITH_OPENMP
+  #include <omp.h>
+#endif
 
 #ifndef MAX_PATH
   #define MAX_PATH 2000
@@ -130,6 +133,8 @@ void SetLogLevel(const char * const value)
       logLevel = "warning";
     else if( strcmp(value, "enable") == 0 )
       logLevel = "debug";
+    else
+      logLevel = value;
     if( ! logLevel.empty() )
       g_logger.SetLogLevel(logLevel);
   }
@@ -144,14 +149,25 @@ void SetNumTranslationThreads(const char * const value)
   fastestUnsignedDataType numParallelTranslationThreads;
   if( ConvertCharStringToTypename(numParallelTranslationThreads, value) )
   {
+    std::cout << "setting # translation threads to " << value << std::endl;
     TranslationControllerBase::s_numParallelTranslationThreads = 
       numParallelTranslationThreads;
+    g_p_translationcontrollerbase->m_numThreadsAndTimeDuration[
+      applyTranslRules].numThreads = numParallelTranslationThreads;
+#ifdef COMPILE_WITH_OPENMP
+    omp_set_num_threads(numParallelTranslationThreads);
+#else //#ifdef COMPILE_WITH_OPENMP
     //TODO set # in this object
     g_p_translationcontrollerbase->m_multiThreadedTranslation.
       SetNumberOfThreads(numParallelTranslationThreads);
-    g_p_translationcontrollerbase->m_numThreadsAndTimeDuration[
-      applyTranslRules].numThreads = numParallelTranslationThreads;
+    /** Call this method as early as possible as thread creation may take some
+     *  (the more threads the more) time. */
+    g_p_translationcontrollerbase->m_multiThreadedTranslation.StartThreadsAsync();
+#endif //#ifdef COMPILE_WITH_OPENMP
   }
+  else
+    std::cerr << " error converting # of translation threads from \"" << value 
+      << "\" to a number" << std::endl;
 }
 
 void AddSettingsName2ValueAndFunctionMapping()

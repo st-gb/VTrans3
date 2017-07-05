@@ -2,6 +2,8 @@
  * Author: sg
  * Created on 9. Mai 2017, 11:20 */
 
+#define EVALUATE_PROCESSING
+
 #include "ConsoleTranslationController.hpp"
 #include "Controller/character_string/ConvertStdStringToTypename.hpp"
 #include <data_structures/ByteArray.hpp>
@@ -10,7 +12,18 @@
 
 std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
   ConsoleTranslationController::s_functionName2function;
+TranslateParseByRiseTree::ProcessParseTree_type ConsoleTranslationController::
+  s_3rdStepTranslationFunction = & TranslateParseByRiseTree::TranslateParseTree;
+fastestUnsignedDataType ConsoleTranslationController::s_num3rdTranslationStepIterations = 1;
 
+CommandLineOption/*<char>*/ ConsoleTranslationController::s_commandLineOptions [] = {
+//   <<text to translate>> 
+  {"numThreads", "# of threads for 3rd translation step", SetNumTranslationThreads},
+  {"3rdTranslStepFunction", "function to execute as third translation step", 
+    Set3rdTranslationStepFunction},
+  {"numIters", "# iterations of 3rd translation step", SetNumIterationsFor3rdTranslationStep},
+  {""}
+};
 //void SetLogLevel(const char * const value)
 //{
 //  Logger::GetAsNumber(value);
@@ -132,7 +145,7 @@ void ConsoleTranslationController::OutputStatistics()
 void ConsoleTranslationController::OutputUsage()
 {
   std::cout << "usage: <<text to translate>> >># threads for 3rd translation "
-    "step<< >>function<< >># iterations of 3rd translation step" << std::endl;
+    "step<< >>function<< >># iterations of 3rd translation step<< >>log level<<" << std::endl;
   std::cout << "possible functions:" << std::endl;
   for(std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type>::
       const_iterator c_iter = s_functionName2function.begin() ; 
@@ -141,12 +154,32 @@ void ConsoleTranslationController::OutputUsage()
   {
       std::cout << c_iter->first << std::endl;
   }
+  std::cout << "possible log levels: warning, error " << std::endl;
+//  NodeTrieNode<BYTE>::const_ * p_ntn = Logger::s_nodetrieLogLevelStringToNumber.begin();
+}
+
+void Set3rdTranslationStepFunction(const char value[])
+{
+  std::map<std::string, TranslateParseByRiseTree::
+    ProcessParseTree_type>::const_iterator c_iter =
+    ConsoleTranslationController::s_functionName2function.find(value);
+  if( c_iter != ConsoleTranslationController::s_functionName2function.end() )
+    ConsoleTranslationController::s_3rdStepTranslationFunction = c_iter->second;
+}
+
+void SetNumIterationsFor3rdTranslationStep(const char value[])
+{
+  if( ! ConvertCharStringToTypename(
+    ConsoleTranslationController::s_num3rdTranslationStepIterations, value) );
+  else
+    std::cerr << "error conv. in SetNumIterationsFor3rdTranslationStep";
 }
 
 int main(int argc, char *  argv[])
 {
   std::cout << argc << std::endl;
   ConsoleTranslationController::CreateMappingBetweenFunctionNameAndFunction();
+  Logger::CreateLogLevelStringToNumberMapping();
   OpenLogFile(argv[0]);
   
   if( argc > 1 )
@@ -163,33 +196,23 @@ int main(int argc, char *  argv[])
       
       fastestUnsignedDataType num3rdTranslationStepIterations = 1;
       ConsoleTranslationController consoleTranslationController;
-      TranslateParseByRiseTree::ProcessParseTree_type pfnProcessParseTree =
-        & TranslateParseByRiseTree::ProvokeCacheMisses;
+      g_p_translationcontrollerbase = & consoleTranslationController;
       if( argc > 2 )
       {
-        int numThreads;
-        if( ! ConvertCharStringToTypename(numThreads, argv[2] ) )
-          std::cerr << " error converting ";
-        consoleTranslationController.m_multiThreadedTranslation.
-          SetNumberOfThreads(numThreads);
-        /** Call this method as early as possible as thread creation may take some
-         *  (the more threads the more time). */
-        consoleTranslationController.m_multiThreadedTranslation.StartThreadsAsync();
+        SetNumTranslationThreads(argv[2]);
         if( argc > 3 )
         {
-          std::map<std::string, TranslateParseByRiseTree::
-            ProcessParseTree_type>::const_iterator c_iter = 
-            ConsoleTranslationController::s_functionName2function.find(argv[3]);
-          if( c_iter != ConsoleTranslationController::s_functionName2function.end() )
-            pfnProcessParseTree = c_iter->second;
+          Set3rdTranslationStepFunction(argv[3]);
           if( argc > 4 )
           {
-            if( ! ConvertCharStringToTypename(num3rdTranslationStepIterations, argv[4]) )
-              num3rdTranslationStepIterations = 1;
+            SetNumIterationsFor3rdTranslationStep(argv[4]);
+            if( argc > 5 )
+            {
+              g_logger.SetLogLevel(argv[5]);
+            }
           }
         }
       }
-      g_p_translationcontrollerbase = & consoleTranslationController;
       consoleTranslationController.Init("configuration/VTrans_main_config.xml");
       ByteArray byteArray;
       fastestUnsignedDataType maxNumThreads = consoleTranslationController.
@@ -200,7 +223,7 @@ int main(int argc, char *  argv[])
       consoleTranslationController.TranslateAsXMLgetAverageTimes(
         argv[1], 
         byteArray, 
-        pfnProcessParseTree,
+        ConsoleTranslationController::s_3rdStepTranslationFunction,
         num3rdTranslationStepIterations
         );
       std::string std_strParseTreeAsIndentedXML = ::GetParseTreeAsIndentedXML(
@@ -209,7 +232,7 @@ int main(int argc, char *  argv[])
       std::cout << "after translate:" << std_strParseTreeAsIndentedXML;
       std::cout << "with max. " << maxNumThreads << "threads" << std::endl;
       std::cout << "after executing: function \"" << ConsoleTranslationController::
-        GetFunctionName(pfnProcessParseTree) << "\" for 3rd step" << std::endl;
+        GetFunctionName(ConsoleTranslationController::s_3rdStepTranslationFunction) << "\" for 3rd step" << std::endl;
       std::cout << "average (" << num3rdTranslationStepIterations << "x) apply transl. rules took:" << consoleTranslationController.
         m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds << "s" << std::endl;
       
@@ -218,7 +241,8 @@ int main(int argc, char *  argv[])
         m_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds << "s" << std::endl;
     }catch(VTrans3::OpenDictFileException & odfe )
     {
-      std::cout << "error opening dictionary file:" << odfe.m_openError << std::endl;
+      std::cout << "error opening dictionary file:" << odfe.m_openError << 
+        odfe.GetErrorMessageA() << std::endl;
     }
   }
   else

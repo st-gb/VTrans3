@@ -32,6 +32,11 @@
 #include <compiler/GCC/suppress_unused_variable.h>
 
 #include <string>//class std::string
+#ifdef COMPILE_WITH_OPENMP
+  #include <omp.h>
+
+#include "preprocessor_macros/expand_and_stringify.h"
+#endif
 
 std::map<std::string, AttributeTypeAndPosAndSize > *
   ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef ;
@@ -833,10 +838,29 @@ void TranslateParseByRiseTree::ProcessParseTree(
     //TODO this loop could be parallelized with OpenMP? but with no respect
     // to other parse trees that begin at other token indices?
     //TOOD parallelize (OpenMP, POSIX, ...)
+
+#ifdef COMPILE_WITH_OPENMP
+    #pragma message "COMPILE_WITH_OPENMP defined"
+    /** from http://www.mi.fu-berlin.de/wiki/pub/ABI/AlDaBiWS10Praktikum/04_Parallelprogrammierung.pdf :
+     *  "Seit OpenMP 3.0 sind auch Iterator-Schleifen parallelisierbar"
+     *  "Verschiedene Arten, den Indexraum auf Threads zu verteilen"
+     *      "schedule"  */
+    #if _OPENMP >= 200805 /** <=> >= version 3.0*/
+      #define USE_OPENMP_FOR_PARALLEL_TRANSLATION
+//      #pragma message "OpenMP version is:" STRINGIFY(_OPENMP)
+      fastestUnsignedDataType num_OpenMP_threads;
+      /** parallelizes the following "for" loop */
+      #pragma omp parallel for 
+    #else
+      #pragma message "OpenMP version \"" EXPAND_AND_STRINGIFY(_OPENMP) "\" is too low" 
+//      #pragma message STRINGIFY(_OPENMP)
+    #endif
+#endif
     for( std::vector<GrammarPart *>::const_iterator
         c_iter_p_grammarpartLargestParseTrees =
         stdvec_p_grammarpartLargestParseTrees.begin();
-        c_iter_p_grammarpartLargestParseTrees !=
+        /** OpenMP does not allow the "!=" operator */
+        c_iter_p_grammarpartLargestParseTrees <
         stdvec_p_grammarpartLargestParseTrees.end();
         ++ c_iter_p_grammarpartLargestParseTrees )
     {
@@ -853,7 +877,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
       //TODO necessary?
       WordCompoundsAtSameTokenIndex wordCompoundsAtSameTokenIndex;
       
-#ifdef PARALLELIZE_TRANSLATION
+#if defined(PARALLELIZE_TRANSLATION) && !defined(USE_OPENMP_FOR_PARALLEL_TRANSLATION)
         if( g_p_translationcontrollerbase->m_multiThreadedTranslation.GetNumberOfThreads() > 0)
 //        if( numThreadsRunning >= numCPUcoresAvailable )
 //          multiThreadedTranslation.WaitForThreadBecomingIdle();
@@ -868,24 +892,35 @@ void TranslateParseByRiseTree::ProcessParseTree(
 //          (this->TranslateParseByRiseTree::DummyTranslateParseTree)(
             * c_iter_p_grammarpartLargestParseTrees,
             wordCompoundsAtSameTokenIndex);
-#else /** single-threaded version */
+#else /** single-threaded version or OpenMP version*/
         //( * this->pfnProcessParseTree)
           (this->* pfnProcessParseTree)(
             * c_iter_p_grammarpartLargestParseTrees,
             wordCompoundsAtSameTokenIndex);
+  #ifdef USE_OPENMP_FOR_PARALLEL_TRANSLATION
+//#pragma omp single
+//          num_OpenMP_threads = omp_get_num_threads();
+  #endif
 #endif        
       
       //TODO Is TranslationResult needed at all?
 //      r_translationResult.push_back(
 //        wordCompoundsAtSameTokenIndex);
-    }
+    } /** http://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-sync.html :
+       *  "implicit barrier at the end of the loop" */
 #ifdef PARALLELIZE_TRANSLATION
+#ifdef USE_OPENMP_FOR_PARALLEL_TRANSLATION
+    /** Explicit barrier needed at all? */
+//    #pragma omp barrier
+//    std::cout << "# OpenMP threads: " << num_OpenMP_threads << std::endl;
+#else //#ifdef USE_OPENMP_FOR_PARALLEL_TRANSLATION
     if( g_p_translationcontrollerbase->m_multiThreadedTranslation.GetNumberOfThreads() > 0)
       /** Sync, else the main translation thread may delete pointers while other 
       * translation threads access them. */
       //TODO this sync could be moved to the latemost code point to let the threads
       // run as long as possible
       g_p_translationcontrollerbase->m_multiThreadedTranslation.EnsureAllThreadsFinishedJob();
+#endif //#ifdef USE_OPENMP_FOR_PARALLEL_TRANSLATION
 #endif
   }//if( p_parsebyrise )
   LOGN_DEBUG("end")

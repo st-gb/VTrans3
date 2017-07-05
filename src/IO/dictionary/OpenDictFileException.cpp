@@ -22,5 +22,16 @@ namespace VTrans3
       // TODO Auto-generated destructor stub
     }
 
+    std::string OpenDictFileException::GetErrorMessageA()
+    {
+      switch(m_openError)
+      {
+        case I_File::fileNotFound :
+          return "file not found";
+        default:
+          return "";
+      }
+      return "";
+    }
 //  } /* namespace DictionaryReader */
 } /* namespace VTrans3 */

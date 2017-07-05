@@ -1,0 +1,3 @@
+callee graph (https://stackoverflow.com/questions/27742462/understanding-linux-perf-report-output)
+perf record -g ...
+perf report -G

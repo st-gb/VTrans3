@@ -10,6 +10,9 @@ CPP_COMPILER=/usr/bin/g++
 
 NUM_ARGS_NEEDED=1
 
+BASEDIR=$(pwd)
+echo "this shell script's dir: $BASEDIR"
+
 #IDEA: pass as args: <NAME=VALUE>, e.g. COMMON_SOURCECODE_ROOT_PATH=../common_sourcecode
 if [ $# -ge $NUM_ARGS_NEEDED ]; then
   BUILD_SYSTEM_GENERATOR=$1
@@ -17,18 +20,23 @@ if [ $# -ge $NUM_ARGS_NEEDED ]; then
 
 # "-pg" (DCMAKE_CXX_FLAGS) option for "gprof" profiling
 
-cd src
+#cd src
 #use "-O3" in DCMAKE_CXX_FLAGS to optimize (for speed)
-cmake -G "$BUILD_SYSTEM_GENERATOR" \
+
+EXEC="cmake -G \"$BUILD_SYSTEM_GENERATOR\" \
 -DCMAKE_BUILD_TYPE=Debug \
 -DCMAKE_C_COMPILER=${C_COMPILER} \
 -DCMAKE_CXX_COMPILER=${CPP_COMPILER} \
--DCMAKE_C_FLAGS_DEBUG="-g3 -gdwarf-2" \
--DCMAKE_CXX_FLAGS_DEBUG="-g3 -gdwarf-2" \
+-DCMAKE_C_FLAGS_DEBUG=\"-g3 -gdwarf-2\" \
+-DCMAKE_CXX_FLAGS_DEBUG=\"-g3 -gdwarf-2\" \
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
--DCMAKE_CXX_FLAGS="-pg -O3" \
+-DCMAKE_CXX_FLAGS=\"-pg -O3\" \
+-DCOMPILE_WITH_OPENMP=NO \
 . \
--DEXE_TYPE:STRING=console 
+-DEXE_TYPE:STRING=console \
+./src" #where to finde the CMakeLists.txt
+echo "should execute: $EXEC"
+eval $EXEC
 else
   echo "ERROR:at least" $NUM_ARGS_NEEDED " args needed:"
   echo $0 " <build system>"

@@ -228,10 +228,12 @@ namespace VTrans3 {
 //      LOGN_INFO("pointer to New Job:" << (void *) newJob )
       ProcessParseTreeParams * p_processParseTreeParams = 
         (ProcessParseTreeParams *) /*newJob*/ threadStates[threadIndex];
+      GCC_DIAG_OFF(pmf-conversions) /** Avoid conversion compiler warning */
       LOGN_INFO("New Job:" <<  (void *) p_processParseTreeParams
         << " grammar part:" << p_processParseTreeParams->p_GrammarPart << " "
         << p_processParseTreeParams->p_translateParseByRiseTree << " "
         << "function pointer:" << (void *) p_processParseTreeParams->processParseTreeFunction )
+      GCC_DIAG_ON(pmf-conversions)
       jobNumber = p_processParseTreeParams->jobNumber;
   //    OperatingSystem::GetTimeCountInSeconds(m_threadTimes[threadIndex]);
       OperatingSystem::GetTimeCountInSeconds(m_jobNumber2time[jobNumber]);
@@ -451,7 +453,7 @@ namespace VTrans3 {
   
   void MultiThreadedTranslation::BroadcastThreadEndToAllThreads()
   {
-    char * message = "kill all threads";
+    char * message = (char *) "kill all threads";
     AtomicExchange( & killAllThreads, 1);
     LockCriticalSection(message);
 //    Broadcast(message, & m_pthread_cond_t, -1);
@@ -675,12 +677,14 @@ namespace VTrans3 {
 //    TranslateParseByRiseTree & translateParseByRiseTree = * p_processParseTreeParams->p_translateParseByRiseTree;
     TranslateParseByRiseTree::ProcessParseTree_type processParseTreeFunction =
       p_processParseTreeParams->processParseTreeFunction;
+    GCC_DIAG_OFF(pmf-conversions) /** Avoid conversion compiler warning */
     LOGN_INFO("New Job:" << (void *) p_processParseTreeParams 
       << " grammar part:" << p_processParseTreeParams->p_GrammarPart << " "
       << p_processParseTreeParams->p_translateParseByRiseTree
       //http://stackoverflow.com/questions/2402579/function-pointer-to-member-function
       << " function pointer:" << (void *) processParseTreeFunction
       << " thread index" << threadIndex)
+    GCC_DIAG_ON(pmf-conversions) /** Switch on conversion warning */
 //    Signal(message, & m_pthread_cond_t);
     Signal(message, & m_pthread_cond_tNewJobOrEndAllThreads[threadIndex],
        threadIndex);

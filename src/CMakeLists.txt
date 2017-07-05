@@ -4,6 +4,8 @@ project (VTrans)
 #from https://cmake.org/Wiki/CMake/Testing_With_CTest
 #enable_testing()
 
+#https://stackoverflow.com/questions/19207721/build-android-ndk-project-with-cmake
+
 if( NOT DEFINED COMMON_SOURCECODE_ROOT_PATH )
   #By default "common_sourcecode" lies/lays 1 level above VTrans3/src
   set(COMMON_SOURCECODE_ROOT_PATH ${PROJECT_SOURCE_DIR}/../../common_sourcecode)
@@ -33,6 +35,7 @@ if( ${EXE_TYPE} STREQUAL "console")
 endif( ${EXE_TYPE} STREQUAL "console")
 
 #set(<variable> <value>  ... <valueN>)
+#/home/sg/Downloads/boost_threadpool-0_2_5-src/threadpool
 set( INCLUDE_DIRS 
   ${INCLUDE_DIRS}
   ${COMMON_SOURCECODE_ROOT_PATH}
@@ -59,6 +62,20 @@ set( CXX_DEFINITIONS
   -DCOMPILE_AS_EXECUTABLE
   -DUNICODE
 )
+
+if( ${COMPILE_WITH_OPENMP} STREQUAL "YES")
+  message("COMPILE_WITH_OPENMP defined:" ${COMPILE_WITH_OPENMP} )
+  #from https://stackoverflow.com/questions/12399422/how-to-set-linker-flags-for-openmp-in-cmakes-try-compile-function
+  find_package(OpenMP)
+  if (OPENMP_FOUND)
+      message("OpenMP found")
+      set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  endif()
+  set( CXX_DEFINITIONS
+    ${CXX_DEFINITIONS}
+    -DCOMPILE_WITH_OPENMP)
+endif( DEFINED COMPILE_WITH_OPENMP)
 
 add_subdirectory(./IO
   #EXCLUDE_FROM_ALL
@@ -117,6 +134,12 @@ if (UNIX)
     ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.cpp
   )
 endif (UNIX)
+
+#set( LIBRARIES 
+#  ${LIBRARIES}
+#  boost_system #for boost::threadpool
+#  boost_thread #for boost::threadpool
+# )
 
 set(BASIC_TRANSLATION_SOURCE_FILES
   ${BASIC_TRANSLATION_SOURCE_FILES}
@@ -209,7 +232,18 @@ endif( ${EXE_TYPE} STREQUAL "console" )
 
 message("CXX_DEFINITIONS for compiling:${CXX_DEFINITIONS}")
 #Compiles all files in ${SOURCE_FILE_PATHS} ?!
-add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
+
+if( ${EXE_TYPE} STREQUAL "Android")
+  message("CMAKE_ANDROID_ARCH: ${CMAKE_ANDROID_ARCH}")
+  message("CMAKE_ANDROID_NDK: ${CMAKE_ANDROID_NDK}")
+  message("CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION: ${CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION}")
+  message("CMAKE_ANDROID_STL_TYPE: ${CMAKE_ANDROID_STL_TYPE}")
+  add_library(${EXE_NAME} SHARED ${SOURCE_FILE_PATHS})
+else ( ${EXE_TYPE} STREQUAL "Android" )
+  add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
+  message ("should link libraries \"${LIBRARIES}\" to executable")
+  target_link_libraries(${EXE_NAME} ${LIBRARIES})
+endif( ${EXE_TYPE} STREQUAL "Android")
 
 if(DEFINED WXWIDGETS)
   #https://wiki.wxwidgets.org/CMake
@@ -219,8 +253,6 @@ if(DEFINED WXWIDGETS)
   #message ("wxWidgets type: ${wxWidgets_CONFIGURATION}")
 endif (DEFINED WXWIDGETS)
 
-message ("should link libraries \"${LIBRARIES}\" to executable")
-target_link_libraries(${EXE_NAME} ${LIBRARIES})
 
 #target_link_libraries (VTrans3 wxWidgets)
 

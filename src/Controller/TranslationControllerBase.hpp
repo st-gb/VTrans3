@@ -137,6 +137,13 @@ enum {buildParseTrees = 0, transform, applyTranslRules, beyondLastValue};
 
 std::string GetParseTreeAsIndentedXML(const ParseByRise & parsebyrise);
 
+void SetLogLevel(const char * const value);
+void SetNumTranslationThreads(const char * const value);
+#ifdef EVALUATE_PROCESSING /** Only needed for testing. */
+void Set3rdTranslationStepFunction(const char * const value);
+void SetNumIterationsFor3rdTranslationStep(const char * const value);
+#endif //#ifdef EVALUATE_PROCESSING
+
 /** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
 class TranslationControllerBase
   : public I_UserInterface
@@ -151,6 +158,12 @@ public:
 //  float m_applyTranslationRulesInSeconds;
   NumThreadsAndTimeDuration m_numThreadsAndTimeDuration[3];
 
+#ifdef EVALUATE_PROCESSING 
+  static fastestUnsignedDataType s_num3rdTranslationStepIterations;
+  static std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
+    s_functionName2function;
+  static TranslateParseByRiseTree::ProcessParseTree_type s_3rdStepTranslationFunction;
+#endif //#ifdef EVALUATE_PROCESSING
 #define PARALLELIZE_TRANSLATION
 #ifdef PARALLELIZE_TRANSLATION
 //    fastestUnsignedDataType numThreadsRunning = 0;
