@@ -22,7 +22,7 @@ if [ $# -ge $NUM_ARGS_NEEDED ]; then
 
 #cd src
 #use "-O3" in DCMAKE_CXX_FLAGS to optimize (for speed)
-
+#compile with : -fno-omit-frame-pointer for call graph information
 EXEC="cmake -G \"$BUILD_SYSTEM_GENERATOR\" \
 -DCMAKE_BUILD_TYPE=Debug \
 -DCMAKE_C_COMPILER=${C_COMPILER} \
@@ -31,7 +31,8 @@ EXEC="cmake -G \"$BUILD_SYSTEM_GENERATOR\" \
 -DCMAKE_CXX_FLAGS_DEBUG=\"-g3 -gdwarf-2\" \
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 -DCMAKE_CXX_FLAGS=\"-pg -O3\" \
--DCOMPILE_WITH_OPENMP=NO \
+-DCOMPILE_WITH_OPENMP=YES \
+-DEVALUATE_PROCESSING=YES \
 . \
 -DEXE_TYPE:STRING=console \
 ./src" #where to finde the CMakeLists.txt

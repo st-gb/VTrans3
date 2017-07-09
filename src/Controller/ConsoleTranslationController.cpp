@@ -2,19 +2,11 @@
  * Author: sg
  * Created on 9. Mai 2017, 11:20 */
 
-#define EVALUATE_PROCESSING
-
 #include "ConsoleTranslationController.hpp"
 #include "Controller/character_string/ConvertStdStringToTypename.hpp"
 #include <data_structures/ByteArray.hpp>
 #include <IO/dictionary/OpenDictFileException.hpp>
 #include <FileSystem/GetCurrentWorkingDir.hpp>
-
-std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
-  ConsoleTranslationController::s_functionName2function;
-TranslateParseByRiseTree::ProcessParseTree_type ConsoleTranslationController::
-  s_3rdStepTranslationFunction = & TranslateParseByRiseTree::TranslateParseTree;
-fastestUnsignedDataType ConsoleTranslationController::s_num3rdTranslationStepIterations = 1;
 
 CommandLineOption/*<char>*/ ConsoleTranslationController::s_commandLineOptions [] = {
 //   <<text to translate>> 
@@ -116,14 +108,14 @@ void ConsoleTranslationController::OutputStatistics()
 //  struct timespec _timespec;
   for( fastestUnsignedDataType jobIndex = 0; jobIndex < numJobs; ++jobIndex )
   {
-    std::cout << "job #" << jobIndex << " took " << 
-//          consoleTranslationController.m_multiThreadedTranslation.m_threadTimes[threadIndex]
-      jobNumber2time[jobIndex]
-      << " seconds";
+//    std::cout << "job #" << jobIndex << " took " << 
+////          consoleTranslationController.m_multiThreadedTranslation.m_threadTimes[threadIndex]
+//      jobNumber2time[jobIndex]
+//      << " seconds";
     /** from http://man7.org/linux/man-pages/man3/pthread_getcpuclockid.3.html */
 //    if(clock_gettime(jobNumber2CPUtime[threadIndex], &_timespec) != -1)
     //from https://linux.die.net/man/2/getrusage
-    std::cout << std::endl;
+//    std::cout << std::endl;
     averageJob += jobNumber2time[jobIndex];
   }
   averageJob /= numJobs;
@@ -172,7 +164,7 @@ void SetNumIterationsFor3rdTranslationStep(const char value[])
   if( ! ConvertCharStringToTypename(
     ConsoleTranslationController::s_num3rdTranslationStepIterations, value) );
   else
-    std::cerr << "error conv. in SetNumIterationsFor3rdTranslationStep";
+    std::cerr << "error converting \"" << value << "\" to a number in SetNumIterationsFor3rdTranslationStep";
 }
 
 int main(int argc, char *  argv[])
@@ -216,7 +208,7 @@ int main(int argc, char *  argv[])
       consoleTranslationController.Init("configuration/VTrans_main_config.xml");
       ByteArray byteArray;
       fastestUnsignedDataType maxNumThreads = consoleTranslationController.
-        m_multiThreadedTranslation.GetNumberOfThreads();
+        s_numParallelTranslationThreads;
       std::cout << "before Translating \"" << argv[1] << "\",max." 
         << maxNumThreads << " threads" << std::endl;
       
@@ -224,16 +216,22 @@ int main(int argc, char *  argv[])
         argv[1], 
         byteArray, 
         ConsoleTranslationController::s_3rdStepTranslationFunction,
-        num3rdTranslationStepIterations
+        ConsoleTranslationController::s_num3rdTranslationStepIterations
         );
       std::string std_strParseTreeAsIndentedXML = ::GetParseTreeAsIndentedXML(
         consoleTranslationController.m_parsebyrise );
       
       std::cout << "after translate:" << std_strParseTreeAsIndentedXML;
-      std::cout << "with max. " << maxNumThreads << "threads" << std::endl;
+      std::cout << "with max." << maxNumThreads;
+#ifdef COMPILE_WITH_OPENMP
+      std::cout << " OpenMP";
+#else
+      std::cout << " own thread pool";
+#endif //#ifdef COMPILE_LOGGER_WITH_OPENMP
+      std::cout << " threads" << std::endl;
       std::cout << "after executing: function \"" << ConsoleTranslationController::
         GetFunctionName(ConsoleTranslationController::s_3rdStepTranslationFunction) << "\" for 3rd step" << std::endl;
-      std::cout << "average (" << num3rdTranslationStepIterations << "x) apply transl. rules took:" << consoleTranslationController.
+      std::cout << "average (" << ConsoleTranslationController::s_num3rdTranslationStepIterations << "x) apply transl. rules took:" << consoleTranslationController.
         m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds << "s" << std::endl;
       
       consoleTranslationController.OutputStatistics();

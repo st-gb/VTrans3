@@ -63,6 +63,15 @@ set( CXX_DEFINITIONS
   -DUNICODE
 )
 
+if( ${EVALUATE_PROCESSING} STREQUAL "YES" )
+  #According to Chandler Carruth in 
+  # "CppCon 2015: Chandler Carruth 
+  # "Tuning C++: Benchmarks, and CPUs, and Compilers! Oh My!"
+  # 1:17:00"-fno-omit-frame-pointer" is better then dwarf unwinding for
+  #call stack information
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer")
+endif( ${EVALUATE_PROCESSING} STREQUAL "YES" )
+
 if( ${COMPILE_WITH_OPENMP} STREQUAL "YES")
   message("COMPILE_WITH_OPENMP defined:" ${COMPILE_WITH_OPENMP} )
   #from https://stackoverflow.com/questions/12399422/how-to-set-linker-flags-for-openmp-in-cmakes-try-compile-function
@@ -75,7 +84,7 @@ if( ${COMPILE_WITH_OPENMP} STREQUAL "YES")
   set( CXX_DEFINITIONS
     ${CXX_DEFINITIONS}
     -DCOMPILE_WITH_OPENMP)
-endif( DEFINED COMPILE_WITH_OPENMP)
+endif( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
 
 add_subdirectory(./IO
   #EXCLUDE_FROM_ALL

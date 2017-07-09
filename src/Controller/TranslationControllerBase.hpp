@@ -137,6 +137,8 @@ enum {buildParseTrees = 0, transform, applyTranslRules, beyondLastValue};
 
 std::string GetParseTreeAsIndentedXML(const ParseByRise & parsebyrise);
 
+#define EVALUATE_PROCESSING
+
 void SetLogLevel(const char * const value);
 void SetNumTranslationThreads(const char * const value);
 #ifdef EVALUATE_PROCESSING /** Only needed for testing. */
@@ -245,6 +247,7 @@ public:
     const std::string & str, struct tm & time, ByteArray & byteArray
     /*void * pData*/);
 
+  void SetNumberOfParallelTranslationThreads(fastestUnsignedDataType);
   virtual void ShowInvalidVocabularyFileFormatMessage(
     const VTrans::string_type & strWordFile,
     DWORD dwOffsetOfBeginOfEntry,

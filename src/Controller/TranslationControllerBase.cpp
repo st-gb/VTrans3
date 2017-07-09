@@ -4,6 +4,7 @@
  *  Created on: Dec 6, 2010
  *      Author: Stefan
  */
+
 /** Must be the 1st inclusion, else compilation error in GCC files <time.h>
  *  indirectly included from this header file: ~ "undefined asctime", ... */
 #include <InputOutput/XML/OutputXMLindented_inl.hpp> //OutputXMLindented(...)
@@ -52,6 +53,14 @@ I_UserInterface * SyntaxTreePath::sp_userinterface ;
 I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 fastestUnsignedDataType TranslationControllerBase::s_numParallelTranslationThreads = 1;
 TranslationControllerBase::settingsName2ValueAndFunction_type TranslationControllerBase::s_settingsName2valueAndFunction;
+#ifdef EVALUATE_PROCESSING
+std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
+  TranslationControllerBase::s_functionName2function;
+TranslateParseByRiseTree::ProcessParseTree_type TranslationControllerBase::
+  s_3rdStepTranslationFunction = & TranslateParseByRiseTree::TranslateParseTree;
+fastestUnsignedDataType TranslationControllerBase::s_num3rdTranslationStepIterations = 1;
+#endif //#ifdef EVALUATE_PROCESSING
+
 
 extern TranslationControllerBase * g_p_translationcontrollerbase;
 //LetterTree VTransApp::s_dictionary ;
@@ -150,20 +159,8 @@ void SetNumTranslationThreads(const char * const value)
   if( ConvertCharStringToTypename(numParallelTranslationThreads, value) )
   {
     std::cout << "setting # translation threads to " << value << std::endl;
-    TranslationControllerBase::s_numParallelTranslationThreads = 
-      numParallelTranslationThreads;
-    g_p_translationcontrollerbase->m_numThreadsAndTimeDuration[
-      applyTranslRules].numThreads = numParallelTranslationThreads;
-#ifdef COMPILE_WITH_OPENMP
-    omp_set_num_threads(numParallelTranslationThreads);
-#else //#ifdef COMPILE_WITH_OPENMP
-    //TODO set # in this object
-    g_p_translationcontrollerbase->m_multiThreadedTranslation.
-      SetNumberOfThreads(numParallelTranslationThreads);
-    /** Call this method as early as possible as thread creation may take some
-     *  (the more threads the more) time. */
-    g_p_translationcontrollerbase->m_multiThreadedTranslation.StartThreadsAsync();
-#endif //#ifdef COMPILE_WITH_OPENMP
+    g_p_translationcontrollerbase->SetNumberOfParallelTranslationThreads(
+      numParallelTranslationThreads);
   }
   else
     std::cerr << " error converting # of translation threads from \"" << value 
@@ -183,7 +180,7 @@ void AddSettingsName2ValueAndFunctionMapping()
 
 TranslationControllerBase::TranslationControllerBase()
   :
-  m_multiThreadedTranslation( OperatingSystem::GetNumberOfLogicalCPUcores() ),
+//  m_multiThreadedTranslation( OperatingSystem::GetNumberOfLogicalCPUcores() ),
 //  m_boost_threadpool(8),
   m_vbContinue(true),
 #ifndef TEST_MINI_XML
@@ -200,8 +197,8 @@ TranslationControllerBase::TranslationControllerBase()
   m_dictionarySuccessfullyLoaded(false)
 {
 #ifdef PARALLELIZE_TRANSLATION
-  m_numThreadsAndTimeDuration[applyTranslRules].numThreads =
-    m_multiThreadedTranslation.GetNumberOfThreads();
+  SetNumberOfParallelTranslationThreads(OperatingSystem::
+    GetNumberOfLogicalCPUcores() );
 //  m_multiThreadedTranslation.CreateAndStartThreads();
 //  /** Call this method as early as possible as thread creation may take some
 //   *  (the more threads the more time). */
@@ -396,6 +393,22 @@ unsigned TranslationControllerBase::GetStatus2( /*const std::string & str*/
   }
   LOGN_DEBUG("return status code:" << statusCode << " " << str)
   return statusCode;
+}
+
+void TranslationControllerBase::SetNumberOfParallelTranslationThreads(
+  fastestUnsignedDataType numberOfParallelTranslationThreads)
+{
+  m_numThreadsAndTimeDuration[applyTranslRules].numThreads = 
+    numberOfParallelTranslationThreads;
+#ifdef COMPILE_WITH_OPENMP
+  omp_set_num_threads(numberOfParallelTranslationThreads);
+#else //#ifdef COMPILE_WITH_OPENMP
+  m_multiThreadedTranslation.SetNumberOfThreads(
+    numberOfParallelTranslationThreads);
+  /** Call this method as early as possible as thread creation may take some
+   *  (the more threads the more) time. */
+  m_multiThreadedTranslation.StartThreadsAsync();
+#endif //#ifdef COMPILE_WITH_OPENMP
 }
 
 void TranslationControllerBase::SetStatus(
