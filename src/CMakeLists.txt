@@ -1,5 +1,5 @@
 #from https://cmake.org/cmake-tutorial/
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8)
 project (VTrans)
 #from https://cmake.org/Wiki/CMake/Testing_With_CTest
 #enable_testing()
@@ -170,8 +170,11 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${VTRANS3_ROOT_PATH}/IO/dictionary/DictionaryReaderBase.cpp
 	${VTRANS3_ROOT_PATH}/IO/dictionary/OpenDictFileException.cpp
 	${VTRANS3_ROOT_PATH}/Controller/DictReaderAndVocAccess/TUchemnitzEngWordSorted1stAndBinarySearch.cpp
-	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/BinarySearchInDictFile.cpp
-	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/EachAttributeInSingleLine.cpp
+	${VTRANS3_ROOT_PATH}/Controller/DictReaderAndVocAccess/TUchemnitzEngWordSorted1stAndBinarySearchInRAM.cpp
+	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/BinarySearchInDictData.cpp
+	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInDictFile.cpp
+	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInRAM.cpp
+	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInDictData.cpp
   ${PROJECT_SOURCE_DIR}/Controller/TranslationControllerBase.cpp
   ${VTRANS3_ROOT_PATH}/IO/UnknownGrammarPartNameException.cpp
   ${VTRANS3_ROOT_PATH}/multi_threaded_translation/TranslateThreadProc.cpp
@@ -202,6 +205,7 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/IVocabularyInMainMem.cpp
 	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/I_WordSearch.cpp
 	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/TUchemnitzEngWordSorted1st/BinarySearchInDictFile.cpp
+	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/TUchemnitzEngWordSorted1st/BinarySearchInRAM.cpp
 	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/VocabularyAndTranslation.cpp
 )
 
@@ -243,6 +247,12 @@ message("CXX_DEFINITIONS for compiling:${CXX_DEFINITIONS}")
 #Compiles all files in ${SOURCE_FILE_PATHS} ?!
 
 if( ${EXE_TYPE} STREQUAL "Android")
+  set(EXE_NAME ${PROJECT_NAME} )
+  message("ANDROID_NDK: ${ANDROID_NDK}")
+  message("ANDROID_ABI: ${ANDROID_ABI}")
+  message("ANDROID_NATIVE_API_LEVEL: ${ANDROID_NATIVE_API_LEVEL}")
+  message("ANDROID_TOOLCHAIN_NAME: ${ANDROID_TOOLCHAIN_NAME}")
+  message("ANDROID_STL: ${ANDROID_STL}")
   message("CMAKE_ANDROID_ARCH: ${CMAKE_ANDROID_ARCH}")
   message("CMAKE_ANDROID_NDK: ${CMAKE_ANDROID_NDK}")
   message("CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION: ${CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION}")

@@ -1,20 +1,19 @@
-/*
- * BinarySearchInDictFile.hpp
- *
+/** BinarySearchInDictFile.hpp
  *  Created on: 11.12.2013
- *      Author: mr.sys
- */
+ *      Author: mr.sys  */
 
 #ifndef BINARYSEARCHINDICTFILE_HPP_
 #define BINARYSEARCHINDICTFILE_HPP_
 
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>
-#include <IO/dictionary/TUchemnitz/EngWordSorted1st/BinarySearchInDictFile.hpp>
+#include "BinarySearchInDictFile.hpp"
 //#include <map> //class std::map
 //#include <VocabularyInMainMem/VocablesForWord.hpp> //class VocablesForWord
 #include <VocabularyInMainMem/CharStringStdMap/CharStringStdMap.hpp>
 
-//class DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile;
+/** Forward declarations: */
+namespace DictionaryReader { namespace TUchemnitz { namespace EngWordSorted1st { namespace EachAttributeInSingleLine {
+  class BinarySearchInDictFile; } } } }
 
 namespace VTrans3
 {
@@ -27,13 +26,16 @@ namespace VTrans3
       class BinarySearchInDictFile
         : public IVocabularyInMainMem
       {
+        /** Used for holding findamental (auxiliary verbs "be", "have", "will") 
+         *  for tenses etc.) data for translation. */
         CharStringStdMap m_charStringStdMap;
-        //Used for holding attribute data for translation.
+        /** Used for holding attribute data for translation. */
         CharStringStdMap m_charStringStdMapTemp;
         typedef std::map<std::string, VocablesForWord> map_type;
 //        map_type m_charStringMap;
 //        DictionaryReader::TUchemnitzEngWordSorted1st::BinarySearchInDictFile & m_r_dictReader;
-        DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile * m_p_dictReader;
+        DictionaryReader::TUchemnitz::EngWordSorted1st::
+          EachAttributeInSingleLine::BinarySearchInDictFile * m_p_dictReader;
       public:
         BinarySearchInDictFile();
         virtual
@@ -73,7 +75,8 @@ namespace VTrans3
         {
           m_p_dictionaryReader = p_dictionaryReader;
           m_p_dictReader =
-            (DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile *) p_dictionaryReader;
+            (DictionaryReader::TUchemnitz::EngWordSorted1st::
+            EachAttributeInSingleLine::BinarySearchInDictFile *) p_dictionaryReader;
         }
       };
     }

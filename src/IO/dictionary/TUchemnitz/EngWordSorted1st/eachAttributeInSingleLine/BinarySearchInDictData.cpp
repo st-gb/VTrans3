@@ -5,7 +5,7 @@
  *      Author: mr.sys
  */
 
-#include "EachAttributeInSingleLine.hpp"
+#include "BinarySearchInDictData.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 #include <compiler/GCC/enable_disable_write_strings_warning.h> //GCC_DIAG_OFF
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>//class IVocabularyInMainMem
@@ -22,8 +22,8 @@
     namespace EngWordSorted1st {
     namespace EachAttributeInSingleLine
     {
-      BinarySearchInDictFile::BinarySearchInDictFile(IVocabularyInMainMem & vocaccess)
-        : DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile(vocaccess)
+      BinarySearchInDictData::BinarySearchInDictData(IVocabularyInMainMem & vocaccess)
+        : DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictData(vocaccess)
       {
         try
         {
@@ -66,12 +66,12 @@
         }
       }
 
-      BinarySearchInDictFile::~BinarySearchInDictFile()
+      BinarySearchInDictData::~BinarySearchInDictData()
       {
         // TODO Auto-generated destructor stub
       }
 
-      IVocabularyInMainMem::voc_container_type * BinarySearchInDictFile::
+      IVocabularyInMainMem::voc_container_type * BinarySearchInDictData::
         AddVocable(
         const std::vector<std::string> & englishVocableWords,
         enum TUchemnitzDictionary::wordKinds wordKind,
@@ -218,7 +218,7 @@
 
       /** @param germanVocables: vector of vocables.
        *     each vocable has vector of words */
-      void BinarySearchInDictFile::AddGermanAttributes(
+      void BinarySearchInDictData::AddGermanAttributes(
           std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
           std::vector< std::vector <std::string> > & germanVocables)
       {
@@ -305,7 +305,7 @@
 
       /** @brief called to determine whether a specific word exists in the
        *  dictionary file. */
-      PositionStringVector::cmp BinarySearchInDictFile::ContainsEnglishWord(
+      PositionStringVector::cmp BinarySearchInDictData::ContainsEnglishWord(
         const PositionStringVector & psvStringToSearch,
         DWORD & r_dwTokenIndex,
         const fastestUnsignedDataType numTokenForStringToSearch,
@@ -320,7 +320,7 @@
           )
     #ifdef _DEBUG
   //      fastestUnsignedDataType currOffset = m_englishDictionary.tellg();
-        fastestUnsignedDataType currOffset = GetCurrentFilePointerPosition();
+        fastestUnsignedDataType currOffset = GetCurrentDictDataOffset();
     #endif
         //bool streamIsGood;
         PositionStringVector psvDictFile;
@@ -368,7 +368,7 @@
               {
     #ifdef _DEBUG
   //              currOffset = m_englishDictionary.tellg();
-                currOffset = GetCurrentFilePointerPosition();
+                currOffset = GetCurrentDictDataOffset();
     #endif
                 //englishWord[charIndex] = 0;
                 LOGN_DEBUG("space reached--word is: \"" << englishWord << "\"")

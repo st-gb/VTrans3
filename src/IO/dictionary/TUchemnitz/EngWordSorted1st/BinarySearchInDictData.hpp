@@ -1,19 +1,15 @@
-/*
- * TUchemnitzDictEngWord1stReader.hpp
- *
- *  Created on: Dec, 2013
- *      Author: Stefan
- */
+/** File:   BinarySearchInDictData.hpp
+ * Author: sg
+ * Created on 6. August 2017, 13:18  */
 
-#ifndef TUCHEMNITZDICTENGWORD1STREADER_HPP_
-#define TUCHEMNITZDICTENGWORD1STREADER_HPP_
+#ifndef BINARYSEARCHINDICTDATA_HPP
+#define BINARYSEARCHINDICTDATA_HPP
 
+#include <map> //class std::map
 #include <IO/dictionary/DictionaryReaderBase.hpp> //class DictionaryReaderBase
-#include <fstream> //class std::ifstream
 #include <Attributes/PositionString.hpp>
 #include <data_structures/Trie/NodeTrie/NodeTrie.hpp>
 #include <set> //class std::set
-#include <map> //class std::map
 #include <Attributes/EnglishWord.hpp> //enum EnglishWord::English_word_class
 //IVocabularyInMainMem::voc_container_type
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>
@@ -51,57 +47,52 @@ namespace DictionaryReader
         bool & compareVectors
   //      ,const char currentChar
         );
-      /** For a TU Chemnitz formatted dictionary where the lines begin with
-       *  English words. So the words are sorted (and a binary search may be
-       *  applied->very fast search) as needed for English->German translation.
-       *
-       *  This reader especially exists for low memory devices such as Android
-       *  smartphones: it should be combined with a vocabulary access class
-       *  that only holds temporary vocabulary information in memory. */
-      class BinarySearchInDictFile
-        : public DictionaryReader::DictionaryReaderBase
-      {
-        std::map<enum EnglishWord::English_word_class, unsigned> * 
-          m_p_englishWordClass2CounterMap;
-  //      typedef void (TUchemnitzDictionaryReader::*insertVocable
-  //          )(//char *
-  //    //    const std::string &
-  //        const char * array,
-  //        const WordData englishWords[10], const WordData germanWords[10]);
+      
+      /** This class is an interface/base class for implementations. */
+class BinarySearchInDictData
+  : public DictionaryReader::DictionaryReaderBase
+{
+  std::map<enum EnglishWord::English_word_class, unsigned> * 
+    m_p_englishWordClass2CounterMap;
+//      typedef void (TUchemnitzDictionaryReader::*insertVocable
+//          )(//char *
+//    //    const std::string &
+//        const char * array,
+//        const WordData englishWords[10], const WordData germanWords[10]);
 
-        void AddAllOffsetsOfMatchingWords(
-          const fastestUnsignedDataType closestBeforeNonMatchOffset,
-          const PositionStringVector & psvStringToSearch,
-  //        const PositionStringVector & psvDictFile,
-          DWORD & r_dwTokenIndex,
-          const fastestUnsignedDataType numToken,
-          std::set<fastestUnsignedDataType> & byteOffsetsOfVocData
-          );
-        virtual void AddGermanAttributes(
-          std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
-          std::vector< std::vector <std::string> > & germanVocables);
-  //      VocabularyAndTranslation *
-        /** @brief Needs to be virtual for overriding in a subclass. */
-        virtual IVocabularyInMainMem::voc_container_type * AddVocable(
-          const std::vector<std::string> & englishVocableWords,
-          enum TUchemnitzDictionary::wordKinds wordKind,
-  //        enum EnglishWord::English_word_class word_class
-          VocabularyAndTranslation *& p_vocabularyandtranslation
-          );
-        virtual PositionStringVector::cmp ContainsEnglishWord(
-          const PositionStringVector & psvStringToSearch,
-          DWORD & r_dwTokenIndex,
-          const fastestUnsignedDataType numToken,
-  //        std::set<fastestUnsignedDataType> & byteOffsetsOfVocData,
-          fastestUnsignedDataType & closestBeforeNonMatchOffset
-          );
-        void HandleSynonymSeparatorChar(
-          const bool english,
-          const unsigned pipeCount,
-          const char word[100],
-          //std::vector<std::vector<std::string> > englishVocables,
-          std::vector<std::string> & englishVocables,
-          std::vector< std::vector <std::string> > & germanVocables,
+  void AddAllOffsetsOfMatchingWords(
+    const fastestUnsignedDataType closestBeforeNonMatchOffset,
+    const PositionStringVector & psvStringToSearch,
+//        const PositionStringVector & psvDictFile,
+    DWORD & r_dwTokenIndex,
+    const fastestUnsignedDataType numToken,
+    std::set<fastestUnsignedDataType> & byteOffsetsOfVocData
+    );
+  virtual void AddGermanAttributes(
+    std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
+    std::vector< std::vector <std::string> > & germanVocables);
+//      VocabularyAndTranslation *
+  /** @brief Needs to be virtual for overriding in a subclass. */
+  virtual IVocabularyInMainMem::voc_container_type * AddVocable(
+    const std::vector<std::string> & englishVocableWords,
+    enum TUchemnitzDictionary::wordKinds wordKind,
+//        enum EnglishWord::English_word_class word_class
+    VocabularyAndTranslation *& p_vocabularyandtranslation
+    );
+  virtual PositionStringVector::cmp ContainsEnglishWord(
+    const PositionStringVector & psvStringToSearch,
+    DWORD & r_dwTokenIndex,
+    const fastestUnsignedDataType numToken,
+//        std::set<fastestUnsignedDataType> & byteOffsetsOfVocData,
+    fastestUnsignedDataType & closestBeforeNonMatchOffset
+    );
+  void HandleSynonymSeparatorChar(
+    const bool english,
+    const unsigned pipeCount,
+    const char word[100],
+    //std::vector<std::vector<std::string> > englishVocables,
+    std::vector<std::string> & englishVocables,
+    std::vector< std::vector <std::string> > & germanVocables,
           unsigned & semicolCountInsideCurrentPipeCharRange,
           fastestUnsignedDataType & synonymIndex//,
   //        unsigned wordStart
@@ -127,32 +118,34 @@ namespace DictionaryReader
         /** static-> no need to (implicitly) pass an object pointer */
       //  static void read();
 //        std::ifstream m_englishDictionary;
-        native_File_type m_dictFile;
         IVocabularyInMainMem * m_p_vocabularyAccess;
-      protected:
-        int GetCurrentFilePointerPosition();
-        static NodeTrie<enum TUchemnitzDictionary::wordKinds> s_nodetrieWordKind;
-      public:
-        BinarySearchInDictFile(IVocabularyInMainMem &);
-        virtual
-        ~BinarySearchInDictFile();
-
-        void addTrieNodes();
+protected:
+        native_File_type m_dictFile;
+          static NodeTrie<enum TUchemnitzDictionary::wordKinds> s_nodetrieWordKind;
+public:
+  BinarySearchInDictData(IVocabularyInMainMem & vocaccess)
+      : DictionaryReaderBase(& vocaccess)  { addTrieNodes(); }
+    
+//  BinarySearchInDictData(const BinarySearchInDictData& orig);
+  virtual ~BinarySearchInDictData();
+  
         IVocabularyInMainMem::voc_container_type * extractVocable(
           const fastestUnsignedDataType,
           //IVocabularyInMainMem::voc_container_type & voc_type
           VocabularyAndTranslation * p_vocabularyandtranslation
           );
-        I_File::CloseError close() { return m_dictFile.Close(); }
-        bool open(const std::string & std_str);
-        fastestUnsignedDataType GetFileSizeInBytes() const 
-          { return m_fileSizeInBytes; }
-        void read();
-        int ReadByte();
-        I_File::ReadResult ReadByteBuffer(
+  /** Implementations must have the same semantics as reading from a file, i.e.
+   *   the offset must be incremented. */
+  virtual int GetNextByte() = 0;
+        /** For files : set file pointer offset */
+        virtual bool SetDictDataOffset(const fastestUnsignedDataType byteOffset) = 0;
+        virtual int GetCurrentDictDataOffset() = 0;
+  /** Implementations must have the same semantics as reading from a file, i.e.
+   *   the offset must be heightened by numBytes. */
+        virtual I_File::ReadResult ReadByteBuffer(
           uint8_t buffer [],
-          fastestUnsignedDataType & numBytes);
-        bool SeekFilePointerPosition(const fastestUnsignedDataType byteOffset);
+          fastestUnsignedDataType & numBytes) = 0;
+
         inline bool GetByteOffsetOfFirstVocable(
           fastestUnsignedDataType & byteOffsetOfVocable,
           bool & endSearchForCompareStringInCurrentVocData
@@ -174,10 +167,8 @@ namespace DictionaryReader
           DWORD & r_dwTokenIndex//,
   //        const fastestUnsignedDataType endTokenIndex
           );
-        void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType & itemNo)
-        {
-          itemNo = GetCurrentFilePointerPosition();
-        }
+
+  void addTrieNodes();
         void GetStatistics(
 //          fastestUnsignedDataType * Representations,
 //          const fastestUnsignedDataType numArrayEles
@@ -188,8 +179,11 @@ namespace DictionaryReader
           /** Default value "UINT_MAX" leads to retrieve the current file
            *  pointer position. */
           fastestUnsignedDataType currentFileOffset = UINT_MAX);
-      };
+private:
+
+}; //BinarySearchInDictData
     }
   }
-} /* namespace DictionaryReader */
-#endif /* TUCHEMNITZDICTENGWORD1STREADER_HPP_ */
+}
+
+#endif /* BINARYSEARCHINDICTDATA_HPP */

@@ -162,9 +162,9 @@ void Set3rdTranslationStepFunction(const char value[])
 void SetNumIterationsFor3rdTranslationStep(const char value[])
 {
   if( ! ConvertCharStringToTypename(
-    ConsoleTranslationController::s_num3rdTranslationStepIterations, value) );
-  else
-    std::cerr << "error converting \"" << value << "\" to a number in SetNumIterationsFor3rdTranslationStep";
+    ConsoleTranslationController::s_num3rdTranslationStepIterations, value) )
+    std::cerr << "error converting \"" << value 
+      << "\" to a number in SetNumIterationsFor3rdTranslationStep" << std::endl;
 }
 
 int main(int argc, char *  argv[])

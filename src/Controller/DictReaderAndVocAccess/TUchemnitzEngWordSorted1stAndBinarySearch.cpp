@@ -11,19 +11,17 @@
 namespace VTrans3
 {
 
-  TUchemnitzEngWordSorted1stAndBinarySearch::TUchemnitzEngWordSorted1stAndBinarySearch()
+  TUchemnitzEngWordSorted1stAndBinarySearchInDictFile::TUchemnitzEngWordSorted1stAndBinarySearchInDictFile()
     :  m_dictReader(m_vocAccess)
   {
-    // TODO Auto-generated constructor stub
-
   }
 
-  TUchemnitzEngWordSorted1stAndBinarySearch::~TUchemnitzEngWordSorted1stAndBinarySearch()
+  TUchemnitzEngWordSorted1stAndBinarySearchInDictFile::~TUchemnitzEngWordSorted1stAndBinarySearchInDictFile()
   {
     LOGN_DEBUG("begin")
   }
 
-  bool TUchemnitzEngWordSorted1stAndBinarySearch::loadDictionary(
+  bool TUchemnitzEngWordSorted1stAndBinarySearchInDictFile::loadDictionary(
       const std::string & s)
   {
     LOGN_DEBUG("begin")
@@ -32,7 +30,7 @@ namespace VTrans3
   }
 
   IVocabularyInMainMem::voc_container_type *
-    TUchemnitzEngWordSorted1stAndBinarySearch::lookUpEnglishWord(
+    TUchemnitzEngWordSorted1stAndBinarySearchInDictFile::lookUpEnglishWord(
     PositionStringVector & c_r_positionStringVector,
     DWORD & dwTokenIndexRightMost)
   {

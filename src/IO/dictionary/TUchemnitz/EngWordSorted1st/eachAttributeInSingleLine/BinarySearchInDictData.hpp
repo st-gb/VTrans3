@@ -8,7 +8,7 @@
 #ifndef EACHATTRIBUTEINSINGLELINE_HPP_
 #define EACHATTRIBUTEINSINGLELINE_HPP_
 
-#include "../BinarySearchInDictFile.hpp" //base class
+#include "../BinarySearchInDictData.hpp" //base class
 //#include <vector> //class std::vector
 //#include <string>
 
@@ -24,13 +24,13 @@ class VocabularyAndTranslation;
     {
       namespace EachAttributeInSingleLine
       {
-        class BinarySearchInDictFile
-          : public DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictFile
+        class BinarySearchInDictData
+          : public DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictData
         {
         public:
-          BinarySearchInDictFile(IVocabularyInMainMem &);
+          BinarySearchInDictData(IVocabularyInMainMem &);
           virtual
-          ~BinarySearchInDictFile();
+          ~BinarySearchInDictData();
 
           void AddGermanAttributes(
             std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,

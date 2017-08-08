@@ -1,14 +1,9 @@
-/*
- * BinarySearchInDictFile.cpp
- *
- *  Created on: 11.12.2013
- *      Author: mr.sys
- */
+/** File:   BinarySearchInRAM.cpp
+ * Author: sg
+ * Created on 6. August 2017, 10:59  */
 
-#include <VocabularyInMainMem/TUchemnitzEngWordSorted1st/BinarySearchInDictFile.hpp>
+#include "BinarySearchInRAM.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h>
-#include <UserInterface/I_UserInterface.hpp>
-#include <IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInDictFile.hpp>
 
 namespace VTrans3
 {
@@ -16,39 +11,17 @@ namespace VTrans3
   {
     namespace TUchemnitzEngWordSorted1st
     {
-      BinarySearchInDictFile::BinarySearchInDictFile()
-//        : m_r_dictReader(* this)
-      {
-        // TODO Auto-generated constructor stub
-      }
+BinarySearchInRAM::BinarySearchInRAM() {
+}
 
-      BinarySearchInDictFile::~BinarySearchInDictFile()
-      {
-        LOGN_DEBUG("end")
-      }
+BinarySearchInRAM::BinarySearchInRAM(const BinarySearchInRAM& orig) {
+}
 
-      void BinarySearchInDictFile::clearTemporaryEntries() {
-        LOGN_DEBUG("before emptying the temporary words map")
-        m_charStringStdMapTemp.clear();
-      }
-      
-      void BinarySearchInDictFile::clear()
-      {
-        LOGN_DEBUG("before emptying the fundamental words map")
-        m_charStringStdMap.clear();
-        LOGN_DEBUG("before emptying the temporary words map")
-        m_charStringStdMapTemp.clear();
-        const I_File::CloseError closeResult = m_p_dictReader->close();
-        if( closeResult == I_File::closingFileFailed )
-          LOGN_ERROR("closing dict file \"" << m_p_dictReader->GetFilePath() 
-            << "\" failed.")
-        else
-          LOGN_DEBUG("closing dict file \"" << m_p_dictReader->GetFilePath() 
-            << "\" succeeded.")
-      }
-      
+BinarySearchInRAM::~BinarySearchInRAM() {
+}
+
       /*virtual void * */ std::set<VocabularyAndTranslation *> *
-        BinarySearchInDictFile::find(
+        BinarySearchInRAM::find(
         const PositionStringVector & psv,
     //      const PositionstdstringVector & psv,
         DWORD & r_dwTokenIndex
@@ -69,42 +42,26 @@ namespace VTrans3
         }
         else
         {
-          p_voc_container = m_charStringStdMapTemp.find(psv, r_dwTokenIndex);
-          if( p_voc_container )
-          {
-            LOGN_SUCCESS("word found in temporary words map")
-            return p_voc_container;
-          }
-          else
      //        m_dictReader.findEnglishWord(psv, r_dwTokenIndex);
-            return m_p_dictReader->findEnglishWord(psv, r_dwTokenIndex);
+          //TODO
+          return m_p_dictReader->findEnglishWord(psv, r_dwTokenIndex);
         }
       }
 
-      unsigned BinarySearchInDictFile::GetNumberOfEnglishWords()
-      {
-        const fastestUnsignedDataType mapSize = m_charStringStdMap.
-          GetNumberOfEnglishWords();
-        const fastestUnsignedDataType tempMapSize = m_charStringStdMapTemp.
-          GetNumberOfEnglishWords();
-        return mapSize + tempMapSize;
-      }
-
-      void BinarySearchInDictFile::GetCollectDictionaryStatisticsStatus(
-        fastestUnsignedDataType & currentItemNo)
-      {
-        m_p_dictReader->GetCollectDictionaryStatisticsStatus(currentItemNo);
+      void BinarySearchInRAM::clearTemporaryEntries() {
+        LOGN_DEBUG("before emptying the temporary words map")
+        m_charStringStdMapTemp.clear();
       }
       
-      void BinarySearchInDictFile::GetStatistics(
+      void BinarySearchInRAM::GetStatistics(
 //        fastestUnsignedDataType * Representations,
 //        const fastestUnsignedDataType numArrayEles
         std::map<enum EnglishWord::English_word_class, unsigned> &
           englishWordClass2CounterMap
         )
       {
-        const fastestUnsignedDataType fileSizeInBytes = 
-          m_p_dictReader->GetFileSizeInBytes();
+//        const fastestUnsignedDataType fileSizeInBytes = 
+//          m_p_dictReader->GetFileSizeInBytes();
 //
 //        char wordKind [9];
 //        int numWordKindChars = 3;        
@@ -118,10 +75,8 @@ namespace VTrans3
 //        mp_userinterface->UpdateDictionaryStatistics(fileSizeInBytes, 
 //          numberOfBytesCurrentlyProcessed);
       }
-
-      /** For inserting fundamental words like "the" etc. */
-//      VocabularyAndTranslation*
-      IVocabularyInMainMem::voc_container_type * BinarySearchInDictFile::Insert(
+                                
+      IVocabularyInMainMem::voc_container_type * BinarySearchInRAM::Insert(
         const char* wordBegin,
         int numChars,
         EnglishWord::English_word_class word_class,
@@ -161,5 +116,4 @@ namespace VTrans3
       }
     }
   }
-
-} /* namespace VTrans3 */
+}

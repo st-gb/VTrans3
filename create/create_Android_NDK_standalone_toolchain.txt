@@ -1,0 +1,16 @@
+#see http://flohofwoe.blogspot.de/2014/04/cmake-and-android-ndk.html
+
+sh /media/sg/devel/devel/Android/android-ndk-r10e_Linux32bit/build/tools/make-standalone-toolchain.sh \
+ --platform=android-19 ndk-dir=/media/sg/devel/devel/Android/android-ndk-r10e_Linux32bit \
+ --install-dir=~/android19-arm-linux-androideabi-4.9-toolchain \
+ --toolchain=arm-linux-androideabi-4.9 \
+ --system=linux-x86
+
+#->output: 
+#Copying prebuilt binaries...
+#Copying sysroot headers and libraries...
+#Copying c++ runtime headers and libraries...
+#Copying files to: ~/android19-arm-linux-androideabi-4.9-toolchain
+#Cleaning up...
+#Done.
+
