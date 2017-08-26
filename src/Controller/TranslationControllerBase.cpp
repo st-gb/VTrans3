@@ -8,6 +8,7 @@
 /** Must be the 1st inclusion, else compilation error in GCC files <time.h>
  *  indirectly included from this header file: ~ "undefined asctime", ... */
 #include <InputOutput/XML/OutputXMLindented_inl.hpp> //OutputXMLindented(...)
+#include <InputOutput/ReadFileContent/ReadFileContent.hpp>
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <OperatingSystem/multithread/GetCurrentThreadNumber.hpp>
 #include <Controller/TranslationControllerBase.hpp>
@@ -31,6 +32,7 @@
   #include <FileSystem/GetCurrentWorkingDir.hpp>
   #include <FileSystem/SetCurrentWorkingDir.hpp>
 #include <OperatingSystem/POSIX/GetNumberOfLogicalCPUcores.h>
+#include <OperatingSystem/POSIX/file_exists.hpp>
 
 #include "Controller/character_string/ConvertStdStringToTypename.hpp"
 #include "multi_threaded_translation/nativeThreads.hpp"
@@ -153,6 +155,22 @@ void SetLogLevel(const char * const value)
   }
 }
 
+void SetInput(const char * const value)
+{
+  if( FileExists(value) )
+  {
+//    std::string str;
+//    uint8_t * buffer;
+//    fastestUnsignedDataType length;
+    ByteArray byteArray;
+    if( ReadFileContent(value, /*buffer, length*/ byteArray) == 1 )
+      g_p_translationcontrollerbase->m_englishText = std::string( 
+        (char *) byteArray.GetArray(), byteArray.GetSize() );
+  }
+  else
+    g_p_translationcontrollerbase->m_englishText = std::string(value);
+}
+
 void SetNumTranslationThreads(const char * const value)
 {
   fastestUnsignedDataType numParallelTranslationThreads;
@@ -167,6 +185,23 @@ void SetNumTranslationThreads(const char * const value)
       << "\" to a number" << std::endl;
 }
 
+void Set3rdTranslationStepFunction(const char value[])
+{
+  std::map<std::string, TranslateParseByRiseTree::
+    ProcessParseTree_type>::const_iterator c_iter =
+    TranslationControllerBase::s_functionName2function.find(value);
+  if( c_iter != TranslationControllerBase::s_functionName2function.end() )
+    TranslationControllerBase::s_3rdStepTranslationFunction = c_iter->second;
+}
+
+void SetNumIterationsFor3rdTranslationStep(const char value[])
+{
+  if( ! ConvertCharStringToTypename(
+    TranslationControllerBase::s_num3rdTranslationStepIterations, value) )
+    std::cerr << "error converting \"" << value 
+      << "\" to a number in SetNumIterationsFor3rdTranslationStep" << std::endl;
+}
+
 void AddSettingsName2ValueAndFunctionMapping()
 {
   ValuesAndFunction valuesAndFunction = { (char *) "disable\tenable", & SetLogLevel};
@@ -176,6 +211,14 @@ void AddSettingsName2ValueAndFunctionMapping()
   ValuesAndFunction valuesAndFunction2 = { (char *) "", & SetNumTranslationThreads };
   TranslationControllerBase::s_settingsName2valueAndFunction.insert(
     std::make_pair("#translThreads", valuesAndFunction2) );
+  
+  ValuesAndFunction valuesAndFunction3 = { (char *) "", & SetInput};
+  TranslationControllerBase::s_settingsName2valueAndFunction.insert(
+    std::make_pair("input", valuesAndFunction3) );
+  
+  ValuesAndFunction valuesAndFunction4 = { (char *) "", & SetNumIterationsFor3rdTranslationStep};
+  TranslationControllerBase::s_settingsName2valueAndFunction.insert(
+    std::make_pair("#num3rdTranslStepIterations", valuesAndFunction4) );
 }
 
 TranslationControllerBase::TranslationControllerBase()
@@ -689,7 +732,7 @@ void TranslationControllerBase::Transform()
 /** @brief Pass settings from a dynamic library etc. */
 void TranslationControllerBase::Settings(
   const char * cp_chName, const char * cp_chValue)
-{  
+{
   settingsName2ValueAndFunction_type::const_iterator c_iter = 
     s_settingsName2valueAndFunction.find(cp_chName);
   if( c_iter != s_settingsName2valueAndFunction.end() )

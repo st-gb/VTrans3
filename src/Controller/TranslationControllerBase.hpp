@@ -160,6 +160,7 @@ public:
 //  float m_applyTranslationRulesInSeconds;
   NumThreadsAndTimeDuration m_numThreadsAndTimeDuration[3];
 
+  std::string m_englishText;
 #ifdef EVALUATE_PROCESSING 
   static fastestUnsignedDataType s_num3rdTranslationStepIterations;
   static std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 

@@ -21,7 +21,6 @@ CommandLineOption/*<char>*/ ConsoleTranslationController::s_commandLineOptions [
 //  Logger::GetAsNumber(value);
 //}
 
-
 ConsoleTranslationController::ConsoleTranslationController() {
 //  s_cmdLineOpt2Function.insert("logLevel", & SetLogLevel);
 //  s_cmdLineOpt2Function.insert("logLevel", SetLogLevel);
@@ -136,9 +135,18 @@ void ConsoleTranslationController::OutputStatistics()
 
 void ConsoleTranslationController::OutputUsage()
 {
-  std::cout << "usage: <<text to translate>> >># threads for 3rd translation "
-    "step<< >>function<< >># iterations of 3rd translation step<< >>log level<<" << std::endl;
-  std::cout << "possible functions:" << std::endl;
+  std::cout << "possible options:" << std::endl;
+  TranslationControllerBase::settingsName2ValueAndFunction_type::const_iterator
+    c_iterSettingsName2ValueAndFunction = TranslationControllerBase::s_settingsName2valueAndFunction.begin();
+  for( ; c_iterSettingsName2ValueAndFunction != TranslationControllerBase::s_settingsName2valueAndFunction.end(); 
+      c_iterSettingsName2ValueAndFunction ++ )
+  {
+    std::string optionName = c_iterSettingsName2ValueAndFunction->first;
+    std::cout << optionName << " ";
+  }
+//  std::cout << "\nusage: <<text to translate>> >># threads for 3rd translation "
+//    "step<< >>function<< >># iterations of 3rd translation step<< >>log level<<" << std::endl;
+  std::cout << "\npossible functions:" << std::endl;
   for(std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type>::
       const_iterator c_iter = s_functionName2function.begin() ; 
       c_iter != s_functionName2function.end(); c_iter ++
@@ -146,34 +154,46 @@ void ConsoleTranslationController::OutputUsage()
   {
       std::cout << c_iter->first << std::endl;
   }
+  
   std::cout << "possible log levels: warning, error " << std::endl;
+  //TODO implement an iterator for trie
 //  NodeTrieNode<BYTE>::const_ * p_ntn = Logger::s_nodetrieLogLevelStringToNumber.begin();
 }
 
-void Set3rdTranslationStepFunction(const char value[])
+void ProcessCommandLineArgs(int argc, char *  argv[])
 {
-  std::map<std::string, TranslateParseByRiseTree::
-    ProcessParseTree_type>::const_iterator c_iter =
-    ConsoleTranslationController::s_functionName2function.find(value);
-  if( c_iter != ConsoleTranslationController::s_functionName2function.end() )
-    ConsoleTranslationController::s_3rdStepTranslationFunction = c_iter->second;
-}
+  for( int argumentIndex = 1; argumentIndex < argc ; argumentIndex ++ )
+  {
+    char * pointerToEquationSign = strchr(argv[argumentIndex], '=');
+    if( pointerToEquationSign != NULL )
+    {
+      std::string optionName = std::string(argv[argumentIndex], 
+        pointerToEquationSign - argv[argumentIndex]);
 
-void SetNumIterationsFor3rdTranslationStep(const char value[])
-{
-  if( ! ConvertCharStringToTypename(
-    ConsoleTranslationController::s_num3rdTranslationStepIterations, value) )
-    std::cerr << "error converting \"" << value 
-      << "\" to a number in SetNumIterationsFor3rdTranslationStep" << std::endl;
+      TranslationControllerBase::settingsName2ValueAndFunction_type::const_iterator c_iter = 
+        TranslationControllerBase::s_settingsName2valueAndFunction.find(optionName);
+      if( c_iter != TranslationControllerBase::s_settingsName2valueAndFunction.end() )
+      {
+        std::string optionValue = std::string(pointerToEquationSign + 1);
+        c_iter->second.p_function( (const char * const) optionValue.c_str() );
+      }
+      else
+      {
+        std::cerr << "unknown option name \"" << optionName << "\"" << std::endl;
+        ConsoleTranslationController::OutputUsage();
+      }
+    }
+  }
 }
 
 int main(int argc, char *  argv[])
 {
-  std::cout << argc << std::endl;
+//  std::cout << argc << std::endl;
   ConsoleTranslationController::CreateMappingBetweenFunctionNameAndFunction();
   Logger::CreateLogLevelStringToNumberMapping();
   OpenLogFile(argv[0]);
   
+  ConsoleTranslationController consoleTranslationController;
   if( argc > 1 )
   {
     if( strcmp(argv[1], "") == 0 )
@@ -187,34 +207,19 @@ int main(int argc, char *  argv[])
       std::cout << std_strCurrentWorkingDir << std::endl;
       
       fastestUnsignedDataType num3rdTranslationStepIterations = 1;
-      ConsoleTranslationController consoleTranslationController;
       g_p_translationcontrollerbase = & consoleTranslationController;
-      if( argc > 2 )
-      {
-        SetNumTranslationThreads(argv[2]);
-        if( argc > 3 )
-        {
-          Set3rdTranslationStepFunction(argv[3]);
-          if( argc > 4 )
-          {
-            SetNumIterationsFor3rdTranslationStep(argv[4]);
-            if( argc > 5 )
-            {
-              g_logger.SetLogLevel(argv[5]);
-            }
-          }
-        }
-      }
+      ProcessCommandLineArgs(argc, argv);
+      
       consoleTranslationController.Init("configuration/VTrans_main_config.xml");
-      ByteArray byteArray;
+      ByteArray byteArrayXMLparseTree;
       fastestUnsignedDataType maxNumThreads = consoleTranslationController.
         s_numParallelTranslationThreads;
-      std::cout << "before Translating \"" << argv[1] << "\",max." 
+      std::cout << "before Translating \"" << consoleTranslationController.m_englishText << "\",max." 
         << maxNumThreads << " threads" << std::endl;
       
       consoleTranslationController.TranslateAsXMLgetAverageTimes(
-        argv[1], 
-        byteArray, 
+        consoleTranslationController.m_englishText.c_str(),
+        byteArrayXMLparseTree, 
         ConsoleTranslationController::s_3rdStepTranslationFunction,
         ConsoleTranslationController::s_num3rdTranslationStepIterations
         );

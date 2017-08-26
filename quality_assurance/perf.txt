@@ -1,0 +1,20 @@
+https://perf.wiki.kernel.org/index.php/Tutorial#Period_and_rate
+perf record --help
+
+
+perf record --callchains -F 250
+
+-F : sample frequency
+
+
+callchains:
+perf record -F 10000 --call-graph dwarf src/VTrans_console "the man likes the car" 1 "applyTranslRules" 100 warning
+perf report --call-graph --stdio
+
+
+to show only Translation-related entries:
+  
+dso: dynamically shared object
+
+perf report --symbols=
+perf report --symbol-filter=TranslationControllerBase9Translate

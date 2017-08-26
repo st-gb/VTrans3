@@ -167,6 +167,7 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${COMMON_SOURCECODE_ROOT_PATH}/data_structures/Trie/byteTrie/ByteTrie.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/data_structures/Trie/byteTrie/Trie.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/multithread/I_Thread.cpp
+  ${COMMON_SOURCECODE_ROOT_PATH}/InputOutput/ReadFileContent/ReadFileContent.cpp
 	${VTRANS3_ROOT_PATH}/IO/dictionary/DictionaryReaderBase.cpp
 	${VTRANS3_ROOT_PATH}/IO/dictionary/OpenDictFileException.cpp
 	${VTRANS3_ROOT_PATH}/Controller/DictReaderAndVocAccess/TUchemnitzEngWordSorted1stAndBinarySearch.cpp

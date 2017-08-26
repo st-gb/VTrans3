@@ -37,9 +37,10 @@ class TranslationRule ;
 class TranslateParseByRiseTree
 {
   uint32_t m_ui32ConcatenationID;
-  WORD m_wParseLevel ;
-  std::map<WORD,DWORD>
-    m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
+  //TODO: unneccessary/unneeded data?!
+//  WORD m_wParseLevel ;
+//  std::map<WORD,DWORD>
+//    m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
   std::map<std::string,std::vector<std::string> >
     m_stdmap_stdstrTranslationArrayName2vec_stdstrArrayElements ;
   std::vector<GrammarPart *> m_stdvecNodesToProcess ;

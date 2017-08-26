@@ -1,0 +1,3 @@
+each attribute (e.g. for nouns: singular & plural) 
+of a word are is in a single line so that binary search can be applied in an
+efficient way and every attribute can be found.

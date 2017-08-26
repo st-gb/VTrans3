@@ -36,6 +36,11 @@ public:
   }
 } ;
 
+/** @brief According to the book "Computerlinguistik und Sprachtechnologie" 
+ *  Eine Einführung, "2. überarbeitete und erweiterte Auflage", 
+ *  ISBN 3-8274-1407-5, page 254
+    this is a bottum-up parser */
+//TODO rename name to : BottumUpParser ?!
 class ParseByRise
 {
   TranslationControllerBase & m_r_translationcontrollerbase;
