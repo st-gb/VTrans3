@@ -20,6 +20,7 @@
 #define __STDC_LIMIT_MACROS
 #include <stdint.h> //__UINT16_MAX__
 #include <limits.h> //UINT16_MAX
+#include <deque> //class std::deque
 
 #ifndef MAXWORD
   #define MAXWORD 65535
@@ -271,6 +272,133 @@ void SyntaxTreePath::GetAsGrammarPartIDvector(
   }
 }
 
+//TODO: make inline?
+/** Gets the node GrammarPart pointer that is common between m_ar_wElements
+ *  and r_stdvec_p_grammarpartPath */
+GrammarPart * SyntaxTreePath::GetCommonNode(
+  const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const
+{
+  GrammarPart * p_grammarpart = NULL ;
+  //e.g. find "def_article_noun.noun" in
+  // "subject.def_article_noun.definite_article"
+  
+  for( std::vector<GrammarPart *>::const_reverse_iterator
+      c_reverse_iter_stdvec_p_grammarpart =
+    //Start from the end (leaf, at least closer to the leaf than the begin)
+    //e.g. for the parse tree path "definite_article_noun.noun"
+    //  e.g. for  the car
+    //              \ /
+    //       definite_article_noun
+    //start from "the" ("noun")
+    //of the current parse tree path.
+    r_stdvec_p_grammarpartPath.rbegin() ;
+    c_reverse_iter_stdvec_p_grammarpart != r_stdvec_p_grammarpartPath.rend() ;
+    ++ c_reverse_iter_stdvec_p_grammarpart
+    )
+  {
+    //for( WORD wArrayIndex = m_wNumberOfElements )
+  //      DEBUG_COUTN("* r_iter: " << *c_reverse_iter_stdvec_p_grammarpart )
+  //      DEBUG_COUTN("SyntaxTreePath--"
+    LOGN_DEBUG("current grammar part: "
+      << *c_reverse_iter_stdvec_p_grammarpart
+      << " ID:" << (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID
+      << " as string:" << mp_parsebyrise->GetGrammarPartName(
+        (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID )
+      )
+  #ifdef _DEBUG
+    if( *c_reverse_iter_stdvec_p_grammarpart )
+    {
+  //        DEBUG_COUTN("* r_iter: " << r_iter->GetG )
+    }
+  #endif
+
+    // e.g. "def_article_noun" from the parse tree path
+    //  "def_article_noun.noun" found in the grammar part path
+    //    "subject.def_article_noun.definite_article" .
+    if( (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID ==
+        m_ar_wElements[0] )
+    {
+      p_grammarpart = *c_reverse_iter_stdvec_p_grammarpart ;
+  #ifdef _DEBUG
+      std::string std_strGrammarPartNameGrammarPartPath =
+        mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID);
+  #endif
+      break ;
+    }
+  }
+  return p_grammarpart;
+}
+
+/** Needed for advancing directing leaf node. */
+GrammarPart * MatchesGrammarPartIDOfLeftOrRightChild(
+  GrammarPart * p_grammarpart,
+  const fastestUnsignedDataType uiCurrentGrammarPartIDfromThisSyntaxTreePath)
+{
+  GrammarPart * p_grammarpartChild = p_grammarpart->mp_grammarpartLeftChild ;
+  if( p_grammarpartChild &&
+    p_grammarpartChild->m_wGrammarPartID ==
+     uiCurrentGrammarPartIDfromThisSyntaxTreePath )
+  {
+    p_grammarpart = p_grammarpartChild ;
+  }
+  else
+  {
+    p_grammarpartChild = p_grammarpart->mp_grammarpartRightChild ;
+    if( p_grammarpartChild &&
+      p_grammarpartChild->m_wGrammarPartID ==
+       uiCurrentGrammarPartIDfromThisSyntaxTreePath )
+    {
+      p_grammarpart = p_grammarpartChild ;
+    }
+    else //neither right nor left child match the syntax tree path.
+//              if(bKleeneStarOperator)
+//              {
+//              }
+//              else
+        return NULL ;
+  }
+  return p_grammarpart;
+}
+
+//TODO: make inline?
+/** Depth-First Search algorithm for the Kleene star property:
+    at first all left children are taken until a leaf node is reached, then the 
+ *  right childen beginning with the first inserted one are used. */
+GrammarPart * GetNodeDirectingLeaves(
+  const fastestUnsignedDataType uiCurrentGrammarPartIDfromThisSyntaxTreePath,
+  GrammarPart * p_grammarpart)
+{
+  std::deque<GrammarPart *> unvisitedGrammarPartVector;
+  /** Strategy : visit left nodes first */
+  do
+  {
+    if( p_grammarpart->mp_grammarpartLeftChild )
+    {
+      if( p_grammarpart->mp_grammarpartRightChild )
+        unvisitedGrammarPartVector.push_back(p_grammarpart->mp_grammarpartRightChild);
+      p_grammarpart = p_grammarpart->mp_grammarpartLeftChild;
+    }
+    else
+    {
+      /** No left and no right child */
+      if( unvisitedGrammarPartVector.empty() )
+        return NULL;
+      else
+      {
+        //the elements the beginning are nearer the common node/ root
+        p_grammarpart = unvisitedGrammarPartVector.front();
+        unvisitedGrammarPartVector.pop_front();
+      }
+    }
+//    if(  )
+//      ;
+    
+//    p_grammarpartChild = MatchesGrammarPartIDOfLeftOrRightChild(p_grammarpart, uiCurrentGrammarPartIDfromThisSyntaxTreePath);
+  }while( p_grammarpart->m_wGrammarPartID != 
+        uiCurrentGrammarPartIDfromThisSyntaxTreePath );
+  return p_grammarpart;
+}
+
 //Gets the leaf node ausgehend from the the back of vector.
 //So for instance if we want to get the leaf of "def_article_noun.noun" , i.e.
 // get the node "noun" ausgehend from "def_article_noun.definite_aricle"
@@ -289,7 +417,7 @@ void SyntaxTreePath::GetAsGrammarPartIDvector(
 //    \  /
 //   def_noun  <-  "forking": from here it walks heading leaf
 //3. walks heading leaf following the grammar part node with the same ID as in
-//   the cintained grammar part ID array:
+//   the contained grammar part ID array:
 //   e.g. if array is [def_noun;"the"]: it walks from "def_noun" to "the"
 //   the  car
 //    \  /
@@ -318,52 +446,7 @@ GrammarPart * SyntaxTreePath::GetLeaf(
 #endif
   if( m_wNumberOfElements > 0 )
   {
-    GrammarPart * p_grammarpart = NULL ;
-    //e.g. find "def_article_noun.noun" in
-    // "subject.def_article_noun.definite_article"
-    //
-    for( std::vector<GrammarPart *>::const_reverse_iterator
-        c_reverse_iter_stdvec_p_grammarpart =
-      //Start from the end (leaf, at least closer to the leaf than the begin)
-      //e.g. for the parse tree path "definite_article_noun.noun"
-      //  e.g. for  the car
-      //              \ /
-      //       definite_article_noun
-      //start from "the" ("noun")
-      //of the current parse tree path.
-      r_stdvec_p_grammarpartPath.rbegin() ;
-      c_reverse_iter_stdvec_p_grammarpart != r_stdvec_p_grammarpartPath.rend() ;
-      ++ c_reverse_iter_stdvec_p_grammarpart
-      )
-    {
-      //for( WORD wArrayIndex = m_wNumberOfElements )
-//      DEBUG_COUTN("* r_iter: " << *c_reverse_iter_stdvec_p_grammarpart )
-//      DEBUG_COUTN("SyntaxTreePath--"
-      LOGN_DEBUG("current grammar part: "
-        << *c_reverse_iter_stdvec_p_grammarpart
-        << " ID:" << (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID
-        << " as string:" << mp_parsebyrise->GetGrammarPartName(
-          (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID )
-        )
-#ifdef _DEBUG
-      if( *c_reverse_iter_stdvec_p_grammarpart )
-      {
-//        DEBUG_COUTN("* r_iter: " << r_iter->GetG )
-      }
-    #endif
-
-      // e.g. "def_article_noun" from the parse tree path
-      //  "def_article_noun.noun" found in the grammar part path
-      //    "subject.def_article_noun.definite_article" .
-      if( (*c_reverse_iter_stdvec_p_grammarpart)->m_wGrammarPartID ==
-          m_ar_wElements[0] )
-      {
-        p_grammarpart = *c_reverse_iter_stdvec_p_grammarpart ;
-        std::string std_strGrammarPartNameGrammarPartPath =
-          mp_parsebyrise->GetGrammarPartName( p_grammarpart->m_wGrammarPartID);
-        break ;
-      }
-    }
+    GrammarPart * p_grammarpart = GetCommonNode(r_stdvec_p_grammarpartPath);
     //e.g. now we have "def_article_noun" from syntax tree path 
     // "def_article_noun.noun".
     if( p_grammarpart )
@@ -372,7 +455,10 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       GrammarPart * p_grammarpartChild = NULL ;
       unsigned uiCurrentGrammarPartIDfromThisSyntaxTreePath;
       std::string std_strCurrentGrammarPartNameFromThisSyntaxTreePath;
+#ifdef _DEBUG
       std::string std_strGrammarPartNameGrammarPartPath;
+#endif
+      bool bKleeneStarOperator = false;
       //"Walk" directing the leaf in the
       //e.g. beginning from "def_article_noun" go further the way that the rule
       //IDs define.
@@ -398,48 +484,49 @@ GrammarPart * SyntaxTreePath::GetLeaf(
           << " as string: "
           << std_strCurrentGrammarPartNameFromThisSyntaxTreePath
           )
-//        if( uiCurrentGrammarPartIDfromThisSyntaxTreePath ==
-//            KLEENE_STAR_OPERATOR)
-//        {
-//          bKleeneStarOperator = true;
-//          continue;
-//        }
-//        if( bKleeneStarOperator)
-//        {
+        
+        /** Use Kleene star : walk nodes directing leaves. 
+        * This minimizes translation rules for object e.g. :
+          Just 1 translation rule :  "clauseWith1Obj.*.mainVerbInf1Obj"
+          instead of many :
+           -"clauseWith1Obj.1stPersSingSimplePresentClauseAllow1Obj.mainVerbInf1Obj" 
+           -"clauseWith1Obj.2ndPersSingSimplePastClauseAllow1Obj.mainVerbInf1Obj" 
+         For declination of "der" in "I like the man" -> "Ich mag DEN Mann" */
+              
+        if( uiCurrentGrammarPartIDfromThisSyntaxTreePath ==
+            KLEENE_STAR_OPERATOR)
+        {
+          bKleeneStarOperator = true;
+          continue;
+        }
+        if( bKleeneStarOperator)
+        {
+          p_grammarpart = GetNodeDirectingLeaves(
+            uiCurrentGrammarPartIDfromThisSyntaxTreePath, p_grammarpart);
+//          if( p_grammarpartChild )
+//            p_grammarpart = p_grammarpartChild;
+//          else
+//            break;
+          if( ! p_grammarpart )
+            return NULL;
 //          if( mp_parsebyrise->GetGrammarPart(
 //              p_grammarpart,
 //              uiCurrentGrammarPartIDfromThisSyntaxTreePath)
 //              )
-//
-//        }
-//        else
+        }
+        else
         {
-          p_grammarpartChild = p_grammarpart->mp_grammarpartLeftChild ;
-          if( p_grammarpartChild &&
-            p_grammarpartChild->m_wGrammarPartID ==
-             uiCurrentGrammarPartIDfromThisSyntaxTreePath )
-          {
-            p_grammarpart = p_grammarpartChild ;
-          }
-          else
-          {
-            p_grammarpartChild = p_grammarpart->mp_grammarpartRightChild ;
-            if( p_grammarpartChild &&
-              p_grammarpartChild->m_wGrammarPartID ==
-               uiCurrentGrammarPartIDfromThisSyntaxTreePath )
-            {
-              p_grammarpart = p_grammarpartChild ;
-            }
-            else //neither right nor left child match the syntax tree path.
-              return NULL ;
-          }
+          p_grammarpart = MatchesGrammarPartIDOfLeftOrRightChild(
+            p_grammarpart, uiCurrentGrammarPartIDfromThisSyntaxTreePath);
+          if( ! p_grammarpart )
+            return NULL;
         }
 //        if( ! p_grammarpartChild )
 //          break ;
       }
-      if( p_grammarpartChild )
-        p_grammarpartRet = p_grammarpartChild ;
-      else
+//      if( p_grammarpartChild )
+//        p_grammarpartRet = p_grammarpartChild ;
+//      else
         p_grammarpartRet = p_grammarpart ;
     }
   }

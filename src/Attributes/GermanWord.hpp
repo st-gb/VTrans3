@@ -164,8 +164,8 @@ public:
   enum e_case {
     nominative = 1
     , genitive
-    , dativ
-    , accusativ
+    , dative
+    , accusative
     //"Ich gab ihm ein Buch."
     //          \/   \    /
     //       dative accusative

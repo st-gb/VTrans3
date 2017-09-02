@@ -45,16 +45,19 @@ bool ConditionsAndTranslation::AllConditionsMatch(
 //          grammarpart.string &&
 //          mp_parsebyrise->psv.getTokens(
 //              grammarpart.index, index2) )
+#ifdef _DEBUG
+  const unsigned numConditions = m_conditions.size();
+#endif
   if( m_conditions.size() > 0 )
   {
     GrammarPart * p_grammarpartLeaf ;
     bAllConditionsMatch = true ;
 //    const Condition & cr_condition =
 //      r_conditions_and_translation.m_conditions.front() ;
-    std::vector<Condition> r_vec_condition = m_conditions ;
+//    std::vector<Condition> r_vec_condition = m_conditions ;
     for( std::vector<Condition>::const_iterator c_ConditionIterator =
-        r_vec_condition.begin() ;
-        c_ConditionIterator != r_vec_condition.end() ;
+        /*r_vec_condition*/m_conditions.begin() ;
+        c_ConditionIterator != /*r_vec_condition*/m_conditions.end() ;
         ++ c_ConditionIterator
         )
     {

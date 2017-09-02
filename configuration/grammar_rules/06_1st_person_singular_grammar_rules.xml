@@ -32,12 +32,14 @@
   <!--grammar_rule left_child="MainVerbPast0Obj" superordinate="MainVerbPastAndObject"/-->
   <!--grammar_rule left_child="I" right_child="MainVerbPastAndObject" superordinate="1stPersSingSimplePastClause"/-->
   
+  <!-- generalize to "clauseWith1Obj" to need less translation rules for the object. -->
   <grammar_rule left_child="1stPersSingSimplePresentClauseAllow1Obj" right_child="obj"
-    superordinate="1stPersSingSimplePresentClause1Obj"/>
+    superordinate="clauseWith1Obj"/>
   <grammar_rule left_child="1stPersSingSimplePresentClauseAllow1Obj" right_child="myself"
     superordinate="1stPersSingSimplePresentClause1Obj"/>
+  <!-- 2 objects: e.g. : "he gave me a book." -->
   <grammar_rule left_child="1stPersSingSimplePresentClauseAllow2Obj" right_child="obj"
-    superordinate="1stPersSingSimplePresentClause2Obj"/>
+    superordinate="clauseWith2Obj"/>
   
   <!--1st person singular end-->
 </grammar_rules>

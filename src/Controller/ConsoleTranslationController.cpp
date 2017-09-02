@@ -244,7 +244,9 @@ int main(int argc, char *  argv[])
         m_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds << "s" << std::endl;
     }catch(VTrans3::OpenDictFileException & odfe )
     {
-      std::cout << "error opening dictionary file:" << odfe.m_openError << 
+      std::cout << "error opening dictionary file: \"" << 
+        consoleTranslationController.m_stdstrVocabularyFilePath << "\"" 
+          << "error code:" << odfe.m_openError << 
         odfe.GetErrorMessageA() << std::endl;
     }
   }

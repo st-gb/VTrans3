@@ -1,0 +1,22 @@
+<translation_rules>
+
+  <!-- Translation rule for a single intransitive verb. -->
+  <translation_rule 
+    syntax_tree_path="mainVerbInf0Obj"
+    attribute_name="GerMainVerb0ObjInfinitive"
+  />
+
+  <!-- Translation rule for a single transitive verb allowing 1 object. -->
+  <translation_rule 
+    syntax_tree_path="mainVerbInf1Obj"
+    attribute_name="GerMainVerb1ObjInfinitive"
+  />  
+
+  <!-- Translation rule for a single transitive verb allowing 2 objects 
+       (e.g. "to give": "to give a man a book" ). -->
+  <translation_rule 
+    syntax_tree_path="mainVerbInf2Obj"
+    attribute_name="GerMainVerb2ObjInfinitive"
+  />  
+
+</translation_rules>

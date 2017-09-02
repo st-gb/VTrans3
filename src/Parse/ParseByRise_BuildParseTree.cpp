@@ -23,7 +23,8 @@
 //class TranslationControllerBase;
 //LetterTree TranslationControllerBase::s_dictionary;
 
-//Creates the leafs of possible parse trees ausgehend from the source text.
+/** Does the Part-Of-Speech (word class) tagging.
+ *  Creates the leafs of possible parse trees ausgehend from the source text.*/
 // Leaves are word classes, e.g. nouns.
 // If a grammar rule applies later then these leaves can make up a parse trees:
 // the vacuum cleaner sucks.
@@ -43,6 +44,7 @@ void ParseByRise::CreateInitialGrammarParts ( const std::string &
 
 //  BuildTokenVector(cr_stdstrText,m_psv) ;
   m_psv.BuildTokenVector(cr_stdstrText);
+//  std::cout << "all tokens:" << m_psv << std::endl;
 #ifdef _DEBUG
   DWORD dwSize ;
 #endif

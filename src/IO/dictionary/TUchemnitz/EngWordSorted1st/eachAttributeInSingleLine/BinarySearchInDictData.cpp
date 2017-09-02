@@ -59,6 +59,12 @@
         wordKind = "vtI"; /** "Transitive Verb infinitive" */
         s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
           TUchemnitzDictionary::transitiveVerb);
+        wordKind = "vdI"; /** "Transitive dative Verb infinitive" */
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::dativeVerb);
+        wordKind = "vaI"; /** "Transitive accusative Verb infinitive" */
+        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          TUchemnitzDictionary::accusativeVerb);
         //TODO  insert more nodes: for "vt", "vr", ...
         }catch( const NS_NodeTrie::RootNodeNotInitalizedException & e)
         {
@@ -71,6 +77,95 @@
         // TODO Auto-generated destructor stub
       }
 
+      enum EnglishWord::English_word_class GetEnglishWordClass(
+        const enum TUchemnitzDictionary::wordKinds wordKind)
+      {
+        enum EnglishWord::English_word_class english_word_class = EnglishWord::beyond_last_entry;
+        GCC_DIAG_OFF(switch)
+        switch(wordKind)
+        {
+  //      case TUchemnitzDictionary::reflexiveVerb:
+  //        word_class = EnglishWord::ref
+        case TUchemnitzDictionary::intransitiveVerb:
+          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+          english_word_class = EnglishWord::main_verb_allows_0object_infinitive;
+          break;
+        case TUchemnitzDictionary::vi_3singPres:
+          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+          english_word_class = EnglishWord::mainVerbAllows0object3rdPersonSingularPresent;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+//          p_vocabularyandtranslation = NULL;
+          break;
+        case TUchemnitzDictionary::vt_3singPres:
+          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+          english_word_class = EnglishWord::mainVerbAllows1object3rdPersonSingularPresent;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+//          p_vocabularyandtranslation = NULL;
+          break;
+        case TUchemnitzDictionary::vi_3singPast:
+          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+          english_word_class = EnglishWord::mainVerbAllows0object3rdPersonSingularPast;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+//          p_vocabularyandtranslation = NULL;
+          break;
+        case TUchemnitzDictionary::vt_3singPast:
+          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
+          english_word_class = EnglishWord::mainVerbAllows1object3rdPersonSingularPast;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+//          p_vocabularyandtranslation = NULL;
+          break;
+          //TODO handle more wordkinds
+        case TUchemnitzDictionary::transitiveVerb:
+        case TUchemnitzDictionary::dativeVerb:
+        case TUchemnitzDictionary::accusativeVerb:
+          /** http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29:
+          * " sowohl Subjekt als auch ein Objekt benötigen, damit ein Satz, der
+          * mit diesem Verb gebildet wird, grammatisch ist." */
+          english_word_class = EnglishWord::main_verb_allows_1object_infinitive;
+          break;
+        case TUchemnitzDictionary::adj:
+          english_word_class = EnglishWord::adjective;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+//          p_vocabularyandtranslation = NULL;
+          break;
+        case TUchemnitzDictionary::adjPositive:
+          english_word_class = EnglishWord::adjective_positiveForm;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created. (multiple singular nouns may appear in a row->create
+           *   a VocabularyAndTranslation for each noun. */
+//          p_vocabularyandtranslation = NULL;
+          break;
+        case TUchemnitzDictionary::adv:
+          english_word_class = EnglishWord::adverb;
+          break;
+        case TUchemnitzDictionary::femNoun:
+        case TUchemnitzDictionary::mascNoun:
+        case TUchemnitzDictionary::neutralNoun:
+          /** Must add as singular, else applying grammar rule fails. */
+          english_word_class = EnglishWord::singular;
+          break;
+        case TUchemnitzDictionary::pluralNoun:
+  //        word_class = EnglishWord::noun;
+          /** =NULL means: The next time a VocabularyAndTranslation should be
+           *   created.*/
+//          p_vocabularyandtranslation = NULL;
+          english_word_class = EnglishWord::plural_noun;
+          break;
+        }
+        GCC_DIAG_ON(switch)
+        return english_word_class;
+      }
+      
       IVocabularyInMainMem::voc_container_type * BinarySearchInDictData::
         AddVocable(
         const std::vector<std::string> & englishVocableWords,
@@ -86,102 +181,28 @@
   #ifdef _DEBUG
         const int sz = englishVocableWords.size();
   #endif
-        enum EnglishWord::English_word_class word_class = EnglishWord::beyond_last_entry;
-        GCC_DIAG_OFF(switch)
-        switch(wordKind)
-        {
-  //      case TUchemnitzDictionary::reflexiveVerb:
-  //        word_class = EnglishWord::ref
-        case TUchemnitzDictionary::intransitiveVerb:
-          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
-          word_class = EnglishWord::main_verb_allows_0object_infinitive;
-          break;
-        case TUchemnitzDictionary::vi_3singPres:
-          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
-          word_class = EnglishWord::mainVerbAllows0object3rdPersonSingularPresent;
-          /** =NULL means: The next time a VocabularyAndTranslation should be
-           *   created. (multiple singular nouns may appear in a row->create
-           *   a VocabularyAndTranslation for each noun. */
-          p_vocabularyandtranslation = NULL;
-          break;
-        case TUchemnitzDictionary::vt_3singPres:
-          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
-          word_class = EnglishWord::mainVerbAllows1object3rdPersonSingularPresent;
-          /** =NULL means: The next time a VocabularyAndTranslation should be
-           *   created. (multiple singular nouns may appear in a row->create
-           *   a VocabularyAndTranslation for each noun. */
-          p_vocabularyandtranslation = NULL;
-          break;
-        case TUchemnitzDictionary::vi_3singPast:
-          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
-          word_class = EnglishWord::mainVerbAllows0object3rdPersonSingularPast;
-          /** =NULL means: The next time a VocabularyAndTranslation should be
-           *   created. (multiple singular nouns may appear in a row->create
-           *   a VocabularyAndTranslation for each noun. */
-          p_vocabularyandtranslation = NULL;
-          break;
-        case TUchemnitzDictionary::vt_3singPast:
-          /** see http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29 */
-          word_class = EnglishWord::mainVerbAllows1object3rdPersonSingularPast;
-          /** =NULL means: The next time a VocabularyAndTranslation should be
-           *   created. (multiple singular nouns may appear in a row->create
-           *   a VocabularyAndTranslation for each noun. */
-          p_vocabularyandtranslation = NULL;
-          break;
-          //TODO handle more wordkinds
-        case TUchemnitzDictionary::transitiveVerb:
-          /** http://de.wikipedia.org/wiki/Transitivit%C3%A4t_%28Grammatik%29:
-          * " sowohl Subjekt als auch ein Objekt benötigen, damit ein Satz, der
-          * mit diesem Verb gebildet wird, grammatisch ist." */
-          word_class = EnglishWord::main_verb_allows_1object_infinitive;
-          break;
-        case TUchemnitzDictionary::adj:
-          word_class = EnglishWord::adjective;
-          /** =NULL means: The next time a VocabularyAndTranslation should be
-           *   created. (multiple singular nouns may appear in a row->create
-           *   a VocabularyAndTranslation for each noun. */
-          p_vocabularyandtranslation = NULL;
-          break;
-        case TUchemnitzDictionary::adjPositive:
-          word_class = EnglishWord::adjective_positiveForm;
-          /** =NULL means: The next time a VocabularyAndTranslation should be
-           *   created. (multiple singular nouns may appear in a row->create
-           *   a VocabularyAndTranslation for each noun. */
-          p_vocabularyandtranslation = NULL;
-          break;
-        case TUchemnitzDictionary::adv:
-          word_class = EnglishWord::adverb;
-          break;
-        case TUchemnitzDictionary::femNoun:
-        case TUchemnitzDictionary::mascNoun:
-        case TUchemnitzDictionary::neutralNoun:
-          /** Must add as singular, else applying grammar rule fails. */
-          word_class = EnglishWord::singular;
-          /** =NULL means: The next time a VocabularyAndTranslation should be
-           *   created. (multiple singular nouns may appear in a row->create
-           *   a VocabularyAndTranslation for each noun. */
-          p_vocabularyandtranslation = NULL;
-          break;
-        case TUchemnitzDictionary::pluralNoun:
-  //        word_class = EnglishWord::noun;
-          /** =NULL means: The next time a VocabularyAndTranslation should be
-           *   created.*/
-          p_vocabularyandtranslation = NULL;
-          word_class = EnglishWord::plural_noun;
-          break;
-        }
-        GCC_DIAG_ON(switch)
+        enum EnglishWord::English_word_class word_class = 
+          GetEnglishWordClass(wordKind);
+        
+        /** For the file format "each attribute in single line" each attribute
+         *  (singular, plural, ...) of a vocable is stored in a single line and
+         *  so for each line a VocabularyAndTranslation object should be created.
+         *  NULL means: The next time a VocabularyAndTranslation should be
+         *   created. (multiple singular nouns may appear in a row->create
+         *   a VocabularyAndTranslation for each noun. */
+        p_vocabularyandtranslation = NULL;
+        
         LOGN_DEBUG("EnglishWord::class: " << word_class)
         if( word_class != EnglishWord::beyond_last_entry &&
             englishVocableWords.size() > 0 )
         {
-          const std::string str = englishVocableWords.at(0);
-          const char * ar_chWordBegin = str.c_str();
-          const int stringLen = str.length();
+          const std::string std_strFirstVocableWord = englishVocableWords.at(0);
+          const char * ar_chFirstVocableWordBegin = std_strFirstVocableWord.c_str();
+          const int stringLen = std_strFirstVocableWord.length();
           p_voc_container =
             //s_p_vocinmainmem
               m_p_vocaccess->InsertAsKeyAndAddVocabularyAttributes(
-            ar_chWordBegin
+            ar_chFirstVocableWordBegin
             , (int &) stringLen
             , word_class,
             p_vocabularyandtranslation);
@@ -207,6 +228,12 @@
                *  typically may be either dative or accusative. */
               p_vocabularyandtranslation->SetAttributeValue(0,
                 GermanVerb::dative_or_accusative);
+            case TUchemnitzDictionary::dativeVerb:
+              p_vocabularyandtranslation->SetAttributeValue(0,
+                GermanVerb::dative);
+            case TUchemnitzDictionary::accusativeVerb:
+              p_vocabularyandtranslation->SetAttributeValue(0,
+                GermanVerb::accusative);
             }
             GCC_DIAG_ON(switch)
           }

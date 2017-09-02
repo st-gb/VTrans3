@@ -48,7 +48,8 @@ namespace DictionaryReader
 
 BinarySearchInDictData::~BinarySearchInDictData() {
 }
-
+    //TODO move to a general TU Chemnitz file?! because it may be used for any
+    //  TU Chemnitz reader
     void BinarySearchInDictData::addTrieNodes()
     {
 //      s_p_i_userinterface = & i_userinterface;
@@ -89,6 +90,8 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       }
     }
 
+    //TODO move to a general TU Chemnitz file?! because it may be used for any
+    //  TU Chemnitz reader
    inline enum EnglishWord::English_word_class 
       getEnglishWordClassFromTUchemnitzDictWordClass(
       const enum TUchemnitzDictionary::wordKinds wordKind, 
@@ -157,6 +160,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       const int sz = englishVocableWords.size();
 #endif
       enum EnglishWord::English_word_class word_class = EnglishWord::beyond_last_entry;
+      //TODO replace the switch/case with getEnglishWordClassFromTUchemnitzDictWordClass ?!
 //      word_class = getEnglishWordClassFromTUchemnitzDictWordClass(wordKind);
       GCC_DIAG_OFF(switch)
       switch(wordKind)
@@ -569,12 +573,16 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       DWORD & r_dwTokenIndex
       )
     {
-      IVocabularyInMainMem::voc_container_type * p_voc_container = NULL;
+      IVocabularyInMainMem::voc_container_type * p_valid_voc_container = NULL, 
+        * p_voc_container = NULL;
       typedef std::vector< std::set<fastestUnsignedDataType> > offsetVec;
 
 //      fastestUnsignedDataType byteOffsetOfVocable =
       VocabularyAndTranslation * p_vocandtransl = NULL;
       std::set<fastestUnsignedDataType> byteOffsetsOfVocData;
+      /** vector containing sets of byte offsets for vocabulary with same 
+       *    # of tokens.
+       *    1st element: byte offsets of voc data with 1 token */
       std::vector< std::set<fastestUnsignedDataType> > byteOffsetsOfVocDataVec;
       PositionStringVector::cmp comp;// = PositionStringVector;
       fastestUnsignedDataType numToken = 1;
@@ -601,6 +609,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
        *  Must use "reverse_iterator" rather than "const_reverse_iterator"
        *  for Android NDK. */
       offsetVec::reverse_iterator
+        /** Start with the word containing the most tokens. */
         c_rev_iter = byteOffsetsOfVocDataVec.rbegin();
       if( c_rev_iter != byteOffsetsOfVocDataVec.rend() )
       {
@@ -615,16 +624,21 @@ BinarySearchInDictData::~BinarySearchInDictData() {
         while(c_iter != r_byteOffsetsOfVocData.end() )
         {
           byteOffsetOfVocable = * c_iter;
+          //TODO it seems that more than 1 container is created for the same word "car"
+          // for the dict.cc dictionary
           p_voc_container = extractVocable(
             byteOffsetOfVocable,
             //p_voc_container,
             p_vocandtransl);
+          /** If word kind can't be determined the p_voc_container is NULL */
+          if( p_voc_container )
+            p_valid_voc_container = p_voc_container;
           ++ c_iter;
         }
         //++ c_rev_iter;
       }
 //      if()
-      return /*NULL*/ p_voc_container;
+      return /*NULL*/ p_valid_voc_container;
     }
 
     inline void HandleEndOfToken(
@@ -763,7 +777,8 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       m_p_vocaccess->GetUserInterface()->EndedGetDictStats();
     }
     
-    /** e.g. "schoolbook; textbook; educational book | schoolbooks; textbooks; educational books :: Lehrbuch {n} | Lehrbücher {pl} "
+    /** @return container of different vocables.
+     * e.g. line "schoolbook; textbook; educational book | schoolbooks; textbooks; educational books :: Lehrbuch {n} | Lehrbücher {pl} "
      * */
     IVocabularyInMainMem::voc_container_type *
       BinarySearchInDictData::extractVocable(
@@ -1071,7 +1086,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       return p_voc_container;
     }
 
-        fastestUnsignedDataType BinarySearchInDictData::GetByteOffsetOfNextVocDataBegin(
+    fastestUnsignedDataType BinarySearchInDictData::GetByteOffsetOfNextVocDataBegin(
       bool & endSearchForCompareStringInCurrentVocData,
       fastestUnsignedDataType currentFileOffsetOrig )
     {

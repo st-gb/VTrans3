@@ -2,6 +2,10 @@
 
   <grammar_rule left_child="me" superordinate="ObjEnumEle"/>
   <grammar_rule left_child="objective_you" superordinate="ObjEnumEle"/>
+  <!-- singular you: "dich"/"dir", "Sie"/"Ihnen" -->
+  <grammar_rule left_child="you" superordinate="ObjEnumEle"/>
+  <!-- plural you: "euch" ("vertraue euch", "mag euch") -->
+  <grammar_rule left_child="you_plur" superordinate="ObjEnumEle"/>
   <grammar_rule left_child="him" superordinate="ObjEnumEle"/>
   <grammar_rule left_child="her" superordinate="ObjEnumEle"/>
   <grammar_rule left_child="objective_it" superordinate="ObjEnumEle"/>

@@ -3,9 +3,17 @@
   <translation_rule 
     syntax_tree_path="*.I"
     translation="ich" />
+  <!-- "you" is identical for objective and subjective use. So for the  
+        translation one has to distinguish by whether the part of sentence
+       is a subject or object. -->
+  <!-- singular "you" -->
   <translation_rule 
-    syntax_tree_path="*.you"
-    translation="du" />
+    syntax_tree_path="*.YouSimplePresent1Obj.*.you"
+    translation="du|Sie" />
+  <!-- singular "you" -->
+  <translation_rule 
+    syntax_tree_path="you"
+    translation="du|Sie" />
   <translation_rule 
     syntax_tree_path="*.he"
     translation="er">
@@ -21,11 +29,54 @@
   <translation_rule 
     syntax_tree_path="*.we"
     translation="wir">
-  </translation_rule>  
+  </translation_rule>
+  <!-- "you" is identical for objective and subjective use. So distinguish by
+        whether subject or object. -->
   <translation_rule 
-    syntax_tree_path="*.you_plur"
+    syntax_tree_path="*.YouSimplePresent1Obj.*.you_plur"
+    translation="ihr" />
+  <translation_rule 
+    syntax_tree_path="you_plur"
     translation="ihr" />
   <translation_rule 
     syntax_tree_path="*.they"
     translation="sie" />
+
+  <!-- translate personal pronouns used in object -->
+
+  <!-- singular "you" -> e.g. "ich vertraue dir", "ich vertraue Ihnen" -->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.*.obj.*.you"
+    translation="dir|Ihnen">
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.mainVerbInf1Obj" 
+      attribute_name="grammatical_case" byte_attribute_value="3"/>
+  </translation_rule>
+
+  <!-- plural "you" -> e.g. "ich vertraue euch" -->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.*.obj.*.you_plur"
+    translation="euch">
+    <!--grammatical_case=3 <=> dative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.mainVerbInf1Obj" 
+      attribute_name="grammatical_case" byte_attribute_value="3"/>
+  </translation_rule>
+
+  <!-- e.g. "ich mag dich" -->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.*.obj.*.you"
+    translation="dich|Sie">
+    <!--grammatical_case=4 <=> accusative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.*.mainVerbInf1Obj" 
+      attribute_name="grammatical_case" byte_attribute_value="4"/>
+  </translation_rule>
+
+  <!-- plural "you" -> e.g. "ich mag euch" -->
+  <translation_rule 
+    syntax_tree_path="clauseWith1Obj.*.obj.*.you_plur"
+    translation="euch">
+    <!--grammatical_case=4 <=> accusative verb-->
+    <condition syntax_tree_path="clauseWith1Obj.*.mainVerbInf1Obj" 
+      attribute_name="grammatical_case" byte_attribute_value="4"/>
+  </translation_rule>
 </translation_rules>

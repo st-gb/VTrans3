@@ -81,6 +81,7 @@ class SyntaxTreePath
 {
   //unsigned char  m_byOtherReferencesToGrammarPartIDArray ;
   bool m_bReferringOthersGrammarPartIDArray ;
+
 public:
   typedef /*WORD*/ fastestUnsignedDataType number_type;
   enum CreateGrammarPartIDArray_return_values
@@ -116,6 +117,8 @@ public:
     ) ;
   ~SyntaxTreePath() ;
 
+  GrammarPart * GetCommonNode(
+    const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const;
   BYTE CreateGrammarPartIDArray(
     const std::string & r_stdstrSyntaxTreePath
     , ParseByRise * p_parsebyrise
