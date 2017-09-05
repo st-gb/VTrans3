@@ -293,8 +293,8 @@ public:
     const std::string & cr_stdstrWholeInputText ,
     std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
 //    TranslationResult & translationResult
-    TranslateParseByRiseTree::ProcessParseTree_type,
-    fastestUnsignedDataType numIterations
+    TranslateParseByRiseTree::ProcessParseTree_type = & TranslateParseByRiseTree::TranslateParseTree,
+    fastestUnsignedDataType numIterations = 1
     ) ;
 #endif //#ifndef TEST_MINI_XML
 //  virtual void StartTimer();

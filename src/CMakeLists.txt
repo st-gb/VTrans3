@@ -18,6 +18,7 @@ SET(EXE_TYPE "wxGUI" CACHE STRING "Some user-specified option")
 message("EXE_TYPE: ${EXE_TYPE}")
 
 message("CXX flags: ${CMAKE_CXX_FLAGS}")
+message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
 message("CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
 
 if( ${EXE_TYPE} STREQUAL "wxGUI")
@@ -258,12 +259,24 @@ if( ${EXE_TYPE} STREQUAL "Android")
   message("CMAKE_ANDROID_NDK: ${CMAKE_ANDROID_NDK}")
   message("CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION: ${CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION}")
   message("CMAKE_ANDROID_STL_TYPE: ${CMAKE_ANDROID_STL_TYPE}")
+  set(EXE_TYPE "dynlib")
+endif( ${EXE_TYPE} STREQUAL "Android")
+
+if ( ${EXE_TYPE} STREQUAL "dynlib" )
+  set(EXE_NAME ${PROJECT_NAME} )
+  set(SOURCE_FILE_PATHS 
+    ${SOURCE_FILE_PATHS} 
+    ${PROJECT_SOURCE_DIR}/Controller/DynLib/dynlib_main.cpp
+    )
+  #https://stackoverflow.com/questions/11783932/how-to-add-linker-or-compile-flag-in-cmake-file
+  #"--no-undefined" reports "undefined reference to" -errors while compiling
+  # else these errors are reported when linking at first
+  #see https://stackoverflow.com/questions/2356168/force-gcc-to-notify-about-undefined-references-in-shared-libraries
+  SET( CMAKE_CXX_FLAGS "-Wl,--no-undefined")
   add_library(${EXE_NAME} SHARED ${SOURCE_FILE_PATHS})
-else ( ${EXE_TYPE} STREQUAL "Android" )
-  add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
   message ("should link libraries \"${LIBRARIES}\" to executable")
   target_link_libraries(${EXE_NAME} ${LIBRARIES})
-endif( ${EXE_TYPE} STREQUAL "Android")
+endif( ${EXE_TYPE} STREQUAL "dynlib")
 
 if(DEFINED WXWIDGETS)
   #https://wiki.wxwidgets.org/CMake

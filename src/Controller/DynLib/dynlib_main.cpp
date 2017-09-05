@@ -8,7 +8,7 @@
 #include <Attributes/TranslationResult.hpp> //class TranslationResult
 #include <Controller/character_string/stdstring_format.hpp>//to_stdstring(...)
 #include <Controller/Logger/Logger.hpp> //class Logger
-#include <Controller/GetErrorMessageFromLastErrorCode.hpp>
+#include <OperatingSystem/GetErrorMessageFromLastErrorCode.hpp>
 #include <data_structures/ByteArray.hpp> //class ByteArray
 #include <FileSystem/GetCurrentWorkingDir.hpp>
 //class CSS::LogFormatter::Log4jFormatter
@@ -96,7 +96,7 @@ int OpenLogFile(const char * const p_chConfigFilesRootPath)
   if( ! bFileIsOpen )
   {
     std::cerr << "Failed to open the log file:"
-      << GetErrorMessageFromLastErrorCodeA() << std::endl;
+      << OperatingSystem::GetErrorMessageFromLastErrorCodeA() << std::endl;
     return TranslationControllerBaseClass::InitFunction::creatingLogFileFailed;
   }
   LOGN_INFO("compile time:" << __DATE__ << " " << __TIME__ )
@@ -257,8 +257,8 @@ EXPORT char * Translate(const char * p_chEnglishText)
   TranslationResult translationResult;
   g_p_translationcontrollerbase->Translate(
     stdstrWholeInputText,
-    stdvec_stdstrWholeTransl,
-    /*stdvec_stdvecTranslationAndGrammarPart*/ translationResult
+    stdvec_stdstrWholeTransl//,
+    /*stdvec_stdvecTranslationAndGrammarPart*/ //translationResult
     );
   for( std::vector< std::string> ::const_iterator
       c_iter_stdvec_stdstr =
