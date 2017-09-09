@@ -380,9 +380,11 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
   else
     return TranslationControllerBaseClass::InitFunction::loadingMainConfigFileFailed;
   LOGN_INFO("waiting for termination of the thread starter thread.")
+#ifdef PARALLELIZE_TRANSLATION
   /** Ensure all threads for multithreaded translation have been created
    *  before we return. */
   m_multiThreadedTranslation.m_asyncThreadStarterThread.WaitForTermination();
+#endif
   LOGN_INFO("AFTER waiting for termination of the thread starter thread.")
   return TranslationControllerBaseClass::InitFunction::success;
 }
@@ -443,6 +445,7 @@ void TranslationControllerBase::SetNumberOfParallelTranslationThreads(
 {
   m_numThreadsAndTimeDuration[applyTranslRules].numThreads = 
     numberOfParallelTranslationThreads;
+#ifdef PARALLELIZE_TRANSLATION
 #ifdef COMPILE_WITH_OPENMP
   omp_set_num_threads(numberOfParallelTranslationThreads);
 #else //#ifdef COMPILE_WITH_OPENMP
@@ -452,6 +455,7 @@ void TranslationControllerBase::SetNumberOfParallelTranslationThreads(
    *  (the more threads the more) time. */
   m_multiThreadedTranslation.StartThreadsAsync();
 #endif //#ifdef COMPILE_WITH_OPENMP
+#endif //#ifdef PARALLELIZE_TRANSLATION
 }
 
 void TranslationControllerBase::SetStatus(

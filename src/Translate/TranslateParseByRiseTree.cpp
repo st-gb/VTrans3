@@ -984,7 +984,9 @@ void TranslateParseByRiseTree::NonBusySleep(
 {
   /** Time needed for applying translation rule for the 4 biggest parse trees
     of "the man works" is 8 ms for a Core i7 at ?? GHz */
+#ifndef __ANDROID__ //If NOT build via Android NDK etc.
   usleep(8000); //non-busy sleep in microseconds 
+#endif
 }
 
 /** Dummy function/method in order to see how parallel translation executes.*/

@@ -167,7 +167,7 @@ public:
     s_functionName2function;
   static TranslateParseByRiseTree::ProcessParseTree_type s_3rdStepTranslationFunction;
 #endif //#ifdef EVALUATE_PROCESSING
-#define PARALLELIZE_TRANSLATION
+//#define PARALLELIZE_TRANSLATION
 #ifdef PARALLELIZE_TRANSLATION
 //    fastestUnsignedDataType numThreadsRunning = 0;
     //TODO to get the # of CPU cores: https://developer.android.com/ndk/guides/cpu-features.html
