@@ -248,9 +248,13 @@ endif( ${EXE_TYPE} STREQUAL "console" )
 message("CXX_DEFINITIONS for compiling:${CXX_DEFINITIONS}")
 #Compiles all files in ${SOURCE_FILE_PATHS} ?!
 
+if (ANDROID)
+    message(STATUS "Hello from taka-no-me/android-cmake")
+endif()
 if( ${EXE_TYPE} STREQUAL "Android")
   set(EXE_NAME ${PROJECT_NAME} )
   message("ANDROID_NDK: ${ANDROID_NDK}")
+  message("DCMAKE_CXX_COMPILER: ${DCMAKE_CXX_COMPILER}")
   message("ANDROID_ABI: ${ANDROID_ABI}")
   message("ANDROID_NATIVE_API_LEVEL: ${ANDROID_NATIVE_API_LEVEL}")
   message("ANDROID_TOOLCHAIN_NAME: ${ANDROID_TOOLCHAIN_NAME}")
@@ -276,9 +280,17 @@ if ( ${EXE_TYPE} STREQUAL "dynlib" )
   add_library(${EXE_NAME} SHARED ${SOURCE_FILE_PATHS})
   message ("should link libraries \"${LIBRARIES}\" to executable")
   target_link_libraries(${EXE_NAME} ${LIBRARIES})
+  message ("library name: " $<TARGET_FILE_NAME:${EXE_NAME}> )
+  #execute_process("file " $<TARGET_FILE:${EXE_NAME}>)
+  add_custom_command( 
+    TARGET ${EXE_NAME} 
+    POST_BUILD 
+    COMMAND "file" $<TARGET_FILE:${EXE_NAME}> )
 endif( ${EXE_TYPE} STREQUAL "dynlib")
 
 if(DEFINED WXWIDGETS)
+  add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
+  target_link_libraries(${EXE_NAME} ${LIBRARIES})
   #https://wiki.wxwidgets.org/CMake
   message ("should link wxWidgets libraries ${wxWidgets_LIBRARIES} to executable")
   #This line is necessary, else linker errors: undefined reference to "wx..."
