@@ -39,10 +39,11 @@ endif( ${EXE_TYPE} STREQUAL "console")
 #/home/sg/Downloads/boost_threadpool-0_2_5-src/threadpool
 set( INCLUDE_DIRS 
   ${INCLUDE_DIRS}
-  ${COMMON_SOURCECODE_ROOT_PATH}
+  ${MINI_XML_SOURCE}
+ ${COMMON_SOURCECODE_ROOT_PATH}
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/MSVC_adaption
   ${PROJECT_SOURCE_DIR}
-)
+c)
 
 #set(PROJECT_BINARY_DIR /home/sg/SourceCodeManagement/VTrans3/build)
 #http://stackoverflow.com/questions/6594796/how-do-i-make-cmake-output-into-a-bin-dir
@@ -63,6 +64,7 @@ set( CXX_DEFINITIONS
   -DCOMPILE_AS_EXECUTABLE
   -DUNICODE
 )
+
 
 if( ${EVALUATE_PROCESSING} STREQUAL "YES" )
   #According to Chandler Carruth in 
@@ -85,6 +87,12 @@ if( ${COMPILE_WITH_OPENMP} STREQUAL "YES")
   set( CXX_DEFINITIONS
     ${CXX_DEFINITIONS}
     -DCOMPILE_WITH_OPENMP)
+else( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
+  set(BASIC_TRANSLATION_SOURCE_FILES
+    ${BASIC_TRANSLATION_SOURCE_FILES}
+#    ${VTRANS3_ROOT_PATH}/multi_threaded_translation/TranslateThreadProc.cpp
+#    ${VTRANS3_ROOT_PATH}/multi_threaded_translation/native_threads.cpp 
+  )
 endif( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
 
 add_subdirectory(./IO
@@ -179,8 +187,6 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInDictData.cpp
   ${PROJECT_SOURCE_DIR}/Controller/TranslationControllerBase.cpp
   ${VTRANS3_ROOT_PATH}/IO/UnknownGrammarPartNameException.cpp
-  ${VTRANS3_ROOT_PATH}/multi_threaded_translation/TranslateThreadProc.cpp
-  ${VTRANS3_ROOT_PATH}/multi_threaded_translation/native_threads.cpp
   ${PROJECT_SOURCE_DIR}/Parse/DirectingLeavesInSingleIterationTraverser.cpp
   ${PROJECT_SOURCE_DIR}/Parse/DirectingLeavesMultipleIterTraverser.cpp
   ${PROJECT_SOURCE_DIR}/Parse/DuplicateParseTree.cpp
@@ -249,6 +255,30 @@ message("CXX_DEFINITIONS for compiling:${CXX_DEFINITIONS}")
 #Compiles all files in ${SOURCE_FILE_PATHS} ?!
 
 if( ${EXE_TYPE} STREQUAL "Android")
+  if( NOT DEFINED MINI_XML_SOURCE )
+   warning("MINI_XML_SOURCE not defined")
+  endif(NOT DEFINED MINI_XML_SOURCE)
+  add_definitions(-D__ANDROID__)
+  set(MINI_XML_SOURCE_FILE_PATHS
+    ${MINI_XML_SOURCE}/mxml-attr.c
+    ${MINI_XML_SOURCE}/mxmldoc.c
+    ${MINI_XML_SOURCE}/mxml-entity.c
+    ${MINI_XML_SOURCE}/mxml-file.c
+    ${MINI_XML_SOURCE}/mxml-get.c
+    ${MINI_XML_SOURCE}/mxml-index.c
+    ${MINI_XML_SOURCE}/mxml-node.c
+    ${MINI_XML_SOURCE}/mxml-private.c
+    ${MINI_XML_SOURCE}/mxml-search.c
+    ${MINI_XML_SOURCE}/mxml-set.c
+    ${MINI_XML_SOURCE}/mxml-string.c
+    ${MINI_XML_SOURCE}/testmxml.c
+    )
+
+  #link_directories(${MINI_XML_SOURCE})
+  #set(SOURCE_FILE_PATHS
+  #  ${SOURCE_FILE_PATHS} 
+  #  ${MINI_XML_SOURCE_FILE_PATHS} )
+
   set(EXE_NAME ${PROJECT_NAME} )
   message("ANDROID_NDK: ${ANDROID_NDK}")
   message("ANDROID_ABI: ${ANDROID_ABI}")
@@ -279,13 +309,14 @@ if ( ${EXE_TYPE} STREQUAL "dynlib" )
 endif( ${EXE_TYPE} STREQUAL "dynlib")
 
 if(DEFINED WXWIDGETS)
+  add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
+  target_link_libraries(${EXE_NAME} ${LIBRARIES})
   #https://wiki.wxwidgets.org/CMake
   message ("should link wxWidgets libraries ${wxWidgets_LIBRARIES} to executable")
   #This line is necessary, else linker errors: undefined reference to "wx..."
   target_link_libraries(${EXE_NAME} ${wxWidgets_LIBRARIES})
-  #message ("wxWidgets type: ${wxWidgets_CONFIGURATION}")
+  message ("wxWidgets type: ${wxWidgets_CONFIGURATION}")
 endif (DEFINED WXWIDGETS)
-
 
 #target_link_libraries (VTrans3 wxWidgets)
 

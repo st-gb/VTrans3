@@ -50,7 +50,8 @@ void SettingsDialog::BuildGUI()
   }
   p_boxsizer->Add( m_p_settingNameListBox, 
     1 //1=stretchable in sizer's orientation
-    , wxEXPAND //wxEXPAND=stretchable);
+    , wxEXPAND //wxEXPAND=stretchable
+    );
   m_p_settingValueComboBox = new wxComboBox(this, wxID_ANY);
   p_boxsizer->Add( m_p_settingValueComboBox, 
     0 //stretchable in sizer's orientation
