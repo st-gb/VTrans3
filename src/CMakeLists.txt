@@ -40,10 +40,10 @@ endif( ${EXE_TYPE} STREQUAL "console")
 set( INCLUDE_DIRS 
   ${INCLUDE_DIRS}
   ${MINI_XML_SOURCE}
- ${COMMON_SOURCECODE_ROOT_PATH}
+  ${COMMON_SOURCECODE_ROOT_PATH}
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/MSVC_adaption
   ${PROJECT_SOURCE_DIR}
-c)
+  )
 
 #set(PROJECT_BINARY_DIR /home/sg/SourceCodeManagement/VTrans3/build)
 #http://stackoverflow.com/questions/6594796/how-do-i-make-cmake-output-into-a-bin-dir
@@ -65,17 +65,17 @@ set( CXX_DEFINITIONS
   -DUNICODE
 )
 
-
-if( ${EVALUATE_PROCESSING} STREQUAL "YES" )
+if( DEFINED EVALUATE_PROCESSING AND ${EVALUATE_PROCESSING} STREQUAL "YES" )
   #According to Chandler Carruth in 
   # "CppCon 2015: Chandler Carruth 
   # "Tuning C++: Benchmarks, and CPUs, and Compilers! Oh My!"
   # 1:17:00"-fno-omit-frame-pointer" is better then dwarf unwinding for
   #call stack information
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer")
-endif( ${EVALUATE_PROCESSING} STREQUAL "YES" )
+endif( DEFINED EVALUATE_PROCESSING AND ${EVALUATE_PROCESSING} STREQUAL "YES" )
 
-if( ${COMPILE_WITH_OPENMP} STREQUAL "YES")
+if( DEFINED COMPILE_WITH_OPENMP )
+ if( ${COMPILE_WITH_OPENMP} STREQUAL "YES")
   message("COMPILE_WITH_OPENMP defined:" ${COMPILE_WITH_OPENMP} )
   #from https://stackoverflow.com/questions/12399422/how-to-set-linker-flags-for-openmp-in-cmakes-try-compile-function
   find_package(OpenMP)
@@ -94,6 +94,7 @@ else( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
 #    ${VTRANS3_ROOT_PATH}/multi_threaded_translation/native_threads.cpp 
   )
 endif( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
+endif( DEFINED COMPILE_WITH_OPENMP )
 
 add_subdirectory(./IO
   #EXCLUDE_FROM_ALL
@@ -259,7 +260,7 @@ if (ANDROID)
 endif()
 if( ${EXE_TYPE} STREQUAL "Android")
   if( NOT DEFINED MINI_XML_SOURCE )
-   warning("MINI_XML_SOURCE not defined")
+   message( WARNING "MINI_XML_SOURCE not defined")
   endif(NOT DEFINED MINI_XML_SOURCE)
   add_definitions(-D__ANDROID__)
   set(MINI_XML_SOURCE_FILE_PATHS

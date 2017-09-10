@@ -3,8 +3,10 @@
  *      Author: Stefan  */
 
 #include "BinarySearchInDictFile.hpp"
+//#include "FileSystem/File/GetAbsoluteFilePath.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 #include <OperatingSystem/GetLastErrorCode.hpp>
+#include <FileSystem/GetAbsolutePath.hpp>
 #include <IO/dictionary/DictionaryFileAccessException.hpp>
 #include <IO/dictionary/OpenDictFileException.hpp>//class OpenDictFileException
 
@@ -47,9 +49,11 @@ namespace DictionaryReader
         if( m_fileSizeInBytes == -1 )
         {
           const DWORD lastError = OperatingSystem::GetLastErrorCode();
+          std::string absoluteDictFilePath = FileSystem::GetAbsolutePathA(
+            std_strDictFilePath.c_str());
           DictionaryFileAccessException dictionaryFileAccessException(
             DictionaryFileAccessException::getFileSize, lastError,
-            std_strDictFilePath.c_str() );
+            absoluteDictFilePath.c_str() );
   	      LOGN_ERROR("error getting dictionary file size->throwing an exception")
           throw dictionaryFileAccessException;
         }
@@ -58,7 +62,10 @@ namespace DictionaryReader
       }
       else //Or throw enum I_File::OpenError openError
       {
-	    LOGN_ERROR("error loading dictionary->throwing an exception")
+        std::string absoluteDictFilePath = FileSystem::GetAbsolutePathA(
+          std_strDictFilePath.c_str());
+	      LOGN_ERROR("error loading dictionary \"" << absoluteDictFilePath << "\"->throwing an exception")
+//        const DWORD lastError = OperatingSystem::GetLastErrorCode();
         throw VTrans3::OpenDictFileException(openError);
       }
       return dictFileIsOpen;

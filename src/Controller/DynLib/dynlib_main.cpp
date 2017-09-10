@@ -69,9 +69,12 @@ EXPORT void FreeMemory()
   LOGN("end")
 }
 
+/** Called after the end of the executable that opened the library (in run_exit_handlers) */
 void __attribute__ ((destructor)) my_fini(void)
 {
-  FreeMemory();
+  /** Seems to cause a Signal received: SIGSEGV (Segmentation fault) 
+   *  (because the freeing happens too late after the dynlib is already detached?!) */
+  //FreeMemory();
 }
 
 int OpenLogFile(const char * const p_chConfigFilesRootPath)
