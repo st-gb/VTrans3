@@ -8,9 +8,11 @@
 #include <Attributes/TranslationResult.hpp> //class TranslationResult
 #include <Controller/character_string/stdstring_format.hpp>//to_stdstring(...)
 #include <Controller/Logger/Logger.hpp> //class Logger
+#include <Controller/Logger/LogFileAccessException.hpp> //class LogFileAccessException
 #include <OperatingSystem/GetErrorMessageFromLastErrorCode.hpp>
 #include <data_structures/ByteArray.hpp> //class ByteArray
 #include <FileSystem/GetCurrentWorkingDir.hpp>
+#include <IO/dictionary/OpenDictFileException.hpp>
 //class CSS::LogFormatter::Log4jFormatter
 #include <Controller/Logger/Formatter/Log4jFormatter.hpp>
 #include <Controller/TranslationControllerBase.hpp>
@@ -85,13 +87,21 @@ int OpenLogFile(const char * const p_chConfigFilesRootPath)
   std::string stdstrLogFilePath = p_chConfigFilesRootPath;
   stdstrLogFilePath += "/VTransDynlib_log.";
   stdstrLogFilePath += logFormat;
-  bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 4000,
-    LogLevel::debug) ;
+  bool bFileIsOpen = false;
+  try
+  {
+    bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 4000,
+      LogLevel::debug) ;
 #ifdef __linux__
 #ifndef __ANDROID__
   g_logger.AddConsoleLogEntryWriter();
 #endif
 #endif
+  }
+  catch(const LogFileAccessException & lfae)
+  {
+      std::cerr << "failed to open log file " <<  lfae.GetErrorMessageA() << std::endl;
+  }
   //g_logger.
   if( ! bFileIsOpen )
   {
@@ -142,14 +152,24 @@ EXPORT BYTE
 
 //  g_p_translationcontrollerbase->SetCurrentDirToConfigFilesRootPath(
 //    stdstrConfigFilesRootPath);
+    BYTE byReturn = 1;
+    try
+    {
+      byReturn = //g_translationcontrollerbase.Init(//"VTrans_main_config.xml"
+        g_p_translationcontrollerbase->Init(
+        stdstrMainConfigFilePath);
+    //  delete g_p_translationcontrollerbase;
+      LOGN("return " << (fastestUnsignedDataType) byReturn
+        //<< TranslationControllerBaseClass::InitFunction::retCodeDescriptions[byReturn]
+        )
+    }catch(VTrans3::OpenDictFileException & odfe )
+    {
+      std::cerr << "error opening dictionary file: \"" << 
+        g_p_translationcontrollerbase->m_stdstrVocabularyFilePath << "\"" 
+          << "error code:" << odfe.m_openError << 
+        odfe.GetErrorMessageA() << std::endl;
+    }
 
-  BYTE byReturn = //g_translationcontrollerbase.Init(//"VTrans_main_config.xml"
-    g_p_translationcontrollerbase->Init(
-    stdstrMainConfigFilePath);
-//  delete g_p_translationcontrollerbase;
-  LOGN("return " << (fastestUnsignedDataType) byReturn
-    //<< TranslationControllerBaseClass::InitFunction::retCodeDescriptions[byReturn]
-    )
   return byReturn;
 }
 
@@ -255,6 +275,8 @@ EXPORT char * Translate(const char * p_chEnglishText)
   std::string stdstrAllPossibilities ;
   std::vector<std::string> stdvec_stdstrWholeTransl;
   TranslationResult translationResult;
+  try
+  {
   g_p_translationcontrollerbase->Translate(
     stdstrWholeInputText,
     stdvec_stdstrWholeTransl//,
@@ -277,6 +299,13 @@ EXPORT char * Translate(const char * p_chEnglishText)
     ar_chTranslation[ stdstrAllPossibilities.length()] = '\0';
   }
   LOGN("::Translate(...) end")
+    }catch(VTrans3::OpenDictFileException & odfe )
+    {
+      std::cerr << "error opening dictionary file: \"" << 
+        g_p_translationcontrollerbase->m_stdstrVocabularyFilePath << "\"" 
+          << "error code:" << odfe.m_openError << 
+        odfe.GetErrorMessageA() << std::endl;
+    }
   return ar_chTranslation;
 }
 #endif //#ifdef TEST_MINI_XML
