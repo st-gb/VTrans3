@@ -10,7 +10,8 @@ static void * g_VTransDynLibHandle = NULL;
 
 typedef unsigned char (*VTransDynLibInit_type)(const char * p_chMainConfigFilePath, 
   const char * p_chConfigFilesRootPath);
-typedef unsigned char * (*VTransDynLibTranslate_type)(const char * englishText);
+//typedef void (*VTransDynLibTranslate_type)(const char * englishText, char ** );
+typedef char * (*VTransDynLibTranslateAsXML_char_array_type)(const char * englishText );
 typedef void (*VTransDynLibTranslateAsXML_type)(const char * englishText, ByteArray &);
 
 /** 
@@ -46,6 +47,14 @@ int main(int argc, char** argv)
       VTransDynLibTranslateAsXML_type pfnVTransDynLibTranslateAsXML = //*(void **) (&VTransDynLibInit)
         (VTransDynLibTranslateAsXML_type) dlsym(g_VTransDynLibHandle, "TranslateAsXML");
       (*pfnVTransDynLibTranslateAsXML)("the man", * p_byteArray);
+
+      VTransDynLibTranslateAsXML_char_array_type pfnVTransDynLibTranslateAsXML_char_array = 
+        (VTransDynLibTranslateAsXML_char_array_type) dlsym(g_VTransDynLibHandle,
+        "TranslateAsXML_char_array");
+//      char * germanTranslation = (*pfnVTransDynLibTranslate)("the man");
+      char * germanTranslation;
+      germanTranslation = (*pfnVTransDynLibTranslateAsXML_char_array)("the man");//, & germanTranslation);
+      std::cout << "germanTranslation:" << germanTranslation << std::endl;
     }
     catch(VTrans3::OpenDictFileException)
     {

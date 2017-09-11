@@ -251,6 +251,23 @@ EXPORT /*char * */ void TranslateAsXML(const char * p_chEnglishText//,
 //  return /*ar_chTranslation*/ byteArray;
 }
 
+/** Function for easier access for Python etc. : Python dyn lib calls only 
+ *   accept C (and no pointer to pointer?) */
+EXPORT /*char * */ char * TranslateAsXML_char_array(const char * p_chEnglishText//,
+  //WORD * p_wNuberOfBytes
+  //, char ** p_charArray
+  )
+{
+  ByteArray byteArray;
+  TranslateAsXML(p_chEnglishText//,
+    , byteArray);
+  char * charArray = new char[byteArray.GetSize() + 1];
+  memcpy(charArray, byteArray.GetArray(), byteArray.GetSize());
+  charArray[byteArray.GetSize()] = '\0';
+//  * p_charArray = charArray;
+  return charArray;
+}
+
 EXPORT BYTE GetStatus(std::string & item, struct tm & time)
 {
   return g_p_translationcontrollerbase->GetStatus(item, time);
