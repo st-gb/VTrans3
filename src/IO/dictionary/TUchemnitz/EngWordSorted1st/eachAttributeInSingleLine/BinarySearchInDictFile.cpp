@@ -6,6 +6,7 @@
 //#include "FileSystem/File/GetAbsoluteFilePath.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 #include <OperatingSystem/GetLastErrorCode.hpp>
+#include <FileSystem/File/FileReadException.hpp>
 #include <FileSystem/GetAbsolutePath.hpp>
 #include <IO/dictionary/DictionaryFileAccessException.hpp>
 #include <IO/dictionary/OpenDictFileException.hpp>//class OpenDictFileException

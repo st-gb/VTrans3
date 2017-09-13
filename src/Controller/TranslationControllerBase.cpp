@@ -31,11 +31,13 @@
   //SetCurrentDirectory(...)
   #include <FileSystem/GetCurrentWorkingDir.hpp>
   #include <FileSystem/SetCurrentWorkingDir.hpp>
-#include <OperatingSystem/POSIX/GetNumberOfLogicalCPUcores.h>
-#include <OperatingSystem/POSIX/file_exists.hpp>
+#include <hardware/CPU/GetNumberOfLogicalCPUcores.h>
+#include <FileSystem/file_exists.h>
 
 #include "Controller/character_string/ConvertStdStringToTypename.hpp"
+#ifdef PARALLELIZE_TRANSLATION
 #include "multi_threaded_translation/nativeThreads.hpp"
+#endif //#ifdef PARALLELIZE_TRANSLATION
 //#else
 //  //platformstl::filesystem_traits<char>::set_current_directory(...)
 //  #include <platformstl/filesystem/current_directory.hpp>

@@ -17,7 +17,9 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TransformationRule.hpp> //class TransformationRule
 #include <OperatingSystem/multithread/nativeCriticalSectionType.hpp>
+#ifdef PARALLELIZE_TRANSLATION
 #include <multi_threaded_translation/nativeThreads.hpp>
+#endif //#ifdef PARALLELIZE_TRANSLATION
 //#include <boost/threadpool.hpp> //boost::threadpool
 #include <OperatingSystem/time/GetCurrentTime.hpp>
 #ifndef TEST_MINI_XML

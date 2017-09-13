@@ -23,7 +23,9 @@
 #include <Translate/TranslatedTreeTraverser.hpp>
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
-#include <multi_threaded_translation/nativeThreads.hpp>
+#ifdef PARALLELIZE_TRANSLATION
+  #include <multi_threaded_translation/nativeThreads.hpp>
+#endif //#ifdef PARALLELIZE_TRANSLATION
 
 //#include <Xerces/ReadViaSAX2.hpp> //ReadViaSAX2InitAndTermXerces(...)
 ////class SAX2TranslationRuleHandler
@@ -984,7 +986,7 @@ void TranslateParseByRiseTree::NonBusySleep(
 {
   /** Time needed for applying translation rule for the 4 biggest parse trees
     of "the man works" is 8 ms for a Core i7 at ?? GHz */
-#ifndef __ANDROID__ //If NOT build via Android NDK etc.
+#if defined(__unix__) && not defined(__ANDROID__) //If NOT build via Android NDK etc.
   usleep(8000); //non-busy sleep in microseconds 
 #endif
 }

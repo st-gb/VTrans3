@@ -41,10 +41,15 @@ set( INCLUDE_DIRS
   ${INCLUDE_DIRS}
   ${MINI_XML_SOURCE}
   ${COMMON_SOURCECODE_ROOT_PATH}
-  ${COMMON_SOURCECODE_ROOT_PATH}/Controller/MSVC_adaption
   ${PROJECT_SOURCE_DIR}
   )
-
+if(NOT WIN32)
+  #Important: under Windows the original files should be included, else errors.
+  set( INCLUDE_DIRS
+    ${INCLUDE_DIRS}
+    ${COMMON_SOURCECODE_ROOT_PATH}/Controller/MSVC_adaption
+    )
+endif(NOT WIN32)
 #set(PROJECT_BINARY_DIR /home/sg/SourceCodeManagement/VTrans3/build)
 #http://stackoverflow.com/questions/6594796/how-do-i-make-cmake-output-into-a-bin-dir
 #set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}/../build)
@@ -57,6 +62,7 @@ message("PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
 
 set( CXX_DEFINITIONS
   ${CXX_DEFINITIONS}
+  #-H #show includes hierarchy
   -DCOMPILE_LOGGER_MULTITHREAD_SAFE
   #-D__WXDEBUG__
   -DUSE_OWN_LOGGER
@@ -153,6 +159,24 @@ if (UNIX)
     ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.cpp
   )
 endif (UNIX)
+if(WIN32)
+    set(BASIC_TRANSLATION_SOURCE_FILES
+      ${BASIC_TRANSLATION_SOURCE_FILES}
+      ${COMMON_SOURCECODE_ROOT_PATH}/Windows/Logger/LogEntryOutputter.cpp
+      ${COMMON_SOURCECODE_ROOT_PATH}/Windows/FileSystem/File/File.cpp
+      ${COMMON_SOURCECODE_ROOT_PATH}/Windows/ErrorCode/GetErrorMessageFromErrorCode.cpp
+      ${COMMON_SOURCECODE_ROOT_PATH}/Windows/ErrorCode/GetErrorMessageFromLastErrorCode.cpp
+      ${COMMON_SOURCECODE_ROOT_PATH}/Windows/ErrorCode/LocalLanguageMessageFromErrorCode.cpp
+      )
+    set( LIBRARIES
+      ${LIBRARIES}
+      Shlwapi #PathIsRelativeA(...), PathFileExistsA(...)
+      )
+else(WIN32)
+    set(BASIC_TRANSLATION_SOURCE_FILES
+      ${BASIC_TRANSLATION_SOURCE_FILES}
+      ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/OutputHandler/StdOfStreamLogWriter.cpp )
+endif(WIN32)
 
 #set( LIBRARIES 
 #  ${LIBRARIES}
@@ -173,7 +197,6 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/Formatter/Log4jFormatter.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/OutputHandler/I_LogEntryOutputter.cpp
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/OutputHandler/StdCoutLogWriter.cpp
-	${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/OutputHandler/StdOfStreamLogWriter.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/data_structures/Trie/byteTrie/ByteTrie.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/data_structures/Trie/byteTrie/Trie.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/multithread/I_Thread.cpp
@@ -263,25 +286,6 @@ if( ${EXE_TYPE} STREQUAL "Android")
    message( WARNING "MINI_XML_SOURCE not defined")
   endif(NOT DEFINED MINI_XML_SOURCE)
   add_definitions(-D__ANDROID__)
-  set(MINI_XML_SOURCE_FILE_PATHS
-    ${MINI_XML_SOURCE}/mxml-attr.c
-    ${MINI_XML_SOURCE}/mxmldoc.c
-    ${MINI_XML_SOURCE}/mxml-entity.c
-    ${MINI_XML_SOURCE}/mxml-file.c
-    ${MINI_XML_SOURCE}/mxml-get.c
-    ${MINI_XML_SOURCE}/mxml-index.c
-    ${MINI_XML_SOURCE}/mxml-node.c
-    ${MINI_XML_SOURCE}/mxml-private.c
-    ${MINI_XML_SOURCE}/mxml-search.c
-    ${MINI_XML_SOURCE}/mxml-set.c
-    ${MINI_XML_SOURCE}/mxml-string.c
-    ${MINI_XML_SOURCE}/testmxml.c
-    )
-
-  #link_directories(${MINI_XML_SOURCE})
-  #set(SOURCE_FILE_PATHS
-  #  ${SOURCE_FILE_PATHS} 
-  #  ${MINI_XML_SOURCE_FILE_PATHS} )
 
   set(EXE_NAME ${PROJECT_NAME} )
   message("ANDROID_NDK: ${ANDROID_NDK}")
