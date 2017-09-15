@@ -14,7 +14,7 @@ set(VTRANS3_ROOT_PATH ${PROJECT_SOURCE_DIR} )
 
 #from http://stackoverflow.com/questions/12896988/passing-the-argument-to-cmake-via-command-prompt
 # on command line: "-DEXE_TYPE:STRING=GUI"
-SET(EXE_TYPE "wxGUI" CACHE STRING "Some user-specified option")
+#SET(EXE_TYPE "wxGUI" CACHE STRING "Some user-specified option")
 message("EXE_TYPE: ${EXE_TYPE}")
 
 message("CXX flags: ${CMAKE_CXX_FLAGS}")
@@ -71,14 +71,16 @@ set( CXX_DEFINITIONS
   -DUNICODE
 )
 
-if( DEFINED EVALUATE_PROCESSING AND ${EVALUATE_PROCESSING} STREQUAL "YES" )
+if( DEFINED EVALUATE_PROCESSING)
+  #if({EVALUATE_PROCESSING} STREQUAL "YES" )
   #According to Chandler Carruth in 
   # "CppCon 2015: Chandler Carruth 
   # "Tuning C++: Benchmarks, and CPUs, and Compilers! Oh My!"
   # 1:17:00"-fno-omit-frame-pointer" is better then dwarf unwinding for
   #call stack information
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer")
-endif( DEFINED EVALUATE_PROCESSING AND ${EVALUATE_PROCESSING} STREQUAL "YES" )
+#endif( DEFINED EVALUATE_PROCESSING AND ${EVALUATE_PROCESSING} STREQUAL "YES" )
+endif( DEFINED EVALUATE_PROCESSING )
 
 if( DEFINED COMPILE_WITH_OPENMP )
  if( ${COMPILE_WITH_OPENMP} STREQUAL "YES")
@@ -147,10 +149,14 @@ set( ATTRIBUTE_DATA_SOURCE_FILES
 )
 
 if (UNIX)
+  #For Android NDK there's no "pthread.a" to link to ?!
+  if( ${EXE_TYPE} STREQUAL "Android" )
+  else( ${EXE_TYPE} STREQUAL "Android" )
   set( LIBRARIES
     ${LIBRARIES}
     pthread
   )
+  endif( ${EXE_TYPE} STREQUAL "Android" )
   set( BASIC_TRANSLATION_SOURCE_FILES
     ${BASIC_TRANSLATION_SOURCE_FILES}
     ${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/POSIX/multithread/pthreadBasedI_Thread.cpp
@@ -299,6 +305,13 @@ if( ${EXE_TYPE} STREQUAL "Android")
   message("CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION: ${CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION}")
   message("CMAKE_ANDROID_STL_TYPE: ${CMAKE_ANDROID_STL_TYPE}")
   set(EXE_TYPE "dynlib")
+  message( "SYSROOT: ${SYSROOT}" )
+  #see https://stackoverflow.com/questions/16795583/android-error-cannot-open-crtbegin-dynamic-o-no-such-file-or-directory
+  message( WARNING "for taka-no-me's Android CMake toolchain file CMAKE_CXX_FLAGS may not be set MANUALLY, else errors like: undefined reference to crtbegin.so")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -ffor-scope -fno-rtti -pipe -ffunction-sections -fdata-sections -ffast-math -Wnon-virtual-dtor -Wreorder -Wsign-promo -fvisibility=hidden -fvisibility-inlines-hidden -Wstrict-null-sentinel -Os -funroll-all-loops -fpeel-loops -ftree-vectorize")
+  #TODO: are these flags used at all?
+  set(LINKER_FLAGS "${LINKER_FLAGS} -Wl,--as-needed -Wl,--gc-sections -Wl,--no-undefined -Wl,--strip-all -Wl,-rpath-link=${ANDROID_NDK_SYSROOT}/usr/lib/ -L${ANDROID_NDK_SYSROOT}/usr/lib/")
+  message( "ANDROID_NDK_SYSROOT: ${ANDROID_NDK_SYSROOT}" )
 endif( ${EXE_TYPE} STREQUAL "Android")
 
 if ( ${EXE_TYPE} STREQUAL "dynlib" )
@@ -311,16 +324,22 @@ if ( ${EXE_TYPE} STREQUAL "dynlib" )
   #"--no-undefined" reports "undefined reference to" -errors while compiling
   # else these errors are reported when linking at first
   #see https://stackoverflow.com/questions/2356168/force-gcc-to-notify-about-undefined-references-in-shared-libraries
-  SET( CMAKE_CXX_FLAGS "-Wl,--no-undefined")
+  #SET( CMAKE_CXX_FLAGS 
+  #  ${CMAKE_CXX_FLAGS}
+  #  "-Wl,--no-undefined -fPIC")
+  message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
   add_library(${EXE_NAME} SHARED ${SOURCE_FILE_PATHS})
   message ("should link libraries \"${LIBRARIES}\" to executable")
   target_link_libraries(${EXE_NAME} ${LIBRARIES})
   message ("library name: " $<TARGET_FILE_NAME:${EXE_NAME}> )
   #execute_process("file " $<TARGET_FILE:${EXE_NAME}>)
-  add_custom_command( 
-    TARGET ${EXE_NAME} 
-    POST_BUILD 
-    COMMAND "file" $<TARGET_FILE:${EXE_NAME}> )
+  #problems when building for Android with "cmd.exe" that does not know the "file" command
+  if(UNIX)
+    add_custom_command( 
+      TARGET ${EXE_NAME} 
+      POST_BUILD 
+      COMMAND "file" $<TARGET_FILE:${EXE_NAME}> )
+  endif(UNIX)
 endif( ${EXE_TYPE} STREQUAL "dynlib")
 
 if(DEFINED WXWIDGETS)
