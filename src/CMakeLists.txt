@@ -288,6 +288,9 @@ if (ANDROID)
     message(STATUS "Hello from taka-no-me/android-cmake")
 endif()
 if( ${EXE_TYPE} STREQUAL "Android")
+  set( CMAKE_BINARY_DIR
+    ${ANDROID_DIR}/libs)
+  set(CREATE_DYN_LIB 1)
   if( NOT DEFINED MINI_XML_SOURCE )
    message( WARNING "MINI_XML_SOURCE not defined")
   endif(NOT DEFINED MINI_XML_SOURCE)
@@ -304,7 +307,7 @@ if( ${EXE_TYPE} STREQUAL "Android")
   message("CMAKE_ANDROID_NDK: ${CMAKE_ANDROID_NDK}")
   message("CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION: ${CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION}")
   message("CMAKE_ANDROID_STL_TYPE: ${CMAKE_ANDROID_STL_TYPE}")
-  set(EXE_TYPE "dynlib")
+  #set(EXE_TYPE "dynlib")
   message( "SYSROOT: ${SYSROOT}" )
   #see https://stackoverflow.com/questions/16795583/android-error-cannot-open-crtbegin-dynamic-o-no-such-file-or-directory
   message( WARNING "for taka-no-me's Android CMake toolchain file CMAKE_CXX_FLAGS may not be set MANUALLY, else errors like: undefined reference to crtbegin.so")
@@ -312,9 +315,15 @@ if( ${EXE_TYPE} STREQUAL "Android")
   #TODO: are these flags used at all?
   set(LINKER_FLAGS "${LINKER_FLAGS} -Wl,--as-needed -Wl,--gc-sections -Wl,--no-undefined -Wl,--strip-all -Wl,-rpath-link=${ANDROID_NDK_SYSROOT}/usr/lib/ -L${ANDROID_NDK_SYSROOT}/usr/lib/")
   message( "ANDROID_NDK_SYSROOT: ${ANDROID_NDK_SYSROOT}" )
+  message( "DISCORDIA_ANDROID_CMAKE_HOME: ${DISCORDIA_ANDROID_CMAKE_HOME}")
+  include("${DISCORDIA_ANDROID_CMAKE_HOME}/android.apk.cmake" REQUIRED)
 endif( ${EXE_TYPE} STREQUAL "Android")
 
 if ( ${EXE_TYPE} STREQUAL "dynlib" )
+  set(CREATE_DYN_LIB 1)
+endif( ${EXE_TYPE} STREQUAL "dynlib" )
+if ( CREATE_DYN_LIB )
+  message("should create dyn lib")
   set(EXE_NAME ${PROJECT_NAME} )
   set(SOURCE_FILE_PATHS 
     ${SOURCE_FILE_PATHS} 
@@ -328,6 +337,7 @@ if ( ${EXE_TYPE} STREQUAL "dynlib" )
   #  ${CMAKE_CXX_FLAGS}
   #  "-Wl,--no-undefined -fPIC")
   message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+  message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
   add_library(${EXE_NAME} SHARED ${SOURCE_FILE_PATHS})
   message ("should link libraries \"${LIBRARIES}\" to executable")
   target_link_libraries(${EXE_NAME} ${LIBRARIES})
@@ -340,7 +350,20 @@ if ( ${EXE_TYPE} STREQUAL "dynlib" )
       POST_BUILD 
       COMMAND "file" $<TARGET_FILE:${EXE_NAME}> )
   endif(UNIX)
-endif( ${EXE_TYPE} STREQUAL "dynlib")
+  if( ${EXE_TYPE} STREQUAL "Android")
+    message("creating apk file--ANDROID_DIR:${ANDROID_DIR}")
+    #from https://github.com/Discordia/android-cmake-example/blob/master/CMakeLists.txt
+#    android_create_apk(
+#      ${EXE_NAME} 
+#      "de.it_gebauer.VTrans" 
+#      "${ANDROID_DIR}/apk" #where to create the apk directory
+#      "${ANDROID_DIR}/libs" #dynamic library (*.so) files
+#      "${ANDROID_DIR}" #where the AndroidManifest.xml resides
+#      "${ANDROID_DIR}/assets" #assets like the dictionary
+#      "E:/Android/sdk"
+#      )
+  endif( ${EXE_TYPE} STREQUAL "Android")
+endif( )
 
 if(DEFINED WXWIDGETS)
   add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
