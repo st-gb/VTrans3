@@ -114,6 +114,7 @@ int OpenLogFile(const char * const p_chConfigFilesRootPath)
   }
   LOGN_INFO("compile time:" << __DATE__ << " " << __TIME__ )
 #endif
+  return TranslationControllerBaseClass::InitFunction::success;
 }
 
 /** @return: result of initialization: 0=success, else error.  */
@@ -122,10 +123,11 @@ EXPORT BYTE
   const char * p_chMainConfigFilePath,
   //Root path where the rule file pathes contained in the main config file
   //are appended to.
-  const char * const p_chConfigFilesRootPath
+  const char * const p_chConfigFilesRootPath,
+  const char * const p_chLogFilePath
   )
 {
-  int i = OpenLogFile(p_chConfigFilesRootPath);
+  int i = OpenLogFile(p_chLogFilePath);
   if( i == TranslationControllerBaseClass::InitFunction::creatingLogFileFailed)
     return i;
   std::string std_strCurrentWorkingDir;

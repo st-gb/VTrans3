@@ -74,7 +74,8 @@ public:
       std_strErrorMessage = "other action regarding";
       break;
    }
-    const std::string std_strAbsoluteLogFilePath = /*GetAbsoluteFilePathA();*/
+    //TODO get absolute file path
+    const std::string std_strAbsoluteLogFilePath;// = OperatingSystem::GetAbsoluteFilePathA();
 
     std_strErrorMessage += " dictionary file \"" + std_strAbsoluteLogFilePath + "\" failed:";
     const std::string std_strErrorMessageFromErrorCode =

@@ -27,7 +27,8 @@ EXPORT BYTE
   const char * p_chMainConfigFilePath,
   //Root path where the rule file pathes contained in the main config file
   //are appended to.
-  const char * p_chConfigFilesRootPath
+  const char * p_chConfigFilesRootPath,
+  const char * p_strCurrentWorkingDir
   );
 /** @param item: detailed message of current status: current word/ translation
  *    rule path etc.

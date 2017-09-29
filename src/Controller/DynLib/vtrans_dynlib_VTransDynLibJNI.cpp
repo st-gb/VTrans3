@@ -60,8 +60,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
  * Method:    Init
  * Signature: (Ljava/lang/String;)B
  */
-//JNIEXPORT
-extern "C" jbyte /*JNICALL*/ Java_vtrans_dynlib_VTransDynLibJNI_Init
+JNIEXPORT
+/*extern "C"*/ jbyte JNICALL Java_vtrans_dynlib_VTransDynLibJNI_Init
   (JNIEnv * p_jni_env, //jobject thiz
     jclass jc,
     jstring jstrMainCfgFile,
@@ -104,7 +104,7 @@ extern "C" jbyte /*JNICALL*/ Java_vtrans_dynlib_VTransDynLibJNI_Init
 //      & jb
 //      );
   jbyte jInitResult = Init(//p_chMainConfigFilePath
-    strMainConfigFile, strConfigFilesRootPath);
+    strMainConfigFile, strConfigFilesRootPath, strCurrentWorkingDir);
   //jni_env->ReleaseStringChars(jstrMainCfgFile,p_chMainConfigFilePath);
   //( *
   LOGN_DEBUG(//"Java_vtrans_1dynlib_VTransDynLibJNI_Init" FULL_FUNC_NAME <<

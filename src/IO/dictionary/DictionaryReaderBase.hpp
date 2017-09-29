@@ -15,7 +15,8 @@
 
 inline bool isValidEnglishWordCharacter(uint8_t character)
 {
-  if( character > 0x60 /** "a" */ && character < 0x7A /** "z" */ || 
+    /** Use parentheses around the '&&' expression to avoid compiler warning */
+  if( ( character > 0x60 /** "a" */ && character < 0x7A /** "z" */ ) ||
       character == '-' /** e.g. "fork-lift" */ )
     return true;
   return false;
@@ -23,8 +24,10 @@ inline bool isValidEnglishWordCharacter(uint8_t character)
 
 inline bool isValidGermanWordCharacter(uint8_t character)
 {
-  if( character > 'A' && character < 'Z' || 
-      character > 0x60 /** "a" */ && character < 0x7A /** "z" */ || 
+  /** Use parentheses around the '&&' expression to avoid compiler warning */
+  if( ( character > 'A' && character < 'Z' ) ||
+      /** Use parentheses around the '&&' expression to avoid compiler warning */
+      ( character > 0x60 /** "a" */ && character < 0x7A /** "z" */ ) ||
       character == ISO_8859_1::ae || character == ISO_8859_1::Ae ||
       character == ISO_8859_1::oe || character == ISO_8859_1::Oe ||
       character == ISO_8859_1::ue || character == ISO_8859_1::Ue ||

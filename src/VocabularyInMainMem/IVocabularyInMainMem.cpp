@@ -207,7 +207,9 @@ DWORD THREAD_FUNCTION_CALLING_CONVENTION CollectDictStatsThreadFunc(void * p_v)
 	  }
   }catch(DictionaryFileAccessException & dictionaryFileAccessException ) {
     g_p_translationcontrollerbase->Message(dictionaryFileAccessException.GetErrorMessageA() );
+    return 1;
   }
+  return 0;
 }
 
 void IVocabularyInMainMem::GetStatisticsInSeparateThread(

@@ -90,7 +90,7 @@ if( DEFINED COMPILE_WITH_OPENMP )
   if (OPENMP_FOUND)
       message("OpenMP found")
       set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+      #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   endif()
   set( CXX_DEFINITIONS
     ${CXX_DEFINITIONS}
@@ -294,6 +294,11 @@ if( ${EXE_TYPE} STREQUAL "Android")
   if( NOT DEFINED MINI_XML_SOURCE )
    message( WARNING "MINI_XML_SOURCE not defined")
   endif(NOT DEFINED MINI_XML_SOURCE)
+  set(SOURCE_FILE_PATHS
+    ${SOURCE_FILE_PATHS}
+    ${VTRANS3_ROOT_PATH}/Controller/DynLib/vtrans_dynlib_VTransDynLibJNI.cpp
+    ${COMMON_SOURCECODE_ROOT_PATH}/Controller/character_string/format_as_string.cpp
+    )
   add_definitions(-D__ANDROID__)
 
   set(EXE_NAME ${PROJECT_NAME} )
@@ -316,7 +321,7 @@ if( ${EXE_TYPE} STREQUAL "Android")
   set(LINKER_FLAGS "${LINKER_FLAGS} -Wl,--as-needed -Wl,--gc-sections -Wl,--no-undefined -Wl,--strip-all -Wl,-rpath-link=${ANDROID_NDK_SYSROOT}/usr/lib/ -L${ANDROID_NDK_SYSROOT}/usr/lib/")
   message( "ANDROID_NDK_SYSROOT: ${ANDROID_NDK_SYSROOT}" )
   message( "DISCORDIA_ANDROID_CMAKE_HOME: ${DISCORDIA_ANDROID_CMAKE_HOME}")
-  include("${DISCORDIA_ANDROID_CMAKE_HOME}/android.apk.cmake" REQUIRED)
+  #include("${DISCORDIA_ANDROID_CMAKE_HOME}/android.apk.cmake" REQUIRED)
 endif( ${EXE_TYPE} STREQUAL "Android")
 
 if ( ${EXE_TYPE} STREQUAL "dynlib" )
@@ -350,19 +355,24 @@ if ( CREATE_DYN_LIB )
       POST_BUILD 
       COMMAND "file" $<TARGET_FILE:${EXE_NAME}> )
   endif(UNIX)
-  if( ${EXE_TYPE} STREQUAL "Android")
-    message("creating apk file--ANDROID_DIR:${ANDROID_DIR}")
+  #if( ${EXE_TYPE} STREQUAL "Android")
+    string(COMPARE EQUAL "${ANDROID_DIR}" "" result)
+    if(result)
+      message("creating apk file--ANDROID_DIR:${ANDROID_DIR}")
     #from https://github.com/Discordia/android-cmake-example/blob/master/CMakeLists.txt
 #    android_create_apk(
-#      ${EXE_NAME} 
-#      "de.it_gebauer.VTrans" 
+#      ${EXE_NAME}
+#      "de.it_gebauer.VTrans"
 #      "${ANDROID_DIR}/apk" #where to create the apk directory
 #      "${ANDROID_DIR}/libs" #dynamic library (*.so) files
 #      "${ANDROID_DIR}" #where the AndroidManifest.xml resides
 #      "${ANDROID_DIR}/assets" #assets like the dictionary
 #      "E:/Android/sdk"
 #      )
-  endif( ${EXE_TYPE} STREQUAL "Android")
+    else()
+      message("not creating apk file because ANDROID_DIR is empty")
+    endif()
+  #endif()
 endif( )
 
 if(DEFINED WXWIDGETS)

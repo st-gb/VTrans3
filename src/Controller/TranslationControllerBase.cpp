@@ -815,7 +815,7 @@ void TranslationControllerBase::Translate(
   timeCountInNanoSecondsParseTreeGen = timeCountInNanoSecondsAfterParseTreeGen -
     timeCountInNanoSecondsBeforeParseTreeGen;
   m_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds = (double) 
-    timeCountInNanoSecondsParseTreeGen / 1000000000.0d;
+    timeCountInNanoSecondsParseTreeGen / 1000000000.0f;
   
   std::string std_strIndentedXML = GetParseTreeAsIndentedXML(
     m_parsebyrise);
@@ -869,7 +869,7 @@ void TranslationControllerBase::Translate(
     timeCountInNanoSecondsAfterTranslRules - timeCountInNanoSecondsBeforeTranslRules;
   timeCountInNanoSecondsApplyTranslRules /= (float) numIterations;
   m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds = (double) 
-    timeCountInNanoSecondsApplyTranslRules / 1000000000.0d;
+    timeCountInNanoSecondsApplyTranslRules / 1000000000.0f;
   
   /** If not clearing and translating different words multiple times or long
     * texts then the main memory may get exhausted. */

@@ -331,11 +331,13 @@ public:
     
     /** else prepend a "ge" */
     //else
+    return "";
   }
-  
+
+  //TODO
   static std::string GetPastParticiple()
   {
-    
+    return "";
   }
   
   //TODO umlauts: e.g. "laufen" -> du "lÄufst" ("a"->"ä")

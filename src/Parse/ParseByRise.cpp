@@ -179,6 +179,7 @@ std::string ParseByRise::GetErrorMessage(
   //,stdstrLeftChild
   )
 {
+  GCC_DIAG_OFF(switch)
   switch(insertGrammarRuleReturnCode)
   {
   case ParseByRise::unknownLeftGrammarPart:
@@ -196,6 +197,7 @@ std::string ParseByRise::GetErrorMessage(
       /*+ L"\*/" child grammar part";
     break;
   }
+  GCC_DIAG_ON(switch)
   return "";
 }
 
@@ -429,6 +431,7 @@ fastestUnsignedDataType ParseByRise::GetNumberOfLargestParseTrees()
         m_dwRightmostIndex + 1;
   }
   while( dwLeftMostTokenIndex );
+  return numberOfLargestParseTrees;
 }
 
 void ParseByRise::GetLargestParseTrees(

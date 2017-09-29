@@ -46,7 +46,7 @@ public:
         //TODO implement
         void clear() { };
         //TODO implement
-        fastestUnsignedDataType GetNumberOfAllocatedBytes() { };
+        fastestUnsignedDataType GetNumberOfAllocatedBytes() { return 0;};
         void AddVocabularyAttributes(EnglishWord::English_word_class, void*) {};
         IVocabularyInMainMem::voc_container_type * Insert(const char*,
           int, EnglishWord::English_word_class, /*void* */

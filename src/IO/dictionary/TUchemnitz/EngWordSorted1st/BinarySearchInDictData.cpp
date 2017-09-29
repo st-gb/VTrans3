@@ -508,8 +508,9 @@ BinarySearchInDictData::~BinarySearchInDictData() {
 //          numTokenForStringToSearch);
       LOGN_DEBUG("return value of comparison: " << PositionStringVector:://GetResultAsString(comp)
           s_comparisonResultString[comp] )
+      GCC_DIAG_OFF(switch)
       switch (comp)
-        {
+      {
       //                  case PositionStringVector::match :
       //                    /*p_vocandtransl*/
       //                    p_voc_container = extractVocable(byteOffsetOfVocable, p_vocandtransl);
@@ -557,7 +558,8 @@ BinarySearchInDictData::~BinarySearchInDictData() {
         if (numTokenForStringToSearch <= numTokenStringFromDictFile)
           breakWhile = true;
         break;
-        }
+      }
+      GCC_DIAG_ON(switch)
       if (hi < lo + 2)
         {
           LOGN_DEBUG("hi <= lo")
@@ -1576,10 +1578,12 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       bool & endSearchForCompareStringInCurrentVocData
       )
     {
+      bool successfullyGotByteOffsetOfFirstVocable = false;
       try
       {
         byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(
           endSearchForCompareStringInCurrentVocData);
+        successfullyGotByteOffsetOfFirstVocable = true;
       }catch( const EndOfFileException & e )
       {
 //        //EOF or read error.
@@ -1589,6 +1593,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
           byteOffsetOfVocable = 0;
         }
       }
+      return successfullyGotByteOffsetOfFirstVocable;
     }
     
     void BinarySearchInDictData::AddAllOffsetsOfMatchingWords(

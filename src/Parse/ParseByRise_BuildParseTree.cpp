@@ -486,6 +486,7 @@ bool ParseByRise::PossiblyDuplicateSubTrees(
   }
   else
     p_grammarpartRightChild->m_bAssignedAsChild = true;
+  return createdNewSubTree;
 }
 
 /*bool*/ GrammarPart * ParseByRise::InsertIntoSuperordinateGrammarPartContainer(
