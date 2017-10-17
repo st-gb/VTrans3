@@ -1,0 +1,10 @@
+
+1st step: change "::" to a single character separator (e.g. \t)
+2nd step: change single " to backslash quote (\") (else error )
+
+https://stackoverflow.com/questions/14947916/import-csv-to-sqlite:
+
+sqlite3 TUchemnitzDeEnDictionary_2016-09-06.db
+create table entries(Ger, Eng);
+.separator "\t"
+.import en-de.txt_2016-09-06_tab_as_separator,escape_quoted.txt entries

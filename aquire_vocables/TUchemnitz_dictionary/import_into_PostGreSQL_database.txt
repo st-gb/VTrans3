@@ -1,0 +1,13 @@
+
+1st step: change "::" to a single character separator (e.g. \t)
+2nd step: change single " to double ("") (else error )
+3rd step: remove 3rd dictionary line because no tab there
+4th step: in line "to advertise; to promote (a product) | advertising; promoting | advertised; promoted | to advertise" :
+  change  'echten to "echten
+          in line: "and; at this point; with ...ing | and I realized that ... | and you have to be careful that ... | At" 
+  change "Yelden to "Yelden"
+
+from https://stackoverflow.com/questions/2987433/how-to-import-csv-file-data-into-a-postgresql-table
+create table entries(German text, English text);
+#replace with your path
+copy entries FROM '/home/sg/SourceCodeManagement/VTrans3/dictionaries/TUchemnitz/en-de.txt_2016-09-06_tab_as_separator.txt' DELIMITER E'\t' CSV
