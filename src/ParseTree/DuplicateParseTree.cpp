@@ -1,13 +1,16 @@
-/*
- * DupliceParseTree.cpp
- *
+/** DupliceParseTree.cpp
  *  Created on: 21.03.2014
- *      Author: mr.sys
- */
+ *      Author: mr.sys   */
 
-#include <Parse/DuplicateParseTree.hpp>
+#include <ParseTree/DuplicateParseTree.hpp>
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
+#include <preprocessor_macros/logging_preprocessor_macros.h>
+#include <hardware/CPU/atomic/atomicIncrement.h>
+
+//#ifdef _DEBUG
+fastestUnsignedDataType ParseTreeTraverser::DuplicateParseTree::s_numInstances = 0;
+//#endif
 
 namespace ParseTreeTraverser
 {
@@ -15,22 +18,26 @@ namespace ParseTreeTraverser
   DuplicateParseTree::DuplicateParseTree(
       const GrammarPart * p_grammarpartStartNode
       //TODO make const?
-      , ParseByRise & r_parsebyrise
+      , VTrans3::BottomUpParser & r_bottomUpParser
   //    , TranslateParseByRiseTree & r_translateparsebyrisetree
       )
     :
       ParseTreeTraverser::KeepTrackOfCurrentParseTreePath(
        p_grammarpartStartNode ,
-       r_parsebyrise
+       r_bottomUpParser
        )
   {
+    atomicIncrement( (long *) & s_numInstances);
     //TODO memory leak acc. to valgrind
+    /** Use (default) copy constructor. */
     m_p_rootOfDuplicatedSubTree = new GrammarPart( * p_grammarpartStartNode);
     m_p_currentParent = m_p_rootOfDuplicatedSubTree;
   }
 
+  //TODO double free or corruption from here in KeepTrackOfCurrentParseTreePath
   DuplicateParseTree::~DuplicateParseTree()
   {
+    LOGN_DEBUG("")
 //    delete m_p_rootOfDuplicatedSubTree;
   }
 

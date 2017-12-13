@@ -10,7 +10,8 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG
 #include <Controller/TranslationControllerBase.hpp>
 
-extern TranslationControllerBase * g_p_translationcontrollerbase;
+//extern TranslationControllerBase * g_p_translationcontrollerbase;
+//extern I_UserInterface * g_p_userInterface;
 
 //IVocabularyInMainMem::s_arstdstrPersonalPronoun = {"hh", "j"} ;
 //
@@ -29,6 +30,7 @@ extern TranslationControllerBase * g_p_translationcontrollerbase;
 IVocabularyInMainMem::IVocabularyInMainMem()
   : m_numberOfVocPairs(0)
   , m_numberOfEnglishWords(0)
+  , m_numberOfFundamentalWords(0)
   , m_maxTokenToConsider(4) //"hand-held vacuum cleaner"
 {
   //m_arstdstrPersonalPronoun = new std::string[NUMBER_OF_PERSONAL_PRONOUNS] ;
@@ -122,6 +124,7 @@ void IVocabularyInMainMem::InsertFundamentalWords()
   Insert("a", EnglishWord::English_indefinite_article) ;
   Insert("an", EnglishWord::English_indefinite_article) ;
 
+  /** Personal pronouns */
   Insert( "I" , EnglishWord::personal_pronoun_I) ;
 //  Insert( "you" , EnglishWord::personal_pronoun_you_sing ) ;
   Insert( "you" , EnglishWord::personal_pronoun_you) ;
@@ -132,6 +135,8 @@ void IVocabularyInMainMem::InsertFundamentalWords()
   Insert( "you" , EnglishWord::personal_pronoun_you_plur) ;
   Insert( "they" , EnglishWord::personal_pronoun_they) ;
 
+  /** Reflexive pronouns 
+   *  see https://en.wikipedia.org/wiki/Reflexive_pronoun#Origins_and_usage */
   Insert( "myself" , EnglishWord::reflexive_pronoun_myself) ;
   Insert( "yourself" , EnglishWord::reflexive_pronoun_yourself) ;
   Insert("himself", EnglishWord::reflexive_pronoun_himself) ;
@@ -194,20 +199,21 @@ void IVocabularyInMainMem::OutputVocs(const voc_container_type * p_voc_container
 DWORD THREAD_FUNCTION_CALLING_CONVENTION CollectDictStatsThreadFunc(void * p_v)
 {
   I_Thread::SetCurrentThreadName("CollectDictStats");
-  try
+  CollectDictStatsThreadFuncParams * p_collectDictStatsThreadFuncParams =
+    (CollectDictStatsThreadFuncParams *) p_v;
+  if( p_collectDictStatsThreadFuncParams)
   {
-	  CollectDictStatsThreadFuncParams * p_collectDictStatsThreadFuncParams =
-		(CollectDictStatsThreadFuncParams *) p_v;
-	  if( p_collectDictStatsThreadFuncParams)
-	  {
-		IVocabularyInMainMem * pVocabularyInMainMem =
-		  p_collectDictStatsThreadFuncParams->pIVocabularyInMainMem;
-		pVocabularyInMainMem->GetStatistics(
-		  p_collectDictStatsThreadFuncParams->englishWordClass2CounterMap);
-	  }
-  }catch(DictionaryFileAccessException & dictionaryFileAccessException ) {
-    g_p_translationcontrollerbase->Message(dictionaryFileAccessException.GetErrorMessageA() );
-    return 1;
+    try
+    {
+      IVocabularyInMainMem * pVocabularyInMainMem =
+        p_collectDictStatsThreadFuncParams->pIVocabularyInMainMem;
+      pVocabularyInMainMem->GetStatistics(
+        p_collectDictStatsThreadFuncParams->englishWordClass2CounterMap);
+    }catch(DictionaryFileAccessException & dictionaryFileAccessException ) {
+      p_collectDictStatsThreadFuncParams->pUserInterface->Message(
+        dictionaryFileAccessException.GetErrorMessageA() );
+      return 1;
+    }
   }
   return 0;
 }

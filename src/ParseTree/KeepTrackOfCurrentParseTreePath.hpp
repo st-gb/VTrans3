@@ -9,7 +9,7 @@
 #define KEEPTRACKOFCURRENTPARSETREEPATH_HPP_
 
 #include <vector> //class std::vector
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/GrammarPart.hpp> //class GrammarPart
 
 namespace ParseTreeTraverser
@@ -25,7 +25,7 @@ namespace ParseTreeTraverser
   public:
     KeepTrackOfCurrentParseTreePath(
       const GrammarPart * p_grammarpartStartNode
-      , ParseByRise & r_parsebyrise
+      , VTrans3::BottomUpParser &
 //      , TranslateParseByRiseTree & r_translateparsebyrisetree
       );
     virtual
@@ -52,6 +52,8 @@ namespace ParseTreeTraverser
       m_vec_wGrammarPartIDcurrentParsePath.push_back(
         m_grammarpartpointer_and_parselevelCurrent.
           m_p_grammarpart->m_wGrammarPartID ) ;
+//      LOGN_DEBUG("adding GrammarPart " << (void *) 
+//        m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart )
       m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
         m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
     }

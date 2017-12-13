@@ -43,7 +43,7 @@ private:
 public:
     SAX2TranslationRuleHandler(
       TranslateParseByRiseTree & ,
-      ParseByRise & ,
+      BottomUpParser &,
       I_UserInterface & r_userinterface
       , ConfigurationHandler_type & configurationReader);
     virtual ~SAX2TranslationRuleHandler();

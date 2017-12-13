@@ -13,7 +13,7 @@
  *      Author: Stefan
  */
 
-#include <Parse/DirectingLeavesInSingleIterationTraverser.hpp>
+#include <ParseTree/DirectingLeavesInSingleIterationTraverser.hpp>
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
@@ -34,7 +34,7 @@ namespace ParseTreeTraverser
     };
   DirectingLeavesInSingleIterationTraverser::DirectingLeavesInSingleIterationTraverser(
     const GrammarPart * p_grammarpartStartNode
-    , ParseByRise * p_parsebyrise
+    , const VTrans3::BottomUpParser * p_bottomUpParser
     )
     :
     m_bTraverseTree( true ) ,
@@ -43,7 +43,7 @@ namespace ParseTreeTraverser
     , mp_grammarpartStartNode ( p_grammarpartStartNode )
     , m_wParseLevel( 0)
   {
-    mp_parsebyrise = p_parsebyrise ;
+    mp_parsebyrise = p_bottomUpParser ;
   }
 
   DirectingLeavesInSingleIterationTraverser::~DirectingLeavesInSingleIterationTraverser()

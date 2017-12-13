@@ -1,27 +1,21 @@
-/*
- * TranslationControllerBase.hpp
- *
+/** TranslationControllerBase.hpp
  *  Created on: Dec 6, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan  */
 
 #ifndef TRANSLATIONCONTROLLERBASE_HPP_
 #define TRANSLATIONCONTROLLERBASE_HPP_
 
 #include <Attributes/TranslationResult.hpp> //class TranslationResult
 #include <Controller/dictionary_type.hpp> //typedef dictionary_type
-#include <Controller/DictReaderAndVocAccess/dictReaderAndVocAccess_type.hpp>
+#include <Controller/TranslationProcess.hpp> //
 #include "TranslateControllerBaseReturnCodes.h" //enum Init_return_codes
-#include <data_structures/Trie/NodeTrie/NodeTrie.hpp> //class NodeTrie
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Translate/TransformationRule.hpp> //class TransformationRule
-#include <OperatingSystem/multithread/nativeCriticalSectionType.hpp>
 #ifdef PARALLELIZE_TRANSLATION
 #include <multi_threaded_translation/nativeThreads.hpp>
 #endif //#ifdef PARALLELIZE_TRANSLATION
 //#include <boost/threadpool.hpp> //boost::threadpool
-#include <OperatingSystem/time/GetCurrentTime.hpp>
 #ifndef TEST_MINI_XML
 //class TranslateParseByRiseTree
 #include <Translate/TranslateParseByRiseTree.hpp>
@@ -30,10 +24,9 @@
 //#include <VocabularyInMainMem/LetterTree/LetterTree.hpp>//class LetterTree
 //#include <xercesc/util/XercesVersion.hpp> //XERCES_CPP_NAMESPACE
 #include "ConfigurationHandler_type.hpp"
+#include "TranslationProcess.hpp"
 #include <hardware/CPU/fastest_data_type.h>//fastestUnsignedDataType
 
-#include <map> //class std::map
-#include <stdint.h> //for uint32_t
 #include <string> //class std::string
 #include <vector> //class std::vector
 
@@ -51,78 +44,6 @@ namespace XERCES_CPP_NAMESPACE
   class DefaultHandler ;
 }
 
-class GUIattributes
-{
-public:
-  bool m_bShowGrammarPartAddress ;
-  bool m_doubleBufferParseTreePanel;
-  bool m_bShowTranslation ;
-  bool m_translateOnTextChanges;
-  fastestUnsignedDataType m_concatenationIDcolour;
-  fastestUnsignedDataType m_fontSizeInPoint;
-  fastestUnsignedDataType m_minFontSizeInPoint;
-  std::string m_std_strGrammarPartIDcolor;
-  std::string m_std_strConcatenationIDcolor;
-  std::string m_std_strGrammarPartMemoryAddressColor;
-  
-  GUIattributes()
-    : m_bShowGrammarPartAddress( true /*false*/ )
-      , m_doubleBufferParseTreePanel(false)
-      , m_bShowTranslation(false)
-      , m_translateOnTextChanges(false)
-      , m_std_strGrammarPartIDcolor("#FF0000")
-      , m_std_strConcatenationIDcolor("#0000FF")
-      , m_std_strGrammarPartMemoryAddressColor("#FF0000")
-      , m_fontSizeInPoint(8)
-      , m_minFontSizeInPoint(5)
-      , m_concatenationIDcolour(255)
-  {}
-  
-  void SetConcatenationIDcolour(DWORD dw)
-  {
-    m_concatenationIDcolour = dw;
-  }
-  
-  void SetPointSizeOfParseTreePanel(const fastestUnsignedDataType fontSizeInPoint) {
-    m_fontSizeInPoint = fontSizeInPoint;
-  }
-  void SetMinFontSizeInPointOfParseTreePanel(
-    const fastestUnsignedDataType fontSizeInPoint) {
-    m_minFontSizeInPoint = fontSizeInPoint;
-  }
-};
-
-namespace VTrans
-{
-  enum StatusCode {not_set, lookUpWordInDictBeginningFromTokenIndex,
-	translationRules, transformParseTree, generateXMLtreeFromParseTree
-    };
-  const char * const g_statusMessages [] = { "not set", 
-    "lookUpWordInDictBeginningFromTokenIndex", "translationRules", 
-    "transformParseTree", "generateXMLtreeFromParseTree"};
-  class CurrentStatus
-  {
-    private:
-    StatusCode m_code;
-    std::string m_item;
-    struct tm m_time;
-    public:
-    CurrentStatus() : m_code(not_set)
-    {
-
-    }
-    StatusCode GetCode() { return m_code; }
-    void GetItem(std::string & str ) { str = m_item; }
-    void GetTime(struct tm & time ) { time = m_time; }
-    void Set(StatusCode code, const char * const pch)
-    {
-      m_item = std::string(pch);
-      m_code = code;
-      OperatingSystem::GetCurrentTime(m_time);
-    }
-  };
-}
-
 struct ValuesAndFunction
 {
   char * values;
@@ -137,7 +58,7 @@ struct NumThreadsAndTimeDuration
 
 enum {buildParseTrees = 0, transform, applyTranslRules, beyondLastValue};
 
-std::string GetParseTreeAsIndentedXML(const ParseByRise & parsebyrise);
+std::string GetParseTreeAsIndentedXML(const BottomUpParser & parsebyrise);
 
 #define EVALUATE_PROCESSING
 
@@ -152,8 +73,8 @@ void SetNumIterationsFor3rdTranslationStep(const char * const value);
 class TranslationControllerBase
   : public I_UserInterface
 {
-  nativeCriticalSection_type m_critSecStatus;
-  VTrans::CurrentStatus m_currentStatus;
+//  VTrans::CurrentStatus m_currentStatus;
+//  TranslationProcess m_translationProcess;
 protected:
   enum ProgramArgumentIndices { MainConfigFilePathProgArgIndex = 1,
     CurrWorkDirProgArgIndex};
@@ -179,13 +100,6 @@ public:
 //  boost::threadpool::pool m_boost_threadpool;
 #endif
   
-  std::string m_std_strCurrentConfigfile;
-  volatile bool m_vbContinue;
-#ifndef TEST_MINI_XML
-  std::map<TranslationRule *, std::string>
-    m_std_map_p_translationrule2filepath;
-  std::map<std::string, std::string> m_std_map_grammarRuleName2filepath;
-#endif //#ifndef TEST_MINI_XML
 //  dictReaderAndVocAccess_type m_dictReaderAndVocAccess;
   std::string m_std_strOriginalCurrWorkDir;
   ConfigurationHandler_type m_configurationHandler;
@@ -195,11 +109,7 @@ public:
   static settingsName2ValueAndFunction_type s_settingsName2valueAndFunction;
   static fastestUnsignedDataType s_numParallelTranslationThreads;
 #ifndef TEST_MINI_XML
-  /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
-#endif //TEST_MINI_XML
-  NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
-#ifndef TEST_MINI_XML
-  ParseByRise m_parsebyrise ;
+  VTrans3::BottomUpParser m_parsebyrise ;
 #endif
   std::string m_stdstrVocabularyFilePath ;
 //  std::map<std::string,TransformationRule>
@@ -210,7 +120,6 @@ public:
   TranslateParseByRiseTree m_translateparsebyrisetree ;
 #endif //#ifndef TEST_MINI_XML
   std::string m_std_strMainConfigFilePath;
-  GUIattributes m_GUIattributes;
   bool m_dictionarySuccessfullyLoaded;
 
   TranslationControllerBase();
@@ -241,14 +150,6 @@ public:
   {
 
   }
-  /** (Sub class) implementation may set title of a window to the status passed. */
-  virtual void SetStatus(enum VTrans::StatusCode, /*const std::string & str*/
-    const char * const);
-  enum VTrans::StatusCode GetStatus( /*const std::string & str*/
-    std::string &, struct tm &);
-  unsigned GetStatus2( /*const std::string & str*/
-    const std::string & str, struct tm & time, ByteArray & byteArray
-    /*void * pData*/);
 
   void SetNumberOfParallelTranslationThreads(fastestUnsignedDataType);
   virtual void ShowInvalidVocabularyFileFormatMessage(

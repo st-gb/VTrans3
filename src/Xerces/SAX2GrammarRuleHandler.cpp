@@ -48,9 +48,9 @@
 	SAX2GrammarRuleHandler::SAX2GrammarRuleHandler(
 //	  Model & model ,
 //	  UserInterface * p_userinterface //,
-	  ParseByRise & r_parsebyrise
+	  BottomUpParser & r_bottomUpParser
 	  )
-    : mr_parsebyrise( r_parsebyrise )
+    : mr_parsebyrise( r_bottomUpParser )
 	{
 //	  m_p_model = & model ;
 //	  m_p_userinterface = p_userinterface ;
@@ -62,7 +62,7 @@
     const std::string & stdstrSuperordinate
     )
   {
-    enum ParseByRise::InsertGrammarRuleReturnCodes insertGrammarRuleReturnCode
+    enum BottomUpParser::InsertGrammarRuleReturnCodes insertGrammarRuleReturnCode
       = mr_parsebyrise.InsertGrammarRule(
       stdstrLeftChild.c_str() //const char * cp_chLeftGrammarRuleName
       , stdstrRightChild.c_str() //const char * cp_chRightGrammarRuleName
@@ -70,7 +70,7 @@
       stdstrSuperordinate.c_str() //const char * cp_chSuperordinateGrammarRuleName
       ) ;
     std::wstring std_wstrMessage;
-    if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
+    if( insertGrammarRuleReturnCode != BottomUpParser::AllGrammarPartsAreKnown )
     {
       std_wstrMessage = L"In document \n\"" +
         Xerces::ConvertXercesStringToStdWstring(m_pc_locator->
@@ -164,13 +164,13 @@
           }
           else
           {
-            enum ParseByRise::InsertGrammarRuleReturnCodes
+            enum BottomUpParser::InsertGrammarRuleReturnCodes
               insertGrammarRuleReturnCode = mr_parsebyrise.
               InsertSuperClassGrammarRule(
                 stdstrLeftChild.c_str() , //cp_chSubclassGrammarRuleName
                 stdstrSuperordinate.c_str() //cp_chSuperclassGrammarRuleName
               ) ;
-            if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
+            if( insertGrammarRuleReturnCode != BottomUpParser::AllGrammarPartsAreKnown )
             {
               std::wstring std_wstrMessage = L"In document \n\"" +
                 Xerces::ConvertXercesStringToStdWstring(m_pc_locator->

@@ -8,14 +8,14 @@
 #include <Attributes/EnglishWord.hpp> //class EnglishWord's enum
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <Translate/TranslationRule.hpp> //class TranslationRule
-#include "DuplicateParseTree.hpp" //class ParseTreeTraverser::DuplicateParseTree
+#include <ParseTree/DuplicateParseTree.hpp> //class ParseTreeTraverser::DuplicateParseTree
 
 #ifndef MAXWORD
   #define MAXWORD 65535
 #endif
 
 /** Static variable definitons. */
-ParseByRise * GrammarPart::s_p_parseByRise;
+VTrans3::BottomUpParser * GrammarPart::s_p_parseByRise;
 
   void GrammarPart::SetLeftChild(GrammarPart & r_grammarpart)
   {
@@ -49,6 +49,7 @@ ParseByRise * GrammarPart::s_p_parseByRise;
 
 GrammarPart::GrammarPart(DWORD dwTokenIndexLeftMost, DWORD dwTokenIndexRightMost )
 {
+  LOGN_DEBUG("GrammarPart pointer:" << (void *) this )
   Init() ;
   m_dwLeftmostIndex = dwTokenIndexLeftMost ;
   m_dwRightmostIndex = dwTokenIndexRightMost ;
@@ -59,16 +60,54 @@ GrammarPart::GrammarPart(
   DWORD dwTokenIndexRightMost ,
   WORD wGrammarPartID )
 {
+  LOGN_DEBUG("GrammarPart pointer:" << (void *) this )
   Init() ;
   m_dwLeftmostIndex = dwTokenIndexLeftMost ;
   m_dwRightmostIndex = dwTokenIndexRightMost ;
   m_wGrammarPartID = wGrammarPartID ;
 }
 
-GrammarPart * GrammarPart::DuplicateSubTree(const ParseByRise & pbr) const
+GrammarPart::~GrammarPart()
+{
+  LOGN_DEBUG("GrammarPart pointer:" << (void *) this )
+}
+
+std::map<unsigned, unsigned> GrammarPart::pointer2numaAllocsMinusNumDeletes;
+  
+  void * GrammarPart::operator new(size_t size)
+  {
+    //https://stackoverflow.com/questions/14819760/override-delete-operator
+    void * addressOfAllocatedMemory = new char[size];
+    std::map<unsigned, unsigned>::const_iterator c_iter = 
+      pointer2numaAllocsMinusNumDeletes.find((unsigned) addressOfAllocatedMemory);
+    if( c_iter == pointer2numaAllocsMinusNumDeletes.end() ) 
+      pointer2numaAllocsMinusNumDeletes.insert( 
+        std::make_pair( (unsigned) addressOfAllocatedMemory, 1));
+  #ifdef _DEBUG
+    else
+      pointer2numaAllocsMinusNumDeletes[(unsigned) addressOfAllocatedMemory] = 1;
+  #endif
+    return addressOfAllocatedMemory;
+  }
+  void GrammarPart::operator delete(void * p)
+  {
+    pointer2numaAllocsMinusNumDeletes[(unsigned) p] --;
+  #ifdef _DEBUG
+    const fastestUnsignedDataType numDeletes = 
+      pointer2numaAllocsMinusNumDeletes[(unsigned) p];
+    if( numDeletes < 0 )
+    {
+      std::cerr << "error: more deletes than allocations" << std::endl;
+    }    
+  #endif
+    return delete[] static_cast<char*>(p);
+  }
+
+GrammarPart * GrammarPart::DuplicateSubTree(
+  const VTrans3::BottomUpParser & bottomUpParser) const
 {
   ParseTreeTraverser::DuplicateParseTree parseTreeDuplicater(
-      (const GrammarPart *) this, (ParseByRise &) pbr);
+      (const GrammarPart *) this, (BottomUpParser &) bottomUpParser);
   parseTreeDuplicater./*Traverse()*/ProcessLeavesOfParseTree();
   return parseTreeDuplicater.m_p_rootOfDuplicatedSubTree;
 }
@@ -78,13 +117,14 @@ std::string GrammarPart::GetName() const
   return s_p_parseByRise->GetGrammarPartName(m_wGrammarPartID);
 }
 
-GrammarPart * GrammarPart::PossiblyDuplicateSubTree(const ParseByRise & pbr)
+GrammarPart * GrammarPart::PossiblyDuplicateSubTree(
+  const VTrans3::BottomUpParser & bottomUpParser)
 {
   if( m_bAssignedAsChild )
   {
 //  p_grammarpartLeftChild = p_grammarpartLeftChild->DuplicateSubtree();
 //    p_grammarpartParent->SetLeftChild(p_grammarpartLeftChild);
-    return DuplicateSubTree(pbr);
+    return DuplicateSubTree(bottomUpParser);
   }
   else
     m_bAssignedAsChild = true;

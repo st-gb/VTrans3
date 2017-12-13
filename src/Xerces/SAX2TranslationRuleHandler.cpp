@@ -35,13 +35,13 @@ extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 SAX2TranslationRuleHandler::SAX2TranslationRuleHandler(
   TranslateParseByRiseTree & r_translateparsebyrise ,
-  ParseByRise & r_parsebyrise
+  BottomUpParser & r_bottomUpParser
   , I_UserInterface & r_userinterface
   , ConfigurationHandler_type & configurationReader
   )
   : VTrans3::TranslationRuleFileReaderBase(
     r_translateparsebyrise
-    , r_parsebyrise
+    , r_bottomUpParser
     , r_userinterface
     , configurationReader,
     g_p_translationcontrollerbase )

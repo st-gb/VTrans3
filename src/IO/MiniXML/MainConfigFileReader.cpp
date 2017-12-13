@@ -14,14 +14,17 @@
 namespace VTrans3 {
 namespace MiniXML
 {
-  TranslationControllerBase * MainConfigFileReader::s_p_translationController;
+//  TranslationControllerBase * MainConfigFileReader::s_p_translationController;
+  I_UserInterface * MainConfigFileReader::s_p_UserInterface;
 
   MainConfigFileReader::MainConfigFileReader(
-      TranslationControllerBase & r_translationController,
+//    TranslationControllerBase & r_translationController,
+    I_UserInterface * p_UserInterface,
     ConfigurationHandler_type & configurationReader)
     : MainConfigFileReaderBase(configurationReader)
   {
-    s_p_translationController = & r_translationController;
+//    s_p_translationController = & r_translationController;
+    s_p_UserInterface = p_UserInterface;
   }
 
   MainConfigFileReader::~MainConfigFileReader()
@@ -101,8 +104,8 @@ namespace MiniXML
     FILE * fp = fopen(cr_stdstrFilePath.c_str(), "r");
     if( fp != NULL)
     {
-      mxml_node_t rootXMLnode;
-      void * sax_data;
+//      mxml_node_t rootXMLnode;
+//      void * sax_data;
       mxml_node_t * mxml_node_tLoadFileRes = ::mxmlSAXLoadFile(
         //see http://www.msweet.org/documentation/project3/Mini-XML.pdf
         NULL, //& rootXMLnode,

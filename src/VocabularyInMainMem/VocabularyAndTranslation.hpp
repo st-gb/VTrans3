@@ -32,11 +32,12 @@
   #define NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB 16
 
 
-/** forward decl. */
+/** Forward declarations */
 class LetterNode ;
 class I_UserInterface;
-class TranslationControllerBase;
-
+namespace VTrans3 {
+  class BottomUpParser;
+}
 //class Word ;
 #include <Attributes/Word.hpp>
 
@@ -81,7 +82,7 @@ class TranslationControllerBase;
       data_type m_byArraySizeForGermanWord;
       data_type m_byArraySizeForByteArray;
     };
-    static TranslationControllerBase * s_p_translationControllerBase;
+    static VTrans3::BottomUpParser * s_p_bottomUpParser;
     static const ArraySizes s_arraysizes [];
 
     static I_UserInterface * s_p_userinterface;
@@ -312,7 +313,19 @@ class TranslationControllerBase;
     {
       /** This method may be called multiple times with the same index. */
       if( m_arstrGermanWord[vocAndTranslArrayIndex] != NULL)
-        delete [] m_arstrGermanWord[vocAndTranslArrayIndex];
+      {
+        fastestUnsignedDataType numEngWords;
+        fastestUnsignedDataType numGerWords;
+        VocabularyAndTranslation::GetNumberOfArrayElements(
+          m_englishWordClass,
+          numEngWords,
+          numGerWords
+          );
+        if(vocAndTranslArrayIndex < numGerWords)
+          //TODO SIGSEGV for "diese Farben sind waschecht" for 
+          //  EnglishWord::plural_noun, vocAndTranslArrayIndex==2
+          delete [] m_arstrGermanWord[vocAndTranslArrayIndex];
+        }
       m_arstrGermanWord[vocAndTranslArrayIndex] = new
         word_type_for_new_allocator [stringLen
          // string terminating 0 char.

@@ -1,9 +1,6 @@
-/*
- * SAX2TransformationRuleHandler.hpp
- *
+/** SAX2TransformationRuleHandler.hpp
  *  Created on: Dec 21, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan  */
 
 #ifndef SAX2TRANSFORMATIONRULEHANDLER_HPP_
 #define SAX2TRANSFORMATIONRULEHANDLER_HPP_
@@ -12,7 +9,7 @@
 //Base class XERCES_CPP_NAMESPACE::DefaultHandler
 #include <xercesc/sax2/DefaultHandler.hpp>
 
-class ParseByRise ;
+/** Forward declarations */
 class TransformationRule;
 class TranslationControllerBase ;
 

@@ -51,11 +51,15 @@ MainConfigFileReaderBase::MainConfigFileReaderBase (
         ConvertStdStringToTypename(dwValue, std_strColour );
         try
         {
-          m_r_configurationReader.m_translationController.m_nodetrie_ui32GrammarPartName2colour.
-          insert_inline(
-          (BYTE *) strGrammarPartName,
-          ::strlen(strGrammarPartName ),
-          dwValue
+          m_r_configurationReader.m_ui32GrammarPartName2colourContainer.
+//          insert_inline(
+//          (BYTE *) strGrammarPartName,
+//          ::strlen(strGrammarPartName ),
+//          dwValue
+//          );
+          insert( std::make_pair(
+            std_strGrammarPartName,
+            dwValue)
           );
       }catch( const NS_NodeTrie::RootNodeNotInitalizedException & e)
       {
@@ -75,11 +79,12 @@ MainConfigFileReaderBase::MainConfigFileReaderBase (
     {
       LOGN_DEBUG("grammar rule file path:" << std_strGrammarRuleFilePath)
 //            strVocabularyFilePath
-      m_r_configurationReader.m_translationController.ReadGrammarRuleFile(
+      m_r_configurationReader.ReadGrammarRuleFile(
         std_strGrammarRuleFilePath);
     }
   }
 
+#if USE_TRANSLATION_RULES
   void MainConfigFileReaderBase::HandleReadTranslationRuleFileXMLelement(
     attributeType & xmlElement )
   {
@@ -90,7 +95,9 @@ MainConfigFileReaderBase::MainConfigFileReaderBase (
     {
       LOGN_DEBUG("translation rule file path:" << std_strTranslationRuleFilePath)
 //            strVocabularyFilePath
-      m_r_configurationReader.m_translationController.ReadTranslationRuleFile(
+//      m_r_configurationReader.m_translationController.ReadTranslationRuleFile(
+//        std_strTranslationRuleFilePath);
+      m_r_configurationReader.ReadTranslationRuleFile(
         std_strTranslationRuleFilePath);
     }
   }
@@ -106,10 +113,11 @@ MainConfigFileReaderBase::MainConfigFileReaderBase (
       LOGN_DEBUG("vocabulary_attribute_definition file path:"
         << std_strVocabularyAttributeDefinitionFilePath)
 //            strVocabularyFilePath
-      m_r_configurationReader.m_translationController.ReadVocAttributeDefinitionFile(
+      m_r_configurationReader.ReadVocAttributeDefinitionFile(
         std_strVocabularyAttributeDefinitionFilePath);
     }
   }
+#endif 
 #endif //#ifndef TEST_MINI_XML
 
 fastestUnsignedDataType GetFontSizeInPoint(
@@ -164,13 +172,13 @@ void MainConfigFileReaderBase::openingXMLelement(
         std::string std_strFontSizeXMLattributeValue;
         
         std::string & strConcatenationIDcolor =
-          m_r_configurationReader.m_translationController.m_GUIattributes.
+          m_r_configurationReader.m_GUIattributes.
           m_std_strConcatenationIDcolor;
         m_r_configurationReader.GetAttributeValue(xmlElement, 
           strConcatenationIDcolor, "concatenation_id_color");
         unsigned dwValue;
         if( ConvertStdStringToTypename(dwValue, strConcatenationIDcolor ) )
-          m_r_configurationReader.m_translationController.m_GUIattributes.
+          m_r_configurationReader.m_GUIattributes.
             SetConcatenationIDcolour(dwValue);
 
         m_r_configurationReader.GetAttributeValue(xmlElement, 
@@ -178,14 +186,14 @@ void MainConfigFileReaderBase::openingXMLelement(
         fastestUnsignedDataType fontSizeInPoint = GetFontSizeInPoint(
           std_strFontSizeXMLattributeValue);
         if( fontSizeInPoint)
-          m_r_configurationReader.m_translationController.m_GUIattributes.
+          m_r_configurationReader.m_GUIattributes.
             SetPointSizeOfParseTreePanel(fontSizeInPoint);
         
         m_r_configurationReader.GetAttributeValue(xmlElement, 
           std_strFontSizeXMLattributeValue, "minimum_font_size");
         fontSizeInPoint = GetFontSizeInPoint(std_strFontSizeXMLattributeValue);
         if( fontSizeInPoint)
-          m_r_configurationReader.m_translationController.m_GUIattributes.
+          m_r_configurationReader.m_GUIattributes.
             SetMinFontSizeInPointOfParseTreePanel(fontSizeInPoint);
       }
         //TODO implement in base class of "MainConfigFileReader" or
@@ -203,6 +211,7 @@ void MainConfigFileReaderBase::openingXMLelement(
 //         {
 //           HandleReadTransformationRuleFileXMLelement( cr_xercesc_attributes ) ;
 //         }
+#if USE_TRANSLATION_RULES
       else if( ::strcmp(xmlElementName, "translation_rule_file") == 
               C_standard_library::strcmp::stringsAreEqual )
       {
@@ -214,6 +223,7 @@ void MainConfigFileReaderBase::openingXMLelement(
       {
         HandleReadVocabularyAttributeDefinitionFileXMLelement(xmlElement ) ;
       }
+#endif
      else if( ::strcmp(xmlElementName, "vocabulary_file") == 
              C_standard_library::strcmp::stringsAreEqual )
      {
@@ -226,7 +236,7 @@ void MainConfigFileReaderBase::openingXMLelement(
        {
          //LOGN_DEBUG("Dict file path:" << strVocabularyFilePath)
 //            strVocabularyFilePath
-         m_r_configurationReader.m_translationController.
+         m_r_configurationReader.
            /*m_configurationHandler.*/m_stdstrVocabularyFilePath =
            std_strVocabularyFilePath;
        }

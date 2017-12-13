@@ -24,7 +24,8 @@
 #define SET_FREED_MEM_TO_NULL
 
 /** static variable definitions */
-TranslationControllerBase * VocabularyAndTranslation::s_p_translationControllerBase;
+VTrans3::BottomUpParser * VocabularyAndTranslation::s_p_bottomUpParser;
+I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 
   const VocabularyAndTranslation::ArraySizes VocabularyAndTranslation::
     s_arraysizes [] = {
@@ -374,6 +375,7 @@ VocabularyAndTranslation::VocabularyAndTranslation(/*BYTE*/
     numGerWords);
   if( numEngWords)
   {
+    //TODO memory leak here according to valgrind
     m_arstrEnglishWord = new word_type[numEngWords];
     memset(m_arstrEnglishWord, 0, sizeof(word_type) * numEngWords);
   }
@@ -381,6 +383,7 @@ VocabularyAndTranslation::VocabularyAndTranslation(/*BYTE*/
     m_arstrEnglishWord = NULL;
   if( numGerWords)
   {
+    //TODO memory leak here according to valgrind
     m_arstrGermanWord = new word_type[numGerWords];
     memset(m_arstrGermanWord, 0, sizeof(word_type) * numGerWords);
   }
@@ -454,8 +457,7 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfBytes()
   return numBytesForPointers;
 }
 
-/** For switch with m_englishWordClass  */
-//GCC_DIAG_OFF(-Wno-switch)
+/** free memory allocated in VocabularyAndTranslation constructor. */
 void VocabularyAndTranslation::FreeMemory()
 {
   ArraySizes arraySizes;
@@ -464,7 +466,7 @@ void VocabularyAndTranslation::FreeMemory()
     arraySizes.m_byArraySizeForEnglishWord,
     arraySizes.m_byArraySizeForGermanWord);
   GCC_DIAG_OFF(switch)
-  switch( m_englishWordClass )
+//  switch( m_englishWordClass )
   {
   //  // singular type is only needed for parsing. It shares the same attr as
   //  // the noun. Because for the noun the storage is freed it should NOT be done again
@@ -477,6 +479,7 @@ void VocabularyAndTranslation::FreeMemory()
   //  case EnglishWord::adjective_positiveForm:
   //    break ;
   //  default:
+    
   case EnglishWord::singular :
   case EnglishWord::main_verb_allows_0object_infinitive:
   case EnglishWord::main_verb_allows_1object_infinitive:
@@ -492,7 +495,7 @@ void VocabularyAndTranslation::FreeMemory()
     {
 #ifdef _DEBUG
       const std::map<WORD, std::string> & r_stdmap_wRuleID2RuleName =
-        s_p_translationControllerBase->m_parsebyrise.m_stdmap_wRuleID2RuleName;
+        s_p_bottomUpParser->m_stdmap_wRuleID2RuleName;
       std::map<WORD, std::string>::const_iterator c_iterRuleID2RuleName =
         /*::wxGetApp()*/ r_stdmap_wRuleID2RuleName.find(m_englishWordClass);
       std::string std_strWordClassName = "";
@@ -545,6 +548,7 @@ void VocabularyAndTranslation::FreeMemory()
           delete [] germanWord;
         }
       }
+      //TODO runtime error: corrupted heap structure here
       delete [] m_arstrGermanWord ;
   #ifdef SET_FREED_MEM_TO_NULL
       m_arstrGermanWord = NULL ;
@@ -679,7 +683,7 @@ void VocabularyAndTranslation::GetAttributeValue(BYTE byIndex)
 //}
 
 VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
-    const fastestUnsignedDataType germanWordIndex) const
+  const fastestUnsignedDataType germanWordIndex) const
 {
 //                  DEBUG_COUTN
   DEBUGN("language for choosing attribute value is "
@@ -688,6 +692,8 @@ VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
     )
   if( m_englishWordClass <= EnglishWord::adverb)
   {
+    //TODO crashed here for parallel translation: m_englishWordClass was out of
+    //range : "3009438744"
     if( germanWordIndex < s_arraysizes[ m_englishWordClass].m_byArraySizeForGermanWord
 //      m_arstrGermanWord
       )
@@ -705,7 +711,7 @@ VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
   {
     word_type & r_stdstrAttrVal = m_arstrGermanWord[germanWordIndex ] ;
     if( r_stdstrAttrVal == NULL )
-      return "";
+      return (word_type) "";
     return r_stdstrAttrVal ;
   }
   /** the dictionary reader knows which attributes were inserted into the
@@ -713,7 +719,7 @@ VocabularyAndTranslation::word_type VocabularyAndTranslation::GetGermanString(
    *   -> let it deliver the string. */
 //  s_p_translationControllerBase->m_p_dictionaryReader->GetGermanString(
 //    germanWordIndex, this);
-  return "";
+  return (word_type) "";
 }
 
 std::ostream & operator << (std::ostream & std_ostream, 

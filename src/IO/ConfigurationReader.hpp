@@ -1,17 +1,24 @@
-/*
- * ConfigurationReader.hpp
- *
+/** ConfigurationReader.hpp
  *  Created on: 09.12.2013
- *      Author: mr.sys
- */
+ *      Author: mr.sys  */
 
 #ifndef CONFIGURATIONREADER_HPP_
 #define CONFIGURATIONREADER_HPP_
 
 #include <string> //class std::string
 #include <sstream> //std::istringstream
+#include <map> //class std::map
+#include <Attributes/GUIattributes.hpp> //class GUIattributes
+#include <data_structures/Trie/NodeTrie/NodeTrie.hpp> //class NodeTrie
+#include <stdint.h> //for uint32_t
 
-class TranslationControllerBase;
+/** Forward declarations: */
+//class TranslationControllerBase;
+class I_UserInterface;
+namespace VTrans3 {
+  class BottomUpParser;
+}
+class TranslationRule;
 
 namespace VTrans3
 {
@@ -23,11 +30,35 @@ namespace VTrans3
   {
   protected:
   public:
-    TranslationControllerBase & m_translationController;
-    std::string m_stdstrVocabularyFilePath ;
-    ConfigurationReader(TranslationControllerBase *);
+//    TranslationControllerBase & m_translationController;
+    static I_UserInterface * m_p_UserInterface;
+    GUIattributes m_GUIattributes;
+    typedef NodeTrie<uint32_t> grammarPartName2ColourContainer_type;
+//    NodeTrie<uint32_t> m_nodetrie_ui32GrammarPartName2colour;
+    std::map<std::string, uint32_t> m_ui32GrammarPartName2colourContainer;    
+    std::string m_stdstrVocabularyFilePath;
+    /** The current configuration file (grammer rule, translation rule, ...) 
+      * currently being processed. */
+    static std::string m_std_strCurrentConfigfile;
+    BottomUpParser & m_parseByRise;
+  #ifndef TEST_MINI_XML
+    static std::map<TranslationRule *, std::string>
+      m_std_map_p_translationrule2filepath;
+    static std::map<std::string, std::string> m_std_map_grammarRuleName2filepath;
+  #endif //#ifndef TEST_MINI_XML
+
+    ConfigurationReader(/* TranslationControllerBase * */ I_UserInterface *, 
+      BottomUpParser & parseByRise );
     virtual
     ~ConfigurationReader();
+
+    virtual void ReadGrammarRuleFile(const std::string & cr_stdstrFilePath) = 0;
+    virtual bool ReadMainConfigFile(const std::string & cr_stdstrFilePath) = 0;
+#if USE_TRANSLATION_RULES
+    virtual void ReadVocAttributeDefinitionFile(
+      const std::string & cr_stdstrFilePath) = 0;
+    virtual void ReadTranslationRuleFile(const std::string & cr_stdstrFilePath) = 0;
+#endif
 
     /** virtual template methods are impossible */
     /*template <typename XMLelementType>*/ virtual bool GetAttributeValue(
@@ -116,10 +147,16 @@ namespace VTrans3
   };
 
   template <typename attributeType>
-    ConfigurationReader<attributeType>::ConfigurationReader(TranslationControllerBase * p)
-    : m_translationController (* p)
+    ConfigurationReader<attributeType>::ConfigurationReader(
+      /*TranslationControllerBase * p_translationController*/
+      I_UserInterface * p_userInterface, BottomUpParser & parseByRise )
+    : /*m_translationController( * p_translationController )*/
+      //m_p_UserInterface(p_userInterface)
+    m_parseByRise(parseByRise)
+//  , m_ui32GrammarPartName2colourContainer(256, -1)
   {
 //    s_p_translationController = & r_translationController;
+    m_p_UserInterface = p_userInterface;
   }
 
   template <typename attributeType> ConfigurationReader<attributeType>::
@@ -128,5 +165,9 @@ namespace VTrans3
     // TODO Auto-generated destructor stub
   }
 } /* namespace VTrans3 */
+
+/** https://stackoverflow.com/questions/7108914/what-should-happen-to-template-class-static-member-variables-with-definition-in */
+template<typename attributeType> std::map<std::string, std::string> 
+  VTrans3::ConfigurationReader<attributeType>::m_std_map_grammarRuleName2filepath;
 
 #endif /* CONFIGURATIONREADER_HPP_ */

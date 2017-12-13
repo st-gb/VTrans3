@@ -36,7 +36,7 @@
 //Forward declarations (faster than #include)
 class GrammarPartLocationWithinWindow ;
 class GrammarPart ;
-class ParseByRise ;
+class BottomUpParser ;
 class wxBitmap;
 class wxDC ;
 
@@ -46,7 +46,7 @@ class wxParseTreePanel
   fastestUnsignedDataType m_pointSizeOfFont;
     WORD m_wParseLevel ;
     wxSize m_wxsizeClientRect;
-    ParseByRise * mp_parsebyrise ;
+    BottomUpParser * mp_parsebyrise ;
     wxBitmap * m_p_wxbitmapBuffer;
     wxBitmap m_wxbitmapBuffer;
     wxMemoryDC m_wxmemorydc;
@@ -129,7 +129,7 @@ public:
 	  WORD wParseLevel ,
 	  GrammarPart * p_grammarpart
 	  ) ;
-	void DrawParseTree( ParseByRise & r_parsebyrise
+	void DrawParseTree( BottomUpParser & 
             /*wxDC & r_wxdc*/) ;
   void DrawParseTreeBeginningFromLeaves(
     //Use base class wxDC, so subclasses of it can be used as actual parameters.

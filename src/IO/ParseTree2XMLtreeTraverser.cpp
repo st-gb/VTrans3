@@ -16,13 +16,13 @@ namespace ParseTreeTraverser
 
   ParseTree2XMLtreeTraverser::ParseTree2XMLtreeTraverser(
     const GrammarPart * p_grammarpartStartNode
-    , ParseByRise & r_parsebyrise
+    , const VTrans3::BottomUpParser & bottomUpParser
     )
     :
 //     ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
      ParseTreeTraverser::DirectingLeavesInSingleIterationTraverser(
       p_grammarpartStartNode ,
-      & r_parsebyrise
+      & bottomUpParser
       )
   {
     // TODO Auto-generated constructor stub

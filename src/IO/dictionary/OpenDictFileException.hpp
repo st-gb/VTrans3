@@ -8,7 +8,8 @@
 #ifndef OPENDICTFILEEXCEPTION_HPP_
 #define OPENDICTFILEEXCEPTION_HPP_
 
-#include <FileSystem/File/File.hpp>
+#include <FileSystem/File/File.hpp> //I_File::OpenError
+#include <string> //class std::string
 
 namespace VTrans3
 {
@@ -17,12 +18,14 @@ namespace VTrans3
 
     class OpenDictFileException
     {
+      std::string m_absoluteFilePath;
     public:
       enum I_File::OpenError m_openError;
       OpenDictFileException(enum I_File::OpenError);
+      OpenDictFileException(enum I_File::OpenError, const std::string &);
       virtual
       ~OpenDictFileException();
-      std::string GetErrorMessageA();
+      std::string GetErrorMessageA() const;
     };
 
 //  } /* namespace DictionaryReader */

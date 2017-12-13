@@ -13,10 +13,13 @@
 #include <Attributes/Word.hpp> //class EnglishWord
 #include <stdint.h> //for uint32_t
 
+#include <map> //class std::map
+
 /** Forward declarations (so no include of a file that declares this class->faster compilation) */
 class VocabularyAndTranslation ;
-class ParseByRise;
-
+namespace VTrans3 {
+  class BottomUpParser;
+}
 //class GrammarRule
 //idea: model the syntax tree of the source text as a binary tree structure.
 //e.g.:
@@ -68,7 +71,7 @@ public:
   bool m_bAssignedAsChild;
   BYTE m_byPersonIndex ;
   static const uint32_t unconnected = 0;
-  static ParseByRise * s_p_parseByRise;
+  static VTrans3::BottomUpParser * s_p_parseByRise;
   //The region indexes are important for applying grammar rules:
   // 0     1      2     3  4     <-indexes of tokens
   //The vacuum cleaner is big.
@@ -106,9 +109,9 @@ public:
 //  VTrans::string_type m_vtrans_strTranslation ;
   std::string m_stdstrTranslation ;
 
-  GrammarPart * DuplicateSubTree(const ParseByRise & ) const;
+  GrammarPart * DuplicateSubTree(const VTrans3::BottomUpParser & ) const;
   std::string GetName() const;
-  GrammarPart * PossiblyDuplicateSubTree(const ParseByRise & );
+  GrammarPart * PossiblyDuplicateSubTree(const VTrans3::BottomUpParser & );
   void SetLeftChild(GrammarPart & r_grammarpart) ;
 
   void SetRightChild(GrammarPart & r_grammarpart) ;
@@ -131,6 +134,13 @@ public:
     DWORD dwTokenIndexRightMost ,
     WORD wGrammarPartID ) ;
 
+  ~GrammarPart();
+
+  //TODO just for testing
+  static std::map<unsigned, unsigned> pointer2numaAllocsMinusNumDeletes;
+  
+  void * operator new(size_t);
+  void operator delete(void *);
 //  //Copy constructor.
 //  GrammarPart( const GrammarPart & c_r_grammarpart)
 //    :

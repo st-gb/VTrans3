@@ -27,10 +27,10 @@
 
 #define INDEX_OF_LAST_SMALL_LETTER_IN_ASCII 128
 
-NodeTrie<enum TUchemnitzDictionary::wordKinds>
-  DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictData::s_nodetrieWordKind(
-    INDEX_OF_LAST_SMALL_LETTER_IN_ASCII,
-    TUchemnitzDictionary::not_set);
+//NodeTrie<enum TUchemnitzDictionary::wordKinds>
+//  DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictData::s_wordKindContainer(
+//    INDEX_OF_LAST_SMALL_LETTER_IN_ASCII,
+//    TUchemnitzDictionary::not_set);
 
 namespace DictionaryReader
 {
@@ -38,6 +38,8 @@ namespace DictionaryReader
   {
     namespace EngWordSorted1st
     {
+      BinarySearchInDictData::wordKindContainerType BinarySearchInDictData::s_wordKindContainer;
+
 //BinarySearchInDictData::BinarySearchInDictData()
 //{
 //    addTrieNodes();
@@ -47,41 +49,37 @@ namespace DictionaryReader
 //}
 
 BinarySearchInDictData::~BinarySearchInDictData() {
+//  s_nodetrieWordKind.FreeMemory();
 }
+
+    void BinarySearchInDictData::InsertIntoWordKindContainer(
+      const char * const wordKindString,
+      TUchemnitzDictionary::wordKinds wordKind)
+    {
+//      s_wordKindContainer.insert_inline
+      s_wordKindContainer.insert(std::make_pair(wordKindString, wordKind) );
+    }
+    
     //TODO move to a general TU Chemnitz file?! because it may be used for any
     //  TU Chemnitz reader
     void BinarySearchInDictData::addTrieNodes()
     {
 //      s_p_i_userinterface = & i_userinterface;
-      if( s_nodetrieWordKind.size() == 0 )
+//      if( s_nodetrieWordKind.size() == 0 )
       {
     //    Build();
         try
         {
         //Wortart: adj, adv, vi=verb intrans. vr=verb reflexiv.
-        std::string wordKind = "adj";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          TUchemnitzDictionary::adj);
-        wordKind = "adv";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          TUchemnitzDictionary::adv);
-        wordKind = "m";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          TUchemnitzDictionary::mascNoun);
-        wordKind = "f";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          TUchemnitzDictionary::femNoun);
-        wordKind = "n";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          TUchemnitzDictionary::neutralNoun);
-        wordKind = "pl";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
-          TUchemnitzDictionary::pluralNoun);
-        wordKind = "vi"; //="Verb Intransitive"
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        InsertIntoWordKindContainer("adj", TUchemnitzDictionary::adj);
+        InsertIntoWordKindContainer("adv", TUchemnitzDictionary::adv);
+        InsertIntoWordKindContainer("m", TUchemnitzDictionary::mascNoun);
+        InsertIntoWordKindContainer("f", TUchemnitzDictionary::femNoun);
+        InsertIntoWordKindContainer("n", TUchemnitzDictionary::neutralNoun);
+        InsertIntoWordKindContainer("pl", TUchemnitzDictionary::pluralNoun);
+        InsertIntoWordKindContainer("vi", //="Verb Intransitive",
           TUchemnitzDictionary::intransitiveVerb);
-        wordKind = "vt"; //="Verb Transitive"
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        InsertIntoWordKindContainer("vt", //="Verb Transitive"
           TUchemnitzDictionary::transitiveVerb);
         }catch( const NS_NodeTrie::RootNodeNotInitalizedException & e)
         {
@@ -247,7 +245,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
     void AddWord(
       const bool english,
       const unsigned pipeCount,
-      char word[100],
+      char word[BinarySearchInDictData::numberOfWordCharacters],
       const fastestUnsignedDataType charIndex,
 //      std::vector<std::vector<std::string> > & englishVocables,
       std::vector<std::string> & englishVocableWords,
@@ -366,14 +364,13 @@ BinarySearchInDictData::~BinarySearchInDictData() {
             ;
         //            char * wordKind = new char[numWordKindChars];
         wordKind[numWordKindChars /*- 1*/ ] = '\0';
-        NodeTrieNode<
-            enum TUchemnitzDictionary::wordKinds>* p_ntn =
-            s_nodetrieWordKind.contains_inline((BYTE*) ((wordKind)),
-                numWordKindChars /*- 1*/, true);
+        
+        wordKindContainerType::const_iterator c_iterWordKind =
+            s_wordKindContainer.find(wordKind);
         //            delete [] wordKind;
         kindOfWordStart = 0;
         //#endif
-        if (p_ntn)
+        if (c_iterWordKind != s_wordKindContainer.end() )
           {
             bool bExtractVocables = false;
             //          ( * (extractVocable) p_ntn->m_member )(array, numChars
@@ -401,7 +398,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
 
             //          InsertAdjective(array);
 //              return p_ntn->m_member;
-            e_wordKind = p_ntn->m_member;
+            e_wordKind = c_iterWordKind->second;
           }
       }
 //      return i;
@@ -475,11 +472,11 @@ BinarySearchInDictData::~BinarySearchInDictData() {
         << (char) i << "\' word: \"" << word << "\"")
     }
 
-    inline void SetWordCharacter(char word[100],
+    inline void SetWordCharacter(char word[BinarySearchInDictData::numberOfWordCharacters],
         const fastestUnsignedDataType charIndexInsideWord,
         const char ch)
     {
-      if(charIndexInsideWord < 100)
+      if(charIndexInsideWord < BinarySearchInDictData::numberOfWordCharacters)
         word[charIndexInsideWord] = ch;
 #ifdef _DEBUG
       else
@@ -720,13 +717,12 @@ BinarySearchInDictData::~BinarySearchInDictData() {
           if( afterOpeningCurlyBrace )
           {
             wordType[numWordKindChars] = '\0';
-            NodeTrieNode<enum TUchemnitzDictionary::wordKinds> * p_ntn =
-            s_nodetrieWordKind.contains_inline( (BYTE *) (wordType),
-                numWordKindChars /*- 1*/, true);
-            if( p_ntn )
+            wordKindContainerType::const_iterator wordKindIterator = 
+              s_wordKindContainer.find(wordType);
+            if( wordKindIterator != s_wordKindContainer.end() )
             {
               const enum EnglishWord::English_word_class word_class = 
-                getEnglishWordClassFromTUchemnitzDictWordClass(p_ntn->m_member, 
+                getEnglishWordClassFromTUchemnitzDictWordClass(wordKindIterator->second, 
                 pVocabularyAndTranslation);
 //              std::map<enum EnglishWord::English_word_class, unsigned>::const_iterator 
 //                c_iter = englishWordClass2CounterMap.find(word_class);
@@ -815,7 +811,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       i = GetNextByte();
 //      streamIsGood = i > -1;
       bool breakWhile = false;
-      char word[100];
+      char word[numberOfWordCharacters];
       int prevChar = 0;
       std::vector<std::string> englishVocableWords;
       std::vector<std::vector<std::string> > englishVocables;
@@ -823,7 +819,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       bool english = true;
       fastestUnsignedDataType kindOfWordStart = 0;
       fastestUnsignedDataType charIndex = 0, charIndexInsideWord = 0;
-      char wordKind[/*5*/ 100];
+      char wordKind[/*5*/ numberOfWordCharacters];
 //      unsigned char UTF8sequence[8];
       bool insideBracket = false;
       char ASCIIcodePage850Char;

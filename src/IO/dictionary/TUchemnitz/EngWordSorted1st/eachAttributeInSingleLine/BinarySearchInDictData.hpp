@@ -32,6 +32,8 @@ class VocabularyAndTranslation;
           virtual
           ~BinarySearchInDictData();
 
+          void InsertIntoWordkindContainer(const std::string & wordKindString, 
+            const enum TUchemnitzDictionary::wordKinds wordKind);
           void AddGermanAttributes(
             std::map<unsigned, VocabularyAndTranslation *> & voc_containerVocsCreated,
             std::vector< std::vector <std::string> > & germanVocables);

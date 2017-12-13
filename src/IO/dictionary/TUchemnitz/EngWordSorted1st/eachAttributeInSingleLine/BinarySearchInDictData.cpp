@@ -21,49 +21,52 @@
     namespace TUchemnitz {
     namespace EngWordSorted1st {
     namespace EachAttributeInSingleLine
-    {
+    {      
+      /** This function exists for easier insertion into the ontainer and to 
+       *   abstract from the concrete container type. */
+      void BinarySearchInDictData::InsertIntoWordkindContainer(
+        const std::string & wordKindString, const enum TUchemnitzDictionary::wordKinds wordKind)
+      {
+        s_wordKindContainer.insert( std::make_pair( wordKindString, wordKind) );
+      }
+      
       BinarySearchInDictData::BinarySearchInDictData(IVocabularyInMainMem & vocaccess)
         : DictionaryReader::TUchemnitz::EngWordSorted1st::BinarySearchInDictData(vocaccess)
       {
         try
         {
         /** "Intransitive Verb 3rd person singular present" */
-        std::string wordKind = "vi3Pres";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        InsertIntoWordkindContainer("vi3Pres", 
           TUchemnitzDictionary::vi_3singPres);
 
-        wordKind = "vi_3singPast"; //="Verb Intransitive"
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        InsertIntoWordkindContainer("vi_3singPast", //="Verb Intransitive",
           TUchemnitzDictionary::vi_3singPast);
 
         /** "Transitive Verb 3rd person singular present" */
-        wordKind = "vt3Pres";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        InsertIntoWordkindContainer("vt3Pres", 
           TUchemnitzDictionary::vt_3singPres);
 
         /** "Reflexive Verb 3rd person singular present" */
-        wordKind = "vr3Pres";
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        InsertIntoWordkindContainer("vr3Pres",
           TUchemnitzDictionary::vr_3singPres);
 
-        wordKind = "positive"; //=adjective in positive form
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        InsertIntoWordkindContainer("positive", //=adjective in positive form
           TUchemnitzDictionary::adjPositive);
 
-        wordKind = "viI"; /** "Intransitive Verb infinitive" */
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        InsertIntoWordkindContainer("viI", /** "Intransitive Verb infinitive" */
           TUchemnitzDictionary::intransitiveVerb);
-        wordKind = "vrI"; /** "Reflexive Verb infinitive" */
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+
+        InsertIntoWordkindContainer("vrI", /** "Reflexive Verb infinitive" */
           TUchemnitzDictionary::reflexiveVerb);
-        wordKind = "vtI"; /** "Transitive Verb infinitive" */
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          
+        InsertIntoWordkindContainer("vtI", /** "Transitive Verb infinitive" */
           TUchemnitzDictionary::transitiveVerb);
-        wordKind = "vdI"; /** "Transitive dative Verb infinitive" */
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+          
+        InsertIntoWordkindContainer("vdI",/** "Transitive dative Verb infinitive" */
           TUchemnitzDictionary::dativeVerb);
-        wordKind = "vaI"; /** "Transitive accusative Verb infinitive" */
-        s_nodetrieWordKind.insert_inline( (BYTE *) wordKind.c_str(), wordKind.size(),
+        
+        /** "Transitive accusative Verb infinitive" */
+        InsertIntoWordkindContainer("vaI",
           TUchemnitzDictionary::accusativeVerb);
         //TODO  insert more nodes: for "vt", "vr", ...
         }catch( const NS_NodeTrie::RootNodeNotInitalizedException & e)

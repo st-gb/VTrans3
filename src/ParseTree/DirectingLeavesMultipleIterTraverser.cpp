@@ -2,7 +2,7 @@
  *  Created on: May 6, 2010
  *      Author: Stefan */
 
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/GrammarPart.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
@@ -23,7 +23,7 @@ namespace ParseTreeTraverser
     };
   DirectingLeavesMultipleIterTraverser::DirectingLeavesMultipleIterTraverser(
     const GrammarPart * p_grammarpartStartNode
-    , ParseByRise * p_parsebyrise
+    , BottomUpParser * p_bottomUpParser
     )
     :
     m_bTraverseTree( true ) ,
@@ -32,7 +32,7 @@ namespace ParseTreeTraverser
     , mp_grammarpartStartNode ( p_grammarpartStartNode )
     , m_wParseLevel( 0)
   {
-    mp_parsebyrise = p_parsebyrise ;
+    mp_parsebyrise = p_bottomUpParser;
   }
 
   DirectingLeavesMultipleIterTraverser::~DirectingLeavesMultipleIterTraverser()

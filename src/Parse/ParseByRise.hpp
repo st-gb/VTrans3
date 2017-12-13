@@ -1,9 +1,6 @@
-/* 
- * File:   ParseByRise.hpp
+/** File:   ParseByRise.hpp
  * Author: Stefan
- *
- * Created on 13. Februar 2010, 21:05
- */
+ * Created on 13. Februar 2010, 21:05  */
 
 #ifndef _PARSEBYRISE_HPP
 #define	_PARSEBYRISE_HPP
@@ -15,42 +12,46 @@
 #include <Attributes/Token.h> //class PositionStringVector
 #include "GrammarPart.hpp" //class GrammarPart
 #include <hardware/CPU/fastest_data_type.h> // typedef fastestUnsignedDataType
+#include <Controller/DictReaderAndVocAccess/dictReaderAndVocAccess_type.hpp>
+#include "GrammarRule.hpp" //class GrammarRule
+#include <data_structures/ByteArray.hpp>//class ByteArray
 
-//Forward declarations (faster than #include)
+/** Forward declarations (faster than #include) */
 class LetterNode;
 class I_UserInterface ;
 class TranslationControllerBase;
 class VocabularyAndTranslation ;
+class TranslationProcess;
 
-class GrammarRule
+namespace VTrans3
 {
-public:
-  //e.g. grammar part ID for "the" and for "noun" refer to the same
-  //superordinate grammar part ID for "def_article_noun".
-  WORD m_wSuperordinateGrammarRuleID ;
-  WORD m_wRightChildGrammarPartID ;
-  GrammarRule( WORD wGrammarRuleID , WORD wSuperordinateGrammarRuleID )
-  {
-    m_wRightChildGrammarPartID = wGrammarRuleID ;
-    m_wSuperordinateGrammarRuleID = wSuperordinateGrammarRuleID ;
-  }
-} ;
-
 /** @brief According to the book "Computerlinguistik und Sprachtechnologie" 
  *  Eine Einführung, "2. überarbeitete und erweiterte Auflage", 
  *  ISBN 3-8274-1407-5, page 254
-    this is a bottum-up parser */
-//TODO rename name to : BottumUpParser ?!
-class ParseByRise
+    this is a bottum-up parser 
+ *  See also https://en.wikipedia.org/wiki/Bottom-up_parsing */
+class BottomUpParser
 {
-  TranslationControllerBase & m_r_translationcontrollerbase;
+//  TranslationControllerBase & m_r_translationcontrollerbase;
+#ifndef TEST_MINI_XML
+#endif //TEST_MINI_XML
 public:
+  /** The */
+  /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
   DWORD m_dwMapIndex ;
 //private:
   //For showing (XML) error messages.
 //  I_UserInterface & mr_userinterface ;
   I_UserInterface * m_p_userinterface ;
+  TranslationProcess & m_r_translationProcess;
 public:
+  void GenerateXMLtreeFromParseTree(
+    std::vector<GrammarPart *>::const_iterator
+      c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
+    /*std::string & std_strXML*/ ByteArray & byteArray
+    ) const;
+  void GenerateXMLtree(
+    /*std::string & std_strXML*/ ByteArray & byteArray) const;
   enum InsertGrammarRuleReturnCodes
   {
     AllGrammarPartsAreKnown = 0,
@@ -186,7 +187,7 @@ public:
   void GetGrammarPartCoveringMostTokens(
     DWORD dwLeftmostTokenIndex
     , std::vector<GrammarPart *> & r_stdvec_p_grammarpart
-    ) ;
+    ) const;
 
   bool GrammarPartDoesNotAlreadyExist(GrammarPart * p_grammarpart);
   bool GetGrammarPartID( const std::string & r_str , WORD & wID ) ;
@@ -199,6 +200,8 @@ public:
   std::string GetPathAs_std_string( const std::vector<WORD> & ) ;
   std::string GetPathAs_std_string(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) ;
+
+  std::string GetAsIndentedXML() const;
 
   void GetRuleNames(
     WORD wSuperordinateGrammarPartID,
@@ -294,7 +297,8 @@ public:
     ) ;
 //  ParseByRise() ;
 //  ParseByRise( I_UserInterface & r_userinterface );
-  ParseByRise( TranslationControllerBase & r_translationcontrollerbase );
+  BottomUpParser( /*TranslationControllerBase & r_translationcontrollerbase*/
+    I_UserInterface * p_userinterface, TranslationProcess & );
 //  ParseByRise(const ParseByRise& orig);
   /*bool*/ GrammarPart * InsertIntoSuperordinateGrammarPartContainer(
     GrammarPart * p_grammarPartToInsert);
@@ -399,10 +403,10 @@ public:
   void DeleteFromMultiMap(
     std::multimap<DWORD, GrammarPart *> & std_multimap_dwIndex2p_grammarpart);
   void SummarizeUnknownWords();
-  virtual ~ParseByRise();
+  virtual ~BottomUpParser();
 private:
-
 };
+}
 
 #endif	/* _PARSEBYRISE_HPP */
 

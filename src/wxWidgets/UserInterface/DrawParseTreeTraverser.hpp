@@ -26,7 +26,7 @@ class DrawParseTreeTraverser
   : public ParseTreeTraverser::DirectingLeavesMultipleIterTraverser
 {
 public:
-  ParseByRise * mp_parsebyrise ;
+  BottomUpParser * mp_parsebyrise ;
   wxColor m_wxcolor;
   fastestUnsignedDataType m_stringHeigth;
   fastestUnsignedDataType m_currentParseTreeLeftEndInPixels ;
@@ -35,7 +35,7 @@ public:
   wxDC * mp_wxdc ;
   DrawParseTreeTraverser(
     wxDC * p_wxdcm ,
-    ParseByRise * p_parsebyrise ,
+    BottomUpParser *,
     GrammarPart * p_grammarpart
     );
   virtual

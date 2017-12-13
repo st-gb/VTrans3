@@ -10,8 +10,9 @@
 #include <stddef.h> //NULL
 
 class GrammarPart ;
-class ParseByRise ;
-
+namespace VTrans3 { 
+  class BottomUpParser;
+}
 typedef unsigned short WORD ;
 
 class GrammarPartPointerAndParseLevel

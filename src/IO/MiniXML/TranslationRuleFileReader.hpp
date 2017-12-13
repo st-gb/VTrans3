@@ -1,9 +1,6 @@
-/*
- * TranslationRuleFileReader.hpp
- *
+/** TranslationRuleFileReader.hpp
  *  Created on: 23.12.2013
- *      Author: mr.sys
- */
+ *      Author: mr.sys */
 
 #ifndef TRANSLATIONRULEFILEREADER_HPP_
 #define TRANSLATIONRULEFILEREADER_HPP_
@@ -32,7 +29,7 @@ namespace VTrans3
     public:
       TranslationRuleFileReader(
         TranslateParseByRiseTree & r_translateparsebyrise ,
-        ParseByRise & r_parsebyrise
+        VTrans3::BottomUpParser &
         , I_UserInterface & r_userinterface
         , ConfigurationHandler_type & configurationReader
         );

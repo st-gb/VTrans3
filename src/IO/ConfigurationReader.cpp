@@ -1,15 +1,18 @@
-/*
- * ConfigurationReader.cpp
- *
+/** ConfigurationReader.cpp
  *  Created on: 09.12.2013
- *      Author: mr.sys
- */
+ *      Author: mr.sys   */
 
 #include <IO/ConfigurationReader.hpp>
+#include <Controller/ConfigurationHandler_type.hpp>
+
+/** Static variable definitons. */
+/** for template in static varable definition
+ *   https://stackoverflow.com/questions/1553854/template-static-variable */
+template<> I_UserInterface * VTrans3::ConfigurationReader<attributeType>::m_p_UserInterface = NULL;
+template<> std::string VTrans3::ConfigurationReader<attributeType>::m_std_strCurrentConfigfile = "";
 
 namespace VTrans3
 {
-
 //  template <typename attributeType>
 //    ConfigurationReader<attributeType>::ConfigurationReader(TranslationControllerBase * p)
 //  {

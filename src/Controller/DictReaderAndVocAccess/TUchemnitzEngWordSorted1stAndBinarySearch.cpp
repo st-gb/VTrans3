@@ -22,11 +22,11 @@ namespace VTrans3
   }
 
   bool TUchemnitzEngWordSorted1stAndBinarySearchInDictFile::loadDictionary(
-      const std::string & s)
+      const std::string & std_strDictionaryFilePath)
   {
     LOGN_DEBUG("begin")
 //    return m_dictReader.read();
-    return m_dictReader.open(s);
+    return m_dictReader.open(std_strDictionaryFilePath);
   }
 
   IVocabularyInMainMem::voc_container_type *

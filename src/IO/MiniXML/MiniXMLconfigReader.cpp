@@ -13,18 +13,25 @@
 #include <IO/MiniXML/TranslationRuleFileReader.hpp>
 #include <IO/MiniXML/VocAttributeDefintionHandler.hpp>
 #include <Controller/TranslationControllerBase.hpp>
+#include <OperatingSystem/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.hpp>
 
 namespace VTrans3 {
 namespace MiniXML
 {
-  TranslationControllerBase * MiniXMLconfigReader::s_p_translationController = NULL;
+//  TranslationControllerBase * MiniXMLconfigReader::s_p_traNslationController = NULL;
+//  I_UserInterface * MiniXMLconfigReader::s_p_userInterface = NULL;
 
   MiniXMLconfigReader::MiniXMLconfigReader(
-      TranslationControllerBase & r_translationController)
-    : VTrans3::ConfigurationReader<mxml_node_t *>( & r_translationController)
+//      TranslationControllerBase & r_translationController
+    I_UserInterface * p_userInterface, 
+    BottomUpParser & bottomUpParser
+    )
+    : VTrans3::ConfigurationReader<mxml_node_t *>( /* & r_translationController*/ 
+        p_userInterface, bottomUpParser)
 //      m_translationController(r_translationController)
   {
-    s_p_translationController = & r_translationController;
+//    s_p_translationController = & r_translationController;
+//    s_p_userInterface = & p_userInterface;
   }
 
   MiniXMLconfigReader::~MiniXMLconfigReader()
@@ -79,16 +86,17 @@ namespace MiniXML
     FILE * p_file = fopen(cr_stdstrFilePath/*.c_str()*/, "r");
     if( p_file == NULL)
     {
-      std::string cwd = s_p_translationController->GetCurrentWorkingDir();
+      std::string cwd;// = s_p_translationController->GetCurrentWorkingDir();
+      OperatingSystem::GetCurrentWorkingDirA_inl(cwd);
     //TODO output/show  error message
-      s_p_translationController->Message("Failed to open file "
+      /*s_p_translationController*/m_p_UserInterface->Message("Failed to open file "
         + cwd + cr_stdstrFilePath);
     }
     else
     {
       mxml_node_t rootXMLnode;
       void * sax_data;
-      s_p_translationController->m_std_strCurrentConfigfile = cr_stdstrFilePath;
+      /*s_p_translationController*/m_std_strCurrentConfigfile = cr_stdstrFilePath;
       mxml_node_t * mxml_node_tLoadFileRes = ::mxmlSAXLoadFile(
         //see http://www.msweet.org/documentation/project3/Mini-XML.pdf
         NULL, //& rootXMLnode,
@@ -124,7 +132,8 @@ namespace MiniXML
 //    //First node or NULL if the file could not be read.
 //    if( mxml_node_tLoadFileRes == NULL )
 //      ;
-    VTrans3::MiniXML::GrammarRuleFileReader grammarRuleFileReader(m_translationController);
+    VTrans3::MiniXML::GrammarRuleFileReader grammarRuleFileReader(
+      /*m_translationController*/ m_p_UserInterface, m_parseByRise);
     /*return */grammarRuleFileReader.ProcessXML(cr_stdstrFilePath.c_str() );
   }
 #endif// #ifndef TEST_MINI_XML
@@ -132,39 +141,20 @@ namespace MiniXML
   void error_callback(const char * message)
   {
     const std::string std_strMessage = "in file \"" + MiniXMLconfigReader::
-      s_p_translationController->m_std_strCurrentConfigfile + "\" : " + message;
+      /*s_p_translationController*/m_std_strCurrentConfigfile + "\" : " + message;
     LOGN_ERROR(std_strMessage)
-    MiniXMLconfigReader::s_p_translationController->Message(std_strMessage);
+    MiniXMLconfigReader::/*s_p_translationController*/m_p_UserInterface->
+      Message(std_strMessage);
   }
 
   bool MiniXMLconfigReader::ReadMainConfigFile(
     const std::string & cr_stdstrFilePath )
   {
-	LOGN_DEBUG("begin")
-    MiniXML::MainConfigFileReader mainConfigFileReader(m_translationController, *this);
+  	LOGN_DEBUG("begin")
+    MiniXML::MainConfigFileReader mainConfigFileReader(
+      /*m_translationController*/ m_p_UserInterface, *this);
     mxmlSetErrorCallback(error_callback);
     return mainConfigFileReader.ProcessXML(cr_stdstrFilePath);
   }
-#ifndef TEST_MINI_XML
-  void MiniXMLconfigReader::ReadVocAttributeDefinitionFile(
-    const std::string & cr_stdstrFilePath)
-  {
-	LOGN_DEBUG("begin")
-//    VTrans3::MiniXML::VocAttributeDefintionHandler
-//      vocAttributeDefintionHandler(m_translationController);
-    ReadFile(cr_stdstrFilePath.c_str(), VTrans3::MiniXML::VocAttributeDefintionFile::sax_cb);
-  }
-  void MiniXMLconfigReader::ReadTranslationRuleFile(const std::string & cr_stdstrFilePath)
-  {
-    TranslationRuleFileReader translationRuleFileReader(
-        s_p_translationController->m_translateparsebyrisetree
-        , s_p_translationController->m_parsebyrise
-        , * s_p_translationController
-        , * this
-        );
-//    ReadFile(cr_stdstrFilePath.c_str(), VTrans3::MiniXML::ReadTranslationRuleFile::sax_cb);
-    translationRuleFileReader.Process(cr_stdstrFilePath);
-  }
-#endif //#ifndef TEST_MINI_XML
 } /* namespace MiniXML */
 }

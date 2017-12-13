@@ -9,6 +9,8 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG(...)
 // SUPPRESS_UNUSED_VARIABLE_WARNING(...)
 #include <compiler/GCC/suppress_unused_variable.h>
+#include <hardware/CPU/fastest_data_type.h>
+#include <limits.h> //UINT_MAX
 
   const char * const PositionStringVector::s_comparisonResultString [] = {
     "not set", "fullMatchOfCompareVector", "match", "lower", "greater", "tooFewTokens",
@@ -49,6 +51,8 @@
         ch )
     {
       case '\t':
+      case '\r':
+      case '\n':
       case ' ':
       case '\0':
       case '.':

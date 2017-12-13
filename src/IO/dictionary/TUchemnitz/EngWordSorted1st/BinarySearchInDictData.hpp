@@ -60,6 +60,9 @@ class BinarySearchInDictData
 //        const char * array,
 //        const WordData englishWords[10], const WordData germanWords[10]);
 
+  void InsertIntoWordKindContainer(
+      const char * const wordKindString,
+      TUchemnitzDictionary::wordKinds wordKind);
   void AddAllOffsetsOfMatchingWords(
     const fastestUnsignedDataType closestBeforeNonMatchOffset,
     const PositionStringVector & psvStringToSearch,
@@ -119,9 +122,12 @@ class BinarySearchInDictData
       //  static void read();
 //        std::ifstream m_englishDictionary;
         IVocabularyInMainMem * m_p_vocabularyAccess;
+public:
+    typedef std::map<std::string, enum TUchemnitzDictionary::wordKinds> wordKindContainerType;
 protected:
-        native_File_type m_dictFile;
-          static NodeTrie<enum TUchemnitzDictionary::wordKinds> s_nodetrieWordKind;
+    native_File_type m_dictFile;
+//      static NodeTrie<enum TUchemnitzDictionary::wordKinds> s_wordKindContainer;
+    static wordKindContainerType s_wordKindContainer;
 public:
   BinarySearchInDictData(IVocabularyInMainMem & vocaccess)
       : DictionaryReaderBase(& vocaccess)  { addTrieNodes(); }
@@ -129,6 +135,7 @@ public:
 //  BinarySearchInDictData(const BinarySearchInDictData& orig);
   virtual ~BinarySearchInDictData();
   
+  static const fastestUnsignedDataType numberOfWordCharacters = 100;
         IVocabularyInMainMem::voc_container_type * extractVocable(
           const fastestUnsignedDataType,
           //IVocabularyInMainMem::voc_container_type & voc_type

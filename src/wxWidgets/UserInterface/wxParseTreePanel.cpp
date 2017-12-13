@@ -391,11 +391,11 @@ void wxParseTreePanel::DrawGrammarPartParentToChildLine(
 }
 
 /** May be called from outside of this class. */
-void wxParseTreePanel::DrawParseTree( ParseByRise & r_parsebyrise
+void wxParseTreePanel::DrawParseTree( BottomUpParser & r_bottomUpParser
   /*wxDC & r_wxdc*/)
 {
-  LOGN_DEBUG("begin--r_parsebyrise:" << & r_parsebyrise)
-  mp_parsebyrise = & r_parsebyrise ;
+  LOGN_DEBUG("begin--address of BottomUpParser object:" << & r_bottomUpParser)
+  mp_parsebyrise = & r_bottomUpParser ;
 
 //  if( m_p_wxbitmapBuffer != NULL )
 //    delete m_p_wxbitmapBuffer;

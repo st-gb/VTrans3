@@ -8,9 +8,10 @@
 #include "ParseByRise.hpp" //class ParseByRise
 #include <Attributes/EnglishWord.hpp> //for class EnglishWord's English_word_class enum
 
+namespace VTrans3 {
 //see http://en.wikipedia.org/wiki/Possessive_adjective#Nomenclature:
 // they stand _before_ a noun.
-void ParseByRise::InsertGrammarRuleNamesForPossessiveAdjectives()
+void BottomUpParser::InsertGrammarRuleNamesForPossessiveAdjectives()
 {
 //  InsertGrammarRule( EnglishWord::PossessiveAdjective , "my" );
 ////  InsertGrammarRule( EnglishWord::personal_pronoun_you_sing ,"you_sing" ) ;
@@ -23,7 +24,7 @@ void ParseByRise::InsertGrammarRuleNamesForPossessiveAdjectives()
 }
 
 // \brief Insert a grammar part <-> grammar part name mapping for word classes.
-void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
+void BottomUpParser::InsertGrammarPartID2NameMappingForWordClasses()
 {
   InsertGrammarRule( EnglishWord::noun, "noun" ) ;
   InsertGrammarRule( EnglishWord::singular, "singular_noun" ) ;
@@ -100,7 +101,7 @@ void ParseByRise::InsertGrammarPartID2NameMappingForWordClasses()
   InsertGrammarRule( EnglishWord::UnknownWord , "UnknownWord" ) ; // he/she/it is
 }
 
-void ParseByRise::InsertGrammarRuleNamesForAuxiliaryVerbToBe()
+void BottomUpParser::InsertGrammarRuleNamesForAuxiliaryVerbToBe()
 {
   InsertGrammarRule( EnglishWord::am , "am" ) ; //I am
   // you (2nd person singular and plural) are, we are, they are
@@ -108,7 +109,7 @@ void ParseByRise::InsertGrammarRuleNamesForAuxiliaryVerbToBe()
   InsertGrammarRule( EnglishWord::is , "is" ) ; // he/she/it is
 }
 
-void ParseByRise::InsertGrammarRuleNamesForObjectFormPersonalPronouns()
+void BottomUpParser::InsertGrammarRuleNamesForObjectFormPersonalPronouns()
 {
   //TODO: Is a separate ID for every personal pronoun in object form needed?
   // Probably yes because: for the translation different grammar part IDs are
@@ -123,7 +124,7 @@ void ParseByRise::InsertGrammarRuleNamesForObjectFormPersonalPronouns()
   InsertGrammarRule( EnglishWord::personal_pronoun_them, "them" ) ;
 }
 
-void ParseByRise::InsertGrammarRuleNamesForPersonalPronouns()
+void BottomUpParser::InsertGrammarRuleNamesForPersonalPronouns()
 {
   //For syntax checking (e.g. only allow 3 person singular subject for 3rd
   //person singular finite verb form) and for the correct finite verb form when
@@ -140,7 +141,7 @@ void ParseByRise::InsertGrammarRuleNamesForPersonalPronouns()
   InsertGrammarRule( EnglishWord::personal_pronoun_they, "they" ) ;
 }
 
-void ParseByRise::InsertGrammarRuleNamesForReflexivePronouns()
+void BottomUpParser::InsertGrammarRuleNamesForReflexivePronouns()
 {
   //The person of the reflexive pronoun must exactly match the subject's person.
   //(only allow "I like myself." and not "He likes myself."
@@ -181,3 +182,4 @@ void ParseByRise::InsertGrammarRuleNamesForReflexivePronouns()
 //    "definite_article_singular"
 //    , "article_singular"
 //    ) ;
+}

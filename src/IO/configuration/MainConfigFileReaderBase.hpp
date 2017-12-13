@@ -20,9 +20,11 @@ public:
   
   void HandleGrammartPartColourXMLelement(attributeType & xmlElement);
   void HandleReadGrammarRuleFileXMLelement(attributeType & xmlElement );
+#if USE_TRANSLATION_RULES
   void HandleReadTranslationRuleFileXMLelement(attributeType & xmlElement );
   void HandleReadVocabularyAttributeDefinitionFileXMLelement(
     attributeType & xmlElement );
+#endif
   void openingXMLelement(const char * const xmlElementName, attributeType & xmlElement);
 private:
 

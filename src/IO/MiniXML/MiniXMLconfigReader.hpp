@@ -1,9 +1,6 @@
-/*
- * MiniXMLconfigReader.hpp
- *
+/** MiniXMLconfigReader.hpp
  *  Created on: 08.12.2013
- *      Author: mr.sys
- */
+ *      Author: mr.sys  */
 
 #ifndef MINIXMLCONFIGREADER_HPP_
 #define MINIXMLCONFIGREADER_HPP_
@@ -13,7 +10,8 @@
 #include <mxml.h> //typedef mxml_sax_cb_t
 #include <sstream> //std::istringstream
 
-class TranslationControllerBase;
+//class TranslationControllerBase;
+class I_UserInterface;
 
 namespace VTrans3
 {
@@ -31,8 +29,11 @@ namespace MiniXML
   public:
     /** For accessing the TranslationControllerBase object easily from
      * global functions / MiniXML callback functions. */
-    static TranslationControllerBase * s_p_translationController;
-    MiniXMLconfigReader(TranslationControllerBase & r_translationController);
+//    static TranslationControllerBase * s_p_translationController;
+//    static I_UserInterface * s_p_userInterface;
+    MiniXMLconfigReader(/*TranslationControllerBase & r_translationController*/
+      I_UserInterface * p_userInterface,
+      VTrans3::BottomUpParser &);
     virtual
     ~MiniXMLconfigReader();
 
@@ -116,9 +117,12 @@ namespace MiniXML
     static bool ReadFile(const char * const cr_stdstrFilePath, mxml_sax_cb_t sax);
     void ReadGrammarRuleFile(const std::string & cr_stdstrFilePath );
     bool ReadMainConfigFile(const std::string & cr_stdstrFilePath );
+    /** If just parsing this is not needed. */
+#if USE_TRANSLATION_RULES
     void ReadVocAttributeDefinitionFile(
       const std::string & cr_stdstrFilePath);
     void ReadTranslationRuleFile(const std::string & cr_stdstrFilePath) ;
+#endif
   };
 } /* namespace MiniXML */
 }

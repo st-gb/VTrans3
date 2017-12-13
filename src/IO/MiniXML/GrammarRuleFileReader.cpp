@@ -8,23 +8,35 @@
 #include <IO/MiniXML/GrammarRuleFileReader.hpp>
 #include <string> //class std::string
  //class TranslationControllerBase
-#include <Controller/TranslationControllerBase.hpp>
+//#include <Controller/TranslationControllerBase.hpp>
+#include <UserInterface/I_UserInterface.hpp> //class I_UserInterface
 #include <IO/UnknownGrammarPartNameException.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <mxml.h>
+#include <OperatingSystem/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.hpp>
 
-extern TranslationControllerBase * g_p_translationcontrollerbase;
+#include "IO/ConfigurationReader.hpp"
+#include "MiniXMLconfigReader.hpp"
+
+//extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 namespace VTrans3
 {
   namespace MiniXML
   {
-    TranslationControllerBase * GrammarRuleFileReader::s_p_translationController = NULL;
+    /** Definitions of static (class) variables, */
+//    TranslationControllerBase * GrammarRuleFileReader::s_p_translationController = NULL;
+    I_UserInterface * GrammarRuleFileReader::s_p_userInterface = NULL;
+    VTrans3::BottomUpParser * GrammarRuleFileReader::s_p_parseByRise = NULL;
 
     GrammarRuleFileReader::GrammarRuleFileReader(
-        TranslationControllerBase & r_translationController )
+      /*TranslationControllerBase & r_translationController*/ 
+      I_UserInterface * p_userInterface,
+      BottomUpParser & bottomUpParser)
     {
-      s_p_translationController = & r_translationController;
+//      s_p_translationController = & r_translationController;
+      s_p_userInterface = p_userInterface;
+      s_p_parseByRise = & bottomUpParser;
     }
 
     GrammarRuleFileReader::~GrammarRuleFileReader()
@@ -40,41 +52,40 @@ namespace VTrans3
         const char * stdstrSuperordinate
         )
       {
-        ParseByRise & parseByRise =
-          GrammarRuleFileReader::s_p_translationController->m_parsebyrise;
+        BottomUpParser & bottomUpParser = * GrammarRuleFileReader::s_p_parseByRise;
         try
         {
-          enum ParseByRise::InsertGrammarRuleReturnCodes
-            insertGrammarRuleReturnCode = parseByRise.InsertGrammarRule(
+          enum BottomUpParser::InsertGrammarRuleReturnCodes
+            insertGrammarRuleReturnCode = bottomUpParser.InsertGrammarRule(
             stdstrLeftChild //const char * cp_chLeftGrammarRuleName
             , stdstrRightChild //const char * cp_chRightGrammarRuleName
             , //std::string
             stdstrSuperordinate //const char * cp_chSuperordinateGrammarRuleName
             ) ;
   //        std::wstring std_wstrMessage;
-          if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
+          if( insertGrammarRuleReturnCode != BottomUpParser::AllGrammarPartsAreKnown )
           {
             //TODO output line and column of error
 //          std_wstrMessage = L" line:"            + L" column:"
 //            L" : grammar rule \"" + GetStdWstring(stdstrSuperordinate)
 
-            const std::string insertGrammarRuleErrMsg = parseByRise.GetErrorMessage(
+            const std::string insertGrammarRuleErrMsg = bottomUpParser.GetErrorMessage(
               insertGrammarRuleReturnCode);
             const std::string message = "error in grammar rule file \"" +
-              g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+              MiniXMLconfigReader::m_std_strCurrentConfigfile
               + "\"\n: was not added because: " +
               insertGrammarRuleErrMsg;
-            GrammarRuleFileReader::s_p_translationController->Message(message);
+            MiniXMLconfigReader::/*s_p_translationController*/m_p_UserInterface->Message(message);
           }
         }
         catch(const VTrans::UnknownGrammarPartNameException & ugpne)
         {
           const std::string message = "error in grammar rule file \"" +
-            g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+            MiniXMLconfigReader::m_std_strCurrentConfigfile
             + "\"\n: \"" + stdstrSuperordinate + "\" was not added because:\n" +
 //            insertGrammarRuleErrMsg;
             ugpne.GetErrorMessage();
-          GrammarRuleFileReader::s_p_translationController->Message(message);
+          MiniXMLconfigReader::/*s_p_translationController*/m_p_UserInterface->Message(message);
         }
       }
 
@@ -108,10 +119,9 @@ namespace VTrans3
                 strSuperOrdinateSyntaxTreePath )
             {
 #ifdef COMPILE_AS_EXECUTABLE
-                g_p_translationcontrollerbase->
-                  m_std_map_grammarRuleName2filepath.insert(
+              MiniXMLconfigReader::m_std_map_grammarRuleName2filepath.insert(
                   std::make_pair(std::string(strSuperOrdinateSyntaxTreePath),
-                    g_p_translationcontrollerbase->m_std_strCurrentConfigfile) );
+                    MiniXMLconfigReader::m_std_strCurrentConfigfile) );
 #endif
               if( strRightChildSyntaxTreePath )
               {
@@ -123,40 +133,40 @@ namespace VTrans3
               }
               else
               {
-                ParseByRise & parseByRise =
-                  GrammarRuleFileReader::s_p_translationController->m_parsebyrise;
+                VTrans3::BottomUpParser & bottomUpParser = 
+                  * GrammarRuleFileReader::s_p_parseByRise;
                 try
                 {
-                  enum ParseByRise::InsertGrammarRuleReturnCodes
-                    insertGrammarRuleReturnCode = parseByRise.InsertSuperClassGrammarRule(
+                  enum BottomUpParser::InsertGrammarRuleReturnCodes
+                    insertGrammarRuleReturnCode = bottomUpParser.InsertSuperClassGrammarRule(
                       strLeftChildSyntaxTreePath , //cp_chSubclassGrammarRuleName
                       strSuperOrdinateSyntaxTreePath //cp_chSuperclassGrammarRuleName
                     ) ;
-                  if( insertGrammarRuleReturnCode != ParseByRise::AllGrammarPartsAreKnown )
+                  if( insertGrammarRuleReturnCode != BottomUpParser::AllGrammarPartsAreKnown )
                   {
-                    const std::string insertGrammarRuleErrMsg = parseByRise.GetErrorMessage(
+                    const std::string insertGrammarRuleErrMsg = bottomUpParser.GetErrorMessage(
                       insertGrammarRuleReturnCode);
 
                     const std::string message = "error in grammar rule file \"" +
-                      g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+                      MiniXMLconfigReader::m_std_strCurrentConfigfile
                       + "\": \"\n" +
                       strSuperOrdinateSyntaxTreePath + "\" was not added because:\n"
                         " unknown grammar part " +
                         insertGrammarRuleErrMsg;
-                    GrammarRuleFileReader::s_p_translationController->Message(message);
+                    MiniXMLconfigReader::m_p_UserInterface->Message(message);
 
-                    GrammarRuleFileReader::s_p_translationController->Message(
+                    MiniXMLconfigReader::m_p_UserInterface->Message(
                      "error in grammar rule file: was not added because: unknown grammar part" );
                   }
                 }
                 catch(const VTrans::UnknownGrammarPartNameException & ugpne)
                 {
                   const std::string message = "error in grammar rule file \"" +
-                    g_p_translationcontrollerbase->m_std_strCurrentConfigfile
+                    MiniXMLconfigReader::m_std_strCurrentConfigfile
                     + "\"\n: was not added because:\n" +
         //            insertGrammarRuleErrMsg;
                     ugpne.GetErrorMessage();
-                  GrammarRuleFileReader::s_p_translationController->Message(message);
+                  MiniXMLconfigReader::m_p_UserInterface->Message(message);
                 }
               }
             }
@@ -172,16 +182,17 @@ namespace VTrans3
       FILE * p_file = fopen(cr_stdstrFilePath/*.c_str()*/, "r");
       if( p_file == NULL)
       {
-        std::string cwd = s_p_translationController->GetCurrentWorkingDir();
+        std::string cwd;// = s_p_translationController->GetCurrentWorkingDir();
+        OperatingSystem::GetCurrentWorkingDirA_inl(cwd);
         //TODO provide error message
-        s_p_translationController->Message("Failed to open file "
+        /*s_p_translationController*/s_p_userInterface->Message("Failed to open file "
           + cwd + cr_stdstrFilePath);
       }
       else
       {
 //#ifdef COMPILE_AS_EXECUTABLE
         // cr_stdstrFilePath = GetAbsoluteFilePath(cr_stdstrFilePath)
-        g_p_translationcontrollerbase->m_std_strCurrentConfigfile =
+        /*g_p_translationcontrollerbase->*/MiniXMLconfigReader::m_std_strCurrentConfigfile =
           cr_stdstrFilePath;
 //#endif
         mxml_node_t rootXMLnode;

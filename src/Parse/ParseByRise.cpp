@@ -1,9 +1,6 @@
-/* 
- * File:   ParseByRise.cpp
+/** File:   ParseByRise.cpp
  * Author: Stefan
- * 
- * Created on 13. Februar 2010, 21:05
- */
+ * Created on 13. Februar 2010, 21:05  */
 
 #include <algorithm>
 #include <set> //for std::set
@@ -11,11 +8,13 @@
 //class VocabularyAndTranslation 
 
 //TranslationControllerBase::s_lettertree
-#include <Controller/TranslationControllerBase.hpp>
+//#include <Controller/TranslationControllerBase.hpp>
+#include <Controller/TranslationProcess.hpp> //class TranslationProcess
+
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
 
-#include "ParseByRise.hpp" //class ParseByRise
+#include "ParseByRise.hpp" //class BottumUpParser declararation
 #include <Attributes/EnglishWord.hpp> //for class EnglishWord's English_word_class enum
 #include <Attributes/Token.h> //class PositionStringVector
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
@@ -25,6 +24,7 @@
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 #include <IO/UnknownGrammarPartNameException.hpp>
+#include <InputOutput/XML/OutputXMLindented_inl.hpp>
 //#include <Xerces/ReadViaSAX2.hpp>//ReadViaSAX2InitAndTermXerces(...)
 //#include <Xerces/SAX2GrammarRuleHandler.hpp>//class SAX2GrammarRuleHandler
 
@@ -53,15 +53,20 @@
 ////  DEBUG_COUTN("ParseByRise(I_UserInterface &) "
 //  LOGN_DEBUG("end")
 //}
-
-ParseByRise::ParseByRise( TranslationControllerBase & r_translationcontrollerbase )
-  : m_p_userinterface(& r_translationcontrollerbase)
-  , m_r_translationcontrollerbase(r_translationcontrollerbase)
+namespace VTrans3
+{
+BottomUpParser::BottomUpParser( /*TranslationControllerBase & r_translationcontrollerbase*/ 
+    I_UserInterface * p_userInterface,
+    TranslationProcess & r_translationProcess
+  )
+  : m_p_userinterface(/*& r_translationcontrollerbase*/ p_userInterface)
+  , //m_r_translationcontrollerbase(r_translationcontrollerbase)
+    m_r_translationProcess(r_translationProcess)
 {
   Init();
 }
 
-void ParseByRise::Init()
+void BottomUpParser::Init()
 {
   LOGN_DEBUG("begin")
   m_dwMapIndex = 0;
@@ -73,7 +78,7 @@ void ParseByRise::Init()
 //ParseByRise::ParseByRise(const ParseByRise& orig) {
 //}
 
-ParseByRise::~ParseByRise()
+BottomUpParser::~BottomUpParser()
 {
   LOGN_DEBUG(//"~ParseByRise() "
     "begin")
@@ -96,7 +101,22 @@ ParseByRise::~ParseByRise()
     "end")
 }
 
-void ParseByRise::ClearAllGrammarStuff()
+std::string BottomUpParser::GetAsIndentedXML() const
+{
+  std::string std_strXML, std_strIntendedXML;
+  ByteArray byteArray; //crashes in parallel translation version in constructor
+  GenerateXMLtree( /*std_strXML*/ byteArray);
+  const BYTE * const byteArrayBegin = byteArray.GetArray();
+  const fastestUnsignedDataType byteArraySize = byteArray.GetSize();
+  std_strXML = UTF8string::GetAsISO_8859_1StdString(byteArrayBegin,
+    byteArraySize );
+  std::ostringstream std_ostringstream;
+  OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
+  std_strIntendedXML = std_ostringstream.str();
+  return std_strIntendedXML;
+}
+
+void BottomUpParser::ClearAllGrammarStuff()
 {
   LOGN_DEBUG(//"ParseByRise::ClearAllGrammarStuff() "
     "begin")
@@ -116,7 +136,7 @@ void ParseByRise::ClearAllGrammarStuff()
 
 /** Clears (empties) the previously generated parse tree.
 * This should be done for a next parse tree generation . */
-void ParseByRise::ClearParseTree()
+void BottomUpParser::ClearParseTree()
 {
   const fastestUnsignedDataType numSuperOrdinateGrammarParts =
     //m_stdset_grammarpartAllSuperordinate.size();
@@ -145,7 +165,7 @@ void ParseByRise::ClearParseTree()
 //   m_stdset_p_grammarpartAllSuperordinate.clear() ;
  }
 
-void ParseByRise::DeleteFromOutMostTokenIndexContainer(
+void BottomUpParser::DeleteFromOutMostTokenIndexContainer(
   GrammarPart * p_grammarpartRootNode,
   std::multimap<DWORD, GrammarPart *> & r_std_multimap_dw2p_grammarpart,
   DWORD dwTokenIndex
@@ -174,23 +194,23 @@ void ParseByRise::DeleteFromOutMostTokenIndexContainer(
   }
 }
 
-std::string ParseByRise::GetErrorMessage(
-  const enum ParseByRise::InsertGrammarRuleReturnCodes insertGrammarRuleReturnCode
+std::string BottomUpParser::GetErrorMessage(
+  const enum BottomUpParser::InsertGrammarRuleReturnCodes insertGrammarRuleReturnCode
   //,stdstrLeftChild
   )
 {
   GCC_DIAG_OFF(switch)
   switch(insertGrammarRuleReturnCode)
   {
-  case ParseByRise::unknownLeftGrammarPart:
+  case BottomUpParser::unknownLeftGrammarPart:
     return "unknown left child grammar part"; // \""
       /*GetStdWstring(stdstrLeftChild ) + L"\"";*/
 //    break;
-  case ParseByRise::unknownRightGrammarPart:
+  case BottomUpParser::unknownRightGrammarPart:
     return "unknown right child grammar part";// \""
       /* + GetStdWstring(stdstrRightChild ) + L"\"";*/
 //    break;
-  case ParseByRise::unknownLeftAndRightGrammarPart:
+  case BottomUpParser::unknownLeftAndRightGrammarPart:
       return "unknown left "// \""
 //      + GetStdWstring(stdstrLeftChild)
         "and right " //\"" + GetStdWstring(stdstrRightChild)
@@ -209,7 +229,7 @@ std::string ParseByRise::GetErrorMessage(
 //  : "the" (pos 0-0) covers 1 token,
 //  : "the vacuum cleaner" (pos 0-2) covers 3 tokens
 //  : "the vacuum cleaner sucks." (pos 0-3) covers 4 tokens
-GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
+GrammarPart * BottomUpParser::GetGrammarPartCoveringMostTokens(
   DWORD dwLeftmostTokenIndex
   )
 {
@@ -286,13 +306,13 @@ GrammarPart * ParseByRise::GetGrammarPartCoveringMostTokens(
  *   all parse trees beginning at token index "dwLeftMostTokenIndex".
 *    Often these parse trees here have the same structure but different
 *    words (->synonyms): "the man works."-> "der Mann|Mensch arbeitet" */
-void ParseByRise::GetGrammarPartCoveringMostTokens(
+void BottomUpParser::GetGrammarPartCoveringMostTokens(
   DWORD dwLeftmostTokenIndex ,
   //Should be a vector because it may be more then 1 token groups may have
   //different translations like "the sheep" -> "das Schaf", "die Schafe"
   std::vector<GrammarPart *> &
     r_stdvec_p_grammarpartCoveringMostTokensATokentIndex
-  )
+  ) const
 {
   DWORD dwNumberOfTokensCoveredMax = 0 ;
   DWORD dwNumberOfTokensCoveredCurrent ;
@@ -379,7 +399,7 @@ void ParseByRise::GetGrammarPartCoveringMostTokens(
 //  return p_grammarpart ;
 }
 
-bool ParseByRise::GetGrammarPartID(
+bool BottomUpParser::GetGrammarPartID(
   const std::string & cr_stdstrGrammarPartName , WORD & r_wGrammarPartID )
 {
 //  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
@@ -399,7 +419,7 @@ bool ParseByRise::GetGrammarPartID(
   return bSuccess ;
 }
 
-std::string ParseByRise::GetGrammarPartName(WORD wRuleID ) const
+std::string BottomUpParser::GetGrammarPartName(WORD wRuleID ) const
 {
 //  std::string stdstrRuleName ;
   std::map<WORD,std::string>::const_iterator iter =
@@ -410,7 +430,7 @@ std::string ParseByRise::GetGrammarPartName(WORD wRuleID ) const
       "*") ;
 }
 
-fastestUnsignedDataType ParseByRise::GetNumberOfLargestParseTrees()
+fastestUnsignedDataType BottomUpParser::GetNumberOfLargestParseTrees()
 {
   fastestUnsignedDataType numberOfLargestParseTrees = 0;
   DWORD dwLeftMostTokenIndex = 0 ;
@@ -434,7 +454,7 @@ fastestUnsignedDataType ParseByRise::GetNumberOfLargestParseTrees()
   return numberOfLargestParseTrees;
 }
 
-void ParseByRise::GetLargestParseTrees(
+void BottomUpParser::GetLargestParseTrees(
   std::vector<GrammarPart *> & r_stdvec_p_grammarpartLargestParseTrees)
 {
   r_stdvec_p_grammarpartLargestParseTrees.clear();
@@ -465,7 +485,7 @@ void ParseByRise::GetLargestParseTrees(
 }
 
 
-std::string ParseByRise::GetPathAs_std_string(
+std::string BottomUpParser::GetPathAs_std_string(
   const std::vector<WORD> & r_stdvec_wGrammarPartPath )
 {
   std::string stdstr ;
@@ -488,7 +508,7 @@ std::string ParseByRise::GetPathAs_std_string(
   return stdstr ;
 }
 
-std::string ParseByRise::GetPathAs_std_string(
+std::string BottomUpParser::GetPathAs_std_string(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath )
 {
   std::string stdstr ;
@@ -525,7 +545,7 @@ std::string ParseByRise::GetPathAs_std_string(
 //       /  \        /   |
 //  +-----+   +-----+   / \ (if "\"= last char:g++ warning:"multi-line comment")
 //  the car , the cat and I
-BYTE ParseByRise::GetSubjectPersonIndex( GrammarPart * p_grammarpart)
+BYTE BottomUpParser::GetSubjectPersonIndex( GrammarPart * p_grammarpart)
 {
 //  if( p_grammarpart )
 //  {
@@ -622,7 +642,7 @@ BYTE ParseByRise::GetSubjectPersonIndex( GrammarPart * p_grammarpart)
   return 0 ;
 }
 
-void ParseByRise::GetTokensAsSpaceSeparatedString(
+void BottomUpParser::GetTokensAsSpaceSeparatedString(
   DWORD dwLeftmostIndex,
   DWORD dwRightmostIndex ,
   std::string & r_stdstr
@@ -660,7 +680,7 @@ void ParseByRise::GetTokensAsSpaceSeparatedString(
 //  return std::string("") ;
 //}
 
-void ParseByRise::InitGrammar()
+void BottomUpParser::InitGrammar()
 {
 //  m_stdmultimap_wGrammarPartID2wGrammarPartID.insert()
   InsertGrammarRule(
@@ -674,7 +694,7 @@ void ParseByRise::InitGrammar()
 //Test if the grammar part is a word class.
 //All grammar rules are based on word classes. Word classes are the leaves of
 //the parse trees.
-bool ParseByRise::GrammarPartIDIsWordClass( WORD wGrammarPartID )
+bool BottomUpParser::GrammarPartIDIsWordClass( WORD wGrammarPartID )
 {
   bool bGrammarPartIDIsWordClass = false ;
 //  switch( wGrammarPartID )
@@ -692,7 +712,7 @@ bool ParseByRise::GrammarPartIDIsWordClass( WORD wGrammarPartID )
   return bGrammarPartIDIsWordClass ;
 }
 
-void ParseByRise::InitGrammarRules()
+void BottomUpParser::InitGrammarRules()
 {
   LOGN_DEBUG(/*"ParseByRise::InitGrammarRules()"*/ "begin")
   m_wNumberOfSuperordinateRules = EnglishWord::beyond_last_entry ;
@@ -701,7 +721,7 @@ void ParseByRise::InitGrammarRules()
   LOGN_DEBUG("end")
 }
 
-void ParseByRise::InsertGrammarRulesFor3rdPersonSingular()
+void BottomUpParser::InsertGrammarRulesFor3rdPersonSingular()
 {
   InsertSuperClassGrammarRule(
     "article_singular"
@@ -728,7 +748,7 @@ void ParseByRise::InsertGrammarRulesFor3rdPersonSingular()
     ) ;
 }
 
-void ParseByRise::InsertFundamentalRuleIDs()
+void BottomUpParser::InsertFundamentalRuleIDs()
 {
   LOGN_DEBUG(//"InsertFundamentalRuleIDs "
     "begin")
@@ -799,7 +819,7 @@ void ParseByRise::InsertFundamentalRuleIDs()
 }
 
 //return: new rule ID
-WORD ParseByRise::InsertGrammarRule(
+WORD BottomUpParser::InsertGrammarRule(
   const char * cp_chLeftGrammarRuleName
   , WORD wGrammarRuleIDRight
   , //std::string
@@ -826,7 +846,7 @@ WORD ParseByRise::InsertGrammarRule(
   return m_wNumberOfSuperordinateRules - 1 ;
 }
 
-void ParseByRise::InsertGrammarRule(
+void BottomUpParser::InsertGrammarRule(
   WORD wGrammarRuleIDLeft ,
   const char * cp_chRightGrammarRuleName
   , //std::string
@@ -846,14 +866,14 @@ void ParseByRise::InsertGrammarRule(
   }
 }
 
-enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertGrammarRule(
+enum BottomUpParser::InsertGrammarRuleReturnCodes BottomUpParser::InsertGrammarRule(
   const char * cp_chLeftGrammarRuleName
   , const char * cp_chRightGrammarRuleName
   , //std::string
   const char * cp_chSuperordinateGrammarRuleName
   )
 {
-  enum ParseByRise::InsertGrammarRuleReturnCodes byReturnValue = AllGrammarPartsAreKnown;
+  enum BottomUpParser::InsertGrammarRuleReturnCodes byReturnValue = AllGrammarPartsAreKnown;
   std::string unknownGrammarPartNames;
   std::map<std::string,WORD>::const_iterator c_iterLeft =
     m_stdmap_RuleName2RuleID.find(
@@ -915,7 +935,7 @@ enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertGrammarRule(
   return byReturnValue;
 }
 
-void ParseByRise::InsertGrammarRule(
+void BottomUpParser::InsertGrammarRule(
   const char * cp_chLeftGrammarRuleName
   , const char * cp_chRightGrammarRuleName
   , //std::string
@@ -1000,7 +1020,7 @@ void ParseByRise::InsertGrammarRule(
 //  -"gerund" + conj + "indefinite_article_noun"
 //  -"gerund" + conj + "gerund"
 
-WORD ParseByRise::InsertSuperClassGrammarRule(
+WORD BottomUpParser::InsertSuperClassGrammarRule(
   WORD wSubclassGrammarRuleID
   , //std::string
   const char * cp_chSuperclassGrammarRuleName
@@ -1063,13 +1083,13 @@ WORD ParseByRise::InsertSuperClassGrammarRule(
 }
 
 //WORD
-enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertSuperClassGrammarRule(
+enum BottomUpParser::InsertGrammarRuleReturnCodes BottomUpParser::InsertSuperClassGrammarRule(
   const char * cp_chSubclassGrammarRuleName
   , //std::string
   const char * cp_chSuperclassGrammarRuleName
   )
 {
-  enum ParseByRise::InsertGrammarRuleReturnCodes returnValue = AllGrammarPartsAreKnown;
+  enum BottomUpParser::InsertGrammarRuleReturnCodes returnValue = AllGrammarPartsAreKnown;
   //This condition prevented inserting a super class rule for grammar part
   // whose name was already in the map.
   std::map<std::string,WORD>::const_iterator iter =
@@ -1109,7 +1129,7 @@ enum ParseByRise::InsertGrammarRuleReturnCodes ParseByRise::InsertSuperClassGram
   return returnValue;
 }
 
-void ParseByRise::InsertGrammarRule(
+void BottomUpParser::InsertGrammarRule(
   //A grammar part with this ID must exist when calling this function.
   WORD wGrammarRuleIDLeft
   //A grammar part with this ID must exist when calling this function.
@@ -1188,7 +1208,7 @@ void ParseByRise::InsertGrammarRule(
     ) ;
 }
 
-void ParseByRise::InsertGrammarRule(WORD wGrammarRuleID
+void BottomUpParser::InsertGrammarRule(WORD wGrammarRuleID
   , const char * cp_ch )
 {
   //GrammarRule()
@@ -1198,7 +1218,7 @@ void ParseByRise::InsertGrammarRule(WORD wGrammarRuleID
   InsertRule_ID2NameAndName2IDmapping( wGrammarRuleID , cp_ch ) ;
 }
 
-void ParseByRise::InsertRule_ID2NameAndName2IDmapping( WORD wGrammarRuleID
+void BottomUpParser::InsertRule_ID2NameAndName2IDmapping( WORD wGrammarRuleID
     , const char * cp_ch )
 {
   m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
@@ -1232,13 +1252,13 @@ void ParseByRise::InsertRule_ID2NameAndName2IDmapping( WORD wGrammarRuleID
 //    , grammarpart ) ;
 //}
 
-void ParseByRise::Message(const std::wstring & cr_stdwstr )
+void BottomUpParser::Message(const std::wstring & cr_stdwstr )
 {
   if( m_p_userinterface )
     m_p_userinterface->Message(cr_stdwstr) ;
 }
 
-void ParseByRise::RemoveParseTree(GrammarPart * p_grammarpartRootNode)
+void BottomUpParser::RemoveParseTree(GrammarPart * p_grammarpartRootNode)
 {
   //m_stdset_grammarpartAllSuperordinate.erase( * p_grammarpartRootNode);
   m_allSuperordinateGrammarParts2pointerToThem.erase (* p_grammarpartRootNode);
@@ -1263,7 +1283,7 @@ void ParseByRise::RemoveParseTree(GrammarPart * p_grammarpartRootNode)
 // delete p_grammarpartRootNode;
 }
 
-void ParseByRise::RemoveSuperordinateRulesFromRootNodes()
+void BottomUpParser::RemoveSuperordinateRulesFromRootNodes()
 {
   GrammarPart * p_grammarpartChild = NULL;
   GrammarPart * p_grammarpartCurrent = NULL;
@@ -1306,4 +1326,5 @@ void ParseByRise::RemoveSuperordinateRulesFromRootNodes()
       * iter );
     ++ iter;
   }
+}
 }

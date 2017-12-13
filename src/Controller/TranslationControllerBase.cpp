@@ -53,8 +53,6 @@
 #endif
 
 /** Static variables need also to be defined in 1 source file. */
-I_UserInterface * SyntaxTreePath::sp_userinterface ;
-I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 fastestUnsignedDataType TranslationControllerBase::s_numParallelTranslationThreads = 1;
 TranslationControllerBase::settingsName2ValueAndFunction_type TranslationControllerBase::s_settingsName2valueAndFunction;
 #ifdef EVALUATE_PROCESSING
@@ -227,9 +225,8 @@ TranslationControllerBase::TranslationControllerBase()
   :
 //  m_multiThreadedTranslation( OperatingSystem::GetNumberOfLogicalCPUcores() ),
 //  m_boost_threadpool(8),
-  m_vbContinue(true),
 #ifndef TEST_MINI_XML
-  m_parsebyrise( * this ) ,
+  m_parsebyrise( this, m_translationProcess ) ,
 #endif
   m_nodetrie_ui32GrammarPartName2colour(256, 0),
 #ifndef TEST_MINI_XML
@@ -251,7 +248,7 @@ TranslationControllerBase::TranslationControllerBase()
 #endif
   GrammarPart::s_p_parseByRise = & m_parsebyrise;
 #ifndef TEST_MINI_XML
-  VocabularyAndTranslation::s_p_translationControllerBase = this;
+  VocabularyAndTranslation::s_p_bottomUpParser = & m_parsebyrise;
 #endif
 #ifndef __ANDROID__
   /** Can be used for executing GUI operations: if a GUI control action (e.g.
@@ -293,7 +290,7 @@ TranslationControllerBase::~TranslationControllerBase()
   LOGN_DEBUG("begin")
   // TODO Auto-generated destructor stub
 #ifndef TEST_MINI_XML
-  IVocabularyInMainMem & r_vocAccess = s_dictReaderAndVocAccess.GetVocAccess();
+  IVocabularyInMainMem & r_vocAccess = m_parsebyrise.s_dictReaderAndVocAccess.GetVocAccess();
   r_vocAccess.clear(); //DeleteCompleteList();
 #endif //TEST_MINI_XML
   LOGN_DEBUG("end")
@@ -317,7 +314,7 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
   /** Needed for SyntaxTreePath::CreateGrammarPartIDArray(...).*/
   SyntaxTreePath::sp_userinterface = this ;
 #ifndef TEST_MINI_XML
-  IVocabularyInMainMem & r_VocAccess = s_dictReaderAndVocAccess.GetVocAccess();
+  IVocabularyInMainMem & r_VocAccess = m_parsebyrise.s_dictReaderAndVocAccess.GetVocAccess();
   r_VocAccess.SetUserInterface(this);
   r_VocAccess.InsertFundamentalWords() ;
 #endif  //#ifndef TEST_MINI_XML
@@ -391,57 +388,6 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
   return TranslationControllerBaseClass::InitFunction::success;
 }
 
-enum VTrans::StatusCode TranslationControllerBase::GetStatus( /*const std::string & str*/
-  std::string & str, struct tm & time)
-{
-  LOGN_DEBUG("begin")
-  VTrans::StatusCode statusCode;
-
-  m_critSecStatus.Enter();
-  if( str == "dictionaryStatistics" )
-  {
-
-  }
-  else
-  {
-    m_currentStatus.GetItem(str);
-    statusCode = m_currentStatus.GetCode();
-    m_currentStatus.GetTime(time);
-  }
-  m_critSecStatus.Leave();
-  LOGN_DEBUG("return status code:" << statusCode << " " << str)
-  return statusCode;
-}
-
-unsigned TranslationControllerBase::GetStatus2( /*const std::string & str*/
-  const std::string & str, struct tm & time, ByteArray & byteArray
-  //void * pData
-  )
-{
-  LOGN_DEBUG("begin")
-  VTrans::StatusCode statusCode;
-
-  if( str == "dictionaryStatistics" )
-  {
-    const unsigned sizeInBytes = sizeof(m_collectDictionaryStatisticsStatus);
-    unsigned char * bytes = new unsigned char[sizeInBytes];
-    m_critSecStatus.Enter();
-    memcpy(bytes, & m_collectDictionaryStatisticsStatus, sizeInBytes);
-    m_critSecStatus.Leave();
-    byteArray.add(bytes, sizeInBytes);
-  }
-  else
-  {
-    m_critSecStatus.Enter();
-//    m_currentStatus.GetItem(str);
-    statusCode = m_currentStatus.GetCode();
-    m_currentStatus.GetTime(time);
-    m_critSecStatus.Leave();
-  }
-  LOGN_DEBUG("return status code:" << statusCode << " " << str)
-  return statusCode;
-}
-
 void TranslationControllerBase::SetNumberOfParallelTranslationThreads(
   fastestUnsignedDataType numberOfParallelTranslationThreads)
 {
@@ -460,21 +406,9 @@ void TranslationControllerBase::SetNumberOfParallelTranslationThreads(
 #endif //#ifdef PARALLELIZE_TRANSLATION
 }
 
-void TranslationControllerBase::SetStatus(
-  enum VTrans::StatusCode statusCode,
-//  const std::string & str
-  const char * const pch
-  )
-{
-  LOGN_DEBUG("begin--status code:" << statusCode << " " << pch)
-  m_critSecStatus.Enter();
-  m_currentStatus.Set(statusCode, /*str*/ pch);
-  m_critSecStatus.Leave();
-}
-
 void TranslationControllerBase::TranslateAsXML(const char * p_chEnglishText, ByteArray & byteArray)
 {
-  g_p_translationcontrollerbase->m_vbContinue = true;
+  g_p_translationcontrollerbase->m_translationProcess.SetContinue(true);
   char * ar_chTranslation;
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
@@ -507,7 +441,7 @@ void TranslationControllerBase::TranslateAsXMLgetAverageTimes(
   fastestUnsignedDataType numTimesExecute3rdTranslationStep
   )
 {
-  g_p_translationcontrollerbase->m_vbContinue = true;
+  g_p_translationcontrollerbase->m_translationProcess.SetContinue(true);
   char * ar_chTranslation;
   std::string stdstrWholeInputText(p_chEnglishText);
   std::string stdstrAllPossibilities ;
@@ -696,9 +630,7 @@ void TranslationControllerBase::SetCurrentDirToConfigFilesRootPath(
 /** Is called from another / the (graphical) UI thread. */
 void TranslationControllerBase::Stop()
 {
-  //TODO check if volatile is sufficient or better use atomic function Compare and swap
-  //TODO is all memory freed when the translation is cancelled?
-  m_vbContinue = false;
+  m_translationProcess.SetContinue(false);
 }
 
 #ifndef TEST_MINI_XML
@@ -706,10 +638,10 @@ void TranslationControllerBase::Transform()
 {
   LOGN(//"TranslationControllerBase::Transform() "
       "begin")
-  	SetStatus(
-  	  VTrans::transformParseTree,
-  	  ""
-  	  );
+  m_translationProcess.SetStatus(
+    VTrans::transformParseTree,
+    ""
+    );
   DWORD dwLeftMostTokenIndex = 0 ;
   std::vector<GrammarPart *> stdvec_p_grammarpartRootNode ;
   //TODO only processes the 1st parse tree(s) covering the most tokens -> 
@@ -751,26 +683,11 @@ void TranslationControllerBase::ResetVocabularyInMainMemToFundamentalWordsOnly()
 {
   /** Else too many words may be held in the temporary words map of a
   * BinarySearchInDictFile if translating too often with different words. */
-  s_dictReaderAndVocAccess.m_vocAccess.clear();
+  m_parsebyrise.s_dictReaderAndVocAccess.m_vocAccess.clear();
   /** Is closed by "clear()" -> reopen */
-  s_dictReaderAndVocAccess.m_dictReader.open(m_stdstrVocabularyFilePath);
+  m_parsebyrise.s_dictReaderAndVocAccess.m_dictReader.open(m_stdstrVocabularyFilePath);
   //  s_dictReaderAndVocAccess.loadDictionary(m_stdstrVocabularyFilePath);
-  s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords();
-}
-
-std::string GetParseTreeAsIndentedXML(const ParseByRise & parsebyrise)
-{
-  std::string std_strXML, std_strIntendedXML;
-  ByteArray byteArray; //crashes in parallel translation version in constructor
-  IO::GenerateXMLtreeFromParseTree( (ParseByRise *) & parsebyrise, /*std_strXML*/ byteArray);
-  const BYTE * const byteArrayBegin = byteArray.GetArray();
-  const fastestUnsignedDataType byteArraySize = byteArray.GetSize();
-  std_strXML = UTF8string::GetAsISO_8859_1StdString(byteArrayBegin,
-    byteArraySize );
-  std::ostringstream std_ostringstream;
-  OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
-  std_strIntendedXML = std_ostringstream.str();
-  return std_strIntendedXML;
+  m_parsebyrise.s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords();
 }
 
 void TranslationControllerBase::Translate(
@@ -808,7 +725,7 @@ void TranslationControllerBase::Translate(
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeParseTreeGen);
 //#endif
 //#endif
-  if(! m_vbContinue)
+  if(! m_translationProcess.Continue() )
     return;
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterParseTreeGen);
@@ -823,7 +740,7 @@ void TranslationControllerBase::Translate(
 
   //  RemoveDuplicateParseTrees();
 
-  if(! m_vbContinue)
+  if(! m_translationProcess.Continue() )
   	return;
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTransforParseTree);
   Transform() ;
@@ -841,7 +758,7 @@ void TranslationControllerBase::Translate(
     m_translateparsebyrisetree ;
 //  DEBUG_COUT("before translation\n")
 
-  if(! m_vbContinue)
+  if(! m_translationProcess.Continue() )
   	return;
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTranslRules);
   TranslationResult r_translationResult;
@@ -873,9 +790,9 @@ void TranslationControllerBase::Translate(
   
   /** If not clearing and translating different words multiple times or long
     * texts then the main memory may get exhausted. */
-  s_dictReaderAndVocAccess.GetVocAccess().clearTemporaryEntries();
+  m_parsebyrise.s_dictReaderAndVocAccess.GetVocAccess().clearTemporaryEntries();
 //  std::string std_strXML;
-  if(! m_vbContinue)
+  if(! m_translationProcess.Continue() )
     return;
   std_strIndentedXML = GetParseTreeAsIndentedXML(
     m_parsebyrise);

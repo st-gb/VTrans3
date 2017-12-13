@@ -11,7 +11,9 @@
 #include <string> //class std::string
 #include <IO/configuration/MainConfigFileReaderBase.hpp>
 
-class TranslationControllerBase;
+/** Forward declarations: */
+//class TranslationControllerBase;
+class I_UserInterface;
 
 /** see http://www.msweet.org/documentation/project3/Mini-XML.pdf */
 namespace VTrans3 {
@@ -21,8 +23,10 @@ namespace MiniXML
     : public MainConfigFileReaderBase
   {
   public:
-    static TranslationControllerBase * s_p_translationController;
-    MainConfigFileReader(TranslationControllerBase & r_translationController,
+//    static TranslationControllerBase * s_p_translationController;
+    static I_UserInterface * s_p_UserInterface;
+    MainConfigFileReader(//TranslationControllerBase & r_translationController,
+      I_UserInterface * p_UserInterface,
       ConfigurationHandler_type & configurationReader);
     virtual
     ~MainConfigFileReader();

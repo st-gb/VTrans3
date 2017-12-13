@@ -67,7 +67,7 @@ namespace DictionaryReader
           std_strDictFilePath.c_str());
 	      LOGN_ERROR("error loading dictionary \"" << absoluteDictFilePath << "\"->throwing an exception")
 //        const DWORD lastError = OperatingSystem::GetLastErrorCode();
-        throw VTrans3::OpenDictFileException(openError);
+        throw VTrans3::OpenDictFileException(openError, absoluteDictFilePath);
       }
       return dictFileIsOpen;
     }

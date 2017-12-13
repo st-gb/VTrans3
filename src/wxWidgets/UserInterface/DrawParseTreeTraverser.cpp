@@ -31,14 +31,14 @@ using namespace wxWidgets;
 
 DrawParseTreeTraverser::DrawParseTreeTraverser(
   wxDC * p_wxdc ,
-  ParseByRise * p_parsebyrise ,
+  BottomUpParser * p_bottomUpParser ,
   GrammarPart * p_grammarpart
   )
   : ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
     p_grammarpart ,
-    p_parsebyrise
+    p_bottomUpParser
     )
-  , mp_parsebyrise (p_parsebyrise)
+  , mp_parsebyrise (p_bottomUpParser)
   , m_currentParseTreeLeftEndInPixels(0)
   , m_wParseLevelCountedFromRoot(0)
   , mp_wxdc ( p_wxdc )

@@ -27,14 +27,14 @@ namespace VTrans3
 
     TranslationRuleFileReader::TranslationRuleFileReader(
       TranslateParseByRiseTree & r_translateparsebyrise ,
-      ParseByRise & r_parsebyrise
+      BottomUpParser & bottomUpParser
       , I_UserInterface & r_userinterface
       , ConfigurationHandler_type & configurationReader
       )
       : //configurationReader(* g_p_translationcontrollerbase),
         VTrans3::TranslationRuleFileReaderBase(
         r_translateparsebyrise
-        , r_parsebyrise
+        , bottomUpParser
         , r_userinterface
         , configurationReader,
         g_p_translationcontrollerbase

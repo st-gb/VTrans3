@@ -4,29 +4,15 @@
 #include <Controller/string_type.hpp> //for typedef VTrans::string_type
 #include <hardware/CPU/fastest_data_type.h>//typedef fastestUnsignedDataType
 #include <hardware/CPU/atomic/AtomicExchange.h>
+#include <Controller/TranslationProcess.hpp> //class TranslationProcess
 
 //typedef unsigned long DWORD;
 #include <windef.h>
 
-class CollectDictionaryStatisticsStatus
-{
-private:
-  long m_numberOfBytesCurrentlyProcessed;
-  long m_fileSizeInBytes;
-public:
-  void SetNumberOfBytesCurrentlyProcessed(
-    const fastestUnsignedDataType numberOfBytesCurrentlyProcessed)
-  {
-    AtomicExchange( & m_numberOfBytesCurrentlyProcessed, 
-      numberOfBytesCurrentlyProcessed);
-//    m_numberOfBytesCurrentlyProcessed = numberOfBytesCurrentlyProcessed;
-  }
-};
-
 class I_UserInterface
 {
 public:
-  CollectDictionaryStatisticsStatus m_collectDictionaryStatisticsStatus;
+//  CollectDictionaryStatisticsStatus m_collectDictionaryStatisticsStatus;
   I_UserInterface()
     : s_numberOfVocabularyPairs(0),
       m_dictionaryFileLineNumber(0)
@@ -36,6 +22,7 @@ public:
   /** avoid g++ warning : "virtual method but non-virtual d'tor" */
   virtual ~I_UserInterface() { }
 
+  TranslationProcess m_translationProcess;
   unsigned s_numberOfVocabularyPairs;
   volatile unsigned m_dictionaryFileLineNumber;
   virtual void Message(const std::string & cr_stdstr ) = 0;
@@ -56,7 +43,7 @@ public:
     const fastestUnsignedDataType fileSizeInBytes,
     const fastestUnsignedDataType numberOfBytesCurrentlyProcessed)
   {
-    m_collectDictionaryStatisticsStatus.SetNumberOfBytesCurrentlyProcessed(
+    m_translationProcess.m_collectDictionaryStatisticsStatus.SetNumberOfBytesCurrentlyProcessed(
       numberOfBytesCurrentlyProcessed);
   }
   //TODO implement: stop timer there

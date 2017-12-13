@@ -74,6 +74,7 @@ public:
     , main_verb_allows_1object_progressive_form //e.g. "am hitting you"
     , main_verb_allows_2objects_progressive_form //e.g. "was giving you a car"
     , main_verb_past
+    /** begin of fundamental words */
     , auxiliary_verb
     //for predicate/ tense
     , be1stPersonSingular
@@ -89,7 +90,6 @@ public:
     , English_indefinite_article
 
 //    , have
-
     , personal_pronoun
     , personal_pronoun_objective_form //"her","him",...
     , personal_pronoun_I

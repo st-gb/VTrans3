@@ -18,7 +18,7 @@
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
 #include <wxWidgets/UserInterface/LogEntries/LogEntriesDialog.hpp>
 
-class ParseByRise;
+class BottomUpParser;
 class TranslationControllerBase;
 class wxBoxSizer;
 class wxGermanTranslationPanel;
@@ -56,7 +56,7 @@ namespace wxWidgets
     LogEntriesDialog * m_p_logEntriesDialog;
   public:
     static unsigned s_windowID;
-    ParseByRise & m_parsebyrise;
+    BottomUpParser & m_parsebyrise;
     TranslationControllerBase & m_translationcontrollerbase;
   public:
     MainWindowBase(wxTopLevelWindow * p_mainwindow);

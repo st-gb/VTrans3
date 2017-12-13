@@ -1,9 +1,6 @@
-/*
- * ParseByRise_BuildParseTree.cpp
- *
+/** ParseByRise_BuildParseTree.cpp
  *  Created on: 18.08.2011
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #include "ParseByRise.hpp"
 //TranslationControllerBase::s_dictionary
@@ -15,6 +12,7 @@
 //#include <VocabularyInMainMem/LetterTree/LetterNode.hpp>//class LetterNode
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
+#include <Controller/TranslationProcess.hpp>//class TranslationProcess
 
 #ifndef MAXWORD
   #define MAXWORD 65535
@@ -23,6 +21,7 @@
 //class TranslationControllerBase;
 //LetterTree TranslationControllerBase::s_dictionary;
 
+namespace VTrans3 {
 /** Does the Part-Of-Speech (word class) tagging.
  *  Creates the leafs of possible parse trees ausgehend from the source text.*/
 // Leaves are word classes, e.g. nouns.
@@ -33,7 +32,7 @@
 // def_article_noun    /           <- tree struct: parse tree
 //              \   /
 //              clause       <- tree struct: parse tree
-void ParseByRise::CreateInitialGrammarParts ( const std::string &
+void BottomUpParser::CreateInitialGrammarParts ( const std::string &
   cr_stdstrText )
 {
   //PositionstdstringVector psv ;
@@ -105,7 +104,7 @@ void ParseByRise::CreateInitialGrammarParts ( const std::string &
   }
 }
 
-void ParseByRise::RemoveAllBetweenInRightIndexMap(
+void BottomUpParser::RemoveAllBetweenInRightIndexMap(
   std::multimap<DWORD, GrammarPart *>::iterator & iterFirstUnknownWord,
   std::multimap<DWORD, GrammarPart *>::iterator & iterLastUnknownWord//,
 //  const GrammarPart * p_grammarPart
@@ -140,7 +139,7 @@ void ParseByRise::RemoveAllBetweenInRightIndexMap(
   }
 }
 
-void ParseByRise::PossiblySumUp(
+void BottomUpParser::PossiblySumUp(
   std::multimap<DWORD, GrammarPart *>::iterator & iterFirstUnknownWord,
   std::multimap<DWORD, GrammarPart *>::iterator & iterLastUnknownWord
 //  std::multimap<DWORD, GrammarPart *> & std_multimap_dwIndex2p_grammarpart,
@@ -194,7 +193,7 @@ void ParseByRise::PossiblySumUp(
   }
 }
 
-void ParseByRise::DeleteFromMultiMap(
+void BottomUpParser::DeleteFromMultiMap(
   std::multimap<DWORD, GrammarPart *> & std_multimap_dwIndex2p_grammarpart
 //  , const bool leftMostIndices
   )
@@ -272,7 +271,7 @@ void ParseByRise::DeleteFromMultiMap(
  *     "Stefan Gebauer"
  *      unknown word
  */
-void ParseByRise::SummarizeUnknownWords()
+void BottomUpParser::SummarizeUnknownWords()
 {
   DeleteFromMultiMap(m_stdmultimap_dwLeftmostIndex2p_grammarpart/*, true*/);
 #ifdef _DEBUG
@@ -283,7 +282,7 @@ void ParseByRise::SummarizeUnknownWords()
 //  DeleteFromMultiMap(m_stdmultimap_dwRightmostIndex2p_grammarpart, false);
 }
 
-void ParseByRise::CreateParseTree(const std::string & cr_stdstrWholeInputText)
+void BottomUpParser::CreateParseTree(const std::string & cr_stdstrWholeInputText)
 {
   ClearParseTree() ;
   //TODO: resolve contractions https://en.wikipedia.org/wiki/Contraction_(grammar)#English
@@ -318,7 +317,7 @@ void ParseByRise::CreateParseTree(const std::string & cr_stdstrWholeInputText)
   LOGN_DEBUG("end")
 }
 
-bool ParseByRise::GrammarPartDoesNotAlreadyExist(GrammarPart * p_grammarpart)
+bool BottomUpParser::GrammarPartDoesNotAlreadyExist(GrammarPart * p_grammarpart)
 {
   bool bGrammarPartDoesNotAlreadyExist =
     //Do not store 1 and the same grammar part more than once in
@@ -344,7 +343,7 @@ bool ParseByRise::GrammarPartDoesNotAlreadyExist(GrammarPart * p_grammarpart)
   return bGrammarPartDoesNotAlreadyExist;
 }
 
-void ParseByRise::GetRuleNames(
+void BottomUpParser::GetRuleNames(
   WORD wSuperordinateGrammarPartID,
   GrammarPart * p_grammarpartLeft,
   GrammarPart * p_grammarpartRight
@@ -415,14 +414,14 @@ void ParseByRise::GetRuleNames(
   SUPPRESS_UNUSED_VARIABLE_WARNING(i)
 }
 
-void ParseByRise::OutputSuperordinateGrammarParts()
+void BottomUpParser::OutputSuperordinateGrammarParts()
 {
   #ifdef _DEBUG
   const int numSuperordinateGPs = //m_stdset_grammarpartAllSuperordinate.size();
     m_allSuperordinateGrammarParts2pointerToThem.size();
   std::ostringstream std_oss;
   std_oss << "# superordinate grammar parts: " << numSuperordinateGPs;
-  m_r_translationcontrollerbase.SetStatus(VTrans::not_set, std_oss.str().c_str() );
+  m_r_translationProcess.SetStatus(VTrans::not_set, std_oss.str().c_str() );
   
   //std::set<GrammarPart>::const_iterator c_iter = 
   //  m_stdset_grammarpartAllSuperordinate.begin();
@@ -456,7 +455,7 @@ void ParseByRise::OutputSuperordinateGrammarParts()
  *   only if subtree is duplicated:
  *    das große Auto <- assigned "the tiny" as left child for when here
  *    der große Fahrkorb */
-bool ParseByRise::PossiblyDuplicateSubTrees(
+bool BottomUpParser::PossiblyDuplicateSubTrees(
   GrammarPart * const p_grammarpartParent,
   GrammarPart * const p_grammarpartLeftChild,
   GrammarPart * const p_grammarpartRightChild
@@ -489,7 +488,7 @@ bool ParseByRise::PossiblyDuplicateSubTrees(
   return createdNewSubTree;
 }
 
-/*bool*/ GrammarPart * ParseByRise::InsertIntoSuperordinateGrammarPartContainer(
+/*bool*/ GrammarPart * BottomUpParser::InsertIntoSuperordinateGrammarPartContainer(
   GrammarPart * p_grammarPartToInsert)
 {
 //  LOGN_DEBUG("inserting " << * p_grammarpartSuperordinate
@@ -520,7 +519,7 @@ bool ParseByRise::PossiblyDuplicateSubTrees(
   return NULL;
 }
 
-bool ParseByRise:://GrammarRuleAppliesTo(
+bool BottomUpParser:://GrammarRuleAppliesTo(
   InsertIfGrammarRuleAppliesTo(
   //Maintaining 2 maps with both leftmost and rightmost indexes should be faster
   //when searching for neighboured grammar parts:
@@ -878,7 +877,7 @@ bool ParseByRise:://GrammarRuleAppliesTo(
 //"definite_article_singular.singular_noun" because the grammar part
 //is the same/ shared/ referenced by the two ones.
 //So as solution: clone grammar part.
-void ParseByRise::InsertIntoOutmostTokenIndexMaps(
+void BottomUpParser::InsertIntoOutmostTokenIndexMaps(
   GrammarPart * p_grammarpart,
   DWORD dwLeftMostTokenIndexOfRule,
   DWORD dwRightMostTokenIndexOfRule
@@ -931,7 +930,7 @@ void OutputIndex2GrammpartMultiMap(
   }
 }
 
-void ParseByRise::InsertIntoOverallLeftmostAndRightmostTokenIndexContainers(
+void BottomUpParser::InsertIntoOverallLeftmostAndRightmostTokenIndexContainers(
   const std::multimap<DWORD, GrammarPart* > & std_multimap_dwLeftmostIndex2p_grammarpart,
   const std::multimap<DWORD, GrammarPart* > & std_multimap_dwRightmostIndex2p_grammarpart
   )
@@ -955,7 +954,7 @@ void ParseByRise::InsertIntoOverallLeftmostAndRightmostTokenIndexContainers(
   LOGN_DEBUG("end")
 }
 
-void ParseByRise::InsertIntoLeftmostAndRightmostTokenIndexContainersFor1ParseLevel(
+void BottomUpParser::InsertIntoLeftmostAndRightmostTokenIndexContainersFor1ParseLevel(
   const fastestUnsignedDataType leftMostTokenIndex,
   const fastestUnsignedDataType rightMostTokenIndex,
   const GrammarPart * const p_grammarPart
@@ -982,7 +981,7 @@ void ParseByRise::InsertIntoLeftmostAndRightmostTokenIndexContainersFor1ParseLev
     ) ;
 }
 
-bool ParseByRise::InsertSuperordinateGrammarPart(
+bool BottomUpParser::InsertSuperordinateGrammarPart(
 //  std::multimap<DWORD, GrammarPart> & multmap_token_index2grammarpt
   std::multimap<DWORD, GrammarPart *> & r_multmap_token_index2p_grammarpt
   , bool bMemorizeInsertion
@@ -1255,7 +1254,7 @@ bool ParseByRise::InsertSuperordinateGrammarPart(
 }
 
 //Create new child(ren) becaus of that:
-void ParseByRise::PossiblyCreateNewLeaves(
+void BottomUpParser::PossiblyCreateNewLeaves(
   GrammarPart * p_grammarpart,
   GrammarPart * p_grammarpartLeftChild,
   GrammarPart * p_grammarpartRightChild
@@ -1283,7 +1282,7 @@ void ParseByRise::PossiblyCreateNewLeaves(
   }
 }
 
-bool ParseByRise::ReplaceGrammarPartIDsBySuperordinate()
+bool BottomUpParser::ReplaceGrammarPartIDsBySuperordinate()
 {
   LOGN_DEBUG("begin")
   bool bReplacedGrammarPartIDsBySuperordinate = false ;
@@ -1311,7 +1310,7 @@ bool ParseByRise::ReplaceGrammarPartIDsBySuperordinate()
   return bReplacedGrammarPartIDsBySuperordinate ;
 }
 
-bool ParseByRise::Resolve1ParseLevel()
+bool BottomUpParser::Resolve1ParseLevel()
 {
   ++ m_dwMapIndex ;
   bool grammarRuleApplied = ResolveGrammarRules();
@@ -1322,7 +1321,7 @@ bool ParseByRise::Resolve1ParseLevel()
 }
 
 //Minimizes, e.g. "article + noun" = "def_article_noun"
-BYTE ParseByRise::ResolveGrammarRules(
+BYTE BottomUpParser::ResolveGrammarRules(
   //Maintaining 2 maps with both leftmost and rightmost indexes should be faster
   //when searching for neighboured grammar parts:
   //  0    1       2      3      <-index
@@ -1497,7 +1496,7 @@ BYTE ParseByRise::ResolveGrammarRules(
   return byGrammarRuleApplied ;
 }
 
-void ParseByRise::ResolveGrammarRulesForAllParseLevels()
+void BottomUpParser::ResolveGrammarRulesForAllParseLevels()
 {
   //Use a multimap because at an index x more than 1 grammar part may exist.
   //E.g. for "I love you.": love" can be grammar part "noun" or grammar part
@@ -1645,7 +1644,7 @@ void ParseByRise::ResolveGrammarRulesForAllParseLevels()
 #endif
 }
 
-void ParseByRise::InsertGrammarPartForEverySameWord(
+void BottomUpParser::InsertGrammarPartForEverySameWord(
 //  const LetterNode * p_letternode,
   std::set<VocabularyAndTranslation *> * std_set_p_vocabularyandtranslation,
   DWORD dwTokenIndex, DWORD dwTokenIndexRightMost
@@ -1752,7 +1751,7 @@ void ParseByRise::InsertGrammarPartForEverySameWord(
 * into a list and its rightmost token index (because a word may have more
 * than 1 token, e.g. "vacuum cleaner") into another list.
 * (words are grammar part at the leaves of the parse tree) */
-void ParseByRise::StoreWordTypeAndGermanTranslation(
+void BottomUpParser::StoreWordTypeAndGermanTranslation(
 //  PositionstdstringVector & psv
   PositionStringVector & c_r_positionStringVector
   , DWORD dwTokenIndex
@@ -1802,14 +1801,15 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
       c_r_positionStringVector.at(dwTokenIndexRightMost).m_Str +
       " beginning from token index #" +
       convertToStdString(dwTokenIndexRightMost);
-    m_r_translationcontrollerbase.SetStatus(
+    
+    m_r_translationProcess.SetStatus(
       VTrans::lookUpWordInDictBeginningFromTokenIndex,
       item.c_str()
       );
     p_std_set_p_vocabularyandtranslation =
       //TranslationControllerBase:://s_dictionary.//searchAndReturnLetterNode(
       //find(
-      m_r_translationcontrollerbase.
+//      m_r_translationcontrollerbase.
       s_dictReaderAndVocAccess.lookUpEnglishWord(
         c_r_positionStringVector,
       //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
@@ -1831,7 +1831,7 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
   }
   while( ! /*p_letternode*/ p_std_set_p_vocabularyandtranslation
     && dwTokenIndexRightMost < c_r_positionStringVector.size() - 1
-    && m_r_translationcontrollerbase.m_vbContinue );
+    && /*m_r_translationcontrollerbase.*/m_r_translationProcess.Continue() );
   if( //dwTokenIndexRightMostUnknownToken
       bUnknownTokenFound)
   {
@@ -1859,4 +1859,5 @@ void ParseByRise::StoreWordTypeAndGermanTranslation(
 //    m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
 //  dwSize = //parsebyrise.
 //    m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
+}
 }

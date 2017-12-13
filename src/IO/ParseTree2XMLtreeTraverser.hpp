@@ -1,9 +1,6 @@
-/*
- * ParseTree2XMLtreeTraverser.hpp
- *
+/** ParseTree2XMLtreeTraverser.hpp
  *  Created on: 24.09.2011
- *      Author: Stefan
- */
+ *      Author: Stefan   */
 
 #ifndef PARSETREE2XMLTREETRAVERSER_HPP_
 #define PARSETREE2XMLTREETRAVERSER_HPP_
@@ -11,9 +8,9 @@
 //class ParseTreeTraverser::DirectingLeavesMultipleIterTraverser
 //#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
 //class ParseTreeTraverser::DirectingLeavesTraverser
-#include <Parse/DirectingLeavesInSingleIterationTraverser.hpp>
-#include <string>
-#include <data_structures/ByteArray.hpp>
+#include <ParseTree/DirectingLeavesInSingleIterationTraverser.hpp>
+//#include <string>
+#include <data_structures/ByteArray.hpp> //class ByteArray
 
 namespace ParseTreeTraverser
 {
@@ -29,7 +26,7 @@ namespace ParseTreeTraverser
     ByteArray m_byteArray;
     ParseTree2XMLtreeTraverser(
       const GrammarPart * p_grammarpartStartNode
-      , ParseByRise & r_parsebyrise
+      , const VTrans3::BottomUpParser &
       );
     virtual
     ~ParseTree2XMLtreeTraverser();

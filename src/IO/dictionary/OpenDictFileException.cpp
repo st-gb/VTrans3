@@ -16,18 +16,30 @@ namespace VTrans3
     {
       m_openError = openError;
     }
+    
+    OpenDictFileException::OpenDictFileException(
+      enum I_File::OpenError openError, 
+      const std::string & absoluteFilePath)
+      : m_absoluteFilePath(absoluteFilePath), m_openError(openError)
+    {
+    }
 
     OpenDictFileException::~OpenDictFileException()
     {
       // TODO Auto-generated destructor stub
     }
 
-    std::string OpenDictFileException::GetErrorMessageA()
+    std::string OpenDictFileException::GetErrorMessageA() const
     {
+      std::string result = "file ";
+      if( ! m_absoluteFilePath.empty() )
+        result += "\"" + m_absoluteFilePath + "\"";
       switch(m_openError)
       {
         case I_File::fileNotFound :
-          return "file not found";
+          result += "not found"; 
+          return result;
+          break;
         default:
           return "";
       }

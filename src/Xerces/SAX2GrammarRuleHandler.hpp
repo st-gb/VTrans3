@@ -17,9 +17,9 @@
 //import/export mechanism.
 //#define XERCES_STATIC_LIBRARY
 
-//Forward declaration (because _this_ header file may be included very often /
-//more than once) is faster than to #include the while declaration file.
-class ParseByRise ;
+/** Forward declaration (because _this_ header file may be included very often /
+* more than once) is faster than to #include the while declaration file. */
+class BottomUpParser;
 
 class SAX2GrammarRuleHandler
   :
@@ -28,12 +28,12 @@ class SAX2GrammarRuleHandler
 {
 private:
   XERCES_CPP_NAMESPACE::Locator const * m_pc_locator ;
-  ParseByRise & mr_parsebyrise ;
+  BottomUpParser & mr_parsebyrise ;
   std::string m_strElementName ;
 
 public:
   SAX2GrammarRuleHandler(
-    ParseByRise & r_parsebyrise
+    BottomUpParser &
     );
 
   void InsertGrammarRule(

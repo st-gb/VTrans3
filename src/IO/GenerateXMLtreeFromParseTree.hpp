@@ -12,13 +12,11 @@
 //#include <data_structures/ByteArray.hpp>
 
 /** Forward decl.*/
-class ParseByRise;
+class BottomUpParser;
 class ByteArray;
 
 namespace IO
 {
-  void GenerateXMLtreeFromParseTree(ParseByRise * p_parsebyrise,
-    /*std::string & std_strXML*/ ByteArray & byteArray);
 }
 
 #endif /* GENERATEXMLTREEFROMPARSETREE_HPP_ */

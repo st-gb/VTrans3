@@ -27,10 +27,12 @@ class GermanWord;
   protected:
     I_UserInterface * mp_userinterface;
     DictionaryReader::DictionaryReaderBase * m_p_dictionaryReader;
+    /** */
     fastestUnsignedDataType m_numberOfVocPairs;
     /** number of all English words (added inside binary and added from
      *  dictionary */
     fastestSignedDataType m_numberOfEnglishWords;
+    fastestUnsignedDataType m_numberOfFundamentalWords;
   public:
     typedef std::set<VocabularyAndTranslation *> voc_container_type;
     static std::string s_arstdstrPersonalPronoun [] ; //= {"hh", "j"} ;
@@ -144,6 +146,7 @@ class GermanWord;
         enum EnglishWord::English_word_class word_class /*void * p_v */
         )
     {
+      ++ m_numberOfFundamentalWords;      
       VocabularyAndTranslation * p_vocabularyandtranslation = NULL;
       Insert(
         stdstrWord,

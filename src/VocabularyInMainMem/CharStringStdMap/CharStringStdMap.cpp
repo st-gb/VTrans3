@@ -77,6 +77,7 @@ void CharStringStdMap::clear()
 //  LOGN_DEBUG("begin")
   //  VocabularyAndTranslation * p_c_vocabularyandtranslation;
   VocabularyAndTranslation * p_vocabularyAndTranslation;
+  /** Loop over all different words (each word may contain homographs) */
   for( map_type::const_iterator c_iter_map = m_charStringMap.begin() ;
       c_iter_map != m_charStringMap.end() ;
       ++ c_iter_map )
@@ -85,8 +86,9 @@ void CharStringStdMap::clear()
     const std::string & st = c_iter_map->first;
 #endif
     DEBUGN( "freeing memory for dictionary word \"" << c_iter_map->first << "\"")
-    /** "const_iterator" for Android NDK. */
-    for( std::set<VocabularyAndTranslation *>::const_iterator
+    /** Loop over homographs for the same word/tokens. */
+    for( /** "const_iterator" for Android NDK. */
+      std::set<VocabularyAndTranslation *>::const_iterator
       iter_p_vocabularyandtranslation =
         c_iter_map->second.m_std_set_p_vocabularyandtranslation.begin() ;
       iter_p_vocabularyandtranslation !=
@@ -102,7 +104,14 @@ void CharStringStdMap::clear()
 #endif
 //      -- ::wxGetApp().s_numberOfVocabularyPairs;
 //      -- m_numberOfVocPairs;
-      -- m_numberOfEnglishWords;
+//      -- m_numberOfEnglishWords;
+      -- m_numberOfVocPairs;
+#ifdef _DEBUG
+      const fastestUnsignedDataType numberOfNonFundamentalWords = 
+        m_numberOfEnglishWords - m_numberOfFundamentalWords;
+      if( /*numberOfNonFundamentalWords*/ m_numberOfVocPairs < 0)
+        LOGN_ERROR("# of words < 0")
+#endif
     }
   }
   m_charStringMap.clear();

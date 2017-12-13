@@ -1,29 +1,33 @@
 /*
- * DirectingLeavesMultipleIterTraverser.h
+ * DirectingLeavesInSingleIterationTraverser.hpp
  *
- *  Created on: May 6, 2010
+ *  Created on: 25.09.2011
  *      Author: Stefan
  */
 
-#ifndef DIRECTINGLEAVESMULTIPLEITERTRAVERSER_H_
-#define DIRECTINGLEAVESMULTIPLEITERTRAVERSER_H_
+#ifndef DIRECTINGLEAVESTRAVERSER_HPP_
+#define DIRECTINGLEAVESTRAVERSER_HPP_
 
-#include <set> //class std::set
 #include <vector> //class std::vector
 
+#include <Parse/GrammarPartPointerAndParseLevel.hpp>
+
 class GrammarPart ;
-class ParseByRise ;
-
+namespace VTrans3 {
+  class BottomUpParser;
+}
 typedef unsigned short WORD ;
-
-//class GrammarPartPointerAndParseLevel
-#include "GrammarPartPointerAndParseLevel.hpp"
 
 //A parse tree is a tree of the allowed syntax.
 namespace ParseTreeTraverser
 {
-  /** Traverses a parse tree from root to the leaves in multiple iterations.*/
-  class DirectingLeavesMultipleIterTraverser
+  //Traverses the parse tree (every node) in 1 iteration.
+  //One application for this is the creation of an XML tree representing
+  //the parse tree: therefore subclass this class an implement:
+  // -CurrentNodeIsLastAddedRightChild() for an opening XML tag for a right child
+  // -ParseTreePathAdded() for an opening XML tag for a left child
+  // -ParseTreePathPopped() for an closing XML tag
+  class DirectingLeavesInSingleIterationTraverser
   {
   public:
     enum directionOfCurrentNodeRelatedToParentNode
@@ -39,21 +43,13 @@ namespace ParseTreeTraverser
   //  const GrammarPart * mcp_grammarpartCurrent ;
     GrammarPartPointerAndParseLevel m_grammarpartpointer_and_parselevelCurrent ;
     const GrammarPart * mp_grammarpartStartNode ;
-    ParseByRise * mp_parsebyrise ;
+    const VTrans3::BottomUpParser * mp_parsebyrise ;
   //  std::vector<const GrammarPart *> m_stdvec_p_grammarpartRightNodeToProcess ;
     std::vector<GrammarPartPointerAndParseLevel>
       m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess ;
-    //The list of nodes that have been processed yet for a previous/ higher
-    //parse tree level: if for e.g.
-    // the car
-    //   \ /
-    // def_article_noun
-    // both "the" and "car" have been processed yet, the traversal for the
-    //next level should only reach until "def_article_noun" and neither "car"
-    //nor "the".
-    std::set<const GrammarPart*> m_stdset_p_grammarpartProcessedYet ;
     WORD m_wParseLevel ;
-    //e.g. gives the poss. to clear containers that track the current parse tree
+
+    //e.g. gives the possibility to clear containers that track the current parse tree
     //path.
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void BeforeBeginAtRoot() {} ;
@@ -61,12 +57,11 @@ namespace ParseTreeTraverser
     //Called after reaching a left leaf.
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void CurrentNodeIsLastAddedRightChild() {} ;
-
-    DirectingLeavesMultipleIterTraverser(
-        const GrammarPart * p_grammarpart ,
-        ParseByRise * p_parsebyrise );
+    DirectingLeavesInSingleIterationTraverser(
+      const GrammarPart * p_grammarpart ,
+      const VTrans3::BottomUpParser *);
     virtual
-    ~DirectingLeavesMultipleIterTraverser();
+    ~DirectingLeavesInSingleIterationTraverser();
 //    void GetGrammarPartPathAsGrammarPartIDvector( std::vector<WORD> & ) ;
 //    WORD * GetGrammarPartPathAsGrammarPartIDarray() ;
 //    const GrammarPart * GetNextRightGrammarPartNotProcessedYet() ;
@@ -74,9 +69,6 @@ namespace ParseTreeTraverser
 
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void ParseTreePathAdded() {} ;
-    virtual void EnteredLeftChild() { };
-    virtual void EnteredRightChild() { };
-    virtual void MemorizedRightChildToProcess() {};
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void ParseTreePathPopped() { } ;
     inline void PopElementsTillNextRightChild(//WORD wNumberOfElementsToPop
@@ -84,12 +76,7 @@ namespace ParseTreeTraverser
         p_grammarpartpointerandparselevelRightChild
       ) ;
     inline void ProcessLastAddedRightNode() ;
-    /** This method is useful e.g. for drawing a parse tree beginning with leaves. */
-    void ProcessLeavesOfParseTree() ;
-    /** This method is useful e.g. for drawing a parse tree beginning with leaves. */
-    void ProcessNextParseTreeLevelDirectingRoot(
-        //const GrammarPart * p_grammarpart
-        ) ;
+    void TraverseParseTree() ;
     //e.g.:
     //   the car and
     //    \  /   /
@@ -127,16 +114,7 @@ namespace ParseTreeTraverser
     void Traverse() ;
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void LeaveFound() {}
-    //The traverser traverses the tree until 1 or 2 processed node(s) was/ were
-    //found: e.g.
-    //
-    //    def_noun    <-when arrived here: "the" and "car" were processed-> call
-    //     / \           "UnprocessedHighestLevelNodeFound"
-    //   the car  <-both were processed yet.
-    //
-    //This is useful for e.g. drawing the parse tree.
-    virtual void UnprocessedHighestLevelNodeFound() {}
   };
 }
 
-#endif /* DIRECTINGLEAVESMULTIPLEITERTRAVERSER_H_ */
+#endif /* DIRECTINGLEAVESTRAVERSER_HPP_ */
