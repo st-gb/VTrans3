@@ -58,7 +58,7 @@ struct NumThreadsAndTimeDuration
 
 enum {buildParseTrees = 0, transform, applyTranslRules, beyondLastValue};
 
-std::string GetParseTreeAsIndentedXML(const BottomUpParser & parsebyrise);
+std::string GetParseTreeAsIndentedXML(const VTrans3::BottomUpParser &);
 
 #define EVALUATE_PROCESSING
 

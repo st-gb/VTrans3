@@ -132,10 +132,12 @@ namespace DictionaryReader
 
     I_File::ReadResult BinarySearchInDictFile::ReadByteBuffer(
       uint8_t buffer [],
-      fastestUnsignedDataType & numBytes)
+      const fastestUnsignedDataType & numBytesToRead,
+	  fastestUnsignedDataType & numBytesRead
+	  )
     {
       I_File::ReadResult readResult;
-	    readResult = m_dictFile.Read(buffer, numBytes, numBytes);
+	    readResult = m_dictFile.Read(buffer, numBytesToRead, numBytesRead);
 	    if( readResult != I_File::successfullyRead )
       {
 	      if( readResult != I_File::readLessThanIntended )

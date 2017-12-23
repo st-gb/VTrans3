@@ -5,7 +5,8 @@
 #ifndef _PARSEBYRISE_HPP
 #define	_PARSEBYRISE_HPP
 
-#include <windef.h> //for DWORD
+//#include <windef.h> //for DWORD
+#include <Windows.h> //includes windef.h;for DWORD, WORD
 #include <string> //class std::string
 #include <map> //class std::map
 #include <set> //class std::set

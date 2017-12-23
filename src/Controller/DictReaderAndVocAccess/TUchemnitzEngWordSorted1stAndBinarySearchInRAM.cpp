@@ -20,11 +20,11 @@ TUchemnitzEngWordSorted1stAndBinarySearchInRAM::~TUchemnitzEngWordSorted1stAndBi
 }
 
 bool TUchemnitzEngWordSorted1stAndBinarySearchInRAM::loadDictionary(
-    const std::string & s)
+    const std::string & filePath)
 {
   LOGN_DEBUG("begin")
 //    return m_dictReader.read();
-  return m_dictReader.open(s);
+  return m_dictReader.open(filePath);
 }
 
 IVocabularyInMainMem::voc_container_type *

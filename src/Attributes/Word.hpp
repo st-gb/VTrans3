@@ -14,7 +14,8 @@
   //using namespace MFC_Compatibility ; //for class CString in MFC_Compatibility
 #endif
 
-#include <windef.h>
+//#include <windef.h> //BYTE
+#include <Windows.h>//includes windef.h;for BYTE
 
 //#include "VocabularyInMainMem/LetterTree/VocabularyAndTranslation.hpp" //for BYTE
 

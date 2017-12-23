@@ -13,7 +13,7 @@
 #include <IO/UnknownGrammarPartNameException.hpp>
 #include <Parse/ParseByRise.hpp>
 #include <mxml.h>
-#include <OperatingSystem/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.hpp>
+#include <FileSystem/GetCurrentWorkingDir.hpp>
 
 #include "IO/ConfigurationReader.hpp"
 #include "MiniXMLconfigReader.hpp"

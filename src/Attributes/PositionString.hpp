@@ -10,7 +10,8 @@
 
   #include <vector> //class std::vector
   #include <Controller/string_type.hpp> //typedef VTrans::string_type
-  #include <windef.h> //for types DWORD, BYTE (,...)
+  //#include <windef.h> //for types DWORD, BYTE (,...)
+  #include <Windows.h> //includes windef.h;for types DWORD, BYTE (,...)
 //#include <iostream> //std::cout
 
   class PositionString

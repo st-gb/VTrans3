@@ -1,12 +1,9 @@
-/*
- * GrammarPart.cpp
- *
+/** GrammarPart.cpp
  *  Created on: May 28, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 #include "GrammarPart.hpp"
 #include <Attributes/EnglishWord.hpp> //class EnglishWord's enum
-#include <Parse/ParseByRise.hpp> //class ParseByRise
+#include <Parse/ParseByRise.hpp> //class VTrans3::BottomUpParser
 #include <Translate/TranslationRule.hpp> //class TranslationRule
 #include <ParseTree/DuplicateParseTree.hpp> //class ParseTreeTraverser::DuplicateParseTree
 
@@ -107,7 +104,7 @@ GrammarPart * GrammarPart::DuplicateSubTree(
   const VTrans3::BottomUpParser & bottomUpParser) const
 {
   ParseTreeTraverser::DuplicateParseTree parseTreeDuplicater(
-      (const GrammarPart *) this, (BottomUpParser &) bottomUpParser);
+      (const GrammarPart *) this, (VTrans3::BottomUpParser &) bottomUpParser);
   parseTreeDuplicater./*Traverse()*/ProcessLeavesOfParseTree();
   return parseTreeDuplicater.m_p_rootOfDuplicatedSubTree;
 }

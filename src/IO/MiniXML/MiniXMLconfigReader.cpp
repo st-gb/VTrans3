@@ -13,7 +13,7 @@
 #include <IO/MiniXML/TranslationRuleFileReader.hpp>
 #include <IO/MiniXML/VocAttributeDefintionHandler.hpp>
 #include <Controller/TranslationControllerBase.hpp>
-#include <OperatingSystem/Linux/FileSystem/GetCurrentWorkingDir/GetCurrentWorkingDir.hpp>
+#include <FileSystem/GetCurrentWorkingDir.hpp>
 
 namespace VTrans3 {
 namespace MiniXML

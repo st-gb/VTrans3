@@ -41,7 +41,9 @@ namespace DictionaryReader
         int GetNextByte();
         I_File::ReadResult ReadByteBuffer(
           uint8_t buffer [],
-          fastestUnsignedDataType & numBytes);
+		  const fastestUnsignedDataType & numBytesToRead,
+		  fastestUnsignedDataType & numBytesRead
+		  );
         bool SetDictDataOffset(const fastestUnsignedDataType byteOffset);
         void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType & itemNo)
         {

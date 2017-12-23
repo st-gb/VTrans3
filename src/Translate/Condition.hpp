@@ -8,7 +8,8 @@
 #ifndef _CONDITION_HPP
 #define	_CONDITION_HPP
 
-#include <windef.h> //for BYTE
+#include <Windows.h>//includes windef,.h;for BYTE
+//#include <windef.h> //for BYTE
 #include <string> //std::string
 //#include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUT(...)
 #include <Translate/SyntaxTreePath.hpp>//class SyntaxTreePath

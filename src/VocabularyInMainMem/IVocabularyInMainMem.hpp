@@ -3,7 +3,13 @@
 #define IVOCABULARYINMAINMEM_HPP
 
 #include <string>
-#include <windef.h> //for BYTE etc.
+/** For MicroSoft compilers do not include windef.h directly, else various
+*  errors like "No Target Architecture" */
+#ifdef _MSC_VER
+  #include <Windows.h>//includes windef.h;for BYTE etc.
+#else
+  #include <windef.h> //for BYTE etc.
+#endif
 #include <map> //class std::map
 #include <set> //class std::set
 #include <Attributes/EnglishWord.hpp> //class EnglishAuxiliaryVerb etc.

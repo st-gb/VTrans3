@@ -23,7 +23,7 @@ namespace ParseTreeTraverser
     };
   DirectingLeavesMultipleIterTraverser::DirectingLeavesMultipleIterTraverser(
     const GrammarPart * p_grammarpartStartNode
-    , BottomUpParser * p_bottomUpParser
+    , VTrans3::BottomUpParser * p_bottomUpParser
     )
     :
     m_bTraverseTree( true ) ,

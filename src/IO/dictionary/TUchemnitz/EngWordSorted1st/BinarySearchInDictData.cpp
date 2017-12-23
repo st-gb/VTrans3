@@ -1110,7 +1110,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
       uint8_t buffer[numBytesToRead];
       fastestUnsignedDataType numBytesRead = numBytesToRead;
       /** Read more bytes at once to speed up translation. */
-      enum I_File::ReadResult fileReadResult = ReadByteBuffer(buffer, numBytesRead);
+      enum I_File::ReadResult fileReadResult = ReadByteBuffer(buffer, numBytesToRead, numBytesRead);
       if( fileReadResult == I_File::successfullyRead ||
           /** End of file reached? */
           fileReadResult == I_File::readLessThanIntended )

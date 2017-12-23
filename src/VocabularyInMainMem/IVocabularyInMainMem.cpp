@@ -1,6 +1,6 @@
 #ifndef __ANDROID__
 //TODO does this include make sense?:
-  #include <bits/stringfwd.h>
+  //#include <bits/stringfwd.h>
 #endif
 
 #include "IVocabularyInMainMem.hpp"
@@ -8,7 +8,8 @@
 #include <Attributes/Word.hpp>
 #include <IO/dictionary/DictionaryFileAccessException.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN_DEBUG
-#include <Controller/TranslationControllerBase.hpp>
+//#include <Controller/TranslationControllerBase.hpp>
+#include <UserInterface/I_UserInterface.hpp>
 
 //extern TranslationControllerBase * g_p_translationcontrollerbase;
 //extern I_UserInterface * g_p_userInterface;

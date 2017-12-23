@@ -350,7 +350,7 @@ namespace VTrans3 {
     {
       SetGermanWord(
         word.c_str(),
-        word.length(),
+        (fastestUnsignedDataType) word.length(),
         vocAndTranslArrayIndex);
     }
 
@@ -369,7 +369,7 @@ namespace VTrans3 {
     std::string GetEnglishWordAsStdString(const fastestUnsignedDataType byIndex) const;
     int GetEnglishWordLength(const fastestUnsignedDataType wordIndex) const
     {
-      return ::strlen(m_arstrEnglishWord[wordIndex]);
+      return (int) ::strlen(m_arstrEnglishWord[wordIndex]);
     }
 
     word_type GetAssembledGermanString(const fastestUnsignedDataType index) const;

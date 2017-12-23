@@ -94,7 +94,7 @@ int OpenLogFile(const char * const p_chConfigFilesRootPath)
   try
   {
     bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 4000,
-      LogLevel::debug) ;
+      LogLevel::warning) ;
 #ifdef __linux__
 #ifndef __ANDROID__
   g_logger.AddConsoleLogEntryWriter();
@@ -128,6 +128,7 @@ EXPORT BYTE
   )
 {
   int i = OpenLogFile(p_chLogFilePath);
+  // g_logger.SetLogLevel();
   if( i == TranslationControllerBaseClass::InitFunction::creatingLogFileFailed)
     return i;
   std::string std_strCurrentWorkingDir;
@@ -244,7 +245,13 @@ EXPORT /*char * */ void TranslateAsXML(const char * p_chEnglishText//,
 {
   LOGN(/*"::TranslateAsXML(...)"*/ "begin")
 //  ByteArray byteArray(512);
-  g_p_translationcontrollerbase->TranslateAsXML(p_chEnglishText, byteArray);
+  try {
+    g_p_translationcontrollerbase->TranslateAsXML(p_chEnglishText, byteArray);
+  }
+  catch(const VTrans3::OpenDictFileException & openDictFileException)
+  {
+
+  }
   LOGN("XML as tree: ")
 //  OutputXMLindented( stdstrAllPossibilities.c_str(),
 //    * g_logger.mp_ofstream );

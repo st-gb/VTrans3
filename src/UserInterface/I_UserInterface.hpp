@@ -7,7 +7,8 @@
 #include <Controller/TranslationProcess.hpp> //class TranslationProcess
 
 //typedef unsigned long DWORD;
-#include <windef.h>
+//#include <windef.h>
+#include <Windows.h> /** includes windef.h, for DWORD */
 
 class I_UserInterface
 {

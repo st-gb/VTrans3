@@ -151,7 +151,9 @@ public:
    *   the offset must be heightened by numBytes. */
         virtual I_File::ReadResult ReadByteBuffer(
           uint8_t buffer [],
-          fastestUnsignedDataType & numBytes) = 0;
+          const fastestUnsignedDataType &,
+		  fastestUnsignedDataType &
+		  ) = 0;
 
         inline bool GetByteOffsetOfFirstVocable(
           fastestUnsignedDataType & byteOffsetOfVocable,

@@ -43,9 +43,12 @@ public:
   
   I_File::ReadResult ReadByteBuffer(
     uint8_t buffer [],
-    fastestUnsignedDataType & numBytes) {
-    memcpy(buffer, m_dictionaryData + m_dataOffset, numBytes);
-    m_dataOffset += numBytes;
+    const fastestUnsignedDataType & numBytesToRead,
+	fastestUnsignedDataType & numBytesRead
+	) {
+    memcpy(buffer, m_dictionaryData + m_dataOffset, numBytesToRead);
+	numBytesRead = numBytesToRead;
+    m_dataOffset += numBytesToRead;
     return I_File::successfullyRead;
   }
   

@@ -1,14 +1,12 @@
-/*
- * GrammarPart.hpp
- *
+/** GrammarPart.hpp
  *  Created on: May 5, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan  */
 
 #ifndef GRAMMARPART_HPP_
 #define GRAMMARPART_HPP_
 
-#include <windef.h> //for BYTE, DWORD etc.
+//#include <windef.h> //for BYTE, DWORD etc.
+#include <Windows.h> //includes windef.h;for BYTE, DWORD etc.
 #include <Attributes/Token.h> //class PositionStringVector
 #include <Attributes/Word.hpp> //class EnglishWord
 #include <stdint.h> //for uint32_t

@@ -3,7 +3,7 @@
 //"fatal error C1010: Unerwartetes Dateiende während der Suche nach dem
 // vorkompilierten Header.[...]"
 #ifdef _MSC_VER //MSVC compiler
-  #include "../../StdAfx.h"
+  //#include "../../StdAfx.h"
 #endif
 #include <Attributes/Word.hpp> //class Word, EnglishWord, EnglishNoun
 #include <Attributes/EnglishWord.hpp> //for class EnglishWord's enum
@@ -11,7 +11,13 @@
 //header file for this VocabularyAndTranslation class
 #include "VocabularyAndTranslation.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h> //DEBUG_COUTN(...)
-#include <windef.h> //for BYTE
+/** For MicroSoft compilers do not include windef.h directly, else various 
+ *  errors like "No Target Architecture" */
+#ifdef _MSC_VER 
+  #include <Windows.h>//includes windef.h;for BYTE
+#else
+  #include <windef.h> //for BYTE
+#endif
 #include <typeinfo> //for typeid()
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
@@ -466,7 +472,7 @@ void VocabularyAndTranslation::FreeMemory()
     arraySizes.m_byArraySizeForEnglishWord,
     arraySizes.m_byArraySizeForGermanWord);
   GCC_DIAG_OFF(switch)
-//  switch( m_englishWordClass )
+  switch( m_englishWordClass )
   {
   //  // singular type is only needed for parsing. It shares the same attr as
   //  // the noun. Because for the noun the storage is freed it should NOT be done again

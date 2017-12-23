@@ -66,6 +66,7 @@ bool BinarySearchInRAM::open(const std::string & std_strDictFilePath )
   else //Or throw enum I_File::OpenError openError
   {
   LOGN_ERROR("error loading dictionary->throwing an exception")
+    //TODO catch exception
     throw VTrans3::OpenDictFileException(openError);
   }
   return dictFileIsOpen;
