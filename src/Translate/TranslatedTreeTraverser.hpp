@@ -9,7 +9,7 @@
 #include <vector> //class std::vector
 //class TranslationAndGrammarPart
 #include <Attributes/TranslationAndGrammarPart.hpp>
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp> //Base class
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp> //Base class
 
 namespace ParseTreeTraverser
 {
@@ -27,12 +27,12 @@ namespace ParseTreeTraverser
 
     TranslatedTreeTraverser(
       const GrammarPart * p_grammarpartStartNode
-      , ParseByRise * p_parsebyrise
+      , VTrans3::BottomUpParser * p_bottomUpParser
       )
       :
       DirectingLeavesMultipleIterTraverser(
         p_grammarpartStartNode
-        , p_parsebyrise
+        , p_bottomUpParser
       )
     {
       mp_grammarpartStartNode = p_grammarpartStartNode;

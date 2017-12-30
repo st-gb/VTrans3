@@ -32,7 +32,8 @@ public:
 //  BYTE m_bySideWhereToInsert;
   BYTE m_bySideWhereToInsertChildNode;
   BYTE m_bySideWhereToInsertParentNode;
-  ParseByRise * mp_parsebyrise ;
+  /** TODO make as static variable to save space?! */
+  VTrans3::BottomUpParser * mp_bottomUpParser;
 //  std::string m_std_strParentNodeGrammarPartName;
 //  unsigned m_uiParentNodeGrammarPartID;
   //If multiple translation rules have the same concatenation ID then they are
@@ -69,9 +70,9 @@ public:
 //    , ParseByRise * p_parsebyrise
     ) ;
   TranslationRule( const std::string & r_stdstrSyntaxTreePath
-      , ParseByRise * p_parsebyrise ) ;
+    , VTrans3::BottomUpParser *);
   TranslationRule( const char * p_ch_SyntaxTreePath
-      , ParseByRise * p_parsebyrise ) ;
+    , VTrans3::BottomUpParser *);
   ~TranslationRule( )
   {
     LOGN_DEBUG("")

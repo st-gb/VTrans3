@@ -69,29 +69,29 @@ GrammarPart::~GrammarPart()
   LOGN_DEBUG("GrammarPart pointer:" << (void *) this )
 }
 
-std::map<unsigned, unsigned> GrammarPart::pointer2numaAllocsMinusNumDeletes;
+std::map<void *, unsigned> GrammarPart::pointer2numaAllocsMinusNumDeletes;
   
   void * GrammarPart::operator new(size_t size)
   {
     //https://stackoverflow.com/questions/14819760/override-delete-operator
     void * addressOfAllocatedMemory = new char[size];
-    std::map<unsigned, unsigned>::const_iterator c_iter = 
-      pointer2numaAllocsMinusNumDeletes.find((unsigned) addressOfAllocatedMemory);
+    std::map<void *, unsigned>::const_iterator c_iter = 
+      pointer2numaAllocsMinusNumDeletes.find(addressOfAllocatedMemory);
     if( c_iter == pointer2numaAllocsMinusNumDeletes.end() ) 
       pointer2numaAllocsMinusNumDeletes.insert( 
-        std::make_pair( (unsigned) addressOfAllocatedMemory, 1));
+        std::make_pair( addressOfAllocatedMemory, 1));
   #ifdef _DEBUG
     else
-      pointer2numaAllocsMinusNumDeletes[(unsigned) addressOfAllocatedMemory] = 1;
+      pointer2numaAllocsMinusNumDeletes[addressOfAllocatedMemory] = 1;
   #endif
     return addressOfAllocatedMemory;
   }
   void GrammarPart::operator delete(void * p)
   {
-    pointer2numaAllocsMinusNumDeletes[(unsigned) p] --;
+    pointer2numaAllocsMinusNumDeletes[p] --;
   #ifdef _DEBUG
     const fastestUnsignedDataType numDeletes = 
-      pointer2numaAllocsMinusNumDeletes[(unsigned) p];
+      pointer2numaAllocsMinusNumDeletes[p];
     if( numDeletes < 0 )
     {
       std::cerr << "error: more deletes than allocations" << std::endl;
@@ -140,6 +140,7 @@ void GrammarPart::Init()
     unconnected;
   mp_grammarpartLeftChild = NULL ;
   mp_grammarpartRightChild = NULL ;
+  m_pvocabularyandtranslation = NULL;
 }
 
 GrammarPart * GrammarPart::InsertChild(

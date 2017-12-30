@@ -32,7 +32,7 @@ namespace ParseTreeTraverser
     , mp_grammarpartStartNode ( p_grammarpartStartNode )
     , m_wParseLevel( 0)
   {
-    mp_parsebyrise = p_bottomUpParser;
+    mp_bottomUpParser = p_bottomUpParser;
   }
 
   DirectingLeavesMultipleIterTraverser::~DirectingLeavesMultipleIterTraverser()
@@ -102,7 +102,7 @@ namespace ParseTreeTraverser
       //p_grammarpart = *iter ;
       //DEBUG_COUT ( "DrawLeavesOfParseTree--popping " <<
       LOGN_DEBUG(
-        mp_parsebyrise->GetGrammarPartName(
+        mp_bottomUpParser->GetGrammarPartName(
 //        p_grammarpart->m_wGrammarPartID
         p_grammarpartpointerandparselevel->m_p_grammarpart->m_wGrammarPartID
         )
@@ -204,11 +204,11 @@ namespace ParseTreeTraverser
     LOGN_DEBUG(//"DirectingLeavesMultipleIterTraverser::"
       //"PopElementsTillNextRightChild()--"
       "should pop " << wNumberOfElementsToPop << " elements from "
-      << mp_parsebyrise->GetGrammarPartName(
+      << mp_bottomUpParser->GetGrammarPartName(
         p_grammmarpartCurrent->m_wGrammarPartID )
       << " (" << p_grammmarpartCurrent << ",level:" << wCurrentParseTreeLevel
       << ") to "
-      << mp_parsebyrise->GetGrammarPartName(
+      << mp_bottomUpParser->GetGrammarPartName(
         p_grammmarpartRightChild->m_wGrammarPartID )
       << "(" << p_grammmarpartRightChild << ",level:"
       << wParseTreeLevelOfNextRightChild << ")."
@@ -362,7 +362,7 @@ namespace ParseTreeTraverser
           LOGN_DEBUG(//"DirectingLeavesMultipleIterTraverser::"
             //"ProcessLeavesOfParseTree()--"
             "Adding " << p_grammarpartRightChild
-            << "(" << mp_parsebyrise->GetGrammarPartName(
+            << "(" << mp_bottomUpParser->GetGrammarPartName(
               p_grammarpartRightChild->m_wGrammarPartID) << ",level:"
               << wParseTreeLevelRightChild << ")"
             )
@@ -576,7 +576,7 @@ namespace ParseTreeTraverser
           LOGN_DEBUG(//"DirectingLeavesMultipleIterTraverser::ProcessNextParseTree"
             //"LevelDirectingRoot()--"
             "Adding " << p_grammarpartRightChild
-            << "(" << mp_parsebyrise->GetGrammarPartName(
+            << "(" << mp_bottomUpParser->GetGrammarPartName(
               p_grammarpartRightChild->m_wGrammarPartID) << ",level:"
             << wParseTreeLevelRightChild << ")"
             )

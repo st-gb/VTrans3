@@ -1,9 +1,6 @@
-/*
- * TranslationRuleFileReaderBase.cpp
- *
+/** TranslationRuleFileReaderBase.cpp
  *  Created on: 23.12.2013
- *      Author: mr.sys
- */
+ *      Author: mr.sys */
 
 #include <Controller/character_string/ConvertStdStringToTypename.hpp>
 #include <Controller/TranslationControllerBase.hpp> //class TranslationControllerBase
@@ -29,7 +26,7 @@ namespace VTrans3
 //  <XMLelementType>
   ::TranslationRuleFileReaderBase(
     TranslateParseByRiseTree & r_translateparsebyrise ,
-    ParseByRise & r_parsebyrise
+    VTrans3::BottomUpParser & r_bottomUpParser
     , I_UserInterface & r_userinterface
 //    , TranslationControllerBase & r_translationController
     , //VTrans3::ConfigurationReader
@@ -39,7 +36,7 @@ namespace VTrans3
     :
     m_bConcatenatedTranslationRules(false)
     , mr_i_userinterface( r_userinterface)
-    , mr_parsebyrise ( r_parsebyrise )
+    , mr_bottomUpParser ( r_bottomUpParser )
     , mr_translateparsebyrise (r_translateparsebyrise)
     , m_ui32ConcatenationID(0)
     , m_r_configurationReader(configurationReader)
@@ -68,7 +65,7 @@ namespace VTrans3
       {
         p_translationrule = new TranslationRule(
           m_stdstrTranslationRuleSyntaxTreePath
-          , & mr_parsebyrise ) ;
+          , & mr_bottomUpParser ) ;
         if( m_bConcatenatedTranslationRules)
         {
           //To find transl rules concatenated to the current one at translation.
@@ -103,7 +100,7 @@ namespace VTrans3
           if( p_translationrule->m_syntaxtreepathInsertionForTranslation.
               CreateGrammarPartIDArray(
                 m_std_strSyntaxTreePathForInsertionForTranslation
-                , p_translationrule->mp_parsebyrise
+                , p_translationrule->mp_bottomUpParser
                 , std_strUnknownGrammarPartID
               ) ==
                 SyntaxTreePath::unknown_grammar_part_name
@@ -121,13 +118,13 @@ namespace VTrans3
             m_uiParentNodeInsertion;
 
 //        p_translationrule->m_std_strParentNodeGrammarPartName =
-        if( ! mr_parsebyrise.GetGrammarPartID(
+        if( ! mr_bottomUpParser.GetGrammarPartID(
             m_std_strParentNodeGrammarPartName,
             p_translationrule->m_uiParentNodeGrammarPartID
             )
           )
           p_translationrule->m_uiParentNodeGrammarPartID = 65534;
-        if( ! mr_parsebyrise.GetGrammarPartID(
+        if( ! mr_bottomUpParser.GetGrammarPartID(
             m_std_strGrammarPartName,
             p_translationrule->m_uiChildNodeGrammarPartID
             )
@@ -355,7 +352,7 @@ namespace VTrans3
     std::string std_strUnknownGrammarPartID;
     if( cond.SetSyntaxTreePath(
           m_stdstrConditionSyntaxTreePath.c_str() ,
-          & mr_parsebyrise ,
+          & mr_bottomUpParser ,
           std_strUnknownGrammarPartID
         ) == SyntaxTreePath::unknown_grammar_part_name
       )

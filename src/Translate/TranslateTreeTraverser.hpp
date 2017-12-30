@@ -1,9 +1,6 @@
-/*
- * DoTranslateTreeTraverser.hpp
- *
+/** DoTranslateTreeTraverser.hpp
  *  Created on: May 17, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #ifndef TRANSLATETREETRAVERSER_HPP_
 #define TRANSLATETREETRAVERSER_HPP_
@@ -12,13 +9,13 @@
 //class TranslationAndConsecutiveID
 #include <Attributes/TranslationAndConsecutiveID.hpp>
 //Base class DirectingLeavesMultipleIterTraverser
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>//base class
 #include <Parse/ParseByRise.hpp>
 #include <map> //class std::map
 #include <vector> //class std::vector
 
-//Forward declaration (faster than to include)
-class ParseByRise ;
+/** Forward declaration (faster than to include header files) */
+namespace VTrans3 { class BottomUpParser; }
 class TranslateParseByRiseTree ;
 
 namespace ParseTreeTraverser
@@ -26,7 +23,7 @@ namespace ParseTreeTraverser
   class ApplyTranslationRulesTreeTraverser
     : public DirectingLeavesMultipleIterTraverser
   {
-    ParseByRise & m_r_parsebyrise ;
+    VTrans3::BottomUpParser & m_r_bottomUpParser;
     TranslateParseByRiseTree & mr_translateparsebyrisetree ;
     std::map<GrammarPart *,WORD>
       m_map_grammarpartRightUnprocessedChild2wParseTreeLevel ;
@@ -50,7 +47,7 @@ namespace ParseTreeTraverser
     //methods
     ApplyTranslationRulesTreeTraverser(
       const GrammarPart * p_grammarpartStartNode
-      , ParseByRise & r_parsebyrise
+      , VTrans3::BottomUpParser & r_parsebyrise
       , TranslateParseByRiseTree & r_translateparsebyrisetree
       );
     virtual

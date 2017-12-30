@@ -1,9 +1,6 @@
-/*
- * ParseTree2XMLtreeTraverser.cpp
- *
+/** ParseTree2XMLtreeTraverser.cpp
  *  Created on: 24.09.2011
- *      Author: Stefan
- */
+ *      Author: Stefan  */
 
 #include <Controller/character_string/stdstring_format.hpp>
 #include "IO/ParseTree2XMLtreeTraverser.hpp"
@@ -11,9 +8,10 @@
 #include <Parse/ParseByRise.hpp> //class ParseByRise
 #include <Controller/character_string/ISO_8859_1.hpp>
 
+#define PARSE_TREE_NODE_LITERAL "parseTreeNode"
+
 namespace ParseTreeTraverser
 {
-
   ParseTree2XMLtreeTraverser::ParseTree2XMLtreeTraverser(
     const GrammarPart * p_grammarpartStartNode
     , const VTrans3::BottomUpParser & bottomUpParser
@@ -34,6 +32,30 @@ namespace ParseTreeTraverser
     // TODO Auto-generated destructor stub
   }
 
+  std::string GetOpeningParseTreeNodeTag()
+  {
+    std::ostringstream stdossOpeningParseTreeNodeTag;
+    stdossOpeningParseTreeNodeTag << "<" << PARSE_TREE_NODE_LITERAL << " name=\"";
+    return stdossOpeningParseTreeNodeTag.str();
+  }
+  
+  VocabularyAndTranslation::word_type GetEnglishWord(const GrammarPart * p_grammarpart)
+  {
+//    GrammarPart * p_grammarpart = m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart;
+    if(p_grammarpart && p_grammarpart->m_pvocabularyandtranslation )
+    {
+      VocabularyAndTranslation * pvocabularyandtranslation = 
+        p_grammarpart->m_pvocabularyandtranslation;
+      if( pvocabularyandtranslation && pvocabularyandtranslation->m_arstrEnglishWord)
+      {
+        VocabularyAndTranslation::word_type * wt = pvocabularyandtranslation->m_arstrEnglishWord;
+        VocabularyAndTranslation::word_type eng = wt[0];
+        return eng;
+      }
+    }
+    return NULL;
+  }
+  
   void ParseTree2XMLtreeTraverser::CurrentNodeIsLastAddedRightChild()
   {
     //http://www.cplusplus.com/reference/stl/vector/resize/:
@@ -55,12 +77,17 @@ namespace ParseTreeTraverser
       //should remain.
       m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ) ;
 
-    m_byteArray.add("<grammar_part name=\"");
+    std::string openingParseTreeNodeTag = GetOpeningParseTreeNodeTag();   
+    m_byteArray.add(openingParseTreeNodeTag.c_str() );
       /** Grammar part names can't be XML element names because they (may)
       * contain numbers/ digits. So make it an attribute value." */
     m_byteArray.add( mp_parsebyrise->GetGrammarPartName(
       m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart->m_wGrammarPartID).c_str() );
+    
+    VocabularyAndTranslation::word_type eng = GetEnglishWord(
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart);
+    
     m_byteArray.add("\">");
 //    m_byteArray.add(std_strXML.c_str(), std_strXML.length() );
 
@@ -104,9 +131,14 @@ namespace ParseTreeTraverser
   }
   void ParseTree2XMLtreeTraverser::ParseTreePathAdded()
   {
-    m_byteArray.add("<grammar_part name=\"");
-      //Grammar part names can't be XML element names because they (may)
-      //contain numbers/ digits. So make it an attribute value.
+    std::string openingParseTreeNodeTag = GetOpeningParseTreeNodeTag();   
+    m_byteArray.add(openingParseTreeNodeTag.c_str() );
+    
+    VocabularyAndTranslation::word_type eng = GetEnglishWord(
+      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart);
+
+    /** Grammar part names can't be XML element names because they (may)
+     * contain numbers/ digits. So make it an attribute value. */
     m_byteArray.add(mp_parsebyrise->GetGrammarPartName(
       m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart->m_wGrammarPartID).c_str() );

@@ -1,9 +1,6 @@
-/*
- * TranslationRuleFileReaderBase.hpp
- *
+/** TranslationRuleFileReaderBase.hpp
  *  Created on: 23.12.2013
- *      Author: mr.sys
- */
+ *      Author: mr.sys */
 
 #ifndef TRANSLATIONRULEFILEREADERBASE_HPP_
 #define TRANSLATIONRULEFILEREADERBASE_HPP_
@@ -21,7 +18,7 @@
 #define TRANSLATION_ANSI_STRING "translation"
 
 /** Forward declarations. */
-class ParseByRise ;
+namespace VTrans3 { class BottomUpParser; }
 class I_UserInterface ;
 class TranslateParseByRiseTree ;
 //namespace VTrans3 {
@@ -39,7 +36,7 @@ namespace VTrans3
     bool m_bConcatenatedTranslationRules;
     ConditionsAndTranslation m_conditionsandtranslation;
     I_UserInterface & mr_i_userinterface;
-    ParseByRise & mr_parsebyrise;
+    VTrans3::BottomUpParser & mr_bottomUpParser;
     TranslateParseByRiseTree & mr_translateparsebyrise;
     std::string m_strElementName;
     std::string m_stdstrConditionSyntaxTreePath;
@@ -61,7 +58,7 @@ namespace VTrans3
   public:
     TranslationRuleFileReaderBase(
       TranslateParseByRiseTree & ,
-      ParseByRise & ,
+      VTrans3::BottomUpParser &,
       I_UserInterface & r_userinterface
 //      , TranslationControllerBase & r_translationController
       , //VTrans3::ConfigurationReader
@@ -74,7 +71,7 @@ namespace VTrans3
 //  protected:
     void EndTranslationRuleXMLelement();
     /*template <typename XMLelement_Type>*/ /*inline*/
-      void HandleBeginOfConditionXMLelement(
+    void HandleBeginOfConditionXMLelement(
       /*XMLelement_Type*/ attributeType & xmlElement);
     inline bool HasByteAttributeValue(
       attributeType & xmlElement, std::string & std_strAttributeValue);

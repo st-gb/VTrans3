@@ -1,16 +1,15 @@
-/*
- * SetSameConsecutiveIDforLeaves.h
- *
+/** SetSameConsecutiveIDforLeaves.h
  *  Created on: Jun 2, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #ifndef SETSAMECONSECUTIVEIDFORLEAVES_H_
 #define SETSAMECONSECUTIVEIDFORLEAVES_H_
 
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>//base class
 
-class GrammarPart ;
+/** Forward declararions */
+class GrammarPart;
+namespace VTrans3 { class BottomUpParser; }
 
 namespace ParseTreeTraverser
 {
@@ -22,7 +21,7 @@ namespace ParseTreeTraverser
     void LeaveFound() ;
     SetSameConsecutiveIDforLeaves(
       const GrammarPart * p_grammarpart ,
-      ParseByRise * p_parsebyrise ,
+      VTrans3::BottomUpParser *,
       WORD wConsecutiveID );
     virtual
     ~SetSameConsecutiveIDforLeaves();

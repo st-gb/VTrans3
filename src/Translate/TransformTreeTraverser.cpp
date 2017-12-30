@@ -18,7 +18,7 @@ namespace ParseTreeTraverser
   {
     m_stdvector_p_grammarpartCurrentParseTreePath.clear() ;
     LOGN_DEBUG(//"TransformTreeTransverser::BeforeBeginAtRoot()--"
-      "current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
+      "current parse tree path: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
   }
@@ -28,7 +28,7 @@ namespace ParseTreeTraverser
     m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
     LOGN_DEBUG(//"TransformTreeTraverser::CurrentNodeIsLastAddedRightChild()--"
-      "current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
+      "current parse tree path: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
   }
@@ -54,7 +54,7 @@ namespace ParseTreeTraverser
   {
     GrammarPart * p_gp = NULL ;
     LOGN_DEBUG(//"Get2ndLastGrammarPart() "
-      "for: " << m_r_parsebyrise.GetPathAs_std_string(
+      "for: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath )
       )
     std::vector<GrammarPart *>::reverse_iterator c_rev_iter =
@@ -63,14 +63,14 @@ namespace ParseTreeTraverser
       )
     {
       LOGN_DEBUG( //"TransformTreeTraverser::Get2ndLastGrammarPart()--"
-        "current grammar part: " << m_r_parsebyrise.GetGrammarPartName(
+        "current grammar part: " << m_r_bottomUpParser.GetGrammarPartName(
           ( * c_rev_iter)->m_wGrammarPartID )
         )
       ++ c_rev_iter ;
       if( c_rev_iter != m_stdvector_p_grammarpartCurrentParseTreePath.rend() )
       {
         LOGN_DEBUG( //"TransformTreeTraverser::Get2ndLastGrammarPart()--"
-          "current grammar part: " << m_r_parsebyrise.GetGrammarPartName(
+          "current grammar part: " << m_r_bottomUpParser.GetGrammarPartName(
             ( * c_rev_iter)->m_wGrammarPartID )
           )
         p_gp = * c_rev_iter ;
@@ -81,7 +81,7 @@ namespace ParseTreeTraverser
 
   void TransformTreeTraverser::LeaveFound()
   {
-    std::string std_strSyntaxTreePath = m_r_parsebyrise.GetPathAs_std_string(
+    std::string std_strSyntaxTreePath = m_r_bottomUpParser.GetPathAs_std_string(
       m_stdvector_p_grammarpartCurrentParseTreePath);
     LOGN_DEBUG(//"TransformTreeTraverser::LeaveFound()--"
       "current parse tree path: " << std_strSyntaxTreePath
@@ -151,7 +151,7 @@ namespace ParseTreeTraverser
         m_p_grammarpartParentOfCurrentGrammarPart )
     {
       std::string std_strParentOfCurrentGrammarPart =
-        m_r_parsebyrise.GetGrammarPartName( insertintotreetransverser.
+        m_r_bottomUpParser.GetGrammarPartName( insertintotreetransverser.
         m_p_grammarpartParentOfCurrentGrammarPart->m_wGrammarPartID );
       WORD wDirection = (WORD) insertintotreetransverser.m_byDirection;
       LOGN_DEBUG( //FULL_FUNC_NAME << "--"
@@ -176,7 +176,7 @@ namespace ParseTreeTraverser
       if( p_p_grammarpartChildOfParentGrammarPartWhereToInsert )
       {
         std::string std_strChildOfParentGrammarPartWhereToInsert =
-          m_r_parsebyrise.GetGrammarPartName(
+          m_r_bottomUpParser.GetGrammarPartName(
           ( * p_p_grammarpartChildOfParentGrammarPartWhereToInsert)->
           m_wGrammarPartID );
         LOGN_DEBUG(//"TransformTreeTraverser::MoveParseTreeBranch(...)"
@@ -234,12 +234,12 @@ namespace ParseTreeTraverser
         LOGN_DEBUG(//"TransformTreeTraverser::MoveParseTreeBranch(...)--"
           "setting p_p_grammarpartChildOfParentGrammarPartWhereToInsert->"
           "mp_grammarpartLeftChild to: "
-          << m_r_parsebyrise.GetGrammarPartName(
+          << m_r_bottomUpParser.GetGrammarPartName(
             insertintotreetransverser.
             m_p_grammarpartChildOfGrammarPartToInsert->
             m_wGrammarPartID )
           << " mp_grammarpartRightChild to: "
-          << m_r_parsebyrise.GetGrammarPartName(
+          << m_r_bottomUpParser.GetGrammarPartName(
             p_grammarpartBranchToMove->m_wGrammarPartID )
           )
           //                  obj  adverb
@@ -268,7 +268,7 @@ namespace ParseTreeTraverser
   //      )
   //    {
   #ifdef COMPILE_WITH_LOG
-    std::string stdstrCurrentParseTreePath = m_r_parsebyrise.
+    std::string stdstrCurrentParseTreePath = m_r_bottomUpParser.
       GetPathAs_std_string( m_stdvector_p_grammarpartCurrentParseTreePath) ;
   //      m_r_parsebyrise.GetPathAs_std_string( stdvec_wGrammarPartID ) ;
     SyntaxTreePath::GetAsGrammarPartIDvector(
@@ -333,17 +333,17 @@ namespace ParseTreeTraverser
       GetChildOfParentGrammarPartWhereToInsertOrToExchange(
       r_insertintotreetransverser);
 
-    std::string std_str2ndChildGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
+    std::string std_str2ndChildGrammarPartName = m_r_bottomUpParser.GetGrammarPartName(
         (* p_p_grammarpartChildOfParentGrammarPartToExchange)->
         m_wGrammarPartID );
     std::string std_str2ndParentGrammarPartName =
-        m_r_parsebyrise.GetGrammarPartName( r_insertintotreetransverser.
+        m_r_bottomUpParser.GetGrammarPartName( r_insertintotreetransverser.
               m_p_grammarpartParentOfGrammarPartToInsert->m_wGrammarPartID);
 
     std::string std_str1stParentGrammarPartName =
-        m_r_parsebyrise.GetGrammarPartName(
+        m_r_bottomUpParser.GetGrammarPartName(
         p_grammarpartParentOfGrammarPartToMoveOrToExchange->m_wGrammarPartID);
-    std::string std_str1stChildGrammarPartName = m_r_parsebyrise.
+    std::string std_str1stChildGrammarPartName = m_r_bottomUpParser.
         GetGrammarPartName(
         p_grammarpartBranchToMoveOrToExchange->
         m_wGrammarPartID );
@@ -424,7 +424,7 @@ namespace ParseTreeTraverser
         c_r_transformationrule ,
         * p_syntaxtreepath,
         m_p_grammarpartStartNode ,
-        m_r_parsebyrise
+        m_r_bottomUpParser
         ) ;
 
       GrammarPart * p_grammarpartChildOfGrammarPartWhereToInsertOrToExchange =
@@ -442,7 +442,7 @@ namespace ParseTreeTraverser
         )
       {
         std::string std_strGrammarPartName;
-        std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
+        std_strGrammarPartName = m_r_bottomUpParser.GetGrammarPartName(
             p_grammarpartChildOfGrammarPartWhereToInsertOrToExchange->
             m_wGrammarPartID );
 
@@ -453,7 +453,7 @@ namespace ParseTreeTraverser
           "grammar part to be a child of the grammar part to insert: "
           << std_strGrammarPartName
           )
-        std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
+        std_strGrammarPartName = m_r_bottomUpParser.GetGrammarPartName(
           insertintotreetransverser.
           m_p_grammarpartParentOfCurrentGrammarPart->m_wGrammarPartID );
         LOGN_DEBUG( //"TransformTreeTraverser::ParseTreePathAdded()-- "
@@ -462,7 +462,7 @@ namespace ParseTreeTraverser
           << std_strGrammarPartName
           )
         std::string std_strParentOfGrammarPartToMove =
-            m_r_parsebyrise.GetGrammarPartName(
+            m_r_bottomUpParser.GetGrammarPartName(
             p_grammarpartParentOfGrammarPartToMoveOrToExchange->m_wGrammarPartID );
         GrammarPart * p_grammarpartBranchToMoveOrToExchange = NULL ;
 
@@ -493,7 +493,7 @@ namespace ParseTreeTraverser
           {
 //            MoveSyntaxTreePath();
 
-            std_strGrammarPartName = m_r_parsebyrise.GetGrammarPartName(
+            std_strGrammarPartName = m_r_bottomUpParser.GetGrammarPartName(
                 p_grammarpartBranchToMoveOrToExchange->m_wGrammarPartID );
             LOGN_DEBUG( /*FULL_FUNC_NAME <<*/ "p_grammarpartBranchToMove:"
               << std_strGrammarPartName
@@ -533,7 +533,7 @@ namespace ParseTreeTraverser
     }
     catch( const GetGrammarPartIDexception & c_r_getgrammarpartidexception )
     {
-        mp_parsebyrise->m_p_userinterface->Message(
+        mp_bottomUpParser->m_p_userinterface->Message(
           "Error moving parse tree branch \"" +
 //          c_iter_syntaxtreepath2transformationrule->second.
           c_r_transformationrule.
@@ -577,7 +577,7 @@ namespace ParseTreeTraverser
     m_stdvector_p_grammarpartCurrentParseTreePath.pop_back() ;
     LOGN_DEBUG(//"TransformTreeTraverser::ParseTreePathPopped()--"
       "current parse tree "
-      "path: " << m_r_parsebyrise.GetPathAs_std_string(
+      "path: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
   }
@@ -586,7 +586,7 @@ namespace ParseTreeTraverser
   {
     LOGN_DEBUG(//"TransformTreeTraverser::RightChildAdded()--"
       "current parse tree "
-      "path: " << m_r_parsebyrise.GetPathAs_std_string(
+      "path: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
   }
@@ -676,12 +676,12 @@ namespace ParseTreeTraverser
     const std::map<SyntaxTreePath,TransformationRule> &
       cr_stdmap_syntaxtreepath2transformationrule ,
     const GrammarPart * p_grammarpartStartNode ,
-    ParseByRise & r_parsebyrise
+    VTrans3::BottomUpParser & r_bottomUpParser
     )
     :
     ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
      p_grammarpartStartNode ,
-     & r_parsebyrise
+     & r_bottomUpParser
      ) ,
     m_bMoveParseTreeBranch( true ) ,
     m_p_grammarpartStartNode( p_grammarpartStartNode ) ,
@@ -689,7 +689,7 @@ namespace ParseTreeTraverser
 //      cr_stdmap_stdstrTransformationRule2transformationrule) ,
     m_stdmap_syntaxtreepath2transformationrule(
       cr_stdmap_syntaxtreepath2transformationrule ) ,
-    m_r_parsebyrise( r_parsebyrise )
+    m_r_bottomUpParser( r_bottomUpParser )
   {
 
   }
@@ -701,7 +701,7 @@ namespace ParseTreeTraverser
   void TransformTreeTraverser::UnprocessedHighestLevelNodeFound()
   {
     LOGN_DEBUG(//"TransformTreeTraverser::UnprocessedHighestLevelNodeFound()--"
-      "current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
+      "current parse tree path: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
   }

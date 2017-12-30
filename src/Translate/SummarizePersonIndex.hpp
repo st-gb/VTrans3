@@ -8,7 +8,7 @@
 #ifndef SUMMARIZEPERSONINDEX_HPP_
 #define SUMMARIZEPERSONINDEX_HPP_
 
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>//base class
 #include <Translate/TranslateParseByRiseTree.hpp>
 #include <map>
 #include <vector>
@@ -25,7 +25,7 @@ namespace ParseTreeTraverser
     : public DirectingLeavesMultipleIterTraverser
   {
   public:
-    ParseByRise & mr_parsebyrise ;
+    VTrans3::BottomUpParser & mr_bottomUpParser;
     TranslateParseByRiseTree * mp_translateparsebyrisetree ;
     std::map<GrammarPart *,WORD>
       m_map_grammarpartRightUnprocessedChild2wParseTreeLevel ;
@@ -33,7 +33,7 @@ namespace ParseTreeTraverser
     std::vector<GrammarPart *> m_stdvec_p_grammarpartPath ;
     SummarizePersonIndex(
       const GrammarPart * p_grammarpart ,
-      ParseByRise * p_parsebyrise ,
+      VTrans3::BottomUpParser *,
       TranslateParseByRiseTree & r_translateparsebyrisetree
       );
     virtual

@@ -1356,7 +1356,7 @@ BinarySearchInDictData::~BinarySearchInDictData() {
           endSearchForCompareStringInCurrentVocData, byteOffsetOfCurrentVocable);
         if( ! endSearchForCompareStringInCurrentVocData)
           SetDictDataOffset(byteOffsetOfNextVocDataBegin);
-
+        //TODO gets "notSet" -> endless loop
         PositionStringVector::cmp comp = ContainsEnglishWord(
           psvStringToSearch,
   //            psvDictFile,
@@ -1365,26 +1365,30 @@ BinarySearchInDictData::~BinarySearchInDictData() {
   //                byteOffsetsOfVocData,
           closestBeforeNonMatchOffset
           );
-        if( comp == PositionStringVector::match )
+        switch( comp )
         {
-		  byteOffsetOfFirstMatchingWord = byteOffsetOfNextVocDataBegin;
+        case PositionStringVector::match :
+          byteOffsetOfFirstMatchingWord = byteOffsetOfNextVocDataBegin;
           LOGN_DEBUG("setting higher bound to " << byteOffsetOfCurrentVocable)
           //byteOffsetOfFirstMatchingWord = byteOffsetOfCurrentVocable;
           higherBound = byteOffsetOfCurrentVocable /*byteOffsetOfVocable*/;
 //          byteOffsetOfCurrentVocable = lowerBound + (higherBound - lowerBound) / 2;
-        }
+          break;
         /** String to search is lexicgraphically after CURRENT vocable in dict file. */
-        else if( comp == PositionStringVector::greater )
-        {
+        case PositionStringVector::greater :
           LOGN_DEBUG("setting lower bound to " << byteOffsetOfCurrentVocable)
           lowerBound = //GetByteOffsetOfNextVocDataBegin(
             //endSearchForCompareStringInCurrentVocData);
             byteOffsetOfCurrentVocable;
 //          byteOffsetOfCurrentVocable = lowerBound + (higherBound - lowerBound) / 2;
-        }
-        else if( comp == PositionStringVector::lower )
-        {
+          break;
+        case PositionStringVector::lower :
           higherBound = byteOffsetOfCurrentVocable;
+          break;
+        default: /** notSet etc. */
+            /** Force end of "while" loop */
+            higherBound = lowerBound + NUM_MIN_CHARS_PER_VOC_ENTRY + 1;
+            break;
         }
       }while(higherBound > lowerBound + NUM_MIN_CHARS_PER_VOC_ENTRY );
       LOGN_DEBUG("end--higherBound <= lowerBound + 6--return " 
@@ -1420,7 +1424,9 @@ BinarySearchInDictData::~BinarySearchInDictData() {
 #endif
         bool breakWhile = false;
         bool endSearchForCompareStringInCurrentVocData = false;
-
+        //TODO change: for binary search succeeding tokens are located (byte offset) 
+        // after the previous word (e.g. vacuum cleaner is behind "vacuum".
+        //  So byte offset should be the location of the previous found.
         fastestUnsignedDataType byteOffset = m_fileSizeInBytes / 2;
         fastestUnsignedDataType lo = 0, hi = m_fileSizeInBytes;
 //        m_englishDictionary.seekg(byteOffset, std::ios_base::beg);
@@ -1444,7 +1450,6 @@ BinarySearchInDictData::~BinarySearchInDictData() {
   //        BytePosAndNextChar * p_BytePosAndNextChar;
           bool newLine = false;
           bool englishGermanSeperatorCharOccurred = false;
-
 //          //EOF or read error.
 //          if( byteOffsetOfVocable == UINT_MAX )
 //          {
@@ -1458,7 +1463,6 @@ BinarySearchInDictData::~BinarySearchInDictData() {
 //          }
 //          else
 //           atLeast1VocDataBeginFound = true;
-
           try
           {
             byteOffsetOfVocable = GetByteOffsetOfNextVocDataBegin(

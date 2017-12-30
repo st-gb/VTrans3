@@ -1,9 +1,6 @@
-/*
- * ConditionsAndTranslation.cpp
- *
+/** ConditionsAndTranslation.cpp
  *  Created on: Jun 7, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 #include "ConditionsAndTranslation.hpp"
 //#include <Attributes/EnglishWord.hpp> //class EnglishWord
 #include <Parse/GrammarPart.hpp>
@@ -24,6 +21,9 @@
 #endif
 
 /** Static variables also need to be defined once. */
+std::map<std::string, AttributeTypeAndPosAndSize > *
+  ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef;
+VTrans3::BottomUpParser * ConditionsAndTranslation::sp_bottomUpParser;
 std::map<std::string, pfnTransformString> ConditionsAndTranslation::
   s_std_mapFunctionName2Function;
 //I_UserInterface * ConditionsAndTranslation::s_p_userinterface;
@@ -79,7 +79,7 @@ bool ConditionsAndTranslation::AllConditionsMatch(
 //        {
 //          DEBUG_COUT
           LOGN_DEBUG("grammar part leaf found:" <<
-            sp_parsebyrise->GetGrammarPartName(
+            sp_bottomUpParser->GetGrammarPartName(
             p_grammarpartLeaf->m_wGrammarPartID)
             //<< "\n"
             )
@@ -117,7 +117,7 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                     GetEnglishWordAsStdString(r_atapas.m_wIndex);
                   //std::string & r_stdstrTextTokens =
                   std::string stdstrTextTokens ;
-                    sp_parsebyrise->GetTokensAsSpaceSeparatedString(
+                    sp_bottomUpParser->GetTokensAsSpaceSeparatedString(
                     p_grammarpartLeaf->m_dwLeftmostIndex,
                     p_grammarpartLeaf->m_dwRightmostIndex ,
                     stdstrTextTokens
@@ -264,7 +264,7 @@ std::string ConditionsAndTranslation::GetTranslationEquivalent(
       //if( p_grammarpartLeaf )
       {
 //        DEBUG_COUTN
-        const std::string & grammarPartName = sp_parsebyrise->GetGrammarPartName(
+        const std::string & grammarPartName = sp_bottomUpParser->GetGrammarPartName(
             p_grammarpartLeaf->m_wGrammarPartID);
         LOGN_DEBUG( //"GetTranslationEquivalent()"
           //FULL_FUNC_NAME << "--"

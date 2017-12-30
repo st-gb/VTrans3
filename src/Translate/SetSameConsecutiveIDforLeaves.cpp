@@ -1,9 +1,6 @@
-/*
- * SetSameConsecutiveIDforLeaves.cpp
- *
+/** SetSameConsecutiveIDforLeaves.cpp
  *  Created on: Jun 2, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #include <Translate/SetSameConsecutiveIDforLeaves.hpp>
 #include <Parse/GrammarPart.hpp>
@@ -13,12 +10,12 @@ namespace ParseTreeTraverser
 
   SetSameConsecutiveIDforLeaves::SetSameConsecutiveIDforLeaves(
     const GrammarPart * p_grammarpartStartNode ,
-    ParseByRise * p_parsebyrise ,
+    VTrans3::BottomUpParser * p_bottomUpParser ,
     WORD wConsecutiveID
     )
     : ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
       p_grammarpartStartNode ,
-      p_parsebyrise
+      p_bottomUpParser
       )
   {
     m_wConsecutiveID = wConsecutiveID ;

@@ -1,9 +1,6 @@
-/*
- * TranslationRule.cpp
- *
+/** TranslationRule.cpp
  *  Created on: 03.04.2010
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #include "TranslationRule.hpp" //header file for this TranslationRule class
 #include <Parse/GrammarPart.hpp> //class GrammarPart
@@ -75,14 +72,14 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
             //p_translationrule->
             m_syntaxtreepathConsecutiveID.
             m_ar_wElements [ wIndex ] <<
-          mp_parsebyrise->GetGrammarPartName( //p_tr->m_ar_wElements [ wIndex ]
+          mp_bottomUpParser->GetGrammarPartName( //p_tr->m_ar_wElements [ wIndex ]
             //p_translationrule->
             m_syntaxtreepathConsecutiveID.
               m_ar_wElements [ wIndex ]
           )
           << " and "
           << (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID
-          << mp_parsebyrise->GetGrammarPartName(
+          << mp_bottomUpParser->GetGrammarPartName(
             (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID )
           )
         if( //p_tr->m_ar_wElements [ wIndex ] !=
@@ -122,7 +119,7 @@ bool TranslationRule::Initialize(
   std::string std_strUnknownGrammarPartID;
   return m_syntaxtreepathCompareWithCurrentPath.CreateGrammarPartIDArray(
     c_r_std_strSyntaxTreePath
-    , mp_parsebyrise
+    , mp_bottomUpParser
     , std_strUnknownGrammarPartID
     )
     ;
@@ -146,7 +143,7 @@ void TranslationRule::Insert(
    GetLeaf(r_stdvec_p_grammarpartPath);
  if( p_grammarpartLeaf )
  {
-   std::string std_strGrammarPartName = mp_parsebyrise->GetGrammarPartName(
+   std::string std_strGrammarPartName = mp_bottomUpParser->GetGrammarPartName(
      p_grammarpartLeaf->m_wGrammarPartID);
    if( m_bySideWhereToInsertParentNode )
    {
@@ -323,7 +320,7 @@ void TranslationRule::SetConsecutiveIDSyntaxTreePath(
   std::string std_strUnknownGrammarPartID;
   if( m_syntaxtreepathConsecutiveID.CreateGrammarPartIDArray(
         r_stdstrSyntaxTreePath
-        , mp_parsebyrise
+        , mp_bottomUpParser
         , std_strUnknownGrammarPartID
       ) == SyntaxTreePath::unknown_grammar_part_name
     )
@@ -339,8 +336,8 @@ void TranslationRule::SetConsecutiveIDSyntaxTreePath(
 //Throws a string that is an _unknown_ token of the syntax tree path as exception.
 TranslationRule::TranslationRule(
     const std::string & r_stdstrSyntaxTreePath
-    , ParseByRise * p_parsebyrise )
-  : mp_parsebyrise(p_parsebyrise)
+    , BottomUpParser * p_bottomUpParser )
+  : mp_bottomUpParser(p_bottomUpParser)
 //  , m_ui32ConcatenationID(0)
 {
   if( ! Initialize(r_stdstrSyntaxTreePath)
@@ -351,9 +348,9 @@ TranslationRule::TranslationRule(
 
 TranslationRule::TranslationRule( //const std::string & r_stdstrSyntaxTreePath
     const char * p_ch_SyntaxTreePath
-    , ParseByRise * p_parsebyrise
+    , BottomUpParser * p_bottomUpParser
     )
-  : mp_parsebyrise(p_parsebyrise)
+  : mp_bottomUpParser(p_bottomUpParser)
 //  , m_ui32ConcatenationID(0)
 {
   std::string stdstrSyntaxTreePath(p_ch_SyntaxTreePath) ;
