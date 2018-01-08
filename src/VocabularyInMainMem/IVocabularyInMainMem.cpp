@@ -42,6 +42,51 @@ IVocabularyInMainMem::IVocabularyInMainMem()
 //  //delete [] m_arstdstrPersonalPronoun ;
 //}
 
+IVocabularyInMainMem::voc_container_type * IVocabularyInMainMem::FindEnglishWord(
+  const PositionStringVector & psv,
+  DWORD & r_dwTokenIndex
+  )
+{
+  voc_container_type * p_voc_container = NULL, 
+    * p_voc_containerMaxWordMatch = NULL;
+  VTrans::string_type word;
+  const int numTokens = psv.size();
+  unsigned tokenIndex = r_dwTokenIndex;
+  const unsigned beginTokenIndex = r_dwTokenIndex;
+
+  word = psv.at(tokenIndex).m_Str;
+  p_voc_container = findEnglishWord( word);
+  if( p_voc_container != NULL )
+    p_voc_containerMaxWordMatch = p_voc_container;
+  ++ tokenIndex;
+  if( tokenIndex < numTokens )
+  {
+    do
+    {
+      word += " ";
+      word += psv.at(tokenIndex).m_Str;
+      p_voc_container = findEnglishWord( word );
+      if( p_voc_container != NULL )
+      {
+        /** Do not break here--"hand-held vacuum" does not exist in dict but
+           "hand-held vacuum cleaner" */
+        //            break;
+        p_voc_containerMaxWordMatch = p_voc_container;
+        r_dwTokenIndex = tokenIndex;
+      }
+      ++ tokenIndex;
+      //TOOD maybe faster implementation for the condition possible here.
+    }while( tokenIndex < numTokens &&
+        tokenIndex - beginTokenIndex < m_maxTokenToConsider );
+  }
+  if( p_voc_containerMaxWordMatch != NULL )
+  {
+    p_voc_container = p_voc_containerMaxWordMatch;
+    IVocabularyInMainMem::OutputVocs(p_voc_containerMaxWordMatch);
+  }
+  return p_voc_containerMaxWordMatch;
+}
+
 void IVocabularyInMainMem::InsertAuxiliaryVerbBe()
 {
   GermanAuxiliaryVerb germanverbSein (

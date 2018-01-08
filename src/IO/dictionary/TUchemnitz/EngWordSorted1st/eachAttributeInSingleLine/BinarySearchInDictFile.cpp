@@ -35,13 +35,13 @@ namespace DictionaryReader
       LOGN_DEBUG("Opening file " << std_strDictFilePath)
 //      m_englishDictionary.open(std_strDictFilePath.c_str(),
 //        std::ios_base::in | std::ios_base::binary );
-      enum I_File::OpenError openError = m_dictFile.OpenA(
+      enum I_File::OpenResult openResult = m_dictFile.OpenA(
         std_strDictFilePath.c_str(),
         I_File::readOnly
         );
 //      bool dictFileIsOpen = m_englishDictionary.is_open();
-      bool dictFileIsOpen = openError == I_File::success;
-      if( /*dictFileIsOpen*/ openError == I_File::success )
+      bool dictFileIsOpen = openResult == I_File::success;
+      if( /*dictFileIsOpen*/ openResult == I_File::success )
       {
         LOGN_DEBUG("Dict file is open")
 //        m_englishDictionary.seekg(0, std::ios_base::end);
@@ -67,7 +67,7 @@ namespace DictionaryReader
           std_strDictFilePath.c_str());
 	      LOGN_ERROR("error loading dictionary \"" << absoluteDictFilePath << "\"->throwing an exception")
 //        const DWORD lastError = OperatingSystem::GetLastErrorCode();
-        throw VTrans3::OpenDictFileException(openError, absoluteDictFilePath);
+        throw VTrans3::OpenDictFileException(openResult, absoluteDictFilePath);
       }
       return dictFileIsOpen;
     }

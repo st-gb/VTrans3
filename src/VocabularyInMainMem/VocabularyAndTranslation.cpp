@@ -71,6 +71,7 @@ I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 //     arr_sz.m_byArraySizeForGermanWord);
 //}
 
+/** @return: length of attribute array */
 fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
   /*const*/ EnglishWord::English_word_class grammarPartID,
   fastestUnsignedDataType & numEngWords,
@@ -87,9 +88,10 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
       numGerWords = NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB ;
       return 2 ;
       break;
-    case WORD_TYPE_CONJUNCTION:
+    case EnglishWord::conjunction:
+    case EnglishWord::mainVerbPastParticiple1Obj:
       numEngWords = 1;
-      numGerWords = 1 ;
+      numGerWords = 1;
       return 1 ;
       break;
     //case LetterTree::personal_pronoun :

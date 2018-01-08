@@ -3,8 +3,25 @@
 #include <Controller/TranslationProcess.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 #include <Controller/character_string/convertFromAndToStdString.hpp>
+#include <InputOutput/XML/OutputXMLindented_inl.hpp>
 
 namespace VTrans3 {
+  
+  std::string BottomUpParser::GetAsIndentedXML() const
+  {
+    std::string std_strXML, std_strIntendedXML;
+    ByteArray byteArray; //crashes in parallel translation version in constructor
+    GenerateXMLtree( /*std_strXML*/ byteArray);
+    const BYTE * const byteArrayBegin = byteArray.GetArray();
+    const fastestUnsignedDataType byteArraySize = byteArray.GetSize();
+    std_strXML = UTF8string::GetAsISO_8859_1StdString(byteArrayBegin,
+      byteArraySize );
+    std::ostringstream std_ostringstream;
+    OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
+    std_strIntendedXML = std_ostringstream.str();
+    return std_strIntendedXML;
+  }
+
   void BottomUpParser::GenerateXMLtreeFromParseTree(
     std::vector<GrammarPart *>::const_iterator
       c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,

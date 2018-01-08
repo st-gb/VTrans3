@@ -12,15 +12,15 @@ namespace VTrans3
 //  namespace DictionaryReader
 //  {
 
-    OpenDictFileException::OpenDictFileException(enum I_File::OpenError openError)
+    OpenDictFileException::OpenDictFileException(enum I_File::OpenResult openResult)
     {
-      m_openError = openError;
+      m_openResult = openResult;
     }
     
     OpenDictFileException::OpenDictFileException(
-      enum I_File::OpenError openError, 
+      enum I_File::OpenResult openResult, 
       const std::string & absoluteFilePath)
-      : m_absoluteFilePath(absoluteFilePath), m_openError(openError)
+      : m_absoluteFilePath(absoluteFilePath), m_openResult(openResult)
     {
     }
 
@@ -34,7 +34,7 @@ namespace VTrans3
       std::string result = "file ";
       if( ! m_absoluteFilePath.empty() )
         result += "\"" + m_absoluteFilePath + "\"";
-      switch(m_openError)
+      switch(m_openResult)
       {
         case I_File::fileNotFound :
           result += "not found"; 

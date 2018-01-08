@@ -20,9 +20,9 @@ namespace VTrans3
     {
       std::string m_absoluteFilePath;
     public:
-      enum I_File::OpenError m_openError;
-      OpenDictFileException(enum I_File::OpenError);
-      OpenDictFileException(enum I_File::OpenError, const std::string &);
+      enum I_File::OpenResult m_openResult;
+      OpenDictFileException(enum I_File::OpenResult);
+      OpenDictFileException(enum I_File::OpenResult, const std::string &);
       virtual
       ~OpenDictFileException();
       std::string GetErrorMessageA() const;

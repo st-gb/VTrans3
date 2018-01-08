@@ -40,6 +40,8 @@ class GermanWord;
     fastestSignedDataType m_numberOfEnglishWords;
     fastestUnsignedDataType m_numberOfFundamentalWords;
   public:
+    /** A container that can hold multiple words/vocables that are written the 
+     *   same (=homographs). */
     typedef std::set<VocabularyAndTranslation *> voc_container_type;
     static std::string s_arstdstrPersonalPronoun [] ; //= {"hh", "j"} ;
     //Use the English_word_class enum in class EnglishWord instead
@@ -72,7 +74,9 @@ class GermanWord;
     , _2nd_person_plural
     , _3rd_person_plural
   } ;
-
+  /** If searching in the dictionary this is the maximum number of tokens to 
+    *  consider for an English entry. This is for performance reasons: to 
+    *  restrict long searches. */
   fastestUnsignedDataType m_maxTokenToConsider;
   IVocabularyInMainMem() ;
   /** Define virtual constructor to avoid g++ warning in subclasses like
@@ -89,6 +93,16 @@ class GermanWord;
   virtual void clearTemporaryEntries(){};
   virtual unsigned GetNumberOfVocPairs() { return m_numberOfVocPairs; }
   void DecreaseNumberOfVocPairs() { -- m_numberOfVocPairs; }
+  voc_container_type * FindEnglishWord(
+    const PositionStringVector & psv,
+    DWORD & r_dwTokenIndex
+    );
+  /** Is called by FindEnglishWord(const PositionStringVector &, DWORD &) */
+  virtual voc_container_type * findEnglishWord(
+    const VTrans::string_type & englishWord
+    ) { return NULL;}
+  /** This is interesting especially for vocabulary access implementations that 
+   *  load (the complete) dictionary into the main memory (RAM). */
   virtual fastestUnsignedDataType GetNumberOfAllocatedBytes() = 0;
 //  virtual fastestUnsignedDataType GetNumberOfNouns() = 0;
 //  virtual fastestUnsignedDataType GetNumberOfVerbs() = 0;
