@@ -38,7 +38,9 @@ class BottomUpParser
 #endif //TEST_MINI_XML
 public:
   /** The */
-  /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
+  #if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
+   /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
+  #endif
   DWORD m_dwMapIndex ;
 //private:
   //For showing (XML) error messages.

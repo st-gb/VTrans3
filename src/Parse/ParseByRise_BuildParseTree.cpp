@@ -1786,7 +1786,8 @@ void BottomUpParser::StoreWordTypeAndGermanTranslation(
 //  std::multimap<DWORD, GrammarPart> * p_stdmultimap_wRightmostIndex2grammarpart
 //    = & m_stdmultimap_dwRightmostIndex2grammarpart ;
 //  std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
-  IVocabularyInMainMem::voc_container_type * p_std_set_p_vocabularyandtranslation ;
+#if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
+	IVocabularyInMainMem::voc_container_type * p_std_set_p_vocabularyandtranslation ;
   DWORD dwTokenIndexRightMost = dwTokenIndex ;
   DWORD dwTokenIndexRightMostUnknownToken = 0;
 //  const LetterNode * p_letternode;
@@ -1855,7 +1856,8 @@ void BottomUpParser::StoreWordTypeAndGermanTranslation(
         dwTokenIndexRightMostUnknownToken, p_grammarPart )
       ) ;
   }
-//  DWORD dwSize = //parsebyrise.
+#endif //#if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
+  //  DWORD dwSize = //parsebyrise.
 //    m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
 //  dwSize = //parsebyrise.
 //    m_stdmultimap_dwLeftmostIndex2grammarpart.size() ;
