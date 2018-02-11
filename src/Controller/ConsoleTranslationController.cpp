@@ -246,7 +246,7 @@ int main(int argc, char *  argv[])
     {
       std::cout << "error opening dictionary file: \"" << 
         consoleTranslationController.m_stdstrVocabularyFilePath << "\"" 
-          << "error code:" << odfe.m_openError << 
+          << "error code:" << odfe.m_openResult << 
         odfe.GetErrorMessageA() << std::endl;
     }
   }

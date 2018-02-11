@@ -28,7 +28,7 @@
 class AttributeTypeAndPosAndSize ;
 class GrammarPart ;
 class I_UserInterface ;
-class ParseByRise ;
+namespace VTrans3 { class BottomUpParser;}
 class TranslationAndConsecutiveID ;
 class TranslationRule ;
 //class TranslationResult;
@@ -47,7 +47,7 @@ class TranslateParseByRiseTree
 public:
   bool m_bTranslationRuleApplies; //Only used by ShowTranslationRulesDialog
   I_UserInterface & mr_i_userinterface ;
-  ParseByRise * mp_parsebyrise ;
+  VTrans3::BottomUpParser * mp_bottomUpParser;
 private:
   //Sores the current path within the syntax tree of grammar part IDs.
   //So it can be compared whether a translation rule exists for it.
@@ -137,7 +137,7 @@ public:
       TranslationRule * p_translationrule,
       const std::vector<GrammarPart * > & r_stdvec_p_grammarpartPath
       );
-  TranslateParseByRiseTree(ParseByRise & r_parsebyrise ,
+  TranslateParseByRiseTree(VTrans3::BottomUpParser &,
     I_UserInterface & r_i_userinterface );
   ~TranslateParseByRiseTree();
 
@@ -159,7 +159,7 @@ public:
     , ProcessParseTree_type pfnProcessParseTree
     );
 
-  void Translate( ParseByRise & r_parsebyrise
+  void Translate( VTrans3::BottomUpParser & r_bottomUpParser
 //    , std::string & stdstrWholeTransl
     , std::vector<std::string> & r_stdvec_stdstrWholeTransl
     , TranslationResult & r_translationResult

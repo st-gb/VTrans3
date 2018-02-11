@@ -20,14 +20,14 @@ namespace ParseTreeTraverser
 
   TestIfTranslationRuleApplies::TestIfTranslationRuleApplies(
     const GrammarPart * p_grammarpartStartNode
-    , ParseByRise & r_parsebyrise
+    , VTrans3::BottomUpParser & r_bottomUpParser
     , TranslateParseByRiseTree & r_translateparsebyrisetree
     )
     :
      ParseTreeTraverser:://DirectingLeavesMultipleIterTraverser(
       KeepTrackOfCurrentParseTreePath(
       p_grammarpartStartNode ,
-      r_parsebyrise
+      r_bottomUpParser
       )
 //    , m_r_parsebyrise (r_parsebyrise)
     , mr_translateparsebyrisetree( r_translateparsebyrisetree )

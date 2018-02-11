@@ -10,9 +10,11 @@
 
 ////Base class DirectingLeavesMultipleIterTraverser
 //#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
-#include <Parse/KeepTrackOfCurrentParseTreePath.hpp>
+#include <ParseTree/KeepTrackOfCurrentParseTreePath.hpp>
 
+/** Forward declarations. (faster than to include header files) */
 class TranslateParseByRiseTree;
+namespace VTrans3 { class BottomUpParser; }
 
 namespace ParseTreeTraverser
 {
@@ -27,7 +29,7 @@ namespace ParseTreeTraverser
     bool m_bTranslationRuleApplies;
     TestIfTranslationRuleApplies(
       const GrammarPart * p_grammarpartStartNode
-      , ParseByRise & r_parsebyrise
+      , VTrans3::BottomUpParser &
       , TranslateParseByRiseTree & r_translateparsebyrisetree
       );
     virtual

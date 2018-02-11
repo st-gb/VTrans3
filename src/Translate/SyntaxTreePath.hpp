@@ -60,11 +60,13 @@ typedef unsigned short WORD ;
 // "definite_article_plural.definite_article.*.object"
 #define KLEENE_STAR_OPERATOR 65535
 
-//Forward declarations
+/** Forward declarations */
 class GrammarPart ;
 class I_UserInterface ;
-class ParseByRise ;
-
+namespace VTrans3
+{
+  class BottomUpParser ;
+}
 //Used to compare whether a condition of a translation rule applies.
 //Therefore it created a syntax tree path as an ID array from the
 //grammar part name(s) to compare faster.
@@ -92,7 +94,7 @@ public:
   };
   //for showing an error message when getting ID from grammar part name failed.
   static I_UserInterface * sp_userinterface ;
-  ParseByRise * mp_parsebyrise ;
+  VTrans3::BottomUpParser * mp_bottomUpParser;
   WORD * m_ar_wElements ;
   WORD m_wNumberOfElements ;
 
@@ -113,7 +115,7 @@ public:
   SyntaxTreePath( const SyntaxTreePath & stpToCopyFrom ) ;
   SyntaxTreePath(
     const std::string & r_stdstrSyntaxTreePath
-    , ParseByRise * p_parsebyrise
+    , VTrans3::BottomUpParser *
     ) ;
   ~SyntaxTreePath() ;
 
@@ -121,7 +123,7 @@ public:
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const;
   BYTE CreateGrammarPartIDArray(
     const std::string & r_stdstrSyntaxTreePath
-    , ParseByRise * p_parsebyrise
+    , VTrans3::BottomUpParser *
     , std::string & r_std_strUnknownGrammarPartID
     ) ;
   std::string GetAs_std_string() const ;

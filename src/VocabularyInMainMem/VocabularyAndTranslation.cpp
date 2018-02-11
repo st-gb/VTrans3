@@ -71,6 +71,7 @@ I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 //     arr_sz.m_byArraySizeForGermanWord);
 //}
 
+/** @return: length of attribute array */
 fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
   /*const*/ EnglishWord::English_word_class grammarPartID,
   fastestUnsignedDataType & numEngWords,
@@ -87,9 +88,10 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
       numGerWords = NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB ;
       return 2 ;
       break;
-    case WORD_TYPE_CONJUNCTION:
+    case EnglishWord::conjunction:
+    case EnglishWord::mainVerbPastParticiple1Obj:
       numEngWords = 1;
-      numGerWords = 1 ;
+      numGerWords = 1;
       return 1 ;
       break;
     //case LetterTree::personal_pronoun :
@@ -471,9 +473,9 @@ void VocabularyAndTranslation::FreeMemory()
     m_englishWordClass,
     arraySizes.m_byArraySizeForEnglishWord,
     arraySizes.m_byArraySizeForGermanWord);
-  GCC_DIAG_OFF(switch)
-  switch( m_englishWordClass )
-  {
+//  GCC_DIAG_OFF(switch)
+//  switch( m_englishWordClass )
+//  {
   //  // singular type is only needed for parsing. It shares the same attr as
   //  // the noun. Because for the noun the storage is freed it should NOT be done again
   //  // for the singular.
@@ -486,15 +488,15 @@ void VocabularyAndTranslation::FreeMemory()
   //    break ;
   //  default:
     
-  case EnglishWord::singular :
-  case EnglishWord::main_verb_allows_0object_infinitive:
-  case EnglishWord::main_verb_allows_1object_infinitive:
-  case EnglishWord::main_verb_allows_2objects_infinitive:
-  case EnglishWord::adjective_positiveForm:
-  case EnglishWord::adverb:
-  case EnglishWord::personal_pronoun:
-  case EnglishWord::auxiliary_verb:
-  case EnglishWord::personal_pronoun_objective_form:
+//  case EnglishWord::singular :
+//  case EnglishWord::main_verb_allows_0object_infinitive:
+//  case EnglishWord::main_verb_allows_1object_infinitive:
+//  case EnglishWord::main_verb_allows_2objects_infinitive:
+//  case EnglishWord::adjective_positiveForm:
+//  case EnglishWord::adverb:
+//  case EnglishWord::personal_pronoun:
+//  case EnglishWord::auxiliary_verb:
+//  case EnglishWord::personal_pronoun_objective_form:
 //    DEBUG_COUTN("freeing voc type" << (WORD) m_englishWordClass)
   //    assert(m_arstrEnglishWord) ;
     if(m_arstrEnglishWord)
@@ -572,9 +574,9 @@ void VocabularyAndTranslation::FreeMemory()
     delete [] m_arpletternodeLastEngChar ;
   #endif //#ifdef COMPILE_WITH_REFERENCE_TO_LAST_LETTER_NODE
   //delete m_arpletternodeLastGerChar ;
-    break;
-  }//switch
-  GCC_DIAG_ON(switch)
+//    break;
+//  }//switch
+//  GCC_DIAG_ON(switch)
 }
 //GCC_DIAG_ON(-Wno-switch)
 

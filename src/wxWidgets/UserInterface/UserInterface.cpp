@@ -136,7 +136,7 @@ namespace wxWidgets
       //TODO Maybe simply catch an "enum I_File::OpenError" value ?
       catch( VTrans3::OpenDictFileException & odfe )
       {
-        switch(odfe.m_openError)
+        switch(odfe.m_openResult)
         {
         case I_File::fileNotFound:
           ::wxGetApp().LoadingVocabularyFileFailed(std_strDictFilePath,

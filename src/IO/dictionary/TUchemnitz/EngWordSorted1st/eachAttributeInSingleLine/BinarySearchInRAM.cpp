@@ -31,13 +31,13 @@ bool BinarySearchInRAM::open(const std::string & std_strDictFilePath )
   LOGN_DEBUG("Opening file " << std_strDictFilePath)
 //      m_englishDictionary.open(std_strDictFilePath.c_str(),
 //        std::ios_base::in | std::ios_base::binary );
-  enum I_File::OpenError openError = m_dictFile.OpenA(
+  enum I_File::OpenResult openResult = m_dictFile.OpenA(
     std_strDictFilePath.c_str(),
     I_File::readOnly
     );
 //      bool dictFileIsOpen = m_englishDictionary.is_open();
-  bool dictFileIsOpen = openError == I_File::success;
-  if( /*dictFileIsOpen*/ openError == I_File::success )
+  bool dictFileIsOpen = openResult == I_File::success;
+  if( /*dictFileIsOpen*/ openResult == I_File::success )
   {
     LOGN_DEBUG("Dict file is open")
 //        m_englishDictionary.seekg(0, std::ios_base::end);
@@ -58,8 +58,14 @@ bool BinarySearchInRAM::open(const std::string & std_strDictFilePath )
     {
       fastestUnsignedDataType numberOfBytesRead;
       m_dictFile.SeekFilePointerPosition(0);
-      m_dictFile.Read(m_dictionaryData, m_fileSizeInBytes, numberOfBytesRead);
+      I_File::ReadResult readResult = m_dictFile.Read(m_dictionaryData, 
+        m_fileSizeInBytes, numberOfBytesRead);
+      if( readResult != I_File::successfullyRead )
+        return false;
+//        throw VTrans3::OpenDictFileException(openError);
     }
+    else //TODO throw an exception?
+      dictFileIsOpen = false;
 //        m_englishDictionary.seekg(0, std::ios_base::beg);
 //        m_dictFile.Seek(0);
   }
@@ -67,7 +73,7 @@ bool BinarySearchInRAM::open(const std::string & std_strDictFilePath )
   {
   LOGN_ERROR("error loading dictionary->throwing an exception")
     //TODO catch exception
-    throw VTrans3::OpenDictFileException(openError);
+    throw VTrans3::OpenDictFileException(openResult);
   }
   return dictFileIsOpen;
 }

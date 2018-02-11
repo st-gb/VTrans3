@@ -69,6 +69,7 @@ public:
   bool m_bAssignedAsChild;
   BYTE m_byPersonIndex ;
   static const uint32_t unconnected = 0;
+  /** Should be set at program startup. */
   static VTrans3::BottomUpParser * s_p_parseByRise;
   //The region indexes are important for applying grammar rules:
   // 0     1      2     3  4     <-indexes of tokens
@@ -135,7 +136,7 @@ public:
   ~GrammarPart();
 
   //TODO just for testing
-  static std::map<unsigned, unsigned> pointer2numaAllocsMinusNumDeletes;
+  static std::map<void *, unsigned> pointer2numaAllocsMinusNumDeletes;
   
   void * operator new(size_t);
   void operator delete(void *);

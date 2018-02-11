@@ -24,7 +24,6 @@
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
 #include <IO/UnknownGrammarPartNameException.hpp>
-#include <InputOutput/XML/OutputXMLindented_inl.hpp>
 //#include <Xerces/ReadViaSAX2.hpp>//ReadViaSAX2InitAndTermXerces(...)
 //#include <Xerces/SAX2GrammarRuleHandler.hpp>//class SAX2GrammarRuleHandler
 
@@ -62,7 +61,7 @@ BottomUpParser::BottomUpParser( /*TranslationControllerBase & r_translationcontr
   : m_p_userinterface(/*& r_translationcontrollerbase*/ p_userInterface)
   , //m_r_translationcontrollerbase(r_translationcontrollerbase)
     m_r_translationProcess(r_translationProcess)
-{
+{ //TODO "this" can't be ausgeklappt werden in NetBeans "Variables" view at this  point
   Init();
 }
 
@@ -97,23 +96,15 @@ BottomUpParser::~BottomUpParser()
     //FIXME SIGSEV here
     delete c_iter->second ;
   }
+  /** Empty containers here to see which container may cause a runtime arror.*/
+  m_stdmultimap_dwLeftmostIndex2p_grammarpart.clear();
+  m_stdmultimap_dwRightmostIndex2p_grammarpart.clear();
+  m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel.clear();
+  m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel.clear();
+//  mp_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate ;
+//  mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
   LOGN_DEBUG(//"~ParseByRise() "
     "end")
-}
-
-std::string BottomUpParser::GetAsIndentedXML() const
-{
-  std::string std_strXML, std_strIntendedXML;
-  ByteArray byteArray; //crashes in parallel translation version in constructor
-  GenerateXMLtree( /*std_strXML*/ byteArray);
-  const BYTE * const byteArrayBegin = byteArray.GetArray();
-  const fastestUnsignedDataType byteArraySize = byteArray.GetSize();
-  std_strXML = UTF8string::GetAsISO_8859_1StdString(byteArrayBegin,
-    byteArraySize );
-  std::ostringstream std_ostringstream;
-  OutputXMLindented_inl(std_strXML.c_str(), std_ostringstream);
-  std_strIntendedXML = std_ostringstream.str();
-  return std_strIntendedXML;
 }
 
 void BottomUpParser::ClearAllGrammarStuff()
@@ -221,15 +212,16 @@ std::string BottomUpParser::GetErrorMessage(
   return "";
 }
 
-//Return the grammar part where all of its (sub-)children cover the widest
-//range of tokens. This is senseful because it is wanted to translate a
-//the largest contigious block of tokens.
-//E.g.: "the vacuum cleaner sucks." : get the largest covering tokens starting at
-//   pos "0".
-//  : "the" (pos 0-0) covers 1 token,
-//  : "the vacuum cleaner" (pos 0-2) covers 3 tokens
-//  : "the vacuum cleaner sucks." (pos 0-3) covers 4 tokens
-GrammarPart * BottomUpParser::GetGrammarPartCoveringMostTokens(
+//TODO what if more than 1 parse tree covers the same amount of tokens?
+/* @return the root of the parse tree that covers the widest
+ *  range of tokens. This is senseful because it is wanted to translate a
+ * the largest contigious block of tokens.
+ * E.g.: "the vacuum cleaner sucks." : get the largest covering tokens starting at
+ *   pos "0".
+   : "the" (pos 0-0) covers 1 token,
+   : "the vacuum cleaner" (pos 0-2) covers 3 tokens
+   : "the vacuum cleaner sucks." (pos 0-3) covers 4 tokens  */
+GrammarPart * BottomUpParser::GetParseTreeCoveringMostTokens(
   DWORD dwLeftmostTokenIndex
   )
 {

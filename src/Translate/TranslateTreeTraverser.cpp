@@ -20,28 +20,28 @@ namespace ParseTreeTraverser
 
   ApplyTranslationRulesTreeTraverser::ApplyTranslationRulesTreeTraverser(
     const GrammarPart * p_grammarpartStartNode
-    , ParseByRise & r_parsebyrise
+    , VTrans3::BottomUpParser & r_bottomUpParser
     , TranslateParseByRiseTree & r_translateparsebyrisetree
     )
     :
      ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
       p_grammarpartStartNode ,
-      & r_parsebyrise
+      & r_bottomUpParser
       )
-    , m_r_parsebyrise (r_parsebyrise)
+    , m_r_bottomUpParser (r_bottomUpParser)
     , mr_translateparsebyrisetree( r_translateparsebyrisetree )
     , m_wConsecutiveID(0)
   {
     LOGN_DEBUG(/*"TranslateTreeTraverser()"*/ "")
 //    m_wSubjectGrammarPartID ;
-    if( ! mp_parsebyrise->GetGrammarPartID("subject", m_wSubjectGrammarPartID)
+    if( ! mp_bottomUpParser->GetGrammarPartID("subject", m_wSubjectGrammarPartID)
       )
       m_wSubjectGrammarPartID = 65535 ;
-    if( ! mp_parsebyrise->GetGrammarPartID("article_singular",
+    if( ! mp_bottomUpParser->GetGrammarPartID("article_singular",
       m_wArticleSingularGrammarPartID)
       )
       m_wArticleSingularGrammarPartID = 65535 ;
-    if( ! mp_parsebyrise->GetGrammarPartID("plural_noun" ,
+    if( ! mp_bottomUpParser->GetGrammarPartID("plural_noun" ,
       m_wPluralNounGrammarPartID)
       )
       m_wPluralNounGrammarPartID = 65535 ;
@@ -81,7 +81,7 @@ namespace ParseTreeTraverser
   //          mp_parsebyrise->GetSubjectPersonIndex( p_grammarpart);
       ParseTreeTraverser::SummarizePersonIndex spi(
         p_grammarpart ,
-        mp_parsebyrise ,
+        mp_bottomUpParser ,
         mr_translateparsebyrisetree
         ) ;
       spi.Traverse() ;
@@ -97,7 +97,7 @@ namespace ParseTreeTraverser
 
   void ApplyTranslationRulesTreeTraverser::LeaveFound()
   {
-    LOGN_DEBUG( "current parse tree path:" << m_r_parsebyrise.GetPathAs_std_string(
+    LOGN_DEBUG( "current parse tree path:" << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
     BYTE byPersonIndex ;
@@ -125,7 +125,7 @@ namespace ParseTreeTraverser
 //      DEBUG_COUTN( "LeaveFound--translation rule applies. translation:" <<
 //        stdstrTranslation ) ;
       LOGN_DEBUG( //"TranslateTreeTraverser::LeaveFound(): " <<
-        m_r_parsebyrise.GetPathAs_std_string(
+        m_r_bottomUpParser.GetPathAs_std_string(
           m_vec_wGrammarPartIDcurrentParsePath)
         << "--translation rule applies. "
         "translation:" << stdstrTranslation ) ;
@@ -170,7 +170,7 @@ namespace ParseTreeTraverser
     {
       WORD wGrammarPartIDcurrentParsePath =
           m_vec_wGrammarPartIDcurrentParsePath.back() ;
-      std::string stdstr = mp_parsebyrise->GetGrammarPartName(
+      std::string stdstr = mp_bottomUpParser->GetGrammarPartName(
         wGrammarPartIDcurrentParsePath) ;
       if( stdstr == "article_singular"
           || stdstr == "definite_article_plural" )
@@ -221,14 +221,14 @@ namespace ParseTreeTraverser
     m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart) ;
 #ifdef _DEBUG
-    std::string stdstr = m_r_parsebyrise.GetPathAs_std_string(
+    std::string stdstr = m_r_bottomUpParser.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
 #endif
     if( m_vec_wGrammarPartIDcurrentParsePath.size() > 0 )
     {
       WORD wGrammarPartIDcurrentParsePath =
           m_vec_wGrammarPartIDcurrentParsePath.back() ;
-      std::string stdstr = mp_parsebyrise->GetGrammarPartName(
+      std::string stdstr = mp_bottomUpParser->GetGrammarPartName(
         wGrammarPartIDcurrentParsePath) ;
       //TODO does this make sense?
       if( stdstr == "article_singular"
@@ -248,7 +248,7 @@ namespace ParseTreeTraverser
     m_vec_wGrammarPartIDcurrentParsePath.pop_back() ;
     LOGN_DEBUG(//"TranslateTreeTraverser::ParseTreePathPopped()--"
       "current parse tree "
-      "path: " << m_r_parsebyrise.GetPathAs_std_string(
+      "path: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
   }
@@ -263,11 +263,11 @@ namespace ParseTreeTraverser
 //      m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
     LOGN_DEBUG(//"TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild() "
       "begin"
-      "--current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
+      "--current parse tree path: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
 #ifdef _DEBUG
-    std::string stdstr = m_r_parsebyrise.GetPathAs_std_string(
+    std::string stdstr = m_r_bottomUpParser.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
 #endif
 //    m_map_grammarpartRightUnprocessedChild2wParseTreeLevel.insert(
@@ -290,11 +290,11 @@ namespace ParseTreeTraverser
     m_stdvector_p_grammarpartCurrentParseTreePath.push_back(
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ) ;
 #ifdef _DEBUG
-    stdstr = m_r_parsebyrise.GetPathAs_std_string(
+    stdstr = m_r_bottomUpParser.GetPathAs_std_string(
       m_vec_wGrammarPartIDcurrentParsePath) ;
     LOGN_DEBUG(//"TranslateTreeTraverser::CurrentNodeIsLastAddedRightChild() "
       "end"
-      "--current parse tree path: " << m_r_parsebyrise.GetPathAs_std_string(
+      "--current parse tree path: " << m_r_bottomUpParser.GetPathAs_std_string(
         m_stdvector_p_grammarpartCurrentParseTreePath)
       )
 #endif
@@ -307,7 +307,7 @@ namespace ParseTreeTraverser
   {
     ParseTreeTraverser::SetSameConsecutiveIDforLeaves trav(
       p_grammarpart ,
-      mp_parsebyrise ,
+      mp_bottomUpParser ,
       ++ m_wConsecutiveID
       ) ;
     trav.Traverse() ;

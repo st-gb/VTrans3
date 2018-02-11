@@ -172,7 +172,7 @@ EXPORT BYTE
     {
       std::cerr << "error opening dictionary file: \"" << 
         g_p_translationcontrollerbase->m_stdstrVocabularyFilePath << "\"" 
-          << "error code:" << odfe.m_openError << 
+          << "error code:" << odfe.m_openResult << 
         odfe.GetErrorMessageA() << std::endl;
     }
 
@@ -332,7 +332,7 @@ EXPORT char * Translate(const char * p_chEnglishText)
     {
       std::cerr << "error opening dictionary file: \"" << 
         g_p_translationcontrollerbase->m_stdstrVocabularyFilePath << "\"" 
-          << "error code:" << odfe.m_openError << 
+          << "error code:" << odfe.m_openResult << 
         odfe.GetErrorMessageA() << std::endl;
     }
   return ar_chTranslation;

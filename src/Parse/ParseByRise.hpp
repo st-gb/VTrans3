@@ -62,15 +62,15 @@ public:
     unknownRightGrammarPart,
     unknownLeftAndRightGrammarPart
   };
-  //This map is for generalisation (grammar rule x IS A superclass grammar
-  //rule y ) in order to minimize the grammar rules needed:
-  //so we can define
-  // -"noun IS A subj_or_obj_enum_ele"
-  // -"gerund is a subj_or_obj_enum_ele"
-  // so we only need 1 grammar rule: "subj_or_obj_enum_ele" + "verb" = clause
-  // instead of 2 grammar rules:
-  //  -"noun" + "verb" = clause
-  //  -"gerund" + "verb" = clause
+  /* This map is for generalisation (grammar rule x IS A superclass grammar
+  * rule y ) in order to minimize the grammar rules needed:
+  * so we can define
+  *  -"noun IS A subj_or_obj_enum_ele"
+  *  -"gerund is a subj_or_obj_enum_ele"
+  *  so we only need 1 grammar rule: "subj_or_obj_enum_ele" + "verb" = clause
+  *  instead of 2 grammar rules:
+  *   -"noun" + "verb" = clause
+  *   -"gerund" + "verb" = clause */
   std::map<WORD,WORD> m_stdmap_wGrammarPartID2SuperordinateID ;
   //This list stores the leftmost indices of the grammar parts:
   // initially only word classes are grammar parts:
@@ -102,16 +102,22 @@ public:
 //  std::multimap<DWORD, GrammarPart> m_stdmultimap_dwRightmostIndex2grammarpart ;
   std::multimap<DWORD, GrammarPart *>
     m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
+  /** Contains the roots of the parse trees for a distinct token index. 
+    * More than 1 parse tree may gave its right end at the sane token index even
+    * after the Part-Of-Speech (=POS) tagging phase: e.g. for "love" the noun
+    * love and the verb love are at the same index.
+    * This is why this is a _multi_map. */
   std::multimap<DWORD, GrammarPart *>
     m_stdmultimap_dwRightmostIndex2p_grammarpart ;
+  /** Mapping from left grammar rule ID to right grammar rule ID.*/
   std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2wGrammarPartID ;
   std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2SuperordinateID ;
   std::multimap<WORD, GrammarRule>
     m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule ;
-  std::multimap<DWORD, GrammarPart *>
-    m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate ;
-  std::multimap<DWORD, GrammarPart* >
-    m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate ;
+//  std::multimap<DWORD, GrammarPart *>
+//    m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate ;
+//  std::multimap<DWORD, GrammarPart* >
+//    m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate ;
   std::multimap<DWORD, GrammarPart *>
     m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate1ParseLevel ;
   std::multimap<DWORD, GrammarPart* >
@@ -134,10 +140,10 @@ public:
   typedef std::multimap<DWORD, GrammarPart *>::const_iterator
     c_iter_mmap_dw2p_grammarpart ;
 
-  std::multimap<DWORD, GrammarPart> *
-    mp_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate ;
-  std::multimap<DWORD, GrammarPart> *
-    mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
+//  std::multimap<DWORD, GrammarPart> *
+//    mp_stdmultimap_dwLeftmostIndex2grammarpartSuperordinate ;
+//  std::multimap<DWORD, GrammarPart> *
+//    mp_stdmultimap_dwRightmostIndex2grammarpartSuperordinate ;
 //  PositionstdstringVector m_psv ;
   PositionStringVector m_psv ;
   //Memorize the applied rules to enable a parse break condition.
@@ -165,6 +171,8 @@ public:
   //serves as a break condition so that is known that no more
   WORD m_wBiggestNumberOfTokensForAppliedGrammarRule ;
   WORD m_wNumberOfTokensForAppliedGrammarRule ;
+  /** The hierarchy level (=maximum height of all parse trees) of (number of times grammar/parse rules have been applied).
+    * Is incremented at the end of function "ResolveGrammarRules" .*/
   WORD m_wParseLevel ;
 public:
   //For the re-init of grammar to be like at the first init all grammar data
@@ -185,7 +193,9 @@ public:
     );
   //TODO possibly also pass left, right child (and superordinate)
   std::string GetErrorMessage(const enum InsertGrammarRuleReturnCodes );
-  GrammarPart * GetGrammarPartCoveringMostTokens(
+  fastestUnsignedDataType GetNumberOfOverallParseTrees() const {
+    return m_stdmultimap_dwLeftmostIndex2p_grammarpart.size(); }
+  GrammarPart * GetParseTreeCoveringMostTokens(
     DWORD dwLeftMostTokenIndex ) ;
   void GetGrammarPartCoveringMostTokens(
     DWORD dwLeftmostTokenIndex

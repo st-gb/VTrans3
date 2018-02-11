@@ -1,20 +1,17 @@
-/*
- * InsertIntoTreeTransverser.hpp
- *
+/** InsertIntoTreeTransverser.hpp
  *  Created on: Dec 21, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan  */
 
 #ifndef INSERTINTOTREETRANSVERSER_HPP_
 #define INSERTINTOTREETRANSVERSER_HPP_
 
 //Base class DirectingLeavesMultipleIterTraverser
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Translate/SyntaxTreePath.hpp> //class SyntaxTreePath
 
 //Forward declarations.
 class GrammarPart ;
-class ParseByRise ;
+namespace VTrans3 { class BottomUpParser; }
 class TransformationRule ;
 
 namespace ParseTreeTraverser
@@ -26,7 +23,7 @@ namespace ParseTreeTraverser
   public:
     BYTE m_byDirection ;
     const TransformationRule & m_cr_transformationrule ;
-    ParseByRise & m_r_parsebyrise ;
+    VTrans3::BottomUpParser & m_r_bottomUpParser;
     GrammarPart * m_p_grammarpartChildOfGrammarPartToInsert ;
     GrammarPart * m_p_grammarpartParentOfGrammarPartToInsert ;
     GrammarPart * m_p_grammarpartParentOfCurrentGrammarPart ;
@@ -39,14 +36,14 @@ namespace ParseTreeTraverser
     InsertIntoTreeTransverser(
       const TransformationRule & cr_transformationrule ,
       const GrammarPart * p_grammarpartStartNode ,
-      ParseByRise & r_parsebyrise
+      VTrans3::BottomUpParser &
       );
     InsertIntoTreeTransverser(
       const TransformationRule & cr_transformationrule ,
 //      const std::string & c_r_stdstrParseTreePath,
       const SyntaxTreePath & c_r_syntaxtreepath,
       const GrammarPart * p_grammarpartStartNode ,
-      ParseByRise & r_parsebyrise
+      VTrans3::BottomUpParser &
       );
     virtual
     ~InsertIntoTreeTransverser();

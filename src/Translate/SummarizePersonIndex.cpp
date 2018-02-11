@@ -1,11 +1,8 @@
-/*
- * SummarizePersonIndex.cpp
- *
+/** SummarizePersonIndex.cpp
  *  Created on: May 6, 2010
- *      Author: Stefan
- */
+ *      Author: Stefan  */
 
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>
 #include <Parse/GrammarPart.hpp>
 #ifdef _DEBUG //for getting a string from an grammar part ID vector
   #include <Parse/ParseByRise.hpp>
@@ -20,14 +17,14 @@ namespace ParseTreeTraverser
 
   SummarizePersonIndex::SummarizePersonIndex(
     const GrammarPart * p_grammarpartStartNode ,
-    ParseByRise * p_parsebyrise ,
+    VTrans3::BottomUpParser * p_bottomUpParser,
     TranslateParseByRiseTree & r_translateparsebyrisetree
     )
     : ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
       p_grammarpartStartNode ,
-      p_parsebyrise
+      p_bottomUpParser
       )
-    , mr_parsebyrise( * p_parsebyrise )
+    , mr_bottomUpParser( * p_bottomUpParser )
     , mp_translateparsebyrisetree ( & r_translateparsebyrisetree )
   {
     // TODO Auto-generated constructor stub
@@ -44,7 +41,7 @@ namespace ParseTreeTraverser
     BYTE byPersonIndex ;
     std::string stdstrTranslation ;
 #ifdef _DEBUG
-    std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
+    std::string stdstr = mr_bottomUpParser.GetPathAs_std_string(
       m_vecGrammarPartID) ;
 #endif
 //    WORD wConsecutiveID ;
@@ -87,7 +84,7 @@ namespace ParseTreeTraverser
     m_stdvec_p_grammarpartPath.push_back( m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart) ;
 #ifdef _DEBUG
-    std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
+    std::string stdstr = mr_bottomUpParser.GetPathAs_std_string(
       m_vecGrammarPartID) ;
 #endif
   }
@@ -97,7 +94,7 @@ namespace ParseTreeTraverser
     )
   {
 #ifdef _DEBUG
-    std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
+    std::string stdstr = mr_bottomUpParser.GetPathAs_std_string(
       m_vecGrammarPartID) ;
 #endif
 //    m_map_grammarpartRightUnprocessedChild2wParseTreeLevel.insert(
@@ -118,7 +115,7 @@ namespace ParseTreeTraverser
     m_stdvec_p_grammarpartPath.push_back( m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart ) ;
 #ifdef _DEBUG
-    stdstr = mr_parsebyrise.GetPathAs_std_string(
+    stdstr = mr_bottomUpParser.GetPathAs_std_string(
       m_vecGrammarPartID) ;
 #endif
   }
@@ -127,7 +124,7 @@ namespace ParseTreeTraverser
   void SummarizePersonIndex::UnprocessedHighestLevelNodeFound()
   {
 #ifdef _DEBUG
-    std::string stdstr = mr_parsebyrise.GetPathAs_std_string(
+    std::string stdstr = mr_bottomUpParser.GetPathAs_std_string(
       m_vecGrammarPartID) ;
 #endif
     GrammarPart * p_grammarpart =

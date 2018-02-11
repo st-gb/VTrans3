@@ -40,10 +40,6 @@
 #include "preprocessor_macros/expand_and_stringify.h"
 #endif
 
-std::map<std::string, AttributeTypeAndPosAndSize > *
-  ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef ;
-ParseByRise * ConditionsAndTranslation::sp_parsebyrise ;
-
 extern TranslationControllerBase * g_p_translationcontrollerbase;
 
 //E.g. add "German_definite_article" , "der\ndie\ndas\ndie"
@@ -117,7 +113,7 @@ void TranslateParseByRiseTree::AddTranslationRule(
     try
     {
     TranslationRule * p_translation_rule = new TranslationRule(
-      r_stdstrSyntaxTreePath, mp_parsebyrise ) ;
+      r_stdstrSyntaxTreePath, mp_bottomUpParser ) ;
 
 //    DEBUG_COUT( "added translation rule for syntax tree path \"" <<
 //        GetSyntaxTreePathAsName( ar_wElements, vec_wElements.size() ) <<
@@ -231,7 +227,7 @@ void TranslateParseByRiseTree::AddVocAndTranslDefinition(
     << r_stdstrWordClassAndAttributeName )
   WORD wGrammarPartID ;
   //e.g. get corresponding ID for word class "noun".
-  if( mp_parsebyrise->GetGrammarPartID(r_stdstrWordClass,wGrammarPartID) )
+  if( mp_bottomUpParser->GetGrammarPartID(r_stdstrWordClass,wGrammarPartID) )
   {
     LOGN_DEBUG("Found GetGrammarPartID for word class" << r_stdstrWordClass )
     AttributeTypeAndPosAndSize attributetypeandposandsize(
@@ -299,7 +295,7 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
         //if( p_grammarpartLeaf )
         {
           LOGN_DEBUG("grammar part leaf found:" <<
-            mp_parsebyrise->GetGrammarPartName(
+            mp_bottomUpParser->GetGrammarPartName(
             p_grammarpartLeaf->m_wGrammarPartID) << "\n")
         }
         std::map<std::string,AttributeTypeAndPosAndSize>::const_iterator
@@ -330,7 +326,7 @@ bool TranslateParseByRiseTree::AllConditionsMatch(
                     GetEnglishWordAsStdString(r_atapas.m_wIndex);
                   //std::string & r_stdstrTextTokens =
                   std::string stdstrTextTokens ;
-                    mp_parsebyrise->GetTokensAsSpaceSeparatedString(
+                    mp_bottomUpParser->GetTokensAsSpaceSeparatedString(
                     p_grammarpartLeaf->m_dwLeftmostIndex,
                     p_grammarpartLeaf->m_dwRightmostIndex ,
                     stdstrTextTokens
@@ -408,7 +404,7 @@ std::string TranslateParseByRiseTree::GetTranslationEquivalent(
         //DEBUG_COUT("GetTranslationEquivalent()--"
         LOGN_DEBUG(
           "grammar part leaf found:" <<
-          mp_parsebyrise->GetGrammarPartName(
+          mp_bottomUpParser->GetGrammarPartName(
           p_grammarpartLeaf->m_wGrammarPartID) << "\n")
       }
       std::map<std::string,AttributeTypeAndPosAndSize>::const_iterator
@@ -523,7 +519,7 @@ void GetDativeFormForGermanSingularNoun( std::string & r_stdstr )
 //}
 
 TranslateParseByRiseTree::TranslateParseByRiseTree(
-  ParseByRise & r_parsebyrise
+  VTrans3::BottomUpParser & r_bottomUpParser
   , I_UserInterface & r_i_userinterface
   )
   :
@@ -541,8 +537,8 @@ TranslateParseByRiseTree::TranslateParseByRiseTree(
   //translates to: "Falls ich dich sehe." -> S O P
   std::string strGerman = "adverb_at_clause_begin\nGerman_subject\nobject\n"
     "predicate" ;
-  mp_parsebyrise = & r_parsebyrise ;
-  ConditionsAndTranslation::sp_parsebyrise = & r_parsebyrise ;
+  mp_bottomUpParser = & r_bottomUpParser ;
+  ConditionsAndTranslation::sp_bottomUpParser = & r_bottomUpParser ;
   ConditionsAndTranslation::sp_stdmap_AttrName2VocAndTranslAttrDef =
     & m_stdmap_AttrName2VocAndTranslAttrDef ;
 
@@ -685,13 +681,13 @@ std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
   WORD wSize = r_stdvec_wGrammarPartPath.size() ;
   WORD wIndex = 0 ;
   std::string str ;
-  if( mp_parsebyrise )
+  if( mp_bottomUpParser )
   {
     for( std::vector<WORD>::const_iterator iter =
       r_stdvec_wGrammarPartPath.begin() ;
         iter < r_stdvec_wGrammarPartPath.end() ; ++ iter )
     {
-      str += mp_parsebyrise->GetGrammarPartName( *iter ) ;
+      str += mp_bottomUpParser->GetGrammarPartName( *iter ) ;
       //If not the last element.
       if( wIndex + 1 < wSize )
         str += "." ;
@@ -707,7 +703,7 @@ std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
   )
 {
   std::string str ;
-  if( mp_parsebyrise )
+  if( mp_bottomUpParser )
   {
 //    DEBUG_COUT( "GetSyntaxTreePathAsName--"
     LOGN_DEBUG("length: " << wLength /*<< "\n"*/ )
@@ -716,9 +712,9 @@ std::string TranslateParseByRiseTree::GetSyntaxTreePathAsName(
 //      DEBUG_COUT( "GetSyntaxTreePathAsName--"
       LOGN_DEBUG("element: grammar part ID:" <<
           ar_wGrammarPartPath[ wIndex ] << " name: " <<
-          mp_parsebyrise->GetGrammarPartName(ar_wGrammarPartPath[ wIndex ])
+          mp_bottomUpParser->GetGrammarPartName(ar_wGrammarPartPath[ wIndex ])
           /*<< "\n"*/ )
-      str += mp_parsebyrise->GetGrammarPartName(
+      str += mp_bottomUpParser->GetGrammarPartName(
         ar_wGrammarPartPath[ wIndex ] ) ;
       //If not the last element.
       if( wIndex + 1 < wLength )
@@ -806,8 +802,8 @@ void TranslateParseByRiseTree::ProcessParseTree(
   , ProcessParseTree_type pfnProcessParseTree
   )
 {
-  ParseByRise * p_parsebyrise = //& r_parsebyrise ;
-    mp_parsebyrise;
+  VTrans3::BottomUpParser * p_bottomUpParser = //& r_parsebyrise ;
+    mp_bottomUpParser;
   //  std::string stdstrWholeTransl ;
 //  std::string stdstrTranslation ;
   std::vector<GrammarPart *>
@@ -815,7 +811,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
   LOGN_DEBUG( "begin" )
   //TODO useful?
 //  m_std_vector_std_vector_p_grammarpartCoveringMostTokensAtTokenIndex.clear();
-  if( p_parsebyrise )
+  if( p_bottomUpParser )
   {
     LOGN_DEBUG( "mp_parsebyrise != NULL")
     //  typedef std::multimap<DWORD, GrammarPart >
@@ -824,7 +820,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
       stdmmap_token_index2grammarpart ;
     stdmmap_token_index2grammarpart::const_iterator citer ;
     stdmmap_token_index2grammarpart &
-      r_stdmultimap_dwLeftmostIndex2grammarpart = p_parsebyrise->
+      r_stdmultimap_dwLeftmostIndex2grammarpart = p_bottomUpParser->
       //m_stdmultimap_dwLeftmostIndex2grammarpart ;
       m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
     //Reset to initial before each translation.
@@ -832,7 +828,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
     std::vector<GrammarPart *> stdvec_p_grammarpartLargestParseTrees;
 //    const fastestUnsignedDataType numberOfLargestParseTrees = p_parsebyrise->
 //      GetNumberOfLargestParseTrees();
-    p_parsebyrise->GetLargestParseTrees(stdvec_p_grammarpartLargestParseTrees);
+    p_bottomUpParser->GetLargestParseTrees(stdvec_p_grammarpartLargestParseTrees);
 #ifdef PARALLELIZE_TRANSLATION
     const fastestUnsignedDataType numberOfLargestParseTrees =
       stdvec_p_grammarpartLargestParseTrees.size();
@@ -932,7 +928,7 @@ void TranslateParseByRiseTree::ProcessParseTree(
 // e.g. "I, you and the car suck."
 //  "I"
 void TranslateParseByRiseTree::Translate(
-  ParseByRise & r_parsebyrise
+  VTrans3::BottomUpParser & r_bottomUpParser
 //  , std::string & stdstrWholeTransl
   , std::vector<std::string> & r_stdvec_stdstrWholeTransl
   , TranslationResult & r_translationResult
@@ -1065,7 +1061,7 @@ void TranslateParseByRiseTree::TranslateParseTree(
     //        p_grammarpart
 //    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
     p_grammarpartRootNode
-    , * mp_parsebyrise
+    , * mp_bottomUpParser
     , * this
     );
 //  translatetreetraverser.m_wConsecutiveID = wConsecutiveID;
@@ -1086,7 +1082,7 @@ void TranslateParseByRiseTree::TranslateParseTree(
   ParseTreeTraverser::TranslatedTreeTraverser translated_treetraverser(
 //    * c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex,
     p_grammarpartRootNode,
-    mp_parsebyrise
+    mp_bottomUpParser
     );
   translated_treetraverser.Traverse();
 

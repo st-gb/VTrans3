@@ -54,9 +54,13 @@ namespace VTrans3
         DWORD & r_dwTokenIndex
         )
       {
+#ifdef _DEBUG
+        std::string tokenVector = psv.GetBetweenAsStdString(r_dwTokenIndex, 
+          r_dwTokenIndex + 4);
+#endif
         VocablesForWord::voc_container_type * p_voc_container =
           m_charStringStdMap.find(psv, r_dwTokenIndex);
-        if( p_voc_container )
+        if( p_voc_container )//If word was found in fundamental words map
         {
           LOGN_SUCCESS("word found in fundamental words map")
     //      VocablesForWord::voc_container_type * p_voc_container =
@@ -70,7 +74,7 @@ namespace VTrans3
         else
         {
           p_voc_container = m_charStringStdMapTemp.find(psv, r_dwTokenIndex);
-          if( p_voc_container )
+          if( p_voc_container )//If word was found in temporary words map
           {
             LOGN_SUCCESS("word found in temporary words map")
             return p_voc_container;

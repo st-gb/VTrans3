@@ -41,7 +41,7 @@ namespace ParseTreeTraverser
   //  const GrammarPart * mcp_grammarpartCurrent ;
     GrammarPartPointerAndParseLevel m_grammarpartpointer_and_parselevelCurrent ;
     const GrammarPart * mp_grammarpartStartNode ;
-    VTrans3::BottomUpParser * mp_parsebyrise ;
+    VTrans3::BottomUpParser * mp_bottomUpParser;
   //  std::vector<const GrammarPart *> m_stdvec_p_grammarpartRightNodeToProcess ;
     std::vector<GrammarPartPointerAndParseLevel>
       m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess ;

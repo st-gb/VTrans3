@@ -8,7 +8,7 @@
 //  //use a relative path, else "VC/include/IO.h" is used
 //  #include <IO/IO.hpp>
   //for WORD_TYPE_NOUN, WORD_TYPE_MAIN_VERB
-  #include <IO/dictionary/word_class_characters.h>
+  //#include <IO/dictionary/word_class_characters.h>
 #include <Attributes/EnglishWord.hpp> //EnglishWord::English_word_class
 #include <hardware/CPU/fastest_data_type.h> //fastestUnsignedDataType
 
@@ -311,6 +311,8 @@ namespace VTrans3 {
       const fastestUnsignedDataType stringLen,
       const fastestUnsignedDataType vocAndTranslArrayIndex)
     {
+      if( m_arstrGermanWord == NULL)
+          return;
       /** This method may be called multiple times with the same index. */
       if( m_arstrGermanWord[vocAndTranslArrayIndex] != NULL)
       {

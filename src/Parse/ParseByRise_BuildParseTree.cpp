@@ -1320,7 +1320,7 @@ bool BottomUpParser::Resolve1ParseLevel()
   return (grammarRuleApplied || bReplacedGrammarPartIDsBySuperordinate);
 }
 
-//Minimizes, e.g. "article + noun" = "def_article_noun"
+/** Applies grammar rules/Minimizes, e.g. "article + noun" = "def_article_noun" */
 BYTE BottomUpParser::ResolveGrammarRules(
   //Maintaining 2 maps with both leftmost and rightmost indexes should be faster
   //when searching for neighboured grammar parts:
@@ -1697,6 +1697,7 @@ void BottomUpParser::InsertGrammarPartForEverySameWord(
       //-store multiple translations per grammar part
       //-clone grammar part (branches).
 
+      /** Must be freed manually.*/
       GrammarPart * p_grammarPart = new GrammarPart(
         //Via the indices the tokens can be got later.
         dwTokenIndex, dwTokenIndexRightMost) ;

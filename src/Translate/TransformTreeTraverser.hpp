@@ -9,7 +9,7 @@
 #define TRANSFORMTREETRANSVERSER_HPP_
 
 //Base class DirectingLeavesMultipleIterTraverser
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>//base class
 //class ParseTreeTraverser::InsertIntoTreeTransverser
 #include <Translate/InsertIntoTreeTransverser.hpp>
 #include <Translate/SyntaxTreePath.hpp> //class SyntaxTreePath
@@ -18,9 +18,9 @@
 #include <map> //class std::map
 #include <string> //class std::strings
 
-//Forward declarations.
+/** Forward declarations (faster than to include files). */
 class GrammarPart ;
-class ParseByRise ;
+namespace VTrans3 { class BottomUpParser; }
 
 namespace ParseTreeTraverser
 {
@@ -41,9 +41,8 @@ namespace ParseTreeTraverser
 //      m_stdmap_ar_wTransformationRuleParseTreePath2transformationrule ;
     const std::map<SyntaxTreePath,TransformationRule> &
       m_stdmap_syntaxtreepath2transformationrule ;
-    ParseByRise & m_r_parsebyrise ;
-    std::vector<GrammarPart *>  m_stdvector_p_grammarpartCurrentParseTreePath;
-
+    VTrans3::BottomUpParser & m_r_bottomUpParser;
+    std::vector<GrammarPart *> m_stdvector_p_grammarpartCurrentParseTreePath;
 
     void BeforeBeginAtRoot() ;
     void CurrentNodeIsLastAddedRightChild() ;
@@ -86,7 +85,7 @@ namespace ParseTreeTraverser
       const std::map<SyntaxTreePath,TransformationRule> &
         cr_stdmap_syntaxtreepath2transformationrule ,
       const GrammarPart * p_grammarpartStartNode ,
-      ParseByRise & r_parsebyrise
+      VTrans3::BottomUpParser &
       );
     virtual
     ~TransformTreeTraverser();

@@ -25,15 +25,23 @@ inline bool isValidEnglishWordCharacter(uint8_t character)
 inline bool isValidGermanWordCharacter(uint8_t character)
 {
   /** Use parentheses around the '&&' expression to avoid compiler warning */
-  if( ( character > 'A' && character < 'Z' ) ||
+  if( ( character >= 'A' && character <= 'Z' ) ||
       /** Use parentheses around the '&&' expression to avoid compiler warning */
-      ( character > 0x60 /** "a" */ && character < 0x7A /** "z" */ ) ||
-      character == ISO_8859_1::ae || character == ISO_8859_1::Ae ||
-      character == ISO_8859_1::oe || character == ISO_8859_1::Oe ||
-      character == ISO_8859_1::ue || character == ISO_8859_1::Ue ||
-      character == ISO_8859_1::sz /** "ß" */ ||
-      character == '-' /** e.g. "fork-lift" */ )
+      ( character >= 'a' && character <= 'z' ) )
     return true;
+  else
+    switch(character) /** "switch" is faster than "if" */
+    {
+        case ISO_8859_1::ae:
+        case ISO_8859_1::Ae:
+        case ISO_8859_1::oe:
+        case ISO_8859_1::Oe:
+        case ISO_8859_1::ue:
+        case ISO_8859_1::Ue:
+        case ISO_8859_1::sz: /** "ß" */
+        case '-': /** e.g. "fork-lift" */
+        return true;
+    }
   return false;
 }
 

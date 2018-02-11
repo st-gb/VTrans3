@@ -1,9 +1,6 @@
-/* 
- * File:   ConditionsAndTranslation.hpp
+/** File:   ConditionsAndTranslation.hpp
  * Author: Stefan
- *
- * Created on 5. April 2010, 23:13
- */
+ * Created on 5. April 2010, 23:13 */
 
 #ifndef _CONDITIONSANDTRANSLATION_HPP
 #define	_CONDITIONSANDTRANSLATION_HPP
@@ -78,7 +75,7 @@ public:
   SyntaxTreePath m_syntaxtreepath ;
 
   //for all objects the same
-  static ParseByRise * sp_parsebyrise ;
+  static VTrans3::BottomUpParser * sp_bottomUpParser;
   static std::map<std::string, //VocabularyAndTranslation
     AttributeTypeAndPosAndSize > *
     sp_stdmap_AttrName2VocAndTranslAttrDef ;
@@ -119,12 +116,12 @@ public:
     const GrammarPart * const p_grammarpartLeaf
     ) const ;
   void SetSyntaxTreePath(const char * p_ch_SyntaxTreePath
-     , ParseByRise * p_parsebyrise )
+     , VTrans3::BottomUpParser * p_bottomUpParser )
   {
     std::string std_strUnknownGrammarPartID;
     std::string stdstrSyntaxTreePath (p_ch_SyntaxTreePath) ;
     m_syntaxtreepath.CreateGrammarPartIDArray( //r_stdstrSyntaxTreePath
-        stdstrSyntaxTreePath , p_parsebyrise, std_strUnknownGrammarPartID ) ;
+        stdstrSyntaxTreePath , p_bottomUpParser, std_strUnknownGrammarPartID ) ;
   }
 };
 
