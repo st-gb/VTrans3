@@ -1,0 +1,33 @@
+
+mixture between TU Chemnitz and dict.cc dictionary
+
+regular plural nouns do not exist as a separate entry, instead following:
+colour band \t Farbband \t m \t <Anzahl gleicher Zeichen wie im Singular>änder
+
+falls dann ein Wort mit "s" am Ende gesucht wird:
+-nach Wort mit s wird gesucht 
+-und : "s" wird entfernt und der Singular gesucht, dann in der Zeile der Plural genommen:
+findEnglishWord("cars");
+
+findEnglishWord(
+
+entry like: 
+
+English \t German \t PartOfSpeech (POS) 
+
+\t = tabulator character
+
+vacuum cleaner
+
+empty German entries for non-existings words that function as a stop-marker:
+English \t \t PartOfSpeech (POS)
+
+if e.g. the word "vacuum cleaner" exists and the word "vacuum" does not exist:
+vacuum \t \t \n
+vacuum cleaner \t Staubsauger \t m \n
+
+because: if the tokens from the input text are looked for then
+it is tried:
+vacuum -> existing entry -> that means: a word starting with "vacuum" with at least 1 more token exists
+ 
+

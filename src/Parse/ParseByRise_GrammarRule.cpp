@@ -81,6 +81,7 @@ void BottomUpParser::InsertGrammarPartID2NameMappingForWordClasses()
 //  InsertGrammarRule( EnglishWord::have2ndPersonSingular,
 //    "have2ndPersonSingular");
   InsertGrammarRule( EnglishWord::haveInfinitive,"haveInfinitive");
+  InsertGrammarRule( EnglishWord::haveSimplePast,"haveSimplePast");
   InsertGrammarRule( EnglishWord::will,"will");
 
   InsertGrammarRuleNamesForPersonalPronouns();
@@ -94,6 +95,7 @@ void BottomUpParser::InsertGrammarPartID2NameMappingForWordClasses()
 
   InsertGrammarRule( EnglishWord::conjunction_and ,"and" ) ;
   InsertGrammarRule( EnglishWord::conjunction, "conjunction" ) ;
+  InsertGrammarRule( EnglishWord::pronoun, "pronoun" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun, "pers_pronoun" ) ;
   InsertGrammarRule( EnglishWord::personal_pronoun_objective_form ,
     "pers_pron_obj" ) ;

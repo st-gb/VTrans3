@@ -10,6 +10,7 @@
 
 #define PARSE_TREE_NODE_LITERAL "parseTreeNode"
 
+//TODO: for easier indentation change to: std::vector with XMLtag.
 namespace ParseTreeTraverser
 {
   ParseTree2XMLtreeTraverser::ParseTree2XMLtreeTraverser(
@@ -22,6 +23,7 @@ namespace ParseTreeTraverser
       p_grammarpartStartNode ,
       & bottomUpParser
       )
+    , m_inputText(*bottomUpParser.m_pInputText)
   {
     // TODO Auto-generated constructor stub
 
@@ -108,16 +110,28 @@ namespace ParseTreeTraverser
   {
     GrammarPart * p_grammarpart = m_grammarpartpointer_and_parselevelCurrent.
       m_p_grammarpart;
-    const std::string & stdstrTranslation = p_grammarpart->m_stdstrTranslation;
+    std::string & stdstrTranslation = p_grammarpart->m_stdstrTranslation;
   #ifdef _DEBUG
     const char * strTranslation = stdstrTranslation.c_str();
   #endif
-
+    if( stdstrTranslation == "")
+    {
+      if( p_grammarpart->m_pvocabularyandtranslation && 
+        p_grammarpart->m_pvocabularyandtranslation->m_arstrGermanWord && 
+        p_grammarpart->m_pvocabularyandtranslation->m_arstrGermanWord[0] )
+        stdstrTranslation = p_grammarpart->m_pvocabularyandtranslation->
+          m_arstrGermanWord[0];
+    }
     fastestUnsignedDataType utf8arraySizeInByte;
     const BYTE * arbyTranslationAsUTF8 = ISO_8859_1::GetAsUTF8(
       stdstrTranslation.c_str(), utf8arraySizeInByte);
 //    std::string std_strTranslationInUTF8 = std::string( (const char *) arbyTranslationAsUTF8);
-    m_byteArray.add("<word translation=\"");
+    m_byteArray.add("<word=\"");
+    std::string stdstrTokens = m_inputText.GetBetweenAsStdString(
+      p_grammarpart->m_dwLeftmostIndex, 
+      p_grammarpart->m_dwRightmostIndex);
+    m_byteArray.add(stdstrTokens.c_str() );
+    m_byteArray.add("\" translation=\"");
 //    AddToUTF8sequence(std_str.c_str(), std_str.length() );
     //    AddToUTF8sequence(arbyTranslationAsUTF8, utf8arraySizeInByte);
     m_byteArray.add(arbyTranslationAsUTF8, utf8arraySizeInByte);
@@ -155,7 +169,9 @@ namespace ParseTreeTraverser
     m_byteArray.add( //"</" + mp_parsebyrise->GetGrammarPartName(
       //r_grammarpartpointerandparselevel.
       //m_p_grammarpart->m_wGrammarPartID) + ">";
-      "</grammar_part>");
+      "</");
+    m_byteArray.add(PARSE_TREE_NODE_LITERAL);
+    m_byteArray.add(">");
 //    m_byteArray.add(std_strXML.c_str(), std_strXML.length() );
 
     m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath.pop_back() ;

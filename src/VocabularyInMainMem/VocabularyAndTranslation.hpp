@@ -390,11 +390,11 @@ namespace VTrans3 {
 //    void GetWord(//Word & word
 //      AutomDelWord & r_automdelword ) ;
 
-    std::string GetWordTypeAsStdStr()
-    {
-      return //g_ar_stdstrWordClass[ m_englishWordClass - WORD_TYPE_NOUN ] ;
-        VocabularyAndTranslation::s_ar_chWordClass[ m_englishWordClass - WORD_TYPE_NOUN ];
-    }
+//    std::string GetWordTypeAsStdStr()
+//    {
+//      return //g_ar_stdstrWordClass[ m_englishWordClass - WORD_TYPE_NOUN ] ;
+//        VocabularyAndTranslation::s_ar_chWordClass[ m_englishWordClass - WORD_TYPE_NOUN ];
+//    }
 
     void PointToAttributeData(
       const VocabularyAndTranslation * const p_vocabularyandtranslationPointTo)

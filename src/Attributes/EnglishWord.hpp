@@ -80,6 +80,7 @@ public:
     , be1stPersonSingular
 //    , have2ndPersonSingular
     , haveInfinitive
+    , haveSimplePast
     , will
 
     , conjunction

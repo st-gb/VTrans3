@@ -61,6 +61,7 @@ BottomUpParser::BottomUpParser( /*TranslationControllerBase & r_translationcontr
   : m_p_userinterface(/*& r_translationcontrollerbase*/ p_userInterface)
   , //m_r_translationcontrollerbase(r_translationcontrollerbase)
     m_r_translationProcess(r_translationProcess)
+  , m_pInputText(NULL)
 { //TODO "this" can't be ausgeklappt werden in NetBeans "Variables" view at this  point
   Init();
 }

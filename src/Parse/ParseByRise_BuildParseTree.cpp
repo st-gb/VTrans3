@@ -1787,6 +1787,7 @@ void BottomUpParser::StoreWordTypeAndGermanTranslation(
 //  std::multimap<DWORD, GrammarPart> * p_stdmultimap_wRightmostIndex2grammarpart
 //    = & m_stdmultimap_dwRightmostIndex2grammarpart ;
 //  std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
+  m_pInputText = & c_r_positionStringVector;
   IVocabularyInMainMem::voc_container_type * p_std_set_p_vocabularyandtranslation ;
   DWORD dwTokenIndexRightMost = dwTokenIndex ;
   DWORD dwTokenIndexRightMostUnknownToken = 0;

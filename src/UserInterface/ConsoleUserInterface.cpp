@@ -1,4 +1,5 @@
 #include "ConsoleUserInterface.hpp"
+#include <iostream> //class std::cout
 
 void ConsoleUserInterface::Message(const std::string & cr_stdstr )
 {

@@ -11,7 +11,11 @@
 //#include "TUchemnitzEngWordSorted1stAndBinarySearch.hpp"
 //typedef VTrans3::TUchemnitzEngWordSorted1stAndBinarySearchInDictFile dictReaderAndVocAccess_type;
 
-#include "TUchemnitzEngWordSorted1stAndBinarySearchInRAM.hpp"
-typedef VTrans3::TUchemnitzEngWordSorted1stAndBinarySearchInRAM dictReaderAndVocAccess_type;
+//#include "TUchemnitzEngWordSorted1stAndBinarySearchInRAM.hpp"
+//typedef VTrans3::TUchemnitzEngWordSorted1stAndBinarySearchInRAM dictReaderAndVocAccess_type;
+
+#include "Original_dict_cc_file_formatAndGermanTranslationByteOffset.hpp"
+typedef VTrans3::Original_dict_cc_EN_DE_AndGermanTranslationByteOffset 
+  dictReaderAndVocAccess_type;
 
 #endif /* DICTREADERANDVOCACCESS_TYPE_HPP_ */

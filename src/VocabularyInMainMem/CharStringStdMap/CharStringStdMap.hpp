@@ -39,6 +39,9 @@ public:
 //      const PositionstdstringVector & psv,
     DWORD & r_dwTokenIndex
     );
+  voc_container_type * findEnglishWord(
+    const VTrans::string_type & englishWord
+    );
 //  /** For all (sub-)classes that use class "VocabularyAndTranslation". */
 //  void Insert(
 //    EnglishWord & ew , GermanWord & gw, //void * p_v

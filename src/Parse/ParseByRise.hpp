@@ -172,6 +172,7 @@ public:
   /** The hierarchy level (=maximum height of all parse trees) of (number of times grammar/parse rules have been applied).
     * Is incremented at the end of function "ResolveGrammarRules" .*/
   WORD m_wParseLevel ;
+  PositionStringVector * m_pInputText;
 public:
   //For the re-init of grammar to be like at the first init all grammar data
   // (grammar ID<-->grammar name mapping, grammar rules, ...

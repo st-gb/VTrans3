@@ -89,6 +89,7 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfArrayElements(
       return 2 ;
       break;
     case EnglishWord::conjunction:
+    case EnglishWord::pronoun:
     case EnglishWord::mainVerbPastParticiple1Obj:
       numEngWords = 1;
       numGerWords = 1;

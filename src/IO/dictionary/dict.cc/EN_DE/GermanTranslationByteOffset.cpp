@@ -11,6 +11,7 @@
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>//class IVocabularyInMainMem
 #include "dict_cc_WordClasses.hpp"
 #include "VocabularyInMainMem/VocablesForWord.hpp"
+#include <InputOutput/GetCharInACSIIcodePage850.hpp>
 
 std::map<enum dict_cc_WordClasses::WordClasses, enum EnglishWord::English_word_class> dict_cc_WordClasses::EnglishWordClassFromPOSconverter::s_POS2englishWord; // define our static member variable
 dict_cc_WordClasses::EnglishWordClassFromPOSconverter::_init dict_cc_WordClasses::EnglishWordClassFromPOSconverter::s_initializer;
@@ -34,10 +35,12 @@ GermanTranslationByteOffset::~GermanTranslationByteOffset() {
 
 void GermanTranslationByteOffset::Build_POSstring2POSenum()
 {
-  s_POSstring2POSenum.insert(std::make_pair("adj", dict_cc_WordClasses::adjective) );
-  s_POSstring2POSenum.insert(std::make_pair("adv", dict_cc_WordClasses::adverb) );
-  s_POSstring2POSenum.insert(std::make_pair("noun", dict_cc_WordClasses::noun) );
-  s_POSstring2POSenum.insert(std::make_pair("past-p", dict_cc_WordClasses::past_participle) );
+  AddMapping("adj", dict_cc_WordClasses::adjective);
+  AddMapping("adv", dict_cc_WordClasses::adverb);
+  AddMapping("conj", dict_cc_WordClasses::conjunction);
+  AddMapping("noun", dict_cc_WordClasses::noun);
+  AddMapping("past-p", dict_cc_WordClasses::past_participle);
+  AddMapping("pron", dict_cc_WordClasses::pronoun);
 }
 
 /** Do not load anything into memory. */
@@ -269,6 +272,8 @@ std::string GermanTranslationByteOffset::GetGermanTranslation(
   unsigned numTabsInCurrentLine = 0;
   std::string currentAttribute;/** Attributes are separated by a tabulator.*/
   int currentByte = m_dictionaryFile.ReadByte();
+  unsigned char ASCIIcodePage850Char;
+  bool isByteOfMultiByteUTF8sequence;
   while( currentByte != -1 )
   {
     switch( currentByte)
@@ -276,11 +281,39 @@ std::string GermanTranslationByteOffset::GetGermanTranslation(
       case '\t' :
 //        numTabsInCurrentLine ++;
         byteOffsetOfGermanPart ++;
+        
         return currentAttribute;
         break;
       default:
 //        if( numTabsInCurrentLine == 0)
-        currentAttribute += (char) currentByte;
+        isByteOfMultiByteUTF8sequence = 
+          UTF8byteSequence::IsByteOfMultiByteUTF8sequence(currentByte);
+        if( isByteOfMultiByteUTF8sequence )
+        {
+          ASCIIcodePage850Char = ISO_8859_1::GetFromUTF8(currentByte);
+          if( ASCIIcodePage850Char != 0 )
+          {
+            switch(ASCIIcodePage850Char)
+            {
+              case ISO_8859_1::ae :
+                currentAttribute += "ae"; break;
+              case ISO_8859_1::oe :
+                currentAttribute += "oe"; break;
+              case ISO_8859_1::ue :
+                currentAttribute += "ue"; break;
+              case ISO_8859_1::Ae :
+                currentAttribute += "Ae"; break;
+              case ISO_8859_1::Oe :
+                currentAttribute += "Oe"; break;
+              case ISO_8859_1::Ue :
+                currentAttribute += "Ue"; break;
+              case ISO_8859_1::sz :
+                currentAttribute += "sz"; break;
+            }
+          }
+        }
+        else
+         currentAttribute += (char) currentByte;
         byteOffsetOfGermanPart ++;
         break;
     }
@@ -302,14 +335,22 @@ VocablesForWord::voc_container_type * GermanTranslationByteOffset::findEnglishWo
   VocablesForWord::voc_container_type * p_vocContainer = 
     new VocablesForWord::voc_container_type;
   VocablesForWord::voc_container_type & vocContainer = * p_vocContainer;
-  container_type::const_iterator citer = m_germanTranslationByteOffsetIndex.
-    find(englishWord);
-  if( citer != m_germanTranslationByteOffsetIndex.end() )
+//  container_type::const_iterator citer = m_germanTranslationByteOffsetIndex.
+//    find(englishWord);
+//  if( citer != m_germanTranslationByteOffsetIndex.end() )
+  std::pair<container_type::const_iterator, container_type::const_iterator> 
+    firstAndLastFound = m_germanTranslationByteOffsetIndex.equal_range(englishWord);
+//  int num = firstAndLastFound.second - firstAndLastFound.first; 
+#ifdef _DEBUG
+  int numberOfSameWords = m_germanTranslationByteOffsetIndex.count(englishWord);
+#endif
+  for(container_type::const_iterator citer = firstAndLastFound.first; 
+    citer != firstAndLastFound.second; ++citer)
   {
     fastestUnsignedDataType byteOffsetOfGermanPart = citer->second;
     std::string germanTranslation = GetGermanTranslation(byteOffsetOfGermanPart);
-    std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeechContainer = GetPartOfSpeeches(
-      byteOffsetOfGermanPart);
+    std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeechContainer = 
+      GetPartOfSpeeches(byteOffsetOfGermanPart);
     std::set<EnglishWord::English_word_class> englishWordClassContainer = 
       dict_cc_WordClasses::EnglishWordClassFromPOSconverter::
       GetEnglishWordClass(partOfSpeechContainer);

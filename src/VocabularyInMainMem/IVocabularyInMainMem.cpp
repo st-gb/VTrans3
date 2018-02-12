@@ -4,6 +4,7 @@
 #endif
 
 #include "IVocabularyInMainMem.hpp"
+#include <algorithm> //std::transform(...)
 #include "Controller/thread_type.hpp"
 #include <Attributes/Word.hpp>
 #include <IO/dictionary/DictionaryFileAccessException.hpp>
@@ -55,6 +56,9 @@ IVocabularyInMainMem::voc_container_type * IVocabularyInMainMem::FindEnglishWord
   const unsigned beginTokenIndex = r_dwTokenIndex;
 
   word = psv.at(tokenIndex).m_Str;
+  /** First letter may be upper letter because the word may be the begin of a sentence. 
+   * https://stackoverflow.com/questions/313970/how-to-convert-stdstring-to-lower-case */
+  std::transform(word.begin(), word.end(), word.begin(), ::tolower);
   p_voc_container = findEnglishWord( word);
   if( p_voc_container != NULL )
     p_voc_containerMaxWordMatch = p_voc_container;
@@ -122,6 +126,7 @@ void IVocabularyInMainMem::InsertAuxiliaryVerbHave()
 
     Insert("have", EnglishWord::/*haveInfinitive*/ auxiliary_verb
       );//, p_v) ;
+    Insert("had", EnglishWord::haveSimplePast);//, p_v) ;
 //  VocabularyAndTranslation * p_vocabularyandtranslation =
 //      (VocabularyAndTranslation *) p_v;
 //  p_vocabularyandtranslation->m_byType = EnglishWord::haveInfinitive;

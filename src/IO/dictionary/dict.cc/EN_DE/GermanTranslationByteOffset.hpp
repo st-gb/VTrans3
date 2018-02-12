@@ -43,6 +43,12 @@ public:
     GermanTranslationByteOffset(IVocabularyInMainMem * p_vocabularyInMainMem);
     virtual ~GermanTranslationByteOffset();
 
+    void AddMapping(
+        const char * const word, 
+        const enum dict_cc_WordClasses::WordClasses wordClasses)
+      {
+        s_POSstring2POSenum.insert(std::make_pair(word, wordClasses) );
+      }
     void Build_POSstring2POSenum();
     VocablesForWord::voc_container_type * findEnglishWord(
         const std::string & englishWord);

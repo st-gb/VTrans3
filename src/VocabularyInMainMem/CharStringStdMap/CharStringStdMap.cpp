@@ -119,6 +119,16 @@ void CharStringStdMap::clear()
   LOGN_DEBUG("end--map size:" << st)
 }
 
+  VocablesForWord::voc_container_type * CharStringStdMap::findEnglishWord(
+    const VTrans::string_type & englishWord)
+  {
+    map_type::const_iterator c_iter = m_charStringMap.find( englishWord );
+    if( c_iter != m_charStringMap.end() )
+      return (VocablesForWord::voc_container_type *) & c_iter->second.
+        m_std_set_p_vocabularyandtranslation;
+    return NULL;
+  }
+
 /*void * */ VocablesForWord::voc_container_type * CharStringStdMap::find(
     const PositionStringVector & psv,
 //      const PositionstdstringVector & psv,

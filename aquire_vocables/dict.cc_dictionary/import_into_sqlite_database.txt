@@ -1,0 +1,52 @@
+https://stackoverflow.com/questions/14947916/import-csv-to-sqlite:
+
+sqlite3 dictCCEnDeDictionary.db
+sqlite> create table verbs(Ger, Eng, PartOfSpeech);
+sqlite> .separator "\t"
+sqlite> .import dict.cc_DE-EN_verbs_sorted_by_ASCII_value.txt verbs
+sqlite> alter table verbs add column grammaticalCase TINYINT;
+
+remove "to" from verb entries:
+from https://stackoverflow.com/questions/1266606/how-to-remove-characters-from-a-string-in-sqlite3-database:
+UPDATE verbs SET Eng=REPLACE(Eng, 'to ', '') WHERE Eng LIKE 'to %';
+
+transitive Verben, 3ter Fall:
+UPDATE verbs SET grammaticalCase=3 WHERE Ger LIKE 'jdm. %';
+UPDATE verbs SET Ger=REPLACE(Ger, 'jdm. ', '') WHERE Ger LIKE 'jdm. %';
+
+intransitive oder transitive Verben, 3ter Fall:
+UPDATE verbs SET grammaticalCase=5 WHERE Ger LIKE '(jdm.) %';
+UPDATE verbs SET Ger=REPLACE(Ger, '(jdm.) ', '') WHERE Ger LIKE '(jdm.) %';
+
+transitive Verben, 4ter Fall:
+UPDATE verbs SET grammaticalCase=4 WHERE Ger LIKE 'jdn. %';
+UPDATE verbs SET Ger=REPLACE(Ger, 'jdn. ', '') WHERE Ger LIKE 'jdn. %';
+UPDATE verbs SET grammaticalCase=6 WHERE Ger LIKE '(jdm./etw.) %';
+UPDATE verbs SET Ger=REPLACE(Ger, '(jdm./etw.) ', '') WHERE Ger LIKE '(jdm./etw.) %';
+
+intransitive oder transitive Verben, 4ter Fall:
+===============================================
+UPDATE verbs SET grammaticalCase=6 WHERE Ger LIKE '(jdn.) %';
+UPDATE verbs SET Ger=REPLACE(Ger, '(jdn.) ', '') WHERE Ger LIKE '(jdn.) %';
+UPDATE verbs SET grammaticalCase=6 WHERE Ger LIKE '(jdn./etw.) %';
+UPDATE verbs SET Ger=REPLACE(Ger, '(jdn./etw.) ', '') WHERE Ger LIKE '(jdn./etw.) %';
+
+select count(*) from verbs where Eng LIKE 'to %'
+
+get dative verbs:
+select count(*) from verbs where Ger LIKE '%jdm%'
+select count(*) from verbs where Ger LIKE '%[Dat.]%'
+
+get accusative verbs:
+select count(*) from verbs where Ger LIKE '%jdn%'
+
+get intransitive or transitive accusative verbs:
+select * from verbs where Ger LIKE '(jdn.)%'
+
+get dative or accusative verbs:
+select count(*) from verbs where Ger LIKE '%[Akk. o. Dat.]%'
+select * from verbs where Ger LIKE '%[Akk. o. Dat.]%'
+
+
+select count(*) from verbs where grammaticalCase=4
+

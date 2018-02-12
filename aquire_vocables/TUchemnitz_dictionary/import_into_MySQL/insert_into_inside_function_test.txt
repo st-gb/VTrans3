@@ -1,0 +1,31 @@
+DROP procedure if exists insert_into_inside_function_test;
+DELIMITER //
+CREATE procedure insert_into_inside_function_test()
+BEGIN
+    -- from https://stackoverflow.com/questions/5817395/how-can-i-loop-through-all-rows-of-a-table-mysql
+    DECLARE englishSynonyms TEXT;
+	DECLARE German TEXT;
+	DECLARE English TEXT;
+    DECLARE currentRowNumber int;
+	DECLARE done INT DEFAULT FALSE;
+    DECLARE cursor_i CURSOR FOR SELECT English,German FROM TU_Chemnitz_en_de;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- DELETE FROM no_English_synonym_entries;
+    set currentRowNumber = 0;
+
+	OPEN cursor_i;
+	read_loop: LOOP
+		FETCH cursor_i INTO English, German;
+		IF done THEN
+			LEAVE read_loop;
+		END IF;
+		-- SELECT "WELCOME TO MySQL:" English;
+    set currentRowNumber = currentRowNumber + 1;
+    END LOOP;
+	SELECT "# of lines processed:" + currentRowNumber;
+    -- print "WELCOME TO MySQL:" + @currentRowNumber;
+    -- CALL log(concat('the value is', currentRowNumber));
+END //
+DELIMITER ;
+CALL insert_into_inside_function_test;

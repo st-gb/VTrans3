@@ -1,0 +1,29 @@
+#https://stackoverflow.com/questions/4546778/how-can-i-import-a-database-with-mysql-from-terminal
+
+# 1. install mysql-server : set "root" password
+# 2. log into mysql
+# see https://ubuntuforums.org/showthread.php?t=1990780
+mysql --user=root -p --local-infile en_de_dictionaries
+mysql> CREATE DATABASE en_de_dictionaries;
+mysql> USE en_de_dictionaries;
+mysql> CREATE TABLE TU_Chemnitz_en_de(English TEXT, German TEXT);
+
+SHOW VARIABLES LIKE "secure_file_priv";
+
+# https://stackoverflow.com/questions/34102562/mysql-error-1290-hy000-secure-file-priv-option :
+# https://stackoverflow.com/questions/32737478/how-should-i-tackle-secure-file-priv-in-mysql
+# "Edit the /etc/my.cnf file for CentOS) or (my.ini file for Windows)" :
+sudo nano /etc/mysql/my.cnf
+# Add secure-file-priv = "/home/sg/SourceCodeManagement/VTrans3/dictionaries/TUchemnitz" line in [mysqld] section
+
+
+# restart to apply changes :
+sudo service mysql restart
+
+# https://dev.mysql.com/doc/refman/5.7/en/mysqlimport.html
+
+mysqlimport [options] en_de_dictionaries textfile1 [textfile2 ...]
+#  or
+LOAD DATA INFILE /home/sg/SourceCodeManagement/VTrans3/dictionaries/TUchemnitz/en-de.txt_2016-09-06_tab_as_separator.txt INTO TABLE en_de_dictionaries.TU_Chemnitz_en_de FIELDS TERMINATED BY '\t';
+
+

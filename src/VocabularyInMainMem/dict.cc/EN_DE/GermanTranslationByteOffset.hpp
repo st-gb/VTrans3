@@ -6,6 +6,7 @@
 #define DICT_CC_EN_DE_HPP
 
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp> //base class
+#include <VocabularyInMainMem/CharStringStdMap/CharStringStdMap.hpp>
 
 /** Forward declarations: */
 namespace DictionaryReader { namespace dict_cc { namespace EN_DE {
@@ -21,6 +22,7 @@ namespace VTrans3
 class GermanTranslationByteOffset
   : public IVocabularyInMainMem
 {
+  CharStringStdMap m_charStringStdMap;
 public:
     GermanTranslationByteOffset();
     virtual ~GermanTranslationByteOffset();
@@ -51,7 +53,7 @@ public:
     IVocabularyInMainMem::voc_container_type * Insert(
       const char * wordBegin, int numChars, //void * p_v
       enum EnglishWord::English_word_class, /*void *&*/
-      VocabularyAndTranslation *& p_vocabularyandtranslation) { }
+      VocabularyAndTranslation *& p_vocabularyandtranslation);
     void SetDictionaryReader(
       DictionaryReader::dict_cc::EN_DE::GermanTranslationByteOffset * 
         p_dictionaryReader)

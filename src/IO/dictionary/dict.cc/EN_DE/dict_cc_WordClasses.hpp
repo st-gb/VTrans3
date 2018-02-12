@@ -9,7 +9,7 @@
 
 namespace dict_cc_WordClasses
 {
-  enum WordClasses {adjective, adverb, noun, past_participle, notSet};
+  enum WordClasses {adjective, adverb,conjunction, noun, past_participle, pronoun, notSet};
   
   class EnglishWordClassFromPOSconverter
   {
@@ -20,10 +20,21 @@ namespace dict_cc_WordClasses
     class _init 
     {
     public:
+        void AddMapping(const WordClasses wordClasses, 
+            const EnglishWord::English_word_class english_word_class )
+        {
+            s_POS2englishWord.insert(std::make_pair(wordClasses, 
+                english_word_class));
+            
+        }
         _init() // the _init constructor will initialize our static variable
         {
-            s_POS2englishWord.insert(std::make_pair(past_participle, 
-                EnglishWord::mainVerbPastParticiple1Obj));
+            AddMapping(adjective, EnglishWord::adjective);
+            AddMapping(adverb, EnglishWord::adverb);
+            AddMapping(conjunction, EnglishWord::conjunction);
+            AddMapping(noun, EnglishWord::noun);
+            AddMapping(past_participle, EnglishWord::mainVerbPastParticiple1Obj);
+            AddMapping(pronoun, EnglishWord::pronoun);
         }
     };
     static std::set<enum EnglishWord::English_word_class> GetEnglishWordClass(

@@ -11,6 +11,7 @@
 #include <ParseTree/DirectingLeavesInSingleIterationTraverser.hpp>
 //#include <string>
 #include <data_structures/ByteArray.hpp> //class ByteArray
+#include <Attributes/PositionString.hpp> //class PositionString
 
 namespace ParseTreeTraverser
 {
@@ -20,6 +21,7 @@ namespace ParseTreeTraverser
   {
     std::vector<GrammarPartPointerAndParseLevel>
       m_std_vec_p_grammarpart_and_parselevelCurrentParseTreePath;
+    PositionStringVector & m_inputText;
   public:
 //    std::string m_std_strXML;
 //    unsigned char * m_pchUTF8_XML;

@@ -8,7 +8,12 @@
 #include "I_UserInterface.hpp"
 
 class ConsoleUserInterface
+  : public I_UserInterface
 {
+public:
+//  ConsoleUserInterface() {}
+//  virtual ~ConsoleUserInterface() {}
+  
   void Message(const std::string & cr_stdstr );
   void Message(const std::wstring & cr_stdwstr );
   void ShowInvalidVocabularyFileFormatMessage(
