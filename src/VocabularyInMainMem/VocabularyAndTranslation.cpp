@@ -453,12 +453,12 @@ fastestUnsignedDataType VocabularyAndTranslation::GetNumberOfBytes()
     arraySizes.m_byArraySizeForGermanWord * sizeof(word_type) +
     sizeof(word_type *) * /*German and English*/ 2 +
     sizeof(BYTE *) + arraySizes.m_byArraySizeForByteArray;
-  for(int i = 0; i < arraySizes.m_byArraySizeForEnglishWord; i++)
+  for(ArraySizes::data_type i = 0; i < arraySizes.m_byArraySizeForEnglishWord; i++)
   {
     if( m_arstrEnglishWord[i])
       numBytesForPointers += strlen(m_arstrEnglishWord[i]) + /* 0 char */ 1;
   }
-  for(int i = 0; i < arraySizes.m_byArraySizeForGermanWord; i++)
+  for(ArraySizes::data_type i = 0; i < arraySizes.m_byArraySizeForGermanWord; i++)
   {
     if(m_arstrGermanWord[i])
       numBytesForPointers += strlen(m_arstrGermanWord[i]) + /* 0 char */ 1;
