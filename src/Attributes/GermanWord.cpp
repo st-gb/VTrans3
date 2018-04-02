@@ -1,8 +1,44 @@
 /** GermanWord.cpp
  *  Created on: 31.07.2011
  *      Author: Stefan */
+#include <vector>
+#include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
+
 #include "GermanWord.hpp"
 
+GermanWord GermanWord::GetGermanWord(VocabularyAndTranslation * p)
+{
+  switch(p->m_englishWordClass)
+  {
+    case EnglishWord::adjective :
+      return GermanAdjective(p);
+  }
+  return GermanWord();
+}
+
+std::vector<std::string> GermanWord::GetInflectionForms(VocabularyAndTranslation * p)
+{
+//  EnglishWord::English_word_class = p->m_englishWordClass;
+  switch(p->m_englishWordClass)
+  {
+    case EnglishWord::adjective_positiveForm :
+      return GermanAdjective().GetInflectionForms(p);
+      
+    /** These word classes have no inflection */
+    case EnglishWord::mainVerbPastParticiple0Obj :
+    case EnglishWord::mainVerbPastParticiple1Obj :
+    case EnglishWord::mainVerbPastParticiple2Obj :
+    case EnglishWord::adverb :
+      if(p->m_arstrGermanWord)
+      {
+        std::vector<std::string> v;
+        v.push_back(p->m_arstrGermanWord[0]);
+        return v;
+      }
+  }
+  return std::vector<std::string>();
+}
+  
 /** https://de.wikipedia.org/wiki/Germanisches_schwaches_Verb :
 *  "Die schwachen Verben sind in den heutigen germanischen Sprachen weitaus 
  *  zahlreicher als die starken. Im Gegensatz zu letzteren sind sie außerdem 
@@ -49,6 +85,69 @@ const char * const GermanVerb::pastPersonEndings [] = {
   , "t" //ihr gingT, arbeiteteT
   , "en" //sie gingEN, arbeitetEN
   };
+
+GermanAdjective::GermanAdjective(VocabularyAndTranslation * p)
+{ 
+  m_bIntegral = FALSE;
+  if(p->m_arstrGermanWord )
+  {
+    m_strPositiv = p->m_arstrGermanWord[0];
+    m_strComperativ = p->m_arstrGermanWord[1];
+    m_strSuperlativ = p->m_arstrGermanWord[2];
+  }
+}
+
+std::vector<std::string> GermanAdjective::GetInflectionForms(const std::string & str)
+{
+  std::vector<std::string> inflectionForms;
+  inflectionForms.push_back(str);  
+  /** Der hohE Mann. Die hohE Frau. Das hohE Kind. Eine hohE Frau. */
+  inflectionForms.push_back(str + "e");
+  /** Ein hohER Mann. */
+  inflectionForms.push_back(str + "er"); 
+  /** Ein hohES Kind. */
+  inflectionForms.push_back(str + "es");
+}
+
+std::vector<std::string> GermanAdjective::GetInflectionForms()
+{
+  std::vector<std::string> inflectionForms;
+
+  std::vector<std::string> positiveInflectionForms = GetInflectionForms(
+    /*Adjective::positive,*/ m_strPositiv);
+  
+  inflectionForms.insert( inflectionForms.end(), 
+    positiveInflectionForms.begin(), positiveInflectionForms.end());
+  
+  inflectionForms.push_back(m_strComperativ);
+  /** Der höherE Mann. Die höherE Frau. Das höherE Kind. */
+  inflectionForms.push_back(m_strComperativ + "e");
+  /** Ein höherER Mann. */
+  inflectionForms.push_back(m_strComperativ + "er"); 
+  /** Ein höherES Kind. */
+  inflectionForms.push_back(m_strComperativ + "es");
+    
+  inflectionForms.push_back(m_strSuperlativ);
+  /** Der höchstE Mann. Die höchstE Frau. Das höchstE Kind. */
+  inflectionForms.push_back(m_strSuperlativ + "e");
+  /** Ein höchstER Mann. */
+  inflectionForms.push_back(m_strSuperlativ + "er"); 
+  /** Ein höchstES Kind. */
+  inflectionForms.push_back(m_strSuperlativ + "es");
+  return inflectionForms;
+}  
+
+std::vector<std::string> GermanAdjective::GetInflectionForms(VocabularyAndTranslation * p)
+{
+  if(p->m_arstrGermanWord)
+    switch(p->m_englishWordClass)
+    {
+      case EnglishWord::adjective_positiveForm :
+//      case EnglishWord::adjective_comperativeForm :
+//      case EnglishWord::adjective_superlativeForm :
+        return GermanAdjective().GetInflectionForms(p->m_arstrGermanWord[0]);
+    }
+}
 
 GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
 {

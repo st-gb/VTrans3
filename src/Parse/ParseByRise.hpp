@@ -38,9 +38,9 @@ class BottomUpParser
 #endif //TEST_MINI_XML
 public:
   /** The */
-  #if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
+//  #if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
    /*static*/ dictReaderAndVocAccess_type s_dictReaderAndVocAccess;
-  #endif
+//  #endif
   DWORD m_dwMapIndex ;
 //private:
   //For showing (XML) error messages.
@@ -100,8 +100,10 @@ public:
   //   "<2,grammar part "def_article_noun" for "the vacuum cleaner">
   //   "<3,grammar part "clause" for "the vacuum cleaner sucks">
 //  std::multimap<DWORD, GrammarPart> m_stdmultimap_dwRightmostIndex2grammarpart ;
-  std::multimap<DWORD, GrammarPart *>
-    m_stdmultimap_dwLeftmostIndex2p_grammarpart ;
+  typedef std::multimap<DWORD, GrammarPart *> 
+    leftMostTokenIndex2ParseTreeNodeContainerType;
+  leftMostTokenIndex2ParseTreeNodeContainerType
+    m_stdmultimap_dwLeftmostIndex2p_grammarpart;
   /** Contains the roots of the parse trees for a distinct token index. 
     * More than 1 parse tree may gave its right end at the sane token index even
     * after the Part-Of-Speech (=POS) tagging phase: e.g. for "love" the noun
@@ -211,6 +213,9 @@ public:
   fastestUnsignedDataType GetNumberOfLargestParseTrees();
   void GetLargestParseTrees(std::vector<GrammarPart *> &
     stdvec_p_grammarpartCoveringMostTokensAtTokenIndex);
+  leftMostTokenIndex2ParseTreeNodeContainerType & 
+    GetLeftMostToken2ParseTreeNodeContainer() {
+    return m_stdmultimap_dwLeftmostIndex2p_grammarpart; }
   std::string GetPathAs_std_string( const std::vector<WORD> & ) ;
   std::string GetPathAs_std_string(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) ;

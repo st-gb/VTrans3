@@ -60,4 +60,11 @@ BYTE IsVowel(TCHAR ch);
 
 void InitDictionary() ;
 
+class Adjective
+{
+public:
+  /** see https://en.wikipedia.org/wiki/Comparison_(grammar)#Morphological_comparison */
+  enum comparison { positive, comperative, superlative};
+};
+
 #endif //!defined (WORD_H_INCLUDED)

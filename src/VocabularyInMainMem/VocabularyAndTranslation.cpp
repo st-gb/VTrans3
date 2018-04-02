@@ -33,20 +33,23 @@
 VTrans3::BottomUpParser * VocabularyAndTranslation::s_p_bottomUpParser;
 I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 
-  const VocabularyAndTranslation::ArraySizes VocabularyAndTranslation::
-    s_arraysizes [] = {
-      //noun
-      { NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN, NUMBER_OF_STRINGS_FOR_GERMAN_NOUN, 2},
-      //main verb
-      { NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB,
-        NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB, 2},
-      //adverb:
-      { NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB,
-        NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB, 0} ,
-      //adjective:
-      { NUMBER_OF_STRINGS_FOR_ENGLISH_ADJECTIVE,
-        NUMBER_OF_STRINGS_FOR_GERMAN_ADJECTIVE, 0}
-    };
+  VocabularyAndTranslation::ArraySizes VocabularyAndTranslation::
+    s_arraysizes [4];// = {
+//      //noun
+//      { .m_byArraySizeForEnglishWord = NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN, 
+//        .m_byArraySizeForGermanWord = NUMBER_OF_STRINGS_FOR_GERMAN_NOUN, 
+//        .m_byArraySizeForByteArray = 2},
+//      //main verb
+//VocabularyAndTranslation::
+//    s_arraysizes [1] {NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB,
+//        NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB, 2};
+//      //adverb:
+//      { NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB,
+//        NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB, 0} ,
+//      //adjective:
+//      { NUMBER_OF_STRINGS_FOR_ENGLISH_ADJECTIVE,
+//        NUMBER_OF_STRINGS_FOR_GERMAN_ADJECTIVE, 0}
+//    };
 
   const char * VocabularyAndTranslation::s_ar_chWordClass[] = {
     //By "(char *)" : avoid g++ error message

@@ -64,6 +64,7 @@ namespace VTrans3 {
     struct ArraySizes
     {
       typedef fastestUnsignedDataType data_type;
+    public:
       ArraySizes(
         const data_type arraySizeForEnglishWord,
         const data_type arraySizeForGermanWord,
@@ -81,9 +82,16 @@ namespace VTrans3 {
       data_type m_byArraySizeForEnglishWord;
       data_type m_byArraySizeForGermanWord;
       data_type m_byArraySizeForByteArray;
+      ArraySizes & operator = ( ArraySizes const & rhs)
+      {
+        m_byArraySizeForEnglishWord = rhs.m_byArraySizeForEnglishWord;
+        m_byArraySizeForGermanWord = rhs.m_byArraySizeForGermanWord;
+        m_byArraySizeForByteArray = rhs.m_byArraySizeForByteArray;
+        return *this;
+      }
     };
     static VTrans3::BottomUpParser * s_p_bottomUpParser;
-    static const ArraySizes s_arraysizes [];
+    static ArraySizes s_arraysizes [4];
 
     static I_UserInterface * s_p_userinterface;
 //    struct ArraySizes
@@ -358,7 +366,24 @@ namespace VTrans3 {
 
     static void Init()
     {
-//      g_arbyWordType2ArraySizeIndex[ (int) (ENGLISH_NOUN) ] = 0;
+      s_arraysizes [0] = VocabularyAndTranslation::ArraySizes(
+      //noun
+        NUMBER_OF_STRINGS_FOR_ENGLISH_NOUN, 
+        NUMBER_OF_STRINGS_FOR_GERMAN_NOUN, 
+        2);
+      //main verb
+      s_arraysizes [1] = VocabularyAndTranslation::ArraySizes(
+        NUMBER_OF_STRINGS_FOR_ENGLISH_MAIN_VERB,
+        NUMBER_OF_STRINGS_FOR_GERMAN_MAIN_VERB, 2);
+      //adverb:
+      s_arraysizes [2] = (VocabularyAndTranslation::ArraySizes)
+        { NUMBER_OF_STRINGS_FOR_ENGLISH_ADVERB,
+        NUMBER_OF_STRINGS_FOR_GERMAN_ADVERB, 0};
+      //adjective:
+      s_arraysizes [3] = (VocabularyAndTranslation::ArraySizes)
+        { NUMBER_OF_STRINGS_FOR_ENGLISH_ADJECTIVE,
+        NUMBER_OF_STRINGS_FOR_GERMAN_ADJECTIVE, 0};
+      //};//      g_arbyWordType2ArraySizeIndex[ (int) (ENGLISH_NOUN) ] = 0;
     }
 
     void GetAttributeValue(BYTE byIndex);

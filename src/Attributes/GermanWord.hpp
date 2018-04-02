@@ -14,6 +14,10 @@
 //GCC_DIAG_OFF(...), GCC_DIAG_ON(...)
 #include <compiler/GCC/enable_disable_warning.h>
 #include <string.h> //strcmp()
+#include <vector> //class std::vector
+
+/** Forward declaration. */
+class VocabularyAndTranslation;
 
 class GermanWord
   //For ability to iterate over all of the word's strings.
@@ -32,12 +36,20 @@ public:
     adverb
   };
   /** For ability to iterate over all of the word's strings. */
-  virtual bool GetNextString( std::string & r_stdstr ) = 0 ;
+  virtual bool GetNextString( std::string & r_stdstr ) { return false;}
     //{ return false; }
+  /** see https://en.wikipedia.org/wiki/Factory_method_pattern 
+    *  Factory pattern. */
+  static GermanWord GetGermanWord(VocabularyAndTranslation * p);
+  /** see https://en.wikipedia.org/wiki/Inflection :
+   *  An inflection is a declationation or a flextion of a verb. */
+  virtual std::vector<std::string> GetInflectionForms() {
+    std::vector<std::string> v; return v;}
+  virtual std::vector<std::string> GetInflectionForms(VocabularyAndTranslation * p);
 };
 
 class GermanAdjective
-  : public Word
+  : public GermanWord
 {
 public:
   VTrans::string_type m_strPositiv; // z.B. hoch
@@ -46,6 +58,10 @@ public:
   VTrans::string_type m_strWortstamm; // wichtig f�r: hoch - ein HOHes Haus (der Wortstamm hierbei
   // ist hoh)
   GermanAdjective(){m_bIntegral=FALSE;}
+  GermanAdjective(VocabularyAndTranslation * p);
+  std::vector<std::string> GetInflectionForms();
+  std::vector<std::string> GetInflectionForms(VocabularyAndTranslation * p);
+  std::vector<std::string> GetInflectionForms(const std::string & str);
 };
 
 class GermanAdverb
@@ -72,7 +88,8 @@ public:
   GermanAuxiliaryVerb(){m_bIntegral=FALSE;}
 };
 
-class GermanConjunction:public Word // englisches Bindewort (Konjunktion)
+class GermanConjunction
+  : public Word // englisches Bindewort (Konjunktion)
 {
 public:
   VTrans::string_type m_strWord;
@@ -94,7 +111,8 @@ public:
 #define DAS '3'
 #define PLURAL 4
 
-class GermanNoun: public Word
+class GermanNoun
+  : public GermanWord
 {
 public:
   enum german_article { der = 0, die, das};

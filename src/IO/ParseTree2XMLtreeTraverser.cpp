@@ -126,7 +126,7 @@ namespace ParseTreeTraverser
     const BYTE * arbyTranslationAsUTF8 = ISO_8859_1::GetAsUTF8(
       stdstrTranslation.c_str(), utf8arraySizeInByte);
 //    std::string std_strTranslationInUTF8 = std::string( (const char *) arbyTranslationAsUTF8);
-    m_byteArray.add("<word=\"");
+    m_byteArray.add("<word tokens=\"");
     std::string stdstrTokens = m_inputText.GetBetweenAsStdString(
       p_grammarpart->m_dwLeftmostIndex, 
       p_grammarpart->m_dwRightmostIndex);
