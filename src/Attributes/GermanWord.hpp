@@ -42,7 +42,8 @@ public:
     *  Factory pattern. */
   static GermanWord GetGermanWord(VocabularyAndTranslation * p);
   /** see https://en.wikipedia.org/wiki/Inflection :
-   *  An inflection is a declationation or a flextion of a verb. */
+   *  An inflection is a declationation or a flextion of a verb. 
+   *  The default method simply returns an empty std::vector container. */
   virtual std::vector<std::string> GetInflectionForms() {
     std::vector<std::string> v; return v;}
   virtual std::vector<std::string> GetInflectionForms(VocabularyAndTranslation * p);
@@ -116,11 +117,15 @@ class GermanNoun
 {
 public:
   enum german_article { der = 0, die, das};
+  /** see https://en.wikipedia.org/wiki/Grammatical_gender */
+  enum grammatical_gender { masculine = 0, feminine, neuter, plural, genderNotSet};
   VTrans::string_type m_strSingular;
   VTrans::string_type m_strPlural;
   BYTE m_bArticle;
   GermanNoun(){m_bIntegral=FALSE;}
   //virtual virtfunc(){};
+  std::vector<std::string> GetInflectionForms(const std::string & str);
+  std::vector<std::string> GetInflectionForms(VocabularyAndTranslation * p);
 };
 
 class GermanPreposition:public Word

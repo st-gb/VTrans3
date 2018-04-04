@@ -12,6 +12,7 @@
 #include "dict_cc_WordClasses.hpp"
 #include "VocabularyInMainMem/VocablesForWord.hpp"
 #include <InputOutput/GetCharInACSIIcodePage850.hpp>
+#include <FileSystem/File/FileReadException.hpp>
 
 std::map<enum dict_cc_WordClasses::WordClasses, enum EnglishWord::English_word_class> dict_cc_WordClasses::EnglishWordClassFromPOSconverter::s_POS2englishWord; // define our static member variable
 dict_cc_WordClasses::EnglishWordClassFromPOSconverter::_init dict_cc_WordClasses::EnglishWordClassFromPOSconverter::s_initializer;
@@ -328,6 +329,29 @@ std::string GermanTranslationByteOffset::GetGermanTranslation(
   return "";
 }
 
+GermanNoun::grammatical_gender GetGrammaticalGender(
+  std::string & germanTranslation)
+{
+  GermanNoun::grammatical_gender gender = GermanNoun::genderNotSet;
+  /** The gender is  often located after the last space char. */
+  //TODO the gender is not always located after the last space char
+  std::string::size_type lastSpaceCharIndex = germanTranslation.find_last_of(' ');
+  if( lastSpaceCharIndex != std::string::npos )
+  {
+    const std::string nounGenderString = germanTranslation.substr(lastSpaceCharIndex + 1);
+    germanTranslation = germanTranslation.substr(0, lastSpaceCharIndex);
+    
+    DictionaryReaderBase::nounGenderString2genderEnumContainerType::const_iterator 
+      citer = DictionaryReaderBase::s_nounGenderString2genderEnum.find(
+      nounGenderString);
+    if(citer != DictionaryReaderBase::s_nounGenderString2genderEnum.end() )
+    {
+      gender = citer->second;
+    }
+  }
+  return gender;
+}
+
 VocablesForWord::voc_container_type * GermanTranslationByteOffset::findEnglishWord(
   const std::string & englishWord
   )
@@ -361,6 +385,11 @@ VocablesForWord::voc_container_type * GermanTranslationByteOffset::findEnglishWo
     {
       VocabularyAndTranslation * p_vocabularyAndTranslation = new 
         VocabularyAndTranslation(*englishWordClassIter);
+      if(*englishWordClassIter == EnglishWord::noun)
+      {
+        GermanNoun::grammatical_gender gender = GetGrammaticalGender(germanTranslation);
+        p_vocabularyAndTranslation->SetAttributeValue(0, gender);
+      }
       p_vocabularyAndTranslation->SetGermanWord(germanTranslation, 0);
       vocContainer.insert(p_vocabularyAndTranslation);
     }

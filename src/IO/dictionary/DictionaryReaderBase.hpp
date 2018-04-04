@@ -1,9 +1,6 @@
-/*
- * DictionaryReaderBase.hpp
- *
+/** DictionaryReaderBase.hpp
  *  Created on: Sep 4, 2013
- *      Author: Stefan
- */
+ *      Author: Stefan */
 
 #ifndef DICTIONARYREADERBASE_HPP_
 #define DICTIONARYREADERBASE_HPP_
@@ -12,6 +9,8 @@
 #include <string>
 #include <Controller/character_string/ISO_8859_1.hpp>
 #include <stdint.h> //uint8_t
+#include <Attributes/GermanWord.hpp> //class GermanWord
+#include <map> //class std::map
 
 inline bool isValidEnglishWordCharacter(uint8_t character)
 {
@@ -66,6 +65,10 @@ namespace DictionaryReader
     virtual
     ~DictionaryReaderBase();
 
+    typedef std::map<std::string, GermanNoun::grammatical_gender> 
+      nounGenderString2genderEnumContainerType;
+    static nounGenderString2genderEnumContainerType s_nounGenderString2genderEnum;
+
     fastestUnsignedDataType GetCurrentLineNumber() {
       return m_currentLineNumber; }
     /** For displaying a progress status */
@@ -73,6 +76,7 @@ namespace DictionaryReader
       return //m_numBytesRead;
         m_currentLineBeginFileOffset;
     }
+    void Build_NounGenderString2genderEnum();
 //    virtual void extractVocable() = 0;
     const char * const GetFilePath() { return m_std_strFilePath.c_str(); }
 //    SetUserInterface(I_UserInterface *)

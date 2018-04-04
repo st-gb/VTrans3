@@ -21,6 +21,10 @@ std::vector<std::string> GermanWord::GetInflectionForms(VocabularyAndTranslation
 //  EnglishWord::English_word_class = p->m_englishWordClass;
   switch(p->m_englishWordClass)
   {
+    case EnglishWord::singular :
+    case EnglishWord::plural_noun :
+    case EnglishWord::noun :
+      return GermanNoun().GetInflectionForms(p);
     case EnglishWord::adjective_positiveForm :
       return GermanAdjective().GetInflectionForms(p);
       
@@ -97,16 +101,26 @@ GermanAdjective::GermanAdjective(VocabularyAndTranslation * p)
   }
 }
 
+/** @param str: positive, comperative or superlative */
 std::vector<std::string> GermanAdjective::GetInflectionForms(const std::string & str)
 {
+  //TODO are all cases included? (genitive, ...)
   std::vector<std::string> inflectionForms;
-  inflectionForms.push_back(str);  
-  /** Der hohE Mann. Die hohE Frau. Das hohE Kind. Eine hohE Frau. */
+  inflectionForms.push_back(str); 
+  
+  /** ------ nominative , accusative ---*/
+  /** Der hohE Mann. (ich mag) die hohE Frau. Das hohE Kind. Eine hohE Frau. */
   inflectionForms.push_back(str + "e");
   /** Ein hohER Mann. */
   inflectionForms.push_back(str + "er"); 
   /** Ein hohES Kind. */
   inflectionForms.push_back(str + "es");
+  
+  /** ------ genitive , dative, accusative ---*/
+  /** (ich vertraue/mag) des/dem/den hohEN Mann(es) 
+   *  (ich vertraue/mag)  der hohEN Frau
+   *  (ich vertraue/mag) des/dem hohEN Kind(es) */
+  inflectionForms.push_back(str + "en");
 }
 
 std::vector<std::string> GermanAdjective::GetInflectionForms()
@@ -176,6 +190,66 @@ bool GermanAuxiliaryVerb::GetNextString( std::string & r_stdstr )
     bSucc = true ;
   }
   return bSucc ;
+}
+
+std::vector<std::string> GermanNoun::GetInflectionForms(const std::string & str)
+{
+  std::vector<std::string> inflectionForms;
+  /** Accusative. */
+  inflectionForms.push_back(str);  
+  
+  if( str.size() > 0 )
+  {
+    std::string strEnding = str.substr(str.size() - 1 );
+    char lastChar = strEnding[0];
+    /** On vowel end no "s" is appended?!: "der Schal der Frau" */
+    if( IsConsonant(lastChar) )
+    {
+      switch( lastChar )
+      {
+          /** see http://mein-deutschbuch.de/genitiv.html:
+          * "Nomen im Plural sowie alle feminine Nomen bleiben im Genitiv unverändert." */
+          case 's' :
+            /** Haus -> Hauses. */
+            /** genitive form: des MannES. */
+            inflectionForms.push_back(str + "es");
+            break;
+          case 'r' :
+            /** genitive form: des HerrN.NachbarN */
+            inflectionForms.push_back(str + "n");
+            break;
+        default:
+          inflectionForms.push_back(str + "s");          
+      }
+    }
+  }
+  return inflectionForms;
+}
+
+std::vector<std::string> GermanNoun::GetInflectionForms(VocabularyAndTranslation * p)
+{
+  std::vector<std::string> vec;
+  if(p->m_arstrGermanWord)
+  {
+    vec.push_back(p->m_arstrGermanWord[0]);
+    switch(p->m_englishWordClass)
+    {
+      case EnglishWord::noun :
+      case EnglishWord::singular :
+        fastestUnsignedDataType article = p->m_arbyAttribute[0];
+        /** see http://mein-deutschbuch.de/genitiv.html:
+        *  "Nomen im Plural sowie alle feminine Nomen bleiben im Genitiv unverändert." */
+        if( article == der || article == das )
+        {
+          std::vector<std::string> inflectionForms = GermanNoun().GetInflectionForms(p->m_arstrGermanWord[0]);
+#ifdef _DEBUG
+          const int numInflectionForms = inflectionForms.size();
+#endif
+          vec.insert(vec.end(), inflectionForms.begin(), inflectionForms.end());
+        }
+    }
+  }
+  return vec;
 }
 
 void GermanVerb::CreateFromString(const VTrans::string_type & str)
