@@ -33,6 +33,8 @@ std::vector<std::string> GermanWord::GetInflectionForms(VocabularyAndTranslation
     case EnglishWord::mainVerbPastParticiple1Obj :
     case EnglishWord::mainVerbPastParticiple2Obj :
     case EnglishWord::adverb :
+    case EnglishWord::pronoun :
+    case EnglishWord::preposition :
       if(p->m_arstrGermanWord)
       {
         std::vector<std::string> v;
@@ -203,7 +205,7 @@ std::vector<std::string> GermanNoun::GetInflectionForms(const std::string & str)
     std::string strEnding = str.substr(str.size() - 1 );
     char lastChar = strEnding[0];
     /** On vowel end no "s" is appended?!: "der Schal der Frau" */
-    if( IsConsonant(lastChar) )
+//    if( IsConsonant(lastChar) )
     {
       switch( lastChar )
       {

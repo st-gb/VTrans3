@@ -55,6 +55,7 @@
       case '\n':
       case ' ':
       case '\0':
+      case ',':
       case '.':
       case '?':
       case '!':

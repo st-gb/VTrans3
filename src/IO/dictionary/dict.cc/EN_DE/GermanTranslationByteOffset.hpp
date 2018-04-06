@@ -65,7 +65,7 @@ public:
 //        const PositionStringVector & psvStringToSearch,
 //        DWORD & r_dwTokenIndex//,
 //        );
-    std::string GetGermanTranslation(
+    std::string GetGermanTranslationColumnContent(
         fastestUnsignedDataType & byteOffsetOfGermanPart);
     std::set<enum dict_cc_WordClasses::WordClasses> GetPartOfSpeeches(
         const fastestUnsignedDataType byteOffsetOfGermanPart);
