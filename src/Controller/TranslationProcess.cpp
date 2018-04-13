@@ -51,6 +51,7 @@ unsigned TranslationProcess::GetStatus2( /*const std::string & str*/
     memcpy(bytes, & m_collectDictionaryStatisticsStatus, sizeInBytes);
     m_critSecStatus.Leave();
     byteArray.add(bytes, sizeInBytes);
+    delete [] bytes;
   }
   else
   {
@@ -67,11 +68,12 @@ unsigned TranslationProcess::GetStatus2( /*const std::string & str*/
 void TranslationProcess::SetStatus(
   enum VTrans::StatusCode statusCode,
 //  const std::string & str
-  const char * const pch
+  const char * const pch,
+  signed progress
   )
 {
   LOGN_DEBUG("begin--status code:" << statusCode << " " << pch)
   m_critSecStatus.Enter();
-  m_currentStatus.Set(statusCode, /*str*/ pch);
+  m_currentStatus.Set(statusCode, /*str*/ pch, progress);
   m_critSecStatus.Leave();
 }

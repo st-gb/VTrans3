@@ -11,6 +11,7 @@
 #include <VocabularyInMainMem/IVocabularyInMainMem.hpp>//class IVocabularyInMainMem
 #include "dict_cc_WordClasses.hpp"
 #include "VocabularyInMainMem/VocablesForWord.hpp"
+#include <UserInterface/I_UserInterface.hpp>
 #include <InputOutput/GetCharInACSIIcodePage850.hpp>
 #include <FileSystem/File/FileReadException.hpp>
 #include <regex> //std::regex
@@ -93,6 +94,7 @@ void GermanTranslationByteOffset::IndexByteOffsetOfGermanTranslations()
 {
   if( m_dictionaryFile.IsOpen() )
   {
+    signed fileSizeInBytes = m_dictionaryFile.GetFileSizeInBytes();
     try
     {
     unsigned numTabsInCurrentLine = 0;
@@ -106,6 +108,12 @@ void GermanTranslationByteOffset::IndexByteOffsetOfGermanTranslations()
         case '\t' :
           if( numTabsInCurrentLine == 0)
           {
+            m_p_vocaccess->GetUserInterface()->m_translationProcess.SetStatus(
+                VTrans::loadDictionary,
+                "",
+                (float) currentByteOffset / (float) fileSizeInBytes * INT_MAX
+                );
+
             m_germanTranslationByteOffsetIndex.insert(
               std::make_pair(currentAttribute, currentByteOffset + 1) );
             if( currentAttribute.length() > m_longestEnglishEntryInChars)
