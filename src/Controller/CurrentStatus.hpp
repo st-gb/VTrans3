@@ -7,6 +7,9 @@
 
 #include <OperatingSystem/time/GetCurrentTime.hpp>
 #include <string> //class std::string
+#include <hardware/CPU/atomic/AtomicExchange.h>
+#include <hardware/CPU/atomic/memory_barrier.h>
+//#include <memory>
 
 namespace VTrans
 {
@@ -35,12 +38,17 @@ namespace VTrans
     }
     StatusCode GetCode() { return m_code; }
     void GetItem(std::string & str ) { str = m_item; }
+    int GetProgress() { return m_progress; }
     void GetTime(struct tm & time ) { time = m_time; }
     void Set(StatusCode code, const char * const pch, signed progress)
     {
       m_item = std::string(pch);
       m_code = code;
-      m_progress = progress;
+      //TODO does not work with 1 reading and 1 writing thread
+      memory_barrier();
+      AtomicExchange((long int*) & m_progress, progress);
+      memory_barrier();
+//      m_progress = progress;
       OperatingSystem::GetCurrentTime(m_time);
     }
   };
