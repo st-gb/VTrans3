@@ -785,11 +785,14 @@ void EVENT_HANDLER_CLASS_NAME::UpdateAfterTranslation()
   //    stdvec_stdvecTranslationAndGrammarPart ) ;
 
   //  mp_textctrlGermanText->SetValue(stdstrAllPossibilities ) ;
+    
+    //comment to not show/hide this panel
     m_p_wxgermantranslationpanel->Set(//stdvec_stdvecTranslationAndGrammarPart
       /* stdvec_stdvec_stdvecTranslationAndGrammarPart */ m_translationResult);
     m_p_wxgermantranslationpanel->Create();
     /** Force redraw : sends EVT_PAINT */
     m_p_wxgermantranslationpanel->Refresh();
+    mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
 
   //  wxHTMLfileOutput wxhtml_file_output(
   ////    stdvec_stdvecTranslationAndConsecutiveID
@@ -801,7 +804,6 @@ void EVENT_HANDLER_CLASS_NAME::UpdateAfterTranslation()
   //    wxT("trans.html") ) ;
 
   //  mp_textctrlGermanText->SetValue( stdstrWholeTransl ) ;
-    mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
     //You can also trigger this call by calling Refresh()/Update()
     //m_panel1->Refresh() ;
   //  }

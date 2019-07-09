@@ -22,16 +22,18 @@ if [ $# -ge $NUM_ARGS_NEEDED ]; then
 
 #cd src
 #use "-O3" in DCMAKE_CXX_FLAGS to optimize (for speed)
+# https://gcc.gnu.org/onlinedocs/gcc-4.2.0/gcc/Debugging-Options.html
+#  "-g Produce debugging information in the operating system's native format"
 #compile with : -fno-omit-frame-pointer for call graph information
 EXEC="cmake -G \"$BUILD_SYSTEM_GENERATOR\" \
 -DCMAKE_BUILD_TYPE=Debug \
 -DCMAKE_C_COMPILER=${C_COMPILER} \
 -DCMAKE_CXX_COMPILER=${CPP_COMPILER} \
--DCMAKE_C_FLAGS_DEBUG=\"-g3 -gdwarf-2\" \
--DCMAKE_CXX_FLAGS_DEBUG=\"-g3 -gdwarf-2\" \
+-DCMAKE_C_FLAGS_DEBUG=\"-g3 -O0\" \
+-DCMAKE_CXX_FLAGS_DEBUG=\"-g3 -O0\" \
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
--DCMAKE_CXX_FLAGS=\"-pg -O3\" \
--DCOMPILE_WITH_OPENMP=YES \
+-DCMAKE_CXX_FLAGS=\"-g3 -O0\" \
+-DCOMPILE_WITH_OPENMP=NO \
 -DEVALUATE_PROCESSING=YES \
 . \
 -DEXE_TYPE:STRING=console \

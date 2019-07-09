@@ -35,11 +35,11 @@ EXEC="cmake -G \"$BUILD_SYSTEM_GENERATOR\" \
 -DCMAKE_CXX_FLAGS=\"-g3 -O0\" \
 -DCOMPILE_WITH_OPENMP=NO \
 -DEVALUATE_PROCESSING=YES \
-. \
 -DEXE_TYPE:STRING=dynlib \
 ./src" #where to find the CMakeLists.txt
 echo "should execute: $EXEC"
 eval $EXEC
+make -f ./src/Makefile -j4
 else
   echo "ERROR:at least" $NUM_ARGS_NEEDED " args needed:"
   echo $0 " <build system>"

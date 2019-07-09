@@ -1,0 +1,19 @@
+go{viI}::gehen
+going{viPr}::gehend
+gone{viPP}::gegangen
+eel stock{m}::Aalbestand
+eel stocks{pl}::Aalbestände
+eel fishing{f}::Aalfischerei
+burying beetle{m}::Aaskäfer
+sexton beetle{m}::Aaskäfer
+burying beetles{pl}::Aaskäfer
+sexton beetles{pl}::Aaskäfer
+A-weighted{pos}::A-bewertet
+abandon{viI}::nachlassen
+handcuff{vtI}::fesseln
+handcuffing{vtPr}::fesselnd
+handcuffed{viPP}::gefesselt
+handcuffs{vt3Pres}::fesselt
+handcuffed{vtP}::fesselte
+brain-dead [Br.]{pos}::gehirntot;hirntot
+braindead [Am.]{pos}::gehirntot;hirntot

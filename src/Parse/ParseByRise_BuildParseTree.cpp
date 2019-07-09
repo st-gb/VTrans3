@@ -1787,7 +1787,9 @@ void BottomUpParser::StoreWordTypeAndGermanTranslation(
 //  std::multimap<DWORD, GrammarPart> * p_stdmultimap_wRightmostIndex2grammarpart
 //    = & m_stdmultimap_dwRightmostIndex2grammarpart ;
 //  std::set<VocabularyAndTranslation *> setpvocabularyandtranslation ;
-#if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
+  
+//#if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
+  
   m_pInputText = & c_r_positionStringVector;
   IVocabularyInMainMem::voc_container_type * p_std_set_p_vocabularyandtranslation ;
   DWORD dwTokenIndexRightMost = dwTokenIndex ;
@@ -1858,7 +1860,8 @@ void BottomUpParser::StoreWordTypeAndGermanTranslation(
         dwTokenIndexRightMostUnknownToken, p_grammarPart )
       ) ;
   }
-#endif //#if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
+//#endif //#if _TEST_WITH_DICTREADER_AND_VOCACCESS_TYPE
+  
   //  DWORD dwSize = //parsebyrise.
 //    m_stdmultimap_dwRightmostIndex2grammarpart.size() ;
 //  dwSize = //parsebyrise.

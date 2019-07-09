@@ -17,7 +17,7 @@
  <!--vocabulary_file path="dictionaries/de-en.txt" /-->
  <!--vocabulary_file path="dictionaries/TUchemnitz/en-de/en-de,each_part_in_single_line,wout_'to',sorted,wout_' '.txt" /-->
 
- <vocabulary_file path="dictionaries/TUchemnitz/en-de/en-de_composed_from_word_classes2,sorted,wout' '.txt" />
+ <vocabulary_file path="dictionaries/dict.cc/dict.cc_EN-DE_2017-08-29_14.09_cmkbkkgbgs-77477285-ei8io7.txt" />
  <!--vocabulary_file path="dictionaries/dict.cc/TUchemnitz_en-de_from_dict.cc_EN-DE_2017-08-29_14.09.txt" />-->
  <!--<vocabulary_file path="en-de,each_part_in_single_line,wout_'to',sorted,wout_' '.txt" />-->
  

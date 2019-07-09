@@ -10,5 +10,7 @@
 
 cmake \
   -DCMAKE_SYSTEM_NAME=Android \
+  -DCMAKE_ANDROID_STANDALONE_TOOLCHAIN=$1 \
   ./src #where to finde the CMakeLists.txt
+cmake --build ./src
 
