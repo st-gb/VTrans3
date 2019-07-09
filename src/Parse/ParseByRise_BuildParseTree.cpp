@@ -421,7 +421,7 @@ void BottomUpParser::OutputSuperordinateGrammarParts()
     m_allSuperordinateGrammarParts2pointerToThem.size();
   std::ostringstream std_oss;
   std_oss << "# superordinate grammar parts: " << numSuperordinateGPs;
-  m_r_translationProcess.SetStatus(VTrans::not_set, std_oss.str().c_str() );
+  m_r_translationProcess.SetStatus(VTrans::not_set, std_oss.str().c_str(), -1);
   
   //std::set<GrammarPart>::const_iterator c_iter = 
   //  m_stdset_grammarpartAllSuperordinate.begin();
@@ -1809,7 +1809,8 @@ void BottomUpParser::StoreWordTypeAndGermanTranslation(
     
     m_r_translationProcess.SetStatus(
       VTrans::lookUpWordInDictBeginningFromTokenIndex,
-      item.c_str()
+      item.c_str(),
+      -1
       );
     p_std_set_p_vocabularyandtranslation =
       //TranslationControllerBase:://s_dictionary.//searchAndReturnLetterNode(

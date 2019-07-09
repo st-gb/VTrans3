@@ -55,6 +55,7 @@
       case '\n':
       case ' ':
       case '\0':
+      case ',':
       case '.':
       case '?':
       case '!':
@@ -89,12 +90,14 @@
         if( wEndOfTokenIndex == UINT_MAX )
         {
           wEndOfTokenIndex = wCharIndex ;
+          const fastestUnsignedDataType tokenLengthInChars = wEndOfTokenIndex - 
+            wBeginOfTokenIndex;
           stdstrToken = stdstrText.substr(
-              wBeginOfTokenIndex,wEndOfTokenIndex-wBeginOfTokenIndex) ;
+              wBeginOfTokenIndex, tokenLengthInChars) ;
           push_back(
   //            Positionstdstring( stdstrToken ,
             PositionString( stdstrToken ,
-              wBeginOfTokenIndex,wBeginOfTokenIndex)
+              wBeginOfTokenIndex, tokenLengthInChars)
             ) ;
           //std::cout << ""
         }

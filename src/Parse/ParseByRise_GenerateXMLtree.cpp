@@ -55,7 +55,8 @@ namespace VTrans3 {
   //  std::string std_strXML;
     m_r_translationProcess.SetStatus(
       VTrans::generateXMLtreeFromParseTree,
-      ""
+      "",
+      -1
       );
     fastestUnsignedDataType leftMostTokenIndex = 0 ;
 //    GrammarPart * p_grammarpart ;

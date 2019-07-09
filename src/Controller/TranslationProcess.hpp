@@ -31,7 +31,8 @@ public:
   void SetStatus(
     enum VTrans::StatusCode statusCode,
   //  const std::string & str
-    const char * const pch
+    const char * const pch,
+    signed progress
     );
   void SetContinue(bool b) { 
     //TODO is all memory freed when the translation is cancelled?

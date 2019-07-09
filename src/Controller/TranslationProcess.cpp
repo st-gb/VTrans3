@@ -3,6 +3,7 @@
  * Created on 5. November 2017, 14:54  */
 
 #include "TranslationProcess.hpp"
+#include "BilingualCorpusProcessingBase.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h>
 
 TranslationProcess::TranslationProcess() 
@@ -49,8 +50,24 @@ unsigned TranslationProcess::GetStatus2( /*const std::string & str*/
     unsigned char * bytes = new unsigned char[sizeInBytes];
     m_critSecStatus.Enter();
     memcpy(bytes, & m_collectDictionaryStatisticsStatus, sizeInBytes);
+    statusCode = m_currentStatus.GetCode();
     m_critSecStatus.Leave();
     byteArray.add(bytes, sizeInBytes);
+    delete [] bytes;
+  }
+  else  if( str == "loadDictionary" )
+  {
+    const unsigned sizeInBytes = sizeof(int);
+    unsigned char * bytes = new unsigned char[sizeInBytes];
+    m_critSecStatus.Enter();
+    //TODO does not get updated progress value when written from another thread
+    const int progress = m_currentStatus.GetProgress();
+    memcpy(bytes, & progress, sizeInBytes);
+//    NcursesUI::s_p_NcursesUI->GetBottumUpParser().s_dictReaderAndVocAccess.m_dictReader.
+    statusCode = m_currentStatus.GetCode();
+    m_critSecStatus.Leave();
+    byteArray.add(bytes, sizeInBytes);
+    delete [] bytes;
   }
   else
   {
@@ -67,11 +84,12 @@ unsigned TranslationProcess::GetStatus2( /*const std::string & str*/
 void TranslationProcess::SetStatus(
   enum VTrans::StatusCode statusCode,
 //  const std::string & str
-  const char * const pch
+  const char * const pch,
+  signed progress
   )
 {
   LOGN_DEBUG("begin--status code:" << statusCode << " " << pch)
   m_critSecStatus.Enter();
-  m_currentStatus.Set(statusCode, /*str*/ pch);
+  m_currentStatus.Set(statusCode, /*str*/ pch, progress);
   m_critSecStatus.Leave();
 }

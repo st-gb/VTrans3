@@ -9,7 +9,8 @@
 
 namespace dict_cc_WordClasses
 {
-  enum WordClasses {adjective, adverb,conjunction, noun, past_participle, pronoun, notSet};
+  enum WordClasses {adjective, adverb,conjunction, noun, past_participle, 
+    preposition, pronoun, notSet};
   
   class EnglishWordClassFromPOSconverter
   {
@@ -34,6 +35,7 @@ namespace dict_cc_WordClasses
             AddMapping(conjunction, EnglishWord::conjunction);
             AddMapping(noun, EnglishWord::noun);
             AddMapping(past_participle, EnglishWord::mainVerbPastParticiple1Obj);
+            AddMapping(preposition, EnglishWord::preposition);
             AddMapping(pronoun, EnglishWord::pronoun);
         }
     };
