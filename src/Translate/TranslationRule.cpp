@@ -336,7 +336,7 @@ void TranslationRule::SetConsecutiveIDSyntaxTreePath(
 //Throws a string that is an _unknown_ token of the syntax tree path as exception.
 TranslationRule::TranslationRule(
     const std::string & r_stdstrSyntaxTreePath
-    , BottomUpParser * p_bottomUpParser )
+    , VTrans3::BottomUpParser * p_bottomUpParser )
   : mp_bottomUpParser(p_bottomUpParser)
 //  , m_ui32ConcatenationID(0)
 {
@@ -348,7 +348,7 @@ TranslationRule::TranslationRule(
 
 TranslationRule::TranslationRule( //const std::string & r_stdstrSyntaxTreePath
     const char * p_ch_SyntaxTreePath
-    , BottomUpParser * p_bottomUpParser
+    , VTrans3::BottomUpParser * p_bottomUpParser
     )
   : mp_bottomUpParser(p_bottomUpParser)
 //  , m_ui32ConcatenationID(0)

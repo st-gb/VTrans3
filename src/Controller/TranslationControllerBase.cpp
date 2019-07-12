@@ -639,8 +639,9 @@ void TranslationControllerBase::Transform()
   LOGN(//"TranslationControllerBase::Transform() "
       "begin")
   m_translationProcess.SetStatus(
-    VTrans::transformParseTree,
-    ""
+    VTrans::transformParseTree,///action
+    "",///
+    1 ///state
     );
   DWORD dwLeftMostTokenIndex = 0 ;
   std::vector<GrammarPart *> stdvec_p_grammarpartRootNode ;
@@ -725,7 +726,7 @@ void TranslationControllerBase::Translate(
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeParseTreeGen);
 //#endif
 //#endif
-  if(! m_translationProcess.Continue() )
+  if(!m_translationProcess.Continues() )
     return;
   m_parsebyrise.CreateParseTree(cr_stdstrWholeInputText);
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterParseTreeGen);
@@ -740,7 +741,7 @@ void TranslationControllerBase::Translate(
 
   //  RemoveDuplicateParseTrees();
 
-  if(! m_translationProcess.Continue() )
+  if(!m_translationProcess.Continues() )
   	return;
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTransforParseTree);
   Transform() ;
@@ -758,7 +759,7 @@ void TranslationControllerBase::Translate(
     m_translateparsebyrisetree ;
 //  DEBUG_COUT("before translation\n")
 
-  if(! m_translationProcess.Continue() )
+  if(!m_translationProcess.Continues() )
   	return;
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTranslRules);
   TranslationResult r_translationResult;
@@ -792,7 +793,7 @@ void TranslationControllerBase::Translate(
     * texts then the main memory may get exhausted. */
   m_parsebyrise.s_dictReaderAndVocAccess.GetVocAccess().clearTemporaryEntries();
 //  std::string std_strXML;
-  if(! m_translationProcess.Continue() )
+  if(!m_translationProcess.Continues() )
     return;
   std_strIndentedXML = GetParseTreeAsIndentedXML(
     m_parsebyrise);

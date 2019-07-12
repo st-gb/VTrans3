@@ -3,7 +3,7 @@
  * Created on 5. November 2017, 14:54  */
 
 #include "TranslationProcess.hpp"
-#include "BilingualCorpusProcessingBase.hpp"
+//#include "BilingualCorpusProcessingBase.hpp"
 #include <preprocessor_macros/logging_preprocessor_macros.h>
 
 TranslationProcess::TranslationProcess() 
@@ -84,7 +84,9 @@ unsigned TranslationProcess::GetStatus2( /*const std::string & str*/
 void TranslationProcess::SetStatus(
   enum VTrans::StatusCode statusCode,
 //  const std::string & str
+  ///Concrete step/more detailled description of \param statusCode.
   const char * const pch,
+  ///E.g. for creating the parse tree: the number of parse rules applied.
   signed progress
   )
 {

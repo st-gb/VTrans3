@@ -279,13 +279,13 @@ EXPORT /*char * */ char * TranslateAsXML_char_array(const char * p_chEnglishText
 
 EXPORT BYTE GetStatus(std::string & item, struct tm & time)
 {
-  return g_p_translationcontrollerbase->GetStatus(item, time);
+  return g_p_translationcontrollerbase->m_translationProcess.GetStatus(item, time);
 }
 
 EXPORT BYTE GetStatus2( /*const std::string & str*/
   const std::string & str, struct tm & time, ByteArray & byteArray)
 {
-  return g_p_translationcontrollerbase->GetStatus2(str, time, byteArray);
+  return g_p_translationcontrollerbase->m_translationProcess.GetStatus2(str, time, byteArray);
 }
 
 EXPORT void Settings(const char * cp_chName, const char * cp_chValue)

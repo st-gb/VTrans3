@@ -39,14 +39,22 @@ endif( ${EXE_TYPE} STREQUAL "console")
 #/home/sg/Downloads/boost_threadpool-0_2_5-src/threadpool
 set( INCLUDE_DIRS 
   ${INCLUDE_DIRS}
-  ${MINI_XML_SOURCE}
+  ${MINI_XML_ROOT_DIR} #e.g. from build.gradle or a shell script/command line
   ${COMMON_SOURCECODE_ROOT_PATH}
   ${PROJECT_SOURCE_DIR}
   )
+
+#from https://stackoverflow.com/questions/6902149/listing-include-directories-in-cmake
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "incl.dir='${dir}'")
+endforeach()
+
 if(NOT WIN32)
   #Important: under Windows the original files should be included, else errors.
   set( INCLUDE_DIRS
     ${INCLUDE_DIRS}
+    #"/usr/include" #for MiniXML's mxml.h for Android
     ${COMMON_SOURCECODE_ROOT_PATH}/Controller/MSVC_adaption
     )
 endif(NOT WIN32)
@@ -104,6 +112,8 @@ else( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
 endif( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
 endif( DEFINED COMPILE_WITH_OPENMP )
 
+message("MINI_XML_ROOT_DIR: ${MINI_XML_ROOT_DIR}")
+SET(MINI_XML_SRC_DIR ${MINI_XML_ROOT_DIR})
 add_subdirectory(./IO
   #EXCLUDE_FROM_ALL
   )
@@ -193,6 +203,7 @@ endif(WIN32)
 set(BASIC_TRANSLATION_SOURCE_FILES
   ${BASIC_TRANSLATION_SOURCE_FILES}
 	${COMMON_SOURCECODE_ROOT_PATH}/Controller/character_string/stdtstr.cpp
+
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/preprocessor_logging_macros.cpp
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/Logger.cpp
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/LogLevel.cpp
@@ -203,28 +214,20 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/Formatter/Log4jFormatter.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/OutputHandler/I_LogEntryOutputter.cpp
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/OutputHandler/StdCoutLogWriter.cpp
+
 	${COMMON_SOURCECODE_ROOT_PATH}/data_structures/Trie/byteTrie/ByteTrie.cpp
 	${COMMON_SOURCECODE_ROOT_PATH}/data_structures/Trie/byteTrie/Trie.cpp
-	${COMMON_SOURCECODE_ROOT_PATH}/OperatingSystem/multithread/I_Thread.cpp
+
   ${COMMON_SOURCECODE_ROOT_PATH}/InputOutput/ReadFileContent/ReadFileContent.cpp
-	${VTRANS3_ROOT_PATH}/IO/dictionary/DictionaryReaderBase.cpp
-	${VTRANS3_ROOT_PATH}/IO/dictionary/OpenDictFileException.cpp
-	${VTRANS3_ROOT_PATH}/Controller/DictReaderAndVocAccess/TUchemnitzEngWordSorted1stAndBinarySearch.cpp
-	${VTRANS3_ROOT_PATH}/Controller/DictReaderAndVocAccess/TUchemnitzEngWordSorted1stAndBinarySearchInRAM.cpp
-	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/BinarySearchInDictData.cpp
-	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInDictFile.cpp
-	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInRAM.cpp
-	${VTRANS3_ROOT_PATH}/IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInDictData.cpp
+
   ${PROJECT_SOURCE_DIR}/Controller/TranslationControllerBase.cpp
-  ${VTRANS3_ROOT_PATH}/IO/UnknownGrammarPartNameException.cpp
-  ${PROJECT_SOURCE_DIR}/Parse/DirectingLeavesInSingleIterationTraverser.cpp
-  ${PROJECT_SOURCE_DIR}/Parse/DirectingLeavesMultipleIterTraverser.cpp
-  ${PROJECT_SOURCE_DIR}/Parse/DuplicateParseTree.cpp
-  ${PROJECT_SOURCE_DIR}/Parse/GrammarPart.cpp
-  ${PROJECT_SOURCE_DIR}/Parse/KeepTrackOfCurrentParseTreePath.cpp
-  ${PROJECT_SOURCE_DIR}/Parse/ParseByRise.cpp
-  ${PROJECT_SOURCE_DIR}/Parse/ParseByRise_BuildParseTree.cpp
-  ${PROJECT_SOURCE_DIR}/Parse/ParseByRise_GrammarRule.cpp
+
+	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/CharMappedDictionary.cpp
+	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/CharStringStdMap/CharStringStdMap.cpp
+	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/I_WordSearch.cpp
+)
+
+SET(VTRANS_TRANSLATE_STAGE_SRC_FILE_PATHS
 	${VTRANS3_ROOT_PATH}/Translate/AddVocAndTranslDefinitions.cpp
 	${VTRANS3_ROOT_PATH}/Translate/AttributeTypeAndPosAndSize.cpp
 	${VTRANS3_ROOT_PATH}/Translate/ConditionsAndTranslation.cpp
@@ -238,17 +241,18 @@ set(BASIC_TRANSLATION_SOURCE_FILES
 	${VTRANS3_ROOT_PATH}/Translate/TranslateParseByRiseTree.cpp
 	${VTRANS3_ROOT_PATH}/Translate/TranslateTreeTraverser.cpp
 	${VTRANS3_ROOT_PATH}/Translate/TranslationRule.cpp
-	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/CharMappedDictionary.cpp
-	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/CharStringStdMap/CharStringStdMap.cpp
-	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/IVocabularyInMainMem.cpp
-	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/I_WordSearch.cpp
-	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/TUchemnitzEngWordSorted1st/BinarySearchInDictFile.cpp
-	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/TUchemnitzEngWordSorted1st/BinarySearchInRAM.cpp
-	${VTRANS3_ROOT_PATH}/VocabularyInMainMem/VocabularyAndTranslation.cpp
 )
+
+#for VTrans3allSrcFilesNeededToParse.cmake
+SET( VTRANS_ROOT_PATH  ${VTRANS3_ROOT_PATH} )
+#for VTRANS_PARSE_SRC_FILE_PATHS, TU_CHEMNITZ_DICT_ACCESS_FILE_PATHS
+include(${VTRANS3_ROOT_PATH}/VTrans3allSrcFilesNeededToParse.cmake)
 
 set(SOURCE_FILE_PATHS
   ${SOURCE_FILE_PATHS}
+  ${VTRANS_PARSE_SRC_FILE_PATHS}
+  ${TU_CHEMNITZ_DICT_ACCESS_FILE_PATHS}
+  ${VTRANS_TRANSLATE_STAGE_SRC_FILE_PATHS}
   ${BASIC_TRANSLATION_SOURCE_FILES}
   ${MINI_XML_SOURCE_FILES}
   ${CONFIGURATION_READER_SOURCE_FILES}
@@ -293,6 +297,7 @@ if( ${EXE_TYPE} STREQUAL "Android")
   set(CREATE_DYN_LIB 1)
   if( NOT DEFINED MINI_XML_SOURCE )
    message( WARNING "MINI_XML_SOURCE not defined")
+   SET( USE_MINI_XML_STATIC_LIBRARY TRUE) 
   endif(NOT DEFINED MINI_XML_SOURCE)
   set(SOURCE_FILE_PATHS
     ${SOURCE_FILE_PATHS}

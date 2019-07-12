@@ -1,4 +1,11 @@
 
+if(EXISTS "${MINI_XML_ROOT_DIR}/config.h")
+else()
+message("calling MiniXML's configure")
+#generates needed "config.h"
+execute_process(COMMAND "./configure" WORKING_DIRECTORY ${MINI_XML_ROOT_DIR})
+endif()
+
 set(MINI_XML_SOURCE_FILES
   ${VTRANS3_ROOT_PATH}/IO/MiniXML/MiniXMLconfigReader.cpp
   ${VTRANS3_ROOT_PATH}/IO/MiniXML/GrammarRuleFileReader.cpp
@@ -8,6 +15,14 @@ set(MINI_XML_SOURCE_FILES
 	${VTRANS3_ROOT_PATH}/IO/MiniXML/VocAttributeDefintionHandler.cpp
 	${VTRANS3_ROOT_PATH}/IO/MiniXML/MiniXMLconfigReader.cpp
 )
+
+if( ANDROID_NDK )#TODO change to ~ "if(USE_TRANSLATE_STAGE)"
+  set(MINI_XML_SOURCE_FILES
+    ${MINI_XML_SOURCE_FILES}
+    #Not needed for parsing.
+    ${VTRANS3_ROOT_PATH}/IO/MiniXML/ReadTranslationRuleFile.cpp
+   )
+endif()
 
 #With MinGW/MSYS the static libary could only be created with the console from 
 # >>MinGW dir<<\msys\1.0\msys.bat
@@ -25,26 +40,15 @@ if( DEFINED USE_MINI_XML_STATIC_LIBRARY)
   )
   endif(WIN32)
 
-else ( DEFINED USE_MINI_XML_STATIC_LIBRARY)
-set(MINI_XML_LIBRARY_SOURCE_FILE_PATHS
-  ${MINI_XML_SOURCE}/mxml-attr.c
-  ${MINI_XML_SOURCE}/mxmldoc.c
-  ${MINI_XML_SOURCE}/mxml-entity.c
-  ${MINI_XML_SOURCE}/mxml-file.c
-  ${MINI_XML_SOURCE}/mxml-get.c
-  ${MINI_XML_SOURCE}/mxml-index.c
-  ${MINI_XML_SOURCE}/mxml-node.c
-  ${MINI_XML_SOURCE}/mxml-private.c
-  ${MINI_XML_SOURCE}/mxml-search.c
-  ${MINI_XML_SOURCE}/mxml-set.c
-  ${MINI_XML_SOURCE}/mxml-string.c
-  )
-message("in MiniXML CMakeLists:" ${MINI_XML_LIBRARY_SOURCE_FILE_PATHS} )
+else()
+#for MINI_XML_LIB_SRC_FILE_PATHS
+include(${COMMON_SOURCECODE_ROOT_PATH}/libraries/XML/MiniXML/srcFiles.cmake)
+message("in MiniXML CMakeLists:" ${MINI_XML_LIB_SRC_FILE_PATHS} )
 endif(DEFINED USE_MINI_XML_STATIC_LIBRARY)
 
 set( CONFIGURATION_READER_SOURCE_FILES
   ${MINI_XML_SOURCE_FILES}
-  ${MINI_XML_LIBRARY_SOURCE_FILE_PATHS}
+  ${MINI_XML_LIB_SRC_FILE_PATHS}
   PARENT_SCOPE #to propagate changes to file that included THIS file
 )
 

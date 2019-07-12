@@ -10,6 +10,8 @@
 #include <data_structures/ByteArray.hpp>
 #include <Attributes/CollectDictionaryStatisticsStatus.hpp>
 
+///Encapsulates the current status and the multithreading routine resources to
+/// access the status.
 class TranslationProcess {
   nativeCriticalSection_type m_critSecStatus;
   //TODO check if volatile is sufficient or better use atomic function Compare and swap
@@ -38,7 +40,7 @@ public:
     //TODO is all memory freed when the translation is cancelled?
     m_vbContinue = b;
     }
-  bool Continue() const { return m_vbContinue; }
+  bool Continues() const { return m_vbContinue; }
 private:
 
 };

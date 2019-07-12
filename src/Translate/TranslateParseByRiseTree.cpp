@@ -1075,7 +1075,7 @@ void TranslateParseByRiseTree::TranslateParseTree(
   translatetreetraverser.Traverse() ;
 //  usleep(8000);
 
-  if( ! g_p_translationcontrollerbase->m_vbContinue )
+  if( !g_p_translationcontrollerbase->m_translationProcess.Continues() )
 	return;
   //The tree may have been modified (tree branches moved or inserted)
   //So get all leaves from left to right for the whole tree.
@@ -1355,9 +1355,10 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
 
 	std::string statusMessage = std::string("for current parse tree path \"") +
 	  stdstrCurrentParseTreePath + "\"";
-	g_p_translationcontrollerbase->SetStatus(
+	g_p_translationcontrollerbase->m_translationProcess.SetStatus(
 	  VTrans::translationRules,
-	  statusMessage.c_str()
+	  statusMessage.c_str(),
+	  1 //TODO change to a more appropriate value
 	  );
 
   fastestUnsignedDataType currentTranslationRuleIndex = 0;
@@ -1387,7 +1388,7 @@ bool TranslateParseByRiseTree::TranslationRuleApplies(
         m_stdmap_translationrule2ConditionsAndTranslation.rbegin() ;
       c_rev_iter_translationrule2conditionsandtranslation !=
         m_stdmap_translationrule2ConditionsAndTranslation.rend()
-        && g_p_translationcontrollerbase->m_vbContinue ;
+        && g_p_translationcontrollerbase->m_translationProcess.Continues() ;
       ++ c_rev_iter_translationrule2conditionsandtranslation,
       ++ currentTranslationRuleIndex
       )

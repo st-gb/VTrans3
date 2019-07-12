@@ -1837,7 +1837,7 @@ void BottomUpParser::StoreWordTypeAndGermanTranslation(
   }
   while( ! /*p_letternode*/ p_std_set_p_vocabularyandtranslation
     && dwTokenIndexRightMost < c_r_positionStringVector.size() - 1
-    && /*m_r_translationcontrollerbase.*/m_r_translationProcess.Continue() );
+    && /*m_r_translationcontrollerbase.*/m_r_translationProcess.Continues() );
   if( //dwTokenIndexRightMostUnknownToken
       bUnknownTokenFound)
   {
