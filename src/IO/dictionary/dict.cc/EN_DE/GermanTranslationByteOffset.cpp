@@ -405,7 +405,8 @@ std::string AddData(
 //    std::cout << "match " << i << " (" << regex_match[i] << ") ";
     int regexMatchStringStart = regex_match.position(regexMatchIndex);
     int regexMatchStringLength = regex_match.length(regexMatchIndex);
-    
+
+    GCC_DIAG_OFF(switch)
     switch(p_vocabularyAndTranslation->m_englishWordClass)
     {
       case EnglishWord::preposition :
@@ -418,13 +419,15 @@ std::string AddData(
         }
         break;
     }
+    GCC_DIAG_ON(switch)
 
 //    germanTranslation.erase(regexMatchStringStart, regexMatchStringLength);
 //    std::cout << "at position " << regex_match.position(i) << std::endl; 
   }
   std::string germanTranslation = std::regex_replace(
     germanTranslationColumnContent, regexForGrammaticalInfo, "");
-  
+
+    GCC_DIAG_OFF(switch)
     switch(p_vocabularyAndTranslation->m_englishWordClass)
     {
       case EnglishWord::noun :
@@ -453,6 +456,7 @@ std::string AddData(
       }
       break;
     }
+    GCC_DIAG_ON(switch)
 
     std::regex spaceCharsAtEndRegex("[\\ ]*$");
     /** Remove space chars at start and end of string. */

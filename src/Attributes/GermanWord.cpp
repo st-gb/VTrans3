@@ -8,16 +8,19 @@
 
 GermanWord GermanWord::GetGermanWord(VocabularyAndTranslation * p)
 {
+  GCC_DIAG_OFF(switch)
   switch(p->m_englishWordClass)
   {
     case EnglishWord::adjective :
       return GermanAdjective(p);
   }
+  GCC_DIAG_ON(switch)
   return GermanWord();
 }
 
 std::vector<std::string> GermanWord::GetInflectionForms(VocabularyAndTranslation * p)
 {
+  GCC_DIAG_OFF(switch)
 //  EnglishWord::English_word_class = p->m_englishWordClass;
   switch(p->m_englishWordClass)
   {
@@ -42,6 +45,7 @@ std::vector<std::string> GermanWord::GetInflectionForms(VocabularyAndTranslation
         return v;
       }
   }
+  GCC_DIAG_ON(switch)
   return std::vector<std::string>();
 }
   
@@ -123,6 +127,7 @@ std::vector<std::string> GermanAdjective::GetInflectionForms(const std::string &
    *  (ich vertraue/mag)  der hohEN Frau
    *  (ich vertraue/mag) des/dem hohEN Kind(es) */
   inflectionForms.push_back(str + "en");
+  return inflectionForms;
 }
 
 std::vector<std::string> GermanAdjective::GetInflectionForms()
@@ -156,6 +161,7 @@ std::vector<std::string> GermanAdjective::GetInflectionForms()
 std::vector<std::string> GermanAdjective::GetInflectionForms(VocabularyAndTranslation * p)
 {
   if(p->m_arstrGermanWord)
+    GCC_DIAG_OFF(switch)
     switch(p->m_englishWordClass)
     {
       case EnglishWord::adjective_positiveForm :
@@ -163,6 +169,8 @@ std::vector<std::string> GermanAdjective::GetInflectionForms(VocabularyAndTransl
 //      case EnglishWord::adjective_superlativeForm :
         return GermanAdjective().GetInflectionForms(p->m_arstrGermanWord[0]);
     }
+    GCC_DIAG_ON(switch)
+  return std::vector<std::string>();
 }
 
 GermanAuxiliaryVerb::GermanAuxiliaryVerb(const VTrans::string_type & str)
@@ -234,6 +242,7 @@ std::vector<std::string> GermanNoun::GetInflectionForms(VocabularyAndTranslation
   if(p->m_arstrGermanWord)
   {
     vec.push_back(p->m_arstrGermanWord[0]);
+    GCC_DIAG_OFF(switch)
     switch(p->m_englishWordClass)
     {
       case EnglishWord::noun :
@@ -250,6 +259,7 @@ std::vector<std::string> GermanNoun::GetInflectionForms(VocabularyAndTranslation
           vec.insert(vec.end(), inflectionForms.begin(), inflectionForms.end());
         }
     }
+    GCC_DIAG_ON(switch)
   }
   return vec;
 }

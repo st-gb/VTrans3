@@ -22,6 +22,7 @@ namespace MiniXML
     I_UserInterface * p_UserInterface,
     ConfigurationHandler_type & configurationReader)
     : MainConfigFileReaderBase(configurationReader)
+     , m_successfullyProcessedAllReferredFiles(true)
   {
 //    s_p_translationController = & r_translationController;
     s_p_UserInterface = p_UserInterface;
@@ -92,7 +93,9 @@ namespace MiniXML
 //#endif
 //      }
 ////#endif
-          mainConfigFileReader.openingXMLelement(xmlElementName, node);
+          if( ! mainConfigFileReader.openingXMLelement(xmlElementName, node) )
+            mainConfigFileReader.m_successfullyProcessedAllReferredFiles =
+              false;
         }
       }
     }
@@ -120,7 +123,8 @@ namespace MiniXML
         );
 //      //First node or NULL if the file could not be read.
 //      if( mxml_node_tLoadFileRes != NULL )
-        fileOpenSucceeded = true;
+       if( m_successfullyProcessedAllReferredFiles )
+         fileOpenSucceeded = true;
       fclose(fp);
     }
     return fileOpenSucceeded;

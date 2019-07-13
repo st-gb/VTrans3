@@ -31,6 +31,9 @@ namespace MiniXML
     virtual
     ~MainConfigFileReader();
     bool ProcessXML(const std::string & cr_stdstrFilePath);
+    ///True if all files referred in the main config file could be opened
+    /// successfully.
+    bool m_successfullyProcessedAllReferredFiles;
   };
 } /* namespace MiniXML */
 }

@@ -13,7 +13,7 @@
 #include <stdint.h> //for uint32_t
 
 /** Forward declarations: */
-//class TranslationControllerBase;
+class TranslationControllerBase;
 class I_UserInterface;
 namespace VTrans3 {
   class BottomUpParser;
@@ -30,7 +30,7 @@ namespace VTrans3
   {
   protected:
   public:
-//    TranslationControllerBase & m_translationController;
+    static TranslationControllerBase * s_p_translationController;
     static I_UserInterface * m_p_UserInterface;
     GUIattributes m_GUIattributes;
     typedef NodeTrie<uint32_t> grammarPartName2ColourContainer_type;
@@ -52,7 +52,7 @@ namespace VTrans3
     virtual
     ~ConfigurationReader();
 
-    virtual void ReadGrammarRuleFile(const std::string & cr_stdstrFilePath) = 0;
+    virtual bool ReadGrammarRuleFile(const std::string & cr_stdstrFilePath) = 0;
     virtual bool ReadMainConfigFile(const std::string & cr_stdstrFilePath) = 0;
 #if USE_TRANSLATION_RULES
     virtual void ReadVocAttributeDefinitionFile(

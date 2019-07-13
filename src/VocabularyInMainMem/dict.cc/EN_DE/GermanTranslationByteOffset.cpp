@@ -63,6 +63,7 @@ IVocabularyInMainMem::voc_container_type * GermanTranslationByteOffset::findEngl
   fastestUnsignedDataType GermanTranslationByteOffset::GetNumberOfAllocatedBytes() { 
     if(m_p_dictionaryReader)
       return m_p_dictionaryReader->GetNumberOfAllocatedBytes();
+    return 0;
   }
   
   IVocabularyInMainMem::voc_container_type * GermanTranslationByteOffset::Insert(
@@ -83,7 +84,9 @@ IVocabularyInMainMem::voc_container_type * GermanTranslationByteOffset::findEngl
         , word_class,
         /*pv*/ p_vocabularyandtranslation
         );
-    }  }
+    }
+    return NULL;
+  }
       }
     }
   }

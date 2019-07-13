@@ -22,8 +22,8 @@ namespace MiniXML
 //  I_UserInterface * MiniXMLconfigReader::s_p_userInterface = NULL;
 
   MiniXMLconfigReader::MiniXMLconfigReader(
-//      TranslationControllerBase & r_translationController
-    I_UserInterface * p_userInterface, 
+    TranslationControllerBase & r_translationController,
+    I_UserInterface * p_userInterface,
     BottomUpParser & bottomUpParser
     )
     : VTrans3::ConfigurationReader<mxml_node_t *>( /* & r_translationController*/ 
@@ -115,7 +115,7 @@ namespace MiniXML
     return fileOpenSucceeded;
   }
 #ifndef TEST_MINI_XML
-  void MiniXMLconfigReader::ReadGrammarRuleFile(
+  bool MiniXMLconfigReader::ReadGrammarRuleFile(
       const std::string & cr_stdstrFilePath )
   {
 //    MiniXML::ReadGrammarRuleFile(cr_stdstrFilePath, );
@@ -134,7 +134,7 @@ namespace MiniXML
 //      ;
     VTrans3::MiniXML::GrammarRuleFileReader grammarRuleFileReader(
       /*m_translationController*/ m_p_UserInterface, m_parseByRise);
-    /*return */grammarRuleFileReader.ProcessXML(cr_stdstrFilePath.c_str() );
+    return grammarRuleFileReader.ProcessXML(cr_stdstrFilePath.c_str() );
   }
 #endif// #ifndef TEST_MINI_XML
 

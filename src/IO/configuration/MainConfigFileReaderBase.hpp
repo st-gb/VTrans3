@@ -19,13 +19,15 @@ public:
   virtual ~MainConfigFileReaderBase();
   
   void HandleGrammartPartColourXMLelement(attributeType & xmlElement);
-  void HandleReadGrammarRuleFileXMLelement(attributeType & xmlElement );
+  ///\return true:success
+  bool HandleReadGrammarRuleFileXMLelement(attributeType & xmlElement );
 #if USE_TRANSLATION_RULES
   void HandleReadTranslationRuleFileXMLelement(attributeType & xmlElement );
   void HandleReadVocabularyAttributeDefinitionFileXMLelement(
     attributeType & xmlElement );
 #endif
-  void openingXMLelement(const char * const xmlElementName, attributeType & xmlElement);
+  ///\return true:success
+  bool openingXMLelement(const char * const xmlEleName, attributeType & xmlEle);
 private:
 
 };

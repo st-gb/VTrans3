@@ -75,7 +75,7 @@ set( CXX_DEFINITIONS
   #-D__WXDEBUG__
   -DUSE_OWN_LOGGER
   -DCOMPILE_WITH_LOG
-  -DCOMPILE_AS_EXECUTABLE
+  #-DCOMPILE_AS_EXECUTABLE #not as dynamic library but as standalone executable
   -DUNICODE
 )
 
@@ -252,6 +252,7 @@ set(SOURCE_FILE_PATHS
   ${SOURCE_FILE_PATHS}
   ${VTRANS_PARSE_SRC_FILE_PATHS}
   ${TU_CHEMNITZ_DICT_ACCESS_FILE_PATHS}
+  ${DICT_CC_DICT_ACCESS_SRC_FILE_PATHS}
   ${VTRANS_TRANSLATE_STAGE_SRC_FILE_PATHS}
   ${BASIC_TRANSLATION_SOURCE_FILES}
   ${MINI_XML_SOURCE_FILES}
@@ -259,7 +260,10 @@ set(SOURCE_FILE_PATHS
   ${ATTRIBUTE_DATA_SOURCE_FILES}
 )
 
-add_definitions(${CXX_DEFINITIONS})
+if ( ${EXE_TYPE} STREQUAL "dynlib" )
+  set(CREATE_DYN_LIB 1)
+endif( ${EXE_TYPE} STREQUAL "dynlib" )
+
 #add_library(${LIBRARIES} )
 #specify which libraries an executable target links against.
 #TARGET_LINK_LIBRARIES( ${LIBRARIES})
@@ -285,7 +289,6 @@ if( ${EXE_TYPE} STREQUAL "console")
   set(EXE_NAME ${PROJECT_NAME}_console)
 endif( ${EXE_TYPE} STREQUAL "console" )
 
-message("CXX_DEFINITIONS for compiling:${CXX_DEFINITIONS}")
 #Compiles all files in ${SOURCE_FILE_PATHS} ?!
 
 if (ANDROID)
@@ -329,9 +332,15 @@ if( ${EXE_TYPE} STREQUAL "Android")
   #include("${DISCORDIA_ANDROID_CMAKE_HOME}/android.apk.cmake" REQUIRED)
 endif( ${EXE_TYPE} STREQUAL "Android")
 
-if ( ${EXE_TYPE} STREQUAL "dynlib" )
-  set(CREATE_DYN_LIB 1)
-endif( ${EXE_TYPE} STREQUAL "dynlib" )
+if( CREATE_DYN_LIB )#Android, native dyn lib
+  set( CXX_DEFINITIONS
+    ${CXX_DEFINITIONS}
+    -DUSE_TRANSLATION_RULES
+    )
+endif()
+message("CXX_DEFINITIONS for compiling:${CXX_DEFINITIONS}")
+add_definitions(${CXX_DEFINITIONS})
+
 if ( CREATE_DYN_LIB )
   message("should create dyn lib")
   set(EXE_NAME ${PROJECT_NAME} )
@@ -348,6 +357,7 @@ if ( CREATE_DYN_LIB )
   #  "-Wl,--no-undefined -fPIC")
   message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
   message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+  message( "COMPILE_DEFINITIONS = ${COMPILE_DEFINITIONS}" )
   add_library(${EXE_NAME} SHARED ${SOURCE_FILE_PATHS})
   message ("should link libraries \"${LIBRARIES}\" to executable")
   target_link_libraries(${EXE_NAME} ${LIBRARIES})

@@ -7,6 +7,8 @@
 
 #include <string> //class std::string
 #include <IO/ConfigurationReader.hpp> //base class VTrans3::ConfigurationReader
+/** On Linux: install headers via package manager:
+    e.g. apt if Debian-based: "sudo apt-get install libmxml-dev" */
 #include <mxml.h> //typedef mxml_sax_cb_t
 #include <sstream> //std::istringstream
 
@@ -31,7 +33,11 @@ namespace MiniXML
      * global functions / MiniXML callback functions. */
 //    static TranslationControllerBase * s_p_translationController;
 //    static I_UserInterface * s_p_userInterface;
-    MiniXMLconfigReader(/*TranslationControllerBase & r_translationController*/
+    MiniXMLconfigReader(
+      ///Both TranslationControllerBase and I_UserInterface should be passed
+      /// because the parse-only version or the one with the translation step
+      /// should be built. Alternative: 2 constructors: 1 for each version
+      TranslationControllerBase & r_translationController,
       I_UserInterface * p_userInterface,
       VTrans3::BottomUpParser &);
     virtual
@@ -115,7 +121,7 @@ namespace MiniXML
     /** Provides showing an error message in case of an error for loading an
      * arbitrary XML file via MiniXML. */
     static bool ReadFile(const char * const cr_stdstrFilePath, mxml_sax_cb_t sax);
-    void ReadGrammarRuleFile(const std::string & cr_stdstrFilePath );
+    bool ReadGrammarRuleFile(const std::string & cr_stdstrFilePath );
     bool ReadMainConfigFile(const std::string & cr_stdstrFilePath );
     /** If just parsing this is not needed. */
 #if USE_TRANSLATION_RULES

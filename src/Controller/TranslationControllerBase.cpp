@@ -228,14 +228,16 @@ TranslationControllerBase::TranslationControllerBase()
 #ifndef TEST_MINI_XML
   m_parsebyrise( this, m_translationProcess ) ,
 #endif
-  m_nodetrie_ui32GrammarPartName2colour(256, 0),
+  ///error if uncommented: "member initializer does not name a non-static data
+  /// member or base class"
+  //m_nodetrie_ui32GrammarPartName2colour(256, 0),
 #ifndef TEST_MINI_XML
   m_translateparsebyrisetree(
     m_parsebyrise
     , * this
     ),
 #endif  //#ifndef TEST_MINI_XML
-  m_configurationHandler(*this),
+  m_configurationHandler(*this, this, m_parsebyrise),
   m_dictionarySuccessfullyLoaded(false)
 {
 #ifdef PARALLELIZE_TRANSLATION
@@ -362,7 +364,7 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
       bool bLoadingDictFileSucceeded = /*TUchemnitzDictionaryReader::*/ //tcdr.extractVocables(
 //        dictReader
 //        tuchemnitzengwordsorted1standbinarysearch
-        s_dictReaderAndVocAccess
+        m_parsebyrise.s_dictReaderAndVocAccess
         .loadDictionary(
 //      bool b = dictReader::read(
         m_stdstrVocabularyFilePath.c_str() );
@@ -423,8 +425,7 @@ void TranslationControllerBase::TranslateAsXML(const char * p_chEnglishText, Byt
     );
 
   stdstrAllPossibilities = "";
-  IO::GenerateXMLtreeFromParseTree( & m_parsebyrise,
-    /*stdstrAllPossibilities*/ byteArray);
+  m_parsebyrise.GenerateXMLtree(/*stdstrAllPossibilities*/ byteArray);
 //  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
 //  if( ar_chTranslation )
 //  {
@@ -455,8 +456,8 @@ void TranslationControllerBase::TranslateAsXMLgetAverageTimes(
     );
 
   stdstrAllPossibilities = "";
-  IO::GenerateXMLtreeFromParseTree( & m_parsebyrise,
-    /*stdstrAllPossibilities*/ byteArray);
+  m_parsebyrise.GenerateXMLtree(/*stdstrAllPossibilities*/ byteArray);
+
 //  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
 //  if( ar_chTranslation )
 //  {
@@ -492,7 +493,7 @@ void TranslationControllerBase::ReadTranslationRuleFile(
   const std::string & cr_stdstrFilePath
   )
 {
-  m_configurationHandler.ReadTranslationRuleFile(cr_stdstrFilePath.c_str() );
+  m_configurationHandler.ReadTranslationRuleFile(cr_stdstrFilePath/*.c_str()*/ );
 }
 
 void TranslationControllerBase::ReadVocAttributeDefinitionFile(
@@ -735,8 +736,7 @@ void TranslationControllerBase::Translate(
   m_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds = (double) 
     timeCountInNanoSecondsParseTreeGen / 1000000000.0f;
   
-  std::string std_strIndentedXML = GetParseTreeAsIndentedXML(
-    m_parsebyrise);
+  std::string std_strIndentedXML = m_parsebyrise.GetAsIndentedXML();
   LOGN("parse tree as indented XML:\n" << std_strIndentedXML)
 
   //  RemoveDuplicateParseTrees();
@@ -795,8 +795,7 @@ void TranslationControllerBase::Translate(
 //  std::string std_strXML;
   if(!m_translationProcess.Continues() )
     return;
-  std_strIndentedXML = GetParseTreeAsIndentedXML(
-    m_parsebyrise);
+  std_strIndentedXML = m_parsebyrise.GetAsIndentedXML();
 //  LOGN("translation as indented XML:" << std_strIndentedXML)
 
 //  LOGN( /*FULL_FUNC_NAME <<*/ "generated XML data:" << std_strXML)

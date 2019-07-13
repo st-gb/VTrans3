@@ -14,7 +14,8 @@ namespace VTrans3
 {
   namespace MiniXML
   {
-    TranslationControllerBase * VocAttributeDefintionHandler::s_p_translationController = NULL;
+    TranslationControllerBase * VocAttributeDefintionHandler::
+      s_p_translationController = NULL;
 
     VocAttributeDefintionHandler::VocAttributeDefintionHandler(
         TranslationControllerBase & r_translationController )
@@ -38,7 +39,7 @@ namespace VTrans3
         std::ostringstream stdoss;
         stdoss << "Converting \"" << strAttributeName << "\" (to a number) failed";
         //TODO line and column number in message
-        MiniXML::MiniXMLconfigReader::s_p_translationController->Message(
+        VocAttributeDefintionHandler::s_p_translationController->Message(
           stdoss.str() );
       }
     }
@@ -115,7 +116,7 @@ namespace VTrans3
             {
               std::string stdstrWordClass(strWordClass);
 
-              MiniXML::MiniXMLconfigReader::s_p_translationController->
+              VocAttributeDefintionHandler::s_p_translationController->
                 m_translateparsebyrisetree.AddVocAndTranslDefinition(
                 strWordClass ,
                 strAttributeName ,

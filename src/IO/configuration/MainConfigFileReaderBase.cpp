@@ -69,9 +69,10 @@ MainConfigFileReaderBase::MainConfigFileReaderBase (
     }
   }
 
-  void MainConfigFileReaderBase::HandleReadGrammarRuleFileXMLelement( 
+  bool MainConfigFileReaderBase::HandleReadGrammarRuleFileXMLelement( 
     attributeType & xmlElement )
   {
+    bool success = false;
     std::string std_strGrammarRuleFilePath;
     m_r_configurationReader.GetAttributeValue(xmlElement, 
       std_strGrammarRuleFilePath, "path");
@@ -79,9 +80,10 @@ MainConfigFileReaderBase::MainConfigFileReaderBase (
     {
       LOGN_DEBUG("grammar rule file path:" << std_strGrammarRuleFilePath)
 //            strVocabularyFilePath
-      m_r_configurationReader.ReadGrammarRuleFile(
+      success = m_r_configurationReader.ReadGrammarRuleFile(
         std_strGrammarRuleFilePath);
     }
+    return success;
   }
 
 #if USE_TRANSLATION_RULES
@@ -138,12 +140,13 @@ fastestUnsignedDataType GetFontSizeInPoint(
   return fontSizeInPoint;
 }
 
-void MainConfigFileReaderBase::openingXMLelement(
+bool MainConfigFileReaderBase::openingXMLelement(
   const char * const xmlElementName, attributeType & xmlElement)
 {
+  bool success = false;
     if( xmlElementName == NULL )
       LOGN_DEBUG("element name:NULL")
-	  else
+    else
     {
       LOGN_DEBUG("element name:" << xmlElementName)
 //      std::cout << "element nameXX:" << xmlElementName << std::endl;
@@ -205,7 +208,7 @@ void MainConfigFileReaderBase::openingXMLelement(
       if( ::strcmp(xmlElementName, "grammar_rule_file") == 
          C_standard_library::strcmp::stringsAreEqual )
       {
-        HandleReadGrammarRuleFileXMLelement( xmlElement ) ;
+        success = HandleReadGrammarRuleFileXMLelement( xmlElement ) ;
       }
 //         else if( m_strElementName == "transformation_rule_file" )
 //         {
@@ -242,6 +245,7 @@ void MainConfigFileReaderBase::openingXMLelement(
        }
      }
    }
+  return success;
 }
 
 MainConfigFileReaderBase::~MainConfigFileReaderBase () { }

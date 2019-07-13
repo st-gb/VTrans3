@@ -8,7 +8,7 @@
 C_COMPILER=/usr/bin/gcc
 CPP_COMPILER=/usr/bin/g++
 
-NUM_ARGS_NEEDED=1
+NUM_ARGS_NEEDED=2
 
 BASEDIR=$(pwd)
 echo "this shell script's dir: $BASEDIR"
@@ -16,6 +16,7 @@ echo "this shell script's dir: $BASEDIR"
 #IDEA: pass as args: <NAME=VALUE>, e.g. COMMON_SOURCECODE_ROOT_PATH=../common_sourcecode
 if [ $# -ge $NUM_ARGS_NEEDED ]; then
   BUILD_SYSTEM_GENERATOR=$1
+  MINI_XML_ROOT_DIR=$2
   echo "BUILD_SYSTEM_GENERATOR: $BUILD_SYSTEM_GENERATOR"
 
 # "-pg" (DCMAKE_CXX_FLAGS) option for "gprof" profiling
@@ -36,6 +37,7 @@ EXEC="cmake -G \"$BUILD_SYSTEM_GENERATOR\" \
 -DCOMPILE_WITH_OPENMP=NO \
 -DEVALUATE_PROCESSING=YES \
 -DEXE_TYPE:STRING=dynlib \
+-DMINI_XML_ROOT_DIR=${MINI_XML_ROOT_DIR} \
 ./src" #where to find the CMakeLists.txt
 echo "should execute: $EXEC"
 eval $EXEC

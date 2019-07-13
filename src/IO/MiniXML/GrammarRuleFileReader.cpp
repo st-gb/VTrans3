@@ -1,9 +1,6 @@
-/*
- * GrammarRuleFileReader.cpp
- *
+/** GrammarRuleFileReader.cpp
  *  Created on: 22.12.2013
- *      Author: mr.sys
- */
+ *      Author: mr.sys  */
 
 #include <IO/MiniXML/GrammarRuleFileReader.hpp>
 #include <string> //class std::string
@@ -17,6 +14,8 @@
 
 #include "IO/ConfigurationReader.hpp"
 #include "MiniXMLconfigReader.hpp"
+#include <OperatingSystem/Linux/GetLastErrorCode.hpp>
+#include <OperatingSystem/GetErrorMessageFromErrorCode.h>
 
 //extern TranslationControllerBase * g_p_translationcontrollerbase;
 
@@ -184,9 +183,11 @@ namespace VTrans3
       {
         std::string cwd;// = s_p_translationController->GetCurrentWorkingDir();
         OperatingSystem::GetCurrentWorkingDirA_inl(cwd);
-        //TODO provide error message
-        /*s_p_translationController*/s_p_userInterface->Message("Failed to open file "
-          + cwd + cr_stdstrFilePath);
+        const unsigned lastOSerrorCode = OperatingSystem::GetLastErrorCode();
+        std::string message = "Failed to open file " + cwd + cr_stdstrFilePath
+          + " : " + OperatingSystem::GetErrorMessageFromErrorCodeA(
+          lastOSerrorCode);
+        /*s_p_translationController*/s_p_userInterface->Message(message);
       }
       else
       {

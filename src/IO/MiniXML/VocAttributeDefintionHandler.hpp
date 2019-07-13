@@ -20,6 +20,9 @@ namespace VTrans3
     class VocAttributeDefintionHandler
     {
     public:
+      ///The TranslationControllerBase must be in this class and not in the
+      /// class MiniXML::MiniXMLconfigReader because the translation step
+      /// should be independent from the parsing step.
       static TranslationControllerBase * s_p_translationController;
       VocAttributeDefintionHandler(TranslationControllerBase & r_translationController);
       virtual

@@ -62,7 +62,9 @@ namespace VTrans3 {
 //   /   /  \       \         PP=Personal Pronoun
 //  / C_EE C_EE       CJ_EE      |    C=Comma
 // / /  \  / \   /   \      |
-//PP C PP C PP -CJ ---NC-- main_verb   NC=def_article_noun CJ=ConJunction
+//PP C PP C PP -CJ ---NC-- main_verb   NC=def_article_noun CJ=ConJunction */
+//TODO rename class to "ParseTreeNode", see
+// https://en.wikipedia.org/wiki/Parse_tree
 class GrammarPart
 {
 public:

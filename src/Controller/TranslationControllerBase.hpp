@@ -72,6 +72,7 @@ void SetNumIterationsFor3rdTranslationStep(const char * const value);
 /** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
 class TranslationControllerBase
   : public I_UserInterface
+  //TODO also inherit from class BilingProcBase ?
 {
 //  VTrans::CurrentStatus m_currentStatus;
 //  TranslationProcess m_translationProcess;
