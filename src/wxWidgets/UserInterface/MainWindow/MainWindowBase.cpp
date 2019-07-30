@@ -102,10 +102,13 @@ unsigned wxWidgets::MainWindowBase::s_windowID = 3;
 
 namespace wxWidgets
 {
-MainWindowBase::MainWindowBase(wxTopLevelWindow * p_mainwindow)
+MainWindowBase::MainWindowBase(wxTopLevelWindow * p_mainwindow,
+  VTransApp & vtransApp)
   : m_p_mainwindow(p_mainwindow),
     m_parsebyrise(::wxGetApp().m_parsebyrise),
     m_translationcontrollerbase(::wxGetApp())
+    , r_GUIattributes(vtransApp.m_configurationHandler.m_GUIattributes)
+    , m_vocAccess(vtransApp.m_parsebyrise.s_dictReaderAndVocAccess.m_vocAccess)
 {
 //	wxIcon wxiconThisDialog( VT_icon_xpm ) ;
 //	SetIcon( wxiconThisDialog ) ;

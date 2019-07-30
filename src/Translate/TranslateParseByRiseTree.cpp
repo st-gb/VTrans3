@@ -963,7 +963,7 @@ void TranslateParseByRiseTree::TestIfTranslationRuleApplies(
 {
   ParseTreeTraverser::TestIfTranslationRuleApplies
     testiftranslationruleapplies(p_grammarpart,
-      * mp_parsebyrise, * this);
+      * mp_bottomUpParser, * this);
   //The transformation of the tree may lead to a crash/
   // only the leaves need to be processed-> set to "false".
   testiftranslationruleapplies.m_bTraverseTree = false ;

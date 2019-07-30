@@ -180,7 +180,7 @@ void EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize( wxCommandEvent 
 
 void EVENT_HANDLER_CLASS_NAME::OnDoubleBufferParseTreePanel( wxCommandEvent & wxcmd )
 {
-  ::wxGetApp().m_GUIattributes.m_doubleBufferParseTreePanel = wxcmd.IsChecked();
+  r_GUIattributes.m_doubleBufferParseTreePanel = wxcmd.IsChecked();
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnLogLevel( wxCommandEvent & wxcmd )
@@ -204,13 +204,13 @@ void EVENT_HANDLER_CLASS_NAME::OnIncreaseParseTreePanelFontSize( wxCommandEvent 
 
 void EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress( wxCommandEvent & wxcmd )
 {
-  ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress = wxcmd.IsChecked();
+  r_GUIattributes.m_bShowGrammarPartAddress = wxcmd.IsChecked();
   mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnShowTranslatedWord( wxCommandEvent & wxcmd )
 {
-  ::wxGetApp().m_GUIattributes.m_bShowTranslation = wxcmd.IsChecked();
+  r_GUIattributes.m_bShowTranslation = wxcmd.IsChecked();
   mp_wxparsetreepanel->DrawParseTree(m_parsebyrise) ;
 }
 
@@ -264,7 +264,7 @@ DWORD THREAD_FUNCTION_CALLING_CONVENTION UnloadDictionary(void * p_v)
 //  wxCondition & wxCond = *(wxCondition *)p_v;
   EVENT_HANDLER_CLASS_NAME & event_handler = *(EVENT_HANDLER_CLASS_NAME *)p_v;
 //  EVENT_HANDLER_CLASS_NAME * p_event_handler = (EVENT_HANDLER_CLASS_NAME *) p_v;
-  ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.clear();
+  ::wxGetApp().m_parsebyrise.s_dictReaderAndVocAccess.m_vocAccess.clear();
 //  wxCond.Signal();
   ::wxGetApp().EndTimer();
   LOGN("after clearing the dictionary.")
@@ -339,10 +339,8 @@ void EVENT_HANDLER_CLASS_NAME::UnloadDictionaryShowingStatusAndSendCloseEvent()
 void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
 {
   LOGN("begin before clearing the dictionary")
-  const unsigned numberOfVocPairs = ::wxGetApp().s_dictReaderAndVocAccess.
-    m_vocAccess.GetNumberOfVocPairs();
-  const unsigned numberOfEnglishWords = ::wxGetApp().s_dictReaderAndVocAccess.
-    m_vocAccess.GetNumberOfEnglishWords();
+  const unsigned numberOfVocPairs = m_vocAccess.GetNumberOfVocPairs();
+  const unsigned numberOfEnglishWords = m_vocAccess.GetNumberOfEnglishWords();
   if( /*numberOfVocPairs*/ numberOfEnglishWords > 0 )
   {
     UnloadDictionaryShowingStatusAndSendCloseEvent();
@@ -422,9 +420,9 @@ void EVENT_HANDLER_CLASS_NAME::OnInfoButton( wxCommandEvent & wxcmd )
       ) ,
 //    OneLinePerWordPair::s_dwNumberOfVocabularyPairs
 //    ::wxGetApp().s_numberOfVocabularyPairs
-    vt.s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfEnglishWords()
-    , ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfVocPairs()
-    , ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfAllocatedBytes()
+    m_vocAccess.GetNumberOfEnglishWords()
+    , m_vocAccess.GetNumberOfVocPairs()
+    , m_vocAccess.GetNumberOfAllocatedBytes()
     , wxGetApp().m_parsebyrise.m_stdmap_RuleName2RuleID.size()
     , wxGetApp().m_translateparsebyrisetree.
       m_stdmap_p_translationrule2ConditionsAndTranslation.size()
@@ -675,8 +673,7 @@ void EVENT_HANDLER_CLASS_NAME::OnLoadDictionaryTimerEvent(wxTimerEvent &event)
 //    GetNumberOfBytesRead();
   SetTitle( wxString::Format( wxT("%u"), //wxGetApp().m_dictionaryFileLineNumber
 //    ::wxGetApp().s_numberOfVocabularyPairs
-    ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfVocPairs()
-
+    m_vocAccess.GetNumberOfVocPairs()
      ) );
 //  SetTitle( wxString::Format(wxT("%f"), TUchemnitzDictionaryReader::m_numBytesRead ) );
 }
@@ -697,8 +694,8 @@ void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
 //#else
   OperatingSystem::GetTimeCountInNanoSeconds(beginTimeCountInNanoSeconds);
 //#endif
-  VocablesForWord::voc_container_type * p_voc_container = ::wxGetApp().
-    s_dictReaderAndVocAccess.m_vocAccess.find(psv, dw);
+  VocablesForWord::voc_container_type * p_voc_container = m_vocAccess.find(
+    psv, dw);
 //#ifdef WIN32
 //  Windows_API::GetTimeCountInNanoSeconds(endTimeCountInNanoSeconds);
 //#else
@@ -737,7 +734,7 @@ void EVENT_HANDLER_CLASS_NAME::OnTimerEvent(wxTimerEvent &event)
 {
   SetTitle( wxString::Format(wxT("%u"), //wxGetApp().m_dictionaryFileLineNumber
 //    ::wxGetApp().s_numberOfVocabularyPairs
-    ::wxGetApp().s_dictReaderAndVocAccess.m_vocAccess.GetNumberOfVocPairs()
+    m_vocAccess.GetNumberOfVocPairs()
      ) );
   //TODO show status as "bytes read"/"total bytes" :
 //  wxGetApp().m_dictionaryReader.GetCurrentPosInByte();
@@ -846,8 +843,8 @@ void EVENT_HANDLER_CLASS_NAME::OnTranslateButton( wxCommandEvent & wxcmd )
 
 void EVENT_HANDLER_CLASS_NAME::OnTranslateOnTextChanges( wxCommandEvent & wxcmd )
 {
-  ::wxGetApp().m_GUIattributes.m_translateOnTextChanges = wxcmd.IsChecked();
-  if( ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
+  r_GUIattributes.m_translateOnTextChanges = wxcmd.IsChecked();
+  if( r_GUIattributes.m_translateOnTextChanges )
     Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
     , wxTextEventHandler(EVENT_HANDLER_CLASS_NAME::OnInputTextChanges) );
   else

@@ -79,11 +79,13 @@ namespace wxWidgets
       const std::string grammarRuleName =  c_iterRuleID2RuleName->second;
       std::map<std::string, std::string>::const_iterator
         c_iterGrammarRuleName2filePath =
-        wxGetApp().m_std_map_grammarRuleName2filepath.find(
+        //TODO make reference to the std::map in constructor and use here
+        wxGetApp().m_configurationHandler.m_std_map_grammarRuleName2filepath.find(
         grammarRuleName
         );
       if( c_iterGrammarRuleName2filePath !=
-        wxGetApp().m_std_map_grammarRuleName2filepath.end() )
+        //TODO make reference to the std::map in constructor and use here
+        wxGetApp().m_configurationHandler.m_std_map_grammarRuleName2filepath.end() )
       {
 //                  wxString filePath = //(c_iterGrammarRuleName2filePath->second.c_str() );
 //                    GetwxString_Inline(c_iterGrammarRuleName2filePath->second);

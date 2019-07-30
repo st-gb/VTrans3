@@ -75,7 +75,7 @@ namespace wxWidgets
     p_wxmenu->AppendCheckItem(ID_Translate_On_Text_Changes, 
       wxT("translate on text changes") );
     p_wxmenu->Check(ID_Translate_On_Text_Changes, 
-      ::wxGetApp().m_GUIattributes.m_translateOnTextChanges);
+      ::wxGetApp().m_configurationHandler.m_GUIattributes.m_translateOnTextChanges);
     //p_wxmenubar->Append( p_wxmenu , wxT("&settings")) ;
 
     p_wxmenu->AppendCheckItem(ID_Double_Buffer_ParseTreePanel, 
@@ -140,12 +140,12 @@ namespace wxWidgets
   void MainFrame::EnableDictAccessingActions(const bool enable)
   {
     wxString helpText;
-    if( enable && ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
+    if( enable && r_GUIattributes.m_translateOnTextChanges )
       Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
         , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );
     else
     {
-      if( ! ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
+      if( ! r_GUIattributes.m_translateOnTextChanges )
       {
         helpText = wxT("disabled because currently collecting dictionary statistics");
   //      Disconnect (wxEVT_COMMAND_MENU_SELECTED, //wxEventType eventType, 
@@ -186,6 +186,7 @@ namespace wxWidgets
   }
 
   MainFrame::MainFrame(
+    VTransApp & vtransApp,
     const wxString & cr_wxstrTitle,
     const wxPoint & cr_wxpointPos,
     const wxSize & cr_wxsize
@@ -210,7 +211,8 @@ namespace wxWidgets
         //Necessary for showing a title bar
         | wxDEFAULT_FRAME_STYLE
       )
-    , MainWindowBase(this)
+    , MainWindowBase(this, vtransApp)
+    //, r_GUIattributes(vtransApp.m_configurationHandler.m_GUIattributes)
 //    , m_parsebyrise( ::wxGetApp() )
   {
     wxIcon wxiconThisDialog( /*VT_icon_xpm*/ wxGetApp().m_wxiconVTrans ) ;
@@ -219,7 +221,7 @@ namespace wxWidgets
     mp_wxsplitterwindowOutmost = new wxSplitterWindow( //NULL
       (wxFrame *) this, wxID_ANY ) ;
     AddInputAndOutputPanels();
-    if( ::wxGetApp().m_GUIattributes.m_translateOnTextChanges )
+    if( r_GUIattributes.m_translateOnTextChanges )
     {
       Connect(ID_InputText, wxEVT_COMMAND_TEXT_UPDATED //wxEventType eventType, 
         , wxTextEventHandler(wxWidgets::MainFrame::OnInputTextChanges) );

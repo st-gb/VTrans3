@@ -69,6 +69,7 @@ wxParseTreePanel::wxParseTreePanel(
   :wxPanel(
     parent
     )
+  , mr_GUIattributes(wxGetApp ().m_configurationHandler.m_GUIattributes)
 {
   mp_parsebyrise = NULL ;
 }
@@ -88,7 +89,8 @@ wxParseTreePanel::wxParseTreePanel(
       size,
       style ,
       name )
-  , m_pointSizeOfFont(wxGetApp ().m_GUIattributes.m_fontSizeInPoint)
+  , mr_GUIattributes(wxGetApp ().m_configurationHandler.m_GUIattributes)
+  , m_pointSizeOfFont(mr_GUIattributes.m_fontSizeInPoint)
   , m_p_wxbitmapBuffer(NULL)
 {
 //  Connect(wxEVT_PAINT, wxPaintEventHandler(wxParseTreePanel::OnPaint));
@@ -253,10 +255,10 @@ void wxParseTreePanel::RedrawViaEventLoop()
 void wxParseTreePanel::DecreaseFontSizeBy1Point()
 {
   const fastestUnsignedDataType currentPointSizeOfFont = m_pointSizeOfFont;
-  if( m_pointSizeOfFont > wxGetApp ().m_GUIattributes.m_minFontSizeInPoint)
+  if( m_pointSizeOfFont > mr_GUIattributes.m_minFontSizeInPoint)
     -- m_pointSizeOfFont;
   else
-    m_pointSizeOfFont = wxGetApp ().m_GUIattributes.m_minFontSizeInPoint;
+    m_pointSizeOfFont = mr_GUIattributes.m_minFontSizeInPoint;
   /** If the font size changed. */
   if( currentPointSizeOfFont != m_pointSizeOfFont )
   {
@@ -391,7 +393,7 @@ void wxParseTreePanel::DrawGrammarPartParentToChildLine(
 }
 
 /** May be called from outside of this class. */
-void wxParseTreePanel::DrawParseTree( BottomUpParser & r_bottomUpParser
+void wxParseTreePanel::DrawParseTree(VTrans3::BottomUpParser & r_bottomUpParser
   /*wxDC & r_wxdc*/)
 {
   LOGN_DEBUG("begin--address of BottomUpParser object:" << & r_bottomUpParser)
@@ -828,8 +830,8 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
     LOGN_DEBUG("pointer to data is NULL->ending")
     return;
   }
-  if( m_pointSizeOfFont < wxGetApp ().m_GUIattributes.m_minFontSizeInPoint)
-    m_pointSizeOfFont = wxGetApp ().m_GUIattributes.m_minFontSizeInPoint;
+  if( m_pointSizeOfFont < mr_GUIattributes.m_minFontSizeInPoint)
+    m_pointSizeOfFont = mr_GUIattributes.m_minFontSizeInPoint;
   wxFont font = r_wxdc.GetFont ();
   font.SetPointSize (m_pointSizeOfFont);
   r_wxdc.SetFont(font);
@@ -1251,7 +1253,7 @@ void wxParseTreePanel::OnPaint(wxPaintEvent & event)
      * i.e. if any drawing done on the window is really done on a temporary 
      * backing surface and transferred to the screen all at once later." */
     const bool isDoubleBuffered = IsDoubleBuffered();
-    if( ::wxGetApp().m_GUIattributes.m_doubleBufferParseTreePanel )
+    if( mr_GUIattributes.m_doubleBufferParseTreePanel )
     {
       wxAutoBufferedPaintDC wxAutoBufferedPaintDC(this);
       DrawParseTreeBeginningFromLeaves( wxAutoBufferedPaintDC
@@ -1346,11 +1348,11 @@ void wxParseTreePanel::OnPopupClick(wxCommandEvent & evt)
 // 	void * data = static_cast<wxMenu *>(evt.GetEventObject())->GetClientData();
  	switch( evt.GetId() ) {
  		case showTranslatedWord:
-      ::wxGetApp().m_GUIattributes.m_bShowTranslation = evt.IsChecked();
+      mr_GUIattributes.m_bShowTranslation = evt.IsChecked();
       DrawParseTree(::wxGetApp().m_parsebyrise) ;
  			break;
  		case showGrammarPartAddress:
-      ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress = evt.IsChecked();
+      mr_GUIattributes.m_bShowGrammarPartAddress = evt.IsChecked();
        DrawParseTree(::wxGetApp().m_parsebyrise) ;
  			break;
  		case decreaseFontSize:
@@ -1371,11 +1373,12 @@ void wxParseTreePanel::OnContextMenuMouseButtonDown(wxMouseEvent & evt)
  	wxMenu mnu;
 // 	mnu.SetClientData( data );
   wxMenuItem * item;
- 	item = mnu.AppendCheckItem(showTranslatedWord /*ID_SOMETHING*/, wxT("show translated word") );
-  item->Check(::wxGetApp().m_GUIattributes.m_bShowTranslation);
+  item = mnu.AppendCheckItem(showTranslatedWord /*ID_SOMETHING*/, 
+    wxT("show translated word") );
+  item->Check(mr_GUIattributes.m_bShowTranslation);
  	item = mnu.AppendCheckItem(showGrammarPartAddress, 
     wxT("show memory address") );
-  item->Check(::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress);
+  item->Check(mr_GUIattributes.m_bShowGrammarPartAddress);
  	mnu.Append(decreaseFontSize, wxT("decrease font size") );
  	mnu.Append(increaseFontSize, wxT("increase font size") );
  	mnu.AppendRadioItem(bufferDisplay , wxT("buffer drawing") );

@@ -112,11 +112,6 @@ else( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
 endif( ${COMPILE_WITH_OPENMP} STREQUAL "YES" )
 endif( DEFINED COMPILE_WITH_OPENMP )
 
-message("MINI_XML_ROOT_DIR: ${MINI_XML_ROOT_DIR}")
-SET(MINI_XML_SRC_DIR ${MINI_XML_ROOT_DIR})
-add_subdirectory(./IO
-  #EXCLUDE_FROM_ALL
-  )
 if( ANDROID_NDK )
 else( ANDROID_NDK )
   #add_subdirectory(Xerces
@@ -203,7 +198,7 @@ endif(WIN32)
 set(BASIC_TRANSLATION_SOURCE_FILES
   ${BASIC_TRANSLATION_SOURCE_FILES}
 	${COMMON_SOURCECODE_ROOT_PATH}/Controller/character_string/stdtstr.cpp
-
+  ${VTRANS3_ROOT_PATH}/multi_threaded_translation/TranslateThreadProc.cpp
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/preprocessor_logging_macros.cpp
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/Logger.cpp
   ${COMMON_SOURCECODE_ROOT_PATH}/Controller/Logger/LogLevel.cpp
@@ -248,18 +243,6 @@ SET( VTRANS_ROOT_PATH  ${VTRANS3_ROOT_PATH} )
 #for VTRANS_PARSE_SRC_FILE_PATHS, TU_CHEMNITZ_DICT_ACCESS_FILE_PATHS
 include(${VTRANS3_ROOT_PATH}/VTrans3allSrcFilesNeededToParse.cmake)
 
-set(SOURCE_FILE_PATHS
-  ${SOURCE_FILE_PATHS}
-  ${VTRANS_PARSE_SRC_FILE_PATHS}
-  ${TU_CHEMNITZ_DICT_ACCESS_FILE_PATHS}
-  ${DICT_CC_DICT_ACCESS_SRC_FILE_PATHS}
-  ${VTRANS_TRANSLATE_STAGE_SRC_FILE_PATHS}
-  ${BASIC_TRANSLATION_SOURCE_FILES}
-  ${MINI_XML_SOURCE_FILES}
-  ${CONFIGURATION_READER_SOURCE_FILES}
-  ${ATTRIBUTE_DATA_SOURCE_FILES}
-)
-
 if ( ${EXE_TYPE} STREQUAL "dynlib" )
   set(CREATE_DYN_LIB 1)
 endif( ${EXE_TYPE} STREQUAL "dynlib" )
@@ -283,6 +266,7 @@ message("include directories:${INCLUDE_DIRS}")
 
 if( ${EXE_TYPE} STREQUAL "wxGUI")
   set(EXE_NAME wx${PROJECT_NAME}_GUI)
+  set(TRANSLATE 1)
 endif( ${EXE_TYPE} STREQUAL "wxGUI" )
 
 if( ${EXE_TYPE} STREQUAL "console")
@@ -333,11 +317,33 @@ if( ${EXE_TYPE} STREQUAL "Android")
 endif( ${EXE_TYPE} STREQUAL "Android")
 
 if( CREATE_DYN_LIB )#Android, native dyn lib
+  set(TRANSLATE 1)
+endif()
+if( TRANSLATE )
   set( CXX_DEFINITIONS
     ${CXX_DEFINITIONS}
     -DUSE_TRANSLATION_RULES
     )
 endif()
+
+message("MINI_XML_ROOT_DIR: ${MINI_XML_ROOT_DIR}")
+SET(MINI_XML_SRC_DIR ${MINI_XML_ROOT_DIR})
+add_subdirectory(./IO
+  #EXCLUDE_FROM_ALL
+  )
+
+set(SOURCE_FILE_PATHS
+  ${SOURCE_FILE_PATHS}
+  ${VTRANS_PARSE_SRC_FILE_PATHS}
+  ${TU_CHEMNITZ_DICT_ACCESS_FILE_PATHS}
+  ${DICT_CC_DICT_ACCESS_SRC_FILE_PATHS}
+  ${VTRANS_TRANSLATE_STAGE_SRC_FILE_PATHS}
+  ${BASIC_TRANSLATION_SOURCE_FILES}
+  ${MINI_XML_SOURCE_FILES}
+  ${CONFIGURATION_READER_SOURCE_FILES}
+  ${ATTRIBUTE_DATA_SOURCE_FILES}
+)
+
 message("CXX_DEFINITIONS for compiling:${CXX_DEFINITIONS}")
 add_definitions(${CXX_DEFINITIONS})
 
@@ -399,6 +405,8 @@ if(DEFINED WXWIDGETS)
   target_link_libraries(${EXE_NAME} ${wxWidgets_LIBRARIES})
   message ("wxWidgets type: ${wxWidgets_CONFIGURATION}")
 endif (DEFINED WXWIDGETS)
+
+message("EXE_NAME:${EXE_NAME}")
 
 #target_link_libraries (VTrans3 wxWidgets)
 

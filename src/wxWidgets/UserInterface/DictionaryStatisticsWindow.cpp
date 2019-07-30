@@ -63,7 +63,8 @@ void DictionaryStatisticsWindow::OnTimerEvent(wxTimerEvent & e)
   wxWidgets::VTransApp & vt = ::wxGetApp();
   fastestUnsignedDataType itemNo;
   //memory_barrier ();
-  vt.s_dictReaderAndVocAccess.m_vocAccess.GetCollectDictionaryStatisticsStatus(itemNo);
+  vt.m_parsebyrise.s_dictReaderAndVocAccess.m_vocAccess.
+    GetCollectDictionaryStatisticsStatus(itemNo);
    SetTitle(wxString::Format(wxT("current item no: %u"), itemNo) );
    
   UpdateUI();
@@ -206,7 +207,8 @@ void DictionaryStatisticsWindow::GetStatistics()
 //  r_englishWordClass2CounterMap.insert(std::make_pair(EnglishWord::plural_noun, 0) );
 //  r_englishWordClass2CounterMap.insert(std::make_pair(EnglishWord::adjective, 0) );
   
-  vt.s_dictReaderAndVocAccess.m_vocAccess.GetStatisticsInSeparateThread(//GetStatistics(
+  vt.m_parsebyrise.s_dictReaderAndVocAccess.m_vocAccess.
+    GetStatisticsInSeparateThread(//GetStatistics(
     //numberOfWordClassRepresentations, numArrayEles 
     //englishWordClass2CounterMap
     m_collectDictStatsThreadFuncParams,

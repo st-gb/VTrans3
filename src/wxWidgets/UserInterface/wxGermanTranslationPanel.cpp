@@ -472,16 +472,25 @@ void GetColorAccordingToGrammarPart(
 //    }
     std::string std_strGrammarPartName = wxGetApp().m_parsebyrise.
       GetGrammarPartName(wGrammarPartID);
-    NodeTrieNode<uint32_t> * p_ntn = wxGetApp().
-      m_nodetrie_ui32GrammarPartName2colour.contains_inline(
-      (unsigned char *) std_strGrammarPartName.c_str(),
-      (NodeTrie<uint32_t>::size_type) std_strGrammarPartName.length(),
-      true //bool bFullMatch
-      );
-    if( p_ntn )
-      r_std_set_ui32Colour.insert( p_ntn->m_member);
+    
+//    NodeTrieNode<uint32_t> * p_ntn = wxGetApp().m_configurationHandler.
+//      m_nodetrie_ui32GrammarPartName2colour.contains_inline(
+//      (unsigned char *) std_strGrammarPartName.c_str(),
+//      (NodeTrie<uint32_t>::size_type) std_strGrammarPartName.length(),
+//      true //bool bFullMatch
+//      );
+    std::map<std::string, uint32_t>::iterator iter = wxGetApp().
+      m_configurationHandler.m_ui32GrammarPartName2colourContainer.find(
+      std_strGrammarPartName);
+    
+//    if( p_ntn )
+//      r_std_set_ui32Colour.insert( p_ntn->m_member);
+    if( iter != wxGetApp().m_configurationHandler.
+      m_ui32GrammarPartName2colourContainer.end() )
+      r_std_set_ui32Colour.insert(iter->second);
     else
       r_std_set_ui32Colour.insert( wxBLACK->GetPixel() );
+
     ++ c_iter_std_set_grammarpartpointerandconcatenationid;
   }
 }

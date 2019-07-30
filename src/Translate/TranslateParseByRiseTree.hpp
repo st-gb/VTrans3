@@ -166,7 +166,7 @@ public:
 //    , std::vector<std::vector<TranslationAndConsecutiveID> > &
 //      r_stdvec_stdvecTranslationAndConsecutiveID
     ) ;
-#ifdef COMPILE_AS_EXECUTABLE
+#if defined(COMPILE_AS_EXECUTABLE) || defined(COMPILE_AS_GUI)
   void TestIfTranslationRuleApplies(
     //    std::vector<GrammarPart *>::const_iterator
     //      c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex

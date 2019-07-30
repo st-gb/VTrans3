@@ -12,7 +12,7 @@
 #include "DrawGrammarPartAttributes.hpp"
 #include <Attributes/GrammarPartLocationWithinWindow.hpp>
 //base class ParseTreeTraverser::DirectingLeavesMultipleIterTraverser
-#include <Parse/DirectingLeavesMultipleIterTraverser.hpp>
+#include <ParseTree/DirectingLeavesMultipleIterTraverser.hpp>
 #include <map> //class std::map
 //#include <wx/dc.h>
 #include <wx/gdicmn.h> //class wxSize
@@ -20,13 +20,15 @@
 
 //Forward declarations
 class GrammarPart ;
+class GUIattributes;
 class wxDC ;
 
 class DrawParseTreeTraverser
   : public ParseTreeTraverser::DirectingLeavesMultipleIterTraverser
 {
+  GUIattributes & gUIattributes;
 public:
-  BottomUpParser * mp_parsebyrise ;
+  VTrans3::BottomUpParser * mp_parsebyrise ;
   wxColor m_wxcolor;
   fastestUnsignedDataType m_stringHeigth;
   fastestUnsignedDataType m_currentParseTreeLeftEndInPixels ;
@@ -35,7 +37,7 @@ public:
   wxDC * mp_wxdc ;
   DrawParseTreeTraverser(
     wxDC * p_wxdcm ,
-    BottomUpParser *,
+    VTrans3::BottomUpParser *,
     GrammarPart * p_grammarpart
     );
   virtual

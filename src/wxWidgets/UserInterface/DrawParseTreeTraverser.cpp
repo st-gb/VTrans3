@@ -31,7 +31,7 @@ using namespace wxWidgets;
 
 DrawParseTreeTraverser::DrawParseTreeTraverser(
   wxDC * p_wxdc ,
-  BottomUpParser * p_bottomUpParser ,
+  VTrans3::BottomUpParser * p_bottomUpParser ,
   GrammarPart * p_grammarpart
   )
   : ParseTreeTraverser::DirectingLeavesMultipleIterTraverser(
@@ -42,6 +42,7 @@ DrawParseTreeTraverser::DrawParseTreeTraverser(
   , m_currentParseTreeLeftEndInPixels(0)
   , m_wParseLevelCountedFromRoot(0)
   , mp_wxdc ( p_wxdc )
+  , gUIattributes(::wxGetApp().m_configurationHandler.m_GUIattributes)
 {
 //  wxFont wxfont = p_wxdc->GetFont() ;
 //  wxfont.SetPointSize( 8 ) ;
@@ -106,8 +107,6 @@ inline fastestUnsignedDataType DrawParseTreeTraverser::DrawGrammarPartAtts(
   const wxString & wxstrGrammarPartMemoryAddress = drawGrammarPartAttributes.m_wxstrGrammarPartMemoryAddress;
   const wxString & wxstrGrammarPartID = drawGrammarPartAttributes.m_wxstrGrammarPartID;
   const wxString & wxstrConcatenationID = drawGrammarPartAttributes.m_wxstrConcatenationID;
-  
-  const GUIattributes & gUIattributes = ::wxGetApp().m_GUIattributes;
   
   fastestUnsignedDataType textWidthInPixels = 0;
   
@@ -185,7 +184,7 @@ void DrawParseTreeTraverser::LeaveFound()
 
 //  GetGermanTranslationExtent();
   wxString wxstrGermanTranslation;
-  if( ::wxGetApp().m_GUIattributes.m_bShowTranslation )
+  if( gUIattributes.m_bShowTranslation )
   {
     wxstrGermanTranslation = //GetwxString_Inline(p_pg->m_stdstrTranslation);
       wxString(p_grammarpart->m_stdstrTranslation.c_str(), wxConvISO8859_1);
@@ -213,8 +212,7 @@ void DrawParseTreeTraverser::LeaveFound()
 
   const fastestUnsignedDataType yCoord = DrawRectangle(textWidthInPixels);
 
-  m_wxcolor.Set( GetwxString_Inline(
-    ::wxGetApp().m_GUIattributes.m_std_strGrammarPartIDcolor) );
+  m_wxcolor.Set(GetwxString_Inline(gUIattributes.m_std_strGrammarPartIDcolor) );
   mp_wxdc->SetTextForeground(m_wxcolor);
 #ifdef _DEBUG
   const wxFont & font = mp_wxdc->GetFont();
@@ -286,7 +284,7 @@ wxSize DrawParseTreeTraverser::GetGrammarPartNameExtent(
   drawGrammarPartAttributes.m_wxstrGrammarPartName = //wxString( r_stdstrGrammarPartName ) ;
     GetwxString_Inline(r_stdstrGrammarPartName);
   
-  if( ::wxGetApp().m_GUIattributes.m_bShowGrammarPartAddress )
+  if( gUIattributes.m_bShowGrammarPartAddress )
   {
     //hex. addresses are easier to compare with values in debugger mode.
     if( bShowGrammarPartAddressInHex )

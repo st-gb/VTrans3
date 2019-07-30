@@ -50,6 +50,7 @@ namespace wxWidgets
 //    wxSplitterWindow * mp_wxsplitterwindow ;
   public:
     MainFrame(
+      VTransApp &,
       const wxString & cr_wxstrTitle = wxEmptyString,
       const wxPoint & pos = wxDefaultPosition,
       const wxSize & size = wxDefaultSize

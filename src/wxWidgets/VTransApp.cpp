@@ -122,11 +122,12 @@ void VTransApp::CreateAndShowMainWindow() {
   //    );
   /*m_p_wx_text_input_dialog*/ //m_p_mainWindow = p_wx_text_input_dialog ;
   m_p_mainWindow = new MainFrame(
-          wxEmptyString,
-          wxDefaultPosition,
-          //TODO read size from config file and pass it here
-          wxSize(500, 400)
-          );
+    *this,
+    wxEmptyString,
+    wxDefaultPosition,
+    //TODO read size from config file and pass it here
+    wxSize(500, 400)
+    );
   //      wxWidgets::MainFrame * p_mainframe = new wxWidgets::MainFrame(
   //        wxT("dfd"), wxPoint(0,0) , wxSize(400,400)
   //        ) ;
@@ -281,7 +282,7 @@ bool VTransApp::HandleCommandLineArgs() {
       //main config file's full path"
       << argv[CurrWorkDirProgArgIndex] << "\"")
   }
-  Init(std_strMainConfigFilePath);
+  BYTE initCode = Init(std_strMainConfigFilePath);
   //  }
   //  else
   //  {
@@ -289,9 +290,13 @@ bool VTransApp::HandleCommandLineArgs() {
   //      "argument ->exiting" )
   //      ) ;
   //  }
+  
+  const bool continueInEvtLoop = 
   //Return true to continue to run the (main loop of ) this program.
+    initCode == TranslationControllerBaseClass::InitFunction::success;
   return //false ;
-  true;
+    //true;
+    continueInEvtLoop;
 }
 
 void VTransApp::HandleEvent(
@@ -466,7 +471,7 @@ bool VTransApp::OnInit() {
   //  g_logger.AddExcludeFromLogging( stdstr ) ;
   LOGN_DEBUG(/*"VTransApp::OnInit()"*/ "")
           //ParseByRise parsebyrise ;
-
+  //TODO Continue even if loading (main) config file(s) failed?
   return HandleCommandLineArgs();
   //  return false ;
 }

@@ -6,15 +6,22 @@ message("calling MiniXML's configure")
 execute_process(COMMAND "./configure" WORKING_DIRECTORY ${MINI_XML_ROOT_DIR})
 endif()
 
+#If only parsing/creating the parse tree is needed.
 set(MINI_XML_SOURCE_FILES
-  ${VTRANS3_ROOT_PATH}/IO/MiniXML/MiniXMLconfigReader.cpp
   ${VTRANS3_ROOT_PATH}/IO/MiniXML/GrammarRuleFileReader.cpp
-	${VTRANS3_ROOT_PATH}/IO/MiniXML/MainConfigFileReader.cpp
-	${VTRANS3_ROOT_PATH}/IO/MiniXML/TranslationRuleFileReader.cpp
-	${VTRANS3_ROOT_PATH}/IO/MiniXML/TranslationRuleFile_EndXMLelement.cpp
-	${VTRANS3_ROOT_PATH}/IO/MiniXML/VocAttributeDefintionHandler.cpp
-	${VTRANS3_ROOT_PATH}/IO/MiniXML/MiniXMLconfigReader.cpp
+  ${VTRANS3_ROOT_PATH}/IO/MiniXML/MainConfigFileReader.cpp
+  ${VTRANS3_ROOT_PATH}/IO/MiniXML/MiniXMLconfigReader.cpp
 )
+
+if( TRANSLATE )#If also translating the parse tree should be possible.
+  set(MINI_XML_SOURCE_FILES
+    ${MINI_XML_SOURCE_FILES}
+    ${VTRANS3_ROOT_PATH}/IO/MiniXML/ReadTranslationRuleFile.cpp
+    ${VTRANS3_ROOT_PATH}/IO/MiniXML/TranslationRuleFile_EndXMLelement.cpp
+    ${VTRANS3_ROOT_PATH}/IO/MiniXML/TranslationRuleFileReader.cpp
+    ${VTRANS3_ROOT_PATH}/IO/MiniXML/VocAttributeDefintionHandler.cpp
+    )
+endif()
 
 if( ANDROID_NDK )#TODO change to ~ "if(USE_TRANSLATE_STAGE)"
   set(MINI_XML_SOURCE_FILES

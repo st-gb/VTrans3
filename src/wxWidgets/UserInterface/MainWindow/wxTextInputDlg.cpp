@@ -36,7 +36,8 @@
 #endif
 
 #include "wxTextInputDlg.hpp"
-#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
+///class OneLinePerWordPair
+#include <IO/dictionary/VTrans2FileFormat/VTransDictFormatReader.hpp>
 
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN()
 

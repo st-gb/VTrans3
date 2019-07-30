@@ -33,10 +33,12 @@
 //#include <Attributes/DrawGrammarPartAttributes.hpp>
 #include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 
-//Forward declarations (faster than #include)
+///Forward declarations (faster than #include)
 class GrammarPartLocationWithinWindow ;
 class GrammarPart ;
-class BottomUpParser ;
+class GUIattributes;
+namespace VTrans3 {
+class BottomUpParser; }
 class wxBitmap;
 class wxDC ;
 
@@ -46,10 +48,11 @@ class wxParseTreePanel
   fastestUnsignedDataType m_pointSizeOfFont;
     WORD m_wParseLevel ;
     wxSize m_wxsizeClientRect;
-    BottomUpParser * mp_parsebyrise ;
+  VTrans3::BottomUpParser * mp_parsebyrise ;
     wxBitmap * m_p_wxbitmapBuffer;
     wxBitmap m_wxbitmapBuffer;
     wxMemoryDC m_wxmemorydc;
+  GUIattributes & mr_GUIattributes;
     std::map<WORD,DWORD>
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
     std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2wCenter ;
@@ -129,7 +132,7 @@ public:
 	  WORD wParseLevel ,
 	  GrammarPart * p_grammarpart
 	  ) ;
-	void DrawParseTree( BottomUpParser & 
+  void DrawParseTree(VTrans3::BottomUpParser & 
             /*wxDC & r_wxdc*/) ;
   void DrawParseTreeBeginningFromLeaves(
     //Use base class wxDC, so subclasses of it can be used as actual parameters.

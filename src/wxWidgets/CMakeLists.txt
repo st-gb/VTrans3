@@ -35,7 +35,7 @@ set(SOURCE_FILE_PATHS
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/MainWindow/EventHandlerFunctions.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/MainWindow/MainFrame.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/MainWindow/MainFrame_AddInOutCtrls.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/MainWindow/wxTextInputDlg.cpp
+  #${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/MainWindow/wxTextInputDlg.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/MainWindow/MainWindowBase.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/ParseRules/ParseRulesListCtrl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/UserInterface/ParseRules/ShowParseRulesDialog.cpp

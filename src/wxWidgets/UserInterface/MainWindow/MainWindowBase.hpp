@@ -17,9 +17,15 @@
 #include <wxWidgets/user_interface_control_actions.h>
 #include <Controller/thread_type.hpp> //typedef VTrans::thread_tyoe
 #include <wxWidgets/UserInterface/LogEntries/LogEntriesDialog.hpp>
+///typedef VocAccessType
+#include <Controller/DictReaderAndVocAccess/dictReaderAndVocAccess_type.hpp>
 
-class BottomUpParser;
+///Forward declarations (faster than #include)
+class GUIattributes;
+namespace VTrans3{ class BottomUpParser;}
 class TranslationControllerBase;
+namespace wxWidgets {
+  class VTransApp;}
 class wxBoxSizer;
 class wxGermanTranslationPanel;
 class wxParseTreePanel ;
@@ -48,6 +54,8 @@ namespace wxWidgets
   protected:
     /** Member variables for multi threaded translations. */
     VTrans::thread_type m_translateThread;
+    GUIattributes & r_GUIattributes;
+    VTrans3::VocAccessType & m_vocAccess;
     std::string m_std_strWholeInputText;
     TranslationResult m_translationResult;
     /** Member variables for multi threaded translations END. */
@@ -56,10 +64,10 @@ namespace wxWidgets
     LogEntriesDialog * m_p_logEntriesDialog;
   public:
     static unsigned s_windowID;
-    BottomUpParser & m_parsebyrise;
+    VTrans3::BottomUpParser & m_parsebyrise;
     TranslationControllerBase & m_translationcontrollerbase;
   public:
-    MainWindowBase(wxTopLevelWindow * p_mainwindow);
+    MainWindowBase(wxTopLevelWindow * p_mainwindow, VTransApp &);
 //    MainWindowBase(const MainWindowBase& orig);
     virtual ~MainWindowBase();
     

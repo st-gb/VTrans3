@@ -36,7 +36,8 @@ namespace VTrans
           1
           );
         
-        if( p_translateParameters->m_p_translationControllerBase->m_vbContinue )
+        if( p_translateParameters->m_p_translationControllerBase->
+           m_translationProcess.Continues() )
         {
           long double timeCountInSecondsAfterTranslation;
           OperatingSystem::GetTimeCountInSeconds(timeCountInSecondsAfterTranslation);
@@ -47,8 +48,11 @@ namespace VTrans
             m_p_i_userInterface->
             UpdateAfterTranslation();
         }
-        else
-          p_translateParameters->m_p_translationControllerBase->m_vbContinue = true;
+//        else
+          //TODO What's the sense of this instruction? Whether to continue 
+          // should be determined by the user.
+//          p_translateParameters->m_p_translationControllerBase->
+//            m_translationProcess.SetContinue(true);
 
         /** Should have been allocated on heap before. */
         delete p_translateParameters;

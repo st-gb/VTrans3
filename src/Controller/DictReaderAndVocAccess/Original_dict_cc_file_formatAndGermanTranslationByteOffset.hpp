@@ -11,10 +11,13 @@
 
 namespace VTrans3
 {
+  ///Also used in class wxWidgets::MainWindowBase.
+  typedef VTrans3::VocabularyAccess::dict_cc::EN_DE::GermanTranslationByteOffset 
+    VocAccessType;
 class Original_dict_cc_EN_DE_AndGermanTranslationByteOffset
 {
 public:
-  VTrans3::VocabularyAccess::dict_cc::EN_DE::GermanTranslationByteOffset m_vocAccess;
+  VocAccessType m_vocAccess;
   DictionaryReader::dict_cc::EN_DE::GermanTranslationByteOffset m_dictReader;
   Original_dict_cc_EN_DE_AndGermanTranslationByteOffset()
     : m_dictReader(& m_vocAccess)

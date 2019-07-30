@@ -42,8 +42,9 @@ namespace VTrans3
     static std::string m_std_strCurrentConfigfile;
     BottomUpParser & m_parseByRise;
   #ifndef TEST_MINI_XML
-    static std::map<TranslationRule *, std::string>
-      m_std_map_p_translationrule2filepath;
+    typedef std::map<TranslationRule *, std::string>
+      TranslationRule2filePathType;
+    static TranslationRule2filePathType m_std_map_p_translationrule2filepath;
     static std::map<std::string, std::string> m_std_map_grammarRuleName2filepath;
   #endif //#ifndef TEST_MINI_XML
 
@@ -166,8 +167,17 @@ namespace VTrans3
   }
 } /* namespace VTrans3 */
 
+///Definitions of static/class variables
 /** https://stackoverflow.com/questions/7108914/what-should-happen-to-template-class-static-member-variables-with-definition-in */
 template<typename attributeType> std::map<std::string, std::string> 
   VTrans3::ConfigurationReader<attributeType>::m_std_map_grammarRuleName2filepath;
+#ifdef USE_TRANSLATION_RULES
+  /** https://stackoverflow.com/questions/7108914/what-should-happen-to-template-class-static-member-variables-with-definition-in */
+  template<typename attributeType>
+    //TODO replace by "TranslationRule2filePathType" ?
+    std::map<TranslationRule *, std::string>
+    VTrans3::ConfigurationReader<attributeType>::
+    m_std_map_p_translationrule2filepath;
+#endif
 
 #endif /* CONFIGURATIONREADER_HPP_ */

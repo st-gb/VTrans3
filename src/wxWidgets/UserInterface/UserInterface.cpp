@@ -125,9 +125,10 @@ namespace wxWidgets
       /*TUchemnitzDictionaryReader:: tcdr.read(*/
       try
       {
-        bool b = ::wxGetApp().s_dictReaderAndVocAccess.loadDictionary(
-          std_strDictFilePath.c_str() );//extractVocables( dictFilePath);
-//        if( ! b )
+        bool bSuccOpenedDict = ::wxGetApp().m_parsebyrise.
+          s_dictReaderAndVocAccess.loadDictionary(std_strDictFilePath.c_str() );
+          //extractVocables( dictFilePath);
+//        if( ! bSuccOpenedDict )
 //          ::wxGetApp().LoadingVocabularyFileFailed(std_strDictFilePath);
         AtomicExchange( (long *) & wxGetApp().m_dictionarySuccessfullyLoaded, true); 
         //::wxGetApp().LoadingDictionaryFileSucceeded();
@@ -219,13 +220,13 @@ namespace wxWidgets
 //      ::wxMessageBox( wxT("freeing memory for existing vocabulary") ) ;
       p_wxwindowParent->SetLabel( wxT("freeing memory for existing vocabulary") ) ;
 //      g_lettertree.DeleteCompleteList() ;
-      g_p_translationcontrollerbase->s_dictReaderAndVocAccess.m_vocAccess.
-        /*DeleteCompleteList()*/clear();
-      g_p_translationcontrollerbase->s_dictReaderAndVocAccess.loadDictionary(
-        std_strFilePath);
+      dictReaderAndVocAccess_type & dictReaderAndVocAccess =
+        g_p_translationcontrollerbase->m_parsebyrise.s_dictReaderAndVocAccess;
+      dictReaderAndVocAccess.m_vocAccess./*DeleteCompleteList()*/clear();
+      dictReaderAndVocAccess.loadDictionary(std_strFilePath);
       //MUST be inserted, else some grammar rules can't be applied.
 //      g_lettertree.InsertFundamentalWords() ;
-      g_p_translationcontrollerbase->s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords() ;
+      dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords() ;
 //      OneLinePerWordPair::s_dwNumberOfVocabularyPairs = 0 ;
       ::wxGetApp().s_numberOfVocabularyPairs = 0;
 //      wxMessageDialog * p_dlg = new wxMessageDialog( //NULL,
