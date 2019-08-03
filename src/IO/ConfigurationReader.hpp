@@ -54,7 +54,8 @@ namespace VTrans3
     ~ConfigurationReader();
 
     virtual bool ReadGrammarRuleFile(const std::string & cr_stdstrFilePath) = 0;
-    virtual bool ReadMainConfigFile(const std::string & cr_stdstrFilePath) = 0;
+    virtual bool ReadMainConfigFile(const std::string & cr_stdstrFilePath,
+      TranslationControllerBase &) = 0;
 #if USE_TRANSLATION_RULES
     virtual void ReadVocAttributeDefinitionFile(
       const std::string & cr_stdstrFilePath) = 0;

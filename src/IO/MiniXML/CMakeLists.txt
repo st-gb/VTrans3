@@ -1,9 +1,15 @@
 
-if(EXISTS "${MINI_XML_ROOT_DIR}/config.h")
+if( NOT ${MINI_XML_ROOT_DIR} STREQUAL "")
+  #message("MINI_XML_ROOT_DIR is defined: ${MINI_XML_ROOT_DIR}")
+ if(EXISTS "${MINI_XML_ROOT_DIR}/config.h")
+ else()
+ message("calling MiniXML's configure")
+ #generates needed "config.h"
+ execute_process(COMMAND "./configure" WORKING_DIRECTORY ${MINI_XML_ROOT_DIR})
+ endif()
 else()
-message("calling MiniXML's configure")
-#generates needed "config.h"
-execute_process(COMMAND "./configure" WORKING_DIRECTORY ${MINI_XML_ROOT_DIR})
+  message("MINI_XML_ROOT_DIR is not defined-> assuming installed header and libs")
+  SET(USE_MINI_XML_STATIC_LIBRARY 1)
 endif()
 
 #If only parsing/creating the parse tree is needed.

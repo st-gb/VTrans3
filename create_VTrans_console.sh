@@ -1,6 +1,10 @@
 #parts of NetBeans config: -DCMAKE_C_COMPILER=${IDE_CC} -DCMAKE_CXX_COMPILER=${IDE_CXX}
 #to specify build dir some of these options may work: ../build -B../build -DCMAKE_BINARY_DIR=../build --build ../build -DCMAKE_CURRENT_BINARY_DIRECTORY=/home/sg/SourceCodeManagement/VTrans3/bin
 
+#Possibly delete "CMakeCache.txt" if other (GUI etc.) builds have been done before. 
+#rm CMakeCache.txt
+#rm --recursive CMakeFiles
+
 #Edit the following variables if needed!
 
 #If using a non-absolute path when setting the C Compiler causes this: http://public.kitware.com/Bug/view.php?id=13756
@@ -35,9 +39,8 @@ EXEC="cmake -G \"$BUILD_SYSTEM_GENERATOR\" \
 -DCMAKE_CXX_FLAGS=\"-g3 -O0\" \
 -DCOMPILE_WITH_OPENMP=NO \
 -DEVALUATE_PROCESSING=YES \
-. \
 -DEXE_TYPE:STRING=console \
-./src" #where to finde the CMakeLists.txt
+./src" #where to find the CMakeLists.txt
 echo "should execute: $EXEC"
 eval $EXEC
 else

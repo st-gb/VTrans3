@@ -122,7 +122,8 @@ namespace MiniXML
      * arbitrary XML file via MiniXML. */
     static bool ReadFile(const char * const cr_stdstrFilePath, mxml_sax_cb_t sax);
     bool ReadGrammarRuleFile(const std::string & cr_stdstrFilePath );
-    bool ReadMainConfigFile(const std::string & cr_stdstrFilePath );
+    bool ReadMainConfigFile(const std::string & cr_stdstrFilePath,
+      TranslationControllerBase &);
     /** If just parsing this is not needed. */
 #if USE_TRANSLATION_RULES
     void ReadVocAttributeDefinitionFile(

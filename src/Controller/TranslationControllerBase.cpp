@@ -484,7 +484,8 @@ bool TranslationControllerBase::ReadMainConfigFile(
   OperatingSystem::GetCurrentWorkingDirA_inl(std_strCurrentWorkingDir);
   LOGN_DEBUG("begin--should open file \"" +  std_strCurrentWorkingDir +
     cr_stdstrFilePath )
-  return m_configurationHandler.ReadMainConfigFile(cr_stdstrFilePath.c_str() );
+  return m_configurationHandler.ReadMainConfigFile(cr_stdstrFilePath.c_str(),
+    *this);
 }
 
 #ifndef TEST_MINI_XML

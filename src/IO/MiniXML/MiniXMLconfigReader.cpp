@@ -148,12 +148,15 @@ namespace MiniXML
   }
 
   bool MiniXMLconfigReader::ReadMainConfigFile(
-    const std::string & cr_stdstrFilePath )
+    const std::string & cr_stdstrFilePath,
+    TranslationControllerBase & translationControllerBase)
   {
   	LOGN_DEBUG("begin")
     MiniXML::MainConfigFileReader mainConfigFileReader(
       /*m_translationController*/ m_p_UserInterface, *this);
     mxmlSetErrorCallback(error_callback);
+    VTrans3::MiniXML::VocAttributeDefintionHandler::s_p_translationController =
+      & translationControllerBase;
     return mainConfigFileReader.ProcessXML(cr_stdstrFilePath);
   }
 } /* namespace MiniXML */

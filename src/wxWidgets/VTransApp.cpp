@@ -472,7 +472,8 @@ bool VTransApp::OnInit() {
   LOGN_DEBUG(/*"VTransApp::OnInit()"*/ "")
           //ParseByRise parsebyrise ;
   //TODO Continue even if loading (main) config file(s) failed?
-  return HandleCommandLineArgs();
+  const bool runEvtLoop = HandleCommandLineArgs();
+  return runEvtLoop;
   //  return false ;
 }
 

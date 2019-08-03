@@ -271,6 +271,7 @@ endif( ${EXE_TYPE} STREQUAL "wxGUI" )
 
 if( ${EXE_TYPE} STREQUAL "console")
   set(EXE_NAME ${PROJECT_NAME}_console)
+  set(TRANSLATE 1)
 endif( ${EXE_TYPE} STREQUAL "console" )
 
 #Compiles all files in ${SOURCE_FILE_PATHS} ?!
@@ -394,17 +395,18 @@ if ( CREATE_DYN_LIB )
       message("not creating apk file because ANDROID_DIR is empty")
     endif()
   #endif()
-endif( )
+else(CREATE_DYN_LIB)
 
-if(DEFINED WXWIDGETS)
   add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
   target_link_libraries(${EXE_NAME} ${LIBRARIES})
+if(DEFINED WXWIDGETS)
   #https://wiki.wxwidgets.org/CMake
   message ("should link wxWidgets libraries ${wxWidgets_LIBRARIES} to executable")
   #This line is necessary, else linker errors: undefined reference to "wx..."
   target_link_libraries(${EXE_NAME} ${wxWidgets_LIBRARIES})
   message ("wxWidgets type: ${wxWidgets_CONFIGURATION}")
 endif (DEFINED WXWIDGETS)
+endif(CREATE_DYN_LIB)
 
 message("EXE_NAME:${EXE_NAME}")
 

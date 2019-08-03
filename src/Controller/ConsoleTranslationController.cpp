@@ -97,6 +97,7 @@ std::string ConsoleTranslationController::GetFunctionName(
 
 void ConsoleTranslationController::OutputStatistics()
 {
+#ifdef PARALLELIZE_TRANSLATION
   const int numJobs = m_multiThreadedTranslation.m_jobNumber2time.size();
   std::cout << " # jobs executed:" << numJobs << std::endl;
   std::map<fastestUnsignedDataType, long double> & jobNumber2time =
@@ -131,6 +132,7 @@ void ConsoleTranslationController::OutputStatistics()
       << "system:" << r_timeval_System.tv_sec << "s, " << r_timeval_System.tv_usec / 1000 << "ms"
       << std::endl;
   }
+#endif
 }
 
 void ConsoleTranslationController::OutputUsage()
@@ -194,6 +196,9 @@ int main(int argc, char *  argv[])
   OpenLogFile(argv[0]);
   
   ConsoleTranslationController consoleTranslationController;
+  g_p_translationcontrollerbase = & consoleTranslationController;
+  ///Init even without translating (to be able to check for memory leaks here).
+  consoleTranslationController.Init("configuration/VTrans_main_config.xml");
   if( argc > 1 )
   {
     if( strcmp(argv[1], "") == 0 )
@@ -207,10 +212,8 @@ int main(int argc, char *  argv[])
       std::cout << std_strCurrentWorkingDir << std::endl;
       
       fastestUnsignedDataType num3rdTranslationStepIterations = 1;
-      g_p_translationcontrollerbase = & consoleTranslationController;
       ProcessCommandLineArgs(argc, argv);
       
-      consoleTranslationController.Init("configuration/VTrans_main_config.xml");
       ByteArray byteArrayXMLparseTree;
       fastestUnsignedDataType maxNumThreads = consoleTranslationController.
         s_numParallelTranslationThreads;
@@ -223,8 +226,8 @@ int main(int argc, char *  argv[])
         ConsoleTranslationController::s_3rdStepTranslationFunction,
         ConsoleTranslationController::s_num3rdTranslationStepIterations
         );
-      std::string std_strParseTreeAsIndentedXML = ::GetParseTreeAsIndentedXML(
-        consoleTranslationController.m_parsebyrise );
+      std::string std_strParseTreeAsIndentedXML = consoleTranslationController.
+        m_parsebyrise.GetAsIndentedXML();
       
       std::cout << "after translate:" << std_strParseTreeAsIndentedXML;
       std::cout << "with max." << maxNumThreads;

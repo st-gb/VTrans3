@@ -42,7 +42,7 @@ namespace VTrans
   END_EVENT_TABLE()
 
   TranslationRulesListCtrl::TranslationRulesListCtrl(wxWindow * parent, int ID
-    //TODO pass reference here: ConfigurationReader::
+    //TODO pass reference here: ConfigurationReader::TranslationRule2filePathType
     //,TranslationRule2filePathType & translationRule2filePath
     )
 //    : wxListCtrl(parent, //wxID_ANY
