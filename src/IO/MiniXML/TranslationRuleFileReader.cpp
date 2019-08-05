@@ -23,7 +23,7 @@ namespace VTrans3
 {
   namespace MiniXML
   {
-    TranslationRuleFileReader * g_p_translationRuleFileReader = NULL;
+//    TranslationRuleFileReader * g_p_translationRuleFileReader = NULL;
 
     TranslationRuleFileReader::TranslationRuleFileReader(
       TranslateParseByRiseTree & r_translateparsebyrise ,
@@ -41,7 +41,7 @@ namespace VTrans3
         )
 //      , VTrans3::MiniXML::MiniXMLconfigReader( * g_p_translationcontrollerbase)
     {
-      g_p_translationRuleFileReader = this;
+//      g_p_translationRuleFileReader = this;
     }
 
     TranslationRuleFileReader::~TranslationRuleFileReader()
@@ -224,8 +224,10 @@ namespace VTrans3
     void TranslationRuleFileReader::Process(const std::string & filePath)
     {
       m_std_strFilePath = filePath;
-      MiniXMLconfigReader::ReadFile(filePath.c_str(),
-        VTrans3::MiniXML::ReadTranslationRuleFile::SAX_callback);
+      MiniXMLconfigReader::ReadFile(
+        filePath.c_str(),
+        VTrans3::MiniXML::ReadTranslationRuleFile::SAX_callback,
+        this);
     }
 
     void TranslationRuleFileReader::ShowMessageToUser(
@@ -248,9 +250,12 @@ namespace VTrans3
       void SAX_callback(
         mxml_node_t * node,
         mxml_sax_event_t event,
+        //Pass TranslationRuleFileReader object here
         void * data
         )
       {
+        TranslationRuleFileReader * p_translRuleFileReader =
+          (TranslationRuleFileReader *) data;
         const char * xmlElementName = mxmlGetElement(node);
   //        if (event == MXML_SAX_ELEMENT_CLOSE)
   //        {
@@ -264,29 +269,29 @@ namespace VTrans3
         {
           case MXML_SAX_ELEMENT_CLOSE :
             if( ::strcmp(xmlElementName, "translation_rule") == 0 )
-              g_p_translationRuleFileReader->EndTranslationRuleXMLelement(node);
+              p_translRuleFileReader->EndTranslationRuleXMLelement(node);
             else
               if( ::strcmp(xmlElementName, "concatenated_translation_rules")
                 == 0 )
             {
-              g_p_translationRuleFileReader->m_bConcatenatedTranslationRules = false;
-              ++ g_p_translationRuleFileReader->m_ui32ConcatenationID;
+              p_translRuleFileReader->m_bConcatenatedTranslationRules = false;
+              ++ p_translRuleFileReader->m_ui32ConcatenationID;
             }
             break;
           case MXML_SAX_ELEMENT_OPEN :
             if( ::strcmp(xmlElementName, "translation_rule") == 0 )
             {
-              g_p_translationRuleFileReader->HandleTranslationRuleElementName(node);
+              p_translRuleFileReader->HandleTranslationRuleElementName(node);
             }
             else
             {
 
             }
               if( ::strcmp(xmlElementName, "concatenated_translation_rules") == 0 )
-                g_p_translationRuleFileReader->m_bConcatenatedTranslationRules = true;
+                p_translRuleFileReader->m_bConcatenatedTranslationRules = true;
               else if( ::strcmp(xmlElementName, "condition") == 0 )
               {
-                g_p_translationRuleFileReader->HandleBeginOfConditionXMLelement(node);
+                p_translRuleFileReader->HandleBeginOfConditionXMLelement(node);
               }
             break;
         }

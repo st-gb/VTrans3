@@ -30,7 +30,7 @@ namespace MiniXML
         p_userInterface, bottomUpParser)
 //      m_translationController(r_translationController)
   {
-//    s_p_translationController = & r_translationController;
+    s_p_translationController = & r_translationController;
 //    s_p_userInterface = & p_userInterface;
   }
 
@@ -79,7 +79,8 @@ namespace MiniXML
 
   bool MiniXMLconfigReader::ReadFile(const //std::string & cr_stdstrFilePath
     char * const cr_stdstrFilePath,
-    mxml_sax_cb_t saxCallBack
+    mxml_sax_cb_t saxCallBack,
+    void * p_v
     )
   {
     bool fileOpenSucceeded = false;
@@ -105,7 +106,7 @@ namespace MiniXML
         MXML_NO_CALLBACK,
   //      MiniXML::MainConfigFile::loadFileCallBackFunction,
         saxCallBack, //SAX callback or MXML_NO_CALLBACK
-        NULL //sax_data
+        p_v //NULL //sax_data
         );
 //      //First node or NULL if the file could not be read.
 //      if( mxml_node_tLoadFileRes != NULL )
