@@ -138,6 +138,7 @@ public:
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
   bool CurrentThreadIsGUIthread();
+  void loadDictUpdatingStatus();
   BYTE Init(const std::string & cr_stdstrMainConfigFilePath) ;
   virtual void LoadingVocabularyFileFailed(
     const std::string & cr_stdstrFilePath) {} // = 0;

@@ -11,6 +11,9 @@
 #include <InputOutput/ReadFileContent/ReadFileContent.hpp>
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <OperatingSystem/multithread/GetCurrentThreadNumber.hpp>
+#include <OperatingSystem/multithread/nativeThreadType.hpp>///nativeThread_type
+///OperatingSystem::suspendExecution(...))
+#include <OperatingSystem/time/suspendExecution.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
 #include <data_structures/ByteArray.hpp>
@@ -306,6 +309,38 @@ bool TranslationControllerBase::CurrentThreadIsGUIthread()
   return false;
 }
 
+DWORD loadDictThreadFunc(void * p_v)
+{
+  TranslationControllerBase * p_translCtrler = (TranslationControllerBase *)
+    p_v;
+  bool bSuccess = false;
+  if(p_translCtrler)
+  {
+    bSuccess = p_translCtrler->m_parsebyrise.s_dictReaderAndVocAccess.
+      loadDictionary(p_translCtrler->m_configurationHandler.
+      m_stdstrVocabularyFilePath.c_str() );
+  }
+  return !bSuccess;
+}
+
+void TranslationControllerBase::loadDictUpdatingStatus()
+{
+  nativeThread_type thread;
+  thread.start(loadDictThreadFunc, this);
+  
+  struct tm time;
+  while(thread.IsRunning() )
+  {
+    ByteArray byteArray;
+    m_translationProcess.GetStatus2("loadDictionary", time, byteArray);
+    const int progress = *( (int *) byteArray.GetArray() );
+    std::cout << "loading dict " <<  (float) progress/ (float) INT_MAX * 100.0f
+      << "%\n";
+    OperatingSystem::suspendExecution(1);
+  }
+  //thread.GetTermCode();
+}
+
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFilePath)
 {
   LOGN_DEBUG("begin")
@@ -316,7 +351,8 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
   /** Needed for SyntaxTreePath::CreateGrammarPartIDArray(...).*/
   SyntaxTreePath::sp_userinterface = this ;
 #ifndef TEST_MINI_XML
-  IVocabularyInMainMem & r_VocAccess = m_parsebyrise.s_dictReaderAndVocAccess.GetVocAccess();
+  IVocabularyInMainMem & r_VocAccess = m_parsebyrise.s_dictReaderAndVocAccess.
+    GetVocAccess();
   r_VocAccess.SetUserInterface(this);
   r_VocAccess.InsertFundamentalWords() ;
 #endif  //#ifndef TEST_MINI_XML
@@ -331,7 +367,7 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
   return 4;
 #else
     m_std_strMainConfigFilePath = cr_stdstrMainConfigFilePath;
-    if( /*m_configurationHandler.*/m_stdstrVocabularyFilePath.empty() )
+    if( m_configurationHandler.m_stdstrVocabularyFilePath.empty() )
     {
       Message( "error: The vocabulary file path is empty") ;
 #ifndef COMPILE_AS_EXECUTABLE
@@ -361,13 +397,16 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
 //        * this, & s_dictionary);
 //      TUchemnitzDictEngWord1stReader & dictReader = (* this, s_dictionary);
   //    StartTimer();
+        
       bool bLoadingDictFileSucceeded = /*TUchemnitzDictionaryReader::*/ //tcdr.extractVocables(
 //        dictReader
 //        tuchemnitzengwordsorted1standbinarysearch
-        m_parsebyrise.s_dictReaderAndVocAccess
-        .loadDictionary(
-//      bool b = dictReader::read(
-        m_stdstrVocabularyFilePath.c_str() );
+//        m_parsebyrise.s_dictReaderAndVocAccess
+//        .loadDictionary(
+////      bool b = dictReader::read(
+//        m_configurationHandler.m_stdstrVocabularyFilePath.c_str() );
+        true;
+        loadDictUpdatingStatus();
       LOGN_INFO( "dictionary file is open:" << (bLoadingDictFileSucceeded ? "yes" : "no") )
       LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
 

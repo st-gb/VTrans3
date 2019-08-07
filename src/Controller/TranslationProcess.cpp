@@ -90,7 +90,8 @@ void TranslationProcess::SetStatus(
   signed progress
   )
 {
-  LOGN_DEBUG("begin--status code:" << statusCode << " " << pch)
+  LOGN_DEBUG("begin--status code:" << statusCode << " (as string:" <<
+    VTrans::g_statusMessages[statusCode] << ") state:" << progress << pch)
   m_critSecStatus.Enter();
   m_currentStatus.Set(statusCode, /*str*/ pch, progress);
   m_critSecStatus.Leave();
