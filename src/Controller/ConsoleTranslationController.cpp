@@ -46,8 +46,8 @@ void OpenLogFile(const char * const logFilePrefix)
   stdstrLogFilePath += "_log.";
 //  stdstrLogFilePath += logFormat;
   bool bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 4000,
-//    LogLevel::info /*warning*/
-    LogLevel::warning
+    LogLevel::info /*warning*/
+//    LogLevel::debug
     ) ;
 #ifdef __linux__
 #ifndef __ANDROID__
@@ -164,7 +164,9 @@ void ConsoleTranslationController::OutputUsage()
 
 void ProcessCommandLineArgs(int argc, char *  argv[])
 {
-  for( int argumentIndex = 1; argumentIndex < argc ; argumentIndex ++ )
+  for(int argumentIndex = 
+    ///Start with the 2nd argument (1st is program name/path itself)
+    1; argumentIndex < argc ; argumentIndex ++ )
   {
     char * pointerToEquationSign = strchr(argv[argumentIndex], '=');
     if( pointerToEquationSign != NULL )
@@ -172,8 +174,9 @@ void ProcessCommandLineArgs(int argc, char *  argv[])
       std::string optionName = std::string(argv[argumentIndex], 
         pointerToEquationSign - argv[argumentIndex]);
 
-      TranslationControllerBase::settingsName2ValueAndFunction_type::const_iterator c_iter = 
-        TranslationControllerBase::s_settingsName2valueAndFunction.find(optionName);
+      TranslationControllerBase::settingsName2ValueAndFunction_type::
+        const_iterator c_iter = TranslationControllerBase::
+        s_settingsName2valueAndFunction.find(optionName);
       if( c_iter != TranslationControllerBase::s_settingsName2valueAndFunction.end() )
       {
         std::string optionValue = std::string(pointerToEquationSign + 1);
@@ -198,10 +201,10 @@ int main(int argc, char *  argv[])
   ConsoleTranslationController consoleTranslationController;
   g_p_translationcontrollerbase = & consoleTranslationController;
   ///Init even without translating (to be able to check for memory leaks here).
-  consoleTranslationController.Init("configuration/VTrans_main_config.xml");
+  consoleTranslationController.Init("configuration/VTrans_main_config_dict.cc.xml");
   if( argc > 1 )
   {
-    if( strcmp(argv[1], "") == 0 )
+    if( strcmp(argv[1], "") == 0 )//TODO this is impossible?
       ConsoleTranslationController::OutputUsage();
     else
     try

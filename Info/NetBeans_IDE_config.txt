@@ -1,0 +1,7 @@
+-plugins:
+ -C/C++
+  -for NetBeans 10 C/C++ plugin activation leads to problem:
+   "Warning - could not install some modules:
+   com.jcraft.jsch - org.netbeans.InvalidException: Netigso:
+   /home/sg/.netbeans/10.0/modules/com-jcraft-jsch.jar:
+   Cannot start com.jcraft.jsch state remains INSTALLED after start()"

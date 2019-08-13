@@ -79,6 +79,14 @@ set( CXX_DEFINITIONS
   -DUNICODE
 )
 
+#see https://codeyarns.com/2015/05/14/build-types-in-cmake/
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+ set( CXX_DEFINITIONS
+  ${CXX_DEFINITIONS}
+  -D_DEBUG
+  )
+endif()
+
 if( DEFINED EVALUATE_PROCESSING)
   #if({EVALUATE_PROCESSING} STREQUAL "YES" )
   #According to Chandler Carruth in 

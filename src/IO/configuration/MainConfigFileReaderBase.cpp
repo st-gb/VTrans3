@@ -104,7 +104,7 @@ MainConfigFileReaderBase::MainConfigFileReaderBase (
     }
   }
 
-  void MainConfigFileReaderBase::HandleReadVocabularyAttributeDefinitionFileXMLelement(
+  void MainConfigFileReaderBase::HandleReadVocAttrDefFileXMLele(
       attributeType & xmlElement )
   {
     std::string std_strVocabularyAttributeDefinitionFilePath;
@@ -140,6 +140,7 @@ fastestUnsignedDataType GetFontSizeInPoint(
   return fontSizeInPoint;
 }
 
+//TODO use enum errorCodes as return value?
 bool MainConfigFileReaderBase::openingXMLelement(
   const char * const xmlElementName, attributeType & xmlElement)
 {
@@ -158,6 +159,7 @@ bool MainConfigFileReaderBase::openingXMLelement(
 //            int i = 0;
 //        }
 //      }
+		//TODO change to: BUILD_WITH_USER_INTERFACE
 #ifdef COMPILE_AS_EXECUTABLE
       if( ::strcmp(xmlElementName, "grammar_part") == 
          C_standard_library::strcmp::stringsAreEqual )
@@ -219,12 +221,12 @@ bool MainConfigFileReaderBase::openingXMLelement(
               C_standard_library::strcmp::stringsAreEqual )
       {
         HandleReadTranslationRuleFileXMLelement( xmlElement) ;
-          int i = 0;
+        //int i = 0;
       }
       else if( ::strcmp(xmlElementName, "vocabulary_attribute_definition_file")
                == C_standard_library::strcmp::stringsAreEqual )
       {
-        HandleReadVocabularyAttributeDefinitionFileXMLelement(xmlElement ) ;
+        HandleReadVocAttrDefFileXMLele(xmlElement ) ;
       }
 #endif
      else if( ::strcmp(xmlElementName, "vocabulary_file") == 
@@ -242,11 +244,12 @@ bool MainConfigFileReaderBase::openingXMLelement(
          m_r_configurationReader.
            /*m_configurationHandler.*/m_stdstrVocabularyFilePath =
            std_strVocabularyFilePath;
+         success = true;
        }
      }
    }
-  return success;
+  return //success;
+    true;
 }
 
 MainConfigFileReaderBase::~MainConfigFileReaderBase () { }
-

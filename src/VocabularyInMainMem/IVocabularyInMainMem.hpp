@@ -87,7 +87,8 @@ class GermanWord;
   virtual void AddVocabularyAttributes(
     enum EnglishWord::English_word_class word_class,
     void * p_v) = 0;
-  /** Delete all dictionary entries. */
+  /**Override to delete (all) temporary dictionary entries. (the entries used
+     for caching the dictionary file.*/
   virtual void clear() = 0;
   /** E.g. for freeing temporary entries read from dictionary file. */
   virtual void clearTemporaryEntries(){};

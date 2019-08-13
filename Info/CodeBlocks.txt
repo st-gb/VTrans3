@@ -1,0 +1,43 @@
+create a Code::Blocks project:
+=============================
+ -./create_VTrans_console.sh "CodeBlocks - Unix Makefiles"
+ -> creates "VTrans.cbp"
+
+set execution directory for debugging and building
+============================================
+ either:
+ 1)
+  1.menu "Project"
+  2.menu item "Properties..."
+ 2) 
+  1.context menu on project,
+  2."Properties..." item
+ then:
+  -tab "Project settings" -> field "Execution directory:" : [...]"/VTrans3/src/"
+  -tab "Build targets" -> "Build targets" "VTrans_console", 
+    "Execution working dir:" : [...]/VTrans3
+
+running/debugging:
+==================
+ from:https://stackoverflow.com/questions/1218014/provide-program-arguments-when-debugging-with-codeblocks:
+ menu "Project", menu item "Set programs' arguments..."
+
+for seeing program output
+=========================
+ install "xterm" because in menu "Settings", menu item "Environment...",
+  point "General Settings", field
+  "Terminal to lauch console programs"
+  is set to "xterm -T $TITLE -e"
+ (from https://stackoverflow.com/questions/28878911/how-can-i-get-console-output-in-code-block-ide)
+
+examine variables
+=================
+ (from https://www.dummies.com/programming/c/how-to-examine-variables-with-codeblock-debugger-for-c-programming/):
+ menu "Debug", menu item "Debugging windows" -> "Watches"
+
+disable auto-format
+===================
+menu "Settings", "Editor...", tab "Editor settings"
+ disable:
+ -"Strip trailing blanks"
+ -"End files with blank line"

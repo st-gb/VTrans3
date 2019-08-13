@@ -12,7 +12,7 @@
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <OperatingSystem/multithread/GetCurrentThreadNumber.hpp>
 #include <OperatingSystem/multithread/nativeThreadType.hpp>///nativeThread_type
-///OperatingSystem::suspendExecution(...))
+///OperatingSystem::suspendExecution(...)
 #include <OperatingSystem/time/suspendExecution.hpp>
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
@@ -57,7 +57,8 @@
 
 /** Static variables need also to be defined in 1 source file. */
 fastestUnsignedDataType TranslationControllerBase::s_numParallelTranslationThreads = 1;
-TranslationControllerBase::settingsName2ValueAndFunction_type TranslationControllerBase::s_settingsName2valueAndFunction;
+TranslationControllerBase::settingsName2ValueAndFunction_type
+ TranslationControllerBase::s_settingsName2valueAndFunction;
 #ifdef EVALUATE_PROCESSING
 std::map<std::string, TranslateParseByRiseTree::ProcessParseTree_type> 
   TranslationControllerBase::s_functionName2function;
@@ -344,6 +345,7 @@ void TranslationControllerBase::loadDictUpdatingStatus()
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFilePath)
 {
   LOGN_DEBUG("begin")
+  VocabularyAndTranslation::Init();
 //TODO : uncomment?
 //  if(cr_stdstrMainConfigFilePath.empty() )
 //    std_strMainConfigFilePath = "configuration/VTrans_main_config.xml";
@@ -723,11 +725,17 @@ void TranslationControllerBase::Settings(
 
 void TranslationControllerBase::ResetVocabularyInMainMemToFundamentalWordsOnly()
 {
-  /** Else too many words may be held in the temporary words map of a
-  * BinarySearchInDictFile if translating too often with different words. */
+  /** If not emptying then too many words may be held in the temporary words map
+  * of a BinarySearchInDictFile if translating too often with different words.*/
   m_parsebyrise.s_dictReaderAndVocAccess.m_vocAccess.clear();
-  /** Is closed by "clear()" -> reopen */
-  m_parsebyrise.s_dictReaderAndVocAccess.m_dictReader.open(m_stdstrVocabularyFilePath);
+
+  /** Is/may have been closed by "clear()" -> reopen */
+  //TODO Is (re)opening really necessary?: it is better when the dictionary
+  // file is open all the time as this may prevent files changes that make an 
+  // existing english word->byte offset index worthless.
+//  m_parsebyrise.s_dictReaderAndVocAccess.m_dictReader.open(
+//    m_configurationHandler.m_stdstrVocabularyFilePath);
+
   //  s_dictReaderAndVocAccess.loadDictionary(m_stdstrVocabularyFilePath);
   m_parsebyrise.s_dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords();
 }
@@ -747,11 +755,11 @@ void TranslationControllerBase::Translate(
       "begin")
 //  OperatingSystem::GetCurrentTimeInNanoSeconds();
 //    OperatingSystem::GetTimeCountInNanoSeconds();
-  TimeCountInNanosec_type 
-    timeCountInNanoSecondsBeforeParseTreeGen, 
-    timeCountInNanoSecondsAfterParseTreeGen, 
+  TimeCountInNanosec_type
+    timeCountInNanoSecondsBeforeParseTreeGen,
+    timeCountInNanoSecondsAfterParseTreeGen,
     timeCountInNanoSecondsParseTreeGen,
-    timeCountInNanoSecondsBeforeTransforParseTree, 
+    timeCountInNanoSecondsBeforeTransforParseTree,
     timeCountInNanoSecondsAfterTransforParseTree,
     timeCountInNanoSecondsTransformParseTree,
     timeCountInNanoSecondsBeforeTranslRules,
@@ -773,7 +781,7 @@ void TranslationControllerBase::Translate(
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterParseTreeGen);
   timeCountInNanoSecondsParseTreeGen = timeCountInNanoSecondsAfterParseTreeGen -
     timeCountInNanoSecondsBeforeParseTreeGen;
-  m_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds = (double) 
+  m_numThreadsAndTimeDuration[buildParseTrees].timeDurationInSeconds = (double)
     timeCountInNanoSecondsParseTreeGen / 1000000000.0f;
   
   std::string std_strIndentedXML = m_parsebyrise.GetAsIndentedXML();
@@ -786,8 +794,8 @@ void TranslationControllerBase::Translate(
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTransforParseTree);
   Transform() ;
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterTransforParseTree);
-  timeCountInNanoSecondsTransformParseTree = 
-    timeCountInNanoSecondsAfterTransforParseTree - 
+  timeCountInNanoSecondsTransformParseTree =
+    timeCountInNanoSecondsAfterTransforParseTree -
     timeCountInNanoSecondsBeforeTransforParseTree;
   
 //  TranslateParseByRiseTree translateParseByRiseTree(
@@ -803,7 +811,7 @@ void TranslationControllerBase::Translate(
   	return;
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsBeforeTranslRules);
   TranslationResult r_translationResult;
-  for( fastestUnsignedDataType applyTranslRuleIndex = 0; 
+  for( fastestUnsignedDataType applyTranslRuleIndex = 0;
     applyTranslRuleIndex < numIterations ; applyTranslRuleIndex ++ )
   {
 //  translateParseByRiseTree.Translate(
@@ -821,12 +829,12 @@ void TranslationControllerBase::Translate(
       //see http://stackoverflow.com/questions/4832275/c-typedef-member-function-signature-syntax
       pfn_processParseTree
       );
-    }  
+    }
   OperatingSystem::GetTimeCountInNanoSeconds(timeCountInNanoSecondsAfterTranslRules);
   timeCountInNanoSecondsApplyTranslRules =
     timeCountInNanoSecondsAfterTranslRules - timeCountInNanoSecondsBeforeTranslRules;
   timeCountInNanoSecondsApplyTranslRules /= (float) numIterations;
-  m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds = (double) 
+  m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds = (double)
     timeCountInNanoSecondsApplyTranslRules / 1000000000.0f;
   
   /** If not clearing and translating different words multiple times or long

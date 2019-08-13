@@ -18,12 +18,14 @@ public:
   //MainConfigFileReaderBase(const MainConfigFileReaderBase& orig);
   virtual ~MainConfigFileReaderBase();
   
+  enum errorCodes { noErrsOccuredReadingCfgFiles, error };
+  
   void HandleGrammartPartColourXMLelement(attributeType & xmlElement);
   ///\return true:success
   bool HandleReadGrammarRuleFileXMLelement(attributeType & xmlElement );
 #if USE_TRANSLATION_RULES
   void HandleReadTranslationRuleFileXMLelement(attributeType & xmlElement );
-  void HandleReadVocabularyAttributeDefinitionFileXMLelement(
+  void HandleReadVocAttrDefFileXMLele(
     attributeType & xmlElement );
 #endif
   ///\return true:success

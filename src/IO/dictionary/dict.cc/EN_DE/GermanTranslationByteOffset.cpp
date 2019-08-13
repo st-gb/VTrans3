@@ -16,8 +16,12 @@
 #include <FileSystem/File/FileReadException.hpp>
 #include <regex> //std::regex
 
-std::map<enum dict_cc_WordClasses::WordClasses, enum EnglishWord::English_word_class> dict_cc_WordClasses::EnglishWordClassFromPOSconverter::s_POS2englishWord; // define our static member variable
-dict_cc_WordClasses::EnglishWordClassFromPOSconverter::_init dict_cc_WordClasses::EnglishWordClassFromPOSconverter::s_initializer;
+///Static member variables definition
+std::map<enum dict_cc_WordClasses::WordClasses, enum EnglishWord::
+ English_word_class> dict_cc_WordClasses::EnglishWordClassFromPOSconverter::
+ s_POS2englishWord;
+dict_cc_WordClasses::EnglishWordClassFromPOSconverter::_init
+ dict_cc_WordClasses::EnglishWordClassFromPOSconverter::s_initializer;
 
 namespace DictionaryReader { namespace dict_cc { namespace EN_DE {
 
@@ -50,9 +54,14 @@ void GermanTranslationByteOffset::Build_POSstring2POSenum()
 /** Do not load anything into memory. */
 bool GermanTranslationByteOffset::open(const std::string & std_strDictFilePath )
 {
-  LOGN_DEBUG("Opening file " << std_strDictFilePath)
+  LOGN_DEBUG("Opening file \"" << std_strDictFilePath << "\"")
 //      m_englishDictionary.open(std_strDictFilePath.c_str(),
 //        std::ios_base::in | std::ios_base::binary );
+  //TODO 552 bytes in 1 blocks are still reachable in loss record 1 of 1
+  //==5832==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+  //==5832==    by 0x567AE49: __fopen_internal (iofopen.c:65)
+  //==5832==    by 0x567AE49: fopen@@GLIBC_2.2.5 (iofopen.c:89)
+  //==5832==    by 0x25A978: Linux::File::OpenA(char const*, I_File::OpenMode) (File.hpp:96)
   enum I_File::OpenResult openResult = m_dictionaryFile.OpenA(
     std_strDictFilePath.c_str(),
     I_File::readOnly
@@ -351,12 +360,13 @@ GermanNoun::grammatical_gender GetGrammaticalGender(
   std::string::size_type lastSpaceCharIndex = germanTranslation.find_last_of(' ');
   if( lastSpaceCharIndex != std::string::npos )
   {
-    const std::string nounGenderString = germanTranslation.substr(lastSpaceCharIndex + 1);
+    const std::string nounGenderString = germanTranslation.substr(
+      lastSpaceCharIndex + 1);
     germanTranslation = germanTranslation.substr(0, lastSpaceCharIndex);
     
-    DictionaryReaderBase::nounGenderString2genderEnumContainerType::const_iterator 
-      citer = DictionaryReaderBase::s_nounGenderString2genderEnum.find(
-      nounGenderString);
+    DictionaryReaderBase::nounGenderString2genderEnumContainerType::
+      const_iterator citer = DictionaryReaderBase::
+      s_nounGenderString2genderEnum.find(nounGenderString);
     if(citer != DictionaryReaderBase::s_nounGenderString2genderEnum.end() )
     {
       gender = citer->second;
@@ -427,43 +437,46 @@ std::string AddData(
   std::string germanTranslation = std::regex_replace(
     germanTranslationColumnContent, regexForGrammaticalInfo, "");
 
-    GCC_DIAG_OFF(switch)
-    switch(p_vocabularyAndTranslation->m_englishWordClass)
+  GCC_DIAG_OFF(switch)
+  switch(p_vocabularyAndTranslation->m_englishWordClass)
+  {
+    case EnglishWord::noun :
     {
-      case EnglishWord::noun :
-      {
 //        GermanNoun::grammatical_gender gender = GetGrammaticalGender(germanTranslationColumnContent);
-        std::regex regexForGrammaticalGender("\\{.*\\}");
-        std::smatch regex_match;
-        GermanNoun::grammatical_gender gender = GermanNoun::genderNotSet;
-        std::regex_search (germanTranslation,regex_match, regexForGrammaticalGender);
-        if( regex_match.size() > 0 )
-        {
-            int regexMatchStringStart = regex_match.position(0);
-            int regexMatchStringLength = regex_match.length(0);
-            germanTranslation = germanTranslation.erase(regexMatchStringStart, regexMatchStringLength);
-            
-          std::string nounGenderString = regex_match.str(0);
-            DictionaryReaderBase::nounGenderString2genderEnumContainerType::const_iterator 
-              citer = DictionaryReaderBase::s_nounGenderString2genderEnum.find(
-              nounGenderString);
-            if(citer != DictionaryReaderBase::s_nounGenderString2genderEnum.end() )
-            {
-              gender = citer->second;
-            }
-          p_vocabularyAndTranslation->SetAttributeValue(0, gender);
+      //TODO create this statically once so it does not need to be done for
+      // every noun.
+      std::regex regexForGrammaticalGender("\\{.*\\}");
+      std::smatch regex_match;
+      GermanNoun::grammatical_gender gender = GermanNoun::genderNotSet;
+      std::regex_search (germanTranslation,regex_match, regexForGrammaticalGender);
+      if( regex_match.size() > 0 )
+      {
+        int regexMatchStringStart = regex_match.position(0);
+        int regexMatchStringLength = regex_match.length(0);
+        ///Remove the gender data ( "{"[...]"}" ) from the string.
+        germanTranslation = germanTranslation.erase(regexMatchStringStart,
+          regexMatchStringLength);
+        std::string nounGenderString = regex_match.str(0);
+        DictionaryReaderBase::nounGenderString2genderEnumContainerType::
+          const_iterator citer = DictionaryReaderBase::
+          s_nounGenderString2genderEnum.find(nounGenderString);
+        if(citer != DictionaryReaderBase::s_nounGenderString2genderEnum.end() )
+        { //Gender found.
+          gender = citer->second;
         }
+        p_vocabularyAndTranslation->SetAttributeValue(0, gender);
       }
-      break;
     }
-    GCC_DIAG_ON(switch)
+    break;
+  }
+  GCC_DIAG_ON(switch)
 
-    std::regex spaceCharsAtEndRegex("[\\ ]*$");
-    /** Remove space chars at start and end of string. */
-    germanTranslation = std::regex_replace(germanTranslation,spaceCharsAtEndRegex,"");
+  std::regex spaceCharsAtEndRegex("[\\ ]*$");
+  /** Remove space chars at start and end of string. */
+  germanTranslation = std::regex_replace(germanTranslation,spaceCharsAtEndRegex,"");
 
-//   regex_match::string::const_iterato
-   return germanTranslation;
+  //   regex_match::string::const_iterato
+  return germanTranslation;
 }
 
 VocablesForWord::voc_container_type * GermanTranslationByteOffset::findEnglishWord(
