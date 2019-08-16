@@ -138,13 +138,15 @@ void VTransApp::CreateAndShowMainWindow() {
     //m_p_mainWindow->SetEventHandler( (wxWidgets::MainWindowBase*) m_p_mainWindow);
     //       p_mainframe->Show() ;
     const wxString wxstrVocabularyFilePath = wxWidgets::GetwxString_Inline(
-            m_stdstrVocabularyFilePath);
+      m_configurationHandler.m_stdstrVocabularyFilePath);
     SetDictionaryFilePath(wxstrVocabularyFilePath);
-    InsertIntoVocabularyIntoMemory_Async(
-            m_p_mainWindow, //wxWindow * p_wxwindowParent,
-            //const std::string & std_strFilePath
-            m_stdstrVocabularyFilePath
-            );
+    ///Loading the dictionary asynchronously is already done in
+    /// TranslationControllerBase::loadDictUpdatingStatus().
+//    InsertIntoVocabularyIntoMemory_Async(
+//      m_p_mainWindow, //wxWindow * p_wxwindowParent,
+//      //const std::string & std_strFilePath
+//      m_configurationHandler.m_stdstrVocabularyFilePath
+//      );
   } else {
     std::cerr << "error: couldn't create window\n";
     LOGN_ERROR("couldn't create main window")

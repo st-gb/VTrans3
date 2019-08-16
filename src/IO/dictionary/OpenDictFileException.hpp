@@ -15,7 +15,7 @@ namespace VTrans3
 {
 //  namespace DictionaryReader
 //  {
-
+	//TODO make this a subclass of DictFileAccessException?
     class OpenDictFileException
     {
       std::string m_absoluteFilePath;

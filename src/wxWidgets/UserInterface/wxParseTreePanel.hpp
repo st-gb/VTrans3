@@ -45,6 +45,9 @@ class wxDC ;
 class wxParseTreePanel
   : public wxPanel
 {
+  ///Must be 1st member because in c'tor it must be assigned before other
+  /// instructions using it.
+  GUIattributes & mr_GUIattributes;
   fastestUnsignedDataType m_pointSizeOfFont;
     WORD m_wParseLevel ;
     wxSize m_wxsizeClientRect;
@@ -52,7 +55,6 @@ class wxParseTreePanel
     wxBitmap * m_p_wxbitmapBuffer;
     wxBitmap m_wxbitmapBuffer;
     wxMemoryDC m_wxmemorydc;
-  GUIattributes & mr_GUIattributes;
     std::map<WORD,DWORD>
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
     std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2wCenter ;

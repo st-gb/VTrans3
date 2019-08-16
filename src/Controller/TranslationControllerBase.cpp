@@ -14,13 +14,17 @@
 #include <OperatingSystem/multithread/nativeThreadType.hpp>///nativeThread_type
 ///OperatingSystem::suspendExecution(...)
 #include <OperatingSystem/time/suspendExecution.hpp>
+
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
 #include <data_structures/ByteArray.hpp>
 #include <data_structures/UTF8string.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h> //
+///class VTrans3::OpenDictFileException
+#include <IO/dictionary/OpenDictFileException.hpp>
 //GenerateXMLtreeFromParseTree(...)
 #include <IO/GenerateXMLtreeFromParseTree.hpp>
+
 //#include <IO/dictionary/VTransDictFormatReader.hpp> //class OneLinePerWordPair
 //class TUchemnitzDictionaryReader
 //#include <IO/dictionary/TUchemnitzDictionaryReader.hpp>
@@ -310,6 +314,7 @@ bool TranslationControllerBase::CurrentThreadIsGUIthread()
   return false;
 }
 
+//TODO merge with wxWidgets::LoadDictionary_ThreadFunc
 DWORD loadDictThreadFunc(void * p_v)
 {
   TranslationControllerBase * p_translCtrler = (TranslationControllerBase *)
@@ -317,13 +322,20 @@ DWORD loadDictThreadFunc(void * p_v)
   bool bSuccess = false;
   if(p_translCtrler)
   {
+	std::string & stdstrDictFilePath = p_translCtrler->m_configurationHandler.
+      m_stdstrVocabularyFilePath;
+	try{
     bSuccess = p_translCtrler->m_parsebyrise.s_dictReaderAndVocAccess.
-      loadDictionary(p_translCtrler->m_configurationHandler.
-      m_stdstrVocabularyFilePath.c_str() );
+      loadDictionary(stdstrDictFilePath.c_str() );
+	}catch(VTrans3::OpenDictFileException & e){
+	   LOGN_ERROR("dict file not found")
+	   p_translCtrler->Message("dict file not found");
+	}
   }
   return !bSuccess;
 }
 
+//TODO merge this function with InsertIntoVocabularyIntoMemory_Async(...)
 void TranslationControllerBase::loadDictUpdatingStatus()
 {
   nativeThread_type thread;

@@ -341,7 +341,8 @@ void EVENT_HANDLER_CLASS_NAME::OnClose( wxCloseEvent & wxcmd )
   LOGN("begin before clearing the dictionary")
   const unsigned numberOfVocPairs = m_vocAccess.GetNumberOfVocPairs();
   const unsigned numberOfEnglishWords = m_vocAccess.GetNumberOfEnglishWords();
-  if( /*numberOfVocPairs*/ numberOfEnglishWords > 0 )
+  /// \var numberOfVocPairs should be 0 after unloading the dictionary.
+  if( numberOfVocPairs /*numberOfEnglishWords*/ > 0 )
   {
     UnloadDictionaryShowingStatusAndSendCloseEvent();
   }
@@ -621,7 +622,7 @@ void EVENT_HANDLER_CLASS_NAME::OnShowParseRulesButton( wxCommandEvent & wxcmd )
   }
   wxWidgets::ShowParseRulesDialog showParseRulesDialog(this, choices,
     arraySize);
-  showParseRulesDialog.ShowModal();
+  showParseRulesDialog.ShowModal();//TODO crashes when calling this
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnShowTranslationRulesButton( wxCommandEvent & wxcmd )
