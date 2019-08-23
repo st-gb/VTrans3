@@ -373,6 +373,11 @@ int VTransApp::OnExit() {
   return 0;
 }
 
+void VTransApp::UpdateLoadDictStatus(const float progress)
+{
+  m_p_mainWindow->SetTitle( wxString::Format(wxT("load dict:%f"), progress));
+}
+
 /** @brief for showing messages from threads other than the main/GUI thread.
  *   (if showing/creating a GUI/ window from another than the main/GUI thread
  *    the process crashes/ may crash) */

@@ -10,13 +10,15 @@
 
 #include <FileSystem/File/File.hpp> //I_File::OpenError
 #include <string> //class std::string
+//#include "DictionaryFileAccessException.hpp"///base class
 
 namespace VTrans3
 {
 //  namespace DictionaryReader
 //  {
-	//TODO make this a subclass of DictFileAccessException?
     class OpenDictFileException
+	  //TODO make this a subclass of DictFileAccessException?
+	  //: public DictionaryFileAccessException
     {
       std::string m_absoluteFilePath;
     public:

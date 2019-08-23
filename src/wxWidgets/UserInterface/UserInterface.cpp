@@ -223,7 +223,7 @@ namespace wxWidgets
       dictReaderAndVocAccess_type & dictReaderAndVocAccess =
         g_p_translationcontrollerbase->m_parsebyrise.s_dictReaderAndVocAccess;
       dictReaderAndVocAccess.m_vocAccess./*DeleteCompleteList()*/clear();
-      dictReaderAndVocAccess.loadDictionary(std_strFilePath);
+//      dictReaderAndVocAccess.loadDictionary(std_strFilePath);
       //MUST be inserted, else some grammar rules can't be applied.
 //      g_lettertree.InsertFundamentalWords() ;
       dictReaderAndVocAccess.m_vocAccess.InsertFundamentalWords() ;

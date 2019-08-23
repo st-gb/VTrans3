@@ -327,6 +327,10 @@ endif( ${EXE_TYPE} STREQUAL "Android")
 
 if( CREATE_DYN_LIB )#Android, native dyn lib
   set(TRANSLATE 1)
+  set( CXX_DEFINITIONS
+    ${CXX_DEFINITIONS}
+    -DNO_USER_INTERFACE
+    )
 endif()
 if( TRANSLATE )
   set( CXX_DEFINITIONS

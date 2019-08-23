@@ -71,6 +71,8 @@ void SetNumIterationsFor3rdTranslationStep(const char * const value);
 
 /** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
 class TranslationControllerBase
+  //TODO only inherit from class I_UserInterface if the binary really has a user
+  // interface? (e.g. not for a(n Android) dynamic library?!
   : public I_UserInterface
   //TODO also inherit from class BilingProcBase ?
 {
@@ -138,7 +140,8 @@ public:
   /** Get (German) input text. Must be "virtual" for polymorphism. */
   virtual void GetSourceText(std::string & ) {};
   bool CurrentThreadIsGUIthread();
-  void loadDictUpdatingStatus();
+  int loadDictUpdatingStatus();
+  /*inline*/ bool loadDict();
   BYTE Init(const std::string & cr_stdstrMainConfigFilePath) ;
   virtual void LoadingVocabularyFileFailed(
     const std::string & cr_stdstrFilePath) {} // = 0;

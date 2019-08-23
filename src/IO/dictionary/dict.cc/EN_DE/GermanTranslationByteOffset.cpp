@@ -2,9 +2,12 @@
  * Author: sg
  * Created on 2. Januar 2018, 14:44  */
 
+///from common_sourcecode:
 #include "GermanTranslationByteOffset.hpp"
+#include <FileSystem/GetAbsolutePath.hpp>
 #include <preprocessor_macros/logging_preprocessor_macros.h>//LOGN_DEBUG
 #include <OperatingSystem/GetLastErrorCode.hpp>
+
 #include <IO/dictionary/DictionaryFileAccessException.hpp>
 #include <IO/dictionary/OpenDictFileException.hpp>
 #include <map>//class OpenDictFileException
@@ -87,9 +90,12 @@ bool GermanTranslationByteOffset::open(const std::string & std_strDictFilePath )
   }
   else //Or throw enum I_File::OpenError openError
   {
-  LOGN_ERROR("error loading dictionary->throwing an exception")
+    LOGN_ERROR("error loading dictionary \"" << std_strDictFilePath <<
+      "\"->throwing an exception")
+    const std::string absFilePath = FileSystem::GetAbsolutePathA(
+      std_strDictFilePath.c_str() );
     //TODO catch exception
-    throw VTrans3::OpenDictFileException(openResult);
+    throw VTrans3::OpenDictFileException(openResult, absFilePath);
   }
   return dictFileIsOpen;
 }
@@ -110,6 +116,7 @@ void GermanTranslationByteOffset::IndexByteOffsetOfGermanTranslations()
     std::string currentAttribute;/** Attributes are separated by a tabulator.*/
     int currentByte = m_dictionaryFile.ReadByte();
     unsigned currentByteOffset = 0;
+    unsigned numLines = 0;
     while( currentByte != -1 )
     {
       switch( currentByte)
@@ -117,12 +124,6 @@ void GermanTranslationByteOffset::IndexByteOffsetOfGermanTranslations()
         case '\t' :
           if( numTabsInCurrentLine == 0)
           {
-            m_p_vocaccess->GetUserInterface()->m_translationProcess.SetStatus(
-                VTrans::loadDictionary,
-                "",
-                (float) currentByteOffset / (float) fileSizeInBytes * INT_MAX
-                );
-
             m_germanTranslationByteOffsetIndex.insert(
               std::make_pair(currentAttribute, currentByteOffset + 1) );
             if( currentAttribute.length() > m_longestEnglishEntryInChars)
@@ -133,6 +134,15 @@ void GermanTranslationByteOffset::IndexByteOffsetOfGermanTranslations()
           break;
         case 0xA : /** newline character */
           numTabsInCurrentLine = 0;
+          ++ numLines;
+          ///Only set the status for every thousand line (else too much overhead).
+          //TODO alternative:set status if x time has passed.
+          if( numLines % 1000 == 0)
+           m_p_vocaccess->GetUserInterface()->m_translationProcess.SetStatus(
+            VTrans::loadDictionary,
+            "",
+            (float) currentByteOffset / (float) fileSizeInBytes * INT_MAX
+            );
           break;
         default:
           if( numTabsInCurrentLine == 0)

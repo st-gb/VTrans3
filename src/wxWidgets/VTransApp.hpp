@@ -126,6 +126,7 @@ namespace wxWidgets
     void UpdateDictionaryStatistics(
       const fastestUnsignedDataType fileSizeInBytes,
       const fastestUnsignedDataType numberOfBytesCurrentlyProcessed);
+    void UpdateLoadDictStatus(const float progress);
   private:
     DECLARE_EVENT_TABLE();
   };

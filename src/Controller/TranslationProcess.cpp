@@ -43,7 +43,7 @@ unsigned TranslationProcess::GetStatus2( /*const std::string & str*/
 {
   LOGN_DEBUG("begin")
   VTrans::StatusCode statusCode;
-
+  //TODO comparing enums, i.e. numbers is faster than comparing char strings
   if( str == "dictionaryStatistics" )
   {
     const unsigned sizeInBytes = sizeof(m_collectDictionaryStatisticsStatus);

@@ -10,6 +10,7 @@
 
     void OnAddGrammarRules(wxCommandEvent & wxcmd);
     void OnChar( wxKeyEvent & e);
+  void OnCreate(wxWindowCreateEvent &);
     void OnDecreaseParseTreePanelFontSize(wxCommandEvent & wxcmd);
     void OnDoubleBufferParseTreePanel( wxCommandEvent & wxcmd );
     void OnLogLevel(wxCommandEvent & wxcmd);

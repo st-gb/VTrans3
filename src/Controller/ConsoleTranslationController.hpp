@@ -33,6 +33,8 @@ public:
   std::map<std::string, ProcessCommandLineOption_type> s_cmdLineOpt2Function;
   static std::string GetFunctionName(
     TranslateParseByRiseTree::ProcessParseTree_type pfnProcessParseTree);
+  void UpdateLoadDictStatus(const float);
+  void waitSeconds(int);
 };
 
 #endif /* CONSOLETRANSLATIONCONTROLLER_HPP */

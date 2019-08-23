@@ -12,8 +12,6 @@
 #include <Controller/character_string/stdtstr.hpp> //GetStdString_Inline(...)
 #include <OperatingSystem/multithread/GetCurrentThreadNumber.hpp>
 #include <OperatingSystem/multithread/nativeThreadType.hpp>///nativeThread_type
-///OperatingSystem::suspendExecution(...)
-#include <OperatingSystem/time/suspendExecution.hpp>
 
 #include <Controller/TranslationControllerBase.hpp>
 #include <Controller/time/GetTickCount.hpp>
@@ -329,16 +327,21 @@ DWORD loadDictThreadFunc(void * p_v)
       loadDictionary(stdstrDictFilePath.c_str() );
 	}catch(VTrans3::OpenDictFileException & e){
 	   LOGN_ERROR("dict file not found")
-	   p_translCtrler->Message("dict file not found");
+	   p_translCtrler->Message("error opening dict file:" + e.GetErrorMessageA() );
 	}
   }
   return !bSuccess;
 }
 
 //TODO merge this function with InsertIntoVocabularyIntoMemory_Async(...)
-void TranslationControllerBase::loadDictUpdatingStatus()
+/**Do not call this function from a message loop thread, else usually no update
+  in the user interface will be reflected. Instead spawn another thread that
+  executes this function so that the message loop is not blocked until exit of 
+  this function. */
+int TranslationControllerBase::loadDictUpdatingStatus()
 {
   nativeThread_type thread;
+//  b4StartLoadDictThread();
   thread.start(loadDictThreadFunc, this);
   
   struct tm time;
@@ -347,11 +350,27 @@ void TranslationControllerBase::loadDictUpdatingStatus()
     ByteArray byteArray;
     m_translationProcess.GetStatus2("loadDictionary", time, byteArray);
     const int progress = *( (int *) byteArray.GetArray() );
-    std::cout << "loading dict " <<  (float) progress/ (float) INT_MAX * 100.0f
-      << "%\n";
-    OperatingSystem::suspendExecution(1);
+    UpdateLoadDictStatus((float) progress/ (float) INT_MAX /* * 100.0f*/);
+    waitSeconds(1);
   }
-  //thread.GetTermCode();
+  return thread.GetTermCode();
+}
+
+///For exe with user interface: call this after the event system is set up, i.e.
+/// for wxWdigets after "wxApp::OnInit()".
+bool TranslationControllerBase::loadDict()
+{
+  const bool bLoadingDictFileSucceeded = 
+#ifdef NO_USER_INTERFACE
+    ///For the dyn lib we don't need multi threaded loading dict. because no UI
+    m_parsebyrise.s_dictReaderAndVocAccess.loadDictionary(
+      m_configurationHandler.m_stdstrVocabularyFilePath.c_str() );
+#else
+    ! loadDictUpdatingStatus();
+#endif
+  LOGN_INFO( "dictionary file is open:" << (bLoadingDictFileSucceeded ? "yes" :
+    "no") )
+  return bLoadingDictFileSucceeded;
 }
 
 BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFilePath)
@@ -412,20 +431,10 @@ BYTE TranslationControllerBase::Init(const std::string & cr_stdstrMainConfigFile
 //      TUchemnitzDictEngWord1stReader & dictReader = (* this, s_dictionary);
   //    StartTimer();
         
-      bool bLoadingDictFileSucceeded = /*TUchemnitzDictionaryReader::*/ //tcdr.extractVocables(
-//        dictReader
-//        tuchemnitzengwordsorted1standbinarysearch
-//        m_parsebyrise.s_dictReaderAndVocAccess
-//        .loadDictionary(
-////      bool b = dictReader::read(
-//        m_configurationHandler.m_stdstrVocabularyFilePath.c_str() );
-        true;
-        loadDictUpdatingStatus();
-      LOGN_INFO( "dictionary file is open:" << (bLoadingDictFileSucceeded ? "yes" : "no") )
+      //const bool bLoadingDictFileSucceeded = loadDict();
       LOGN_INFO( "# of vocable pairs:" << s_numberOfVocabularyPairs )
-
-      if( ! bLoadingDictFileSucceeded )
-        return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
+//      if( ! bLoadingDictFileSucceeded )
+//        return TranslationControllerBaseClass::InitFunction::loadingVocabularyFileFailed;
   #endif //#ifndef COMPILE_AS_EXECUTABLE
   ////    StartTimer();
     }

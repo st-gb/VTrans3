@@ -26,6 +26,11 @@ public:
   TranslationProcess m_translationProcess;
   unsigned s_numberOfVocabularyPairs;
   volatile unsigned m_dictionaryFileLineNumber;
+  
+  //Needed for binaries with a user interface and an event loop.
+//  virtual void b4StartLoadDictThread() {};
+  ///Callback function for status function over load dictionary thread.
+  virtual void waitSeconds(int numSecs) {};
   virtual void Message(const std::string & cr_stdstr ) = 0;
   virtual void Message(const std::wstring & cr_stdwstr ) = 0;
   virtual void ShowInvalidVocabularyFileFormatMessage(
@@ -38,6 +43,9 @@ public:
    *  Sample implementation: send a message to the GUI thread to show the
    *   translation result in GUI thread. */
   virtual void UpdateAfterTranslation() {};
+  ///Intention: show the load progress in the user interface (e.g. via a 
+  /// progress bar).
+  virtual void UpdateLoadDictStatus(const float progress) {}
   /** Called by the dictionary access class to inform the UI (because it may 
    * take some seconds) about the current progress. */
   virtual void UpdateDictionaryStatistics(

@@ -80,6 +80,8 @@ BEGIN_EVENT_TABLE( EVENT_HANDLER_CLASS_NAME, EVENT_HANDLER_BASE_CLASS_NAME)
   // "Why does my simple program using EVT_CHAR not work?"
   EVT_CHAR( EVENT_HANDLER_CLASS_NAME::OnChar)
   EVT_TIMER( ID_Timer, EVENT_HANDLER_CLASS_NAME::OnTimerEvent)
+  ///Is called for "EVENT_HANDLER_CLASS_NAME" and all of its subwindows.
+  EVT_WINDOW_CREATE( EVENT_HANDLER_CLASS_NAME::OnCreate )
   BUTTON_EVENT_TYPE( ID_AddGrammarRules , EVENT_HANDLER_CLASS_NAME::OnAddGrammarRules )
   BUTTON_EVENT_TYPE( ID_ShowGrammarPartMemoryAddress,
     EVENT_HANDLER_CLASS_NAME::OnShowGrammarPartMemoryAddress)
@@ -168,6 +170,17 @@ void EVENT_HANDLER_CLASS_NAME::OnChar( wxKeyEvent & e)
     {
         m_translationcontrollerbase.Stop();
     }
+}
+
+///Is called indirectly from wxAppConsoleBase::MainLoop
+void EVENT_HANDLER_CLASS_NAME::OnCreate(wxWindowCreateEvent & evt)
+{
+  wxWindow * p_createdWindow = evt.GetWindow();
+  //TODO possible alternative: implement OnCreate in the wxApp for the TopLevel
+  // window so we do not need to have to filter here?!
+  if(p_createdWindow == this)
+    InsertIntoVocabularyIntoMemory_Async(this, 
+      ::wxGetApp().m_configurationHandler.m_stdstrVocabularyFilePath);
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnDecreaseParseTreePanelFontSize( wxCommandEvent & wxcmd )
@@ -731,12 +744,24 @@ void EVENT_HANDLER_CLASS_NAME::OnLookupWord(wxCommandEvent & wxcmd)
       );
 }
 
+///Used for updating dictionary statistics and/or dictionary loading.
 void EVENT_HANDLER_CLASS_NAME::OnTimerEvent(wxTimerEvent &event)
 {
-  SetTitle( wxString::Format(wxT("%u"), //wxGetApp().m_dictionaryFileLineNumber
+#ifdef _DEBUG
+  const int interval = m_wxtimer.GetInterval();
+#endif
+  //TODO encapsulate instructions into a "loadDictStatus" function.
+  struct tm time;
+  ByteArray byteArray;
+  ::wxGetApp().m_translationProcess.GetStatus2("loadDictionary", time,
+    byteArray);
+  const int progress = *( (int *) byteArray.GetArray() );
+  const float fProgress = (float) progress/ (float) INT_MAX;
+  SetTitle( wxString::Format(wxT("load dict %f %%"),
+    //wxGetApp().m_dictionaryFileLineNumber
 //    ::wxGetApp().s_numberOfVocabularyPairs
-    m_vocAccess.GetNumberOfVocPairs()
-     ) );
+//  unsigned numVocPairs = m_vocAccess.GetNumberOfVocPairs();
+    /*numVocPairs*/ fProgress * 100.0f) );
   //TODO show status as "bytes read"/"total bytes" :
 //  wxGetApp().m_dictionaryReader.GetCurrentPosInByte();
 //  SetTitle( wxString::Format(wxT("%f"), TUchemnitzDictionaryReader::m_numBytesRead ) );

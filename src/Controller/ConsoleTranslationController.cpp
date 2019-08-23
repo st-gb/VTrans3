@@ -3,10 +3,17 @@
  * Created on 9. Mai 2017, 11:20 */
 
 #include "ConsoleTranslationController.hpp"
+
+///from common_sourcecode:
 #include "Controller/character_string/ConvertStdStringToTypename.hpp"
+#include <Controller/time/GetTickCount.hpp>
 #include <data_structures/ByteArray.hpp>
-#include <IO/dictionary/OpenDictFileException.hpp>
 #include <FileSystem/GetCurrentWorkingDir.hpp>
+///OperatingSystem::suspendExecution(...)
+#include <OperatingSystem/time/suspendExecution.hpp>
+
+///from VTrans3:
+#include <IO/dictionary/OpenDictFileException.hpp>
 
 CommandLineOption/*<char>*/ ConsoleTranslationController::s_commandLineOptions [] = {
 //   <<text to translate>> 
@@ -135,6 +142,17 @@ void ConsoleTranslationController::OutputStatistics()
 #endif
 }
 
+void ConsoleTranslationController::UpdateLoadDictStatus(const float progress)
+{
+  std::cout << "loading dict \"" << m_configurationHandler.
+    m_stdstrVocabularyFilePath << "\"" << progress * 100.0f << "%\n";
+}
+
+void ConsoleTranslationController::waitSeconds(int numSeconds)
+{
+  OperatingSystem::suspendExecution(1);
+}
+
 void ConsoleTranslationController::OutputUsage()
 {
   std::cout << "possible options:" << std::endl;
@@ -202,6 +220,16 @@ int main(int argc, char *  argv[])
   g_p_translationcontrollerbase = & consoleTranslationController;
   ///Init even without translating (to be able to check for memory leaks here).
   consoleTranslationController.Init("configuration/VTrans_main_config_dict.cc.xml");
+  
+  //TODO move time measure code to 
+  // TranslationControllerBase::MeasureTimeLoadDictUpd8ingStatus
+  long double timeCountStart, timeCountEnd, timeCountDiff;
+  OperatingSystem::GetTimeCountInSeconds(timeCountStart);
+  consoleTranslationController.loadDictUpdatingStatus();
+  OperatingSystem::GetTimeCountInSeconds(timeCountEnd);
+  timeCountDiff = timeCountEnd - timeCountStart;
+  
+  std::cout << "loading dict took " << timeCountDiff << " s\n";
   if( argc > 1 )
   {
     if( strcmp(argv[1], "") == 0 )//TODO this is impossible?
