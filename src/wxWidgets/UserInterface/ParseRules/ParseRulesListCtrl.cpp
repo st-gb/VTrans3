@@ -119,6 +119,7 @@ namespace wxWidgets
 //                  return filePath.Right(filePath.length() - currWorkDirLen);
       return grammarRuleFileName;
     }
+    return wxT("");
   }
                 
   /** Get text if NO filter is applied.*/
@@ -156,7 +157,8 @@ namespace wxWidgets
             return wxstrGrammarRuleName;
           case FilePath:
             {
-              return GetFileName(superordinateGrammarRuleID);
+              wxString fileName = GetFileName(superordinateGrammarRuleID);
+              return fileName;
             }
         }
       }

@@ -35,21 +35,21 @@ namespace VTrans
 {
 
   ShowTranslationRulesDialog::ShowTranslationRulesDialog(
-    wxWindow * parent,
+    wxWindow * parent/*,
     wxString choices[],
-    int arraySize
+    int arraySize*/
     )
     : ShowRulesDialogBase(
        parent //wxWindow * parent
-       , choices
-       , arraySize
+       /*, choices
+       , arraySize*/
        , wxT("translation rules") //const wxString & title//,
 //       const wxString& name = wxDialogNameStr
       )
       , m_p_translationruleSelected(0)
       , m_p_conditionsandtranslation(0)
   {
-    Create(choices, arraySize);
+    Create(/*choices, arraySize*/);
   }
 
   ShowTranslationRulesDialog::~ShowTranslationRulesDialog()

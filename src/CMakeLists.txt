@@ -1,6 +1,13 @@
 #from https://cmake.org/cmake-tutorial/
 cmake_minimum_required (VERSION 2.8)
-project (VTrans)
+if( DEFINED EXE_TYPE )
+  message("EXE_TYPE is defined")
+ #Set project name by appending exe type so that different project files are 
+ # possible (senseful for Code::Blocks?).
+ project(VTrans_${EXE_TYPE})
+else()
+ project(VTrans)
+endif()
 #from https://cmake.org/Wiki/CMake/Testing_With_CTest
 #enable_testing()
 
@@ -261,24 +268,50 @@ endif( ${EXE_TYPE} STREQUAL "dynlib" )
 
 #target_link_libraries(${LIBRARIES})
 
+#TODO move to file ./wxWidgets/CMakeLists.txt?!
 if(DEFINED WXWIDGETS)
+  #For using library names with wxWidgets-CMake
   #https://wiki.wxwidgets.org/CMake
-  set(wxWidgets_CONFIGURATION mswud) #TODO wrong type
-  SET(wxWidgets_USE_LIBS core base adv)
-  find_package(wxWidgets COMPONENTS core base adv REQUIRED)
-  include(${wxWidgets_USE_FILE})
+  #mswud=MicroSoft Windows UniceCode Debug
+  #set(wxWidgets_CONFIGURATION gtkud) #TODO wrong type for Linux
+  #SET(wxWidgets_USE_LIBS core base adv)
+  #find_package(wxWidgets COMPONENTS core base adv REQUIRED)
+  message("wxWidgets_USE_FILE:${wxWidgets_USE_FILE}")
+  #.cmake file gotten by "find_package(wxWidgets [...])"
+  #Under Linux adds default wxWidgets include dir, default wxWidgets library
+  # dir
+  #include(${wxWidgets_USE_FILE})
+ 
+  #For using library names without wxWdigets-CMake
+  set(wxWidgets_LIBRARIES
+  #set( LIBRARIES
+  #  ${LIBRARIES}
+   wx_gtk2u_core-3.0
+   wx_baseu-3.0
+   wx_gtk2u_adv-3.0)
   message("wxWidgets_LIBRARIES:${wxWidgets_LIBRARIES}")
+  #link_directories(/usr/src/wxWidgets/wxWidgets-3.0.4/lib)
+  #https://stackoverflow.com/questions/25164041/is-there-a-link-directories-or-equivalent-property-in-cmake
+  get_property(test_LINK_DIRECTORIES DIRECTORY PROPERTY LINK_DIRECTORIES)
+  message("LINK_DIRECTORIES: ${test_LINK_DIRECTORIES}")
 endif (DEFINED WXWIDGETS)
 
-message("include directories:${INCLUDE_DIRS}")
+#message("include directories:${INCLUDE_DIRS}")
+#https://stackoverflow.com/questions/6902149/listing-include-directories-in-cmake
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "include dir='${dir}'")
+endforeach()
 
 if( ${EXE_TYPE} STREQUAL "wxGUI")
-  set(EXE_NAME wx${PROJECT_NAME}_GUI)
+  #set(EXE_NAME wx${PROJECT_NAME}_GUI)
+  set(EXE_NAME wx${PROJECT_NAME})
   set(TRANSLATE 1)
 endif( ${EXE_TYPE} STREQUAL "wxGUI" )
 
 if( ${EXE_TYPE} STREQUAL "console")
-  set(EXE_NAME ${PROJECT_NAME}_console)
+  #set(EXE_NAME ${PROJECT_NAME}_console)
+  set(EXE_NAME ${PROJECT_NAME})
   set(TRANSLATE 1)
 endif( ${EXE_TYPE} STREQUAL "console" )
 
@@ -324,6 +357,12 @@ if( ${EXE_TYPE} STREQUAL "Android")
   message( "DISCORDIA_ANDROID_CMAKE_HOME: ${DISCORDIA_ANDROID_CMAKE_HOME}")
   #include("${DISCORDIA_ANDROID_CMAKE_HOME}/android.apk.cmake" REQUIRED)
 endif( ${EXE_TYPE} STREQUAL "Android")
+
+#from http://blog.binchen.org/posts/always-turn-on-fpermissive-for-gcc-4-6.html
+#if(CMAKE_COMPILER_IS_GNUCC)
+# # needed for gcc 4.6+
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
+#endif()
 
 if( CREATE_DYN_LIB )#Android, native dyn lib
   set(TRANSLATE 1)

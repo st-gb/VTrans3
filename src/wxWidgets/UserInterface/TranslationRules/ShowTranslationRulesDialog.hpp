@@ -24,8 +24,8 @@ namespace VTrans
     TranslationRule * m_p_translationruleSelected;
     ConditionsAndTranslation * m_p_conditionsandtranslation;
 
-    ShowTranslationRulesDialog(wxWindow * parent, wxString choices[],
-      int arraySize);
+    ShowTranslationRulesDialog(wxWindow * parent/*, wxString choices[],
+      int arraySize*/);
     virtual
     ~ShowTranslationRulesDialog();
 

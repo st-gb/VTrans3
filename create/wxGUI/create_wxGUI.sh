@@ -31,7 +31,7 @@ cmake -G "$BUILD_SYSTEM_GENERATOR" \
 -DEXE_TYPE:STRING=wxGUI \
 -DWXWIDGETS_INCLUDE_DIR:STRING=$WXWIDGETS_INCLUDE_DIR \
 -DWXWIDGETS_SETUP_H_PATH:STRING=$WXWIDGETS_SETUP_H_PATH \
-./../../src
+./../../src #where to find CMakeLists.txt	
 else
   echo "ERROR:at least" $NUM_ARGS_NEEDED " args needed:"
   echo "specifiy options for this script:<WXWIDGETS_INCLUDE_DIR> <WXWIDGETS_SETUP_H_PATH> <COMMON_SOURCECODE_ROOT_PATH>"

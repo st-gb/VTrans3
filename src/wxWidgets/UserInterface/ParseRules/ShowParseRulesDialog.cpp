@@ -12,14 +12,14 @@ namespace wxWidgets
 {
 
   ShowParseRulesDialog::ShowParseRulesDialog(
-    wxWindow * parent,
+    wxWindow * parent/*,
     wxString choices[],
-    int arraySize
+    int arraySize*/
     )
     : ShowRulesDialogBase(
        parent //wxWindow * parent
-       , choices
-       , arraySize
+       /*, choices
+       , arraySize*/
        , wxT("parse rules") //const wxString & title//,
 //       const wxString& name = wxDialogNameStr
       )
@@ -28,7 +28,7 @@ namespace wxWidgets
     SetTitle( wxString::Format(wxT("%u parse rules"), 
       ( (ParseRulesListCtrl*)m_p_rulesListCtrl)->GetNumberOfParseRules() )
       );
-    Create(choices, arraySize);
+    Create(/*choices, arraySize*/);
   }
 
   ShowParseRulesDialog::~ShowParseRulesDialog()

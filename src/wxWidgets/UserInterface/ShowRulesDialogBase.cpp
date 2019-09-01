@@ -32,8 +32,8 @@ namespace wxWidgets
 
   ShowRulesDialogBase::ShowRulesDialogBase(
     wxWindow * parent,
-    wxString choices[],
-    int arraySize,
+    /*wxString choices[],
+    const int arraySize,*/
     const wxString & title
     )
     : wxDialog(
@@ -57,8 +57,8 @@ namespace wxWidgets
   }
 
   void ShowRulesDialogBase::Create(
-    wxString choices[],
-    int arraySize
+    /*wxString choices[],
+    const int arraySize*/
     )
   {
     CreateRulesListControl();

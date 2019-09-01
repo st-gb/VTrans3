@@ -16,7 +16,7 @@
 #include <wxWidgets/UserInterface/RulesListCtrl.hpp>
 #include <vector> //class std::vector
 
-class TranslationRulesListCtrl;
+//class TranslationRulesListCtrl;
 class wxBoxSizer;
 class wxTextCtrl;
 namespace wxWidgets
@@ -40,16 +40,16 @@ namespace wxWidgets
     enum windowIDs{ ruleTextCtrl, rulesList, testRule };
     ShowRulesDialogBase(
       wxWindow * parent,
-      wxString choices[],
-      int arraySize,
+      /*wxString choices[],
+      const int arraySize,*/
       const wxString & title);
 
     virtual
     ~ShowRulesDialogBase();
 
     void Create(
-      wxString choices[],
-      int arraySize
+      /*wxString choices[],
+      constint arraySize*/
       );
 
     void OnChangeRulePath(wxCommandEvent & event);

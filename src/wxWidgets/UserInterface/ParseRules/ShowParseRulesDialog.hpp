@@ -18,9 +18,9 @@ namespace wxWidgets
   {
   public:
     ShowParseRulesDialog(
-      wxWindow * parent,
+      wxWindow * parent/*,
       wxString choices[],
-      int arraySize
+      int arraySize*/
       );
     virtual
     ~ShowParseRulesDialog();

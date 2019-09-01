@@ -619,9 +619,8 @@ void EVENT_HANDLER_CLASS_NAME::OnShowTokenIndex2GrammarPartButton( wxCommandEven
 //  mp_textctrlGermanText->SetValue( stdstr ) ;
 }
 
-void EVENT_HANDLER_CLASS_NAME::OnShowParseRulesButton( wxCommandEvent & wxcmd )
+/*void getParseRulesChoices()
 {
-
   std::map<WORD,WORD>::const_iterator c_iter =
     m_parsebyrise.m_stdmap_wGrammarPartID2SuperordinateID.begin();
   int arraySize = m_parsebyrise.m_stdmap_wGrammarPartID2SuperordinateID.size();
@@ -633,9 +632,17 @@ void EVENT_HANDLER_CLASS_NAME::OnShowParseRulesButton( wxCommandEvent & wxcmd )
       m_parsebyrise.GetGrammarPartName(c_iter->second) );
     ++ c_iter;
   }
-  wxWidgets::ShowParseRulesDialog showParseRulesDialog(this, choices,
-    arraySize);
-  showParseRulesDialog.ShowModal();//TODO crashes when calling this
+}*/
+
+void EVENT_HANDLER_CLASS_NAME::OnShowParseRulesButton( wxCommandEvent & wxcmd )
+{
+//  int arraySize;
+//  wxString choices[arraySize];
+//  getParseRulesChoices(choices, arraySize);
+ 
+  wxWidgets::ShowParseRulesDialog showParseRulesDialog(this//, choices,arraySize
+    );
+  showParseRulesDialog.ShowModal();
 }
 
 void EVENT_HANDLER_CLASS_NAME::OnShowTranslationRulesButton( wxCommandEvent & wxcmd )
@@ -674,8 +681,8 @@ void EVENT_HANDLER_CLASS_NAME::OnShowTranslationRulesButton( wxCommandEvent & wx
   }
 //  wxTextControlDialog wxd(wxstr);
 //  wxd.ShowModal();
-  VTrans::ShowTranslationRulesDialog showtranslationrulesdialog(this, choices,
-    arraySize);
+  VTrans::ShowTranslationRulesDialog showtranslationrulesdialog(this/*, choices,
+    arraySize*/);
   showtranslationrulesdialog.ShowModal();
 }
 
