@@ -117,7 +117,7 @@ namespace VTrans3
             if( strLeftChildSyntaxTreePath != NULL &&
                 strSuperOrdinateSyntaxTreePath )
             {
-#ifdef COMPILE_AS_EXECUTABLE
+#ifdef COMPILE_AS_GUI//COMPILE_AS_EXECUTABLE
               MiniXMLconfigReader::m_std_map_grammarRuleName2filepath.insert(
                   std::make_pair(std::string(strSuperOrdinateSyntaxTreePath),
                     MiniXMLconfigReader::m_std_strCurrentConfigfile) );

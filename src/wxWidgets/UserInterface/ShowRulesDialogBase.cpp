@@ -72,10 +72,11 @@ namespace wxWidgets
   //      wxLB_HSCROLL | wxLB_NEEDED_SB);
   //    wxListCtrl * p_wxlistctrl = new wxListCtrl();
     m_p_wxtextctrl = new wxTextCtrl(this, ruleTextCtrl);
+    m_p_wxtextctrl->SetToolTip( wxT("filter rules here") );
     wxButton * p_wxbuttonTest = new wxButton( this, testRule,
       wxT("test"));
     p_wxbuttonTest->SetToolTip( wxT("test if rule applies to current parse "
-      "tree") );
+      "tree in the main window") );
     wxBoxSizer * p_wxsizer = new wxBoxSizer(wxHORIZONTAL);
   //    m_p_wxsizer->Add(
     p_wxsizer->Add(

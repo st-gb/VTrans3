@@ -39,6 +39,7 @@ public:
   fastestUnsignedDataType GetNumberOfAllocatedBytes();
   voc_container_type * findEnglishWord(
     const VTrans::string_type & englishWord);
+  //TODO replace by the more generic "TranslateProcess::GetStatus()"?
   void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType &);
   void GetStatistics(
 //    fastestUnsignedDataType wordClass[], 

@@ -272,7 +272,7 @@ endif( ${EXE_TYPE} STREQUAL "dynlib" )
 if(DEFINED WXWIDGETS)
   #For using library names with wxWidgets-CMake
   #https://wiki.wxwidgets.org/CMake
-  #mswud=MicroSoft Windows UniceCode Debug
+  #mswud=MicroSoft Windows UniCode Debug
   #set(wxWidgets_CONFIGURATION gtkud) #TODO wrong type for Linux
   #SET(wxWidgets_USE_LIBS core base adv)
   #find_package(wxWidgets COMPONENTS core base adv REQUIRED)
@@ -449,10 +449,11 @@ if ( CREATE_DYN_LIB )
 else(CREATE_DYN_LIB)
 
   add_executable(${EXE_NAME} ${SOURCE_FILE_PATHS})
+  message("linking libs:${LIBRARIES}")
   target_link_libraries(${EXE_NAME} ${LIBRARIES})
 if(DEFINED WXWIDGETS)
   #https://wiki.wxwidgets.org/CMake
-  message ("should link wxWidgets libraries ${wxWidgets_LIBRARIES} to executable")
+  message ("should link wxWidgets libraries: \"${wxWidgets_LIBRARIES}\" to executable")
   #This line is necessary, else linker errors: undefined reference to "wx..."
   target_link_libraries(${EXE_NAME} ${wxWidgets_LIBRARIES})
   message ("wxWidgets type: ${wxWidgets_CONFIGURATION}")

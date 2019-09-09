@@ -121,24 +121,40 @@ namespace wxWidgets
     }
     return wxT("");
   }
-                
+
+bool ParseRulesListCtrl::isFiltered(std::map<WORD,WORD>::const_iterator
+  c_parseTreeNodeID2SuperordinateIDiter) const
+{
+  const fastestUnsignedDataType leftRuleID =
+    c_parseTreeNodeID2SuperordinateIDiter->first;
+  wxString wxstrLeftGrammarRuleName = wxWidgets::getwxString(
+    wxGetApp().m_parsebyrise.GetGrammarPartName(leftRuleID) );
+  if(wxstrLeftGrammarRuleName.Contains(m_wxstrFilter) )
+    return true;
+  return false;
+}
+
   /** Get text if NO filter is applied.*/
-  wxString ParseRulesListCtrl::GetItemText_noFilter(long item, long column) const
+  wxString ParseRulesListCtrl::GetItemText(long item, long column) const
   {
+	VTrans3::BottomUpParser & bottomUpParser = wxGetApp().m_parsebyrise;
     const std::map<WORD, WORD> & c_r_stdmap_wGrammarPartID2SuperordinateID =
-      wxGetApp().m_parsebyrise.
-      /** Stores only left child->superordinate */
+      bottomUpParser./** Stores only left child->superordinate */
       m_stdmap_wGrammarPartID2SuperordinateID;
     std::map<WORD,WORD>::const_iterator c_iter =
       c_r_stdmap_wGrammarPartID2SuperordinateID.begin();
 
-    int arraySize = c_r_stdmap_wGrammarPartID2SuperordinateID.size();
+    const int arraySize = c_r_stdmap_wGrammarPartID2SuperordinateID.size();
 
     fastestUnsignedDataType arrayIndex = 0;
     wxString wxstrGrammarRuleName;
     const fastestUnsignedDataType currWorkDirLen = ::wxGetCwd().length();
     while( c_iter != c_r_stdmap_wGrammarPartID2SuperordinateID.end() )
     {
+      if(/**Every string contains the empty string, so only check if filtered
+		   if the filter is non-empty.*/ ( ! m_wxstrFilter.IsEmpty()
+		 && isFiltered(c_iter) ) || m_wxstrFilter.IsEmpty() )
+      {
       if( arrayIndex == item)
       {
         const WORD superordinateGrammarRuleID = c_iter->second;
@@ -148,12 +164,12 @@ namespace wxWidgets
             {
             const WORD leftRuleID = c_iter->first;
             wxstrGrammarRuleName = wxWidgets::getwxString(
-              wxGetApp().m_parsebyrise.GetGrammarPartName(leftRuleID) );
+			  bottomUpParser.GetGrammarPartName(leftRuleID) );
             return wxstrGrammarRuleName;
           }
           case ParseRuleName:
             wxstrGrammarRuleName = wxWidgets::getwxString(
-              wxGetApp().m_parsebyrise.GetGrammarPartName(superordinateGrammarRuleID) );
+              bottomUpParser.GetGrammarPartName(superordinateGrammarRuleID) );
             return wxstrGrammarRuleName;
           case FilePath:
             {
@@ -162,8 +178,9 @@ namespace wxWidgets
             }
         }
       }
+      ++ arrayIndex;///Only increment index if the entry is included by filter
+      }
       ++ c_iter;
-      ++ arrayIndex;
     }
     std::multimap<WORD, WORD>::const_iterator mmap_c_iter = 
       wxGetApp().m_parsebyrise.m_stdmultimap_wGrammarPartID2SuperordinateID.begin();
@@ -232,57 +249,60 @@ namespace wxWidgets
   /** Override virtual method of wxListCtrl to provide text data for virtual list*/
   wxString ParseRulesListCtrl::OnGetItemText(long item, long column) const
   {
-    wxString wxstr, wxstrSyntaxTreePath;
-    if( m_wxstrFilter.empty() )
-    {
-      return GetItemText_noFilter(item, column);
-    }
-//    else
+//    if( m_wxstrFilter.empty() )
 //    {
-//      std::map<TranslationRule *,ConditionsAndTranslation> &
-//        r_stdmap_p_translationrule2ConditionsAndTranslation = wxGetApp().
-//        m_translateparsebyrisetree.
-//        m_stdmap_p_translationrule2ConditionsAndTranslation;
-//  //    int arraySize = r_stdmap_p_translationrule2ConditionsAndTranslation.size();
-//  //    wxString choices[arraySize];
-//      std::map<TranslationRule *,ConditionsAndTranslation>::const_iterator
-//        c_iter = r_stdmap_p_translationrule2ConditionsAndTranslation.begin();
-//      unsigned arrayIndex = 0;
-//      unsigned currWorkDirLen = ::wxGetCwd().length();
-//      while( c_iter != r_stdmap_p_translationrule2ConditionsAndTranslation.end() )
-//      {
-//        const TranslationRule * c_p_translationrule =
-//          c_iter->first;
-//    //      r_translationrule.mp_parsebyrise->Get
-//        wxstrSyntaxTreePath = getwxString( c_p_translationrule->
-//          m_syntaxtreepathCompareWithCurrentPath.GetAs_std_string() );
-//        if( wxstrSyntaxTreePath.Contains(m_wxstrFilter) )
-//        {
-//          if( item == arrayIndex )
-//            switch(column)
-//            {
-//              case SyntaxTreePath:
-//                return wxstrSyntaxTreePath;
-//              case FilePath:
-//                std::map<TranslationRule *, std::string>::const_iterator
-//                  c_iterTranslRule2filePath =
-//                  wxGetApp().m_std_map_p_translationrule2filepath.find(
-//                  (TranslationRule *) c_p_translationrule);
-//                if( c_iterTranslRule2filePath !=
-//                  wxGetApp().m_std_map_p_translationrule2filepath.end() )
-//                {
-//                  wxString filePath//(c_iterTranslRule2filePath->second.c_str() );
-//                    = GetwxString_Inline(c_iterTranslRule2filePath->second.c_str() );
-//                  return filePath.Right(filePath.length() - currWorkDirLen);
-//                }
-//                else
-//                  break;
-//            }
-//          ++ arrayIndex;
-//        }
-//        ++ c_iter;
-//      }
+    return GetItemText(item, column);
 //    }
-    return wxT("/");
+//    else
+//      return GetItemText_Filtered(item, column);
+//    return wxT("/");
   }
+
+//TODO move to class BottomUpParser (fn name ~ CountFilteredParseRules) ? 
+// because may be used for differen UIs
+unsigned ParseRulesListCtrl::CountFilteredItems() const
+{
+  fastestUnsignedDataType numItems = 0;
+  VTrans3::BottomUpParser & bottomUpParser = wxGetApp().m_parsebyrise;
+//  fastestUnsignedDataType numItems = bottomUpParser.CountFilteredParseRules();
+  
+  const std::map<WORD, WORD> & c_r_stdmap_wGrammarPartID2SuperordinateID =
+    bottomUpParser./** Stores only left child->superordinate */
+    m_stdmap_wGrammarPartID2SuperordinateID;
+  
+  std::map<WORD,WORD>::const_iterator c_iter =
+    c_r_stdmap_wGrammarPartID2SuperordinateID.begin();
+  for( ; c_iter != c_r_stdmap_wGrammarPartID2SuperordinateID.end(); c_iter++)
+  {
+    if(isFiltered(c_iter) )
+      numItems ++;
+  }
+  return numItems;
+}
+
+void ParseRulesListCtrl::SetFilter(const wxString & filter)
+{
+  const int previousItemCount = GetItemCount();
+  m_wxstrFilter = filter;
+  if( filter.empty() )
+  {
+    SetItemCount( GetNumberOfParseRules() );
+  }
+  else
+  {
+    const unsigned numFilteredItems = CountFilteredItems();
+//    SetTitle( wxString::Format("parse rules:# overall:$d # filtered:%d",
+//      GetNumberOfParseRules(), numFilteredItems) );
+    SetItemCount(numFilteredItems);
+  }
+  //Avoid ../src/generic/listctrl.cpp(2640): assert "lineTo < GetItemCount()"
+  //failed in RefreshLines(): invalid line range
+  if( previousItemCount < GetItemCount() )
+  {
+    //The contents are not visually updated after a filter change
+    // (but if the is redrawn).
+    RefreshItems(0,//lineFrom
+      previousItemCount /*lineTo*/ );
+  }
+}
 } /* namespace wxWidgets */

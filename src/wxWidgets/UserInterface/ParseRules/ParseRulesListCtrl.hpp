@@ -9,6 +9,8 @@
 #define PARSERULESLISTCTRL_HPP_
 
 #include "../RulesListCtrl.hpp"
+#include <map>///class std::map
+#include <Windows.h>///includes windef.h;for WORD
 
 namespace wxWidgets
 {
@@ -24,12 +26,16 @@ namespace wxWidgets
     virtual
     ~ParseRulesListCtrl();
 
+  unsigned CountFilteredItems() const;
     unsigned GetNumberOfParseRules() const;
     void OnRightClick(wxListEvent & event);
     void OnCopyRuleFilePathToClipBoard(wxCommandEvent & cmdevt);
     wxString OnGetItemText(long item, long column) const;
-    wxString GetItemText_noFilter(long int, long int) const;
+    wxString GetItemText(long int, long int) const;
     
+  bool isFiltered(std::map<WORD,WORD>::const_iterator
+    c_parseTreeNodeID2SuperordinateIDiter) const;
+  void SetFilter(const wxString&);
     DECLARE_EVENT_TABLE()
   };
 
