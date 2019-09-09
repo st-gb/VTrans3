@@ -32,6 +32,7 @@ namespace VTrans3 {
 // def_article_noun    /           <- tree struct: parse tree
 //              \   /
 //              clause       <- tree struct: parse tree
+//TODO rename to "doPOStagging" or "createParseTreeLeaves"
 void BottomUpParser::CreateInitialGrammarParts ( const std::string &
   cr_stdstrText )
 {

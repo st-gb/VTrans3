@@ -39,12 +39,13 @@ public:
   fastestUnsignedDataType GetNumberOfAllocatedBytes();
   voc_container_type * findEnglishWord(
     const VTrans::string_type & englishWord);
+  void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType &);
   void GetStatistics(
 //    fastestUnsignedDataType wordClass[], 
 //    const fastestUnsignedDataType numArrayEles
     std::map<enum EnglishWord::English_word_class, unsigned> &
       englishWordClass2CounterMap
-    ) {}
+    );
     void /* void * */
       Insert(EnglishWord & ew , GermanWord & gw, //void * p_v
         VocabularyAndTranslation * p_vocabularyandtranslation

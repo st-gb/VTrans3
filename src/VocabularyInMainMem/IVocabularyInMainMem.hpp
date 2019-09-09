@@ -107,7 +107,12 @@ class GermanWord;
   virtual fastestUnsignedDataType GetNumberOfAllocatedBytes() = 0;
 //  virtual fastestUnsignedDataType GetNumberOfNouns() = 0;
 //  virtual fastestUnsignedDataType GetNumberOfVerbs() = 0;
-  virtual void GetCollectDictionaryStatisticsStatus(fastestUnsignedDataType & currentItemNo) { };
+
+  //TODO rename to GetCollectDictStatsStatus
+  virtual void GetCollectDictionaryStatisticsStatus(
+    fastestUnsignedDataType & currentItemNo) {
+    ///"-1" indicates the default value in the GUI.
+    currentItemNo = -1;}
   virtual void GetStatistics(
 //    fastestUnsignedDataType wordClass[], 
 //    const fastestUnsignedDataType numArrayEles

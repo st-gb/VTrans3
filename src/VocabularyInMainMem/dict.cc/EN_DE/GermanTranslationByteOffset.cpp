@@ -60,6 +60,21 @@ IVocabularyInMainMem::voc_container_type * GermanTranslationByteOffset::findEngl
   }
   return p_vocContainerFile;
 }
+
+void GermanTranslationByteOffset::GetCollectDictionaryStatisticsStatus(
+  fastestUnsignedDataType & currentItemNo)
+{
+  m_p_dictionaryReader->GetCollectDictionaryStatisticsStatus(currentItemNo);
+}
+
+void GermanTranslationByteOffset::GetStatistics(
+  std::map<enum EnglishWord::English_word_class, unsigned> &
+    englishWordClass2CounterMap
+  )
+{
+  m_p_dictionaryReader->GetStatistics(englishWordClass2CounterMap);
+}
+
   fastestUnsignedDataType GermanTranslationByteOffset::GetNumberOfAllocatedBytes() { 
     if(m_p_dictionaryReader)
       return m_p_dictionaryReader->GetNumberOfAllocatedBytes();

@@ -86,7 +86,14 @@ bool GermanTranslationByteOffset::open(const std::string & std_strDictFilePath )
       LOGN_ERROR("error getting dictionary file size->throwing an exception")
       throw dictionaryFileAccessException;
     }
-    IndexByteOffsetOfGermanTranslations();
+    readWholeFile(
+      ///https://stackoverflow.com/questions/18145874/passing-a-pointer-to-a-class-member-function-as-a-parameter/18152250
+      &GermanTranslationByteOffset::IdxGerTranslsByteOffsTabChar,
+      &GermanTranslationByteOffset::IdxGerTranslsByteOffsLineEnd,
+      0,///dummy value
+      //TODO change to value of enum "parts"
+      0///if English part
+      );
   }
   else //Or throw enum I_File::OpenError openError
   {
@@ -105,32 +112,87 @@ bool GermanTranslationByteOffset::open(const std::string & std_strDictFilePath )
 //  
 //}
 
-void GermanTranslationByteOffset::IndexByteOffsetOfGermanTranslations()
+void GermanTranslationByteOffset::IdxGerTranslsByteOffsLineEnd(void * p_v)
+{
+  m_p_vocaccess->GetUserInterface()->m_translationProcess.SetStatus(
+    VTrans::loadDictionary,
+    "",
+    (float) currentByteOffset / (float) fileSizeInBytes * INT_MAX
+    );
+}
+
+void GermanTranslationByteOffset::IdxGerTranslsByteOffsTabChar(
+  //const fastestUnsignedDataType numTabsInCurrentLine
+  )
+{
+  if( numTabsInCurrentLine == 0)///if English part
+  {
+    m_germanTranslationByteOffsetIndex.insert(
+      std::make_pair(currentAttribute, currentByteOffset + 1) );
+    if( currentAttribute.length() > m_longestEnglishEntryInChars)
+      m_longestEnglishEntryInChars = currentAttribute.length();
+    currentAttribute = "";
+  }
+  numTabsInCurrentLine ++;
+}
+
+void GermanTranslationByteOffset::GetStatsLineEnd(void * p_v)
+{
+  std::map<enum EnglishWord::English_word_class, unsigned> &
+	englishWordClass2CounterMap = *
+	(std::map<enum EnglishWord::English_word_class, unsigned> *) p_v;
+  std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeechContainer =
+	GetPartOfSpeeches(currentAttribute);
+  std::set<EnglishWord::English_word_class> englishWordClassContainer =
+    dict_cc_WordClasses::EnglishWordClassFromPOSconverter::
+    GetEnglishWordClass(partOfSpeechContainer);
+  for( std::set<EnglishWord::English_word_class>::const_iterator englishWordClassIter =
+    englishWordClassContainer.begin();
+    englishWordClassIter != englishWordClassContainer.end() ;
+    englishWordClassIter++ )
+  {
+    ///The last attribute only is the part of speech, e.g. "noun". To get more
+    /// detailed information, e.g. whether it is the singular of a noun the 
+    /// 2nd tab-separated part of a dictionary line has to be processed.
+    const EnglishWord::English_word_class English_word_class =
+      *englishWordClassIter;
+    englishWordClass2CounterMap[English_word_class] ++;
+  }
+  //TODO: neccessary?
+  m_p_vocaccess->GetUserInterface()->m_translationProcess.SetStatus(
+    VTrans::loadDictionary,//TOOD use enum value "dictStats"
+    "",
+    (float) currentByteOffset / (float) fileSizeInBytes * INT_MAX
+    );
+}
+
+void GermanTranslationByteOffset::GetStatsTabChar(
+  //const fastestUnsignedDataType numTabsInCurrentLine
+  )
+{
+}
+
+void GermanTranslationByteOffset::readWholeFile(
+  pfnTabCharType tabCharLineCallBack,
+  pfnEndOfLineType endOfLineCallBack,
+  void * p_v,
+  const fastestUnsignedDataType attrIdx)
 {
   if( m_dictionaryFile.IsOpen() )
   {
-    signed fileSizeInBytes = m_dictionaryFile.GetFileSizeInBytes();
+    fileSizeInBytes = m_dictionaryFile.GetFileSizeInBytes();
     try
     {
-    unsigned numTabsInCurrentLine = 0;
-    std::string currentAttribute;/** Attributes are separated by a tabulator.*/
+    numTabsInCurrentLine = 0;
     int currentByte = m_dictionaryFile.ReadByte();
-    unsigned currentByteOffset = 0;
+    currentByteOffset = 0;
     unsigned numLines = 0;
     while( currentByte != -1 )
     {
       switch( currentByte)
       {
-        case '\t' :
-          if( numTabsInCurrentLine == 0)
-          {
-            m_germanTranslationByteOffsetIndex.insert(
-              std::make_pair(currentAttribute, currentByteOffset + 1) );
-            if( currentAttribute.length() > m_longestEnglishEntryInChars)
-              m_longestEnglishEntryInChars = currentAttribute.length();
-            currentAttribute = "";
-          }
-          numTabsInCurrentLine ++;
+        case '\t' :///A tab character separates the attributes
+          (this->*tabCharLineCallBack)(/*numTabsInCurrentLine*/);
           break;
         case 0xA : /** newline character */
           numTabsInCurrentLine = 0;
@@ -138,14 +200,12 @@ void GermanTranslationByteOffset::IndexByteOffsetOfGermanTranslations()
           ///Only set the status for every thousand line (else too much overhead).
           //TODO alternative:set status if x time has passed.
           if( numLines % 1000 == 0)
-           m_p_vocaccess->GetUserInterface()->m_translationProcess.SetStatus(
-            VTrans::loadDictionary,
-            "",
-            (float) currentByteOffset / (float) fileSizeInBytes * INT_MAX
-            );
+            //TODO This leads to calling the statistics callback function not
+            // for every time.
+            (this->*endOfLineCallBack)(p_v);
           break;
         default:
-          if( numTabsInCurrentLine == 0)
+          if( numTabsInCurrentLine == attrIdx)
             currentAttribute += (char) currentByte;
       }
       currentByteOffset ++;
@@ -204,6 +264,7 @@ void GermanTranslationByteOffset::GetPOSstring(
   }
 }
 
+/** A dict.cc line may contain multiple word classes, e.g. "adj pres-p" */
 inline std::vector<std::string> getPOStokens(const std::string & POSstring)
 {
   int beginIndexOfToken = 0;
@@ -222,20 +283,18 @@ inline std::vector<std::string> getPOStokens(const std::string & POSstring)
   return tokenVector;
 }
 
-/** A dict.cc line may contain multiple word classes, e.g. "adj pres-p" */
-std::set<enum dict_cc_WordClasses::WordClasses> GermanTranslationByteOffset::GetPartOfSpeeches(
-  const fastestUnsignedDataType byteOffsetOfGermanPart)
+///Called from GetStatistics() and GetPartOfSpeeches(fastestUnsignedDataType)
+std::set<enum dict_cc_WordClasses::WordClasses> GermanTranslationByteOffset::
+  GetPartOfSpeeches(const std::string & POSstring)
 {
-  std::string POSstring;
   std::set<enum dict_cc_WordClasses::WordClasses> wordClasses;
-  GetPOSstring(byteOffsetOfGermanPart, POSstring);
   std::vector<std::string> POStokens = getPOStokens(POSstring);
 
   std::vector<std::string>::const_iterator POSstringIter = POStokens.begin();
   while( POSstringIter != POStokens.end() )
   {
     /** Empty word class string: idiom*/
-    POSstring2POSenumContainerType::const_iterator iter = 
+    POSstring2POSenumContainerType::const_iterator iter =
       s_POSstring2POSenum.find(*POSstringIter);
     if( iter != s_POSstring2POSenum.end() )
     {
@@ -244,6 +303,15 @@ std::set<enum dict_cc_WordClasses::WordClasses> GermanTranslationByteOffset::Get
     POSstringIter++;
   }
   return wordClasses;
+}
+
+std::set<enum dict_cc_WordClasses::WordClasses> GermanTranslationByteOffset::
+  GetPartOfSpeeches(const fastestUnsignedDataType byteOffsetOfGermanPart)
+{
+  std::string POSstring;
+  GetPOSstring(byteOffsetOfGermanPart, POSstring);
+
+  return GetPartOfSpeeches(POSstring);
 }
 
 void GermanTranslationByteOffset::findRegardingLongestEnglishEntryInFile(
@@ -487,6 +555,28 @@ std::string AddData(
 
   //   regex_match::string::const_iterato
   return germanTranslation;
+}
+
+void GermanTranslationByteOffset::GetCollectDictionaryStatisticsStatus(
+  fastestUnsignedDataType & currentItemNo)
+{
+  currentItemNo = m_dictionaryFile.GetCurrentFilePointerPosition();
+}
+
+void GermanTranslationByteOffset::GetStatistics(
+  std::map<enum EnglishWord::English_word_class, unsigned> &
+	englishWordClass2CounterMap)
+{
+  readWholeFile(
+    ///https://stackoverflow.com/questions/18145874/passing-a-pointer-to-a-class-member-function-as-a-parameter/18152250
+    &GermanTranslationByteOffset::GetStatsTabChar,
+    &GermanTranslationByteOffset::GetStatsLineEnd,
+    & englishWordClass2CounterMap,
+    2///part of speeches part
+    );
+  #ifdef _DEBUG
+    int i = 0;
+  #endif
 }
 
 VocablesForWord::voc_container_type * GermanTranslationByteOffset::findEnglishWord(
