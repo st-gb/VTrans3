@@ -37,13 +37,15 @@ GermanTranslationByteOffset::GermanTranslationByteOffset(
     , m_longestEnglishEntryInChars(0)
 {
   if( s_POSstring2POSenum.empty() )
-    Build_POSstring2POSenum();
+    FillPOSstring2dict_ccPOSenum();
 }
 
 GermanTranslationByteOffset::~GermanTranslationByteOffset() {
 }
 
-void GermanTranslationByteOffset::Build_POSstring2POSenum()
+///Build a mapping from the part of speeches part of a dictionary line to an
+/// enum value.
+void GermanTranslationByteOffset::FillPOSstring2dict_ccPOSenum()
 {
   AddMapping("adj", dict_cc_WordClasses::adjective);
   AddMapping("adv", dict_cc_WordClasses::adverb);
@@ -91,8 +93,7 @@ bool GermanTranslationByteOffset::open(const std::string & std_strDictFilePath )
       &GermanTranslationByteOffset::IdxGerTranslsByteOffsTabChar,
       &GermanTranslationByteOffset::IdxGerTranslsByteOffsLineEnd,
       0,///dummy value
-      //TODO change to value of enum "parts"
-      0///if English part
+      EnglishPart
       );
   }
   else //Or throw enum I_File::OpenError openError
@@ -125,7 +126,7 @@ void GermanTranslationByteOffset::IdxGerTranslsByteOffsTabChar(
   //const fastestUnsignedDataType numTabsInCurrentLine
   )
 {
-  if( numTabsInCurrentLine == 0)///if English part
+  if( numTabsInCurrentLine == EnglishPart)
   {
     m_germanTranslationByteOffsetIndex.insert(
       std::make_pair(currentAttribute, currentByteOffset + 1) );
@@ -139,15 +140,17 @@ void GermanTranslationByteOffset::IdxGerTranslsByteOffsTabChar(
 void GermanTranslationByteOffset::GetStatsLineEnd(void * p_v)
 {
   std::map<enum EnglishWord::English_word_class, unsigned> &
-	englishWordClass2CounterMap = *
-	(std::map<enum EnglishWord::English_word_class, unsigned> *) p_v;
-  std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeechContainer =
-	GetPartOfSpeeches(currentAttribute);
+    englishWordClass2CounterMap = *
+    (std::map<enum EnglishWord::English_word_class, unsigned> *) p_v;
+  
+//  std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeechContainer =
   std::set<EnglishWord::English_word_class> englishWordClassContainer =
-    dict_cc_WordClasses::EnglishWordClassFromPOSconverter::
-    GetEnglishWordClass(partOfSpeechContainer);
-  for( std::set<EnglishWord::English_word_class>::const_iterator englishWordClassIter =
-    englishWordClassContainer.begin();
+    GetPartOfSpeeches(m_germanPart, currentAttribute);
+//  std::set<EnglishWord::English_word_class> englishWordClassContainer =
+//    dict_cc_WordClasses::EnglishWordClassFromPOSconverter::
+//    GetEnglishWordClass(partOfSpeechContainer);
+  for( std::set<EnglishWord::English_word_class>::const_iterator 
+    englishWordClassIter = englishWordClassContainer.begin();
     englishWordClassIter != englishWordClassContainer.end() ;
     englishWordClassIter++ )
   {
@@ -170,6 +173,12 @@ void GermanTranslationByteOffset::GetStatsTabChar(
   //const fastestUnsignedDataType numTabsInCurrentLine
   )
 {
+  if( numTabsInCurrentLine == GermanPart)
+  {
+    m_germanPart = currentAttribute;
+  }
+  currentAttribute = "";
+  numTabsInCurrentLine ++;
 }
 
 void GermanTranslationByteOffset::readWholeFile(
@@ -191,10 +200,10 @@ void GermanTranslationByteOffset::readWholeFile(
     {
       switch( currentByte)
       {
-        case '\t' :///A tab character separates the attributes
+        case DICT_CC_PART_SEPARATOR_CHAR :
           (this->*tabCharLineCallBack)(/*numTabsInCurrentLine*/);
           break;
-        case 0xA : /** newline character */
+        case DICT_CC_LINE_END_CHAR : /** newline character */
           numTabsInCurrentLine = 0;
           ++ numLines;
           ///Only set the status for every thousand line (else too much overhead).
@@ -224,12 +233,8 @@ void GermanTranslationByteOffset::readWholeFile(
 }
 
 void GermanTranslationByteOffset::GetPOSstring(
-  const fastestUnsignedDataType byteOffsetOfGermanPart, 
   std::string & POSstring)
 {
-  enum I_File::SeekResult seekResult = m_dictionaryFile.
-    SeekFilePointerPosition(byteOffsetOfGermanPart);
-  if( seekResult == I_File::successfullySeeked)
   try
   {
   unsigned numTabsInCurrentLine = 0;
@@ -246,7 +251,7 @@ void GermanTranslationByteOffset::GetPOSstring(
 //        }
 //        numTabsInCurrentLine ++;
 //        break;
-      case 0xA : /** newline character */
+      case DICT_CC_LINE_END_CHAR : /** newline character */
         POSstring = currentAttribute;
         return;
         break;
@@ -262,6 +267,18 @@ void GermanTranslationByteOffset::GetPOSstring(
     if( fileReadException.GetResult() != I_File::endOfFileReached )
       throw fileReadException;
   }
+}
+
+///Gets the part of speech string from the part of speech column of a 
+/// dictionary line.
+void GermanTranslationByteOffset::GetPOSstring(
+  const fastestUnsignedDataType byteOffsetOfGermanPart, 
+  std::string & POSstring)
+{
+  enum I_File::SeekResult seekResult = m_dictionaryFile.
+    SeekFilePointerPosition(byteOffsetOfGermanPart);
+  if( seekResult == I_File::successfullySeeked)
+    GetPOSstring(POSstring);
 }
 
 /** A dict.cc line may contain multiple word classes, e.g. "adj pres-p" */
@@ -283,35 +300,87 @@ inline std::vector<std::string> getPOStokens(const std::string & POSstring)
   return tokenVector;
 }
 
-///Called from GetStatistics() and GetPartOfSpeeches(fastestUnsignedDataType)
-std::set<enum dict_cc_WordClasses::WordClasses> GermanTranslationByteOffset::
-  GetPartOfSpeeches(const std::string & POSstring)
+///\param germanPart: the german tab-separated part of a dictionary line
+/// e.g. "Mann {m}" of line "man [male]	Mann {m}	noun"
+GermanNoun::grammatical_gender getNounGenderViaRegex(
+  const std::string & germanPart)
 {
-  std::set<enum dict_cc_WordClasses::WordClasses> wordClasses;
+  //TODO create this statically once so it does not need to be done for
+  // every noun.
+  std::regex nounGenderRegex("\\{.*\\}");
+  std::smatch regex_match;
+  GermanNoun::grammatical_gender gender = GermanNoun::genderNotSet;
+  std::regex_search(germanPart,regex_match, nounGenderRegex);
+  if( regex_match.size() > 0 )///regex is contained
+  {
+    int regexMatchStringStart = regex_match.position(0);
+    int regexMatchStringLength = regex_match.length(0);
+    ///Remove the gender data ( "{"[...]"}" ) from the string.
+//    germanTranslation = germanTranslation.erase(regexMatchStringStart,
+//      regexMatchStringLength);
+    std::string nounGenderString = regex_match.str(0);
+    DictionaryReaderBase::nounGenderString2genderEnumContainerType::
+      const_iterator citer = DictionaryReaderBase::
+      s_nounGenderString2genderEnum.find(nounGenderString);
+    if(citer != DictionaryReaderBase::s_nounGenderString2genderEnum.end() )
+    { //Gender found.
+      gender = citer->second;
+    }
+  }
+  return gender;
+}
+
+///Called from GetStatistics() and GetPartOfSpeeches(fastestUnsignedDataType)
+//std::set<enum dict_cc_WordClasses::WordClasses>
+std::set<enum EnglishWord::English_word_class>
+  GermanTranslationByteOffset::GetPartOfSpeeches(
+  const std::string & germanPart,/**contains gender information for nouns*/
+  const std::string & POSstring/**POS=part of speech*/
+  //TODO additional parameter
+  //, const std::vector<std::string> & grammaticalInfo
+  )
+{
+//  std::set<enum dict_cc_WordClasses::WordClasses> wordClasses;
+  std::set<enum EnglishWord::English_word_class> wordClasses;
   std::vector<std::string> POStokens = getPOStokens(POSstring);
 
   std::vector<std::string>::const_iterator POSstringIter = POStokens.begin();
   while( POSstringIter != POStokens.end() )
   {
     /** Empty word class string: idiom*/
-    POSstring2POSenumContainerType::const_iterator iter =
-      s_POSstring2POSenum.find(*POSstringIter);
-    if( iter != s_POSstring2POSenum.end() )
+    POSstring2POSenumContainerType::const_iterator POSstring2dict_ccPOSenumIter
+      = s_POSstring2POSenum.find(*POSstringIter);
+    if( POSstring2dict_ccPOSenumIter != s_POSstring2POSenum.end() )
     {
-      wordClasses.insert(iter->second);
+      const enum dict_cc_WordClasses::WordClasses dict_ccPOS = 
+        POSstring2dict_ccPOSenumIter->second;
+      if(dict_ccPOS == dict_cc_WordClasses::noun)
+      {
+        GermanNoun::grammatical_gender gender = getNounGenderViaRegex(
+          //TODO grammaticalInfo already contains the data in "{}"
+          germanPart);
+        switch(gender)
+         {
+         case GermanNoun::masculine:
+         case GermanNoun::feminine:
+         case GermanNoun::neuter:
+//          wordClasses.insert(singNoun);
+            wordClasses.insert (EnglishWord::singular); break;
+         case GermanNoun::plural:
+            wordClasses.insert(EnglishWord::plural_noun); break;
+         }
+      }
+      else
+      {
+//        wordClasses.insert(POSstring2dict_ccPOSenumIter->second);
+        enum EnglishWord::English_word_class wordClass = dict_cc_WordClasses::
+          EnglishWordClassFromPOSconverter::GetEngPOS(dict_ccPOS);
+        wordClasses.insert(wordClass);
+      }
     }
     POSstringIter++;
   }
   return wordClasses;
-}
-
-std::set<enum dict_cc_WordClasses::WordClasses> GermanTranslationByteOffset::
-  GetPartOfSpeeches(const fastestUnsignedDataType byteOffsetOfGermanPart)
-{
-  std::string POSstring;
-  GetPOSstring(byteOffsetOfGermanPart, POSstring);
-
-  return GetPartOfSpeeches(POSstring);
 }
 
 void GermanTranslationByteOffset::findRegardingLongestEnglishEntryInFile(
@@ -329,13 +398,16 @@ void GermanTranslationByteOffset::findRegardingLongestEnglishEntryInFile(
       find(searchInDictionary);
     if( citer != m_germanTranslationByteOffsetIndex.end() )
     {
-      fastestUnsignedDataType byteOffsetOfGermanPart = citer->second;
-      std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeech = 
-        GetPartOfSpeeches(byteOffsetOfGermanPart);
+      const fastestUnsignedDataType byteOffsetOfGermanPart = citer->second;
+//      std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeech = 
+//      std::set<EnglishWord::English_word_class> englishWordClassContainer =
+//        //TODO m_germanPart is for statistics
+//        GetPartOfSpeeches(m_germanPart, byteOffsetOfGermanPart);
 //      std::string germanTranslation = GetGermanTranslation(byteOffsetOfGermanPart);
     }
     endTokenIndex ++;
-    searchInDictionary = psvStringToSearch.GetBetweenAsStdString(r_dwTokenIndex, endTokenIndex);
+    searchInDictionary = psvStringToSearch.GetBetweenAsStdString(r_dwTokenIndex,
+      endTokenIndex);
   }
 }
 
@@ -363,10 +435,11 @@ void GermanTranslationByteOffset::findRegardingLongestEnglishEntryInFile(
  *    The line may also contain other information like the grammatical case 
  *    ,gender for nouns etc. **/
 std::string GermanTranslationByteOffset::GetGermanTranslationColumnContent(
-  fastestUnsignedDataType & byteOffsetOfGermanPart)
+  const fastestUnsignedDataType & byteOffsetOfGermanPart)
 {
   enum I_File::SeekResult seekResult = m_dictionaryFile.
     SeekFilePointerPosition(byteOffsetOfGermanPart);
+  fastestUnsignedDataType byteOffset = byteOffsetOfGermanPart;
   if( seekResult == I_File::successfullySeeked)
   try
   {
@@ -379,9 +452,9 @@ std::string GermanTranslationByteOffset::GetGermanTranslationColumnContent(
   {
     switch( currentByte)
     {
-      case '\t' :
+      case DICT_CC_PART_SEPARATOR_CHAR :
 //        numTabsInCurrentLine ++;
-        byteOffsetOfGermanPart ++;
+        byteOffset ++;
         
         return currentAttribute;
         break;
@@ -415,7 +488,7 @@ std::string GermanTranslationByteOffset::GetGermanTranslationColumnContent(
         }
         else
          currentAttribute += (char) currentByte;
-        byteOffsetOfGermanPart ++;
+        byteOffset ++;
         break;
     }
     currentByte = m_dictionaryFile.ReadByte();
@@ -429,18 +502,31 @@ std::string GermanTranslationByteOffset::GetGermanTranslationColumnContent(
   return "";
 }
 
+void GermanTranslationByteOffset::getGermanAndPOSpart(
+  const fastestUnsignedDataType byteOffsetOfGermanPart,
+  std::string & germanPart, 
+  std::string & POSpart)
+{
+  germanPart = GetGermanTranslationColumnContent(byteOffsetOfGermanPart);
+  GetPOSstring(POSpart);
+}
+
+///Gets the gender (masc, fem, neut, plur) for a German noun.
+//\param germanPart: the middle part/column separated by tabular character in a
+// dictionary line
 GermanNoun::grammatical_gender GetGrammaticalGender(
-  std::string & germanTranslation)
+  std::string & germanPart)
 {
   GermanNoun::grammatical_gender gender = GermanNoun::genderNotSet;
   /** The gender is  often located after the last space char. */
-  //TODO the gender is not always located after the last space char
-  std::string::size_type lastSpaceCharIndex = germanTranslation.find_last_of(' ');
+  //TODO the gender is not always located after the last space char:
+  // "Bock {m} [Technik]"
+  std::string::size_type lastSpaceCharIndex = germanPart.find_last_of('{');
   if( lastSpaceCharIndex != std::string::npos )
   {
-    const std::string nounGenderString = germanTranslation.substr(
+    const std::string nounGenderString = germanPart.substr(
       lastSpaceCharIndex + 1);
-    germanTranslation = germanTranslation.substr(0, lastSpaceCharIndex);
+//    std::string germanPart = germanPart.substr(0, lastSpaceCharIndex);
     
     DictionaryReaderBase::nounGenderString2genderEnumContainerType::
       const_iterator citer = DictionaryReaderBase::
@@ -453,11 +539,28 @@ GermanNoun::grammatical_gender GetGrammaticalGender(
   return gender;
 }
 
+///For getting part of speeches we need the German part of a dictionary line
+/// as well as the part of speech part: for nouns the info whether this is singular
+/// or plural is in the german part: "man [male]	Mann {m}	noun"
+//std::set<enum dict_cc_WordClasses::WordClasses>
+//std::set<EnglishWord::English_word_class> 
+//  GermanTranslationByteOffset::GetPartOfSpeeches(
+//  const std::string & germanPart,
+//  const fastestUnsignedDataType //byteOffsetOfGermanPart
+//    POSpartbyteOffset)
+//{
+//  std::string POSstring;
+//  GetPOSstring(POSpartbyteOffset, POSstring);
+////  if( POSstring == "noun")
+////    GetGrammaticalGender(germanPart);
+//  return GetPartOfSpeeches(POSstring, germanPart);
+//}
+
 std::string GetGermanTranslation(const std::string & germanTranslationColumnContent)
 {
   std::string germanTranslation;
   /** entry e.g. "gegenüber [+Dat.]"
-  *  replace "[.*]" by "" */ 
+  *  replace grammatical information in "[.*]" by "" */
   //http://www.cplusplus.com/reference/regex/regex_replace/
   //http://www.informit.com/articles/article.aspx?p=2064649&seqNum=6
    std::regex regex("\\[.*\\]");
@@ -471,37 +574,94 @@ std::string GetGermanTranslation(const std::string & germanTranslationColumnCont
 //      s = regex_match.suffix().str();
 //    }
 //    std::regex regex2("^[\\ ]*.*[\\ ]$");
-    std::regex regex2("[\\ ]*$");
-    /** Remove space chars at start and end of string. */
+  std::regex regex2("[\\ ]*$");
+  /** Remove space chars at start and end of string. */
   str = std::regex_replace(str,regex2,"");
   return str;
 }
 
+std::string extractGrammarInfo(
+  const std::string & germanPart, 
+  std::regex & grammaticalInfoRegex,
+  std::vector<std::string> & grammaticalInfo)
+{
+  std::smatch regex_match;
+  std::regex_search(germanPart,regex_match,grammaticalInfoRegex);
+  //http://www.cplusplus.com/reference/regex/match_results/position/
+  ///Traverse all regex matches
+  for (unsigned regexMatchIndex = 0; regexMatchIndex < regex_match.size(); 
+    ++regexMatchIndex)
+  {
+    int regexMatchStringStart = regex_match.position(regexMatchIndex);
+    int regexMatchStringLength = regex_match.length(regexMatchIndex);
+    std::string grammarInfo = germanPart.substr(regexMatchStringStart, 
+      regexMatchStringLength);
+    grammaticalInfo.push_back(grammarInfo);
+  }
+  std::string gerPartWoutGrammarInfo = std::regex_replace(germanPart, 
+    grammaticalInfoRegex,"");
+  return gerPartWoutGrammarInfo;
+}
+
+///Gets
+///-the German word/translation
+///-grammatical info like noun gender
+std::string TokenizeGermanPart(const std::string & germanPart,
+  std::vector<std::string> & grammaticalInfo)
+{
+  std::string germanWord;
+  /** entry e.g. "gegenüber [+Dat.]"
+  *  replace grammatical information in "[.*]" by "" */
+  //http://www.cplusplus.com/reference/regex/regex_replace/
+  //http://www.informit.com/articles/article.aspx?p=2064649&seqNum=6
+  std::regex grammaticalInfoRegex("\\[.*\\]");
+  std::string gerPartWoutGrammarInfo = extractGrammarInfo(germanPart,
+    grammaticalInfoRegex, grammaticalInfo);
+  
+  std::regex grammaticalInfoRegex2("\\{.*\\}");
+  gerPartWoutGrammarInfo = extractGrammarInfo(gerPartWoutGrammarInfo,
+    grammaticalInfoRegex2, grammaticalInfo);  
+  
+  std::regex spaceCharsAtEndRegex("[\\ ]*$");
+  /** Remove space chars at start and end of string. */
+  germanWord = std::regex_replace(gerPartWoutGrammarInfo,spaceCharsAtEndRegex,"");  
+  return germanWord;
+}
+
+///Adds grammatical information from the dictionary to a 
+/// VocabularyAndTranslation object.
 std::string AddData(
-  std::string & germanTranslationColumnContent, 
+  std::string & germanPart, 
   VocabularyAndTranslation * p_vocabularyAndTranslation)
 {
 //    std::string germanTranslation;
 //   std::string germanTranslation = germanTranslationColumnContent;
-   std::regex regexForGrammaticalInfo("\\[.*\\]");
-   std::smatch regex_match;
-   std::regex_search (germanTranslationColumnContent,regex_match,regexForGrammaticalInfo);
+//  std::regex regexForGrammaticalInfo("\\[.*\\]");
+//  std::smatch regex_match;
+//  std::regex_search(germanPart,regex_match,regexForGrammaticalInfo);
+   
+  std::vector<std::string> grammaticalInfo;
+  //TODO regex "{.*}" is done before in getGermanAndPOSpart(...)
+  std::string germanWord = TokenizeGermanPart(germanPart, grammaticalInfo);
+
    //http://www.cplusplus.com/reference/regex/match_results/position/
-   for (unsigned regexMatchIndex = 0; regexMatchIndex < regex_match.size(); 
-    ++regexMatchIndex)
+//   ///Traverse all regex matches
+//   for(unsigned regexMatchIndex = 0; regexMatchIndex < regex_match.size(); 
+//    ++regexMatchIndex)
+   for(auto grammarInfo : grammaticalInfo)
    {
 //    std::cout << "match " << i << " (" << regex_match[i] << ") ";
-    int regexMatchStringStart = regex_match.position(regexMatchIndex);
-    int regexMatchStringLength = regex_match.length(regexMatchIndex);
+//    int regexMatchStringStart = regex_match.position(regexMatchIndex);
+//    int regexMatchStringLength = regex_match.length(regexMatchIndex);
 
     GCC_DIAG_OFF(switch)
     switch(p_vocabularyAndTranslation->m_englishWordClass)
     {
       case EnglishWord::preposition :
       case EnglishWord::main_verb :
-        std::string regexMatchString = regex_match.str(regexMatchIndex);
+//        std::string regexMatchString = regex_match.str(regexMatchIndex);
         //TODO add other grammatical cases
-        if( regexMatchString.find("Dat.") != std::string::npos)
+        if( /*regexMatchString*/grammarInfo.find("Dat.") != std::string::npos)
         {
           p_vocabularyAndTranslation->m_arbyAttribute[0] = GermanVerb::dative;
         }
@@ -512,49 +672,32 @@ std::string AddData(
 //    germanTranslation.erase(regexMatchStringStart, regexMatchStringLength);
 //    std::cout << "at position " << regex_match.position(i) << std::endl; 
   }
-  std::string germanTranslation = std::regex_replace(
-    germanTranslationColumnContent, regexForGrammaticalInfo, "");
-
+//  ///Removes regexForGrammaticalInfo from German part
+//  std::string germanTranslation = std::regex_replace(
+//    germanPart, regexForGrammaticalInfo, "");
+  
   GCC_DIAG_OFF(switch)
   switch(p_vocabularyAndTranslation->m_englishWordClass)
   {
-    case EnglishWord::noun :
+    case EnglishWord::noun : case EnglishWord::singular :
     {
 //        GermanNoun::grammatical_gender gender = GetGrammaticalGender(germanTranslationColumnContent);
-      //TODO create this statically once so it does not need to be done for
-      // every noun.
-      std::regex regexForGrammaticalGender("\\{.*\\}");
-      std::smatch regex_match;
-      GermanNoun::grammatical_gender gender = GermanNoun::genderNotSet;
-      std::regex_search (germanTranslation,regex_match, regexForGrammaticalGender);
-      if( regex_match.size() > 0 )
-      {
-        int regexMatchStringStart = regex_match.position(0);
-        int regexMatchStringLength = regex_match.length(0);
-        ///Remove the gender data ( "{"[...]"}" ) from the string.
-        germanTranslation = germanTranslation.erase(regexMatchStringStart,
-          regexMatchStringLength);
-        std::string nounGenderString = regex_match.str(0);
-        DictionaryReaderBase::nounGenderString2genderEnumContainerType::
-          const_iterator citer = DictionaryReaderBase::
-          s_nounGenderString2genderEnum.find(nounGenderString);
-        if(citer != DictionaryReaderBase::s_nounGenderString2genderEnum.end() )
-        { //Gender found.
-          gender = citer->second;
-        }
-        p_vocabularyAndTranslation->SetAttributeValue(0, gender);
-      }
+      const GermanNoun::grammatical_gender gender = 
+        //TODO replace by searching in "grammaticalInfo"
+        //TODO regex "{.*}" is done before in getGermanAndPOSpart(...)
+        getNounGenderViaRegex(germanPart);
+      p_vocabularyAndTranslation->SetAttributeValue(0, gender);
     }
     break;
   }
   GCC_DIAG_ON(switch)
 
-  std::regex spaceCharsAtEndRegex("[\\ ]*$");
-  /** Remove space chars at start and end of string. */
-  germanTranslation = std::regex_replace(germanTranslation,spaceCharsAtEndRegex,"");
+//  std::regex spaceCharsAtEndRegex("[\\ ]*$");
+//  /** Remove space chars at start and end of string. */
+//  germanTranslation = std::regex_replace(germanTranslation,spaceCharsAtEndRegex,"");
 
   //   regex_match::string::const_iterato
-  return germanTranslation;
+  return /*germanTranslation*/germanWord;
 }
 
 void GermanTranslationByteOffset::GetCollectDictionaryStatisticsStatus(
@@ -572,7 +715,7 @@ void GermanTranslationByteOffset::GetStatistics(
     &GermanTranslationByteOffset::GetStatsTabChar,
     &GermanTranslationByteOffset::GetStatsLineEnd,
     & englishWordClass2CounterMap,
-    2///part of speeches part
+    partOfSpeech
     );
   #ifdef _DEBUG
     int i = 0;
@@ -599,18 +742,27 @@ VocablesForWord::voc_container_type * GermanTranslationByteOffset::findEnglishWo
     citer != firstAndLastFound.second; ++citer)
   {
     fastestUnsignedDataType byteOffsetOfGermanPart = citer->second;
-    std::string germanTranslationColumnContent = 
-      GetGermanTranslationColumnContent(byteOffsetOfGermanPart);
+//    const std::string gerTranslColContent =
+//      GetGermanTranslationColumnContent(byteOffsetOfGermanPart);
+    std::string gerTranslColContent;
+    std::string POSpart;
+    getGermanAndPOSpart(byteOffsetOfGermanPart,
+      gerTranslColContent, POSpart);
     
-    std::string germanTranslation;// = GetGermanTranslation(germanTranslationColumnContent);
+    std::string germanTranslation = GetGermanTranslation(gerTranslColContent);
+    //TODO replace by:
+//    std::vector<std::string> grammaticalInfo;
+//    std::string germanTranslation = TokenizeGermanPart(gerTranslColContent,
+//      grammaticalInfo);
     
-    std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeechContainer = 
-      GetPartOfSpeeches(byteOffsetOfGermanPart);
-    std::set<EnglishWord::English_word_class> englishWordClassContainer = 
-      dict_cc_WordClasses::EnglishWordClassFromPOSconverter::
-      GetEnglishWordClass(partOfSpeechContainer);
-    for( std::set<EnglishWord::English_word_class>::const_iterator englishWordClassIter =
-      englishWordClassContainer.begin(); 
+//    std::set<enum dict_cc_WordClasses::WordClasses> partOfSpeechContainer =
+    std::set<EnglishWord::English_word_class> englishWordClassContainer =
+      GetPartOfSpeeches(gerTranslColContent, /*byteOffsetOfGermanPart*/POSpart);
+//    std::set<EnglishWord::English_word_class> englishWordClassContainer = 
+//      dict_cc_WordClasses::EnglishWordClassFromPOSconverter::
+//      GetEnglishWordClass(partOfSpeechContainer);
+    for( std::set<EnglishWord::English_word_class>::const_iterator 
+      englishWordClassIter = englishWordClassContainer.begin(); 
       englishWordClassIter != englishWordClassContainer.end() ; 
       englishWordClassIter++ )
     {
@@ -625,7 +777,7 @@ VocablesForWord::voc_container_type * GermanTranslationByteOffset::findEnglishWo
 //        p_vocabularyAndTranslation->SetAttributeValue(0, gender);
 //      }
 //      p_vocabularyAndTranslation->SetGermanWord(germanTranslation, 0);
-      germanTranslation = AddData(germanTranslationColumnContent, p_vocabularyAndTranslation);
+      germanTranslation = AddData(gerTranslColContent, p_vocabularyAndTranslation);
       p_vocabularyAndTranslation->SetGermanWord(germanTranslation, 0);
 
       vocContainer.insert(p_vocabularyAndTranslation);

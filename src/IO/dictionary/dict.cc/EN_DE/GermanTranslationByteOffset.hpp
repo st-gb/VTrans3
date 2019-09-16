@@ -18,15 +18,21 @@
 /** Forward declarations: */
 class IVocabularyInMainMem;
 
+#define DICT_CC_LINE_END_CHAR 0xA
+///A tab character separates the 3 parts (English, German, part of speech)
+#define DICT_CC_PART_SEPARATOR_CHAR '\t'
+
 namespace DictionaryReader { namespace dict_cc { namespace EN_DE {
 class GermanTranslationByteOffset 
   : public DictionaryReader::DictionaryReaderBase
 {
 private:
   native_File_type m_dictionaryFile;
-  unsigned numTabsInCurrentLine = 0;
-  unsigned currentByteOffset = 0;
+  unsigned numTabsInCurrentLine;
+  unsigned currentByteOffset;
+  unsigned numLines;
   signed fileSizeInBytes;
+  std::string m_germanPart;
 
   ///An attribute is either
   ///-the English part
@@ -48,21 +54,25 @@ private:
   typedef void (GermanTranslationByteOffset::*pfnTabCharType)();
   //typedef pfnTabCharType pfnEndOfLineType;
   typedef void (GermanTranslationByteOffset::*pfnEndOfLineType)(void *);
-
+  ///If looking for a word in the source text this is the largest number of
+  /// characters all tokens and space characters in between need to be searched.
   fastestUnsignedDataType m_longestEnglishEntryInChars;
-  typedef std::map<std::string, dict_cc_WordClasses::WordClasses> POSstring2POSenumContainerType;
+  typedef std::map<std::string, enum dict_cc_WordClasses::WordClasses> 
+    POSstring2POSenumContainerType;
   static POSstring2POSenumContainerType s_POSstring2POSenum;
 public:
+  ///Sample entry: "man [male]	Mann {m}	noun"
+  enum parts {EnglishPart = 0, GermanPart, partOfSpeech};
     GermanTranslationByteOffset(IVocabularyInMainMem * p_vocabularyInMainMem);
     virtual ~GermanTranslationByteOffset();
 
-    void AddMapping(
-        const char * const word, 
-        const enum dict_cc_WordClasses::WordClasses wordClasses)
-      {
-        s_POSstring2POSenum.insert(std::make_pair(word, wordClasses) );
-      }
-    void Build_POSstring2POSenum();
+  static void AddMapping(
+    const char * const word,
+    const enum dict_cc_WordClasses::WordClasses wordClasses)
+  {
+    s_POSstring2POSenum.insert(std::make_pair(word, wordClasses) );
+  }
+  static void FillPOSstring2dict_ccPOSenum();
     VocablesForWord::voc_container_type * findEnglishWord(
         const std::string & englishWord);
     std::set<VocabularyAndTranslation *> * findEnglishWord(
@@ -82,28 +92,38 @@ public:
     fastestUnsignedDataType & currentItemNo);
   void GetStatistics(
     std::map<enum EnglishWord::English_word_class, unsigned> & );
+  ///Callback functions for indexing the vocabulary by the English word.
   void IdxGerTranslsByteOffsLineEnd(void *);
   void IdxGerTranslsByteOffsTabChar(
     /*const fastestUnsignedDataType numTabsInCurrentLine*/);
+  ///Callback functions for dictionary statistics.
   void GetStatsLineEnd(void *);
   void GetStatsTabChar();
-    std::string GetGermanTranslationColumnContent(
-        fastestUnsignedDataType & byteOffsetOfGermanPart);
-  std::set<enum dict_cc_WordClasses::WordClasses> GetPartOfSpeeches(
-    const std::string & POSstring);
-    std::set<enum dict_cc_WordClasses::WordClasses> GetPartOfSpeeches(
-        const fastestUnsignedDataType byteOffsetOfGermanPart);
+  
+  void getGermanAndPOSpart(
+    const fastestUnsignedDataType byteOffsetOfGermanPart,
+    std::string & germanPart, 
+    std::string & POSpart);
+  std::string GetGermanTranslationColumnContent(
+    const fastestUnsignedDataType & byteOffsetOfGermanPart);
+//  std::set<enum dict_cc_WordClasses::WordClasses> 
+  std::set<EnglishWord::English_word_class>
+    GetPartOfSpeeches(
+    const std::string & POSstring, const std::string & germanPart);
+//  std::set<enum dict_cc_WordClasses::WordClasses>
+  std::set<EnglishWord::English_word_class>
+    GetPartOfSpeeches(const fastestUnsignedDataType byteOffsetOfGermanPart);
     bool open(const std::string & std_strDictFilePath );
     void readWholeFile(pfnTabCharType, pfnEndOfLineType,
 	  void * endOfLineFnParam,
 	  const fastestUnsignedDataType attrIdx);
-    void GetPOSstring(
-        const fastestUnsignedDataType byteOffsetOfGermanPart, 
-        std::string & POSstring);
+  void GetPOSstring(std::string & POSstring);
+  void GetPOSstring(
+    const fastestUnsignedDataType byteOffsetOfGermanPart, 
+    std::string & POSstring);
     fastestUnsignedDataType GetNumberOfAllocatedBytes() { return 
       m_germanTranslationByteOffsetIndex.size() * sizeof(indexType); }
 };
 }}}
 
 #endif /* DICT_CC_EN_DE_READER_HPP */
-
