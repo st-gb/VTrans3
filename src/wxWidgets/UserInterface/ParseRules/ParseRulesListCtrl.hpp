@@ -1,28 +1,31 @@
-/*
- * ParseRulesListCtrl.hpp
- *
+/* ParseRulesListCtrl.hpp
  *  Created on: 22.03.2014
- *      Author: mr.sys
- */
+ *      Author: mr.sys */
 
 #ifndef PARSERULESLISTCTRL_HPP_
 #define PARSERULESLISTCTRL_HPP_
 
-#include "../RulesListCtrl.hpp"
+#include "../RulesListCtrl.hpp"///base class wxWidgets::RulesListCtrl
 #include <map>///class std::map
 #include <Windows.h>///includes windef.h;for WORD
+#include <hardware/CPU/fastest_data_type.h>///fastestUnsignedDataType
+
+///Forward declarations
+namespace wxWidgets { class ShowParseRulesDialog; }
 
 namespace wxWidgets
 {
 
-  class ParseRulesListCtrl
-    : public wxWidgets::RulesListCtrl
-  {
-    enum ColumnIDs { leftChild = 0, ParseRuleName, FilePath};
+class ParseRulesListCtrl
+  : public wxWidgets::RulesListCtrl
+{
+    enum ColumnIDs { leftChild = 0/*, rightChild*/, ParseRuleName, FilePath};
     enum ContextMenuItemIDs{ ID_CopyRuleFilePathToClipBoard };
     int m_itemIndexOfContextMenu;
+  wxWidgets::ShowParseRulesDialog * dialog;
  public:
-    ParseRulesListCtrl(wxWindow * parent, int ID);
+    ParseRulesListCtrl(/*wxWindow*/wxWidgets::ShowParseRulesDialog * parent,
+      int ID);
     virtual
     ~ParseRulesListCtrl();
 
@@ -33,11 +36,10 @@ namespace wxWidgets
     wxString OnGetItemText(long item, long column) const;
     wxString GetItemText(long int, long int) const;
     
-  bool isFiltered(std::map<WORD,WORD>::const_iterator
-    c_parseTreeNodeID2SuperordinateIDiter) const;
+  bool isFiltered(const fastestUnsignedDataType leftRuleID) const;
   void SetFilter(const wxString&);
     DECLARE_EVENT_TABLE()
-  };
+};
 
 } /* namespace wxWidgets */
 

@@ -14,8 +14,8 @@
 namespace VTrans
 {
   enum StatusCode {not_set, lookUpWordInDictBeginningFromTokenIndex,
-	translationRules, transformParseTree, generateXMLtreeFromParseTree,
-        loadDictionary
+    translationRules, transformParseTree, generateXMLtreeFromParseTree,
+    loadDictionary, dictStats
     };
   const char * const g_statusMessages [] = { "not set", 
     "lookUpWordInDictBeginningFromTokenIndex", "translationRules", 

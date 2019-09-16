@@ -393,17 +393,17 @@ void BottomUpParser::GetGrammarPartCoveringMostTokens(
 }
 
 bool BottomUpParser::GetGrammarPartID(
-  const std::string & cr_stdstrGrammarPartName , WORD & r_wGrammarPartID )
+  const std::string & cr_stdstrGrammarPartName, PTN_IDtype & r_parseTreeNodeID)
 {
 //  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
   LOGN_DEBUG(
     cr_stdstrGrammarPartName << ",...) begin")
   bool bSuccess = false ;
-  std::map<std::string,WORD>::const_iterator iter =
+  PTNtypeName2PTN_IDtype::const_iterator iter =
     m_stdmap_RuleName2RuleID.find(cr_stdstrGrammarPartName) ;
   if( iter != m_stdmap_RuleName2RuleID.end() )
   {
-    r_wGrammarPartID = iter->second ;
+    r_parseTreeNodeID = iter->second ;
     bSuccess = true ;
   }
 //  DEBUG_COUTN("ParseByRise::GetGrammarPartID(" <<
@@ -412,11 +412,11 @@ bool BottomUpParser::GetGrammarPartID(
   return bSuccess ;
 }
 
-std::string BottomUpParser::GetGrammarPartName(WORD wRuleID ) const
+std::string BottomUpParser::GetGrammarPartName(PTN_IDtype ruleID) const
 {
 //  std::string stdstrRuleName ;
-  std::map<WORD,std::string>::const_iterator iter =
-    m_stdmap_wRuleID2RuleName.find( wRuleID ) ;
+  PTN_ID2PTNtypeNameType::const_iterator iter =
+    m_stdmap_wRuleID2RuleName.find( ruleID ) ;
   if( iter != m_stdmap_wRuleID2RuleName.end() )
     return iter->second ;
   return std::string(//"?gram pt"
@@ -687,7 +687,7 @@ void BottomUpParser::InitGrammar()
 //Test if the grammar part is a word class.
 //All grammar rules are based on word classes. Word classes are the leaves of
 //the parse trees.
-bool BottomUpParser::GrammarPartIDIsWordClass( WORD wGrammarPartID )
+bool BottomUpParser::GrammarPartIDIsWordClass( PTN_IDtype parseTreeNodeID )
 {
   bool bGrammarPartIDIsWordClass = false ;
 //  switch( wGrammarPartID )
@@ -699,7 +699,7 @@ bool BottomUpParser::GrammarPartIDIsWordClass( WORD wGrammarPartID )
 //    bGrammarPartIDIsWordClass = true ;
 //    break ;
 //  }
-  if( wGrammarPartID >= EnglishWord::noun && wGrammarPartID <
+  if( parseTreeNodeID >= EnglishWord::noun && parseTreeNodeID <
       EnglishWord::beyond_last_entry )
     bGrammarPartIDIsWordClass = true ;
   return bGrammarPartIDIsWordClass ;
@@ -812,69 +812,70 @@ void BottomUpParser::InsertFundamentalRuleIDs()
 }
 
 //return: new rule ID
-WORD BottomUpParser::InsertGrammarRule(
+PTN_IDtype BottomUpParser::InsertGrammarRule(
   const char * cp_chLeftGrammarRuleName
-  , WORD wGrammarRuleIDRight
+  , PTN_IDtype grammarRuleIDRight
   , //std::string
   const char * cp_chSuperordinateGrammarRuleName
   )
 {
-  std::map<std::string,WORD>::const_iterator iter =
+  PTNtypeName2PTN_IDtype::const_iterator iter =
     m_stdmap_RuleName2RuleID.find(
     cp_chLeftGrammarRuleName ) ;
   if( iter != m_stdmap_RuleName2RuleID.end() )
   {
-    WORD wGrammarRuleIDLeft = iter->second ;
+    PTN_IDtype grammarRuleIDLeft = iter->second ;
     LOGN_DEBUG("inserting grammar rule \"" << cp_chSuperordinateGrammarRuleName
       << "\" " << "(ID=" << m_wNumberOfSuperordinateRules << ")"
-      << " for " << cp_chLeftGrammarRuleName << wGrammarRuleIDLeft
+      << " for " << cp_chLeftGrammarRuleName << grammarRuleIDLeft
       << ","
-      << wGrammarRuleIDRight
+      << grammarRuleIDRight
       << "\n")
     InsertGrammarRule(
-      wGrammarRuleIDLeft
-      , wGrammarRuleIDRight
+      grammarRuleIDLeft
+      , grammarRuleIDRight
       , cp_chSuperordinateGrammarRuleName ) ;
   }
   return m_wNumberOfSuperordinateRules - 1 ;
 }
 
 void BottomUpParser::InsertGrammarRule(
-  WORD wGrammarRuleIDLeft ,
+  PTN_IDtype grammarRuleIDLeft ,
   const char * cp_chRightGrammarRuleName
   , //std::string
   const char * cp_chSuperordinateGrammarRuleName
   )
 {
-  std::map<std::string,WORD>::const_iterator iter =
+  PTNtypeName2PTN_IDtype::const_iterator iter =
     m_stdmap_RuleName2RuleID.find(
     cp_chRightGrammarRuleName ) ;
   if( iter != m_stdmap_RuleName2RuleID.end() )
   {
-    WORD wGrammarRuleIDRight = iter->second ;
+    PTN_IDtype wGrammarRuleIDRight = iter->second ;
     InsertGrammarRule(
-      wGrammarRuleIDLeft
+      grammarRuleIDLeft
       , wGrammarRuleIDRight
       , cp_chSuperordinateGrammarRuleName ) ;
   }
 }
 
-enum BottomUpParser::InsertGrammarRuleReturnCodes BottomUpParser::InsertGrammarRule(
+enum BottomUpParser::InsertGrammarRuleReturnCodes BottomUpParser::
+  InsertGrammarRule(
   const char * cp_chLeftGrammarRuleName
   , const char * cp_chRightGrammarRuleName
   , //std::string
   const char * cp_chSuperordinateGrammarRuleName
   )
 {
-  enum BottomUpParser::InsertGrammarRuleReturnCodes byReturnValue = AllGrammarPartsAreKnown;
+  enum BottomUpParser::InsertGrammarRuleReturnCodes byReturnValue =
+    AllGrammarPartsAreKnown;
   std::string unknownGrammarPartNames;
-  std::map<std::string,WORD>::const_iterator c_iterLeft =
-    m_stdmap_RuleName2RuleID.find(
-    cp_chLeftGrammarRuleName ) ;
-  std::map<std::string,WORD>::const_iterator c_iterRight =
+  PTNtypeName2PTN_IDtype::const_iterator c_iterLeft =
+    m_stdmap_RuleName2RuleID.find(cp_chLeftGrammarRuleName);
+  PTNtypeName2PTN_IDtype::const_iterator c_iterRight =
     m_stdmap_RuleName2RuleID.find(
         cp_chRightGrammarRuleName ) ;
-  std::map<std::string,WORD>::const_iterator
+  PTNtypeName2PTN_IDtype::const_iterator
     c_iter_std_map_std_str2wRuleName2RuleIDend =
     m_stdmap_RuleName2RuleID.end();
   if( c_iterLeft == //m_stdmap_RuleName2RuleID.end()
@@ -903,17 +904,17 @@ enum BottomUpParser::InsertGrammarRuleReturnCodes BottomUpParser::InsertGrammarR
   }
   if( byReturnValue == AllGrammarPartsAreKnown )
   {
-    WORD wGrammarRuleIDLeft = c_iterLeft->second ;
-    WORD wGrammarRuleIDRight = c_iterRight->second ;
+    PTN_IDtype grammarRuleIDLeft = c_iterLeft->second ;
+    PTN_IDtype grammarRuleIDRight = c_iterRight->second ;
     LOGN_DEBUG("inserting rule \"" << cp_chSuperordinateGrammarRuleName
       << "\" " << "(ID=" << m_wNumberOfSuperordinateRules << ")"
-      << " for " << cp_chLeftGrammarRuleName << wGrammarRuleIDLeft
+      << " for " << cp_chLeftGrammarRuleName << grammarRuleIDLeft
       << ","
-      << cp_chRightGrammarRuleName << wGrammarRuleIDRight
+      << cp_chRightGrammarRuleName << grammarRuleIDRight
       << "\n")
     InsertGrammarRule(
-      wGrammarRuleIDLeft
-      , wGrammarRuleIDRight
+      grammarRuleIDLeft
+      , grammarRuleIDRight
       , cp_chSuperordinateGrammarRuleName ) ;
     LOGN_DEBUG("After inserting rule \"" << cp_chSuperordinateGrammarRuleName
       << "\" " )
@@ -933,13 +934,13 @@ void BottomUpParser::InsertGrammarRule(
   , const char * cp_chRightGrammarRuleName
   , //std::string
   //EXISTING rule / grammar part ID
-  WORD wSuperordinateGrammarRuleID
+  PTN_IDtype superordinateGrammarRuleID
   )
 {
-  std::map<std::string,WORD>::const_iterator c_iterLeft =
+  PTNtypeName2PTN_IDtype::const_iterator c_iterLeft =
     m_stdmap_RuleName2RuleID.find(
     cp_chLeftGrammarRuleName ) ;
-  std::map<std::string,WORD>::const_iterator c_iterRight =
+  PTNtypeName2PTN_IDtype::const_iterator c_iterRight =
     m_stdmap_RuleName2RuleID.find(
     cp_chLeftGrammarRuleName ) ;
   if( c_iterLeft != m_stdmap_RuleName2RuleID.end() &&
@@ -947,8 +948,8 @@ void BottomUpParser::InsertGrammarRule(
       c_iterRight != m_stdmap_RuleName2RuleID.end()
       )
   {
-    WORD wGrammarRuleIDLeft = c_iterLeft->second ;
-    WORD wGrammarRuleIDRight = c_iterRight->second ;
+    PTN_IDtype grammarRuleIDLeft = c_iterLeft->second ;
+    PTN_IDtype grammarRuleIDRight = c_iterRight->second ;
 //    InsertGrammarRule(
 //      wGrammarRuleIDLeft
 //      , wGrammarRuleIDRight
@@ -960,22 +961,22 @@ void BottomUpParser::InsertGrammarRule(
     //        /          \ (if "\"= last char:g++ warning:"multi-line comment")
     //definite article  noun
     m_stdmultimap_wGrammarPartID2SuperordinateID.insert(
-      std::pair<WORD,WORD> (wGrammarRuleIDLeft,
+      std::pair<PTN_IDtype,PTN_IDtype> (grammarRuleIDLeft,
       //ID for added rule.
-      wSuperordinateGrammarRuleID)
+      superordinateGrammarRuleID)
       ) ;
 
     //Used in InsertIfGrammarRuleAppliesTo(...) for getting all grammar rules
     // whose left child has the same grammarpart ID is the map's key value.
     m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule.insert(
       std::pair<WORD,GrammarRule> (
-        wGrammarRuleIDLeft,
-        GrammarRule(wGrammarRuleIDRight,wSuperordinateGrammarRuleID)
+        grammarRuleIDLeft,
+        GrammarRule(grammarRuleIDRight,superordinateGrammarRuleID)
         )
       ) ;
 
     m_stdmultimap_wGrammarPartID2wGrammarPartID.insert(
-      std::pair<WORD,WORD> (wGrammarRuleIDLeft, wGrammarRuleIDRight)
+      std::pair<PTN_IDtype,PTN_IDtype> (grammarRuleIDLeft, grammarRuleIDRight)
       ) ;
 
   //  m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
@@ -1013,14 +1014,15 @@ void BottomUpParser::InsertGrammarRule(
 //  -"gerund" + conj + "indefinite_article_noun"
 //  -"gerund" + conj + "gerund"
 
-WORD BottomUpParser::InsertSuperClassGrammarRule(
-  WORD wSubclassGrammarRuleID
+///Insert a rule with only 1 child (i.e. no left and right children)
+PTN_IDtype BottomUpParser::InsertSuperClassGrammarRule(
+  PTN_IDtype subclassGrammarRuleID
   , //std::string
   const char * cp_chSuperclassGrammarRuleName
   )
 {
-  std::map<std::string,WORD>::const_iterator iter =
-      m_stdmap_RuleName2RuleID.find(
+  PTNtypeName2PTN_IDtype::const_iterator iter =
+    m_stdmap_RuleName2RuleID.find(
       cp_chSuperclassGrammarRuleName ) ;
   if( //superclass rule (name) does not exist yet.
       iter == m_stdmap_RuleName2RuleID.end() )
@@ -1032,8 +1034,8 @@ WORD BottomUpParser::InsertSuperClassGrammarRule(
     //         /          \ (if "\"= last char:g++ warning:"multi-line comment")
     // definite article  noun
     m_stdmap_wGrammarPartID2SuperordinateID.insert(
-      std::pair<WORD,WORD> (
-        wSubclassGrammarRuleID,
+      std::pair<PTN_IDtype,PTN_IDtype> (
+        subclassGrammarRuleID,
         //ID for added rule.
         m_wNumberOfSuperordinateRules
         )
@@ -1065,8 +1067,8 @@ WORD BottomUpParser::InsertSuperClassGrammarRule(
   {
     LOGN_WARNING("existing rule is being replaced")
     m_stdmap_wGrammarPartID2SuperordinateID.insert(
-      std::pair<WORD,WORD> (
-        wSubclassGrammarRuleID,
+      std::pair<PTN_IDtype,PTN_IDtype> (
+        subclassGrammarRuleID,
         //ID for added rule.
         iter->second
         )
@@ -1085,16 +1087,16 @@ enum BottomUpParser::InsertGrammarRuleReturnCodes BottomUpParser::InsertSuperCla
   enum BottomUpParser::InsertGrammarRuleReturnCodes returnValue = AllGrammarPartsAreKnown;
   //This condition prevented inserting a super class rule for grammar part
   // whose name was already in the map.
-  std::map<std::string,WORD>::const_iterator iter =
+  PTNtypeName2PTN_IDtype::const_iterator iter =
     m_stdmap_RuleName2RuleID.find(
     cp_chSubclassGrammarRuleName ) ;
   if( //If the name exists within the map
       iter != m_stdmap_RuleName2RuleID.end() )
   {
-    WORD wSubclassGrammarRuleID = iter->second ;
+    PTN_IDtype subclassPTN_ID = iter->second ;
     LOGN("inserting rule \"" << cp_chSuperclassGrammarRuleName << "\" "
       << "(ID=" << m_wNumberOfSuperordinateRules << ")"
-      << " for " << cp_chSubclassGrammarRuleName << wSubclassGrammarRuleID
+      << " for " << cp_chSubclassGrammarRuleName << subclassPTN_ID
 //      << ","
 //      << wGrammarRuleIDRight
       //<< "\n"
@@ -1104,7 +1106,7 @@ enum BottomUpParser::InsertGrammarRuleReturnCodes BottomUpParser::InsertSuperCla
 //      , 65535
 //      , cp_chSuperordinateGrammarRuleName ) ;
     InsertSuperClassGrammarRule(
-      wSubclassGrammarRuleID
+      subclassPTN_ID
       , //std::string
       cp_chSuperclassGrammarRuleName
       ) ;
@@ -1124,19 +1126,20 @@ enum BottomUpParser::InsertGrammarRuleReturnCodes BottomUpParser::InsertSuperCla
 
 void BottomUpParser::InsertGrammarRule(
   //A grammar part with this ID must exist when calling this function.
-  WORD wGrammarRuleIDLeft
+  PTN_IDtype grammarRuleIDLeft
   //A grammar part with this ID must exist when calling this function.
-  , WORD wGrammarRuleIDRight
+  , PTN_IDtype grammarRuleIDRight
   , //std::string
   //Name of the new rule to insert that consists of left and right existing
   //rules.
   const char * cp_chSuperordinateGrammarRuleName
   )
 {
-  std::map<std::string,WORD>::const_iterator c_iter =
+  PTNtypeName2PTN_IDtype::const_iterator c_ruleName2ruleIDiter =
     m_stdmap_RuleName2RuleID.find(
-      cp_chSuperordinateGrammarRuleName ) ;
-  if( c_iter == m_stdmap_RuleName2RuleID.end() )
+      cp_chSuperordinateGrammarRuleName );
+  ///If parse tree node ID for superordinate name was not found.
+  if( c_ruleName2ruleIDiter == m_stdmap_RuleName2RuleID.end() )
   {
     //When parsing, compare the neighboured grammar parts' IDs for a shared
     //superordinate grammar part ID.
@@ -1144,16 +1147,16 @@ void BottomUpParser::InsertGrammarRule(
     //        /          \ (if "\"= last char:g++ warning:"multi-line comment")
     //definite article  noun
     m_stdmultimap_wGrammarPartID2SuperordinateID.insert(
-      std::pair<WORD,WORD> (wGrammarRuleIDLeft,
+      std::pair<PTN_IDtype,PTN_IDtype> (grammarRuleIDLeft,
       //ID for added rule.
       m_wNumberOfSuperordinateRules)
       ) ;
     //Used in InsertIfGrammarRuleAppliesTo(...) for getting all grammar rules
     // whose left child has the same grammarpart ID is the map's key value.
     m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule.insert(
-      std::pair<WORD,GrammarRule> (
-        wGrammarRuleIDLeft,
-        GrammarRule(wGrammarRuleIDRight,m_wNumberOfSuperordinateRules)
+      std::pair<PTN_IDtype,GrammarRule> (
+        grammarRuleIDLeft,
+        GrammarRule(grammarRuleIDRight,m_wNumberOfSuperordinateRules)
         )
       ) ;
   //  m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
@@ -1168,11 +1171,11 @@ void BottomUpParser::InsertGrammarRule(
   }
   else
   {
+    PTN_IDtype superordinatePTN_ID = c_ruleName2ruleIDiter->second;
 #ifdef _DEBUG //because I can't show iter's value with Cygwin gdb Debugger
     //see http://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html:
 //    #pragma GCC diagnostic ignored  "-Wunused"
-    WORD wSuperordinateGrammarPartID = c_iter->second ;
-    SUPPRESS_UNUSED_VARIABLE_WARNING(wSuperordinateGrammarPartID)
+    SUPPRESS_UNUSED_VARIABLE_WARNING(superordinatePTN_ID)
     //Useless instruction just for breakpoint possibility.
     int i ;
     SUPPRESS_UNUSED_VARIABLE_WARNING(i)
@@ -1183,25 +1186,25 @@ void BottomUpParser::InsertGrammarRule(
     //        /          \ (if "\"= last char:g++ warning:"multi-line comment")
     //definite article  noun
     m_stdmultimap_wGrammarPartID2SuperordinateID.insert(
-      std::pair<WORD,WORD> (wGrammarRuleIDLeft,
+      std::pair<PTN_IDtype,PTN_IDtype> (grammarRuleIDLeft,
       //ID for added rule.
-      c_iter->second )
+      superordinatePTN_ID )
       ) ;
     //Used in InsertIfGrammarRuleAppliesTo(...) for getting all grammar rules
     // whose left child has the same grammarpart ID is the map's key value.
     m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule.insert(
-      std::pair<WORD,GrammarRule> (
-        wGrammarRuleIDLeft,
-        GrammarRule(wGrammarRuleIDRight,c_iter->second)
+      std::pair<PTN_IDtype,GrammarRule> (
+        grammarRuleIDLeft,
+        GrammarRule(grammarRuleIDRight,superordinatePTN_ID)
         )
       ) ;
   }
   m_stdmultimap_wGrammarPartID2wGrammarPartID.insert(
-    std::pair<WORD,WORD> (wGrammarRuleIDLeft, wGrammarRuleIDRight)
+    std::pair<PTN_IDtype,PTN_IDtype> (grammarRuleIDLeft, grammarRuleIDRight)
     ) ;
 }
 
-void BottomUpParser::InsertGrammarRule(WORD wGrammarRuleID
+void BottomUpParser::InsertGrammarRule(PTN_IDtype wGrammarRuleID
   , const char * cp_ch )
 {
   //GrammarRule()
@@ -1211,14 +1214,14 @@ void BottomUpParser::InsertGrammarRule(WORD wGrammarRuleID
   InsertRule_ID2NameAndName2IDmapping( wGrammarRuleID , cp_ch ) ;
 }
 
-void BottomUpParser::InsertRule_ID2NameAndName2IDmapping( WORD wGrammarRuleID
-    , const char * cp_ch )
+void BottomUpParser::InsertRule_ID2NameAndName2IDmapping(
+  PTN_IDtype parseTreeNodeID, const char * cp_ch )
 {
-  m_stdmap_wRuleID2RuleName.insert( std::pair<WORD,std::string>
-    ( wGrammarRuleID, std::string( cp_ch) )
+  m_stdmap_wRuleID2RuleName.insert( std::pair<PTN_IDtype,std::string>
+    ( parseTreeNodeID, std::string( cp_ch) )
     ) ;
-  m_stdmap_RuleName2RuleID.insert( std::pair<std::string,WORD>
-    ( std::string( cp_ch) , wGrammarRuleID )
+  m_stdmap_RuleName2RuleID.insert( std::pair<std::string,PTN_IDtype>
+    ( std::string( cp_ch) , parseTreeNodeID )
     ) ;
 }
 
@@ -1292,7 +1295,7 @@ void BottomUpParser::RemoveSuperordinateRulesFromRootNodes()
 
     if( p_grammarpartChild )
     {
-      std::map<WORD,WORD>::const_iterator c_iter_std_map_w2w =
+      std::map<PTN_IDtype,PTN_IDtype>::const_iterator c_iter_std_map_w2w =
         m_stdmap_wGrammarPartID2SuperordinateID.find( p_grammarpartChild->
                 m_wGrammarPartID);
       if( //grammar part ID found in map

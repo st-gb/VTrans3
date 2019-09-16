@@ -33,6 +33,8 @@
 VTrans3::BottomUpParser * VocabularyAndTranslation::s_p_bottomUpParser;
 I_UserInterface * VocabularyAndTranslation::s_p_userinterface;
 
+using namespace VTrans3;///scope PTN_ID2PTNtypeNameType
+
   VocabularyAndTranslation::ArraySizes VocabularyAndTranslation::
     s_arraysizes [4];// = {
 //      //noun
@@ -507,9 +509,9 @@ void VocabularyAndTranslation::FreeMemory()
     if(m_arstrEnglishWord)
     {
 #ifdef _DEBUG
-      const std::map<WORD, std::string> & r_stdmap_wRuleID2RuleName =
+      const PTN_ID2PTNtypeNameType & r_stdmap_wRuleID2RuleName =
         s_p_bottomUpParser->m_stdmap_wRuleID2RuleName;
-      std::map<WORD, std::string>::const_iterator c_iterRuleID2RuleName =
+      std::map<PTN_IDtype, std::string>::const_iterator c_iterRuleID2RuleName =
         /*::wxGetApp()*/ r_stdmap_wRuleID2RuleName.find(m_englishWordClass);
       std::string std_strWordClassName = "";
       if( c_iterRuleID2RuleName != r_stdmap_wRuleID2RuleName.end() )

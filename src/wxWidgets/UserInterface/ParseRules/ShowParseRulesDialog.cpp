@@ -40,4 +40,13 @@ namespace wxWidgets
   {
     m_p_rulesListCtrl = new ParseRulesListCtrl(this, rulesList);
   }
+
+void ShowParseRulesDialog::UpdateTitle(
+  const fastestUnsignedDataType numOverallRules,
+  const fastestUnsignedDataType numFilteredRules)
+{
+  const wxString title = wxString::Format("parse rules:# overall:%d # "
+    "filtered:%d", numOverallRules, numFilteredRules);
+  SetTitle(title);
+}
 } /* namespace wxWidgets */

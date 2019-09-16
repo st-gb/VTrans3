@@ -55,13 +55,13 @@ GrammarPart::GrammarPart(DWORD dwTokenIndexLeftMost, DWORD dwTokenIndexRightMost
 GrammarPart::GrammarPart(
   DWORD dwTokenIndexLeftMost,
   DWORD dwTokenIndexRightMost ,
-  WORD wGrammarPartID )
+  PTN_IDtype grammarPartID )
 {
   LOGN_DEBUG("GrammarPart pointer:" << (void *) this )
   Init() ;
   m_dwLeftmostIndex = dwTokenIndexLeftMost ;
   m_dwRightmostIndex = dwTokenIndexRightMost ;
-  m_wGrammarPartID = wGrammarPartID ;
+  m_wGrammarPartID = grammarPartID ;
 }
 
 GrammarPart::~GrammarPart()
@@ -203,9 +203,9 @@ GrammarPart * GrammarPart::InsertRightChild(unsigned uiGrammarPartID,
 }
 
 //inline
-void GrammarPart::SetGrammarPartID(WORD wGrammarPartID )
+void GrammarPart::SetGrammarPartID(PTN_IDtype grammarPartID )
 {
-  switch( wGrammarPartID )
+  switch( grammarPartID )
   {
     //the person index is alos important : e.g. if noun has the same string
   // for plural and singular then the person index of the verb gives info
@@ -224,7 +224,7 @@ void GrammarPart::SetGrammarPartID(WORD wGrammarPartID )
     break ;
   }
 
-  m_wGrammarPartID = wGrammarPartID ;
+  m_wGrammarPartID = grammarPartID ;
 }
 
 /** @see http://msdn.microsoft.com/en-us/library/1z2f6c2k.aspx */

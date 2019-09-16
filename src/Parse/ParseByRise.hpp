@@ -26,6 +26,24 @@ class TranslationProcess;
 
 namespace VTrans3
 {
+  ///Define typedefs here instead of in class BottomUpParser so we don't need to
+  /// prepend a class name before when using outside of this class.(with "using 
+  /// namespace" the namespace can be avoided)
+  
+  ///typdef'ing the parse tree node ID data type has the advantage to change it
+  /// at a central point for all occurances.
+  typedef WORD parseTreeNodeIDtype;
+  typedef parseTreeNodeIDtype PTN_IDtype;
+  
+  typedef std::map<PTN_IDtype,PTN_IDtype> stdmapPTN_ID2PTN_IDtype;
+  typedef std::multimap<PTN_IDtype, PTN_IDtype> stdmmapPTN_ID2PTN_IDtype;
+  
+  typedef std::map<PTN_IDtype,std::string> PTN_ID2PTNtypeNameType;
+  typedef std::map<std::string,PTN_IDtype> PTNtypeName2PTN_IDtype;
+  
+  typedef std::multimap<DWORD, GrammarPart *> 
+    leftMostTokenIndex2ParseTreeNodeContainerType;
+
 /** @brief According to the book "Computerlinguistik und Sprachtechnologie" 
  *  Eine Einführung, "2. überarbeitete und erweiterte Auflage", 
  *  ISBN 3-8274-1407-5, page 254
@@ -71,7 +89,7 @@ public:
   *  instead of 2 grammar rules:
   *   -"noun" + "verb" = clause
   *   -"gerund" + "verb" = clause */
-  std::map<WORD,WORD> m_stdmap_wGrammarPartID2SuperordinateID ;
+  stdmapPTN_ID2PTN_IDtype m_stdmap_wGrammarPartID2SuperordinateID;
   //This list stores the leftmost indices of the grammar parts:
   // initially only word classes are grammar parts:
   //   0    1       2      3      <- token index
@@ -100,8 +118,6 @@ public:
   //   "<2,grammar part "def_article_noun" for "the vacuum cleaner">
   //   "<3,grammar part "clause" for "the vacuum cleaner sucks">
 //  std::multimap<DWORD, GrammarPart> m_stdmultimap_dwRightmostIndex2grammarpart ;
-  typedef std::multimap<DWORD, GrammarPart *> 
-    leftMostTokenIndex2ParseTreeNodeContainerType;
   leftMostTokenIndex2ParseTreeNodeContainerType
     m_stdmultimap_dwLeftmostIndex2p_grammarpart;
   /** Contains the roots of the parse trees for a distinct token index. 
@@ -112,9 +128,12 @@ public:
   std::multimap<DWORD, GrammarPart *>
     m_stdmultimap_dwRightmostIndex2p_grammarpart ;
   /** Mapping from left grammar rule ID to right grammar rule ID.*/
-  std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2wGrammarPartID ;
-  std::multimap<WORD, WORD> m_stdmultimap_wGrammarPartID2SuperordinateID ;
-  std::multimap<WORD, GrammarRule>
+  stdmmapPTN_ID2PTN_IDtype m_stdmultimap_wGrammarPartID2wGrammarPartID ;
+  ///Map for left & right parse tree node -> superordinate rule
+  /// Must be multimap because the same parse tree node ID made be used 
+  /// multiple times: definite article: for defArticleSing and defArticlePlural
+  stdmmapPTN_ID2PTN_IDtype m_stdmultimap_wGrammarPartID2SuperordinateID ;
+  std::multimap<PTN_IDtype, GrammarRule>
     m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule ;
 //  std::multimap<DWORD, GrammarPart *>
 //    m_stdmultimap_dwLeftmostIndex2p_grammarpartSuperordinate ;
@@ -125,8 +144,8 @@ public:
   std::multimap<DWORD, GrammarPart* >
     m_stdmultimap_dwRightmostIndex2p_grammarpartSuperordinate1ParseLevel ;
 
-  std::map<WORD, std::string> m_stdmap_wRuleID2RuleName ;
-  std::map<std::string,WORD> m_stdmap_RuleName2RuleID ;
+  PTN_ID2PTNtypeNameType m_stdmap_wRuleID2RuleName;
+  PTNtypeName2PTN_IDtype m_stdmap_RuleName2RuleID ;
 
   std::map<WORD, std::multimap<WORD, GrammarRule> >
     m_stdmap_wParseLevelIndex2stdmultimap_dwLeftmostIndex2grammarpart ;

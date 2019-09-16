@@ -133,8 +133,8 @@ namespace wxWidgets
 
   void MainFrame::DisableDoTranslateControls()
   {
-    //TODO SetText is deprecated in wx >= 3.0 ?!
-     m_p_wxMenuItemTranslate->SetText( wxT("stop translation") );
+    ///SetText is deprecated in wx >= 3.0 ?!
+     m_p_wxMenuItemTranslate->SetItemLabel( wxT("stop translation") );
   }
   
   void MainFrame::EnableDictAccessingActions(const bool enable)
@@ -178,8 +178,8 @@ namespace wxWidgets
 
   void MainFrame::SetDictionaryFilePath(const wxString & wxstrDictionaryFilePath)
   {
-    //TODO SetText is deprecated in wx >= 3.0 ?!
-    m_p_wxMenuItemUnloadDictionary->SetText( wxT("Unload ") +
+    ///SetText is deprecated in wx >= 3.0 ?!
+    m_p_wxMenuItemUnloadDictionary->SetItemLabel( wxT("Unload ") +
       wxstrDictionaryFilePath);
     m_p_wxToolBarToolBaseLoadDictionary->SetShortHelp(
       wxT("(re-)load dictionary ") + wxstrDictionaryFilePath);
