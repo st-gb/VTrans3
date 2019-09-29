@@ -12,6 +12,8 @@
 #include <Translate/InsertIntoTreeTransverser.hpp>
 #include <Translate/TransformTreeTraverser.hpp>
 
+using namespace VTrans3;///scoping PTN_IDtype
+
 namespace ParseTreeTraverser
 {
   void TransformTreeTraverser::BeforeBeginAtRoot()
@@ -153,13 +155,14 @@ namespace ParseTreeTraverser
       std::string std_strParentOfCurrentGrammarPart =
         m_r_bottomUpParser.GetGrammarPartName( insertintotreetransverser.
         m_p_grammarpartParentOfCurrentGrammarPart->m_wGrammarPartID );
-      WORD wDirection = (WORD) insertintotreetransverser.m_byDirection;
+      const fastestUnsignedDataType direction = (fastestUnsignedDataType)
+        insertintotreetransverser.m_byDirection;
       LOGN_DEBUG( //FULL_FUNC_NAME << "--"
         "Direction where to move child to:"
         << //c_iter_syntaxtreepath2transformationrule->second.
           //m_bInsertLeftChild
-        wDirection << " (" << DirectingLeavesMultipleIterTraverser::
-        s_ar_chDirection[wDirection] << ")"
+        direction << " (" << DirectingLeavesMultipleIterTraverser::
+        s_ar_chDirection[direction] << ")"
         )
   //            if( ! bIsLeftChild )
 //       GrammarPart * & r_p_grammarpartParentOfGrammarPartToMove =
@@ -260,7 +263,7 @@ namespace ParseTreeTraverser
 
   void TransformTreeTraverser::PossiblyMoveParseTreeBranch()
   {
-    std::vector<WORD> stdvec_wGrammarPartID ;
+    std::vector<PTN_IDtype> stdvec_wGrammarPartID ;
   //    GetGrammarPartPathAsGrammarPartIDvector( stdvec_wGrammarPartID ) ;
 
   //    if( //m_stdstrParseTreeToSearchFor ==

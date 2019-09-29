@@ -7,6 +7,8 @@
 #include <Translate/SyntaxTreePath.hpp> //class SyntaxTreePath
 #include <Translate/TransformationRule.hpp> //class TransformationRule
 
+using namespace VTrans3;///scoping PTN_IDtype
+
 namespace ParseTreeTraverser
 {
   /** Used in TransformTreeTraverser */
@@ -85,12 +87,12 @@ namespace ParseTreeTraverser
   void InsertIntoTreeTransverser::CheckIfGrammarPartPathMatches(
     BYTE byDirection )
   {
-    std::vector<WORD> stdvec_wGrammarPartID ;
+    std::vector<PTN_IDtype> stdvec_parseTreeNodeID ;
     SyntaxTreePath::GetAsGrammarPartIDvector(
-      m_stdvector_p_grammarpartCurrentParseTreePath , stdvec_wGrammarPartID ) ;
+      m_stdvector_p_grammarpartCurrentParseTreePath , stdvec_parseTreeNodeID ) ;
     if( m_syntaxtreepath.Matches(
         //ar_wGrammarPartID,
-          stdvec_wGrammarPartID )
+          stdvec_parseTreeNodeID )
       )
     {
       LOGN_DEBUG(//"InsertIntoTreeTransverser::ParseTreePathAdded()"

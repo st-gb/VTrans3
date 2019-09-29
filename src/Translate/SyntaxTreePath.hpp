@@ -14,6 +14,9 @@
 #include <windef.h> //for BYTE
 #include <hardware/CPU/fastest_data_type.h> //typedef fastestUnsignedDataType
 //#include <exception>//class std::exception
+#include <Parse/ParseTreeNode_ID_type.hpp>///typedef PTN_IDtype
+
+using namespace VTrans3;///Scoping for PTN_IDtype
 
 class GetGrammarPartIDexception
 //  : public std::exception
@@ -58,6 +61,7 @@ typedef unsigned short WORD ;
 //                 ClauseWith1Obj
 // So the "Kleene star operator" is useful for these situations:
 // "definite_article_plural.definite_article.*.object"
+//TODO the value is dependent on the data type used for parse tree node IDs
 #define KLEENE_STAR_OPERATOR 65535
 
 /** Forward declarations */
@@ -86,6 +90,8 @@ class SyntaxTreePath
 
 public:
   typedef /*WORD*/ fastestUnsignedDataType number_type;
+  ///PTN_ID=ParseTreeNodeIDentifier
+  typedef std::vector<PTN_IDtype> PTN_IDpathContainer_type;
   enum CreateGrammarPartIDArray_return_values
   {
     unknown_grammar_part_name = 0 ,
@@ -95,7 +101,7 @@ public:
   //for showing an error message when getting ID from grammar part name failed.
   static I_UserInterface * sp_userinterface ;
   VTrans3::BottomUpParser * mp_bottomUpParser;
-  WORD * m_ar_wElements ;
+  PTN_IDtype * m_ar_wElements ;
   WORD m_wNumberOfElements ;
 
   void copy(const SyntaxTreePath & c_r_syntaxtreepathToCopyFrom);
@@ -129,24 +135,24 @@ public:
   std::string GetAs_std_string() const ;
   static void GetAsGrammarPartIDvector(
     std::vector<GrammarPart *> & r_stdvector_p_grammarpartParseTreePath ,
-    std::vector<WORD> & r_stdvec_w_grammarpartPath) ;
+    PTN_IDpathContainer_type & PTN_IDpathContainer) ;
   GrammarPart * GetLeaf(
     const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath) const ;
-  number_type GetNumberOfElements() { return m_wNumberOfElements; }
+  number_type GetNumberOfElements() const { return m_wNumberOfElements; }
   SyntaxTreePath & operator = ( const SyntaxTreePath & r) ;
   bool operator < ( const SyntaxTreePath & r) const ;
-  bool IsPartOf(std::vector<WORD> & r_stdvec_wGrammarPartPath ) ;
+  bool IsPartOf(PTN_IDpathContainer_type & PTN_IDpathContainer ) ;
  static bool Matches(
-    WORD * ar_wElements ,
-    WORD wNumberOfElements ,
-    const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath
+    PTN_IDtype * ar_wElements ,
+    fastestUnsignedDataType numberOfElements ,
+    const PTN_IDpathContainer_type & PTN_IDpathContainer
     ) ;
 //  static bool Matches(
 //    const std::vector<WORD> & cr_stdvec_wGrammarPartPath ,
 //    const std::vector<GrammarPart *> & cr_stdvec_grammarpartPath
 //    ) const ;
   bool Matches(
-    const std::vector<WORD> & r_stdvec_wCurrentGrammarPartPath
+    const PTN_IDpathContainer_type & r_stdvec_wCurrentGrammarPartPath
     ) const ;
 }; //end class
 

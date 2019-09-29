@@ -5,7 +5,9 @@
 #include "TranslationRule.hpp" //header file for this TranslationRule class
 #include <Parse/GrammarPart.hpp> //class GrammarPart
 #include <Parse/ParseByRise.hpp> //class ParseByRise for DEBUG_COUTN(...)
+
 #include <exception> //for class std::exception
+#include <limits>///std::numeric_limits
 /** SUPPRESS_UNUSED_VARIABLE_WARNING(...) */
 #include <compiler/GCC/suppress_unused_variable.h>
 
@@ -13,6 +15,7 @@
   #define MAXWORD 65535
 #endif
 
+//TODO change data type to fastestUnsignedDataType?
 WORD TranslationRule::GetConsecutiveID(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath ) const
 {
@@ -28,7 +31,7 @@ WORD TranslationRule::GetConsecutiveID(
         return p_grammarpart->m_wConsecutiveID ;
 #endif
   }
-  return MAXWORD ;
+  return MAXWORD;
 }
 
 //pointer address to >>const<<ant content
@@ -57,25 +60,25 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
       SUPPRESS_UNUSED_VARIABLE_WARNING(p_grammarpartContainingConsecutiveID)
       bool bIdentical = true ;
       //Compare from end to begin.
-      WORD wIndex ;
+      indexDataType index;
       std::vector<GrammarPart *>::const_reverse_iterator
         c_rev_iter_stdvec_p_grammarpart = r_stdvec_p_grammarpartPath.rbegin() ;
-      for( wIndex = //p_tr->m_wNumberOfElements - 1 ;
+      for( index = //p_tr->m_wNumberOfElements - 1 ;
           m_syntaxtreepathConsecutiveID.m_wNumberOfElements - 1 ;
-          wIndex != MAXWORD &&
+          index != std::numeric_limits<indexDataType>::max() &&
           c_rev_iter_stdvec_p_grammarpart != r_stdvec_p_grammarpartPath.rend()
-         ; -- wIndex
+         ; -- index
          )
       {
 //        DEBUG_COUTN
         DEBUGN("comparing " << //p_tr->m_ar_wElements [ wIndex ] <<
             //p_translationrule->
             m_syntaxtreepathConsecutiveID.
-            m_ar_wElements [ wIndex ] <<
+            m_ar_wElements [ index ] <<
           mp_bottomUpParser->GetGrammarPartName( //p_tr->m_ar_wElements [ wIndex ]
             //p_translationrule->
             m_syntaxtreepathConsecutiveID.
-              m_ar_wElements [ wIndex ]
+              m_ar_wElements [ index ]
           )
           << " and "
           << (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID
@@ -83,7 +86,7 @@ GrammarPart * TranslationRule::GetGrammarPartWithConsecutiveID(
             (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID )
           )
         if( //p_tr->m_ar_wElements [ wIndex ] !=
-            m_syntaxtreepathConsecutiveID.m_ar_wElements [ wIndex ] !=
+            m_syntaxtreepathConsecutiveID.m_ar_wElements [ index ] !=
             (*c_rev_iter_stdvec_p_grammarpart)->m_wGrammarPartID
           )
         {
@@ -196,8 +199,8 @@ void TranslationRule::Insert(
  }
 }
 
-bool TranslationRule::Matches(
-  const std::vector<WORD> & cr_stdvec_wCurrentGrammarPartPath ) const
+bool TranslationRule::Matches(const SyntaxTreePath::PTN_IDpathContainer_type &
+  cr_currParseTreeNodePath) const
 {
 //  bool bIdentical = false ;
 //  bool bCurrentlyKleeneStarOperator = false ;
@@ -309,7 +312,7 @@ bool TranslationRule::Matches(
 //  // a def_article_plural gramar part.
 //  return !bCurrentlyKleeneStarOperator && bIdentical ;
   return m_syntaxtreepathCompareWithCurrentPath.Matches(
-    cr_stdvec_wCurrentGrammarPartPath ) ;
+    cr_currParseTreeNodePath ) ;
 }
 
 void TranslationRule::SetConsecutiveIDSyntaxTreePath(

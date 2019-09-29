@@ -10,12 +10,14 @@
 #include <string> //class std::string
 #include <map> //class std::map
 #include <set> //class std::set
+
 #include <Attributes/Token.h> //class PositionStringVector
 #include "GrammarPart.hpp" //class GrammarPart
 #include <hardware/CPU/fastest_data_type.h> // typedef fastestUnsignedDataType
 #include <Controller/DictReaderAndVocAccess/dictReaderAndVocAccess_type.hpp>
 #include "GrammarRule.hpp" //class GrammarRule
 #include <data_structures/ByteArray.hpp>//class ByteArray
+#include "ParseTreeNode_ID_type.hpp"///typedef PTN_IDtype
 
 /** Forward declarations (faster than #include) */
 class LetterNode;
@@ -29,12 +31,7 @@ namespace VTrans3
   ///Define typedefs here instead of in class BottomUpParser so we don't need to
   /// prepend a class name before when using outside of this class.(with "using 
   /// namespace" the namespace can be avoided)
-  
-  ///typdef'ing the parse tree node ID data type has the advantage to change it
-  /// at a central point for all occurances.
-  typedef WORD parseTreeNodeIDtype;
-  typedef parseTreeNodeIDtype PTN_IDtype;
-  
+    
   typedef std::map<PTN_IDtype,PTN_IDtype> stdmapPTN_ID2PTN_IDtype;
   typedef std::multimap<PTN_IDtype, PTN_IDtype> stdmmapPTN_ID2PTN_IDtype;
   

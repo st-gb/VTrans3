@@ -185,33 +185,33 @@ namespace ParseTreeTraverser
         p_grammarpartpointerandparselevelRightChild
       )
   {
-    WORD wCurrentParseTreeLevel = m_grammarpartpointer_and_parselevelCurrent.
-      m_wParseLevel ;
+    fastestUnsignedDataType currentParseTreeLevel = 
+      m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel ;
     GrammarPart * p_grammmarpartCurrent =
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart ;
     GrammarPart * p_grammmarpartRightChild =
       p_grammarpartpointerandparselevelRightChild->m_p_grammarpart ;
-    WORD wParseTreeLevelOfNextRightChild =
+    fastestUnsignedDataType parseTreeLevelOfNextRightChild =
       //m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.back().
       p_grammarpartpointerandparselevelRightChild->
       m_wParseLevel ;
-    WORD wNumberOfElementsToPop = wCurrentParseTreeLevel -
-      wParseTreeLevelOfNextRightChild
+    fastestUnsignedDataType numberOfElementsToPop = currentParseTreeLevel -
+      parseTreeLevelOfNextRightChild
       //If right child is added at level 0, it gets level 1; if then left
       //child is leave it als has level 1; 1-1 = 0, but 1 element should be
-      //poppped, so add a value of "1".
+      //popped, so add a value of "1".
       + 1 ;
     LOGN_DEBUG(//"DirectingLeavesMultipleIterTraverser::"
       //"PopElementsTillNextRightChild()--"
-      "should pop " << wNumberOfElementsToPop << " elements from "
+      "should pop " << numberOfElementsToPop << " elements from "
       << mp_bottomUpParser->GetGrammarPartName(
         p_grammmarpartCurrent->m_wGrammarPartID )
-      << " (" << p_grammmarpartCurrent << ",level:" << wCurrentParseTreeLevel
+      << " (" << p_grammmarpartCurrent << ",level:" << currentParseTreeLevel
       << ") to "
       << mp_bottomUpParser->GetGrammarPartName(
         p_grammmarpartRightChild->m_wGrammarPartID )
       << "(" << p_grammmarpartRightChild << ",level:"
-      << wParseTreeLevelOfNextRightChild << ")."
+      << parseTreeLevelOfNextRightChild << ")."
         )
 //    if( wNumberOfElementsToPop )
     do
@@ -256,7 +256,7 @@ namespace ParseTreeTraverser
 //    //            << " current size=" << m_stdvec_p_grammarpartRightNodeToProcess.size()
 //        << "\n" )
     }
-    while( -- wNumberOfElementsToPop ) ;
+    while( -- numberOfElementsToPop ) ;
   }
 
   inline void DirectingLeavesMultipleIterTraverser::ProcessLastAddedRightNode()
@@ -353,7 +353,7 @@ namespace ParseTreeTraverser
           )
         {
   //#ifdef COMPILE_WITH_LOG
-          WORD wParseTreeLevelRightChild =
+          fastestUnsignedDataType parseTreeLevelRightChild =
             m_grammarpartpointer_and_parselevelCurrent.m_wParseLevel + 1 ;
           GrammarPart * p_grammarpartRightChild =
             m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
@@ -364,7 +364,7 @@ namespace ParseTreeTraverser
             "Adding " << p_grammarpartRightChild
             << "(" << mp_bottomUpParser->GetGrammarPartName(
               p_grammarpartRightChild->m_wGrammarPartID) << ",level:"
-              << wParseTreeLevelRightChild << ")"
+              << parseTreeLevelRightChild << ")"
             )
           //Add to process possible children of the right nodes later.
   //        m_stdvec_p_grammarpartRightNodeToProcess.push_back(
@@ -373,11 +373,11 @@ namespace ParseTreeTraverser
             GrammarPartPointerAndParseLevel(
               p_grammarpartRightChild ,
   //            m_wParseLevel + 1
-              wParseTreeLevelRightChild
+              parseTreeLevelRightChild
               )
             ) ;
 //          MemorizedRightChildToProcess();
-          RightChildAdded(wParseTreeLevelRightChild);
+          RightChildAdded(parseTreeLevelRightChild);
   //#endif
         }
           if( //mcp_grammarpartCurrent->mp_grammarpartLeftChild
@@ -459,7 +459,7 @@ namespace ParseTreeTraverser
       iter_p_grammarpartRight ;
 //    m_stdvec_p_grammarpartRightNodeToProcess.clear();
     m_stdvec_p_grammarpart_and_parselevelRightNodeToProcess.clear() ;
-    WORD m_wCurrentParseTreeLevel = 0 ;
+    fastestUnsignedDataType currentParseTreeLevel = 0 ;
     bool bGetNextUnprocessedRightChild = false ;
     do
     {
@@ -546,7 +546,7 @@ namespace ParseTreeTraverser
             EnteredRightChild();
             p_grammarpartpointerandparselevel =
                 & m_grammarpartpointer_and_parselevelCurrent ;
-            ++ m_wCurrentParseTreeLevel ;
+            ++ currentParseTreeLevel ;
             ParseTreePathAdded() ;
           }
           else
@@ -571,14 +571,14 @@ namespace ParseTreeTraverser
           GrammarPart * p_grammarpartRightChild =
             p_grammarpartpointerandparselevel->m_p_grammarpart->
             mp_grammarpartRightChild ;
-          WORD wParseTreeLevelRightChild = p_grammarpartpointerandparselevel->
-            m_wParseLevel + 1 ;
+          fastestUnsignedDataType parseTreeLevelRightChild =
+            p_grammarpartpointerandparselevel->m_wParseLevel + 1 ;
           LOGN_DEBUG(//"DirectingLeavesMultipleIterTraverser::ProcessNextParseTree"
             //"LevelDirectingRoot()--"
             "Adding " << p_grammarpartRightChild
             << "(" << mp_bottomUpParser->GetGrammarPartName(
               p_grammarpartRightChild->m_wGrammarPartID) << ",level:"
-            << wParseTreeLevelRightChild << ")"
+            << parseTreeLevelRightChild << ")"
             )
           //Add to process possible children of the right nodes later.
 //            m_stdvec_p_grammarpartRightNodeToProcess.push_back( //p_grammarpart->mp_grammarpartRightChild
@@ -588,12 +588,12 @@ namespace ParseTreeTraverser
               //p_grammarpart->mp_grammarpartRightChild
               p_grammarpartRightChild
               , //m_wParseLevel
-              wParseTreeLevelRightChild
+              parseTreeLevelRightChild
               )
             ) ;
           //This is important for keeping track of the current parse tree
           //path:
-          RightChildAdded(m_wCurrentParseTreeLevel) ;
+          RightChildAdded(currentParseTreeLevel) ;
     //      wStringWidthRightChild = GetGrammarPartNameExtent( wxpaintdc,
     //          p_grammarpart->mp_grammarpartRightChild,
     //          wxstrGrammarPartName ).GetWidth() ;
@@ -624,7 +624,7 @@ namespace ParseTreeTraverser
                 ) ;
             p_grammarpartpointerandparselevel =
                 & m_grammarpartpointer_and_parselevelCurrent ;
-            ++ m_wCurrentParseTreeLevel ;
+            ++ currentParseTreeLevel ;
             ParseTreePathAdded() ;
             EnteredLeftChild();
       //      wStringWidthLeftChild = GetGrammarPartNameExtent( wxpaintdc,
@@ -699,7 +699,7 @@ namespace ParseTreeTraverser
         m_grammarpartpointer_and_parselevelCurrent =
             * p_grammarpartpointerandparselevel ;
   //            p_grammarpart wparselevel
-        m_wCurrentParseTreeLevel = p_grammarpartpointerandparselevel->
+        currentParseTreeLevel = p_grammarpartpointerandparselevel->
           m_wParseLevel ;
         CurrentNodeIsLastAddedRightChild() ;
       }

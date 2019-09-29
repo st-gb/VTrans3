@@ -15,9 +15,13 @@
 //#include <rest.h> //DEBUG_COUT
 #include <windef.h>//for WORD
 #define __STDC_LIMIT_MACROS
+
 #include <stdint.h> //__UINT16_MAX__
+#include <limits>///std::numeric_limits
 #include <limits.h> //UINT16_MAX
 #include <deque> //class std::deque
+
+using namespace VTrans3;///scoping PTN_IDtype
 
 #ifndef MAXWORD
   #define MAXWORD 65535
@@ -83,12 +87,12 @@ void SyntaxTreePath::copy(const SyntaxTreePath & c_r_syntaxtreepathToCopyFrom)
   //  stpToCopyFrom.m_bReferredOthersGrammarPartIDArray = true ;
   m_wNumberOfElements = c_r_syntaxtreepathToCopyFrom.m_wNumberOfElements ;
   //  m_ar_wElements = stpToCopyFrom.m_ar_wElements ;
-  m_ar_wElements = new WORD[ m_wNumberOfElements ] ;
+  m_ar_wElements = new PTN_IDtype[ m_wNumberOfElements ] ;
   if( m_ar_wElements )
   {
     memcpy( m_ar_wElements , //void * destination,
       c_r_syntaxtreepathToCopyFrom.m_ar_wElements , //const void * source
-      sizeof(WORD) * m_wNumberOfElements //Number of bytes to copy.
+      sizeof(PTN_IDtype) * m_wNumberOfElements //Number of bytes to copy.
       ) ;
   }
   mp_bottomUpParser = c_r_syntaxtreepathToCopyFrom.mp_bottomUpParser ;
@@ -106,29 +110,29 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
     r_stdstrSyntaxTreePath << "," << p_bottomUpParser << ") begin")
   bool bNewEle = false ;
   std::string stdstrCurrentElement ;
-  std::vector<WORD> vec_wElements ;
-  WORD wStringStart = 0 ;
-  WORD wGrammarPartID ;
-  WORD wNumberOfElements = 1 ;
+  PTN_IDpathContainer_type vec_elements ;
+  indexDataType stringStart = 0 ;
+  PTN_IDtype grammarPartID ;
+  indexDataType numberOfElements = 1 ;
   mp_bottomUpParser = p_bottomUpParser ;
-  for( WORD i = 0 ; i < r_stdstrSyntaxTreePath.length() ; ++ i )
+  for( indexDataType i = 0 ; i < r_stdstrSyntaxTreePath.length() ; ++ i )
   {
     if( i == r_stdstrSyntaxTreePath.length() - 1 )
     {
       stdstrCurrentElement = r_stdstrSyntaxTreePath.substr(
-          wStringStart, ( i + 1 ) - wStringStart ) ;
+          stringStart, ( i + 1 ) - stringStart ) ;
       bNewEle = true ;
     }
     if( r_stdstrSyntaxTreePath[i] == '.' )
     {
       stdstrCurrentElement = r_stdstrSyntaxTreePath.substr(
-          wStringStart, i - wStringStart ) ;
+          stringStart, i - stringStart ) ;
       bNewEle = true ;
     }
     if( bNewEle )
     {
-      ++ wNumberOfElements ;
-      wStringStart = i + 1 ;
+      ++ numberOfElements ;
+      stringStart = i + 1 ;
       //If e.g. definite_article_plural.definite_article it is important if
       // a direct or indirect parent node is "object" so that it is translated.
       //The syntax tree path may vary because between
@@ -137,14 +141,14 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
       // So the "Kleene star operator" is useful for these situations.
       if( stdstrCurrentElement == "*" )
       {
-        vec_wElements.push_back(KLEENE_STAR_OPERATOR) ;
+        vec_elements.push_back(KLEENE_STAR_OPERATOR) ;
       }
       else
         if( mp_bottomUpParser->GetGrammarPartID( stdstrCurrentElement ,
-            wGrammarPartID )
+            grammarPartID )
           )
         {
-          vec_wElements.push_back(wGrammarPartID) ;
+          vec_elements.push_back(grammarPartID) ;
         }
         else //no such string in the map->return failure.
           //return 0 ;
@@ -167,18 +171,18 @@ BYTE SyntaxTreePath::CreateGrammarPartIDArray(
   } //"for"-loop
 //  DEBUG_COUT("SyntaxTreePath::CreateGrammarPartIDArray size:" <<
 //      vec_wElements.size() + "\n" )
-  WORD * ar_wElements = new WORD [ vec_wElements.size() ] ;
-  if( ar_wElements ) //<> 0
+  PTN_IDtype * ar_elements = new PTN_IDtype [ vec_elements.size() ] ;
+  if( ar_elements ) //<> 0
   {
-    WORD wIndex = 0 ;
-    for( std::vector<WORD>::const_iterator iter = vec_wElements.begin() ;
-        iter != vec_wElements.end() ; ++ iter )
+    indexDataType index = 0 ;
+    for( PTN_IDpathContainer_type::const_iterator iter = vec_elements.begin() ;
+        iter != vec_elements.end() ; ++ iter )
     {
       //DEBUG("curr") ;
-      ar_wElements[ wIndex ++ ] = *iter ;
+      ar_elements[ index ++ ] = *iter ;
     }
-    m_ar_wElements = ar_wElements ;
-    m_wNumberOfElements = vec_wElements.size() ;
+    m_ar_wElements = ar_elements ;
+    m_wNumberOfElements = vec_elements.size() ;
 #ifdef _DEBUG
     std::string str = GetAs_std_string() ;
     //DEBUG_COUTN("SyntaxTreePath(" <<
@@ -200,11 +204,12 @@ bool SyntaxTreePath::operator < ( const SyntaxTreePath & r) const
     return false ;
   else //same number of elements
   {
-    for( WORD wIndex = 0 ; wIndex < m_wNumberOfElements ; ++ wIndex )
+    for(indexDataType index = 0 ; index < m_wNumberOfElements ;
+      ++ index )
     {
-      if( m_ar_wElements[ wIndex ] < r.m_ar_wElements[ wIndex ] )
+      if( m_ar_wElements[ index ] < r.m_ar_wElements[ index ] )
         return true ;
-      else if ( m_ar_wElements[ wIndex ] > r.m_ar_wElements[ wIndex ] )
+      else if ( m_ar_wElements[ index ] > r.m_ar_wElements[ index ] )
         return false ;
     }
     //here: Contents are identical.
@@ -227,23 +232,23 @@ std::string SyntaxTreePath::GetAs_std_string( ) const
 {
   std::string stdstr ;
 //#ifdef _DEBUG
-  WORD wGrammarPartID ;
+  PTN_IDtype grammarPartID ;
 //#endif
 //  for(WORD  w=0; w < m_ar_wElements ; ++ w )
 //    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
   if( m_wNumberOfElements )
   {
-    wGrammarPartID = m_ar_wElements[ 0 ] ;
-    stdstr += mp_bottomUpParser->GetGrammarPartName( wGrammarPartID );
+    grammarPartID = m_ar_wElements[ 0 ] ;
+    stdstr += mp_bottomUpParser->GetGrammarPartName( grammarPartID );
 
-    for( WORD wIndex = 1 ; wIndex < m_wNumberOfElements ; ++ wIndex )
+    for(indexDataType index = 1 ; index < m_wNumberOfElements ; ++ index )
     {
   #ifdef _DEBUG
-      wGrammarPartID = m_ar_wElements[ wIndex ] ;
-      stdstr += "." + mp_bottomUpParser->GetGrammarPartName( wGrammarPartID );
+      grammarPartID = m_ar_wElements[ index ] ;
+      stdstr += "." + mp_bottomUpParser->GetGrammarPartName( grammarPartID );
   #else
       stdstr += "." + mp_bottomUpParser->GetGrammarPartName(
-        m_ar_wElements[ wIndex ] );
+        m_ar_wElements[ index ] );
   #endif
     }
   }
@@ -252,21 +257,21 @@ std::string SyntaxTreePath::GetAs_std_string( ) const
 
 void SyntaxTreePath::GetAsGrammarPartIDvector(
   std::vector<GrammarPart *> & r_stdvector_p_grammarpartParseTreePath ,
-  std::vector<WORD> & r_stdvec_w_grammarpartPath
+  PTN_IDpathContainer_type & r_stdvec_w_grammarpartPath
   )
 {
   std::vector<GrammarPart *>::const_iterator c_iter =
     r_stdvector_p_grammarpartParseTreePath.begin() ;
-  WORD wIndex = 0 ;
+  indexDataType index = 0 ;
   while( c_iter != r_stdvector_p_grammarpartParseTreePath.end() )
   {
 #ifdef _DEBUG
-    WORD wGrammarPartID = (*c_iter)->m_wGrammarPartID;
-    r_stdvec_w_grammarpartPath.push_back( wGrammarPartID ) ;
+    PTN_IDtype parseTreeNodeID = (*c_iter)->m_wGrammarPartID;
+    r_stdvec_w_grammarpartPath.push_back( parseTreeNodeID ) ;
 #else
     r_stdvec_w_grammarpartPath.push_back( (*c_iter)->m_wGrammarPartID ) ;
 #endif
-    ++ wIndex ;
+    ++ index ;
     ++ c_iter ;
   }
 }
@@ -468,9 +473,9 @@ GrammarPart * SyntaxTreePath::GetLeaf(
       //         def_article_noun  <-starting here. the grammar part ID defines
       // the way directing the leaf as "def_article_noun->definite_article",
       // So take the child node that has the grammar part ID of "definite_article"
-      for( WORD wIndex = 1 ; wIndex < m_wNumberOfElements ; ++ wIndex )
+      for(indexDataType index = 1 ; index < m_wNumberOfElements ; ++ index )
       {
-        uiCurrentGrammarPartIDfromThisSyntaxTreePath = m_ar_wElements[ wIndex ];
+        uiCurrentGrammarPartIDfromThisSyntaxTreePath = m_ar_wElements[ index ];
 #ifdef _DEBUG
         std_strCurrentGrammarPartNameFromThisSyntaxTreePath =
           mp_bottomUpParser->GetGrammarPartName(
@@ -479,7 +484,7 @@ GrammarPart * SyntaxTreePath::GetLeaf(
           mp_bottomUpParser->GetGrammarPartName( p_grammarpart->m_wGrammarPartID);
 #endif //#ifdef _DEBUG
         LOGN_DEBUG("the next child should have grammar part ID: "
-          << m_ar_wElements[ wIndex ]
+          << m_ar_wElements[ index ]
           << " as string: "
           << std_strCurrentGrammarPartNameFromThisSyntaxTreePath
           )
@@ -534,17 +539,18 @@ GrammarPart * SyntaxTreePath::GetLeaf(
 
 //e.g. test if "def_article_noun.noun" is a part of
 // "subject.def_article_noun.definite aricle" (true)
-bool SyntaxTreePath::IsPartOf(std::vector<WORD> & r_stdvec_wGrammarPartPath )
+bool SyntaxTreePath::IsPartOf(PTN_IDpathContainer_type & 
+  r_stdvec_wGrammarPartPath )
 {
   bool bIsPartOf = false ;
-  for( std::vector<WORD>::const_iterator iter =
+  for( PTN_IDpathContainer_type::const_iterator iter =
     r_stdvec_wGrammarPartPath.begin() ;
     iter != r_stdvec_wGrammarPartPath.end() ; ++ iter )
   {
-    for( WORD wArrayIndex = 0 ; wArrayIndex < m_wNumberOfElements ;
-       ++ wArrayIndex )
+    for(indexDataType arrayIndex = 0 ; arrayIndex <
+      m_wNumberOfElements ; ++ arrayIndex )
     {
-      if( *iter == m_ar_wElements[ wArrayIndex ] )
+      if( *iter == m_ar_wElements[ arrayIndex ] )
       {
         bIsPartOf = true ;
         break ;
@@ -563,7 +569,7 @@ bool SyntaxTreePath::IsPartOf(std::vector<WORD> & r_stdvec_wGrammarPartPath )
 //}
 
 bool SyntaxTreePath::Matches(
-  const std::vector<WORD> & cr_stdvec_wGrammarPartPath
+  const PTN_IDpathContainer_type & cr_stdvec_wGrammarPartPath
   ) const
 {
   return Matches(
@@ -575,9 +581,9 @@ bool SyntaxTreePath::Matches(
 }
 
 bool SyntaxTreePath::Matches(
-  WORD * ar_wElements ,
-  WORD wNumberOfElements ,
-  const std::vector<WORD> & cr_stdvec_wGrammarPartPath
+  PTN_IDtype * ar_elements ,
+  indexDataType numberOfElements ,
+  const PTN_IDpathContainer_type & cr_stdvec_wGrammarPartPath
   ) //const
 {
   bool bIdentical = false ;
@@ -592,18 +598,18 @@ bool SyntaxTreePath::Matches(
     bIdentical = true ;
 //    WORD wLenghtDiff = r_stdvec_wCurrentGrammarPartPath.size() -
 //        m_wNumberOfElements ;
-    std::vector<WORD>::const_reverse_iterator c_rev_iter_wGrammarPartPath =
+    PTN_IDpathContainer_type::const_reverse_iterator c_rev_iter_wGrammarPartPath =
         cr_stdvec_wGrammarPartPath.rbegin() ;
     //Compare from end to begin.
-    WORD wIndex ;
-    WORD wGrammarPartIDforTranslationRule ;
-    WORD wCurrentGrammarPartIDforCurrentParseTreePath;
+    indexDataType index ;
+    PTN_IDtype grammarPartIDforTranslationRule ;
+    PTN_IDtype currPTN_IDforCurrParseTreePath;
     //Avoid g++ warning "'wGrammarPartIDforTranslationRule' might be used
     // uninitialized in this function"
-    SUPPRESS_UNUSED_VARIABLE_WARNING(wGrammarPartIDforTranslationRule)
-    for( wIndex = //p_tr->m_wNumberOfElements - 1 ;
-        wNumberOfElements - 1 ;
-        wIndex != MAXWORD
+    SUPPRESS_UNUSED_VARIABLE_WARNING(grammarPartIDforTranslationRule)
+    for( index = //p_tr->m_wNumberOfElements - 1 ;
+        numberOfElements - 1 ;
+        index != std::numeric_limits<indexDataType>::max()
           //UINT16_MAX
         && c_rev_iter_wGrammarPartPath != cr_stdvec_wGrammarPartPath.rend()
             ; //-- wIndex
@@ -637,37 +643,37 @@ bool SyntaxTreePath::Matches(
       if( bCurrentlyKleeneStarOperator )
       {
         //Matches the grammar part ID following the Kleene star operator.
-        if( wGrammarPartIDforTranslationRule == *c_rev_iter_wGrammarPartPath )
+        if( grammarPartIDforTranslationRule == *c_rev_iter_wGrammarPartPath )
         {
           bCurrentlyKleeneStarOperator = false ;
-          -- wIndex ;
+          -- index ;
         }
         ++ c_rev_iter_wGrammarPartPath ;
       }
       else
       {
-        wGrammarPartIDforTranslationRule =
-            ar_wElements [ wIndex ] ;
-        if( wGrammarPartIDforTranslationRule == KLEENE_STAR_OPERATOR )
+        grammarPartIDforTranslationRule =
+            ar_elements [ index ] ;
+        if( grammarPartIDforTranslationRule == KLEENE_STAR_OPERATOR )
         {
-          if( wIndex - 1 >= 0 )
-            -- wIndex ;
+          if( index - 1 >= 0 )
+            -- index ;
           else
             return //false ;
               //<=> identical because "*" means: 0 or any amount of grammar
               //parts may follow.
               true;
           bCurrentlyKleeneStarOperator = true ;
-          wGrammarPartIDforTranslationRule =
-              ar_wElements [ wIndex ] ;
+          grammarPartIDforTranslationRule =
+              ar_elements [ index ] ;
         }
         else
         {
-          wCurrentGrammarPartIDforCurrentParseTreePath =
+          currPTN_IDforCurrParseTreePath =
             * c_rev_iter_wGrammarPartPath;
-          if( wGrammarPartIDforTranslationRule !=
+          if( grammarPartIDforTranslationRule !=
               //r_stdvec_wCurrentGrammarPartPath.at(wIndex + wLenghtDiff )
-              wCurrentGrammarPartIDforCurrentParseTreePath
+              currPTN_IDforCurrParseTreePath
             )
           {
             bIdentical = false ;
@@ -680,7 +686,7 @@ bool SyntaxTreePath::Matches(
 //            DEBUGN( FULL_FUNC_NAME << "--not identical\n")
             break ;
           }
-          -- wIndex ;
+          -- index ;
           //Only advance if the current grammar part ID is not Kleene star operator
           //because the ID after Kleene star *must* match the (indirect) ID of
           //the vector.
@@ -706,10 +712,10 @@ bool SyntaxTreePath::Matches(
       //e.g. at end of "definite_article_singular.definite_article" and at
       // "definite_article_singular" for path
       // "*.obj.*.definite_article_singular.definite_article"
-      for( ; wIndex != MAXWORD; -- wIndex)
+      for( ; index != std::numeric_limits<indexDataType>::max(); -- index)
       {
         //e.g. at "obj" of "*.obj.*.definite_article_singular.definite_article"
-        if( ar_wElements[ wIndex] != KLEENE_STAR_OPERATOR )
+        if( ar_elements[ index] != KLEENE_STAR_OPERATOR )
         {
           bIdentical = false;
           break;

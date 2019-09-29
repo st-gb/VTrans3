@@ -14,8 +14,8 @@
 //#include <VocabularyInMainMem/CharStringStdMap/CharStringStdMap.hpp>
 #include <VocabularyInMainMem/ReadFileLneAndExtract.hpp>
 
-  typedef /*LetterTree CharStringStdMap*/
-    VocabularyAccess::ReadFileLineAndExtract dictionary_type;
+//  typedef /*LetterTree CharStringStdMap*/
+//    VocabularyAccess::ReadFileLineAndExtract dictionary_type;
 
 
 #endif /* DICTIONARY_TYPE_HPP_ */

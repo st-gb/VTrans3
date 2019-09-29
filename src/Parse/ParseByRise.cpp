@@ -242,14 +242,16 @@ GrammarPart * BottomUpParser::GetParseTreeCoveringMostTokens(
     m_stdmultimap_dwLeftmostIndex2p_grammarpart.equal_range(
     dwLeftmostTokenIndex) ;
 #ifdef _DEBUG
-  WORD wNumberOfGrammapartsStartingAtPos = 0 ;
+  //TODO isn't there a function that gets this number without counting?
+  ///The number of parse trees that start (leftmost leaf) at token index
+  fastestUnsignedDataType numParseTreesStartingAtIdx = 0 ;
 #endif
   for( //c_iter_mmap_dw2grammarpart iterCurrent
       c_iter_mmap_dw2p_grammarpart iterCurrent = stdpair_iter.first ;
       iterCurrent != stdpair_iter.second ; ++ iterCurrent )
   {
 #ifdef _DEBUG
-    ++ wNumberOfGrammapartsStartingAtPos ;
+    ++ numParseTreesStartingAtIdx ;
 #endif
     dwNumberOfTokensCoveredCurrent = //iterCurrent->second.m_dwRightmostIndex -
       iterCurrent->second->m_dwRightmostIndex -
@@ -300,7 +302,7 @@ GrammarPart * BottomUpParser::GetParseTreeCoveringMostTokens(
 *    Often these parse trees here have the same structure but different
 *    words (->synonyms): "the man works."-> "der Mann|Mensch arbeitet" */
 void BottomUpParser::GetGrammarPartCoveringMostTokens(
-  DWORD dwLeftmostTokenIndex ,
+  DWORD dwLeftmostTokenIndex ,//TODO make parameter const
   //Should be a vector because it may be more then 1 token groups may have
   //different translations like "the sheep" -> "das Schaf", "die Schafe"
   std::vector<GrammarPart *> &
@@ -324,7 +326,9 @@ void BottomUpParser::GetGrammarPartCoveringMostTokens(
     m_stdmultimap_dwLeftmostIndex2p_grammarpart.equal_range(
     dwLeftmostTokenIndex) ;
 #ifdef _DEBUG
-  WORD wNumberOfGrammapartsStartingAtPos = 0 ;
+  //TODO isn't there a function that gets this number without counting?
+  ///The number of parse trees that start (leftmost leaf) at token index
+  fastestUnsignedDataType numParseTreesStartingAtIdx = 0 ;
 #endif
   for( //c_iter_mmap_dw2grammarpart
       c_iter_mmap_dw2p_grammarpart c_iter_mmap_dw2p_grammarpartCurrent =
@@ -336,7 +340,7 @@ void BottomUpParser::GetGrammarPartCoveringMostTokens(
       ++ c_iter_mmap_dw2p_grammarpartCurrent )
   {
 #ifdef _DEBUG
-    ++ wNumberOfGrammapartsStartingAtPos ;
+    ++ numParseTreesStartingAtIdx ;
 #endif
     dwNumberOfTokensCoveredCurrent = //iterCurrent->second.m_dwRightmostIndex -
         c_iter_mmap_dw2p_grammarpartCurrent->second->m_dwRightmostIndex -
@@ -434,8 +438,9 @@ fastestUnsignedDataType BottomUpParser::GetNumberOfLargestParseTrees()
       dwLeftMostTokenIndex ,
       stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
       ) ;
-    WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
-    numberOfLargestParseTrees += wSize;
+    fastestUnsignedDataType size = 
+      stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
+    numberOfLargestParseTrees += size;
     if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
       dwLeftMostTokenIndex = 0;
     else
@@ -459,7 +464,8 @@ void BottomUpParser::GetLargestParseTrees(
       dwLeftMostTokenIndex ,
       stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
       ) ;
-    WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
+    fastestUnsignedDataType size = 
+      stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
     if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
       dwLeftMostTokenIndex = 0;
     else
@@ -477,26 +483,25 @@ void BottomUpParser::GetLargestParseTrees(
   while( dwLeftMostTokenIndex );
 }
 
-
 std::string BottomUpParser::GetPathAs_std_string(
-  const std::vector<WORD> & r_stdvec_wGrammarPartPath )
+  const std::vector<PTN_IDtype> & r_stdvec_PTN_IDpath )
 {
   std::string stdstr ;
-  WORD wIndex = 0 ;
+  indexDataType index = 0 ;
   //Gets "-1"->65535 as unsigned if vector size is "0", but then the loop body
   //is not executed.
-  WORD wSizeMinus1 = r_stdvec_wGrammarPartPath.size() - 1 ;
+  indexDataType sizeMinus1 = r_stdvec_PTN_IDpath.size() - 1 ;
 //  for(WORD  w=0; w < m_ar_wElements ; ++ w )
 //    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
-  for( std::vector<WORD>::const_iterator iter =
-    r_stdvec_wGrammarPartPath.begin() ;
-    iter != r_stdvec_wGrammarPartPath.end() ; ++ iter )
+  for( std::vector<PTN_IDtype>::const_iterator iter =
+    r_stdvec_PTN_IDpath.begin() ;
+    iter != r_stdvec_PTN_IDpath.end() ; ++ iter )
   {
     stdstr += GetGrammarPartName( *iter ) ;
     //Not the last element (if size == 2: wSizeMinus1-> 1 ).
-    if( wIndex < wSizeMinus1 )
+    if( index < sizeMinus1 )
       stdstr += "." ;
-    ++ wIndex ;
+    ++ index ;
   }
   return stdstr ;
 }
@@ -505,10 +510,10 @@ std::string BottomUpParser::GetPathAs_std_string(
   const std::vector<GrammarPart *> & r_stdvec_p_grammarpartPath )
 {
   std::string stdstr ;
-  WORD wIndex = 0 ;
-  //Gets "-1"->65535 as unsigned if vector size is "0", but then the loop body
-  //is not executed.
-  WORD wSizeMinus1 = r_stdvec_p_grammarpartPath.size() - 1 ;
+  indexDataType index = 0 ;
+  //Gets "-1"->max value as unsigned if vector size is "0", but then the loop
+  // body is not executed.
+  indexDataType sizeMinus1 = r_stdvec_p_grammarpartPath.size() - 1 ;
 //  for(WORD  w=0; w < m_ar_wElements ; ++ w )
 //    stdstr += mp_parsebyrise->GetGrammarPartName( m_ar_wElements[w]) ;
   for( std::vector<GrammarPart *>::const_iterator iter =
@@ -517,9 +522,9 @@ std::string BottomUpParser::GetPathAs_std_string(
   {
     stdstr += GetGrammarPartName( (*iter)->m_wGrammarPartID ) ;
     //Not the last element (if size == 2: wSizeMinus1-> 1 ).
-    if( wIndex < wSizeMinus1 )
+    if( index < sizeMinus1 )
       stdstr += "." ;
-    ++ wIndex ;
+    ++ index ;
   }
   return stdstr ;
 }
@@ -636,7 +641,7 @@ BYTE BottomUpParser::GetSubjectPersonIndex( GrammarPart * p_grammarpart)
 }
 
 void BottomUpParser::GetTokensAsSpaceSeparatedString(
-  DWORD dwLeftmostIndex,
+  DWORD dwLeftmostIndex,//TOOD make parameters const
   DWORD dwRightmostIndex ,
   std::string & r_stdstr
   )
@@ -646,17 +651,17 @@ void BottomUpParser::GetTokensAsSpaceSeparatedString(
 //  std::vector<Positionstdstring>::const_iterator iter ;
   std::vector<PositionString>::const_iterator iter ;
   iter = m_psv.begin() ;
-  WORD wIndex = 0 ;
-  while( iter != m_psv.end() && wIndex <= dwRightmostIndex )
+  indexDataType tokenIndex = 0 ;
+  while( iter != m_psv.end() && tokenIndex <= dwRightmostIndex )
   {
-    if( wIndex >= dwLeftmostIndex )
+    if( tokenIndex >= dwLeftmostIndex )
     {
       if( bAtLeast1Token )
         r_stdstr += " " ;
       r_stdstr += iter->m_Str ;
       bAtLeast1Token = true ;
     }
-    ++ wIndex ;
+    ++ tokenIndex ;
     ++ iter ;
   }
 //  m_psv.at(dwLeftmostIndex) ;
@@ -969,7 +974,7 @@ void BottomUpParser::InsertGrammarRule(
     //Used in InsertIfGrammarRuleAppliesTo(...) for getting all grammar rules
     // whose left child has the same grammarpart ID is the map's key value.
     m_stdmmap_wLeftChildGrammarPartID2SuperordinateGrammarRule.insert(
-      std::pair<WORD,GrammarRule> (
+      std::pair<PTN_IDtype,GrammarRule> (
         grammarRuleIDLeft,
         GrammarRule(grammarRuleIDRight,superordinateGrammarRuleID)
         )

@@ -39,7 +39,7 @@ namespace ParseTreeTraverser
     void CurrentNodeIsLastAddedRightChild();
     void EnteredLeftChild();
     void EnteredRightChild();
-    void RightChildAdded(WORD wParseTreeLevelRightChild);
+    void RightChildAdded(fastestUnsignedDataType parseTreeLevelRightChild);
 //    void RightChildAdded( unsigned short);
     void MemorizedRightChildToProcess();
   };

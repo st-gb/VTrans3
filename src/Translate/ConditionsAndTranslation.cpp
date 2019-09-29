@@ -160,8 +160,8 @@ bool ConditionsAndTranslation::AllConditionsMatch(
                     const fastestUnsignedDataType attributeValue =
                       c_arbyAttribute[r_atapas.m_wIndex ] ;
                     LOGN_DEBUG( //FULL_FUNC_NAME << "--"
-                      "attribute value is "
-                      << (WORD) cr_condition.m_byAttributeValue
+                      "attribute value is " << (fastestUnsignedDataType#)
+                      cr_condition.m_byAttributeValue
                       << ", leaf's value is: " << attributeValue )
                     if( cr_condition.m_byAttributeValue != attributeValue )
                     {

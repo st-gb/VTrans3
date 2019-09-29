@@ -79,7 +79,7 @@ namespace ParseTreeTraverser
   }
 
   void DuplicateParseTree::RightChildAdded(
-      WORD wParseTreeLevelRightChild)
+    fastestUnsignedDataType parseTreeLevelRightChild)
   {
     GrammarPart * p_grammarpartRightChildOrig =
       m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart->
