@@ -94,10 +94,10 @@ int OpenLogFile(const char * const p_chConfigFilesRootPath)
   try
   {
     bFileIsOpen = g_logger.OpenFileA(stdstrLogFilePath, logFormat, 4000,
-      LogLevel::warning) ;
+      LogLevel::info) ;
 #ifdef __linux__
 #ifndef __ANDROID__
-  g_logger.AddConsoleLogEntryWriter();
+  //g_logger.AddConsoleLogEntryWriter();
 #endif
 #endif
   }
@@ -168,6 +168,7 @@ EXPORT BYTE
       LOGN("return " << (fastestUnsignedDataType) byReturn
         //<< TranslationControllerBaseClass::InitFunction::retCodeDescriptions[byReturn]
         )
+      g_p_translationcontrollerbase->loadDictUpdatingStatus();
     }catch(VTrans3::OpenDictFileException & odfe )
     {
       std::cerr << "error opening dictionary file: \"" << 
