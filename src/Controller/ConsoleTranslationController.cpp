@@ -11,6 +11,7 @@
 #include <FileSystem/GetCurrentWorkingDir.hpp>
 ///OperatingSystem::suspendExecution(...)
 #include <OperatingSystem/time/suspendExecution.hpp>
+#include <FileSystem/GetCurrentWorkingDir.hpp>///GetCurrentWorkingDirA_inl(...)
 
 ///from VTrans3:
 #include <IO/dictionary/OpenDictFileException.hpp>
@@ -211,7 +212,9 @@ void ProcessCommandLineArgs(int argc, char *  argv[])
 
 int main(int argc, char *  argv[])
 {
-//  std::cout << argc << std::endl;
+  std::string currWorkDir;
+  OperatingSystem::GetCurrentWorkingDirA_inl(currWorkDir);
+  std::cout << "curr work dir:" << currWorkDir << std::endl;
   ConsoleTranslationController::CreateMappingBetweenFunctionNameAndFunction();
   Logger::CreateLogLevelStringToNumberMapping();
   OpenLogFile(argv[0]);
@@ -219,17 +222,36 @@ int main(int argc, char *  argv[])
   ConsoleTranslationController consoleTranslationController;
   g_p_translationcontrollerbase = & consoleTranslationController;
   ///Init even without translating (to be able to check for memory leaks here).
-  consoleTranslationController.Init("configuration/VTrans_main_config_dict.cc.xml");
+  const enum TranslationControllerBaseClass::InitFunction::Init_return_codes
+    initFnRetCode = 
+    (enum TranslationControllerBaseClass::InitFunction::Init_return_codes)
+    consoleTranslationController.Init("configuration/VTrans_main_config.xml");
   
   //TODO move time measure code to 
   // TranslationControllerBase::MeasureTimeLoadDictUpd8ingStatus
+  
+  if(initFnRetCode != TranslationControllerBaseClass::InitFunction::success)
+  {
+    std::cerr << "error initializing:code " << initFnRetCode << std::endl;
+    return 1;
+  }
+#ifdef _DEBUG
+  std::cout << "fundamental words:" << consoleTranslationController.
+    m_parsebyrise.s_dictReaderAndVocAccess.getFundamentalWords() << std::endl;
+#endif
   long double timeCountStart, timeCountEnd, timeCountDiff;
   OperatingSystem::GetTimeCountInSeconds(timeCountStart);
-  consoleTranslationController.loadDictUpdatingStatus();
+  const int loadDictRetCode = consoleTranslationController.
+    loadDictUpdatingStatus();
   OperatingSystem::GetTimeCountInSeconds(timeCountEnd);
   timeCountDiff = timeCountEnd - timeCountStart;
   
   std::cout << "loading dict took " << timeCountDiff << " s\n";
+  
+  if( loadDictRetCode != 0)
+  {
+    std::cerr << "Loading dict failed" << std::endl;
+  }
   if( argc > 1 )
   {
     if( strcmp(argv[1], "") == 0 )//TODO this is impossible?

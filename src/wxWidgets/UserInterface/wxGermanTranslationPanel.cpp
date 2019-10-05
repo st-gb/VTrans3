@@ -448,12 +448,12 @@ void GetColorAccordingToGrammarPart(
     c_iter_std_set_grammarpartpointerandconcatenationid =
     std_set_grammarpartpointerandconcatenationid.begin();
 
-  WORD wGrammarPartID = 0;
+  PTN_IDtype parseTreeNodeID = 0;
   while( c_iter_std_set_grammarpartpointerandconcatenationid !=
      std_set_grammarpartpointerandconcatenationid.end()
    )
   {
-    wGrammarPartID = c_iter_std_set_grammarpartpointerandconcatenationid->
+    parseTreeNodeID = c_iter_std_set_grammarpartpointerandconcatenationid->
       m_p_grammarpartToken->m_wGrammarPartID;
 //    switch(wGrammarPartID)
 //    {
@@ -471,7 +471,7 @@ void GetColorAccordingToGrammarPart(
 //      break;
 //    }
     std::string std_strGrammarPartName = wxGetApp().m_parsebyrise.
-      GetGrammarPartName(wGrammarPartID);
+      GetGrammarPartName(parseTreeNodeID);
     
 //    NodeTrieNode<uint32_t> * p_ntn = wxGetApp().m_configurationHandler.
 //      m_nodetrie_ui32GrammarPartName2colour.contains_inline(

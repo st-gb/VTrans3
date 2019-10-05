@@ -43,8 +43,7 @@ public:
             englishWordClass2CounterMap
           );
 
-        //TODO implement
-        void clear() { };
+  void clear() { m_charStringStdMap.clear(); m_charStringStdMapTemp.clear(); }
         //TODO implement
         fastestUnsignedDataType GetNumberOfAllocatedBytes() { return 0;};
         void AddVocabularyAttributes(EnglishWord::English_word_class, void*) {};
@@ -62,6 +61,8 @@ public:
             (DictionaryReader::TUchemnitz::EngWordSorted1st::
             EachAttributeInSingleLine::BinarySearchInRAM *) p_dictionaryReader;
         }
+  std::/*ostream &*/string getFundamentalWords(/*std::ostream& os*/ 
+    /*std::string & str*/);
 
 };
     }

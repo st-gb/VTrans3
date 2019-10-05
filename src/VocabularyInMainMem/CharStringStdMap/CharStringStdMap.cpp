@@ -9,6 +9,7 @@
 #include <preprocessor_macros/logging_preprocessor_macros.h> //LOGN(...)
 //class VocabularyAndTranslation
 #include <VocabularyInMainMem/VocabularyAndTranslation.hpp>
+//#include <compiler/GCC/enable_disable_warning.h>///GCC_DIAG_OFF
 
 //Class variable definition (because it's a global variable):
 VocablesForWord * CharStringStdMap::s_p_vocablesforwordLastForInsertedWord;
@@ -289,6 +290,58 @@ IVocabularyInMainMem::voc_container_type * CharStringStdMap::Insert(
   LOGN_DEBUG("return NULL")
   return //p_vocabularyandtranslation;
     NULL;
+}
+
+Word * CharStringStdMap::GetNextOccurance(
+  const std::string & searchStr
+  , Word * p_wordEnglish
+  , Word * p_wordGerman
+//  VocabularyAndTranslation * p_vocAndTransl
+  )
+{
+  if( p_wordEnglish->p_iter )
+  {
+    if( searchStr == "")///=>traverse all entries
+    {
+//    GCC_DIAG_OFF(permissive)
+//    map_type::const_iterator * p_iter = (map_type::const_iterator *) p_wordEnglish->
+//      p_iter;
+    map_type::const_iterator & iter = m_iter;
+    /* *p_iter*/ iter++;
+    if( /* *p_iter*/ iter != m_charStringMap.end() )
+    {
+      p_wordEnglish->p_iter = (void *) /*p_iter*/ & iter;
+      const std::string & str = /*(*p_iter)*/iter->first;
+      p_wordEnglish->p_word = str.c_str();
+      p_wordEnglish->numBytes = /*(*p_iter)*/iter->first.length();
+    }
+    else
+      p_wordEnglish->p_iter = NULL;
+    }
+  }
+  else
+  {
+    ///TODO free memory
+//    map_type::const_iterator * p_iter = new map_type::const_iterator();
+//    map_type::const_iterator iter = * p_iter;
+    map_type::const_iterator & iter = m_iter;
+    /* *p_iter*/ iter = m_charStringMap.begin();
+    if( /* *p_iter*/ iter != m_charStringMap.end() )
+    {
+      p_wordEnglish->p_iter = /*p_iter*/ & iter;
+      p_wordEnglish->p_word = /*(*p_iter)*/iter->first.c_str();
+      p_wordEnglish->numBytes = /*(*p_iter)*/iter->first.length();
+#ifdef _DEBUG
+//      map_type::const_iterator * p_iter2 = (map_type::const_iterator *) p_wordEnglish->
+//        p_iter;
+//      (*p_iter2)++;
+//      map_type::const_iterator iter = *p_iter2;
+////      iter++;
+//      iter->first;
+#endif
+    }
+  }
+  return NULL;
 }
 
 //void

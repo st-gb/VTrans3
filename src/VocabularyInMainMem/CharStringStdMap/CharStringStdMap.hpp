@@ -16,7 +16,7 @@
 #include "VocabularyInMainMem/VocablesForWord.hpp"
 
 class CharStringStdMap
-  : //public I_WordSearch,
+  : public I_WordSearch,
    public IVocabularyInMainMem
 {
 private:
@@ -25,6 +25,9 @@ private:
   static VocablesForWord * s_p_vocablesforwordLastForInsertedWord;
   static VocabularyAndTranslation * s_p_vocabularyandtranslation;
 public:
+  ///Workaround because storing the pointer to an STL iterator in am 
+  /// "iter" member of a "Word" object did not work.
+  map_type::const_iterator m_iter;
   CharStringStdMap();
   virtual
   ~CharStringStdMap();
@@ -75,6 +78,17 @@ public:
     VocabularyAndTranslation *& p_vocabularyandtranslation);
 //  void Insert(const char * wordBegin, int numChars, //void * p_v
 //    enum EnglishWord::English_word_class);
+  
+  Word * GetNextOccurance(
+    const std::string & searchStr
+    , Word * p_wordEnglish
+    , Word * p_wordGerman
+    );
+  Word * GetPreviousOccurance(
+    const std::string & searchStr
+    , Word ** p_wordEnglish
+    , Word ** p_wordGerman
+    ){return NULL;}
 };
 
 #endif /* CHARSTRINGMAP_HPP_ */

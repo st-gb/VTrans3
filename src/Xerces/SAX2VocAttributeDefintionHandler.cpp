@@ -79,6 +79,7 @@
         std::string stdstrAttributeType ;
         std::string stdstrLanguage ;
         std::string stdstrWordClass ;
+        //TODO change to a faster (fastestUnsignedDataType) data type?!
         WORD wAttributeIndex ;
         WORD wAttributeLength ;
         WORD wAttributeType ;

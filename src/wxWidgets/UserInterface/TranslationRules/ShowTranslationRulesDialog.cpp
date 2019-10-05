@@ -63,7 +63,9 @@ namespace VTrans
       wxT("condition:") +
       getwxString(cond.m_syntaxtreepath.GetAs_std_string() + " " +
         cond.m_stdstrAttributeName + "=" +
-        convertToStdString<WORD>(cond.m_byAttributeValue) )
+        convertToStdString<
+         //TODO change to a faster (fastestUnsignedDataType) data type?!
+         WORD>(cond.m_byAttributeValue) )
       );
 //      m_std_vecConditionControls.push_back(p_wxstatictext);
     m_p_wxsizer->Add( p_wxstatictext);

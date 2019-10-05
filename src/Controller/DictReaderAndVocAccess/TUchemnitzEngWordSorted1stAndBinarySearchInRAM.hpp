@@ -8,15 +8,17 @@
 #include <IO/dictionary/TUchemnitz/EngWordSorted1st/eachAttributeInSingleLine/BinarySearchInRAM.hpp>
 #include <VocabularyInMainMem/TUchemnitzEngWordSorted1st/BinarySearchInRAM.hpp>
 #include <Attributes/PositionString.hpp>
+#include "I_DictReaderAndVocAccess.hpp"///class I_DictReaderAndVocAccess
 
 namespace VTrans3
 {
-  
+  typedef VTrans3::VocabularyAccess::TUchemnitzEngWordSorted1st::
+    BinarySearchInRAM VocAccessType;
 class TUchemnitzEngWordSorted1stAndBinarySearchInRAM
+  : public I_DictReaderAndVocAccess
 {
 public:
-  VTrans3::VocabularyAccess::TUchemnitzEngWordSorted1st::BinarySearchInRAM
-    m_vocAccess;
+  VocAccessType m_vocAccess;
   DictionaryReader::TUchemnitz::EngWordSorted1st::EachAttributeInSingleLine::
     BinarySearchInRAM m_dictReader;
   TUchemnitzEngWordSorted1stAndBinarySearchInRAM();
@@ -28,11 +30,11 @@ public:
   IVocabularyInMainMem::voc_container_type * lookUpEnglishWord(
     PositionStringVector & c_r_positionStringVector,
     DWORD & dwTokenIndexRightMost);
+  virtual std::/*ostream &*/string getFundamentalWords(/*std::ostream & os*/);
 private:
   };
 
 } /* namespace VTrans3 */
-
 
 #endif /* TUCHEMNITZENGWORDSORTED1STANDBINARYSEARCHINRAM_HPP */
 

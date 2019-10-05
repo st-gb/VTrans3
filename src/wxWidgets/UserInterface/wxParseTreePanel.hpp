@@ -55,9 +55,13 @@ class wxParseTreePanel
     wxBitmap * m_p_wxbitmapBuffer;
     wxBitmap m_wxbitmapBuffer;
     wxMemoryDC m_wxmemorydc;
-    std::map<WORD,DWORD>
+  typedef std::map<
+    //TODO change to a faster (fastestUnsignedDataType) data type?!
+    WORD,DWORD> parseLvlIdx2RightEndOfRightmostTokenName_Type;
+  parseLvlIdx2RightEndOfRightmostTokenName_Type
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName ;
-    std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2wCenter ;
+  //TODO change WORD to fastestUnsignedDataType?
+  std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2wCenter ;
     std::vector<GrammarPart *> m_stdvecNodesToProcess ;
     //std::map<GrammarPart *,WORD> m_stdmap_p_grammarpart2HorizCenter;
     std::map<GrammarPart *,GrammarPartLocationWithinWindow>

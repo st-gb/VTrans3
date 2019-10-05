@@ -46,6 +46,9 @@ public:
 	//polymorphic)"
 	virtual void virtfunc(){};
 	BOOL operator==(Word * pWordFirst);
+  void * p_iter;///e.g. pointer to an STL iterator or an array address
+  void * p_word;///data
+  unsigned numBytes;///number of bytes for word data
 };
 
 //#include "EnglishWord.hpp" //class EnglishWord

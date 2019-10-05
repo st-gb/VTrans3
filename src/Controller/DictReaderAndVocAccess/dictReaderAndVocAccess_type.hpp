@@ -9,13 +9,21 @@
 #define DICTREADERANDVOCACCESS_TYPE_HPP_
 
 //#include "TUchemnitzEngWordSorted1stAndBinarySearch.hpp"
-//typedef VTrans3::TUchemnitzEngWordSorted1stAndBinarySearchInDictFile dictReaderAndVocAccess_type;
+//typedef VTrans3::TUchemnitzEngWordSorted1stAndBinarySearchInDictFile
+//  dictReaderAndVocAccess_type;
 
-//#include "TUchemnitzEngWordSorted1stAndBinarySearchInRAM.hpp"
-//typedef VTrans3::TUchemnitzEngWordSorted1stAndBinarySearchInRAM dictReaderAndVocAccess_type;
+///Pass the dictionary type via preprocessor definitions from the build system
+/// (Makefile etc.) so it needn't be changed here.
 
+#ifdef USE_TU_CHEMNITZ_DICT
+#include "TUchemnitzEngWordSorted1stAndBinarySearchInRAM.hpp"
+typedef VTrans3::TUchemnitzEngWordSorted1stAndBinarySearchInRAM
+  dictReaderAndVocAccess_type;
+
+#elif (defined USE_DICT_CC_DICT)
 #include "Original_dict_cc_file_formatAndGermanTranslationByteOffset.hpp"
 typedef VTrans3::Original_dict_cc_EN_DE_AndGermanTranslationByteOffset 
-  dictReaderAndVocAccess_type;
+  dictReaderAndVocAccess_type;#
+#endif
 
 #endif /* DICTREADERANDVOCACCESS_TYPE_HPP_ */

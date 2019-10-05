@@ -35,4 +35,15 @@ IVocabularyInMainMem::voc_container_type *
   return m_vocAccess.find(c_r_positionStringVector, dwTokenIndexRightMost);
 //    return NULL;
 }
+
+/*std::ostream &*/ std::string TUchemnitzEngWordSorted1stAndBinarySearchInRAM::
+  getFundamentalWords(/*std::ostream & os*/)
+{
+#ifdef _DEBUG
+//  std::string str = os.
+#endif
+  std::string str = m_vocAccess.getFundamentalWords(/*os*/ /*str*/);
+//  std::cout << "fundamental words:" << str << std::endl;
+  return /*os*/ str;
+}
 }/** namespace VTrans3 */

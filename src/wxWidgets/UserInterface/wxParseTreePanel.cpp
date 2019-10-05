@@ -123,6 +123,7 @@ wxParseTreePanel::~wxParseTreePanel() {
 void wxParseTreePanel::DrawGrammarPartName(
     GrammarPart * p_pg ,
     wxDC & r_wxdc ,
+    //TODO change to a faster (fastestUnsignedDataType) data type?!
     WORD & r_wHorizTextCenter
     )
 {
@@ -132,7 +133,7 @@ void wxParseTreePanel::DrawGrammarPartName(
     const std::string & r_std_strGrammarPartName = //citer->second.
       //m_stdstrGrammarPartName ;
       mp_parsebyrise->GetGrammarPartName( p_pg->m_wGrammarPartID ) ;
-    std::map<WORD,DWORD>::const_iterator c_iter =
+    parseLvlIdx2RightEndOfRightmostTokenName_Type::const_iterator c_iter =
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.
       find( m_wParseLevel) ;
     if( c_iter != m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.
@@ -152,7 +153,8 @@ void wxParseTreePanel::DrawGrammarPartName(
 
     wxSize wxsizeText = r_wxdc.GetTextExtent( c_wxstrGrammarPartName ) ;
     dwXcoordinate += wxsizeText.x ;
-    std::pair<std::map<WORD,DWORD>::iterator,bool> pair_iter_bool =
+    std::pair<parseLvlIdx2RightEndOfRightmostTokenName_Type::iterator,bool>
+        pair_iter_bool =
       m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.insert(
         std::pair<WORD,DWORD>( m_wParseLevel, dwXcoordinate )
         ) ;
@@ -917,6 +919,7 @@ void wxParseTreePanel::DrawParseTreeBeginningFromLeaves(
         )
     {
       m_wParseLevel =  2 ;
+      //TODO change WORD to fastestUnsignedDataType?
       WORD wParseLevelCountedFromRoot = 0 ;
       WORD wNextLeftEndInPixelsOfParseTreeRightOfCurrentTokens = 0 ;
       c_iter_stdvec_p_grammarpart = stdvec_p_grammarpart.begin() ;

@@ -126,7 +126,7 @@ namespace wxWidgets
       const char * const XPMbitmapData [],
       const wxChar toolTip []//, wxSizer * p_wxsizer
       ) = 0;
-  private:
+  //private:
     wxTimer m_wxtimer;
     
   };

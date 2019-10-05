@@ -114,6 +114,25 @@ BinarySearchInRAM::~BinarySearchInRAM() {
         LOGN_DEBUG("return " << p_voc_container)
         return p_voc_container;
       }
+
+std::/*ostream &*/string BinarySearchInRAM::getFundamentalWords(
+  /*std::ostream& os*/ /*std::string & str*/)
+{
+  std::ostringstream os;
+  Word wordEnglish, wordGerman;
+  wordEnglish.p_iter = NULL;
+  std::string searchStr("");
+  m_charStringStdMap.GetNextOccurance(searchStr, & wordEnglish, & wordGerman);
+  for( ; wordEnglish.p_iter;)
+  {
+    std::string str(( char *) wordEnglish.p_word, wordEnglish.numBytes);
+    os << str << "*" << m_charStringStdMap.m_iter->second.
+      m_std_set_p_vocabularyandtranslation.size() << " ";
+    m_charStringStdMap.GetNextOccurance(searchStr, & wordEnglish, & wordGerman);
+  }
+  std::string str = os.str();
+  return /*os*/str;
+}
     }
   }
 }

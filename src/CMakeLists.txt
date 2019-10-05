@@ -1,6 +1,6 @@
 #from https://cmake.org/cmake-tutorial/
 cmake_minimum_required (VERSION 2.8)
-if( DEFINED EXE_TYPE )
+if( DEFINED EXE_TYPE AND NOT ${EXE_TYPE} STREQUAL "Android" )
   message("EXE_TYPE is defined")
  #Set project name by appending exe type so that different project files are 
  # possible (senseful for Code::Blocks?).
@@ -8,6 +8,12 @@ if( DEFINED EXE_TYPE )
 else()
  project(VTrans)
 endif()
+
+if( NOT DEFINED DictReaderAndVocAccessType )
+  add_definitions(-DUSE_TU_CHEMNITZ_DICT)
+endif()
+
+message(WARNING "if this script is executed unintentionally at least twice this may be due to changing the EXE_TYPE :then delete CMakeCache.txt")
 #from https://cmake.org/Wiki/CMake/Testing_With_CTest
 #enable_testing()
 
@@ -23,6 +29,13 @@ set(VTRANS3_ROOT_PATH ${PROJECT_SOURCE_DIR} )
 # on command line: "-DEXE_TYPE:STRING=GUI"
 #SET(EXE_TYPE "wxGUI" CACHE STRING "Some user-specified option")
 message("EXE_TYPE: ${EXE_TYPE}")
+
+#from http://blog.binchen.org/posts/always-turn-on-fpermissive-for-gcc-4-6.html
+if(CMAKE_COMPILER_IS_GNUCC)
+  message("GNU C compiler")
+# # needed for gcc 4.6+
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fpermissive")
+endif()
 
 message("CXX flags: ${CMAKE_CXX_FLAGS}")
 message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
@@ -324,10 +337,10 @@ if( ${EXE_TYPE} STREQUAL "Android")
   set( CMAKE_BINARY_DIR
     ${ANDROID_DIR}/libs)
   set(CREATE_DYN_LIB 1)
-  if( NOT DEFINED MINI_XML_SOURCE )
-   message( WARNING "MINI_XML_SOURCE not defined")
-   SET( USE_MINI_XML_STATIC_LIBRARY TRUE) 
-  endif(NOT DEFINED MINI_XML_SOURCE)
+  if( NOT DEFINED MINI_XML_ROOT_DIR )
+   message( WARNING "MINI_XML_SOURCE not defined->using MiniXML as static library")
+   SET( USE_MINI_XML_STATIC_LIBRARY TRUE)
+  endif()
   set(SOURCE_FILE_PATHS
     ${SOURCE_FILE_PATHS}
     ${VTRANS3_ROOT_PATH}/Controller/DynLib/vtrans_dynlib_VTransDynLibJNI.cpp
@@ -357,12 +370,6 @@ if( ${EXE_TYPE} STREQUAL "Android")
   message( "DISCORDIA_ANDROID_CMAKE_HOME: ${DISCORDIA_ANDROID_CMAKE_HOME}")
   #include("${DISCORDIA_ANDROID_CMAKE_HOME}/android.apk.cmake" REQUIRED)
 endif( ${EXE_TYPE} STREQUAL "Android")
-
-#from http://blog.binchen.org/posts/always-turn-on-fpermissive-for-gcc-4-6.html
-#if(CMAKE_COMPILER_IS_GNUCC)
-# # needed for gcc 4.6+
-#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
-#endif()
 
 if( CREATE_DYN_LIB )#Android, native dyn lib
   set(TRANSLATE 1)

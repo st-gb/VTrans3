@@ -41,7 +41,8 @@ EXEC="cmake -G \"$BUILD_SYSTEM_GENERATOR\" \
 ./src" #where to find the CMakeLists.txt
 echo "should execute: $EXEC"
 eval $EXEC
-make -f ./src/Makefile -j4
+#This line lead to execute "make" twice when executed via NetBeans IDE
+#make -f ./src/Makefile -j4
 else
   echo "ERROR:at least" $NUM_ARGS_NEEDED " args needed:"
   echo $0 " <build system>"

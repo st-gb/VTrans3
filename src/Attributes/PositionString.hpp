@@ -14,6 +14,7 @@
   #include <Windows.h> //includes windef.h;for types DWORD, BYTE (,...)
 //#include <iostream> //std::cout
 
+//TODO rename to TokenAndPos?
   class PositionString
   {
   public:

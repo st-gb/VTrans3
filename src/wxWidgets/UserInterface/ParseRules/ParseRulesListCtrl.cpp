@@ -150,10 +150,10 @@ bool ParseRulesListCtrl::isFiltered(const fastestUnsignedDataType leftRuleID)
 wxString ParseRulesListCtrl::GetItemText(long item, long column) const
 {
   VTrans3::BottomUpParser & bottomUpParser = wxGetApp().m_parsebyrise;
-    const std::map<WORD, WORD> & c_r_stdmap_wGrammarPartID2SuperordinateID =
+    const std::map<PTN_IDtype, PTN_IDtype> & c_r_stdmap_wGrammarPartID2SuperordinateID =
       bottomUpParser./** Stores only left child->superordinate */
       m_stdmap_wGrammarPartID2SuperordinateID;
-    std::map<WORD,WORD>::const_iterator c_iter =
+    std::map<PTN_IDtype,PTN_IDtype>::const_iterator c_iter =
       c_r_stdmap_wGrammarPartID2SuperordinateID.begin();
 
     const int arraySize = c_r_stdmap_wGrammarPartID2SuperordinateID.size();
@@ -170,12 +170,12 @@ wxString ParseRulesListCtrl::GetItemText(long item, long column) const
     {
       if( arrayIndex == item)
       {
-        const WORD superordinateGrammarRuleID = c_iter->second;
+        const PTN_IDtype superordinateGrammarRuleID = c_iter->second;
         switch(column)
         {
           case leftChild :
             {
-            const WORD leftRuleID = c_iter->first;
+            const PTN_IDtype leftRuleID = c_iter->first;
             wxstrGrammarRuleName = wxWidgets::getwxString(
 			  bottomUpParser.GetGrammarPartName(leftRuleID) );
             return wxstrGrammarRuleName;
@@ -202,19 +202,19 @@ wxString ParseRulesListCtrl::GetItemText(long item, long column) const
       }
       ++ c_iter;
     }
-    std::multimap<WORD, WORD>::const_iterator mmap_c_iter = 
+    std::multimap<PTN_IDtype, PTN_IDtype>::const_iterator mmap_c_iter = 
       bottomUpParser.m_stdmultimap_wGrammarPartID2SuperordinateID.begin();
     while( mmap_c_iter != bottomUpParser.
       m_stdmultimap_wGrammarPartID2SuperordinateID.end() )
     {
       if( arrayIndex == item)
       {
-        const WORD superordinateGrammarRuleID = mmap_c_iter->second;
+        const PTN_IDtype superordinateGrammarRuleID = mmap_c_iter->second;
         switch(column)
         {
           case leftChild :
             {
-            const WORD leftRuleID = mmap_c_iter->first;
+            const PTN_IDtype leftRuleID = mmap_c_iter->first;
             wxstrGrammarRuleName = wxWidgets::getwxString(
               bottomUpParser.GetGrammarPartName(leftRuleID) );
             return wxstrGrammarRuleName;

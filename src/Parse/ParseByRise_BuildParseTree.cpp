@@ -54,6 +54,10 @@ void BottomUpParser::CreateInitialGrammarParts ( const std::string &
 //  DEBUG_COUT( "tokens:\n" );
   #endif
   DWORD wTokenIndex = 0 ;
+#ifdef _DEBUG
+  LOGN_DEBUG("fundamental words:" << s_dictReaderAndVocAccess.
+    getFundamentalWords() );
+#endif
   //ParseByRise parsebyrise ;
   while( iter != m_psv.end() )
   {
@@ -291,11 +295,19 @@ void BottomUpParser::CreateParseTree(const std::string & cr_stdstrWholeInputText
   //  "he’d" -> "he had", "he would"
   //TODO clitics (genitive "'s" ), slang forms like "gonna"
   CreateInitialGrammarParts ( cr_stdstrWholeInputText ) ;
+#ifdef _DEBUG
+  int numParseTrees = m_stdmultimap_dwLeftmostIndex2p_grammarpart.size();
+  const std::string std_strIndentedXML = GetAsIndentedXML();
+  LOGN_DEBUG("parse tree as indented XML:\n" << std_strIndentedXML)
+#endif
 
   SummarizeUnknownWords();
 
-  DEBUG_COUT("before resolving GrammarRulesForAllParseLevels \n")
+  LOGN_DEBUG("before resolving GrammarRulesForAllParseLevels \n")
   ResolveGrammarRulesForAllParseLevels() ;
+#ifdef _DEBUG
+  numParseTrees = m_stdmultimap_dwLeftmostIndex2p_grammarpart.size();
+#endif
 //  bool atLeast1Resolved;
 //  do
 //  {
@@ -315,6 +327,9 @@ void BottomUpParser::CreateParseTree(const std::string & cr_stdstrWholeInputText
   //But on the other hand: if there are translation rules that include at least 1
   //of these superordinate rules, they wouldn't apply.
   RemoveSuperordinateRulesFromRootNodes();
+#ifdef _DEBUG
+  numParseTrees = m_stdmultimap_dwLeftmostIndex2p_grammarpart.size();
+#endif
   LOGN_DEBUG("end")
 }
 

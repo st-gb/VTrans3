@@ -43,18 +43,16 @@ public:
     //, Word * & p_wordGerman
     , AutomDelWord & r_automdelwordEng
     , AutomDelWord & r_automdelwordGer
-    ) = 0 ;
+    ) /*= 0;*/{}
   virtual //BYTE 
     Word * GetNextOccurance(
-    //const CString & str
-    const std::string & str
-    , Word ** p_wordEnglish
-    , Word ** p_wordGerman
+    const std::string & searchStr///word to search:leave empty for all entries
+    , Word * p_wordEnglish
+    , Word * p_wordGerman
     ) = 0 ;
   virtual //BYTE 
     Word * GetPreviousOccurance(
-    //const CString & str
-    const std::string & str
+    const std::string & searchStr///word to search:leave empty for all entries
     , Word ** p_wordEnglish
     , Word ** p_wordGerman
     ) = 0 ;

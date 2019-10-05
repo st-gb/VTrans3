@@ -45,13 +45,14 @@ namespace VTrans3 {
     byteArray.add(inner.GetArray(), inner.GetSize() );
   }
 
+  ///\brief gets the parse tree as XML in UTF-8 format
   void BottomUpParser::GenerateXMLtree(
   //  std::string & std_strXML
     ByteArray & byteArray
     ) const
   {
-    std::vector<GrammarPart *>
-      stdvec_p_grammarpartCoveringMostTokensAtTokenIndex ;
+    ///PTNs=Parse Tree Nodes, Tkn=Token, Idx=Index
+    std::vector<GrammarPart *> p_PTNsCoveringMostTknsAtLeftTknIdx ;
   //  std::string std_strXML;
     m_r_translationProcess.SetStatus(
       VTrans::generateXMLtreeFromParseTree,
@@ -87,7 +88,14 @@ namespace VTrans3 {
     byteArray.add("<translated_text>");
 //    //Reset to initial before each translation.
 //    m_ui32ConcatenationID = 1;
-    do
+    GetGrammarPartCoveringMostTokens(
+      leftMostTokenIndex ,
+      p_PTNsCoveringMostTknsAtLeftTknIdx
+      ) ;
+  ///If there is at least 1 tree either:
+  ///-at the first token
+  ///-1 token right of the rightmost token index of the last tree(s)
+    while(! p_PTNsCoveringMostTknsAtLeftTknIdx.empty() )
     {
 //      //Before each draw in order to begin at x position "0".
 //      m_stdmap_wParseLevelIndex2dwRightEndOfRightmostTokenName.clear() ;
@@ -100,14 +108,11 @@ namespace VTrans3 {
 
       citer = r_stdmultimap_dwLeftmostIndex2grammarpart.begin() ;
       //p_grammarpart =
-      GetGrammarPartCoveringMostTokens(
-        leftMostTokenIndex ,
-        stdvec_p_grammarpartCoveringMostTokensAtTokenIndex
-        ) ;
 
 #ifdef _DEBUG
       GCC_DIAG_OFF(unused-variable)
-      WORD wSize = stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.size();
+      const fastestUnsignedDataType numParseTrees = 
+        p_PTNsCoveringMostTknsAtLeftTknIdx.size();
       GCC_DIAG_ON(unused-variable)
 #endif //#ifdef _DEBUG
 //      WORD wConsecutiveID = 0 ;
@@ -116,9 +121,9 @@ namespace VTrans3 {
       //"leftMostTokenIndex".
       for( std::vector<GrammarPart *>::const_iterator
           c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex =
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.begin() ;
+          p_PTNsCoveringMostTknsAtLeftTknIdx.begin() ;
           c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex <
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.end() ;
+          p_PTNsCoveringMostTknsAtLeftTknIdx.end() ;
           ++ c_iter_p_grammarpartParseTreeRootCoveringMostTokensAtTokenIndex
          )
       {
@@ -131,15 +136,19 @@ namespace VTrans3 {
       } //loop for all parse trees beginning at same token index
       byteArray.add("</translations>");
 
-      if( stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.empty() )
-        leftMostTokenIndex = 0;
+      if( p_PTNsCoveringMostTknsAtLeftTknIdx.empty() )
+        leftMostTokenIndex = 0;//TODO unneccessary instruction?!
       else
         leftMostTokenIndex =
-          stdvec_p_grammarpartCoveringMostTokensAtTokenIndex.at(0)->
+          p_PTNsCoveringMostTknsAtLeftTknIdx.at(0)->
           m_dwRightmostIndex + 1;
       LOGN("leftMostTokenIndex:" << leftMostTokenIndex )
+      GetGrammarPartCoveringMostTokens(
+        leftMostTokenIndex ,
+        p_PTNsCoveringMostTknsAtLeftTknIdx
+        ) ;
     }
-    while( leftMostTokenIndex );
+    //while( leftMostTokenIndex );
     byteArray.add("</translated_text>"); //Topmost XML element.
   }
 }
