@@ -45,7 +45,9 @@ public:
     uint8_t buffer [],
     const fastestUnsignedDataType & numBytesToRead,
 	fastestUnsignedDataType & numBytesRead
-	) {
+	)
+  {//TODO m_dictionaryData was 0x0 (NULL) after calling Translate with the wrong
+   // file path
     memcpy(buffer, m_dictionaryData + m_dataOffset, numBytesToRead);
 	numBytesRead = numBytesToRead;
     m_dataOffset += numBytesToRead;

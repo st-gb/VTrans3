@@ -64,7 +64,9 @@ bool BinarySearchInRAM::open(const std::string & std_strDictFilePath )
         return false;
 //        throw VTrans3::OpenDictFileException(openError);
     }
-    else //TODO throw an exception?
+    else //TODO throw an exception? This may be better than passing return 
+      //codes over multiple function hierarchies (high call stack), e.g.:
+      //throw VTrans3::DictFileException(errorAllocRAM)
       dictFileIsOpen = false;
 //        m_englishDictionary.seekg(0, std::ios_base::beg);
 //        m_dictFile.Seek(0);

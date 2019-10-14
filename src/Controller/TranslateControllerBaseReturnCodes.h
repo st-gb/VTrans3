@@ -22,7 +22,8 @@ namespace TranslationControllerBaseClass
       vocabularyFilePathIsEmpty,
       loadingVocabularyFileFailed,
       creatingLogFileFailed,
-      loadingMainConfigFileFailed
+      loadingMainConfigFileFailed,
+      otherReason
     };
   }
 }

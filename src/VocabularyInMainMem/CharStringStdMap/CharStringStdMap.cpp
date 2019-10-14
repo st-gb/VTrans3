@@ -312,7 +312,7 @@ Word * CharStringStdMap::GetNextOccurance(
     {
       p_wordEnglish->p_iter = (void *) /*p_iter*/ & iter;
       const std::string & str = /*(*p_iter)*/iter->first;
-      p_wordEnglish->p_word = str.c_str();
+      p_wordEnglish->p_word = (void *) str.c_str();
       p_wordEnglish->numBytes = /*(*p_iter)*/iter->first.length();
     }
     else
@@ -329,7 +329,7 @@ Word * CharStringStdMap::GetNextOccurance(
     if( /* *p_iter*/ iter != m_charStringMap.end() )
     {
       p_wordEnglish->p_iter = /*p_iter*/ & iter;
-      p_wordEnglish->p_word = /*(*p_iter)*/iter->first.c_str();
+      p_wordEnglish->p_word = (void *) /*(*p_iter)*/iter->first.c_str();
       p_wordEnglish->numBytes = /*(*p_iter)*/iter->first.length();
 #ifdef _DEBUG
 //      map_type::const_iterator * p_iter2 = (map_type::const_iterator *) p_wordEnglish->

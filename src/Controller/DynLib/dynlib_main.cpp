@@ -158,7 +158,7 @@ EXPORT BYTE
 
 //  g_p_translationcontrollerbase->SetCurrentDirToConfigFilesRootPath(
 //    stdstrConfigFilesRootPath);
-    BYTE byReturn = 1;
+    BYTE byReturn = TranslationControllerBaseClass::InitFunction::otherReason;
     try
     {
       byReturn = //g_translationcontrollerbase.Init(//"VTrans_main_config.xml"
@@ -168,15 +168,26 @@ EXPORT BYTE
       LOGN("return " << (fastestUnsignedDataType) byReturn
         //<< TranslationControllerBaseClass::InitFunction::retCodeDescriptions[byReturn]
         )
-      g_p_translationcontrollerbase->loadDictUpdatingStatus();
+      if( byReturn == TranslationControllerBaseClass::InitFunction::success )
+      {
+      const int loadDictTermCode = g_p_translationcontrollerbase->
+        loadDictUpdatingStatus();
+      if( loadDictTermCode != 0 )
+          byReturn = TranslationControllerBaseClass::InitFunction::
+            loadingVocabularyFileFailed;
+      }
     }catch(VTrans3::OpenDictFileException & odfe )
     {
       std::cerr << "error opening dictionary file: \"" << 
         g_p_translationcontrollerbase->m_stdstrVocabularyFilePath << "\"" 
           << "error code:" << odfe.m_openResult << 
         odfe.GetErrorMessageA() << std::endl;
+      byReturn = TranslationControllerBaseClass::InitFunction::
+        loadingVocabularyFileFailed;
     }
-
+  //TODO Android app crashes with art_sigsegv after returning from this function
+  // Probably this is due to a changed "sourceLists" definition in file 
+  // "build.gradle".
   return byReturn;
 }
 

@@ -43,7 +43,7 @@ public:
     //, Word * & p_wordGerman
     , AutomDelWord & r_automdelwordEng
     , AutomDelWord & r_automdelwordGer
-    ) /*= 0;*/{}
+    ) /*= 0;*/{return 0;}
   virtual //BYTE 
     Word * GetNextOccurance(
     const std::string & searchStr///word to search:leave empty for all entries

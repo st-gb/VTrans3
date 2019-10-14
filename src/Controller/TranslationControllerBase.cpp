@@ -330,7 +330,7 @@ DWORD loadDictThreadFunc(void * p_v)
 	   p_translCtrler->Message("error opening dict file:" + e.GetErrorMessageA() );
 	}
   }
-  return !bSuccess;
+  return !bSuccess;///0=success for return values of this function.
 }
 
 //TODO merge this function with InsertIntoVocabularyIntoMemory_Async(...)
@@ -353,6 +353,7 @@ int TranslationControllerBase::loadDictUpdatingStatus()
     UpdateLoadDictStatus((float) progress/ (float) INT_MAX /* * 100.0f*/);
     waitSeconds(1);
   }
+  //TODO termination code was 0 although "<>0" was returned.
   return thread.GetTermCode();
 }
 
