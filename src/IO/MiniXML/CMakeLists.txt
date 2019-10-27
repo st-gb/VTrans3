@@ -1,4 +1,6 @@
 
+message("MiniXML CMakeLists--LIBRARIES:${LIBRARIES}")
+
 if( NOT ${MINI_XML_ROOT_DIR} STREQUAL "")
   #message("MINI_XML_ROOT_DIR is defined: ${MINI_XML_ROOT_DIR}")
  if(EXISTS "${MINI_XML_ROOT_DIR}/config.h")

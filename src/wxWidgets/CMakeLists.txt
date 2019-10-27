@@ -12,6 +12,7 @@ message("wxWidgets_USE_DEBUG: ${wxWidgets_USE_DEBUG}")
 set( CXX_DEFINITIONS
   ${CXX_DEFINITIONS}
   -DCOMPILE_AS_GUI
+  #-DCOMPILE_AS_EXECUTABLE
 # Must not use "PARENT_SCOPE" HERE, else this definition and the one at the end
 #  of this file are not both propagated to the file that includes this file
 #  (reason for this is unknown)
@@ -70,11 +71,14 @@ set(INCLUDE_DIRS
 #find_package(wxWidgets COMPONENTS core base REQUIRED)
 #include(${wxWidgets_USE_FILE})
 
+message("wxWidgets CMakeLists--LIBRARIES:${LIBRARIES}")
+message("adding \"${wxWidgets_USE_FILE}\" to libraries")
 set( LIBRARIES
   ${LIBRARIES}
   ${wxWidgets_USE_FILE}
   PARENT_SCOPE #To propagate changes to file that included THIS file
 )
+message("wxWidgets CMakeLists after adding \"${wxWidgets_USE_FILE}\"--LIBRARIES:${LIBRARIES}")
 
 if (WIN32)
   add_definitions(-D__WXMSW__)

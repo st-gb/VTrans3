@@ -101,11 +101,12 @@ namespace MiniXML
     }
   } //namespace MainConfigFile
 
+  ///\return: 
   bool MainConfigFileReader::ProcessXML(const std::string & cr_stdstrFilePath)
   {
     bool fileOpenSucceeded = false;
     FILE * fp = fopen(cr_stdstrFilePath.c_str(), "r");
-    if( fp != NULL)
+    if( fp != NULL)///May also be non-NULL if the path is a directory.
     {
 //      mxml_node_t rootXMLnode;
 //      void * sax_data;
@@ -123,10 +124,14 @@ namespace MiniXML
         );
 //      //First node or NULL if the file could not be read.
 //      if( mxml_node_tLoadFileRes != NULL )
-       if( m_successfullyProcessedAllReferredFiles )
+       if( m_successfullyProcessedAllReferredFiles //&&
+         /// is e.g. NULL if the path is a directory?.
+         /*mxml_node_tLoadFileRes != NULL*/)
          fileOpenSucceeded = true;
       fclose(fp);
     }
+//    else
+//      unsigned long int errCode = OperatingSystem::GetLastErrorCode();
     return fileOpenSucceeded;
   }
 } /* namespace MiniXML */

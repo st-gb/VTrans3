@@ -142,6 +142,8 @@ public:
   bool CurrentThreadIsGUIthread();
   int loadDictUpdatingStatus();
   /*inline*/ bool loadDict();
+  //TODO make inline to avoid an additionaly function call?
+  void ClearTempWordEntries();
   BYTE Init(const std::string & cr_stdstrMainConfigFilePath) ;
   virtual void LoadingVocabularyFileFailed(
     const std::string & cr_stdstrFilePath) {} // = 0;
@@ -199,7 +201,7 @@ public:
   void Transform() ;
   void Translate(
     const std::string & cr_stdstrWholeInputText ,
-    std::vector<std::string> & r_stdvec_stdstrWholeTransl ,
+    std::vector<std::string> & r_stdvec_stdstrWholeTransl,
 //    TranslationResult & translationResult
     TranslateParseByRiseTree::ProcessParseTree_type = & TranslateParseByRiseTree::TranslateParseTree,
     fastestUnsignedDataType numIterations = 1

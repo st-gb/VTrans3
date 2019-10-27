@@ -315,6 +315,7 @@ bool TranslationControllerBase::CurrentThreadIsGUIthread()
 //TODO merge with wxWidgets::LoadDictionary_ThreadFunc
 DWORD loadDictThreadFunc(void * p_v)
 {
+  LOGN_INFO("begin")
   TranslationControllerBase * p_translCtrler = (TranslationControllerBase *)
     p_v;
   bool bSuccess = false;
@@ -330,6 +331,9 @@ DWORD loadDictThreadFunc(void * p_v)
 	   p_translCtrler->Message("error opening dict file:" + e.GetErrorMessageA() );
 	}
   }
+  LOGN_INFO("end--setting exit code " << !bSuccess)
+  nativeThread_type::SetExitCode((void *)!bSuccess);
+  LOGN_INFO("return " << !bSuccess)
   return !bSuccess;///0=success for return values of this function.
 }
 
@@ -343,7 +347,8 @@ int TranslationControllerBase::loadDictUpdatingStatus()
   nativeThread_type thread;
 //  b4StartLoadDictThread();
   thread.start(loadDictThreadFunc, this);
-  
+  LOGN_INFO("load dict thread started")
+
   struct tm time;
   while(thread.IsRunning() )
   {
@@ -353,6 +358,7 @@ int TranslationControllerBase::loadDictUpdatingStatus()
     UpdateLoadDictStatus((float) progress/ (float) INT_MAX /* * 100.0f*/);
     waitSeconds(1);
   }
+  LOGN_INFO("load dict thread finished")
   //TODO termination code was 0 although "<>0" was returned.
   return thread.GetTermCode();
 }
@@ -471,6 +477,18 @@ void TranslationControllerBase::SetNumberOfParallelTranslationThreads(
 #endif //#ifdef PARALLELIZE_TRANSLATION
 }
 
+/** This function is added because the comments belong to the function called.
+ * So call this function to include the comments for every call to
+ * "IVocabularyInMainMem::clearTemporaryEntries". */
+void TranslationControllerBase::ClearTempWordEntries()
+{
+  /** Clearing the words may delete the data at the parse tree leaves. So do
+   * this at the end. */
+  /** If not clearing and translating different words multiple times or long
+   * texts then the main memory may get exhausted. */
+  m_parsebyrise.s_dictReaderAndVocAccess.GetVocAccess().clearTemporaryEntries();
+}
+
 void TranslationControllerBase::TranslateAsXML(const char * p_chEnglishText, ByteArray & byteArray)
 {
   g_p_translationcontrollerbase->m_translationProcess.SetContinue(true);
@@ -489,6 +507,8 @@ void TranslationControllerBase::TranslateAsXML(const char * p_chEnglishText, Byt
 
   stdstrAllPossibilities = "";
   m_parsebyrise.GenerateXMLtree(/*stdstrAllPossibilities*/ byteArray);
+  ClearTempWordEntries();
+
 //  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
 //  if( ar_chTranslation )
 //  {
@@ -519,7 +539,7 @@ void TranslationControllerBase::TranslateAsXMLgetAverageTimes(
     );
 
   stdstrAllPossibilities = "";
-  m_parsebyrise.GenerateXMLtree(/*stdstrAllPossibilities*/ byteArray);
+//  m_parsebyrise.GenerateXMLtree(/*stdstrAllPossibilities*/ byteArray);
 
 //  ar_chTranslation = new char[stdstrAllPossibilities.length() + 1];
 //  if( ar_chTranslation )
@@ -859,9 +879,6 @@ void TranslationControllerBase::Translate(
   m_numThreadsAndTimeDuration[applyTranslRules].timeDurationInSeconds = (double)
     timeCountInNanoSecondsApplyTranslRules / 1000000000.0f;
   
-  /** If not clearing and translating different words multiple times or long
-    * texts then the main memory may get exhausted. */
-  m_parsebyrise.s_dictReaderAndVocAccess.GetVocAccess().clearTemporaryEntries();
 //  std::string std_strXML;
   if(!m_translationProcess.Continues() )
     return;

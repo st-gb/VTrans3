@@ -328,6 +328,10 @@ void VTransApp::HandleEvent(
             wxstrMessage);
     //    wxGetApp().ShowMessage(wxstrMessage);
   }
+  catch(...)
+  {
+    ((VTransApp *) this)->ShowMessage(wxT("unknown exception occured"));
+  }
 }
 
 void VTransApp::LoadingVocabularyFileFailed(

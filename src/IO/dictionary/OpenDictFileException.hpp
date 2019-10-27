@@ -19,6 +19,8 @@ namespace VTrans3
     class OpenDictFileException
 	  //TODO make this a subclass of DictFileAccessException?
 	  //: public DictionaryFileAccessException
+      //TODO create class DictFileException and sublass here?
+      // : public DictFileException
     {
       std::string m_absoluteFilePath;
     public:
