@@ -1844,7 +1844,8 @@ void BottomUpParser::StoreWordTypeAndGermanTranslation(
 //      m_r_translationcontrollerbase.
       s_dictReaderAndVocAccess.lookUpEnglishWord(
         c_r_positionStringVector,
-      //If "vacuum cleaner" and wTokenIndex is "0" before the call it gets "1".
+      /** If "vacuum cleaner" and wTokenIndex is "0" before the call it gets 
+       *  "1" afterwards. */
       dwTokenIndexRightMost );
     //If the word was found.
     if( /*p_letternode*/ p_std_set_p_vocabularyandtranslation )

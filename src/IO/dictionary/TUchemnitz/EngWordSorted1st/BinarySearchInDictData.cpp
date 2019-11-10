@@ -594,8 +594,21 @@ BinarySearchInDictData::~BinarySearchInDictData() {
           numToken,
           byteOffsetsOfVocData
           );
-        if( byteOffsetsOfVocData.size() > 0 )
+        if( byteOffsetsOfVocData.size() > 0 ) {
           byteOffsetsOfVocDataVec.push_back(byteOffsetsOfVocData);
+      //TODO if only largest words found in dictionary are used then 
+      // possibilities are missing?:"Linux is software developer Stefan" ->
+      // "Linux ist ein Softwareentwickler" & "Stefan" statt 
+      // "Linux ist eine Software" & "Entwickler Stefan".
+      // "he likes the vacuum cleaner sucks." -> 
+      // "er mag den Staubsauger" & "saugt"
+      // "er mag das Vakuum" & "Reiniger nervt"
+      // (this also holds for/affects other implementations of 
+      //std::set<VocabularyAndTranslation *> * IVocabularyInMainMem::find() )
+
+      ///Set to the max. tokens covered
+      r_dwTokenIndex = r_dwTokenIndex + numToken - 1;
+        }
         ++ numToken;
         if( r_dwTokenIndex + numToken > psvStringToSearch.size() )
           break;

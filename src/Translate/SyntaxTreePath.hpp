@@ -62,6 +62,8 @@ typedef unsigned short WORD ;
 // So the "Kleene star operator" is useful for these situations:
 // "definite_article_plural.definite_article.*.object"
 //TODO the value is dependent on the data type used for parse tree node IDs
+// Change to "const indexDataType KLEENE_STAR_OPERATOR = std::numeric_limits<
+// indexDataType>::max();"?
 #define KLEENE_STAR_OPERATOR 65535
 
 /** Forward declarations */

@@ -152,7 +152,9 @@ namespace ParseTreeTraverser
   {
     const GrammarPart * p_grammarpart = mp_grammarpartStartNode ;
     BeforeBeginAtRoot() ;
-    ProcessLeavesOfParseTree() ;
+    //TODO This step is not neccessary for translating?->waste of time?
+    // -> use a flag whether to call this function?
+    ProcessLeavesOfParseTree();
 //    m_grammarpartpointer_and_parselevelCurrent = GrammarPartPointerAndParseLevel(
 //        mp_grammarpartStartNode , 0 ) ;
     if( m_bTraverseTree &&
@@ -411,7 +413,6 @@ namespace ParseTreeTraverser
     //            mcp_grammarpartCurrent
                 m_grammarpartpointer_and_parselevelCurrent.m_p_grammarpart
               ) ;
-            //Can be used as a callback method in subclasses of this class.
             LOGN_DEBUG(//"DirectingLeavesMultipleIterTraverser::"
               //"ProcessLeavesOfParseTree()--"
               "LeaveFound" )

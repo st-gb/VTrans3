@@ -24,9 +24,10 @@ typedef unsigned short WORD ;
 //A parse tree is a tree of the allowed syntax.
 namespace ParseTreeTraverser
 {
-  /** Traverses a parse tree from root to the leaves in multiple iterations.*/
-  class DirectingLeavesMultipleIterTraverser
-  {
+//TODO rename to BottomUpTraverser?
+/** Traverses a parse tree from root to the leaves in multiple iterations.*/
+class DirectingLeavesMultipleIterTraverser
+{
   public:
     enum directionOfCurrentNodeRelatedToParentNode
     {
@@ -53,10 +54,11 @@ namespace ParseTreeTraverser
     // both "the" and "car" have been processed yet, the traversal for the
     //next level should only reach until "def_article_noun" and neither "car"
     //nor "the".
+  //TODO rename to parseTreeNodeProcessedYet?
     std::set<const GrammarPart*> m_stdset_p_grammarpartProcessedYet ;
     WORD m_wParseLevel ;
-    //e.g. gives the poss. to clear containers that track the current parse tree
-    //path.
+    //E.g. gives the possibilty to clear containers that track the current parse
+    //tree path.
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void BeforeBeginAtRoot() {} ;
 
@@ -127,7 +129,7 @@ namespace ParseTreeTraverser
     //Must be "virtual" because this is a callback method for subclasses.
     virtual void RightChildAdded( unsigned short) {} ;
     void Traverse() ;
-    //Must be "virtual" because this is a callback method for subclasses.
+  ///Must be "virtual" to be a possible callback method in subclasses.
     virtual void LeaveFound() {}
     //The traverser traverses the tree until 1 or 2 processed node(s) was/ were
     //found: e.g.

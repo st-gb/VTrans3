@@ -652,16 +652,16 @@ bool SyntaxTreePath::Matches(
       }
       else
       {
-        grammarPartIDforTranslationRule =
-            ar_elements [ index ] ;
+        grammarPartIDforTranslationRule = ar_elements [ index ] ;
         if( grammarPartIDforTranslationRule == KLEENE_STAR_OPERATOR )
-        {
-          if( index - 1 >= 0 )
+        {///Gets std::numeric_limits::max() if unsigned data type and "0 - 1"
+          //TODO "index > 0" would be easier?
+          if( index - 1 != std::numeric_limits<indexDataType>::max() )
             -- index ;
-          else
+          else///<=> Kleene star operator at start/root node?
             return //false ;
-              //<=> identical because "*" means: 0 or any amount of grammar
-              //parts may follow.
+              //<=> identical because "*" means: 0 or any amount of parse tree
+              //nodes may follow.
               true;
           bCurrentlyKleeneStarOperator = true ;
           grammarPartIDforTranslationRule =
@@ -687,9 +687,9 @@ bool SyntaxTreePath::Matches(
             break ;
           }
           -- index ;
-          //Only advance if the current grammar part ID is not Kleene star operator
-          //because the ID after Kleene star *must* match the (indirect) ID of
-          //the vector.
+          /** Only advance if the current parse tree node ID is not Kleene star
+           * operator because the ID after Kleene star *must* match the 
+           * (indirect) ID of the vector. */
           ++ c_rev_iter_wGrammarPartPath ;
         }
       }
