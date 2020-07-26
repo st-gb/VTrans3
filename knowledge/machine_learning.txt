@@ -1,0 +1,10 @@
+bei TU Berlin, Kurs "Automatic Image Analysis" nachschauen:
+-Expectation Maximization
+-Bayes Theorem
+
+Dr. Ronny Hänsch 02.Jun.2020: Hidden-Markov-Modell
+
+Fuzzy Logic
+
+https://de.wikipedia.org/wiki/Maschinelles_Lernen
+https://en.wikipedia.org/wiki/Machine_learning

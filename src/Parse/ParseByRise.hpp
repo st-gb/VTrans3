@@ -38,6 +38,7 @@ namespace VTrans3
   typedef std::map<PTN_IDtype,std::string> PTN_ID2PTNtypeNameType;
   typedef std::map<std::string,PTN_IDtype> PTNtypeName2PTN_IDtype;
   
+  //TODO make shorter, e.g. "lftMostTknIdx2PTNcntType"
   typedef std::multimap<DWORD, GrammarPart *> 
     leftMostTokenIndex2ParseTreeNodeContainerType;
 

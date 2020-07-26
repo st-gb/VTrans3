@@ -77,6 +77,8 @@ void BottomUpParser::CreateInitialGrammarParts ( const std::string &
 //   }
     //outputWordTypeAndGermanTranslation(psv,wTokenIndex) ;
     //parsebyrise.StoreWordTypeAndGermanTranslation(
+    //TODO "software developer" gives 2 parse trees (sotware developer,
+    // developer) instead of 1 with modified TU Chemnitz dictionary access
     StoreWordTypeAndGermanTranslation(
       m_psv //PositionstdstringVector & psv
       , wTokenIndex //DWORD dwTokenIndex

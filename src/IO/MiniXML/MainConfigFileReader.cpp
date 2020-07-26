@@ -59,11 +59,14 @@ namespace MiniXML
         return (MXML_TEXT);
     }
 
-    /** see http://www.msweet.org/documentation/project3/Mini-XML.html#4_7 */
-    void sax_callback(
+/** see https://www.msweet.org/mxml/mxml.html#sax-stream-loading-of-documents :
+ * "Each function [...] uses a callback to process each node as it is read. The
+ * callback function receives the node, an event code, and a user data pointer
+ * you supply" */
+void sax_callback(
       mxml_node_t * node,
       mxml_sax_event_t event,
-      void * data
+  void * data///pointer passed from last parameter of mxmlSAXLoadFile(...)
       )
     {
 //      LOGN_DEBUG("begin--node:" << node )

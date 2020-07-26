@@ -69,7 +69,10 @@ void Set3rdTranslationStepFunction(const char * const value);
 void SetNumIterationsFor3rdTranslationStep(const char * const value);
 #endif //#ifdef EVALUATE_PROCESSING
 
-/** @brief Base class for e.g. wxApp and CWinApp-derived classes. */
+/** @brief Base class for all classes that do all translation steps
+ * (part-of-speech (POS) tagging, building parse tree, transforming the
+ *  parse/syntax tree and translating)
+ *  e.g. wxApp- and CWinApp-derived classes. */
 class TranslationControllerBase
   //TODO only inherit from class I_UserInterface if the binary really has a user
   // interface? (e.g. not for a(n Android) dynamic library?!

@@ -11,6 +11,7 @@
 /** typedef attributeType, typedef ConfigurationHandler_type */
 #include <Controller/ConfigurationHandler_type.hpp> 
 
+///Base class for SAX XML file readers like MiniML and Apache Xerces.
 class MainConfigFileReaderBase {
   VTrans3::ConfigurationReader<attributeType> & m_r_configurationReader;
 public:
